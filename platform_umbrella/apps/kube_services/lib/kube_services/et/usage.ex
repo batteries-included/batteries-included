@@ -5,7 +5,7 @@ defmodule KubeServices.ET.Usage do
   use GenServer
   use TypedStruct
 
-  alias CommonCore.ET.HomeBaseClient
+  alias KubeServices.ET.HomeBaseClient
 
   require Logger
 
@@ -18,7 +18,7 @@ defmodule KubeServices.ET.Usage do
 
   @spec init() :: {:ok, struct()}
   def init(args \\ []) do
-    min_sleep_time = Keyword.get(args, :min_sleep_time, 3 * 60 * 1000)
+    min_sleep_time = Keyword.get(args, :min_sleep_time, 4 * 60 * 1000)
     max_sleep_time = Keyword.get(args, :max_sleep_time, 5 * 60 * 1000)
 
     sleep_time = :rand.uniform(max_sleep_time - min_sleep_time) + min_sleep_time

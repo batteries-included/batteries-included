@@ -18,6 +18,8 @@ defmodule HomeBase.Repo.Migrations.CreateInstallations do
       # Default size for the installation
       add :default_size, :string
 
+      add :control_jwk, :map
+
       timestamps(type: :utc_datetime_usec)
     end
 

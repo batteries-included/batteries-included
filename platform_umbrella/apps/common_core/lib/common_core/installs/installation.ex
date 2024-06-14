@@ -41,6 +41,8 @@ defmodule CommonCore.Installation do
     # Default size for the installation
     field :default_size, Ecto.Enum, values: @sizes, default: :medium
 
+    field :control_jwk, :map, redact: true
+
     belongs_to :user, User
     belongs_to :team, Team
 
@@ -52,18 +54,9 @@ defmodule CommonCore.Installation do
     installation
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_require_oauth_email(attrs)
+    |> maybe_add_control_jwk()
     |> validate_email_address(:initial_oauth_email)
     |> foreign_key_constraint(:slug)
-  end
-
-  def maybe_require_oauth_email(changeset, %{"sso_enabled" => true}) do
-    validate_required(changeset, [:initial_oauth_email])
-  end
-
-  def maybe_require_oauth_email(changeset, _attrs), do: changeset
-
-  def downcase_slug(changeset) do
-    update_change(changeset, :slug, &String.downcase/1)
   end
 
   @default_provider_type :kind
@@ -139,4 +132,31 @@ defmodule CommonCore.Installation do
   def default_size(_, _), do: :medium
 
   defp default_provider_config(_, _), do: %{}
+
+  defp maybe_require_oauth_email(changeset, %{"sso_enabled" => true}) do
+    validate_required(changeset, [:initial_oauth_email])
+  end
+
+  defp maybe_require_oauth_email(changeset, _attrs), do: changeset
+
+  defp maybe_add_control_jwk(changeset) do
+    case get_field(changeset, :control_jwk) do
+      nil ->
+        put_change(changeset, :control_jwk, CommonCore.JWK.generate_key())
+
+      _ ->
+        changeset
+    end
+  end
+
+  def verify_message!(%__MODULE__{control_jwk: control_jwk}, message) do
+    case JOSE.JWT.verify(control_jwk, message) do
+      {true, jwt, _} ->
+        {_, map} = JOSE.JWT.to_map(jwt)
+        map
+
+      {false, _, _} ->
+        raise CommonCore.JWK.BadKeyError.exception()
+    end
+  end
 end

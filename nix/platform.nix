@@ -35,7 +35,7 @@
           ;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-nyoqL7szcNsflmLseT4o1YpNK/OEQcrjcSZ1vCCBlVY=";
+        sha256 = "sha256-Aj/KcPhiM/I5q+iXlWA+ejPNN9YkWZ/ducFKDh2/gdg=";
       };
 
       # mix fixed output derivation dependencies
@@ -53,7 +53,7 @@
           elixir
           ;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-EYUnNAby/RFtnqFa1rYJICiYOwBQqECvmm/4ESdyiTg=";
+        sha256 = "sha256-PndtetuLdGso7k75z12sRusDqyE20c68fcgW2dmpA90=";
       };
 
       control-server = pkgs.callPackage ./platform-release.nix {

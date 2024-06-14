@@ -8,7 +8,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_018ffa554b487feab67c66a5c962b44b",
+        "id": "batt_019012f33f087194ae49e99e18e10e55",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -22,7 +22,14 @@
           "default_size": "tiny",
           "cluster_name": "integration-test",
           "server_in_cluster": false,
-          "install_id": "batt_018ffa554b3476b5a323502a6fcedd43",
+          "install_id": "batt_019012f33eef788984f4ca894a7ba3dc",
+          "control_jwk": {
+            "crv": "P-256",
+            "d": "ieM8kYsOXsto7J0J_mXSVQsv4W2yEelhB2P5_ZNGSDU",
+            "kty": "EC",
+            "x": "GOSWtyl-rBUHjjLRDiMwdwrZNpp0R-9edpBSVyD4w-4",
+            "y": "N85Ct0p-65UylZn-B6mBc7LJN1f6hb-PyYGNhbaIWvQ"
+          },
           "image_override": null,
           "bootstrap_image_override": null
         },
@@ -61,7 +68,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "2EATKL5QT3LGHT7VC4ELUUOR",
+            "password": "DG2ZDBHSRI7IOOQDWZJRFPK5",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -83,7 +90,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "U7QD43RKGVOLAQAEVYGHNJ3HIQY4X2QC4VW36QPCEPQMHFHJSWOQ===="
+          "battery/hash": "OA2JIZZBVYEKOMDUHWCIE6NFKLT6O3WY3HZBWRPMKUIFLETIPAIA===="
         },
         "labels": {
           "app": "battery-core",
@@ -93,7 +100,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_018ffa554b487feab67c66a5c962b44b",
+          "battery/owner": "batt_019012f33f087194ae49e99e18e10e55",
           "istio-injection": "enabled",
           "version": "latest"
         },

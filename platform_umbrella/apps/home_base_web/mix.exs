@@ -52,7 +52,9 @@ defmodule HomeBaseWeb.MixProject do
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
       {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
-      {:phoenix_live_reload, "~> 1.3", only: :dev}
+      {:phoenix_live_reload, "~> 1.3", only: :dev},
+      # Token/Signing
+      {:jose, "~> 1.11"}
     ]
   end
 

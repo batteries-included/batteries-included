@@ -27,5 +27,6 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     # It shouldn't be nil. However we can't make it required before
     # InstallSpec from Install is fixed.
     field :install_id, CommonCore.Ecto.BatteryUUID, default: nil
+    field :control_jwk, :map, redact: true, default: nil
   end
 end
