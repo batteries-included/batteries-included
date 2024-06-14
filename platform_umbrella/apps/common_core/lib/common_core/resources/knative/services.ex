@@ -2,9 +2,15 @@ defmodule CommonCore.Resources.KnativeServices do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
 
+  import CommonCore.StateSummary.Hosts
+
   alias CommonCore.Containers.EnvValue
   alias CommonCore.Knative.Service
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.ProxyUtils, as: PU
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
 
   def serving_service(%Service{} = service, battery, _state) do
     template =
@@ -110,5 +116,27 @@ defmodule CommonCore.Resources.KnativeServices do
 
   multi_resource(:knative_services, battery, state) do
     Map.new(state.knative_services, fn s -> {"/service/#{s.id}", serving_service(s, battery, state)} end)
+  end
+
+  # create an istio virtual service for each knative service with oauth2_proxy enabled
+  multi_resource(:knative_virtual_services, battery, state) do
+    Map.new(state.knative_services, fn s -> {"/virtual_service/#{s.id}", servicing_vs(battery, state, s)} end)
+  end
+
+  defp servicing_vs(battery, state, service) do
+    namespace = battery.config.namespace
+
+    spec =
+      [hosts: [knative_host(state, service)]]
+      |> VirtualService.new!()
+      |> V.prefix(PU.prefix(battery), PU.service_name(service.name), PU.port(battery))
+      |> V.fallback(service.name, 80)
+
+    :istio_virtual_service
+    |> B.build_resource()
+    |> B.name(service.name)
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :istio_gateway)
   end
 end

@@ -7,8 +7,6 @@ defmodule CommonCore.Resources.ProxyUtils do
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.StateSummary
 
-  require Logger
-
   @default_port 80
 
   @spec port(SystemBattery.t()) :: pos_integer()
@@ -24,11 +22,10 @@ defmodule CommonCore.Resources.ProxyUtils do
   def extension_name(_), do: nil
 
   @spec service_name(SystemBattery.t()) :: String.t()
-  def service_name(%SystemBattery{type: battery_type} = _battery) do
-    "oauth2-proxy-#{sanitize(battery_type)}"
-  end
+  def service_name(%SystemBattery{type: battery_type} = _battery), do: service_name(battery_type)
 
-  def service_name(_), do: nil
+  @spec service_name(atom() | String.t()) :: String.t()
+  def service_name(battery), do: sanitize("oauth2-proxy-#{battery}")
 
   @spec fully_qualified_service_name(SystemBattery.t(), StateSummary.t()) :: String.t()
   def fully_qualified_service_name(%SystemBattery{} = battery, %StateSummary{} = state) do
@@ -45,9 +42,7 @@ defmodule CommonCore.Resources.ProxyUtils do
   end
 
   @spec cookie_secret(SystemBattery.t()) :: String.t()
-  def cookie_secret(%SystemBattery{config: battery_config} = _battery) do
-    battery_config.cookie_secret
-  end
+  def cookie_secret(%SystemBattery{config: battery_config} = _battery), do: battery_config.cookie_secret
 
   def cookie_secret(_), do: nil
 
