@@ -47,10 +47,10 @@ defmodule HomeBaseWeb.LoginLive do
     <div class="text-center">
       <p>
         Don't have an account?
-        <.a navigate={~p"/signup"} variant="styled">Sign up</.a>
+        <.a navigate={~p"/signup"}>Sign up</.a>
       </p>
 
-      <.a navigate={~p"/reset"} variant="styled">
+      <.a navigate={~p"/reset"}>
         Forgot your password?
       </.a>
     </div>

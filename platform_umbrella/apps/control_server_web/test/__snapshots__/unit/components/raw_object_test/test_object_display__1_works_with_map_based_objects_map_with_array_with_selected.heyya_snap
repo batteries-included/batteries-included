@@ -6,7 +6,7 @@
     <h3 class="text-xl font-medium text-gray-darker dark:text-white my-4">
   Root
 </h3>
-    <a href="/?path[]=a" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+    <a href="/?path[]=a" data-phx-link="patch" data-phx-link-state="push" class="font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
   
   <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M6 4.75A.75.75 0 0 1 6.75 4h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 4.75ZM6 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 10Zm0 5.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75a.75.75 0 0 1-.75-.75ZM1.99 4.75a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 15.25a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 10a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1V10Z" clip-rule="evenodd"/>
@@ -16,7 +16,7 @@
   <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"/>
 </svg>
 
-</a><a href="/?path[]=b" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+</a><a href="/?path[]=b" data-phx-link="patch" data-phx-link-state="push" class="font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
   
   <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M6 4.75A.75.75 0 0 1 6.75 4h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 4.75ZM6 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 10Zm0 5.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75a.75.75 0 0 1-.75-.75ZM1.99 4.75a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 15.25a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 10a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1V10Z" clip-rule="evenodd"/>
@@ -26,7 +26,7 @@
   <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"/>
 </svg>
 
-</a><a href="/?path[]=c" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+</a><a href="/?path[]=c" data-phx-link="patch" data-phx-link-state="push" class="font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
   
   <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M6 4.75A.75.75 0 0 1 6.75 4h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 4.75ZM6 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 10Zm0 5.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75a.75.75 0 0 1-.75-.75ZM1.99 4.75a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 15.25a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 10a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1V10Z" clip-rule="evenodd"/>
@@ -45,7 +45,7 @@
     <h3 class="text-xl font-medium text-gray-darker dark:text-white my-4">
   A
 </h3>
-    <a href="/?path[]=a&amp;path[]=0" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+    <a href="/?path[]=a&amp;path[]=0" data-phx-link="patch" data-phx-link-state="push" class="font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
   
   <svg version="1.1" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" fill="currentColor" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark">
   <g>
@@ -59,7 +59,7 @@
   <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"/>
 </svg>
 
-</a><a href="/?path[]=a&amp;path[]=1" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+</a><a href="/?path[]=a&amp;path[]=1" data-phx-link="patch" data-phx-link-state="push" class="font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
   
   <svg version="1.1" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" fill="currentColor" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark">
   <g>
@@ -73,7 +73,7 @@
   <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"/>
 </svg>
 
-</a><a href="/?path[]=a&amp;path[]=2" data-phx-link="patch" data-phx-link-state="push" class=" flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+</a><a href="/?path[]=a&amp;path[]=2" data-phx-link="patch" data-phx-link-state="push" class="font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
   
   <svg version="1.1" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" fill="currentColor" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark">
   <g>

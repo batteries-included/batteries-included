@@ -18,8 +18,7 @@ defmodule ControlServerWeb.Common.Page do
     assigns =
       Map.put(assigns, :back_button_attrs, %{
         icon: :arrow_left,
-        variant: "icon_bordered",
-        class: "rounded-lg"
+        variant: "icon_bordered"
       })
 
     ~H"""

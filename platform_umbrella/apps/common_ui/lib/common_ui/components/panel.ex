@@ -17,10 +17,7 @@ defmodule CommonUI.Components.Panel do
   def panel(assigns) do
     ~H"""
     <div class={[panel_class(assigns[:variant]), @class]} {@rest}>
-      <.flex
-        :if={assigns[:title]}
-        class="items-center justify-between w-full text-center flex-col lg:flex-row px-6 pt-5"
-      >
+      <.flex :if={assigns[:title]} class="items-center justify-between flex-wrap w-full px-6 pt-5">
         <.h3><%= @title %></.h3>
 
         <%= if @menu, do: render_slot(@menu) %>

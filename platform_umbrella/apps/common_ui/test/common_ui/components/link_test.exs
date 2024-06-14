@@ -3,19 +3,27 @@ defmodule CommonUI.Components.LinkTest do
 
   import CommonUI.Components.Link
 
+  component_snapshot_test "Link default" do
+    assigns = %{}
+
+    ~H"""
+    <.a navigate="/">Test Link</.a>
+    """
+  end
+
+  component_snapshot_test "Link underlined type" do
+    assigns = %{}
+
+    ~H"""
+    <.a variant="underlined" navigate="/">Test Link</.a>
+    """
+  end
+
   component_snapshot_test "Link icon type" do
     assigns = %{}
 
     ~H"""
     <.a variant="icon" icon={:face_smile} navigate="/">Test Link</.a>
-    """
-  end
-
-  component_snapshot_test "Link styled type" do
-    assigns = %{}
-
-    ~H"""
-    <.a variant="styled" navigate="/">Test Link</.a>
     """
   end
 
@@ -40,14 +48,6 @@ defmodule CommonUI.Components.LinkTest do
 
     ~H"""
     <.a variant="bordered" href="https://google.com">Test External Link</.a>
-    """
-  end
-
-  component_snapshot_test "Link default" do
-    assigns = %{}
-
-    ~H"""
-    <.a navigate="/">Test unstyled Link</.a>
     """
   end
 end

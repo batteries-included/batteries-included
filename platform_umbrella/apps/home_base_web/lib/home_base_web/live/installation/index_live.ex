@@ -62,35 +62,37 @@ defmodule HomeBaseWeb.InstallationLive do
     </div>
 
     <div :if={@installations != []}>
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between mb-2">
         <.h2>Installations</.h2>
 
-        <.button variant="dark" icon={:bolt} phx-click={show_modal("new-installation")}>
+        <.button variant="dark" icon={:plus} phx-click={show_modal("new-installation")}>
           New Installation
         </.button>
       </div>
 
-      <.table
-        id="installations"
-        rows={@installations}
-        row_click={&JS.navigate(~p"/installations/#{&1}")}
-      >
-        <:col :let={installation} label="Id"><%= installation.id %></:col>
-        <:col :let={installation} label="Slug"><%= installation.slug %></:col>
+      <.panel>
+        <.table
+          id="installations"
+          rows={@installations}
+          row_click={&JS.navigate(~p"/installations/#{&1}")}
+        >
+          <:col :let={installation} label="ID"><%= installation.id %></:col>
+          <:col :let={installation} label="Slug"><%= installation.slug %></:col>
 
-        <:action :let={installation}>
-          <.button
-            variant="minimal"
-            link={~p"/installations/#{installation}"}
-            icon={:eye}
-            id={"show_installation_" <> installation.id}
-          />
+          <:action :let={installation}>
+            <.button
+              variant="minimal"
+              link={~p"/installations/#{installation}"}
+              icon={:eye}
+              id={"show_installation_" <> installation.id}
+            />
 
-          <.tooltip target_id={"show_installation_" <> installation.id}>
-            Show Installation
-          </.tooltip>
-        </:action>
-      </.table>
+            <.tooltip target_id={"show_installation_" <> installation.id}>
+              Show Installation
+            </.tooltip>
+          </:action>
+        </.table>
+      </.panel>
     </div>
 
     <.modal id="new-installation">

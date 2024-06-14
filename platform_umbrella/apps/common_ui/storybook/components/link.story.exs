@@ -12,14 +12,14 @@ defmodule Storybook.Components.Link do
         slots: ["Default Link"]
       },
       %Variation{
+        id: :underlined,
+        attributes: %{variant: "underlined", navigate: "/"},
+        slots: ["Link with underline"]
+      },
+      %Variation{
         id: :icon,
         attributes: %{variant: "icon", navigate: "/", icon: :face_smile},
         slots: ["I'm outta here"]
-      },
-      %Variation{
-        id: :styled,
-        attributes: %{variant: "styled", navigate: "/"},
-        slots: ["Link with a tux"]
       },
       %Variation{
         id: :external,

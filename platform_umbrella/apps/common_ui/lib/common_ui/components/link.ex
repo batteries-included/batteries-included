@@ -4,7 +4,7 @@ defmodule CommonUI.Components.Link do
 
   import CommonUI.Components.Icon
 
-  attr :variant, :string, values: ["icon", "styled", "external", "bordered"]
+  attr :variant, :string, values: ["underlined", "icon", "external", "bordered"]
   attr :icon, :atom, default: nil
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(download hreflang replace referrerpolicy rel target type href navigate patch method)
@@ -23,9 +23,7 @@ defmodule CommonUI.Components.Link do
   def a(%{variant: "external"} = assigns) do
     ~H"""
     <.link class={[link_class(@variant), @class]} target="_blank" {@rest}>
-      <span class="flex-initial">
-        <%= render_slot(@inner_block) %>
-      </span>
+      <span class="flex-initial"><%= render_slot(@inner_block) %></span>
       <.icon name={:arrow_top_right_on_square} class="ml-2 w-5 h-5 flex-none" />
     </.link>
     """
@@ -59,8 +57,8 @@ defmodule CommonUI.Components.Link do
     """
   end
 
+  defp link_class("underlined"), do: "underline hover:opacity-75"
   defp link_class("icon"), do: "font-medium text-primary hover:text-primary-dark hover:opacity-50"
-  defp link_class("styled"), do: "font-medium text-primary hover:text-primary-dark hover:underline"
   defp link_class("external"), do: "font-medium text-primary-dark hover:underline flex"
 
   defp link_class("bordered") do
@@ -70,5 +68,5 @@ defmodule CommonUI.Components.Link do
     ]
   end
 
-  defp link_class(_), do: ""
+  defp link_class(_), do: "font-medium text-primary hover:text-primary-dark hover:underline"
 end

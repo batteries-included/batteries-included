@@ -83,7 +83,7 @@ defmodule ControlServerWeb.Live.Timeline do
 
       <.data_list>
         <:item title="Show Backend Service">
-          <.a navigate={~p(/backend_services)}><%= @payload.name %></.a>
+          <.link navigate={~p(/backend_services)}><%= @payload.name %></.link>
         </:item>
       </.data_list>
     </.payload_container>
@@ -99,10 +99,10 @@ defmodule ControlServerWeb.Live.Timeline do
 
       <.data_list>
         <:item title="Show Cluster">
-          <.a navigate={~p(/postgres/#{@payload.entity_id}/show)}><%= @payload.name %></.a>
+          <.link navigate={~p(/postgres/#{@payload.entity_id}/show)}><%= @payload.name %></.link>
         </:item>
         <:item title="Edit History">
-          <.a navigate={~p(/postgres/#{@payload.entity_id}/edit_versions)}>Edit History</.a>
+          <.link navigate={~p(/postgres/#{@payload.entity_id}/edit_versions)}>Edit History</.link>
         </:item>
       </.data_list>
     </.payload_container>
@@ -118,10 +118,14 @@ defmodule ControlServerWeb.Live.Timeline do
 
       <.data_list>
         <:item title="Show Service">
-          <.a navigate={~p(/knative/services/#{@payload.entity_id}/show)}><%= @payload.name %></.a>
+          <.link navigate={~p(/knative/services/#{@payload.entity_id}/show)}>
+            <%= @payload.name %>
+          </.link>
         </:item>
         <:item title="Edit History">
-          <.a navigate={~p(/knative/services/#{@payload.entity_id}/edit_versions)}>Edit History</.a>
+          <.link navigate={~p(/knative/services/#{@payload.entity_id}/edit_versions)}>
+            Edit History
+          </.link>
         </:item>
       </.data_list>
     </.payload_container>
@@ -137,10 +141,10 @@ defmodule ControlServerWeb.Live.Timeline do
 
       <.data_list>
         <:item title="Show Service">
-          <.a navigate={~p(/ferretdb/#{@payload.entity_id}/show)}><%= @payload.name %></.a>
+          <.link navigate={~p(/ferretdb/#{@payload.entity_id}/show)}><%= @payload.name %></.link>
         </:item>
         <:item title="Edit History">
-          <.a navigate={~p(/ferretdb/#{@payload.entity_id}/edit_versions)}>Edit History</.a>
+          <.link navigate={~p(/ferretdb/#{@payload.entity_id}/edit_versions)}>Edit History</.link>
         </:item>
       </.data_list>
     </.payload_container>

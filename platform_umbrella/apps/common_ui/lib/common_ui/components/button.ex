@@ -133,7 +133,7 @@ defmodule CommonUI.Components.Button do
   defp button_class("icon_bordered") do
     [
       button_class(),
-      "size-9 p-1.5 rounded-full border border-gray-lighter text-primary hover:border-primary-light",
+      "size-9 p-1.5 rounded-lg border border-gray-lighter text-primary hover:border-primary-light",
       "dark:border-gray-darker dark:hover:border-gray-dark",
       "disabled:text-gray disabled:hover:border-gray-lighter"
     ]

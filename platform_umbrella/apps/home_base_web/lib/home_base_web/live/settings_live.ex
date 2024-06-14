@@ -299,13 +299,13 @@ defmodule HomeBaseWeb.SettingsLive do
     <.h2>Your Profile</.h2>
 
     <.alert :if={!@current_user.confirmed_at} variant="warning" class="inline-flex mb-4">
-      <span>Your account still needs to be been confirmed!</span>
+      <span>Your account still needs to be been confirmed.</span>
 
       <span :if={@confirmation_resent} class="opacity-50">
         Email resent
       </span>
 
-      <.a :if={!@confirmation_resent} variant="styled" phx-click="resend_confirm">
+      <.a :if={!@confirmation_resent} variant="underlined" phx-click="resend_confirm">
         Resend confirmation email
       </.a>
     </.alert>

@@ -77,7 +77,7 @@ defmodule HomeBaseWeb.SignupLive do
 
       <.input field={@form[:terms]} type="checkbox">
         I agree to the
-        <.a variant="styled" href="https://batteriesincl.com" target="_blank">terms & conditions</.a>
+        <.a href="https://batteriesincl.com" target="_blank">terms & conditions</.a>
       </.input>
 
       <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
@@ -87,7 +87,7 @@ defmodule HomeBaseWeb.SignupLive do
 
     <div class="text-center">
       Already have an account?
-      <.a navigate={~p"/login"} variant="styled">Log in</.a>
+      <.a navigate={~p"/login"}>Log in</.a>
     </div>
     """
   end

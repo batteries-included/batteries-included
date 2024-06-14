@@ -75,6 +75,13 @@ defmodule HomeBaseWeb.Layouts do
   attr :inner_content, :any
 
   def app(assigns) do
+    assigns =
+      if assigns[:current_role] do
+        assign(assigns, :current_entity, assigns.current_role.team.name)
+      else
+        assign(assigns, :current_entity, assigns.current_user.email)
+      end
+
     ~H"""
     <.flash_group flash={@flash} global />
 
@@ -86,15 +93,22 @@ defmodule HomeBaseWeb.Layouts do
       autoshow={false}
     />
 
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen background-gradient">
       <div class={[
-        "flex items-center justify-between relative header-gradient px-8",
-        "border-b border-b-gray-lighter dark:border-b-gray-darker"
+        "flex items-center justify-between relative px-5 m-4 lg:m-6 rounded-lg",
+        "bg-white dark:bg-gray-darkest border border-gray-lighter dark:border-gray-darker"
       ]}>
-        <.logo variant="full" class="my-3" />
+        <.link navigate={~p"/"}>
+          <.logo variant="full" class="my-2" />
+        </.link>
 
         <div class="flex items-center gap-8">
-          <.button variant={@page != :dashboard && "minimal"} icon={:chart_pie} link={~p"/"}>
+          <.button
+            variant={@page != :dashboard && "minimal"}
+            icon={:chart_pie}
+            link={~p"/"}
+            class="hidden lg:flex"
+          >
             Dashboard
           </.button>
 
@@ -102,22 +116,36 @@ defmodule HomeBaseWeb.Layouts do
             variant={@page != :installations && "minimal"}
             icon={:command_line}
             link={~p"/installations"}
+            class="hidden lg:flex"
           >
             Installations
           </.button>
 
           <div>
-            <.dropdown id="main-dropdown">
+            <.dropdown id="main-dropdown" class="mt-4 lg:mt-6">
               <:trigger>
+                <.button variant="icon_bordered" icon={:bars_3} class="lg:hidden !min-w-0" />
+
                 <.button
-                  variant="secondary"
-                  icon={:chevron_down}
-                  icon_position={:right}
-                  class="!min-w-0"
+                  variant="minimal"
+                  icon={if @current_role, do: :users, else: :user}
+                  class="hidden lg:flex"
                 >
-                  <%= if @current_role, do: @current_role.team.name, else: @current_user.email %>
+                  <div class="flex items-center">
+                    <%= @current_entity %>
+                    <.icon name={:chevron_down} class="size-7" mini />
+                  </div>
                 </.button>
               </:trigger>
+
+              <div class={[
+                "px-4 py-3 font-semibold whitespace-nowrap text-ellipsis overflow-hidden lg:hidden",
+                "border-b border-b-gray-lighter dark:border-b-gray-darker",
+                "bg-gray-lightest dark:bg-gray-darkest-tint",
+                "text-gray-light dark:text-gray-dark"
+              ]}>
+                <%= @current_entity %>
+              </div>
 
               <.dropdown_link
                 :if={@current_user.roles != []}
@@ -129,11 +157,33 @@ defmodule HomeBaseWeb.Layouts do
                 Switch Team
               </.dropdown_link>
 
-              <.dropdown_link icon={:plus_circle} navigate={~p"/teams/new"}>
+              <.dropdown_link
+                icon={:plus_circle}
+                navigate={~p"/teams/new"}
+                selected={@page == :new_team}
+              >
                 New Team
               </.dropdown_link>
 
               <.dropdown_hr />
+
+              <.dropdown_link
+                selected={@page == :dashboard}
+                icon={:chart_pie}
+                navigate={~p"/"}
+                class="lg:hidden"
+              >
+                Dashboard
+              </.dropdown_link>
+
+              <.dropdown_link
+                selected={@page == :installations}
+                icon={:command_line}
+                navigate={~p"/installations"}
+                class="lg:hidden"
+              >
+                Installations
+              </.dropdown_link>
 
               <.dropdown_link
                 icon={:cog_6_tooth}
@@ -152,7 +202,7 @@ defmodule HomeBaseWeb.Layouts do
               </.dropdown_link>
             </.dropdown>
 
-            <.dropdown id="team-dropdown">
+            <.dropdown id="team-dropdown" class="mt-4 lg:mt-6">
               <.dropdown_link :if={@current_role} href={~p"/teams/personal"}>
                 Back to personal
               </.dropdown_link>
@@ -171,7 +221,7 @@ defmodule HomeBaseWeb.Layouts do
         </div>
       </div>
 
-      <div class="block relative p-8 flex-1 overflow-auto bg-white dark:bg-gray-darkest">
+      <div class="block relative px-4 lg:px-6 flex-1 overflow-auto">
         <%= @inner_content %>
       </div>
     </div>

@@ -53,7 +53,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
 
   def render(assigns) do
     ~H"""
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-2">
       <.h2><%= @installation.slug %></.h2>
 
       <div>
@@ -69,7 +69,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
     </div>
 
     <.grid columns={%{md: 1, lg: 2}}>
-      <.panel variant="gray">
+      <.panel>
         <.data_list>
           <:item title="Usage"><%= @installation.usage %></:item>
           <:item title="Provider"><%= @installation.kube_provider %></:item>
@@ -77,6 +77,11 @@ defmodule HomeBaseWeb.InstallationShowLive do
           <:item title="Created"><%= @installation.inserted_at %></:item>
         </.data_list>
       </.panel>
+
+      <div>
+        <!-- TODO: Link to installation's control server -->
+        <.a variant="bordered" href={~p"/"}>Control Server</.a>
+      </div>
     </.grid>
 
     <.modal id="edit-installation">
