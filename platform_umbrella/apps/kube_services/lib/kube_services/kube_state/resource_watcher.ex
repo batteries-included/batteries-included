@@ -137,7 +137,6 @@ defmodule KubeServices.KubeState.ResourceWatcher do
         {:delay, nil}
 
       _ ->
-        Logger.debug("Restarting watch on #{inspect(resource_type)}.")
         # add 6 seconds per retry. the max is configured in `start_watch` where retries is incremented.
         {:delay, trigger_start_watch((retries + 1) * @defaults.retry_secs * 1_000)}
     end
