@@ -4,6 +4,7 @@ defmodule KubeServices.ET.HomeBaseClient do
   use TypedStruct
 
   alias CommonCore.ET.HostReport
+  alias CommonCore.ET.InstallStatus
   alias CommonCore.ET.UsageReport
   alias CommonCore.StateSummary
 
@@ -26,6 +27,10 @@ defmodule KubeServices.ET.HomeBaseClient do
 
   def send_hosts(client \\ @me, state_summary) do
     GenServer.call(client, {:send_hosts, state_summary})
+  end
+
+  def get_status(client \\ @me) do
+    GenServer.call(client, :get_status)
   end
 
   def start_link(opts \\ []) do
@@ -73,10 +78,13 @@ defmodule KubeServices.ET.HomeBaseClient do
     {:reply, do_send_usage(state, state_summary), state}
   end
 
-  @impl GenServer
   def handle_call({:send_hosts, state_summary}, _, state) do
     Logger.info("Sending hosts to #{state.home_url}")
     {:reply, do_send_host(state, state_summary), state}
+  end
+
+  def handle_call(:get_status, _from, state) do
+    {:reply, do_get_status(state), state}
   end
 
   defp build_client(%State{home_url: home_url, http_client: nil} = state) do
@@ -90,6 +98,8 @@ defmodule KubeServices.ET.HomeBaseClient do
       Tesla.Middleware.JSON
     ]
   end
+
+  defp do_get_status(_), do: {:ok, InstallStatus.new!(status: :unknown, message: "Unknown")}
 
   defp do_send_usage(%{http_client: client, usage_report_path: usage_report_path} = state, state_summary) do
     with {:ok, usage_report} <- UsageReport.new(state_summary),
