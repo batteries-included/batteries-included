@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"bi/pkg/cluster/eks"
+	"bi/pkg/cluster/util"
 
 	"github.com/adrg/xdg"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
@@ -157,22 +158,22 @@ func (p *pulumiProvider) installPlugins(ctx context.Context, ws auto.Workspace, 
 	return nil
 }
 
-func (p *pulumiProvider) Create(ctx context.Context) error {
+func (p *pulumiProvider) Create(ctx context.Context, progressReporter *util.ProgressReporter) error {
 	if !p.initSuccessful {
 		return fmt.Errorf("attempted to create with uninitialized provider")
 	}
 	eks := eks.New(p.toEKSConfig())
 
-	return eks.Up(ctx)
+	return eks.Up(ctx, progressReporter)
 }
 
-func (p *pulumiProvider) Destroy(ctx context.Context) error {
+func (p *pulumiProvider) Destroy(ctx context.Context, progressReporter *util.ProgressReporter) error {
 	if !p.initSuccessful {
 		return fmt.Errorf("attempted to destroy with uninitialized provider")
 	}
 	eks := eks.New(p.toEKSConfig())
 
-	return eks.Destroy(ctx)
+	return eks.Destroy(ctx, progressReporter)
 }
 
 func (p *pulumiProvider) Outputs(ctx context.Context, out io.Writer) error {

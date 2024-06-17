@@ -349,6 +349,9 @@ schema = 3
   [mod."github.com/mxk/go-flowrate"]
     version = "v0.0.0-20140419014527-cca7078d478f"
     hash = "sha256-gRTfRfff/LRxC1SXXnQd2tV3UTcTx9qu90DJIVIaGn8="
+  [mod."github.com/neilotoole/slogt"]
+    version = "v1.1.0"
+    hash = "sha256-afBaGoRz0liungu8ZiedVJ1x9C/MV4spTw0It4Kh4ZI="
   [mod."github.com/noisysockets/netstack"]
     version = "v0.8.0"
     hash = "sha256-UnpDan/PzEOAn/s4pIk+VR3QaA5Cn6TgC4Y+ngxjgjs="

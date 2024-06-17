@@ -13,6 +13,7 @@ require (
 	github.com/dghubble/ipnets v1.0.0
 	github.com/docker/docker v26.1.4+incompatible
 	github.com/lmittmann/tint v1.0.4
+	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.20.3
 	github.com/noisysockets/noisysockets v0.27.4
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.39.0

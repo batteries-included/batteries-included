@@ -96,16 +96,13 @@ var components = []component{
 	{"karpenter", &karpenterConfig{}},
 }
 
-func (e *eks) Up(ctx context.Context) error {
+func (e *eks) Up(ctx context.Context, progressReporter *util.ProgressReporter) error {
 	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
 	if err != nil {
 		return fmt.Errorf("failed to parse pulumi config: %w", err)
 	}
 
 	e.pConfig = pConfig
-
-	progress := util.NewProgress()
-	defer progress.Shutdown()
 
 	for _, cmpnt := range components {
 		stack, err := e.createStack(ctx, cmpnt.name, cmpnt.run)
@@ -128,7 +125,10 @@ func (e *eks) Up(ctx context.Context) error {
 		upOpts := []optup.Option{
 			optup.ProgressStreams(util.DebugLogWriter(ctx, slog.Default())),
 			optup.SuppressProgress(), // No progress dots
-			optup.EventStreams(progress.AddBar(cmpnt.name, false)),
+		}
+
+		if progressReporter != nil {
+			upOpts = append(upOpts, optup.EventStreams(progressReporter.ForPulumiEvents(cmpnt.name, false)))
 		}
 
 		res, err := stack.Up(ctx, upOpts...)
@@ -142,7 +142,7 @@ func (e *eks) Up(ctx context.Context) error {
 	return nil
 }
 
-func (e *eks) Destroy(ctx context.Context) error {
+func (e *eks) Destroy(ctx context.Context, progressReporter *util.ProgressReporter) error {
 	pConfig, err := util.ParsePulumiConfig(e.cfg.Config)
 	if err != nil {
 		return fmt.Errorf("failed to parse pulumi config: %w", err)
@@ -171,9 +171,6 @@ func (e *eks) Destroy(ctx context.Context) error {
 		stacks[cmpnt.name] = stack
 	}
 
-	progress := util.NewProgress()
-	defer progress.Shutdown()
-
 	// then work backwards to destroy each stack
 	for i := range components {
 		cmpnt := components[len(components)-1-i]
@@ -190,7 +187,10 @@ func (e *eks) Destroy(ctx context.Context) error {
 		destroyOpts := []optdestroy.Option{
 			optdestroy.ProgressStreams(util.DebugLogWriter(ctx, slog.Default())),
 			optdestroy.SuppressProgress(), // No progress dots
-			optdestroy.EventStreams(progress.AddBar(cmpnt.name, true)),
+		}
+
+		if progressReporter != nil {
+			destroyOpts = append(destroyOpts, optdestroy.EventStreams(progressReporter.ForPulumiEvents(cmpnt.name, true)))
 		}
 
 		if _, err := stack.Destroy(ctx, destroyOpts...); err != nil {
