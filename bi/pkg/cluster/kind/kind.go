@@ -7,6 +7,7 @@ import (
 	"io"
 	"log/slog"
 
+	slogmulti "github.com/samber/slog-multi"
 	"sigs.k8s.io/kind/pkg/cluster"
 )
 
@@ -16,7 +17,7 @@ const (
 
 type KindClusterProvider struct {
 	logger       *slog.Logger
-	kindProvider *cluster.Provider
+	nodeProvider cluster.ProviderOption
 	name         string
 }
 
@@ -28,15 +29,15 @@ func NewClusterProvider(logger *slog.Logger, name string) *KindClusterProvider {
 }
 
 func (c *KindClusterProvider) Init(ctx context.Context) error {
-	po, err := cluster.DetectNodeProvider()
+	var err error
+	c.nodeProvider, err = cluster.DetectNodeProvider()
 	if err != nil {
 		return fmt.Errorf("failed to detect node provider: %w", err)
 	}
-	if po == nil {
+	if c.nodeProvider == nil {
 		return fmt.Errorf("neither docker nor podman are available")
 	}
 
-	c.kindProvider = cluster.NewProvider(po, cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
 	return nil
 }
 
@@ -47,9 +48,25 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 	}
 
 	if !isRunning {
-		// TODO: Add a progress bar here.
+		logger := c.logger
+		if progressReporter != nil {
+			logInterceptor := progressReporter.ForKindCreateLogs()
+			defer logInterceptor.(io.Closer).Close()
 
-		co := []cluster.CreateOption{
+			logger = slog.New(slogmulti.Fanout(
+				c.logger.Handler(),
+				logInterceptor,
+			))
+		}
+
+		providerOpts := []cluster.ProviderOption{
+			c.nodeProvider,
+			cluster.ProviderWithLogger(&slogAdapter{Logger: logger}),
+		}
+
+		kindProvider := cluster.NewProvider(providerOpts...)
+
+		createOpts := []cluster.CreateOption{
 			// We'll need to configure the cluster here
 			// if customers need to access the docker images.
 			cluster.CreateWithNodeImage(KindImage),
@@ -57,7 +74,7 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 			cluster.CreateWithDisplaySalutation(false),
 		}
 
-		if err := c.kindProvider.Create(c.name, co...); err != nil {
+		if err := kindProvider.Create(c.name, createOpts...); err != nil {
 			return fmt.Errorf("failed to create kind cluster: %w", err)
 		}
 	} else {
@@ -67,16 +84,21 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 	return nil
 }
 
-func (c *KindClusterProvider) Destroy(ctx context.Context, progressReporter *util.ProgressReporter) error {
+func (c *KindClusterProvider) Destroy(ctx context.Context, _ *util.ProgressReporter) error {
 	isRunning, err := c.isRunning()
 	if err != nil {
 		return fmt.Errorf("failed to check if kind cluster is running: %w", err)
 	}
 
 	if isRunning {
-		// TODO: Add a progress bar here.
+		providerOpts := []cluster.ProviderOption{
+			c.nodeProvider,
+			cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}),
+		}
 
-		if err := c.kindProvider.Delete(c.name, ""); err != nil {
+		kindProvider := cluster.NewProvider(providerOpts...)
+
+		if err := kindProvider.Delete(c.name, ""); err != nil {
 			return fmt.Errorf("failed to delete existing kind cluster: %w", err)
 		}
 	} else {
@@ -92,7 +114,10 @@ func (c *KindClusterProvider) Outputs(ctx context.Context, w io.Writer) error {
 }
 
 func (c *KindClusterProvider) KubeConfig(ctx context.Context, w io.Writer, internal bool) error {
-	kubeConfigBytes, err := c.kindProvider.KubeConfig(c.name, internal)
+	kindProvider := cluster.NewProvider(c.nodeProvider,
+		cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
+
+	kubeConfigBytes, err := kindProvider.KubeConfig(c.name, internal)
 	if err != nil {
 		return fmt.Errorf("failed to get kubeconfig: %w", err)
 	}
@@ -110,7 +135,10 @@ func (c *KindClusterProvider) WireGuardConfig(ctx context.Context, w io.Writer) 
 }
 
 func (c *KindClusterProvider) isRunning() (bool, error) {
-	clusters, err := c.kindProvider.List()
+	kindProvider := cluster.NewProvider(c.nodeProvider,
+		cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
+
+	clusters, err := kindProvider.List()
 	if err != nil {
 		return false, fmt.Errorf("failed to list kind clusters: %w", err)
 	}

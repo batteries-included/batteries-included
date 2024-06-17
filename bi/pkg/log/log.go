@@ -11,17 +11,19 @@ import (
 	slogmulti "github.com/samber/slog-multi"
 )
 
+// Level is the current verbosity level of the logger.
+var Level slog.Level
+
 // SetupLogging configures the default slog Logger with the given verbosity and
 // color settings.
 func SetupLogging(verbosity string, color bool) error {
-	var logLevel slog.Level
-	if err := logLevel.UnmarshalText([]byte(verbosity)); err != nil {
+	if err := Level.UnmarshalText([]byte(verbosity)); err != nil {
 		return fmt.Errorf("unable to parse log level: %w", err)
 	}
 
 	slog.SetDefault(slog.New(tint.NewHandler(os.Stderr, &tint.Options{
-		Level:      logLevel,
-		AddSource:  logLevel == slog.LevelDebug,
+		Level:      Level,
+		AddSource:  Level == slog.LevelDebug,
 		NoColor:    !color,
 		TimeFormat: time.Kitchen,
 	})))

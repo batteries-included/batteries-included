@@ -1,6 +1,10 @@
 package util
 
 import (
+	"context"
+	"log/slog"
+	"strings"
+
 	"github.com/pulumi/pulumi/sdk/v3/go/auto/events"
 	"github.com/vbauerster/mpb/v8"
 	"github.com/vbauerster/mpb/v8/decor"
@@ -56,3 +60,55 @@ func (pr *ProgressReporter) ForPulumiEvents(name string, destroy bool) chan<- ev
 
 	return events
 }
+
+// ForKindCreateLogs creates a new progress bar for kind cluster creation logs.
+func (pr *ProgressReporter) ForKindCreateLogs() slog.Handler {
+	bar := pr.progress.AddBar(6,
+		mpb.PrependDecorators(
+			decor.Name("cluster", decor.WC{C: decor.DindentRight | decor.DextraSpace}),
+		),
+		mpb.AppendDecorators(
+			decor.Percentage(),
+		),
+	)
+
+	return &logInterceptor{
+		bar: bar,
+		// Six total steps in the kind cluster creation process.
+		messages: []string{
+			"Ensuring node image",
+			"Preparing nodes",
+			"Writing configuration",
+			"Starting controlplane",
+			"Installing CNI",
+			"Installing StorageClass",
+		},
+	}
+}
+
+type logInterceptor struct {
+	bar      *mpb.Bar
+	messages []string
+}
+
+func (h *logInterceptor) Close() error {
+	h.bar.SetTotal(h.bar.Current(), true)
+	return nil
+}
+
+func (h *logInterceptor) Enabled(_ context.Context, _ slog.Level) bool { return true }
+
+func (h *logInterceptor) Handle(_ context.Context, r slog.Record) error {
+	for _, msg := range h.messages {
+		if strings.Contains(r.Message, msg) {
+			h.bar.Increment()
+			break
+		}
+	}
+
+	return nil
+}
+
+func (h *logInterceptor) WithAttrs(_ []slog.Attr) slog.Handler { return h }
+
+func (h *logInterceptor) WithGroup(_ string) slog.Handler { return h }
