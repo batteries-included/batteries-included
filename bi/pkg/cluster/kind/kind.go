@@ -48,19 +48,17 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 	}
 
 	if !isRunning {
-		providerOpts := []cluster.ProviderOption{
-			c.nodeProvider,
-		}
-
+		logger := c.logger
 		if progressReporter != nil {
-			logger := slog.New(slogmulti.Fanout(
+			logger = slog.New(slogmulti.Fanout(
 				c.logger.Handler(),
 				progressReporter.ForKindCreateLogs(),
 			))
+		}
 
-			providerOpts = append(providerOpts, cluster.ProviderWithLogger(&slogAdapter{Logger: logger}))
-		} else {
-			providerOpts = append(providerOpts, cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
+		providerOpts := []cluster.ProviderOption{
+			c.nodeProvider,
+			cluster.ProviderWithLogger(&slogAdapter{Logger: logger}),
 		}
 
 		kindProvider := cluster.NewProvider(providerOpts...)
