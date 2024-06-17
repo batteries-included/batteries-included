@@ -50,9 +50,12 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 	if !isRunning {
 		logger := c.logger
 		if progressReporter != nil {
+			logInterceptor := progressReporter.ForKindCreateLogs()
+			defer logInterceptor.(io.Closer).Close()
+
 			logger = slog.New(slogmulti.Fanout(
 				c.logger.Handler(),
-				progressReporter.ForKindCreateLogs(),
+				logInterceptor,
 			))
 		}
 
