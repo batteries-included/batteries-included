@@ -8,6 +8,7 @@ import (
 	"log/slog"
 
 	"bi/pkg/cluster/kind"
+	"bi/pkg/cluster/util"
 	"bi/pkg/specs"
 )
 
@@ -52,13 +53,27 @@ func (env *InstallEnv) StartKubeProvider(ctx context.Context) error {
 func (env *InstallEnv) StopKubeProvider(ctx context.Context) error {
 	slog.Debug("Stopping provider")
 
-	return env.clusterProvider.Destroy(ctx)
+	// When not using debug logging, show a progressReporter bar.
+	var progressReporter *util.ProgressReporter
+	if !slog.Default().Enabled(ctx, slog.LevelDebug) {
+		progressReporter = util.NewProgressReporter()
+		defer progressReporter.Shutdown()
+	}
+
+	return env.clusterProvider.Destroy(ctx, progressReporter)
 }
 
 func (env *InstallEnv) startLocal(ctx context.Context) error {
 	slog.Debug("Starting local cluster")
 
-	if err := env.clusterProvider.Create(ctx); err != nil {
+	// When not using debug logging, show a progressReporter bar.
+	var progressReporter *util.ProgressReporter
+	if !slog.Default().Enabled(ctx, slog.LevelDebug) {
+		progressReporter = util.NewProgressReporter()
+		defer progressReporter.Shutdown()
+	}
+
+	if err := env.clusterProvider.Create(ctx, progressReporter); err != nil {
 		return fmt.Errorf("error creating local cluster: %w", err)
 	}
 
@@ -72,7 +87,14 @@ func (env *InstallEnv) startLocal(ctx context.Context) error {
 func (env *InstallEnv) startAWS(ctx context.Context) error {
 	slog.Debug("Starting aws cluster")
 
-	if err := env.clusterProvider.Create(ctx); err != nil {
+	// When not using debug logging, show a progressReporter bar.
+	var progressReporter *util.ProgressReporter
+	if !slog.Default().Enabled(ctx, slog.LevelDebug) {
+		progressReporter = util.NewProgressReporter()
+		defer progressReporter.Shutdown()
+	}
+
+	if err := env.clusterProvider.Create(ctx, progressReporter); err != nil {
 		return fmt.Errorf("error creating aws cluster: %w", err)
 	}
 

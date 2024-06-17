@@ -296,8 +296,8 @@ schema = 3
     version = "v0.0.15"
     hash = "sha256-WP39EU2UrQbByYfnwrkBDoKN7xzXsBssDq3pNryBGm0="
   [mod."github.com/miekg/dns"]
-    version = "v1.1.59"
-    hash = "sha256-O8FK7gVlLB6adMl4phCH/4e923D3AU85cHthO8SWoGQ="
+    version = "v1.1.61"
+    hash = "sha256-LVd9lUiyjszM6gdAxTkLF4WZcg25WbUSfP6HttoAAJs="
   [mod."github.com/mitchellh/go-ps"]
     version = "v1.0.0"
     hash = "sha256-HzxVHNLHZpnsBuPcub0G+9jjDcDOsxM/6wifbsxf7EY="
@@ -349,24 +349,27 @@ schema = 3
   [mod."github.com/mxk/go-flowrate"]
     version = "v0.0.0-20140419014527-cca7078d478f"
     hash = "sha256-gRTfRfff/LRxC1SXXnQd2tV3UTcTx9qu90DJIVIaGn8="
+  [mod."github.com/neilotoole/slogt"]
+    version = "v1.1.0"
+    hash = "sha256-afBaGoRz0liungu8ZiedVJ1x9C/MV4spTw0It4Kh4ZI="
   [mod."github.com/noisysockets/netstack"]
     version = "v0.8.0"
     hash = "sha256-UnpDan/PzEOAn/s4pIk+VR3QaA5Cn6TgC4Y+ngxjgjs="
   [mod."github.com/noisysockets/netutil"]
-    version = "v0.7.0"
-    hash = "sha256-DQ+H/oLA2+ukam7Bm3SnBbteBcyZeYOESeqEg1d3aRA="
+    version = "v0.9.0"
+    hash = "sha256-GqCHr5WEn7zxG4+8Q+KDWYsmhk17oc53ikPWBdkNjwo="
   [mod."github.com/noisysockets/network"]
-    version = "v0.18.2"
-    hash = "sha256-U4KxMb3Ht3fhs0vFhBYmKKoNNOZTXNm8MobsK1EsxtE="
+    version = "v0.20.3"
+    hash = "sha256-RIZB+lyIvnAgDlDBUxFXkPDm7E/kZmi10vVsG3z1pJM="
   [mod."github.com/noisysockets/noisysockets"]
-    version = "v0.26.0"
-    hash = "sha256-KWdgHbVU5GwZbGEPf5Rr4UxdkduPSVOruS1dp9Z5DNw="
+    version = "v0.27.4"
+    hash = "sha256-QVtuf5XvyuRS1uCxm4PyfZKa4VaFTZ1ueML9K/TyMBM="
   [mod."github.com/noisysockets/pinger"]
     version = "v0.4.2"
     hash = "sha256-pyx1oG+96oxJHp8f1/CP09T2uziWA4MAY3COtMvVVNE="
   [mod."github.com/noisysockets/resolver"]
-    version = "v0.12.0"
-    hash = "sha256-JTjj3B/R2TM19OVnddEEh/TgbVZtoyj2Igi1knkcgxY="
+    version = "v0.14.0"
+    hash = "sha256-W7lvMwq+BndU3kz8PlVnJ7N6tO2lvS1HtY51+FidmkM="
   [mod."github.com/nxadm/tail"]
     version = "v1.4.11"
     hash = "sha256-7XF47xVcyHjpO1E0+GGAoytxOa0JJFCBXHJGLTexVgo="

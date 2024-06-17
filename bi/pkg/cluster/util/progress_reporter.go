@@ -6,28 +6,27 @@ import (
 	"github.com/vbauerster/mpb/v8/decor"
 )
 
-// Progress is a helper for creating progress bars for Pulumi operations.
-type Progress struct {
+// ProgressReporter is a convenience wrapper around mpb.Progress.
+type ProgressReporter struct {
 	progress *mpb.Progress
 }
 
-// NewProgress creates a new Progress instance.
-func NewProgress() *Progress {
-	return &Progress{
+// NewProgressReporter creates a new ProgressReporter.
+func NewProgressReporter() *ProgressReporter {
+	return &ProgressReporter{
 		progress: mpb.New(),
 	}
 }
 
 // Shutdown stops all registered progress bars.
-func (p *Progress) Shutdown() {
-	p.progress.Shutdown()
+func (pr *ProgressReporter) Shutdown() {
+	pr.progress.Shutdown()
 }
 
-// AddBar creates a new progress bar with the given name and initial total.
-// The returns events channel can be passed to pulumi via optup.EventStreams()
-// and optdestroy.EventStreams().
-func (p *Progress) AddBar(name string, destroy bool) chan<- events.EngineEvent {
-	bar := p.progress.AddBar(0,
+// ForPulumiEvents creates a new progress bar for Pulumi events. The returned
+// events channel can be passed to pulumi via optup.EventStreams() and optdestroy.EventStreams().
+func (pr *ProgressReporter) ForPulumiEvents(name string, destroy bool) chan<- events.EngineEvent {
+	bar := pr.progress.AddBar(0,
 		mpb.PrependDecorators(
 			decor.Name(name, decor.WC{C: decor.DindentRight | decor.DextraSpace}),
 		),

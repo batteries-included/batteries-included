@@ -5,13 +5,13 @@ import (
 	"bi/pkg/kube"
 	"bi/pkg/testutil"
 	"context"
-	"log/slog"
 	"net"
 	"os"
 	"path/filepath"
 	"testing"
 
 	dockernetwork "github.com/docker/docker/api/types/network"
+	"github.com/neilotoole/slogt"
 	noisysocketsconfig "github.com/noisysockets/noisysockets/config"
 	noisysocketsv1alpha2 "github.com/noisysockets/noisysockets/config/v1alpha2"
 	noisysocketstypes "github.com/noisysockets/noisysockets/types"
@@ -116,18 +116,18 @@ func TestBatteryKubeClient(t *testing.T) {
 	os.Setenv("KIND_EXPERIMENTAL_DOCKER_NETWORK", testNetwork.Name)
 
 	t.Log("Creating kind cluster")
-	clusterProvider := kind.NewClusterProvider(slog.Default(), "bi-wg-test")
+	clusterProvider := kind.NewClusterProvider(slogt.New(t), "bi-wg-test")
 	require.NoError(t, err)
 
 	require.NoError(t, clusterProvider.Init(ctx))
-	require.NoError(t, clusterProvider.Create(ctx))
+	require.NoError(t, clusterProvider.Create(ctx, nil))
 
 	t.Cleanup(func() {
 		t.Log("Deleting kind cluster")
 
 		require.NoError(t, os.Unsetenv("KIND_EXPERIMENTAL_DOCKER_NETWORK"))
 
-		require.NoError(t, clusterProvider.Destroy(ctx))
+		require.NoError(t, clusterProvider.Destroy(ctx, nil))
 	})
 
 	// Get a kubeconfig for the kind cluster (using its internal domain name).

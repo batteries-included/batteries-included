@@ -13,8 +13,9 @@ require (
 	github.com/dghubble/ipnets v1.0.0
 	github.com/docker/docker v26.1.4+incompatible
 	github.com/lmittmann/tint v1.0.4
-	github.com/noisysockets/network v0.18.2
-	github.com/noisysockets/noisysockets v0.26.0
+	github.com/neilotoole/slogt v1.1.0
+	github.com/noisysockets/network v0.20.3
+	github.com/noisysockets/noisysockets v0.27.4
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.39.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.3
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.3
@@ -124,7 +125,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/miekg/dns v1.1.59 // indirect
+	github.com/miekg/dns v1.1.61 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -143,9 +144,9 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
 	github.com/noisysockets/netstack v0.8.0 // indirect
-	github.com/noisysockets/netutil v0.7.0 // indirect
+	github.com/noisysockets/netutil v0.9.0 // indirect
 	github.com/noisysockets/pinger v0.4.2 // indirect
-	github.com/noisysockets/resolver v0.12.0 // indirect
+	github.com/noisysockets/resolver v0.14.0 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect

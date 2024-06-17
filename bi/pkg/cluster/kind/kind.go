@@ -1,13 +1,13 @@
 package kind
 
 import (
+	"bi/pkg/cluster/util"
 	"context"
 	"fmt"
 	"io"
 	"log/slog"
 
 	"sigs.k8s.io/kind/pkg/cluster"
-	"sigs.k8s.io/kind/pkg/log"
 )
 
 const (
@@ -36,17 +36,19 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 		return fmt.Errorf("neither docker nor podman are available")
 	}
 
-	c.kindProvider = cluster.NewProvider(po, cluster.ProviderWithLogger(log.NoopLogger{}))
+	c.kindProvider = cluster.NewProvider(po, cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
 	return nil
 }
 
-func (c *KindClusterProvider) Create(ctx context.Context) error {
+func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util.ProgressReporter) error {
 	isRunning, err := c.isRunning()
 	if err != nil {
 		return fmt.Errorf("failed to check if kind cluster is running: %w", err)
 	}
 
 	if !isRunning {
+		// TODO: Add a progress bar here.
+
 		co := []cluster.CreateOption{
 			// We'll need to configure the cluster here
 			// if customers need to access the docker images.
@@ -54,8 +56,6 @@ func (c *KindClusterProvider) Create(ctx context.Context) error {
 			cluster.CreateWithDisplayUsage(false),
 			cluster.CreateWithDisplaySalutation(false),
 		}
-
-		c.logger.Info("Creating kind cluster", slog.String("name", c.name), slog.String("image", KindImage))
 
 		if err := c.kindProvider.Create(c.name, co...); err != nil {
 			return fmt.Errorf("failed to create kind cluster: %w", err)
@@ -67,14 +67,15 @@ func (c *KindClusterProvider) Create(ctx context.Context) error {
 	return nil
 }
 
-func (c *KindClusterProvider) Destroy(ctx context.Context) error {
+func (c *KindClusterProvider) Destroy(ctx context.Context, progressReporter *util.ProgressReporter) error {
 	isRunning, err := c.isRunning()
 	if err != nil {
 		return fmt.Errorf("failed to check if kind cluster is running: %w", err)
 	}
 
 	if isRunning {
-		c.logger.Info("Deleting kind cluster", slog.String("name", c.name))
+		// TODO: Add a progress bar here.
+
 		if err := c.kindProvider.Delete(c.name, ""); err != nil {
 			return fmt.Errorf("failed to delete existing kind cluster: %w", err)
 		}
