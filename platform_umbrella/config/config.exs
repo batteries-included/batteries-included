@@ -103,6 +103,14 @@ config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
 
 config :common_core, CommonCore.Resources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 
+config :common_core, CommonCore.JWK,
+  paths: [
+    home_a: "apps/common_core/priv/keys/home_a.pem",
+    home_b: "apps/common_core/priv/keys/home_b.pem"
+  ],
+  sign_key: :test,
+  verify_keys: [:test_pub, :home_a_pub, :home_b_pub]
+
 config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]}
 
 config :swoosh, :api_client, Swoosh.ApiClient.Finch

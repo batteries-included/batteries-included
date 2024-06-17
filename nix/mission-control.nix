@@ -129,7 +129,7 @@ _: {
               ${builtins.readFile ./scripts/common-functions.sh}
               do_portforward_controlserver
 
-              m test --trace --stale
+              m test --trace --stale --warnings-as-errors --all-warnings
             '';
           };
 
@@ -142,7 +142,7 @@ _: {
 
               export MIX_ENV=test
               m "do" \
-                test --trace --exclude slow --cover --export-coverage default --warnings-as-errors, \
+                test --trace --exclude slow --cover --export-coverage default --all-warnings --warnings-as-errors, \
                 test.coverage
             '';
           };
@@ -159,7 +159,7 @@ _: {
               mix deps.get
               mix compile --warnings-as-errors
               mix ecto.reset
-              mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors
+              mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors --all-warnings
               mix test.coverage
             '';
           };

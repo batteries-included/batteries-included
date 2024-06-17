@@ -53,4 +53,9 @@ config :control_server_web, ControlServerWeb.Endpoint,
 
 config :common_core, :clusters, default: :service_account
 
+config :common_core, CommonCore.JWK,
+  paths: [],
+  sign_key: :home_a,
+  verify_keys: [:home_a_pub, :home_b_pub]
+
 config :kube_services, cluster_type: :prod

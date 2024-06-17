@@ -3,6 +3,8 @@
   src,
   version,
   gcc,
+  cmake,
+  python312,
   openssl,
   pkg-config,
   mixEnv ? "prod",
@@ -47,10 +49,14 @@ beamPackages.mixRelease {
 
   nativeBuildInputs = [
     gcc
+    cmake
     pkg-config
     nodejs
+    python312
   ];
+
   buildInputs = [ openssl ];
+
   LANG = "en_US.UTF-8";
   LC_ALL = "en_US.UTF-8";
   LC_CTYPE = "en_US.UTF-8";

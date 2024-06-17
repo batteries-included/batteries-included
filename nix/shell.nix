@@ -17,6 +17,8 @@
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_27;
       inherit (beamPackages) erlang;
+      nodejs = pkgs.nodejs_22;
+      inherit (pkgs) python312;
 
       # These build and check.
       # However by the time that the devShell
@@ -112,6 +114,10 @@
 
           awscli2
           ssm-session-manager-plugin
+
+          gcc
+          cmake
+          python312
         ]
         ++ elixirNativeTools
         ++ goNativeBuildTools

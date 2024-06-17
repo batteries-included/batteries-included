@@ -1,21 +1,20 @@
 {
-  "id": "batt_019012f33eef7aba9d446c15bc83e68a",
+  "id": "batt_01902a1b14a57f419fbf8065a8951cab",
   "usage": "internal_dev",
-  "default_size": "small",
-  "control_jwk": {
-    "crv": "P-256",
-    "d": "wKK1q8dskobSmvjjlR-n3aelp-P7kCQq_A-NHSVULEI",
-    "kty": "EC",
-    "x": "9bAJcn1YItZEbbbp4dpJaOvlfjY6paqJy4f7FUwL6oM",
-    "y": "V3rL1xI1O4R-SnPHxF1TJkkiOxVVkFelQTPHz4bSEHY"
-  },
   "inserted_at": null,
   "updated_at": null,
+  "default_size": "small",
+  "control_jwk": {
+    "crv": "Ed25519",
+    "d": "rGqaSm8bTRHswqVI3mXJdrusBti5rdOB-fNkLbWyLOU",
+    "kty": "OKP",
+    "x": "emJcsXrUXxpCFLjIeDiT_-4ApiSL9Px3J-LPfAgpG8k"
+  },
   "slug": "damian",
   "kube_provider": "aws",
   "kube_provider_config": {},
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_019012f33ec47ed6a91091cc937b4652"
+  "team_id": "batt_01902a1b147376018d018eca4ece4958"
 }

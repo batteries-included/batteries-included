@@ -53,3 +53,11 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   check_origin: false,
   secret_key_base: secret_key_base,
   server: true
+
+config :common_core, CommonCore.JWK,
+  paths: [
+    home_a: "/etc/keys/home_a.pem",
+    home_b: "/etc/keys/home_b.pem"
+  ],
+  sign_key: :home_a,
+  verify_keys: [:home_a_pub, :home_b_pub]

@@ -8,16 +8,10 @@ defmodule HomeBaseWeb.Application do
   @impl Application
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
       HomeBaseWeb.Telemetry,
-      # Start the Endpoint (http/https)
       HomeBaseWeb.Endpoint
-      # Start a worker by calling: HomeBaseWeb.Worker.start_link(arg)
-      # {HomeBaseWeb.Worker, arg}
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: HomeBaseWeb.Supervisor]
     Supervisor.start_link(children, opts)
   end
