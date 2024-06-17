@@ -6,12 +6,21 @@ import (
 	"log/slog"
 	"time"
 
+	"bi/pkg/cluster/util"
 	"bi/pkg/installs"
+	"bi/pkg/log"
 )
 
 func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 	slog.Info("Starting provider")
-	if err := env.StartKubeProvider(ctx); err != nil {
+
+	var progressReporter *util.ProgressReporter
+	if log.Level != slog.LevelDebug {
+		progressReporter = util.NewProgressReporter()
+		defer progressReporter.Shutdown()
+	}
+
+	if err := env.StartKubeProvider(ctx, progressReporter); err != nil {
 		return fmt.Errorf("unable to start kube provider: %w", err)
 	}
 
