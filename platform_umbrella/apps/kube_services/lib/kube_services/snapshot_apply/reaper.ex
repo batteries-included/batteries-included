@@ -4,6 +4,7 @@ defmodule KubeServices.SnapshotApply.Reaper do
   periodically finds all snapshots that are past the age and
   then deletes them. Reporting the clean up here.
   """
+
   use GenServer
   use TypedStruct
 
@@ -15,9 +16,9 @@ defmodule KubeServices.SnapshotApply.Reaper do
 
   typedstruct module: State do
     # How often to check for old snapshots in milliseconds
-    field :delay, pos_integer(), default: 3_600_000
+    field :delay, pos_integer(), default: 1000 * 60 * 60
     # The max age of a snapshot in hours
-    field :max_age, pos_integer(), default: 72
+    field :max_age, pos_integer(), default: 120
   end
 
   def start_link(args) do
@@ -33,15 +34,20 @@ defmodule KubeServices.SnapshotApply.Reaper do
   def init(init_arg) do
     state = struct!(State, init_arg)
     Logger.debug("Starting reaper with state: #{inspect(state)}")
-    Process.send_after(self(), :reap, state.delay)
+    schedule_reap(state)
     {:ok, state}
   end
 
   @impl GenServer
   def handle_info(:reap, state) do
-    Process.send_after(self(), :reap, state.delay)
     deleted_count = Umbrella.reap_old_snapshots(state.max_age)
-    Logger.info("Deleted #{deleted_count} snapshots")
+    deleted_doc_count = ControlServer.ContentAddressable.Reap.reap_unused_documents()
+    Logger.info("Deleted #{deleted_count} snapshots and #{deleted_doc_count} documents that are not referenced.")
+    schedule_reap(state)
     {:noreply, state}
+  end
+
+  defp schedule_reap(%State{delay: delay} = _state) do
+    Process.send_after(self(), :reap, delay)
   end
 end

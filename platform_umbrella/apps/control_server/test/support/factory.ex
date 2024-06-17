@@ -15,6 +15,27 @@ defmodule ControlServer.Factory do
   alias CommonCore.Timeline
   alias CommonCore.Timeline.TimelineEvent
 
+  def umbrella_snapshot_factory do
+    %ControlServer.SnapshotApply.UmbrellaSnapshot{}
+  end
+
+  def kube_snapshot_factory do
+    %ControlServer.SnapshotApply.KubeSnapshot{
+      status: sequence(:status, [:creation, :generation, :applying, :ok, :error])
+    }
+  end
+
+  def resource_path_factory do
+    %ControlServer.SnapshotApply.ResourcePath{
+      path: sequence("/path/path-"),
+      # Junk hash this might break things
+      hash: Hashing.compute_hash(%{}),
+      name: sequence("resource-path-"),
+      type: sequence(:type, CommonCore.ApiVersionKind.all_known()),
+      is_success: sequence(:is_success, [true, false])
+    }
+  end
+
   def project_factory do
     %CommonCore.Projects.Project{
       name: sequence("project-"),

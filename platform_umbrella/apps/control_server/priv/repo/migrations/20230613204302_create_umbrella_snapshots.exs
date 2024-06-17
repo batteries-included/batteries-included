@@ -52,7 +52,7 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
       add :apply_result, :string
 
       add :kube_snapshot_id, references(:kube_snapshots, on_delete: :delete_all, type: :uuid)
-      add :document_id, references(:documents)
+      add :document_id, references(:documents, on_delete: :nothing)
 
       timestamps(type: :utc_datetime_usec)
     end
@@ -81,7 +81,8 @@ defmodule ControlServer.Repo.Migrations.CreateUmbrellaSnapshots do
 
       add :document_id, references(:documents, on_delete: :nothing)
 
-      add :keycloak_snapshot_id, references(:keycloak_snapshots, on_delete: :nothing)
+      add :keycloak_snapshot_id,
+          references(:keycloak_snapshots, on_delete: :delete_all, type: :uuid)
 
       timestamps(type: :utc_datetime_usec)
     end
