@@ -116,8 +116,8 @@ defmodule HomeBaseWeb.InstallationShowLive do
         <.input field={@form[:sso_enabled]} type="switch" label="Use Single Sign On" />
 
         <.input
+          :if={normalize_value("checkbox", @form[:sso_enabled].value)}
           field={@form[:initial_oauth_email]}
-          class={@form[:sso_enabled].value != "on" && "hidden"}
           placeholder="Initial OAuth Email"
         />
 

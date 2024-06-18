@@ -95,8 +95,8 @@ defmodule ControlServerWeb.Projects.AIForm do
     params =
       Map.take(params, [
         "jupyter",
-        if(params["need_postgres"] == "on" && params["db_type"] == "new", do: "postgres"),
-        if(params["need_postgres"] == "on" && params["db_type"] == "existing", do: "postgres_ids")
+        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "new", do: "postgres"),
+        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "existing", do: "postgres_ids")
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -145,7 +145,7 @@ defmodule ControlServerWeb.Projects.AIForm do
 
         <.input field={@form[:need_postgres]} type="switch" label="I need a database" />
 
-        <div class={@form[:need_postgres].value != "on" && "hidden"}>
+        <div class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}>
           <.tab_bar variant="secondary" class="mb-6">
             <:tab
               phx-click="db_type"

@@ -92,6 +92,7 @@ defmodule ControlServerWeb do
 
       import CommonUI.Gettext
       import Phoenix.HTML
+      import Phoenix.HTML.Form
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

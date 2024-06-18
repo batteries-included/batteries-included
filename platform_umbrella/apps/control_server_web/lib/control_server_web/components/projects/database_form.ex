@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
 
     form =
       to_form(%{
-        "need_postgres" => "on",
+        "need_postgres" => "true",
         "postgres" => postgres_changeset,
         "redis" => redis_changeset
       })
@@ -89,8 +89,8 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   def handle_event("save", params, socket) do
     params =
       Map.take(params, [
-        if(params["need_postgres"] == "on", do: "postgres"),
-        if(params["need_redis"] == "on", do: "redis")
+        if(normalize_value("checkbox", params["need_postgres"]), do: "postgres"),
+        if(normalize_value("checkbox", params["need_redis"]), do: "redis")
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -116,7 +116,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         <.input field={@form[:need_postgres]} type="switch" label="I need a postgres instance" />
 
         <PostgresFormSubcomponents.size_form
-          class={@form[:need_postgres].value != "on" && "hidden"}
+          class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}
           form={to_form(@form[:postgres].value, as: :postgres)}
           phx_target={@myself}
           ticks={PGCluster.compact_storage_range_ticks()}
@@ -125,7 +125,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
 
         <RedisFormSubcomponents.size_form
-          class={@form[:need_redis].value != "on" && "hidden"}
+          class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
           form={to_form(@form[:redis].value, as: :redis)}
         />
 

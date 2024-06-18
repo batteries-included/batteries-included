@@ -22,7 +22,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
     # Turns on batteries that are required for this project
     form =
       required
-      |> Map.new(&{Atom.to_string(&1.type), "on"})
+      |> Map.new(&{Atom.to_string(&1.type), true})
       |> to_form()
 
     {:ok,
@@ -53,7 +53,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   """
   def handle_event("toggle", %{"_target" => [target]} = params, socket) do
     selected =
-      if params[target] == "on" do
+      if normalize_value("checkbox", params[target]) do
         socket.assigns.selected ++ [target]
       else
         Enum.reject(socket.assigns.selected, &(&1 == target))
@@ -62,7 +62,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
     params =
       Map.merge(
         %{"search" => socket.assigns.form.params["search"]},
-        Map.new(selected, &{&1, "on"})
+        Map.new(selected, &{&1, true})
       )
 
     {:noreply,
@@ -82,7 +82,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
   def handle_event("save", _params, socket) do
     # Don't actually care about the form data, we just want the selected batteries
-    params = Map.new(socket.assigns.selected, &{&1, "on"})
+    params = Map.new(socket.assigns.selected, &{&1, true})
 
     # Don't create the resources yet, send data to parent liveview
     send(self(), {:next, {__MODULE__, params}})

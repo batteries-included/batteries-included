@@ -137,6 +137,14 @@ defmodule CommonUI.Components.InputTest do
       <.input type="checkbox" name="foo" label="Foobar" checked errors={["Oh no"]} />
       """
     end
+
+    component_snapshot_test "disabled" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="checkbox" name="foo" label="Foobar" checked disabled />
+      """
+    end
   end
 
   describe "radio input component" do
@@ -177,6 +185,22 @@ defmodule CommonUI.Components.InputTest do
 
       ~H"""
       <.input type="switch" name="foo" value="bar" label="Foobar" checked errors={["Oh no"]} />
+      """
+    end
+
+    component_snapshot_test "with boolean" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="switch" name="foo" value="true" label="Foobar" checked />
+      """
+    end
+
+    component_snapshot_test "disabled with boolean" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="switch" name="foo" value="true" label="Foobar" checked disabled />
       """
     end
   end

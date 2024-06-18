@@ -1,0 +1,12 @@
+<label phx-feedback-for="foo" class="flex flex-wrap items-center gap-x-2 cursor-pointer ">
+  <input type="hidden" name="foo" value="false" disabled>
+  <input type="checkbox" name="foo" value="true" checked class="size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darkest-tint checked:border-primary checked:hover:border-primary border-gray-lighter dark:border-gray-darker-tint hover:border-primary" disabled>
+
+  <span class="text-sm text-gray-darkest dark:text-gray-lighter">
+    Foobar
+    
+  </span>
+
+  
+  
+</label>
