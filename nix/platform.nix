@@ -23,6 +23,7 @@
       hex = beamPackages.hex.override { inherit elixir; };
       rebar3 = beamPackages.rebar3.overrideAttrs (_old: {
         doCheck = false;
+        chechPhase = "";
       });
 
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
@@ -101,7 +102,7 @@
           export APP_NAME="batteries_included"
           export RELEASE="kube_bootstrap"
           mix do compile --force, \
-            release --no-deps-check --overwrite --path "$out" kube_bootstrap
+          release --no-deps-check --overwrite --path "$out" kube_bootstrap
         '';
       };
 
