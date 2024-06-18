@@ -14,7 +14,7 @@ draft: true
 Storing operational configuration in Git works well for smaller projects, but as
 repositories grow and changes become more frequent, GitOps can become a
 bottleneck. Large repositories with highly dynamic configurations often suffer
-from a slow commit processes:
+from slow commit processes:
 
 - _Single Log:_ Git is made of linear linked lists of commits. That means all
   writes are serialized on a single object. It also means that searching for the
@@ -28,7 +28,7 @@ from a slow commit processes:
 
 ## Knowledge Issues for Non-Expert Developers
 
-Gitops repositories are filled with text-based domain-specific languages to
+GitOps repositories are filled with text-based domain-specific languages to
 express what should be running where. The user interface for changes (text
 files) is the same as the schema (YAML) shown to tools. While that approach to
 configuration management allows for high sophistication and flexibility, it is a
@@ -55,6 +55,6 @@ disadvantage when dealing with GitOps:
   systems. Achieving seamless integration across these tools can be difficult,
   leading to fragmentation and inefficiencies.
 - _Flexiblity Required:_ Each project/company will have its own way of deploying
-  gitops since they are so flexible. That means automation tools are forced to
+  GitOps since they are so flexible. That means automation tools are forced to
   deal with code styles, project layouts, and naming that is almost antagonistic
   to automated change.
