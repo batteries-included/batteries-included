@@ -1,21 +1,20 @@
 {
-  "id": "batt_019012f33eef788984f4ca894a7ba3dc",
+  "id": "batt_01902a1b14a57306ae9f596d7ee91221",
   "usage": "internal_int_test",
-  "default_size": "tiny",
-  "control_jwk": {
-    "crv": "P-256",
-    "d": "ieM8kYsOXsto7J0J_mXSVQsv4W2yEelhB2P5_ZNGSDU",
-    "kty": "EC",
-    "x": "GOSWtyl-rBUHjjLRDiMwdwrZNpp0R-9edpBSVyD4w-4",
-    "y": "N85Ct0p-65UylZn-B6mBc7LJN1f6hb-PyYGNhbaIWvQ"
-  },
   "inserted_at": null,
   "updated_at": null,
+  "default_size": "tiny",
+  "control_jwk": {
+    "crv": "Ed25519",
+    "d": "lWU0-QQ6m24dCra6AdZW-lIYl3hMw3Go_AScodWQLyo",
+    "kty": "OKP",
+    "x": "Kdbix5pFg5LMu0-fhHswMpcXNXLZh-WOaTEpjsesxOo"
+  },
   "slug": "integration-test",
   "kube_provider": "kind",
   "kube_provider_config": {},
   "sso_enabled": false,
   "initial_oauth_email": null,
   "user_id": null,
-  "team_id": "batt_019012f33ec47ed6a91091cc937b4652"
+  "team_id": "batt_01902a1b147376018d018eca4ece4958"
 }

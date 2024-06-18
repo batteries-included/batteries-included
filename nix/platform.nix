@@ -7,8 +7,11 @@
       inherit (pkgs) pkg-config;
       inherit (pkgs) gcc;
       inherit (pkgs) openssl;
-      inherit (pkgs) nodejs;
       inherit (pkgs) beam;
+      inherit (pkgs) cmake;
+
+      inherit (pkgs) python312;
+      nodejs = pkgs.nodejs_22;
 
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
@@ -35,7 +38,7 @@
           ;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-Aj/KcPhiM/I5q+iXlWA+ejPNN9YkWZ/ducFKDh2/gdg=";
+        sha256 = "sha256-tnOGZbA6RLns6FtckYNQoSIZoeUeeQqpuf/6ibwQYv0=";
       };
 
       # mix fixed output derivation dependencies
@@ -53,7 +56,7 @@
           elixir
           ;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-PndtetuLdGso7k75z12sRusDqyE20c68fcgW2dmpA90=";
+        sha256 = "sha256-VR8IOotnkJeOYe1q9GnsA1Arx6oZv0bgL26b7t6gt/c=";
       };
 
       control-server = pkgs.callPackage ./platform-release.nix {
@@ -65,7 +68,13 @@
           ;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
-        inherit pkg-config gcc openssl;
+        inherit
+          pkg-config
+          gcc
+          openssl
+          cmake
+          python312
+          ;
         inherit gitignoreSource;
 
         pname = "control_server";
@@ -81,7 +90,10 @@
 
         nativeBuildInputs = [
           gcc
+          cmake
           pkg-config
+          cmake
+          python312
         ];
         buildInputs = [ openssl ];
         installPhase = ''
@@ -97,7 +109,13 @@
         inherit version src mixFodDeps;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
-        inherit pkg-config gcc openssl;
+        inherit
+          pkg-config
+          gcc
+          openssl
+          cmake
+          python312
+          ;
         inherit gitignoreSource;
 
         pname = "home_base";
@@ -107,7 +125,13 @@
       credo = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit pkg-config gcc openssl;
+        inherit
+          pkg-config
+          gcc
+          openssl
+          cmake
+          python312
+          ;
         inherit rebar3;
 
         pname = "platform";
@@ -119,7 +143,13 @@
       dialyzer = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit pkg-config gcc openssl;
+        inherit
+          pkg-config
+          gcc
+          openssl
+          cmake
+          python312
+          ;
         inherit rebar3;
 
         pname = "platform";
@@ -131,7 +161,12 @@
       format = pkgs.callPackage ./mix-command.nix {
         inherit version src pkgs;
         inherit erlang elixir hex;
-        inherit pkg-config gcc openssl;
+        inherit
+          pkg-config
+          gcc
+          openssl
+          cmake
+          ;
         inherit rebar3;
 
         pname = "platform";

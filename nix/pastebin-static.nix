@@ -5,7 +5,7 @@
     let
       inherit (inputs.gitignore.lib) gitignoreSource;
 
-      inherit (pkgs) nodejs;
+      nodejs = pkgs.nodejs_22;
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
       version = "0.12.4";
     in

@@ -3,7 +3,7 @@
   perSystem =
     { config, pkgs, ... }:
     let
-      inherit (pkgs) nodejs;
+      nodejs = pkgs.nodejs_22;
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
       node_modules = npmlock2nix.v2.node_modules {
         src = ./fmt/.;
