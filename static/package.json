@@ -14,7 +14,7 @@
     "@astrojs/check": "^0.7.0",
     "@astrojs/react": "^3.6.0",
     "@astrojs/rss": "^4.0.6",
-    "@astrojs/sitemap": "^3.1.5",
+    "@astrojs/sitemap": "^3.1.6",
     "@astrojs/tailwind": "^5.1.0",
     "@astrolib/analytics": "^0.5.0",
     "@astrolib/seo": "^1.0.0-beta.5",
