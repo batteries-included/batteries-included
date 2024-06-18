@@ -26,9 +26,11 @@
       # this is good.
       rebar = beamPackages.rebar.overrideAttrs (_old: {
         doCheck = false;
+        chechPhase = "";
       });
       rebar3 = beamPackages.rebar3.overrideAttrs (_old: {
         doCheck = false;
+        chechPhase = "";
       });
 
       # elixir,elixir-ls, and hex are using the same version elixir
