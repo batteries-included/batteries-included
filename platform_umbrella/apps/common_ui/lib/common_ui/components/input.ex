@@ -5,7 +5,6 @@ defmodule CommonUI.Components.Input do
   import CommonUI.Components.Dropdown
   import CommonUI.Components.Icon
   import CommonUI.ErrorHelpers
-  import Phoenix.HTML
   import Phoenix.HTML.Form
 
   alias CommonUI.IDHelpers
@@ -53,9 +52,7 @@ defmodule CommonUI.Components.Input do
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
-    |> assign_new(:checked, fn %{value: value} ->
-      !Enum.any?(["false", "off", nil], &(html_escape(&1) == html_escape(value)))
-    end)
+    |> assign_new(:checked, fn %{value: value} -> normalize_value("checkbox", value) end)
     |> input()
   end
 
@@ -152,7 +149,7 @@ defmodule CommonUI.Components.Input do
       phx-feedback-for={if !@force_feedback, do: @name}
       class={["flex flex-wrap items-center gap-x-2 cursor-pointer", @class]}
     >
-      <input type="hidden" name={@name} value="false" />
+      <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
       <input
         type="checkbox"
         name={@name}
@@ -165,6 +162,7 @@ defmodule CommonUI.Components.Input do
           @errors != [] &&
             "phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900"
         ]}
+        {@rest}
       />
 
       <span class={label_class()}>
@@ -317,9 +315,17 @@ defmodule CommonUI.Components.Input do
 
       <div>
         <input
+          :if={boolean?(@value)}
+          type="hidden"
+          name={@name}
+          value="false"
+          disabled={@rest[:disabled]}
+        />
+
+        <input
           type="checkbox"
           name={@name}
-          value={@value}
+          value={if boolean?(@value), do: "true", else: @value}
           checked={@checked}
           class="peer sr-only"
           {@rest}
@@ -435,6 +441,8 @@ defmodule CommonUI.Components.Input do
   end
 
   defp note_class, do: "text-xs text-gray-light mt-2"
+
+  defp boolean?(value), do: value in [true, "true", false, "false", nil]
 
   defp out_of_bounds?(%{min: min, max: max, lower_boundary: lower, upper_boundary: upper}, percentage) do
     # offset the percentage a tiny bit in case a boundary is right on a tick

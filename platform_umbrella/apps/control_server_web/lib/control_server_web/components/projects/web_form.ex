@@ -98,7 +98,7 @@ defmodule ControlServerWeb.Projects.WebForm do
         "project_type",
         if(params["db_type"] == "new", do: "postgres"),
         if(params["db_type"] == "existing", do: "postgres_ids"),
-        if(params["need_redis"] == "on", do: "redis")
+        if(normalize_value("checkbox", params["need_redis"]), do: "redis")
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -168,7 +168,7 @@ defmodule ControlServerWeb.Projects.WebForm do
         <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
 
         <RedisFormSubcomponents.size_form
-          class={@form[:need_redis].value != "on" && "hidden"}
+          class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
           form={to_form(@form[:redis].value, as: :redis)}
         />
 
