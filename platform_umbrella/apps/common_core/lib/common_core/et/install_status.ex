@@ -9,13 +9,28 @@ defmodule CommonCore.ET.InstallStatus do
       values: ~w(ok unknown needs_account needs_payment bad)a,
       default: :unknown
 
+    # The installation id that this status is for
+    # Since this becomes a JWT this makes it the iss claim
+    field :iss, CommonCore.Ecto.BatteryUUID
+
+    field :exp, :integer
+
     field :message, :string
+  end
+
+  def new_unknown! do
+    exp = DateTime.utc_now() |> DateTime.add(1, :hour) |> DateTime.to_unix()
+    new!(status: :unknown, exp: exp)
   end
 
   def status_ok?(%__MODULE__{status: :bad}), do: false
   def status_ok?(%__MODULE__{status: :needs_payment}), do: false
   def status_ok?(%__MODULE__{status: :needs_account}), do: false
-  def status_ok?(_), do: true
+
+  def status_ok?(%{exp: exp}) do
+    current_time = DateTime.to_unix(DateTime.utc_now())
+    current_time < exp
+  end
 
   @doc ~S"""
   Returns the path to redirect to based on the status of

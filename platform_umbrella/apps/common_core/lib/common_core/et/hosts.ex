@@ -14,12 +14,18 @@ defmodule CommonCore.ET.URLs do
   end
 
   def usage_report_path(state_summary) do
-    install_id = CommonCore.StateSummary.Core.config_field(state_summary, :install_id)
-    "/installations/#{install_id}/usage_reports"
+    "/installations/#{install_id(state_summary)}/usage_reports"
   end
 
   def host_reports_path(state_summary) do
-    install_id = CommonCore.StateSummary.Core.config_field(state_summary, :install_id)
-    "/installations/#{install_id}/host_reports"
+    "/installations/#{install_id(state_summary)}/host_reports"
+  end
+
+  def status_path(state_summary) do
+    "/installations/#{install_id(state_summary)}/status"
+  end
+
+  defp install_id(state_summary) do
+    CommonCore.StateSummary.Core.config_field(state_summary, :install_id)
   end
 end
