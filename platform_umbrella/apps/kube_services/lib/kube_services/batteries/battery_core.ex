@@ -12,7 +12,8 @@ defmodule KubeServices.Batteries.BatteryCore do
       {KubeServices.ET.HomeBaseClient, [home_url: CommonCore.ET.URLs.home_base_url(battery.config)]},
       {KubeServices.ET.Usage, [home_client_pid: KubeServices.ET.HomeBaseClient]},
       {KubeServices.ET.Hosts, [home_client_pid: KubeServices.ET.HomeBaseClient]},
-      {KubeServices.ET.InstallStatusWorker, [home_client_pid: KubeServices.ET.HomeBaseClient]}
+      {KubeServices.ET.InstallStatusWorker,
+       [home_client_pid: KubeServices.ET.HomeBaseClient, install_id: battery.config.install_id]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -11,7 +11,7 @@ defmodule CommonCore.StateSummary.Core do
   @spec config_field(CommonCore.StateSummary.t(), atom()) :: any() | nil
   def config_field(summary, key) do
     case battery_core_config(summary) do
-      %BatteryCoreConfig{} = config -> get_in(config, [Access.key(key)])
+      %BatteryCoreConfig{} = config -> Map.get(config, key)
       _ -> nil
     end
   end

@@ -45,6 +45,8 @@ defmodule CommonCore.JWK do
     jwk |> JOSE.JWT.sign(payload) |> elem(1)
   end
 
+  def verify!(nil), do: raise(CommonCore.JWK.BadKeyError.exception())
+
   def verify!(token) do
     case first_verified(token) do
       nil -> raise CommonCore.JWK.BadKeyError.exception()
@@ -52,8 +54,17 @@ defmodule CommonCore.JWK do
     end
   end
 
+  def verify(nil), do: {:error, CommonCore.JWK.BadKeyError.exception()}
+
+  def verify(token) do
+    case first_verified(token) do
+      nil -> {:error, CommonCore.JWK.BadKeyError.exception()}
+      value -> {:ok, value}
+    end
+  end
+
   defp first_verified(token) do
-    Enum.find_value(verify_keys(), fn key_name ->
+    Enum.find_value(verify_keys(), nil, fn key_name ->
       jwk = CommonCore.JWK.Cache.get(key_name)
       try_verify_single(jwk, token)
     end)
