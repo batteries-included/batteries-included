@@ -66,10 +66,10 @@ defmodule ControlServer.Postgres do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_cluster(attrs \\ %{}, repo \\ Repo) do
+  def create_cluster(attrs \\ %{}) do
     %Cluster{}
     |> Cluster.changeset(attrs)
-    |> repo.insert()
+    |> Repo.insert()
     |> broadcast(:insert)
   end
 
