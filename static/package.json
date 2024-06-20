@@ -35,7 +35,7 @@
     "react-dom": "^18.3.1",
     "react-select": "^5.8.0",
     "slugify": "^1.6.6",
-    "tailwindcss-animated": "^1.1.1",
+    "tailwindcss-animated": "^1.1.2",
     "typescript-esbuild": "^0.4.0",
     "unpic": "^3.18.0"
   },
