@@ -48,7 +48,11 @@ defmodule ControlServer.Postgres do
       ** (Ecto.NoResultsError)
 
   """
-  def get_cluster!(id), do: Repo.get!(Cluster, id)
+  def get_cluster!(id, opts \\ []) do
+    Cluster
+    |> preload(^Keyword.get(opts, :preload, []))
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a cluster.

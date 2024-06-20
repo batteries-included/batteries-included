@@ -96,6 +96,7 @@ defmodule ControlServerWeb.Router do
     live "/new", Live.RedisNew, :new
     live "/:id/edit", Live.RedisEdit, :edit
     live "/:id/show", Live.RedisShow, :show
+    live "/:id/services", Live.RedisShow, :services
   end
 
   scope "/postgres", ControlServerWeb do

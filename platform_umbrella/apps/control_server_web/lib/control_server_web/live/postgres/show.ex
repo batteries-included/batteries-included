@@ -49,7 +49,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp assign_cluster(socket, id) do
-    cluster = Postgres.get_cluster!(id)
+    cluster = Postgres.get_cluster!(id, preload: [:project])
     assign(socket, cluster: cluster, id: id)
   end
 
@@ -178,6 +178,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
         <:item :if={@cluster.memory_limits} title="Memory limits">
           <%= Memory.humanize(@cluster.memory_limits) %>
         </:item>
+        <:item title="Started">
+          <.relative_display time={creation_timestamp(@k8_cluster)} />
+        </:item>
       </.data_list>
     </.panel>
     """
@@ -198,25 +201,28 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp main_page(assigns) do
     ~H"""
     <.page_header title={"Postgres Cluster: #{@cluster.name}"} back_link={~p"/postgres"}>
-      <.flex>
-        <.badge>
-          <:item label="Status">
-            <%= phase(@k8_cluster) %>
-          </:item>
-          <:item label="Started">
-            <.relative_display time={creation_timestamp(@k8_cluster)} />
-          </:item>
+      <:menu>
+        <.badge :if={@cluster.project_id}>
+          <:item label="Project"><%= @cluster.project.name %></:item>
         </.badge>
+      </:menu>
 
-        <.button variant="secondary" link={edit_versions_url(@cluster)}>
-          Edit History
-        </.button>
+      <div>
+        <.tooltip target_id="history-tooltip">Edit History</.tooltip>
+        <.button id="history-tooltip" variant="icon" icon={:clock} link={edit_versions_url(@cluster)} />
 
-        <.flex gaps="0">
-          <.button variant="icon" icon={:pencil} link={edit_url(@cluster)} />
-          <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
-        </.flex>
-      </.flex>
+        <.tooltip target_id="edit-tooltip">Edit Cluster</.tooltip>
+        <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@cluster)} />
+
+        <.tooltip target_id="delete-tooltip">Delete Cluster</.tooltip>
+        <.button
+          id="delete-tooltip"
+          variant="icon"
+          icon={:trash}
+          phx-click="delete"
+          data-confirm="Are you sure?"
+        />
+      </div>
     </.page_header>
 
     <.grid columns={%{sm: 1, lg: 2}}>
