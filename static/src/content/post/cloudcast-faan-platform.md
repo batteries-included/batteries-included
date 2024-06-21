@@ -51,10 +51,10 @@ listen.
    source in building tools but also acknowledges the challenges in using open
    source for platforms that require more opinionated choices.
 
-## Connect with Elliott Clark and Batteries Included:
+## Connect with Elliott Clark and Batteries Included
 
 These insights are just a tip of the iceberg. To dive deeper into the world of
 platform engineering and learn more about Batteries Included, visit their
 website at [batteriesincl.com](https://www.batteriesincl.com/). You can also
-reach out to Elliott directly via email at elliott@batteriesincl.com or
+reach out to Elliott directly via email at <elliott@batteriesincl.com> or
 [Linkedin](https://www.linkedin.com/in/elliottnclark/).
