@@ -17,7 +17,7 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 	var progressReporter *util.ProgressReporter
 	if log.Level != slog.LevelDebug {
 		progressReporter = util.NewProgressReporter()
-		defer progressReporter.Shutdown()
+		// defer progressReporter.Shutdown()
 	}
 
 	if err := env.StartKubeProvider(ctx, progressReporter); err != nil {
@@ -48,6 +48,14 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 	slog.Info("Waiting for bootstrap completion")
 	if err := env.Spec.WaitForBootstrap(ctx, kubeClient); err != nil {
 		return fmt.Errorf("failed to wait for bootstrap: %w", err)
+	}
+
+	// Explicitly shutdown the progress reporter here to ensure it's not
+	// running when we print the access information. That sometimes causes
+	// in the progress bar being printed over the access information.
+	if progressReporter != nil {
+		progressReporter.Shutdown()
+		progressReporter = nil
 	}
 
 	slog.Info("Displaying access information")

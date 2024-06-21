@@ -13,14 +13,15 @@ type AccessSpec struct {
 }
 
 func (a *AccessSpec) PrintToConsole() error {
-
 	// Display a clickable URL
 	// If SSL is enabled, use https, otherwise use http
 	protocol := "http"
 	if a.SSL {
 		protocol = "https"
 	}
-	_, err := fmt.Printf("Batteries Included control server started: %s://%s\n", protocol, a.Hostname)
+	// Just in case we add a new line here. Sometime ncurses doesn't remember what line it's on
+	// and the progress bar will overwrite a line.
+	_, err := fmt.Printf("Batteries Included\nControl Server started: %s://%s\n", protocol, a.Hostname)
 	if err != nil {
 		return fmt.Errorf("failed to print control server URL: %w", err)
 	}
