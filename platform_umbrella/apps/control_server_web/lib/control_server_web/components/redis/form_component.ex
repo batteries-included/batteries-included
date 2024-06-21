@@ -18,30 +18,48 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.page_header title={@title} back_link={~p"/redis"}>
+        <.page_header
+          title={@title}
+          back_link={if @action == :new, do: ~p"/redis", else: ~p"/redis/#{@failover_cluster}/show"}
+        >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
-            Save Redis Cluster
+            Save Cluster
           </.button>
         </.page_header>
 
-        <.panel>
-          <.size_form form={@form} action={@action} />
+        <.grid columns={%{sm: 1, lg: 2}}>
+          <.panel>
+            <.size_form form={@form} action={@action} />
 
-          <.flex class="justify-between w-full py-5 border-t border-gray-lighter dark:border-gray-darker" />
+            <.flex class="justify-between w-full py-5 border-t border-gray-lighter dark:border-gray-darker" />
 
-          <.grid columns={[sm: 1, lg: 2]} class="items-center">
-            <.h5>Number of instances</.h5>
-            <.input field={@form[:num_redis_instances]} type="range" min="1" max="3" step="1" />
-          </.grid>
-          <.grid
-            :if={@form[:num_redis_instances].value |> Integer.to_integer() > 1}
-            columns={[sm: 1, lg: 2]}
-            class="items-center"
-          >
-            <.h5>Number of sentinel instances</.h5>
-            <.input field={@form[:num_sentinel_instances]} type="range" min="1" max="3" step="1" />
-          </.grid>
-        </.panel>
+            <.grid columns={[sm: 1, lg: 2]} class="items-center">
+              <.h5>Number of instances</.h5>
+              <.input field={@form[:num_redis_instances]} type="range" min="1" max="3" step="1" />
+            </.grid>
+            <.grid
+              :if={@form[:num_redis_instances].value |> Integer.to_integer() > 1}
+              columns={[sm: 1, lg: 2]}
+              class="items-center"
+            >
+              <.h5>Number of sentinel instances</.h5>
+              <.input field={@form[:num_sentinel_instances]} type="range" min="1" max="3" step="1" />
+            </.grid>
+          </.panel>
+
+          <.panel title="Advanced Settings" variant="gray">
+            <.flex column>
+              <.input
+                field={@form[:project_id]}
+                type="select"
+                label="Project"
+                placeholder="No Project"
+                placeholder_selectable={true}
+                options={Enum.map(@projects, &{&1.name, &1.id})}
+              />
+            </.flex>
+          </.panel>
+        </.grid>
       </.form>
     </div>
     """
@@ -54,7 +72,8 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> assign_projects()}
   end
 
   @impl Phoenix.LiveComponent
@@ -103,6 +122,11 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp assign_projects(socket) do
+    projects = ControlServer.Projects.list_projects()
+    assign(socket, projects: projects)
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

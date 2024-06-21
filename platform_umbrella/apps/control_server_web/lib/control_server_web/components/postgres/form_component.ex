@@ -229,7 +229,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         phx-change="validate"
         phx-target={@myself}
       >
-        <.page_header title={@title} back_link={~p"/postgres"}>
+        <.page_header
+          title={@title}
+          back_link={if @action == :new, do: ~p"/postgres", else: ~p"/postgres/#{@cluster}/show"}
+        >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">Save Cluster</.button>
         </.page_header>
 
@@ -281,10 +284,10 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             <.panel title="Advanced Settings" variant="gray">
               <.flex column>
                 <.input
-                  label="Project"
                   field={@form[:project_id]}
                   type="select"
-                  placeholder="Choose Project"
+                  label="Project"
+                  placeholder="No Project"
                   placeholder_selectable={true}
                   options={Enum.map(@projects, &{&1.name, &1.id})}
                 />

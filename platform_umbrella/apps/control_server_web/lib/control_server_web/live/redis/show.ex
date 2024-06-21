@@ -2,10 +2,11 @@ defmodule ControlServerWeb.Live.RedisShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
 
+  alias CommonCore.Util.Memory
   alias ControlServer.Redis
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -24,7 +25,7 @@ defmodule ControlServerWeb.Live.RedisShow do
      socket
      |> assign(:id, id)
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:failover_cluster, Redis.get_failover_cluster!(id))
+     |> assign(:failover_cluster, Redis.get_failover_cluster!(id, preload: [:project]))
      |> assign(:k8_failover, k8_failover(id))
      |> assign(:k8_services, k8_services(id))
      |> assign(:k8_pods, k8_pods(id))}
@@ -46,9 +47,77 @@ defmodule ControlServerWeb.Live.RedisShow do
     {:noreply, push_redirect(socket, to: ~p"/redis")}
   end
 
-  defp page_title(:show), do: "Show Redis Failover Cluster"
+  @impl Phoenix.LiveView
+  def render(%{live_action: :show} = assigns) do
+    ~H"""
+    <.page_header title={"Redis Cluster: #{@failover_cluster.name}"} back_link={~p"/redis"}>
+      <:menu>
+        <.badge :if={@failover_cluster.project_id}>
+          <:item label="Project"><%= @failover_cluster.project.name %></:item>
+        </.badge>
+      </:menu>
 
-  defp edit_url(cluster), do: ~p"/redis/#{cluster}/edit"
+      <div>
+        <.tooltip target_id="edit-tooltip">Edit Cluster</.tooltip>
+        <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@failover_cluster)} />
+
+        <.tooltip target_id="delete-tooltip">Delete Cluster</.tooltip>
+        <.button
+          id="delete-tooltip"
+          variant="icon"
+          icon={:trash}
+          phx-click="delete"
+          data-confirm="Are you sure?"
+        />
+      </div>
+    </.page_header>
+
+    <.grid columns={%{sm: 1, lg: 2}}>
+      <.panel title="Details" variant="gray">
+        <.data_list>
+          <:item title="Instances">
+            <%= @failover_cluster.num_redis_instances %>
+          </:item>
+          <:item title="Sentinel Instances">
+            <%= @failover_cluster.num_sentinel_instances %>
+          </:item>
+          <:item :if={@failover_cluster.memory_limits} title="Memory Limits">
+            <%= Memory.humanize(@failover_cluster.memory_limits) %>
+          </:item>
+          <:item title="Started">
+            <.relative_display time={creation_timestamp(@k8_failover)} />
+          </:item>
+        </.data_list>
+      </.panel>
+
+      <.flex column class="justify-start">
+        <.a variant="bordered" navigate={services_url(@failover_cluster)}>Services</.a>
+      </.flex>
+
+      <.panel title="Pods" class="col-span-2">
+        <.pods_table pods={@k8_pods} />
+      </.panel>
+    </.grid>
+    """
+  end
+
+  @impl Phoenix.LiveView
+  def render(%{live_action: :services} = assigns) do
+    ~H"""
+    <.page_header title="Services" back_link={show_url(@failover_cluster)} />
+
+    <.panel>
+      <.services_table services={@k8_services} />
+    </.panel>
+    """
+  end
+
+  defp page_title(:show), do: "Redis Cluster"
+  defp page_title(:services), do: "Redis Cluster Services"
+
+  defp edit_url(failover_cluster), do: ~p"/redis/#{failover_cluster}/edit"
+  defp show_url(failover_cluster), do: ~p"/redis/#{failover_cluster}/show"
+  defp services_url(failover_cluster), do: ~p"/redis/#{failover_cluster}/services"
 
   defp k8_failover(id) do
     Enum.find(KubeState.get_all(:redis_failover), nil, fn pg -> id == labeled_owner(pg) end)
@@ -60,35 +129,5 @@ defmodule ControlServerWeb.Live.RedisShow do
 
   defp k8_services(id) do
     Enum.filter(KubeState.get_all(:service), fn pg -> id == labeled_owner(pg) end)
-  end
-
-  @impl Phoenix.LiveView
-  def render(assigns) do
-    ~H"""
-    <.h1>
-      Redis
-      <:sub_header><%= @failover_cluster.name %></:sub_header>
-    </.h1>
-    <.h2>Pods</.h2>
-    <.pods_table pods={@k8_pods} />
-
-    <.h2>Services</.h2>
-    <.services_table services={@k8_services} />
-
-    <.h2>Actions</.h2>
-    <.panel>
-      <div class="grid md:grid-cols-2 gap-6">
-        <.link navigate={edit_url(@failover_cluster)} class="block">
-          <.button variant="secondary" class="w-full">
-            Edit Cluster
-          </.button>
-        </.link>
-
-        <.button variant="secondary" phx-click="delete" data-confirm="Are you sure?" class="w-full">
-          Delete Cluster
-        </.button>
-      </div>
-    </.panel>
-    """
   end
 end

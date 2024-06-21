@@ -15,8 +15,8 @@ defmodule ControlServer.Redis do
       [%FailoverCluster{}, ...]
 
   """
-  def list_failover_clusters(repo \\ Repo) do
-    repo.all(FailoverCluster)
+  def list_failover_clusters do
+    Repo.all(FailoverCluster)
   end
 
   @doc """
@@ -33,7 +33,11 @@ defmodule ControlServer.Redis do
       ** (Ecto.NoResultsError)
 
   """
-  def get_failover_cluster!(id, repo \\ Repo), do: repo.get!(FailoverCluster, id)
+  def get_failover_cluster!(id, opts \\ []) do
+    FailoverCluster
+    |> preload(^Keyword.get(opts, :preload, []))
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a failover_cluster.
@@ -47,10 +51,10 @@ defmodule ControlServer.Redis do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_failover_cluster(attrs \\ %{}, repo \\ Repo) do
+  def create_failover_cluster(attrs \\ %{}) do
     %FailoverCluster{}
     |> FailoverCluster.changeset(attrs)
-    |> repo.insert()
+    |> Repo.insert()
     |> broadcast(:insert)
   end
 
@@ -66,10 +70,10 @@ defmodule ControlServer.Redis do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_failover_cluster(%FailoverCluster{} = failover_cluster, attrs, repo \\ Repo) do
+  def update_failover_cluster(%FailoverCluster{} = failover_cluster, attrs) do
     failover_cluster
     |> FailoverCluster.changeset(attrs)
-    |> repo.update()
+    |> Repo.update()
     |> broadcast(:update)
   end
 
@@ -85,9 +89,9 @@ defmodule ControlServer.Redis do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_failover_cluster(%FailoverCluster{} = failover_cluster, repo \\ Repo) do
+  def delete_failover_cluster(%FailoverCluster{} = failover_cluster) do
     failover_cluster
-    |> repo.delete()
+    |> Repo.delete()
     |> broadcast(:delete)
   end
 
