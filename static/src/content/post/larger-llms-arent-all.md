@@ -18,7 +18,7 @@ panacea of ChatGPT saving the world, and then guess a little about what that
 means as we move through the trough of disillusionment to the slope of
 enlightenment.
 
-# The Rise of Large Language Models
+## The Rise of Large Language Models
 
 In the realm of artificial intelligence, large language models (LLMs) like
 [GPT-3](https://arxiv.org/abs/2005.14165),
@@ -44,7 +44,7 @@ outputting
 representing un-normalized predicted probablities) for predictions (usually the
 next token in a sequence, but not always).
 
-# The Double-Edged Sword: Limitations of LLMs
+## The Double-Edged Sword: Limitations of LLMs
 
 However, every silver lining has a cloud. The structure and training that
 produces such extraordinary behavior from the likes of ChatGPT, which also has

@@ -184,7 +184,7 @@ have no excuse.
 
 # Where
 
-Check out the documentation website at https://hexdocs.pm/heyya/readme.html and
-the code on GitHub at https://github.com/batteries-included/heyya.
+Check out the documentation website at <https://hexdocs.pm/heyya/readme.html>
+and the code on GitHub at <https://github.com/batteries-included/heyya>.
 
 Happy testing!

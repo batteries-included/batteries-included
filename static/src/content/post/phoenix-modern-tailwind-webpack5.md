@@ -275,7 +275,7 @@ the Phoenix endpoint in dev.
 Currently, there should be a config in `config/dev.exs` inside there is a key
 for configuring the static watchers.
 
-## Before:
+## Before
 
 ```elixir
 config :example_upgrade, ExampleUpgradeWeb.Endpoint,
@@ -294,7 +294,7 @@ config :example_upgrade, ExampleUpgradeWeb.Endpoint,
   ]
 ```
 
-## After:
+## After
 
 ```elixir
 config :example_upgrade, ExampleUpgradeWeb.Endpoint,
