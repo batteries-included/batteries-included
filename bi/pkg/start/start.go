@@ -17,7 +17,7 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 	var progressReporter *util.ProgressReporter
 	if log.Level != slog.LevelDebug {
 		progressReporter = util.NewProgressReporter()
-		// defer progressReporter.Shutdown()
+		defer progressReporter.Shutdown()
 	}
 
 	if err := env.StartKubeProvider(ctx, progressReporter); err != nil {
