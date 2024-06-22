@@ -8,6 +8,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   alias ControlServer.FerretDB
   alias KubeServices.KubeState
+  alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -24,7 +25,12 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
      |> assign_current_page()
      |> assign_ferret_service(service)
      |> assign_pods()
+     |> assign_timeline_installed()
      |> maybe_assign_edit_versions()}
+  end
+
+  defp assign_timeline_installed(socket) do
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
   end
 
   defp assign_current_page(socket) do
@@ -81,11 +87,15 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
           </:item>
         </.badge>
 
-        <.button variant="secondary" link={edit_versions_url(@ferret_service)}>
-          Edit History
-        </.button>
-
+        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
         <.flex gaps="0">
+          <.button
+            :if={@timeline_installed}
+            id="history-tooltip"
+            variant="icon"
+            icon={:clock}
+            link={edit_versions_url(@ferret_service)}
+          />
           <.button variant="icon" icon={:pencil} link={edit_url(@ferret_service)} />
           <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
         </.flex>
@@ -112,7 +122,12 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     ~H"""
     <%= case @live_action do %>
       <% :show -> %>
-        <.main_page ferret_service={@ferret_service} pods={@pods} page_title={@page_title} />
+        <.main_page
+          ferret_service={@ferret_service}
+          pods={@pods}
+          page_title={@page_title}
+          timeline_installed={@timeline_installed}
+        />
       <% :edit_versions -> %>
         <.edit_versions_page ferret_service={@ferret_service} edit_versions={@edit_versions} />
     <% end %>

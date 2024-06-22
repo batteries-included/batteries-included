@@ -10,6 +10,7 @@ defmodule ControlServerWeb.Live.RedisShow do
   alias ControlServer.Redis
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
+  alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -23,12 +24,17 @@ defmodule ControlServerWeb.Live.RedisShow do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
+     |> assign_timeline_installed()
      |> assign(:id, id)
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:failover_cluster, Redis.get_failover_cluster!(id, preload: [:project]))
      |> assign(:k8_failover, k8_failover(id))
      |> assign(:k8_services, k8_services(id))
      |> assign(:k8_pods, k8_pods(id))}
+  end
+
+  defp assign_timeline_installed(socket) do
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
   end
 
   @impl Phoenix.LiveView
@@ -57,19 +63,20 @@ defmodule ControlServerWeb.Live.RedisShow do
         </.badge>
       </:menu>
 
-      <div>
+      <.flex>
         <.tooltip target_id="edit-tooltip">Edit Cluster</.tooltip>
-        <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@failover_cluster)} />
-
         <.tooltip target_id="delete-tooltip">Delete Cluster</.tooltip>
-        <.button
-          id="delete-tooltip"
-          variant="icon"
-          icon={:trash}
-          phx-click="delete"
-          data-confirm="Are you sure?"
-        />
-      </div>
+        <.flex gaps="0">
+          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@failover_cluster)} />
+          <.button
+            id="delete-tooltip"
+            variant="icon"
+            icon={:trash}
+            phx-click="delete"
+            data-confirm="Are you sure?"
+          />
+        </.flex>
+      </.flex>
     </.page_header>
 
     <.grid columns={%{sm: 1, lg: 2}}>

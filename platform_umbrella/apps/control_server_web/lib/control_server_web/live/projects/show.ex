@@ -9,6 +9,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
   alias ControlServer.Projects
   alias KubeServices.KubeState
+  alias KubeServices.SystemState.SummaryBatteries
 
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -18,8 +19,13 @@ defmodule ControlServerWeb.Projects.ShowLive do
     {:noreply,
      socket
      |> assign(:page_title, "Project Details")
+     |> assign_timeline_installed()
      |> assign_project(id)
      |> assign_pods()}
+  end
+
+  defp assign_timeline_installed(socket) do
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
   end
 
   defp assign_project(socket, id) do
@@ -52,10 +58,17 @@ defmodule ControlServerWeb.Projects.ShowLive do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title <> ": " <> @project.name} back_link={~p"/projects"}>
-      <.flex class="items-center">
-        <.button variant="dark" icon={:clock} link={~p"/projects/#{@project.id}/timeline"}>
-          Project Timeline
-        </.button>
+      <.flex>
+        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Project History</.tooltip>
+        <.flex gaps="0">
+          <.button
+            :if={@timeline_installed}
+            id="history-tooltip"
+            variant="icon"
+            icon={:clock}
+            link={~p"/projects/#{@project.id}/timeline"}
+          />
+        </.flex>
       </.flex>
     </.page_header>
 

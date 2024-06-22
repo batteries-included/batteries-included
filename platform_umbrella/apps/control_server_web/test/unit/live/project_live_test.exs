@@ -44,7 +44,6 @@ defmodule ControlServerWeb.ProjectLiveTest do
     test "should display a project", %{conn: conn, project: project} do
       {:ok, _view, html} = live(conn, ~p"/projects/#{project}")
 
-      assert html =~ "Project Timeline"
       assert html =~ project.name
     end
   end

@@ -32,6 +32,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
      |> assign_k8_cluster()
      |> assign_k8_services()
      |> assign_k8_pods()
+     |> assign_timeline_installed()
      |> maybe_assign_grafana_url()
      |> maybe_assign_edit_versions()}
   end
@@ -46,6 +47,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
     {:ok, _} = Postgres.delete_cluster(socket.assigns.cluster)
 
     {:noreply, push_redirect(socket, to: ~p"/postgres")}
+  end
+
+  defp assign_timeline_installed(socket) do
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
   end
 
   defp assign_cluster(socket, id) do
@@ -207,22 +212,28 @@ defmodule ControlServerWeb.Live.PostgresShow do
         </.badge>
       </:menu>
 
-      <div>
-        <.tooltip target_id="history-tooltip">Edit History</.tooltip>
-        <.button id="history-tooltip" variant="icon" icon={:clock} link={edit_versions_url(@cluster)} />
-
+      <.flex>
+        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
         <.tooltip target_id="edit-tooltip">Edit Cluster</.tooltip>
-        <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@cluster)} />
-
         <.tooltip target_id="delete-tooltip">Delete Cluster</.tooltip>
-        <.button
-          id="delete-tooltip"
-          variant="icon"
-          icon={:trash}
-          phx-click="delete"
-          data-confirm="Are you sure?"
-        />
-      </div>
+        <.flex gaps="0">
+          <.button
+            :if={@timeline_installed}
+            id="history-tooltip"
+            variant="icon"
+            icon={:clock}
+            link={edit_versions_url(@cluster)}
+          />
+          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@cluster)} />
+          <.button
+            id="delete-tooltip"
+            variant="icon"
+            icon={:trash}
+            phx-click="delete"
+            data-confirm="Are you sure?"
+          />
+        </.flex>
+      </.flex>
     </.page_header>
 
     <.grid columns={%{sm: 1, lg: 2}}>
@@ -279,6 +290,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           k8_pods={@k8_pods}
           k8_services={@k8_services}
           grafana_dashboard_url={@grafana_dashboard_url}
+          timeline_installed={@timeline_installed}
         />
       <% :users -> %>
         <.users_page cluster={@cluster} k8_cluster={@k8_cluster} />
