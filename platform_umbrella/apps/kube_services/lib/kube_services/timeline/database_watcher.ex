@@ -29,6 +29,10 @@ defmodule KubeServices.Timeline.DatabaseWatcher do
     {:noreply, state}
   end
 
+  # Installer uses a huge multi.
+  # Don't unwrap it here.
+  defp to_event(_type, :multi, _), do: {:ok, nil}
+
   defp to_event(type, action, %{name: name, id: id} = _object) do
     Logger.debug("Going to persist timeline event for #{type} action #{action}",
       type: type,
