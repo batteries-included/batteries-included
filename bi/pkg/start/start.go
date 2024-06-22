@@ -50,6 +50,14 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 		return fmt.Errorf("failed to wait for bootstrap: %w", err)
 	}
 
+	// Explicitly shutdown the progress reporter here to ensure it's not
+	// running when we print the access information. That sometimes causes
+	// in the progress bar being printed over the access information.
+	if progressReporter != nil {
+		progressReporter.Shutdown()
+		progressReporter = nil
+	}
+
 	slog.Info("Displaying access information")
 	if err := env.Spec.PrintAccessInfo(ctx, kubeClient); err != nil {
 		return fmt.Errorf("failed get and display access info: %w", err)

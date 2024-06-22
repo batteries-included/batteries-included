@@ -4,6 +4,7 @@ import (
 	"bi/pkg/kube"
 	"context"
 	"fmt"
+	"log/slog"
 )
 
 func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.KubeClient) error {
@@ -16,6 +17,7 @@ func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.Ku
 
 	// If we're running in dev mode then assume the control server will be run via `bix dev`
 	if !inCluster.(bool) {
+		slog.Debug("Control server is not running in cluster")
 		return nil
 	}
 
