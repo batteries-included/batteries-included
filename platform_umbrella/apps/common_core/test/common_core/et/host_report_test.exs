@@ -16,7 +16,7 @@ defmodule CommonCore.ET.HostReportTest do
   test "new/1 with StateSummary", %{state_summary: state_summary} do
     report = HostReport.new!(state_summary)
 
-    assert report.control_server_host == "control.127-0-0-1.ip.batteriesincl.com"
+    assert report.control_server_host == "control.127-0-0-1.batrsinc.co"
   end
 
   test "new/1 with options map" do

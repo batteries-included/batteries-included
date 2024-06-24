@@ -11,7 +11,7 @@
       pname = "bi";
       modules = ../bi/gomod2nix.toml;
       safeRev = self.shortRev or self.dirtyShortRev;
-      version = "0.12.5";
+      version = "0.13.0";
       taggedVersion = "${version}-${safeRev}";
     in
     {
