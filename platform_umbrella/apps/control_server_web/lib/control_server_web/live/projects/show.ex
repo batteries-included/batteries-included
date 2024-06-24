@@ -59,8 +59,23 @@ defmodule ControlServerWeb.Projects.ShowLive do
     ~H"""
     <.page_header title={@page_title <> ": " <> @project.name} back_link={~p"/projects"}>
       <.flex>
+        <.tooltip target_id="add-tooltip">Add Resources</.tooltip>
         <.tooltip :if={@timeline_installed} target_id="history-tooltip">Project History</.tooltip>
         <.flex gaps="0">
+          <.dropdown>
+            <:trigger>
+              <.button id="add-tooltip" variant="icon" icon={:plus} />
+            </:trigger>
+
+            <.dropdown_link navigate={~p"/postgres/new?project_id=#{@project.id}"}>
+              Postgres
+            </.dropdown_link>
+
+            <.dropdown_link navigate={~p"/redis/new?project_id=#{@project.id}"}>
+              Redis
+            </.dropdown_link>
+          </.dropdown>
+
           <.button
             :if={@timeline_installed}
             id="history-tooltip"

@@ -7,16 +7,15 @@ defmodule ControlServerWeb.Live.PostgresNew do
   require Logger
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     # Pre-populate the databases and users with decent permissions
     cluster = KubeServices.SmartBuilder.new_postgres()
 
-    {:ok, assign(socket, current_page: :data, cluster: cluster)}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+    {:ok,
+     socket
+     |> assign(:project_id, params["project_id"])
+     |> assign(:current_page, :data)
+     |> assign(:cluster, cluster)}
   end
 
   @impl Phoenix.LiveView
@@ -36,6 +35,7 @@ defmodule ControlServerWeb.Live.PostgresNew do
         id="new-cluster-form"
         action={:new}
         title="New Postgres Cluster"
+        project_id={@project_id}
       />
     </div>
     """
