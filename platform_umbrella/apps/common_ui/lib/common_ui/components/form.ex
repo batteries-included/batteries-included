@@ -66,7 +66,7 @@ defmodule CommonUI.Components.Form do
       <%= render_slot(@inner_block) %>
     </div>
 
-    <div class="flex items-center justify-end gap-2 mt-6">
+    <div :if={@actions != []} class="flex items-center justify-end gap-2 mt-6">
       <%= render_slot(@actions) %>
     </div>
     """
@@ -81,7 +81,7 @@ defmodule CommonUI.Components.Form do
 
         <%= render_slot(@inner_block) %>
 
-        <:actions>
+        <:actions :if={@actions != []}>
           <%= render_slot(@actions) %>
         </:actions>
       </.simple_form>

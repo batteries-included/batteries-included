@@ -62,6 +62,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
     <.page_header title={@page_title <> ": " <> @project.name} back_link={~p"/projects"}>
       <.flex>
         <.tooltip target_id="add-tooltip">Add Resources</.tooltip>
+        <.tooltip target_id="edit-tooltip">Edit Project</.tooltip>
         <.tooltip :if={@timeline_installed} target_id="history-tooltip">Project History</.tooltip>
         <.flex gaps="0">
           <.dropdown>
@@ -81,6 +82,13 @@ defmodule ControlServerWeb.Projects.ShowLive do
               FerretDB
             </.dropdown_link>
           </.dropdown>
+
+          <.button
+            id="edit-tooltip"
+            variant="icon"
+            icon={:pencil}
+            link={~p"/projects/#{@project.id}/edit"}
+          />
 
           <.button
             :if={@timeline_installed}

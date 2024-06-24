@@ -41,6 +41,17 @@ defmodule ControlServerWeb.Projects.IndexLive do
           <.flex class="justify-items-center">
             <.button
               variant="minimal"
+              link={~p"/projects/#{project.id}/edit"}
+              icon={:pencil}
+              id={"edit_project_" <> project.id}
+            />
+
+            <.tooltip target_id={"edit_project_" <> project.id}>
+              Edit Project
+            </.tooltip>
+
+            <.button
+              variant="minimal"
               phx-click="delete"
               phx-value-id={project.id}
               data-confirm={"Are you sure you want to delete the \"#{project.name}\" project?"}
