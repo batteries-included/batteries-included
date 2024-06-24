@@ -17,6 +17,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   alias ControlServer.Knative
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
+  alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -33,7 +34,12 @@ defmodule ControlServerWeb.Live.KnativeShow do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign_service(id)
      |> assign_k8s()
+     |> assign_timeline_installed()
      |> maybe_assign_edit_versions()}
+  end
+
+  defp assign_timeline_installed(socket) do
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
   end
 
   defp assign_service(socket, id) do
@@ -162,11 +168,15 @@ defmodule ControlServerWeb.Live.KnativeShow do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/knative/services"}>
       <.flex>
-        <.button variant="secondary" link={edit_versions_url(@service)}>
-          Edit History
-        </.button>
-
+        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
         <.flex gaps="0">
+          <.button
+            :if={@timeline_installed}
+            id="history-tooltip"
+            variant="icon"
+            icon={:clock}
+            link={edit_versions_url(@service)}
+          />
           <.button variant="icon" icon={:pencil} link={edit_url(@service)} />
           <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
         </.flex>
@@ -212,6 +222,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
           service={@service}
           k8_revisions={@k8_revisions}
           page_title={@page_title}
+          timeline_installed={@timeline_installed}
         />
       <% :edit_versions -> %>
         <.edit_versions_page service={@service} edit_versions={@edit_versions} />
