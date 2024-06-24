@@ -25,46 +25,62 @@ defmodule ControlServerWeb.FerretDBFormComponent do
             Save FerretDB Service
           </.button>
         </.page_header>
-        <.panel>
-          <.grid columns={[sm: 1, lg: 2]}>
-            <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
-            <.input
-              field={@form[:postgres_cluster_id]}
-              label="Postgres Cluster"
-              type="select"
-              placeholder="Choose a postgres cluster"
-              options={Enum.map(@pg_clusters, &{&1.name, &1.id})}
-            />
-            <.input
-              field={@form[:virtual_size]}
-              type="select"
-              label="Size"
-              placeholder="Choose a size"
-              options={FerretService.preset_options_for_select()}
-            />
 
-            <.grid columns={[sm: 1, lg: 2]} class="items-center">
-              <.h5>Number of instances</.h5>
-              <.input field={@form[:instances]} type="range" min="1" max="3" step="1" />
+        <.grid columns={[sm: 1, lg: 2]}>
+          <.panel class="col-span-2">
+            <.grid columns={[sm: 1, lg: 2]}>
+              <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
+              <.input
+                field={@form[:postgres_cluster_id]}
+                label="Postgres Cluster"
+                type="select"
+                placeholder="Choose a postgres cluster"
+                options={Enum.map(@pg_clusters, &{&1.name, &1.id})}
+              />
+              <.input
+                field={@form[:virtual_size]}
+                type="select"
+                label="Size"
+                placeholder="Choose a size"
+                options={FerretService.preset_options_for_select()}
+              />
+
+              <.grid columns={[sm: 1, lg: 2]} class="items-center">
+                <.h5>Number of instances</.h5>
+                <.input field={@form[:instances]} type="range" min="1" max="3" step="1" />
+              </.grid>
             </.grid>
-          </.grid>
-          <.data_list
-            :if={@form[:virtual_size].value != "custom"}
-            variant="horizontal-bolded"
-            class="mt-3 mb-5"
-            data={[
-              {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
-              {"CPU limits:", @form[:cpu_limits].value}
-            ]}
-          />
+            <.data_list
+              :if={@form[:virtual_size].value != "custom"}
+              variant="horizontal-bolded"
+              class="mt-3 mb-5"
+              data={[
+                {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
+                {"CPU limits:", @form[:cpu_limits].value}
+              ]}
+            />
 
-          <.grid :if={@form[:virtual_size].value == "custom"} columns={[sm: 1, md: 2, xl: 4]}>
-            <.input field={@form[:cpu_requested]} label="Cpu requested" />
-            <.input field={@form[:cpu_limits]} label="Cpu limits" />
-            <.input field={@form[:memory_requested]} label="Memory requested" />
-            <.input field={@form[:memory_limits]} label="Memory limits" />
-          </.grid>
-        </.panel>
+            <.grid :if={@form[:virtual_size].value == "custom"} columns={[sm: 1, md: 2, xl: 4]}>
+              <.input field={@form[:cpu_requested]} label="Cpu requested" />
+              <.input field={@form[:cpu_limits]} label="Cpu limits" />
+              <.input field={@form[:memory_requested]} label="Memory requested" />
+              <.input field={@form[:memory_limits]} label="Memory limits" />
+            </.grid>
+          </.panel>
+
+          <.panel title="Advanced Settings" variant="gray">
+            <.flex column>
+              <.input
+                field={@form[:project_id]}
+                type="select"
+                label="Project"
+                placeholder="No Project"
+                placeholder_selectable={true}
+                options={Enum.map(@projects, &{&1.name, &1.id})}
+              />
+            </.flex>
+          </.panel>
+        </.grid>
       </.form>
     </div>
     """
@@ -72,13 +88,15 @@ defmodule ControlServerWeb.FerretDBFormComponent do
 
   @impl Phoenix.LiveComponent
   def update(%{ferret_service: ferret_service} = assigns, socket) do
-    changeset = FerretDB.change_ferret_service(ferret_service)
+    project_id = Map.get(ferret_service, :project_id) || assigns[:project_id]
+    changeset = FerretDB.change_ferret_service(ferret_service, %{project_id: project_id})
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_changeset(changeset)
-     |> assign_posssible_clusters()}
+     |> assign_posssible_clusters()
+     |> assign_projects()}
   end
 
   defp assign_changeset(socket, changeset) do
@@ -88,6 +106,11 @@ defmodule ControlServerWeb.FerretDBFormComponent do
   defp assign_posssible_clusters(socket) do
     clusters = Postgres.normal_clusters()
     assign(socket, pg_clusters: clusters)
+  end
+
+  defp assign_projects(socket) do
+    projects = ControlServer.Projects.list_projects()
+    assign(socket, projects: projects)
   end
 
   @impl Phoenix.LiveComponent

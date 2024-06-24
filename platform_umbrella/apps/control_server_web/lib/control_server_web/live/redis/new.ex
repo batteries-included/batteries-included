@@ -7,8 +7,12 @@ defmodule ControlServerWeb.Live.RedisNew do
   require Logger
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
-    {:ok, socket |> assign_failover_cluster() |> assign_page_title()}
+  def mount(params, _session, socket) do
+    {:ok,
+     socket
+     |> assign(:project_id, params["project_id"])
+     |> assign_failover_cluster()
+     |> assign_page_title()}
   end
 
   @impl Phoenix.LiveView
@@ -46,6 +50,7 @@ defmodule ControlServerWeb.Live.RedisNew do
         title={@page_title}
         action={:new}
         save_target={self()}
+        project_id={@project_id}
       />
     </div>
     """

@@ -10,8 +10,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   @impl Phoenix.LiveComponent
   def update(%{cluster: cluster} = assigns, socket) do
-    changeset =
-      Postgres.change_cluster(cluster)
+    project_id = Map.get(cluster, :project_id) || assigns[:project_id]
+    changeset = Postgres.change_cluster(cluster, %{project_id: project_id})
 
     {:ok,
      socket

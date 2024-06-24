@@ -33,7 +33,11 @@ defmodule ControlServer.FerretDB do
       ** (Ecto.NoResultsError)
 
   """
-  def get_ferret_service!(id), do: Repo.get!(FerretService, id)
+  def get_ferret_service!(id, opts \\ []) do
+    FerretService
+    |> preload(^Keyword.get(opts, :preload, []))
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a ferret_service.

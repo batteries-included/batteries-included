@@ -67,7 +67,8 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
 
   @impl Phoenix.LiveComponent
   def update(%{failover_cluster: failover_cluster} = assigns, socket) do
-    changeset = Redis.change_failover_cluster(failover_cluster)
+    project_id = Map.get(failover_cluster, :project_id) || assigns[:project_id]
+    changeset = Redis.change_failover_cluster(failover_cluster, %{project_id: project_id})
 
     {:ok,
      socket
