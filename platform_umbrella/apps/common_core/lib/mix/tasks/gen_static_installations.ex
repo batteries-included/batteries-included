@@ -55,7 +55,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
       ),
       Installation.new!("damian",
         kube_provider: :aws,
-        usage: :internal_dev,
+        usage: :development,
         team_id: team.id,
         id: BatteryUUID.autogenerate()
       ),
