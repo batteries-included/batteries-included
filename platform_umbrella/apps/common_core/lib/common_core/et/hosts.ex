@@ -2,7 +2,7 @@ defmodule CommonCore.ET.URLs do
   @moduledoc false
   alias CommonCore.Batteries.BatteryCoreConfig
 
-  @local_home "http://home.local.127.0.0.1.ip.batteriesincl.com:4100/api/v1"
+  @local_home "http://home.backend-service.127-0-0-1.ip.batteriesincl.com:4100/api/v1"
   @prod_home "https://home.prod.batteriesincl.com/api/v1"
 
   def home_base_url(%BatteryCoreConfig{} = config) do
