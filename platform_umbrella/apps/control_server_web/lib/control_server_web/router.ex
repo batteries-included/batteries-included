@@ -64,6 +64,7 @@ defmodule ControlServerWeb.Router do
     live "/", IndexLive
     live "/new", NewLive
     live "/:id", ShowLive
+    live "/:id/edit", EditLive
     live "/:id/timeline", TimelineLive
   end
 

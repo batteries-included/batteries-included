@@ -47,4 +47,20 @@ defmodule ControlServerWeb.ProjectLiveTest do
       assert html =~ project.name
     end
   end
+
+  describe "/projects/:id/edit" do
+    @tag :slow
+    test "should edit a project", %{conn: conn, project: project} do
+      {:ok, view, _} = live(conn, ~p"/projects/#{project}/edit")
+
+      {:ok, _, html} =
+        view
+        |> element("#edit-project-form")
+        |> render_submit(%{project: %{name: "New Name", description: "New Description"}})
+        |> follow_redirect(conn, ~p"/projects/#{project}")
+
+      assert html =~ "New Name"
+      assert html =~ "New Description"
+    end
+  end
 end
