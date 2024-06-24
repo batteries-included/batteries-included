@@ -51,6 +51,7 @@ defmodule HomeBaseWeb.SignupLive do
     <.simple_form
       for={@form}
       id="signup-form"
+      method="post"
       action={~p"/login?action=registered"}
       phx-change="validate"
       phx-submit="save"
