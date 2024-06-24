@@ -47,7 +47,7 @@ defmodule CommonCore.StateSummary.Hosts do
   end
 
   def knative_base_host(%StateSummary{} = summary) do
-    summary |> ip() |> host("webapp", "user")
+    summary |> ip() |> host("webapp")
   end
 
   def knative_host(%StateSummary{} = summary, service) do
@@ -56,7 +56,7 @@ defmodule CommonCore.StateSummary.Hosts do
   end
 
   def notebooks_host(%StateSummary{} = summary) do
-    summary |> ip() |> host("notebooks", "user")
+    summary |> ip() |> host("notebooks")
   end
 
   # NOTE: This isn't exclusive - some batteries don't have host mappings, some may have multiple in the future.
@@ -81,19 +81,19 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ingress_ips() |> List.first()
   end
 
-  defp host(ip, name, group \\ "core")
+  defp host(ip, name)
 
-  defp host(nil, _name, _group), do: ""
+  defp host(nil, _name), do: ""
 
-  defp host("", _name, _group), do: ""
+  defp host("", _name), do: ""
 
-  defp host(ip, name, group) do
+  defp host(ip, name) do
     # Rather than new hostnames for each octet of ips replace with -'s
     # For one this makes lets encrypt happy, and it also speeds
     # up dns look up traversal on the worst case.
     ip = String.replace(ip, ".", "-")
 
-    "#{name}.#{group}.#{ip}.ip.batteriesincl.com"
+    "#{name}.#{ip}.ip.batteriesincl.com"
   end
 
   defp ingress_ips(%StateSummary{} = summary) do
