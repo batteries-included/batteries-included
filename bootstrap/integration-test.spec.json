@@ -8,7 +8,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_01903204fcbf76509f9203b8a39ec6b3",
+        "id": "batt_01904ade778e7d54ac2f4a2a34d3ff96",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -22,12 +22,12 @@
           "default_size": "tiny",
           "cluster_name": "integration-test",
           "server_in_cluster": false,
-          "install_id": "batt_01903204fc9b7b2c859d62860eaa96b7",
+          "install_id": "batt_01904ade77717f109047dfe6b774ded3",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "WSMEFS5tsnOZSr_SBJXGA2jhttdiTqUeIj3wVopMq4E",
+            "d": "FCMH2QEshrJ7vvJ8ojiGw34mvZDK3zo9YRdcZ4xV94I",
             "kty": "OKP",
-            "x": "wamaPSqAPy0X0ERAv11k_d0uh-QwrZcwtudRLAJHcL4"
+            "x": "ouSkJkJYoyCxT9LHyBI0e2rVM1VLc2hokc-Oz9jykBg"
           },
           "image_override": null,
           "bootstrap_image_override": null
@@ -47,13 +47,13 @@
           "name": "control",
           "owner": "battery-control-user"
         },
-        "storage_class": null,
         "cpu_requested": 500,
         "cpu_limits": 500,
         "memory_requested": 536870912,
         "memory_limits": 536870912,
         "num_instances": 1,
         "virtual_size": "tiny",
+        "storage_class": null,
         "inserted_at": null,
         "updated_at": null,
         "users": [
@@ -67,7 +67,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "5UZAODOCQ2L5FKDU63XAAU46",
+            "password": "XCQORKBO7RR4AC56UALDQEJA",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -89,7 +89,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "NNKI27Q2FX5USIJMWOONLMWRTRUGGDLXZUP723AXRO7KO6AHU6XA===="
+          "battery/hash": "GJQVP4HGFQXGNC6H7Q6SFGXELQCUIHA5QDSWXMA67VE2NPYESD3Q===="
         },
         "labels": {
           "app": "battery-core",
@@ -99,7 +99,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01903204fcbf76509f9203b8a39ec6b3",
+          "battery/owner": "batt_01904ade778e7d54ac2f4a2a34d3ff96",
           "istio-injection": "enabled",
           "version": "latest"
         },
