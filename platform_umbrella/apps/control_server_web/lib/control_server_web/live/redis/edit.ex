@@ -27,7 +27,7 @@ defmodule ControlServerWeb.Live.RedisEdit do
 
   @impl Phoenix.LiveView
   def handle_info({"failover_cluster:save", %{"failover_cluster" => cluster}}, socket) do
-    {:noreply, push_redirect(socket, to: ~p"/redis/#{cluster}/show")}
+    {:noreply, push_navigate(socket, to: ~p"/redis/#{cluster}/show")}
   end
 
   @impl Phoenix.LiveView

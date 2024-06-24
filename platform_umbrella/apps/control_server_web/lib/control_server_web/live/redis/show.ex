@@ -50,7 +50,7 @@ defmodule ControlServerWeb.Live.RedisShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = Redis.delete_failover_cluster(socket.assigns.failover_cluster)
 
-    {:noreply, push_redirect(socket, to: ~p"/redis")}
+    {:noreply, push_navigate(socket, to: ~p"/redis")}
   end
 
   @impl Phoenix.LiveView

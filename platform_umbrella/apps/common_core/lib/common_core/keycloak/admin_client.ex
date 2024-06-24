@@ -429,9 +429,6 @@ defmodule CommonCore.Keycloak.AdminClient do
       {:ensure_access_valid, {:error, error}} ->
         Logger.warning("Failed to get valid access token, error #{inspect(error)}")
         {:error, error}
-
-      _ ->
-        {:error, :unknown_error}
     end
   end
 

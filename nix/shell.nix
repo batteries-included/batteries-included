@@ -35,7 +35,7 @@
 
       # elixir,elixir-ls, and hex are using the same version elixir
       #
-      elixir = beamPackages.elixir_1_16;
+      elixir = beamPackages.elixir_1_17;
       elixir-ls = beamPackages.elixir-ls.override { inherit elixir; };
       hex = beamPackages.hex.override { inherit elixir; };
 

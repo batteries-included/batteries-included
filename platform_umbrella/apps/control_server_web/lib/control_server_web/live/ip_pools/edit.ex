@@ -19,7 +19,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolEdit do
 
   @impl Phoenix.LiveView
   def handle_info({"ip_address_pool:save", _}, socket) do
-    {:noreply, push_redirect(socket, to: ~p"/ip_address_pools")}
+    {:noreply, push_navigate(socket, to: ~p"/ip_address_pools")}
   end
 
   @impl Phoenix.LiveView

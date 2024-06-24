@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.RedisNew do
   def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
     new_path = ~p"/redis/#{failover_cluster}/show"
 
-    {:noreply, push_redirect(socket, to: new_path)}
+    {:noreply, push_navigate(socket, to: new_path)}
   end
 
   @impl Phoenix.LiveView

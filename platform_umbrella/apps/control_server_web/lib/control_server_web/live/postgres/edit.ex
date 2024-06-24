@@ -30,7 +30,7 @@ defmodule ControlServerWeb.Live.PostgresEdit do
 
   @impl Phoenix.LiveView
   def handle_info({"cluster:save", %{"cluster" => cluster}}, socket) do
-    {:noreply, push_redirect(socket, to: ~p"/postgres/#{cluster}/show")}
+    {:noreply, push_navigate(socket, to: ~p"/postgres/#{cluster}/show")}
   end
 
   @impl Phoenix.LiveView

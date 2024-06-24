@@ -46,7 +46,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   def handle_event("delete", _, socket) do
     {:ok, _} = Postgres.delete_cluster(socket.assigns.cluster)
 
-    {:noreply, push_redirect(socket, to: ~p"/postgres")}
+    {:noreply, push_navigate(socket, to: ~p"/postgres")}
   end
 
   defp assign_timeline_installed(socket) do

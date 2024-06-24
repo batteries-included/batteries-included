@@ -102,9 +102,6 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     with {:ok, up_g_snap} <- KubeEctoSteps.update_snap_status(snap, :applying),
          {:ok, apply_result} <- apply_resource_paths(resource_paths, resource_map, state) do
       final_snap_update(up_g_snap, apply_result)
-    else
-      {:error, err} -> {:error, err}
-      err -> {:error, %{error: err}}
     end
   end
 

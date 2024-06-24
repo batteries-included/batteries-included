@@ -7,7 +7,7 @@
 
       nodejs = pkgs.nodejs_22;
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
-      version = "0.12.4";
+      version = "0.12.5";
     in
     {
       packages.pastebin-static = npmlock2nix.v2.build {

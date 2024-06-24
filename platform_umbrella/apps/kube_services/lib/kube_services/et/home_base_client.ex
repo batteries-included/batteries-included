@@ -144,10 +144,6 @@ defmodule KubeServices.ET.HomeBaseClient do
       {:error, reason} ->
         Logger.error("Failed to send usage report: #{inspect(reason)}")
         {:error, reason}
-
-      unexpected ->
-        Logger.error("Unexpected response from home: #{inspect(unexpected)}")
-        {:error, {:unexpected_response, unexpected}}
     end
   end
 
@@ -159,10 +155,6 @@ defmodule KubeServices.ET.HomeBaseClient do
       {:error, reason} ->
         Logger.error("Failed to send host report: #{inspect(reason)}")
         {:error, reason}
-
-      unexpected ->
-        Logger.error("Unexpected response from home: #{inspect(unexpected)}")
-        {:error, {:unexpected_response, unexpected}}
     end
   end
 
