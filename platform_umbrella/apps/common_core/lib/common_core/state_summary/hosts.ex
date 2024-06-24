@@ -88,6 +88,11 @@ defmodule CommonCore.StateSummary.Hosts do
   defp host("", _name, _group), do: ""
 
   defp host(ip, name, group) do
+    # Rather than new hostnames for each octet of ips replace with -'s
+    # For one this makes lets encrypt happy, and it also speeds
+    # up dns look up traversal on the worst case.
+    ip = String.replace(ip, ".", "-")
+
     "#{name}.#{group}.#{ip}.ip.batteriesincl.com"
   end
 

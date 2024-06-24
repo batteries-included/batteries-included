@@ -19,7 +19,7 @@ defmodule ControlServerWeb.Keycloak.TablesTest do
       ~H"""
       <.keycloak_realms_table
         rows={@realms}
-        keycloak_url="http://keycloak.example.129.99.1.1.ip.batteriesincl.com"
+        keycloak_url="http://keycloak.example.129-99-1-1.ip.batteriesincl.com"
       />
       """
     end

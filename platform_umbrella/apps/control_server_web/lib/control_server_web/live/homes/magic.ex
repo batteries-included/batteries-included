@@ -83,7 +83,7 @@ defmodule ControlServerWeb.Live.MagicHome do
 
   defp battery_link_panel(%{battery: %{type: :battery_core}} = assigns) do
     ~H"""
-    <.a variant="bordered" href="http://home.127.0.0.1.ip.batteriesincl.com:4900/">
+    <.a variant="bordered" href="http://home.127-0-0-1.ip.batteriesincl.com:4900/">
       Batteries Included Home
     </.a>
     <.a variant="bordered" navigate={~p"/content_addressable"}>Content Addressable Storage</.a>

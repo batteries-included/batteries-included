@@ -52,7 +52,7 @@ defmodule CommonCore.Factory do
   def host_report_factory(attrs \\ %{}) do
     attrs = Map.new(attrs)
 
-    control_server_host = Map.get(attrs, :control_server_host, "control.core.127.0.0.1.ip.batteriesincl.com")
+    control_server_host = Map.get(attrs, :control_server_host, "control.core.127-0-0-1.ip.batteriesincl.com")
 
     %CommonCore.ET.HostReport{control_server_host: control_server_host}
   end
