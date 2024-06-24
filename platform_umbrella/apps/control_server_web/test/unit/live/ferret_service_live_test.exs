@@ -15,7 +15,7 @@ defmodule ControlServerWeb.FerretServiceLiveTest do
     test "lists all ferret_services", %{conn: conn} do
       {:ok, _index_live, html} = live(conn, ~p"/ferretdb")
 
-      assert html =~ "Listing Ferret services"
+      assert html =~ "Listing FerretDB services"
     end
   end
 
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.FerretServiceLiveTest do
     test "displays ferret_service", %{conn: conn, ferret_service: ferret_service} do
       {:ok, _show_live, html} = live(conn, ~p"/ferretdb/#{ferret_service}/show")
 
-      assert html =~ "Show Ferret Service"
+      assert html =~ "Show FerretDB Service"
     end
   end
 end

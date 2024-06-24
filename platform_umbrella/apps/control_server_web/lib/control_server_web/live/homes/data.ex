@@ -89,10 +89,7 @@ defmodule ControlServerWeb.Live.DataHome do
           <.link navigate={~p"/ferretdb"}>View All</.link>
         </.flex>
       </:menu>
-      <.ferret_services_table
-        rows={Enum.with_index(@ferret_services) |> Enum.map(fn {a, b} -> {b, a} end)}
-        abbridged
-      />
+      <.ferret_services_table rows={@ferret_services} abbridged />
     </.panel>
     """
   end

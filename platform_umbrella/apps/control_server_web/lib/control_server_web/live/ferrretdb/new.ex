@@ -6,13 +6,17 @@ defmodule ControlServerWeb.Live.FerretServiceNew do
   alias ControlServerWeb.FerretDBFormComponent
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     ferret_service = %FerretService{
       instances: 1,
       virtual_size: Atom.to_string(KubeServices.SystemState.SummaryBatteries.default_size())
     }
 
-    {:ok, assign(socket, ferret_service: ferret_service, current_page: :data)}
+    {:ok,
+     socket
+     |> assign(:project_id, params["project_id"])
+     |> assign(:ferret_service, ferret_service)
+     |> assign(:current_page, :data)}
   end
 
   @impl Phoenix.LiveView
@@ -29,7 +33,8 @@ defmodule ControlServerWeb.Live.FerretServiceNew do
         ferret_service={@ferret_service}
         id="new-ferretdb-form"
         action={:new}
-        title="New FerretDB MongoDB Compatible Service"
+        title="New FerretDB/MongoDB Compatible Service"
+        project_id={@project_id}
       />
     </div>
     """

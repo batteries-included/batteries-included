@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
+  import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.PostgresClusterTable
   import ControlServerWeb.RedisTable
@@ -36,8 +37,9 @@ defmodule ControlServerWeb.Projects.ShowLive do
     knative_ids = Enum.map(project.knative_services, & &1.id)
     postgres_ids = Enum.map(project.postgres_clusters, & &1.id)
     redis_ids = Enum.map(project.redis_clusters, & &1.id)
+    ferret_ids = Enum.map(project.ferret_services, & &1.id)
 
-    allowed_ids = MapSet.new(knative_ids ++ postgres_ids ++ redis_ids)
+    allowed_ids = MapSet.new(knative_ids ++ postgres_ids ++ redis_ids ++ ferret_ids)
     pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
 
     assign(socket, pods: pods)
@@ -74,6 +76,10 @@ defmodule ControlServerWeb.Projects.ShowLive do
             <.dropdown_link navigate={~p"/redis/new?project_id=#{@project.id}"}>
               Redis
             </.dropdown_link>
+
+            <.dropdown_link navigate={~p"/ferretdb/new?project_id=#{@project.id}"}>
+              FerretDB
+            </.dropdown_link>
           </.dropdown>
 
           <.button
@@ -98,6 +104,10 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
       <.panel :if={@project.redis_clusters != []} variant="gray" title="Redis">
         <.redis_table rows={@project.redis_clusters} />
+      </.panel>
+
+      <.panel :if={@project.ferret_services != []} variant="gray" title="FerretDB/MongoDB">
+        <.ferret_services_table rows={@project.ferret_services} />
       </.panel>
 
       <.panel title="Pods" class="col-span-2">

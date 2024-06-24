@@ -10,22 +10,18 @@ defmodule ControlServerWeb.FerretServicesTable do
 
   def ferret_services_table(assigns) do
     ~H"""
-    <.table
-      id="ferret_services"
-      rows={@rows}
-      row_click={fn {_id, ferret_service} -> ferret_service |> show_url |> JS.navigate() end}
-    >
-      <:col :let={{_id, ferret_service}} label="Name"><%= ferret_service.name %></:col>
-      <:col :let={{_id, ferret_service}} label="Instances">
+    <.table id="ferret_services" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
+      <:col :let={ferret_service} label="Name"><%= ferret_service.name %></:col>
+      <:col :let={ferret_service} label="Instances">
         <%= ferret_service.instances %>
       </:col>
-      <:col :let={{_id, ferret_service}} :if={!@abbridged} label="Cpu requested">
+      <:col :let={ferret_service} :if={!@abbridged} label="Cpu requested">
         <%= ferret_service.cpu_requested %>
       </:col>
-      <:col :let={{_id, ferret_service}} :if={!@abbridged} label="Memory requested">
+      <:col :let={ferret_service} :if={!@abbridged} label="Memory requested">
         <%= ferret_service.memory_requested %>
       </:col>
-      <:action :let={{_id, ferret_service}}>
+      <:action :let={ferret_service}>
         <.flex class="justify-items-center align-middle">
           <.button
             variant="minimal"

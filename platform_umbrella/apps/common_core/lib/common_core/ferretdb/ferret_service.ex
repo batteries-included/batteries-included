@@ -1,7 +1,9 @@
 defmodule CommonCore.FerretDB.FerretService do
   @moduledoc false
-  use CommonCore, :schema
 
+  use CommonCore, {:schema, no_encode: [:project]}
+
+  alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
   @required_fields ~w(instances postgres_cluster_id)a
@@ -52,6 +54,8 @@ defmodule CommonCore.FerretDB.FerretService do
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true
 
+    belongs_to :project, Project
+
     timestamps()
   end
 
@@ -66,5 +70,6 @@ defmodule CommonCore.FerretDB.FerretService do
     ferret_service
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
+    |> foreign_key_constraint(:project_id)
   end
 end

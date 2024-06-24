@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PodsTable
 
+  alias CommonCore.Util.Memory
   alias ControlServer.FerretDB
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
@@ -17,7 +18,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
-    service = FerretDB.get_ferret_service!(id)
+    service = FerretDB.get_ferret_service!(id, preload: [:project])
 
     {:noreply,
      socket
@@ -38,7 +39,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
   end
 
   defp assign_page_title(%{assigns: %{live_action: :show}} = socket) do
-    assign(socket, page_title: "Show Ferret Service")
+    assign(socket, page_title: "Show FerretDB Service")
   end
 
   defp assign_page_title(%{assigns: %{live_action: :edit_versions}} = socket) do
@@ -79,15 +80,16 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
   defp main_page(assigns) do
     ~H"""
     <.page_header title={"FerretDB Service: #{@ferret_service.name}"} back_link={~p"/ferretdb"}>
-      <.flex>
-        <.badge>
-          <:item label="Instances"><%= @ferret_service.instances %></:item>
-          <:item label="Started">
-            <.relative_display time={@ferret_service.inserted_at} />
-          </:item>
+      <:menu>
+        <.badge :if={@ferret_service.project_id}>
+          <:item label="Project"><%= @ferret_service.project.name %></:item>
         </.badge>
+      </:menu>
 
+      <.flex>
         <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
+        <.tooltip target_id="edit-tooltip">Edit Service</.tooltip>
+        <.tooltip target_id="delete-tooltip">Delete Service</.tooltip>
         <.flex gaps="0">
           <.button
             :if={@timeline_installed}
@@ -96,15 +98,41 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
             icon={:clock}
             link={edit_versions_url(@ferret_service)}
           />
-          <.button variant="icon" icon={:pencil} link={edit_url(@ferret_service)} />
-          <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
+          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@ferret_service)} />
+          <.button
+            id="delete-tooltip"
+            variant="icon"
+            icon={:trash}
+            phx-click="delete"
+            data-confirm="Are you sure?"
+          />
         </.flex>
       </.flex>
     </.page_header>
 
-    <.panel title="Pods">
-      <.pods_table pods={@pods} />
-    </.panel>
+    <.grid columns={%{sm: 1, lg: 2}}>
+      <.panel title="Details" variant="gray">
+        <.data_list>
+          <:item title="Instances">
+            <%= @ferret_service.instances %>
+          </:item>
+          <:item :if={@ferret_service.memory_limits} title="Memory Limits">
+            <%= Memory.humanize(@ferret_service.memory_limits) %>
+          </:item>
+          <:item title="Started">
+            <.relative_display time={@ferret_service.inserted_at} />
+          </:item>
+        </.data_list>
+      </.panel>
+
+      <.flex column class="justify-start">
+        <%!-- TODO: services link and any other relavent links --%>
+      </.flex>
+
+      <.panel title="Pods" class="col-span-2">
+        <.pods_table pods={@pods} />
+      </.panel>
+    </.grid>
     """
   end
 

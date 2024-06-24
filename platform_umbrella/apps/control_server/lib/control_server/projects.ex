@@ -11,7 +11,12 @@ defmodule ControlServer.Projects do
 
   def get_project!(id) do
     Project
-    |> preload([:postgres_clusters, :redis_clusters, :knative_services])
+    |> preload([
+      :postgres_clusters,
+      :redis_clusters,
+      :ferret_services,
+      :knative_services
+    ])
     |> Repo.get!(id)
   end
 
