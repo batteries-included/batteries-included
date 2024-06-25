@@ -63,7 +63,12 @@ defmodule CommonCore.Batteries.Catalog do
       description: "A truly Open Source MongoDB alternative, built on Postgres"
     },
     # Magic
-    %CatalogBattery{group: :magic, type: :battery_core, name: "Battery Core"},
+    %CatalogBattery{
+      group: :magic,
+      type: :battery_core,
+      name: "Battery Core",
+      description: "The core of the Batteries Included system. This battery is required for all other batteries."
+    },
     %CatalogBattery{
       group: :magic,
       type: :timeline,
@@ -124,20 +129,23 @@ defmodule CommonCore.Batteries.Catalog do
       group: :devtools,
       type: :smtp4dev,
       dependencies: [:battery_core, :istio_gateway],
-      name: "SMTP4Dev"
+      name: "SMTP4Dev",
+      description: "SMTP4Dev is a dummy SMTP server for development, testing, and debugging of email systems."
     },
     # ML
     %CatalogBattery{
       group: :ai,
       type: :notebooks,
       dependencies: [:istio_gateway],
-      name: "Notebooks"
+      name: "Notebooks",
+      description: "Jupyter Notebooks for AI, ML, and Data Science."
     },
     %CatalogBattery{
       group: :ai,
       type: :text_generation_webui,
       dependencies: [:istio_gateway],
-      name: "Text Generation WebUI"
+      name: "Text Generation WebUI",
+      description: "A web interface for generating text using LLM's."
     },
     # Monitoring
     %CatalogBattery{
@@ -152,19 +160,24 @@ defmodule CommonCore.Batteries.Catalog do
       group: :monitoring,
       type: :vm_operator,
       dependencies: [:battery_core],
-      name: "VM Operator"
+      name: "VM Operator",
+      description: "The VM Operator is a Kubernetes operator that manages the lifecycle of VictoriaMetrics."
     },
     %CatalogBattery{
       group: :monitoring,
       type: :vm_agent,
       dependencies: [:vm_operator],
-      name: "VM Agent"
+      name: "VM Agent",
+      description:
+        "The VM Agent is an agent that collects metrics from the Kubernetes cluster and sends them to VictoriaMetrics."
     },
     %CatalogBattery{
       group: :monitoring,
       type: :vm_cluster,
       dependencies: [:vm_operator],
-      name: "VM Cluster"
+      name: "VM Cluster",
+      description:
+        "The VM Cluster is a cluster of VictoriaMetrics instances that store and serve metrics from the Kubernetes cluster."
     },
     %CatalogBattery{
       group: :monitoring,
@@ -192,7 +205,8 @@ defmodule CommonCore.Batteries.Catalog do
       group: :monitoring,
       type: :promtail,
       dependencies: [:battery_core, :loki],
-      name: "Promtail"
+      name: "Promtail",
+      description: "Promtail is an agent which ships the contents of local logs to a Loki instance."
     },
     # Network
     %CatalogBattery{
@@ -232,25 +246,32 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :cert_manager,
       dependencies: [:battery_core],
-      name: "Cert Manager"
+      name: "Cert Manager",
+      description:
+        "Cert Manager is a Kubernetes controller that automates the management and issuance of X.509 and TLS certificates from various issuing sources."
     },
     %CatalogBattery{
       group: :net_sec,
       type: :battery_ca,
       dependencies: [:cert_manager],
-      name: "Battery CA"
+      name: "Battery CA",
+      description: "The Certificate Authority for the Batteries Included system."
     },
     %CatalogBattery{
       group: :net_sec,
       type: :trust_manager,
       dependencies: [:battery_core, :battery_ca, :cert_manager],
-      name: "Trust Manager"
+      name: "Trust Manager",
+      description:
+        "Trust Manager is a small Kubernetes operator which aims to help reduce the overhead of managing TLS trust bundles in your clusters."
     },
     %CatalogBattery{
       group: :net_sec,
       type: :istio_csr,
       dependencies: [:istio, :battery_ca],
-      name: "Istio CSR"
+      name: "Istio CSR",
+      description:
+        "Istio CSR is a Kubernetes operator that automates the management of Istio's Certificate Signing Requests."
     },
     %CatalogBattery{
       group: :net_sec,
@@ -271,7 +292,9 @@ defmodule CommonCore.Batteries.Catalog do
       group: :net_sec,
       type: :sso,
       dependencies: [:battery_core, :keycloak],
-      name: "SSO"
+      name: "SSO",
+      description:
+        "Single Sign On for the Batteries Included system. This will configure all batteries to rely on Keycloak for authentication."
     }
   ]
 
