@@ -9,12 +9,14 @@ defmodule ControlServerWeb.Live.KnativeNew do
   require Logger
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     service = %Service{}
     changeset = Knative.change_service(service)
 
     {:ok,
      socket
+     |> assign(:current_page, :devtools)
+     |> assign(:project_id, params["project_id"])
      |> assign(:service, service)
      |> assign(:changeset, changeset)}
   end
@@ -32,7 +34,8 @@ defmodule ControlServerWeb.Live.KnativeNew do
       service={@service}
       id="service-form"
       action={:new}
-      title="New Serverless Service"
+      title="New Knative Service"
+      project_id={@project_id}
     />
     """
   end

@@ -81,7 +81,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   @impl Phoenix.LiveComponent
   def update(%{service: service} = assigns, socket) do
-    changeset = Knative.change_service(service)
+    project_id = Map.get(service, :project_id) || assigns[:project_id]
+    changeset = Knative.change_service(service, %{project_id: project_id})
 
     {:ok,
      socket
@@ -265,7 +266,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           field={@form[:project_id]}
           type="select"
           label="Project"
-          placeholder="Choose Project"
+          placeholder="No Project"
           placeholder_selectable={true}
           options={Enum.map(@projects, &{&1.name, &1.id})}
         />
@@ -300,9 +301,16 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.page_header title={@title} back_link={~p"/knative/services"}>
+        <.page_header
+          title={@title}
+          back_link={
+            if @action == :new,
+              do: ~p"/knative/services",
+              else: ~p"/knative/services/#{@service}/show"
+          }
+        >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
-            Save Serverless
+            Save Service
           </.button>
         </.page_header>
         <.grid columns={[sm: 1, lg: 2]}>

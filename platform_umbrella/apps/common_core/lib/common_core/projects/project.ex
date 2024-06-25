@@ -13,8 +13,8 @@ defmodule CommonCore.Projects.Project do
     has_many :postgres_clusters, CommonCore.Postgres.Cluster
     has_many :redis_clusters, CommonCore.Redis.FailoverCluster
     has_many :ferret_services, CommonCore.FerretDB.FerretService
-    has_many :knative_services, CommonCore.Knative.Service
     has_many :jupyter_notebooks, CommonCore.Notebooks.JupyterLabNotebook
+    has_many :knative_services, CommonCore.Knative.Service
 
     timestamps()
   end

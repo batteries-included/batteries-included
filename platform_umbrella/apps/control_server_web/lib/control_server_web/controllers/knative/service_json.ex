@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.KNativeServiceJSON do
+defmodule ControlServerWeb.KnativeServiceJSON do
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
   alias CommonCore.Knative.Service

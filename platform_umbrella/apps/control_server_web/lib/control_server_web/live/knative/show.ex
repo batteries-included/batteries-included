@@ -12,6 +12,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   import ControlServerWeb.Chart
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.Containers.EnvValuePanel
+  import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Resources.OwnerReference
   alias ControlServer.Knative
@@ -24,7 +25,11 @@ defmodule ControlServerWeb.Live.KnativeShow do
     :ok = KubeEventCenter.subscribe(:pod)
     :ok = KubeEventCenter.subscribe(:knative_service)
     :ok = KubeEventCenter.subscribe(:knative_revision)
-    {:ok, assign(socket, :page_title, page_title(socket.assigns.live_action))}
+
+    {:ok,
+     socket
+     |> assign(:current_page, :devtools)
+     |> assign(:page_title, page_title(socket.assigns.live_action))}
   end
 
   @impl Phoenix.LiveView
@@ -43,7 +48,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   end
 
   defp assign_service(socket, id) do
-    service = Knative.get_service!(id)
+    service = Knative.get_service!(id, preload: [:project])
     assign(socket, service: service, id: id)
   end
 
@@ -97,16 +102,13 @@ defmodule ControlServerWeb.Live.KnativeShow do
     {:noreply, push_navigate(socket, to: ~p"/knative/services")}
   end
 
-  defp page_title(:show), do: "Show Knative Service"
+  defp page_title(:show), do: "Knative Service"
   defp page_title(:edit_versions), do: "Knative Service: Edit History"
 
   defp edit_url(service), do: ~p"/knative/services/#{service}/edit"
   defp show_url(service), do: ~p"/knative/services/#{service}/show"
   defp edit_versions_url(service), do: ~p"/knative/services/#{service}/edit_versions"
-
-  defp service_url(service) do
-    get_in(service, ~w(status url))
-  end
+  defp service_url(service), do: "http://#{knative_host(service)}"
 
   defp traffic(service) do
     get_in(service, ~w(status traffic)) || []
@@ -114,17 +116,6 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp actual_replicas(revision) do
     get_in(revision, ~w(status actualReplicas)) || 0
-  end
-
-  def service_display(assigns) do
-    ~H"""
-    <.traffic_display :if={length(traffic(@service)) > 1} traffic={traffic(@service)} />
-
-    <.grid columns={[sm: 1, lg: 2]}>
-      <.conditions_display conditions={conditions(@service)} />
-      <.revisions_display revisions={@revisions} />
-    </.grid>
-    """
   end
 
   defp traffic_chart_data(traffic_list) do
@@ -166,9 +157,17 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp main_page(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/knative/services"}>
+    <.page_header title={"Knative Service: #{@service.name}"} back_link={~p"/knative/services"}>
+      <:menu>
+        <.badge :if={@service.project_id}>
+          <:item label="Project"><%= @service.project.name %></:item>
+        </.badge>
+      </:menu>
+
       <.flex>
         <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
+        <.tooltip target_id="edit-tooltip">Edit Service</.tooltip>
+        <.tooltip target_id="delete-tooltip">Delete Service</.tooltip>
         <.flex gaps="0">
           <.button
             :if={@timeline_installed}
@@ -177,29 +176,42 @@ defmodule ControlServerWeb.Live.KnativeShow do
             icon={:clock}
             link={edit_versions_url(@service)}
           />
-          <.button variant="icon" icon={:pencil} link={edit_url(@service)} />
-          <.button variant="icon" icon={:trash} phx-click="delete" data-confirm="Are you sure?" />
+          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@service)} />
+          <.button
+            id="delete-tooltip"
+            variant="icon"
+            icon={:trash}
+            phx-click="delete"
+            data-confirm="Are you sure?"
+          />
         </.flex>
       </.flex>
     </.page_header>
 
-    <.flex column>
-      <.badge>
-        <:item label="Name"><%= @service.name %></:item>
-        <:item label="Namespace"><%= namespace(@k8_service) %></:item>
-        <:item label="Started">
-          <.relative_display time={creation_timestamp(@k8_service)} />
-        </:item>
-        <:item label="URL">
-          <.a href={service_url(@k8_service)} variant="external">
-            <%= service_url(@k8_service) %>
-          </.a>
-        </:item>
-      </.badge>
+    <.grid columns={%{sm: 1, lg: 2}}>
+      <.panel title="Details" variant="gray">
+        <.data_list>
+          <:item title="Rollout Duration">
+            <%= @service.rollout_duration %>
+          </:item>
+          <:item title="Namespace">
+            <%= namespace(@k8_service) %>
+          </:item>
+          <:item title="Started">
+            <.relative_display time={creation_timestamp(@k8_service)} />
+          </:item>
+        </.data_list>
+      </.panel>
 
-      <.service_display service={@k8_service} revisions={@k8_revisions} />
+      <.flex column class="justify-start">
+        <.a variant="bordered" href={service_url(@service)}>Running Service</.a>
+      </.flex>
+
+      <.traffic_display :if={length(traffic(@k8_service)) > 1} traffic={traffic(@k8_service)} />
+      <.revisions_display revisions={@k8_revisions} />
       <.env_var_panel env_values={@service.env_values} />
-    </.flex>
+      <.conditions_display conditions={conditions(@k8_service)} />
+    </.grid>
     """
   end
 

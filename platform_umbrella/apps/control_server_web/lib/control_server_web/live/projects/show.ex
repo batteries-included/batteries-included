@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
   import ControlServerWeb.FerretServicesTable
+  import ControlServerWeb.KnativeServicesTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.PostgresClusterTable
   import ControlServerWeb.RedisTable
@@ -34,12 +35,12 @@ defmodule ControlServerWeb.Projects.ShowLive do
   end
 
   defp assign_pods(%{assigns: %{project: project}} = socket) do
-    knative_ids = Enum.map(project.knative_services, & &1.id)
     postgres_ids = Enum.map(project.postgres_clusters, & &1.id)
     redis_ids = Enum.map(project.redis_clusters, & &1.id)
     ferret_ids = Enum.map(project.ferret_services, & &1.id)
+    knative_ids = Enum.map(project.knative_services, & &1.id)
 
-    allowed_ids = MapSet.new(knative_ids ++ postgres_ids ++ redis_ids ++ ferret_ids)
+    allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids)
     pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
 
     assign(socket, pods: pods)
@@ -81,6 +82,10 @@ defmodule ControlServerWeb.Projects.ShowLive do
             <.dropdown_link navigate={~p"/ferretdb/new?project_id=#{@project.id}"}>
               FerretDB
             </.dropdown_link>
+
+            <.dropdown_link navigate={~p"/knative/services/new?project_id=#{@project.id}"}>
+              Knative Service
+            </.dropdown_link>
           </.dropdown>
 
           <.button
@@ -101,27 +106,31 @@ defmodule ControlServerWeb.Projects.ShowLive do
       </.flex>
     </.page_header>
 
-    <.flex column>
+    <.grid columns={[sm: 1, lg: 2]}>
       <.panel :if={@project.description} title="Project Description">
         <%= @project.description %>
       </.panel>
 
       <.panel :if={@project.postgres_clusters != []} variant="gray" title="Postgres">
-        <.postgres_clusters_table rows={@project.postgres_clusters} />
+        <.postgres_clusters_table abbridged rows={@project.postgres_clusters} />
       </.panel>
 
       <.panel :if={@project.redis_clusters != []} variant="gray" title="Redis">
-        <.redis_table rows={@project.redis_clusters} />
+        <.redis_table abbridged rows={@project.redis_clusters} />
       </.panel>
 
       <.panel :if={@project.ferret_services != []} variant="gray" title="FerretDB/MongoDB">
-        <.ferret_services_table rows={@project.ferret_services} />
+        <.ferret_services_table abbridged rows={@project.ferret_services} />
+      </.panel>
+
+      <.panel :if={@project.knative_services != []} variant="gray" title="Knative Services">
+        <.knative_services_table abbridged rows={@project.knative_services} />
       </.panel>
 
       <.panel title="Pods" class="col-span-2">
         <.pods_table pods={@pods} />
       </.panel>
-    </.flex>
+    </.grid>
     """
   end
 end

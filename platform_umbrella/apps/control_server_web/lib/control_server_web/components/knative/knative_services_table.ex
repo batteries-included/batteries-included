@@ -11,25 +11,35 @@ defmodule ControlServerWeb.KnativeServicesTable do
 
   def knative_services_table(assigns) do
     ~H"""
-    <.table id="knative-display-table" rows={@rows}>
+    <.table id="knative-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
       <:col :let={service} :if={!@abbridged} label="ID"><%= service.id %></:col>
       <:col :let={service} label="Name"><%= service.name %></:col>
-      <:col :let={service} label="Link">
-        <.a href={service_url(service)} variant="external">
-          Running Service
-        </.a>
-      </:col>
       <:action :let={service}>
-        <.button
-          variant="minimal"
-          link={show_url(service)}
-          icon={:eye}
-          id={"show_service_" <> service.id}
-        />
+        <.flex class="justify-items-center">
+          <.button
+            variant="minimal"
+            link={show_url(service)}
+            icon={:eye}
+            id={"show_service_" <> service.id}
+          />
 
-        <.tooltip target_id={"show_service_" <> service.id}>
-          Show Service <%= service.name %>
-        </.tooltip>
+          <.tooltip target_id={"show_service_" <> service.id}>
+            Show Service
+          </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={service_url(service)}
+            link_type="external"
+            target="_blank"
+            icon={:arrow_top_right_on_square}
+            id={"running_service_" <> service.id}
+          />
+
+          <.tooltip target_id={"running_service_" <> service.id}>
+            Running Service
+          </.tooltip>
+        </.flex>
       </:action>
     </.table>
     """
@@ -37,5 +47,5 @@ defmodule ControlServerWeb.KnativeServicesTable do
 
   defp show_url(%Service{} = service), do: ~p"/knative/services/#{service.id}/show"
 
-  defp service_url(%Service{} = service), do: "//#{knative_host(service)}"
+  defp service_url(%Service{} = service), do: "http://#{knative_host(service)}"
 end
