@@ -33,13 +33,11 @@ defmodule CommonCore.Resources.CertManager.Certificates.Cert do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Hosts
 
-  resource(:certificate, battery, state) do
-    name = "#{sanitize(battery.type)}-ingress-cert"
+  resource(:certificate, %{type: type} = _battery, state) do
+    name = "#{sanitize(type)}-ingress-cert"
     namespace = istio_namespace(state)
 
-    host = Hosts.for_battery(state, battery.type)
-    issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
-    spec = build_cert_spec(name, host, issuer)
+    spec = spec(name, state, type)
 
     :certmanager_certificate
     |> B.build_resource()
@@ -49,13 +47,26 @@ defmodule CommonCore.Resources.CertManager.Certificates.Cert do
     |> F.require_non_empty(spec)
   end
 
-  defp build_cert_spec(_name, host, issuer) when is_nil(host) or is_nil(issuer), do: nil
+  defp spec(name, state, :knative) do
+    hosts = Enum.map(state.knative_services, &Hosts.knative_host(state, &1))
+    issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
+    build_cert_spec(name, hosts, issuer)
+  end
 
-  defp build_cert_spec(name, host, issuer) do
+  defp spec(name, state, battery_type) do
+    host = Hosts.for_battery(state, battery_type)
+    issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
+    build_cert_spec(name, host, issuer)
+  end
+
+  defp build_cert_spec(_name, host, issuer) when is_nil(host) or is_nil(issuer), do: nil
+  defp build_cert_spec(name, host, issuer) when is_binary(host), do: build_cert_spec(name, [host], issuer)
+
+  defp build_cert_spec(name, hosts, issuer) do
     issuer_ref = B.issuer_ref(group(issuer), kind(issuer), name(issuer))
 
     %{
-      "dnsNames" => [host],
+      "dnsNames" => hosts,
       "issuerRef" => issuer_ref,
       "secretName" => name
     }

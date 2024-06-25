@@ -3,6 +3,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
 
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.SSL
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
@@ -206,19 +207,14 @@ defmodule CommonCore.Resources.KnativeNetIstio do
   resource(:istio_gateway_knative_ingress, battery, state) do
     hosts =
       state.knative_services
-      |> Enum.map(fn service -> knative_host(state, service) end)
+      |> Enum.map(&knative_host(state, &1))
       |> Enum.filter(& &1)
       |> Enum.uniq()
 
     spec =
       %{}
       |> Map.put("selector", %{"istio" => "ingressgateway"})
-      |> Map.put("servers", [
-        %{
-          "hosts" => hosts,
-          "port" => %{"name" => "http", "number" => 80, "protocol" => "HTTP"}
-        }
-      ])
+      |> Map.put("servers", servers(hosts, ssl_enabled?(state)))
 
     :istio_gateway
     |> B.build_resource()
@@ -229,6 +225,18 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.spec(spec)
     |> F.require_non_empty(hosts)
   end
+
+  defp servers(hosts, false = _ssl_enabled?), do: [http_server(hosts)]
+  defp servers(hosts, true = _ssl_enabled?), do: [http_server(hosts), https_server(hosts)]
+
+  defp http_server(hosts), do: %{"hosts" => hosts, "port" => %{"name" => "http", "number" => 80, "protocol" => "HTTP"}}
+
+  defp https_server(hosts),
+    do: %{
+      hosts: hosts,
+      port: %{number: 443, name: "https", protocol: "HTTPS"},
+      tls: %{mode: "SIMPLE", credentialName: "knative-ingress-cert"}
+    }
 
   resource(:istio_gateway_knative_local, battery, _state) do
     ns = battery.config.namespace
