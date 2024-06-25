@@ -2,7 +2,9 @@ defmodule CommonCore.Resources.KnativeServing do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
 
+  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.SSL
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.Secret
@@ -321,8 +323,13 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.data(data)
   end
 
-  resource(:config_map_network, battery, _state) do
-    data = %{}
+  resource(:config_map_network, battery, state) do
+    ssl = ssl_enabled?(state)
+
+    data =
+      %{}
+      |> maybe_put(ssl, "external-domain-tls", "Enabled")
+      |> maybe_put(ssl, "http-protocol", "Redirected")
 
     :config_map
     |> B.build_resource()
