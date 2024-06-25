@@ -64,7 +64,11 @@ defmodule ControlServerWeb.Live.MonitoringHome do
     <.flex :if={@batteries && @batteries != []} column class="items-stretch justify-start">
       <.battery_link_panel :for={battery <- @batteries} battery={battery} />
     </.flex>
-    <.empty_home :if={@batteries == []} install_path={install_path()} />
+    <.empty_home :if={@batteries == []} install_path={install_path()}>
+      <:header>
+        <.h2>Batteries Included Monitoring</.h2>
+      </:header>
+    </.empty_home>
     """
   end
 end

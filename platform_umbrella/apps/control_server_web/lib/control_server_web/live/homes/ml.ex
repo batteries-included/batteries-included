@@ -77,7 +77,11 @@ defmodule ControlServerWeb.Live.MLHome do
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>
-    <.empty_home :if={@batteries == []} install_path={install_path()} />
+    <.empty_home :if={@batteries == []} install_path={install_path()}>
+      <:header>
+        <.h2>Batteries Included AI Tools</.h2>
+      </:header>
+    </.empty_home>
     """
   end
 end
