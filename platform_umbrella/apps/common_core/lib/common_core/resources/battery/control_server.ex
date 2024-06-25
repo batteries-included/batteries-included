@@ -145,7 +145,7 @@ defmodule CommonCore.Resources.ControlServer do
     base
     |> Map.put_new("name", name)
     |> Map.put_new("image", image)
-    |> Map.put_new("imagePullPolicy", "Always")
+    |> Map.put_new("imagePullPolicy", "IfNotPresent")
     |> Map.put_new("resources", %{"requests" => %{"cpu" => "1000m", "memory" => "2000Mi"}})
     |> Map.put_new("env", [
       %{
