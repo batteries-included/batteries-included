@@ -213,7 +213,7 @@ defmodule CommonCore.Resources.Kiali do
                 %{"name" => "LOG_SAMPLER_RATE", "value" => "1"}
               ],
               "image" => battery.config.image,
-              "imagePullPolicy" => "Always",
+              "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{
                   "path" => "/kiali/healthz",

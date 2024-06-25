@@ -225,7 +225,7 @@ defmodule CommonCore.Resources.Forgejo do
                 %{"name" => "TMPDIR", "value" => "/tmp/gitea"}
               ],
               "image" => battery.config.image,
-              "imagePullPolicy" => "Always",
+              "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "failureThreshold" => 10,
                 "initialDelaySeconds" => 200,
@@ -262,7 +262,7 @@ defmodule CommonCore.Resources.Forgejo do
                 %{"name" => "GITEA_TEMP", "value" => "/tmp/gitea"}
               ],
               "image" => battery.config.image,
-              "imagePullPolicy" => "Always",
+              "imagePullPolicy" => "IfNotPresent",
               "name" => "init-directories",
               "securityContext" => %{},
               "volumeMounts" => [
@@ -283,7 +283,7 @@ defmodule CommonCore.Resources.Forgejo do
                 %{"name" => "FORGEJO__DATABASE__HOST", "valueFrom" => B.secret_key_ref(secret_name, "hostname")}
               ],
               "image" => battery.config.image,
-              "imagePullPolicy" => "Always",
+              "imagePullPolicy" => "IfNotPresent",
               "name" => "init-app-ini",
               "securityContext" => %{},
               "volumeMounts" => [
@@ -327,7 +327,7 @@ defmodule CommonCore.Resources.Forgejo do
                     []
                   end,
               "image" => battery.config.image,
-              "imagePullPolicy" => "Always",
+              "imagePullPolicy" => "IfNotPresent",
               "name" => "configure-forgejo",
               "securityContext" => %{"runAsUser" => 1000},
               "volumeMounts" => [
