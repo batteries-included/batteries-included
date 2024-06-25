@@ -113,7 +113,11 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
       </.flex>
     </.grid>
 
-    <.empty_home :if={@batteries == []} install_path={install_path()} />
+    <.empty_home :if={@batteries == []} install_path={install_path()}>
+      <:header>
+        <.h2>Batteries Included Devtools</.h2>
+      </:header>
+    </.empty_home>
     """
   end
 end
