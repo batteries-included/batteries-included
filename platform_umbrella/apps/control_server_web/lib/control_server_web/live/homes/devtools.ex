@@ -38,11 +38,11 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   defp knative_panel(assigns) do
     ~H"""
-    <.panel title="Serverless Services">
+    <.panel title="Knative Services">
       <:menu>
         <.flex>
           <.a navigate={~p"/knative/services/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Knative
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Service
           </.a>
           <.link navigate={~p"/knative/services"}>View All</.link>
         </.flex>

@@ -102,7 +102,7 @@ defmodule CommonCore.Batteries.Catalog do
       group: :devtools,
       type: :knative,
       dependencies: [:battery_core],
-      name: "KNative",
+      name: "Knative",
       description:
         "Knative Kubernetes operator that provides a declarative API for managing Knative Serving and Eventing. " <>
           "Knative serving is ascale-to-zero, request-driven compute platform that lets you run stateless containers " <>

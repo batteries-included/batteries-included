@@ -7,7 +7,11 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_services() |> assign_current_page()}
+    {:ok,
+     socket
+     |> assign_services()
+     |> assign_current_page()
+     |> assign(:current_page, :devtools)}
   end
 
   @impl Phoenix.LiveView
@@ -16,7 +20,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   end
 
   defp apply_action(socket, :index, _params) do
-    assign(socket, :page_title, "Listing Services")
+    assign(socket, :page_title, "Knative Services")
   end
 
   defp assign_services(socket) do
@@ -38,7 +42,7 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
       </.button>
     </.page_header>
 
-    <.panel title="Serverless Services">
+    <.panel title="All Services">
       <.knative_services_table rows={@services} />
     </.panel>
     """

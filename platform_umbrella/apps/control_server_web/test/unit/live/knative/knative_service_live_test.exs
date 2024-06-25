@@ -15,7 +15,7 @@ defmodule ControlServerWeb.ServiceLiveTest do
     test "lists all services", %{conn: conn, service: service} do
       {:ok, _index_live, html} = live(conn, ~p"/knative/services")
 
-      assert html =~ "Listing Services"
+      assert html =~ "Knative Services"
       assert html =~ service.name
     end
   end

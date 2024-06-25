@@ -33,7 +33,11 @@ defmodule ControlServer.Knative do
       ** (Ecto.NoResultsError)
 
   """
-  def get_service!(id), do: Repo.get!(Service, id)
+  def get_service!(id, opts \\ []) do
+    Service
+    |> preload(^Keyword.get(opts, :preload, []))
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a service.
