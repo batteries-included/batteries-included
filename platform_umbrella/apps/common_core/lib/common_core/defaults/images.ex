@@ -1,6 +1,6 @@
 defmodule CommonCore.Defaults.Images do
   @moduledoc false
-  @cert_manager_image_tag "v1.14.6"
+  @cert_manager_image_tag "v1.14.7"
   @kiali_image_version "v1.85.0"
 
   def cert_manager_image_version, do: @cert_manager_image_tag
@@ -8,8 +8,8 @@ defmodule CommonCore.Defaults.Images do
   def vm_tag, do: "v1.93.9"
   def kiali_image_version, do: @kiali_image_version
 
-  def addon_resizer_image, do: "registry.k8s.io/autoscaling/addon-resizer:1.8.21"
-  def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.26.0"
+  def addon_resizer_image, do: "registry.k8s.io/autoscaling/addon-resizer:1.8.22"
+  def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.27.0"
   def aws_load_balancer_controller_image, do: "public.ecr.aws/eks/aws-load-balancer-controller:v2.8.1"
   def bootstrap_image, do: "public.ecr.aws/batteries-included/kube-bootstrap:latest"
   def cert_manager_acmesolver_image, do: "quay.io/jetstack/cert-manager-acmesolver:#{cert_manager_image_version()}"
@@ -17,12 +17,12 @@ defmodule CommonCore.Defaults.Images do
   def cert_manager_controller_image, do: "quay.io/jetstack/cert-manager-controller:#{cert_manager_image_version()}"
   def cert_manager_ctl_image, do: "quay.io/jetstack/cert-manager-ctl:#{cert_manager_image_version()}"
   def cert_manager_webhook_image, do: "quay.io/jetstack/cert-manager-webhook:#{cert_manager_image_version()}"
-  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.23.1"
+  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.23.2"
   def control_server_image, do: "public.ecr.aws/batteries-included/control-server:latest"
   def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.21.0"
-  def forgejo_image, do: "codeberg.org/forgejo/forgejo:1.21.7-0"
+  def forgejo_image, do: "codeberg.org/forgejo/forgejo:1.21.11-2"
   def frrouting_frr_image, do: "quay.io/frrouting/frr:8.5.4"
-  def grafana_image, do: "grafana/grafana:10.4.3"
+  def grafana_image, do: "grafana/grafana:10.4.5"
   def istio_pilot_image, do: "docker.io/istio/pilot:1.22.1-distroless"
   def istio_proxy_image, do: "docker.io/istio/proxyv2:1.22.1-distroless"
   def karpenter_image, do: "public.ecr.aws/karpenter/controller:0.37.0"
@@ -42,7 +42,7 @@ defmodule CommonCore.Defaults.Images do
   def text_generation_webui_image, do: "atinoda/text-generation-webui:default-snapshot-2023-12-10"
   def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.21.3"
   def aqua_node_collector, do: "ghcr.io/aquasecurity/node-collector:0.2.1"
-  def aqua_trivy_checks, do: "ghcr.io/aquasecurity/trivy-checks:0"
+  def aqua_trivy_checks, do: "ghcr.io/aquasecurity/trivy-checks:0.13.0"
 
   def trust_manager_image, do: "quay.io/jetstack/trust-manager:v0.11.0"
   def trust_manager_init_image, do: "quay.io/jetstack/cert-manager-package-debian:20210119.0"
