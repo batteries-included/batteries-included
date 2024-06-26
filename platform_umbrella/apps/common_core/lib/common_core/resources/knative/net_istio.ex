@@ -3,6 +3,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
 
   import CommonCore.StateSummary.Hosts
+  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.SSL
 
   alias CommonCore.Resources.Builder, as: B
@@ -27,8 +28,17 @@ defmodule CommonCore.Resources.KnativeNetIstio do
     |> B.rules(rules)
   end
 
-  resource(:config_map_istio, battery, _state) do
-    data = %{}
+  resource(:config_map_istio, battery, state) do
+    data = %{
+      "external-gateways" =>
+        Ymlr.document!([
+          %{
+            name: "knative-ingress-gateway",
+            namespace: battery.config.namespace,
+            service: "istio-ingressgateway.#{istio_namespace(state)}.svc.cluster.local"
+          }
+        ])
+    }
 
     :config_map
     |> B.build_resource()
