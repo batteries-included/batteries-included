@@ -135,7 +135,7 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 	mapper := restmapper.NewDeferredDiscoveryRESTMapper(discoveryClient)
 
 	// This allows us to remove CRD's
-	apiextensionsclient, err := apiextensionsclientset.NewForConfig(kubeConfig)
+	apiextensionsclient, err := apiextensionsclientset.NewForConfigAndClient(kubeConfig, httpClient)
 	if err != nil {
 		return nil, fmt.Errorf("error creating apiextensions client: %w", err)
 	}
