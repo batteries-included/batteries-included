@@ -4,14 +4,11 @@ Copyright © 2024 Elliott Clark <elliott@batteriesincl.com>
 package cmd
 
 import (
-	"path/filepath"
-
 	"bi/pkg/installs"
 	"bi/pkg/log"
 	"bi/pkg/stop"
 
 	"github.com/spf13/cobra"
-	"k8s.io/client-go/util/homedir"
 )
 
 var stopCmd = &cobra.Command{
@@ -32,17 +29,16 @@ var stopCmd = &cobra.Command{
 			return err
 		}
 
-		return stop.StopInstall(ctx, env)
+		skipCleanKube, err := cmd.Flags().GetBool("skip-clean-kube")
+		if err != nil {
+			return err
+		}
+
+		return stop.StopInstall(ctx, env, skipCleanKube)
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(stopCmd)
-	// The current user homedir
-	if dirname := homedir.HomeDir(); dirname == "" {
-		stopCmd.Flags().StringP("kubeconfig", "k", "/", "The kubeconfig to use")
-	} else {
-		defaultKubeConfig := filepath.Join(dirname, ".kube", "config")
-		stopCmd.PersistentFlags().StringP("kubeconfig", "k", defaultKubeConfig, "The kubeconfig to use")
-	}
+	stopCmd.Flags().Bool("skip-clean-kube", false, "Skip deleting kubernetes resources")
 }
