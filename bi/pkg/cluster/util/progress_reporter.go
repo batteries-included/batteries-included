@@ -4,7 +4,6 @@ import (
 	"context"
 	"log/slog"
 	"strings"
-	"sync"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/auto/events"
 	"github.com/vbauerster/mpb/v8"
@@ -13,8 +12,7 @@ import (
 
 // ProgressReporter is a convenience wrapper around mpb.Progress.
 type ProgressReporter struct {
-	progress     *mpb.Progress
-	shutdownOnce sync.Once
+	progress *mpb.Progress
 }
 
 // NewProgressReporter creates a new ProgressReporter.
@@ -26,7 +24,7 @@ func NewProgressReporter() *ProgressReporter {
 
 // Shutdown stops all registered progress bars.
 func (pr *ProgressReporter) Shutdown() {
-	pr.shutdownOnce.Do(pr.progress.Shutdown)
+	pr.progress.Shutdown()
 }
 
 // ForPulumiEvents creates a new progress bar for Pulumi events. The returned

@@ -55,7 +55,6 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 	// in the progress bar being printed over the access information.
 	if progressReporter != nil {
 		progressReporter.Shutdown()
-		progressReporter = nil
 	}
 
 	slog.Info("Displaying access information")
