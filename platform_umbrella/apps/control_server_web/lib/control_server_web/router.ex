@@ -130,6 +130,7 @@ defmodule ControlServerWeb.Router do
     live "/services/new", Live.KnativeNew, :new
     live "/services/:id/edit", Live.KnativeEdit, :edit
     live "/services/:id/show", Live.KnativeShow, :show
+    live "/services/:id/env_vars", Live.KnativeShow, :env_vars
     live "/services/:id/edit_versions", Live.KnativeShow, :edit_versions
   end
 
