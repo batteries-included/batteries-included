@@ -5,6 +5,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.KnativeServicesTable
+  import ControlServerWeb.NotebooksTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.PostgresClusterTable
   import ControlServerWeb.RedisTable
@@ -83,6 +84,10 @@ defmodule ControlServerWeb.Projects.ShowLive do
               FerretDB
             </.dropdown_link>
 
+            <.dropdown_link navigate={~p"/notebooks/new?project_id=#{@project.id}"}>
+              Jupyter Notebook
+            </.dropdown_link>
+
             <.dropdown_link navigate={~p"/knative/services/new?project_id=#{@project.id}"}>
               Knative Service
             </.dropdown_link>
@@ -121,6 +126,10 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
       <.panel :if={@project.ferret_services != []} variant="gray" title="FerretDB/MongoDB">
         <.ferret_services_table abbridged rows={@project.ferret_services} />
+      </.panel>
+
+      <.panel :if={@project.jupyter_notebooks != []} variant="gray" title="Jupyter Notebooks">
+        <.notebooks_table abbridged rows={@project.jupyter_notebooks} />
       </.panel>
 
       <.panel :if={@project.knative_services != []} variant="gray" title="Knative Services">

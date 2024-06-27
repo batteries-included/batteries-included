@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.MLHome do
+defmodule ControlServerWeb.Live.AIHome do
   @moduledoc false
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
@@ -32,9 +32,12 @@ defmodule ControlServerWeb.Live.MLHome do
 
   defp notebooks_panel(assigns) do
     ~H"""
-    <.panel title="Notebooks">
+    <.panel title="Jupyter Notebooks">
       <:menu>
         <.flex>
+          <.a navigate={~p"/notebooks/new"}>
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Notebook
+          </.a>
           <.link navigate={~p"/notebooks"}>View All</.link>
         </.flex>
       </:menu>

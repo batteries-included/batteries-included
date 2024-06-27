@@ -90,8 +90,8 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     |> validate_required([:storage_size])
   end
 
-  def cpu_select_options,
-    do: [
+  def cpu_options do
+    [
       {"None", nil},
       {"0.05 cores", 50},
       {"0.1 cores", 100},
@@ -105,9 +105,10 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
       {"24 cores", 24_000},
       {"32 cores", 32_000}
     ]
+  end
 
-  def memory_options,
-    do: [
+  def memory_options do
+    [
       Memory.to_bytes(512, :MB),
       Memory.to_bytes(1, :GB),
       Memory.to_bytes(2, :GB),
@@ -121,6 +122,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
       Memory.to_bytes(512, :GB),
       Memory.to_bytes(1024, :GB)
     ]
+  end
 
   def preset_options_for_select do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name})

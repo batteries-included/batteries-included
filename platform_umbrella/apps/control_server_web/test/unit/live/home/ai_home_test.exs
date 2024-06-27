@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.MLHomeTest do
+defmodule ControlServerWeb.AIHomeTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
@@ -20,7 +20,7 @@ defmodule ControlServerWeb.MLHomeTest do
     %{summary: Summarizer.new()}
   end
 
-  describe "ML home with batteries" do
+  describe "AI home with batteries" do
     setup [:install_batteries, :create_notebook, :summary]
 
     test "contains links", %{conn: conn, notebook: notebook} do
@@ -31,7 +31,7 @@ defmodule ControlServerWeb.MLHomeTest do
     end
   end
 
-  describe "ML home with no batteries" do
+  describe "AI home with no batteries" do
     setup [:summary]
 
     test "contains empty home component", %{conn: conn} do
