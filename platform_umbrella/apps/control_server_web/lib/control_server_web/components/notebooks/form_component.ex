@@ -61,7 +61,6 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
          |> push_navigate(to: ~p"/notebooks/#{notebook.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        dbg(changeset)
         {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
