@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Knative.KnativeEditLiveTest do
       params =
         :knative_service
         |> params_for(project_id: project.id)
-        |> Map.drop(~w(containers init_containers env_values kube_internal oauth2_proxy)a)
+        |> Map.drop(~w(containers init_containers env_values kube_internal oauth2_proxy keycloak_realm)a)
 
       conn
       |> start(~p|/knative/services/new|)

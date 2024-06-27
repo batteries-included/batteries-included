@@ -260,6 +260,11 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           label="Protect with OAuth2 Proxy"
         />
         <.input
+          :if={@sso_enabled && @form[:oauth2_proxy].value == true}
+          field={@form[:keycloak_realm]}
+          label="Keycloak Realm"
+        />
+        <.input
           field={@form[:project_id]}
           type="select"
           label="Project"

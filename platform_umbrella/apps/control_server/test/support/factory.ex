@@ -98,6 +98,7 @@ defmodule ControlServer.Factory do
       name: sequence("knative-service-"),
       rollout_duration: sequence(:rollout_duration, ["10s", "1m", "2m", "10m", "20m", "30m"]),
       oauth2_proxy: sequence(:oauth2_proxy, [true, false]),
+      keycloak_realm: sequence("realm_"),
       containers: [build(:containers_container)],
       env_values: [build(:containers_env_value), build(:containers_env_value)]
     }
