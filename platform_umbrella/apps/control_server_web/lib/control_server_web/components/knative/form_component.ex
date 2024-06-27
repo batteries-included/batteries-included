@@ -13,6 +13,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   alias ControlServer.Knative
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryBatteries
+  alias Phoenix.HTML.Form
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -59,10 +60,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     assign_new(socket, :sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
   end
 
-  def assign_url(socket, service) do
-    assign(socket, url: "http://#{knative_host(service)}")
-  end
-
   def assign_container(socket, container) do
     assign(socket, container: container)
   end
@@ -79,6 +76,10 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     assign(socket, env_value_idx: idx)
   end
 
+  defp potential_url(%Form{} = form) do
+    "http://#{knative_host(Changeset.apply_changes(form.source))}"
+  end
+
   @impl Phoenix.LiveComponent
   def update(%{service: service} = assigns, socket) do
     project_id = Map.get(service, :project_id) || assigns[:project_id]
@@ -87,7 +88,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_url(service)
      |> assign_changeset(changeset)}
   end
 
@@ -149,12 +149,9 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   @impl Phoenix.LiveComponent
   def handle_event("validate", %{"service" => params}, socket) do
-    {changeset, new_service} = Service.validate(params)
+    {changeset, _new_service} = Service.validate(params)
 
-    {:noreply,
-     socket
-     |> assign_changeset(changeset)
-     |> assign_url(new_service)}
+    {:noreply, assign_changeset(socket, changeset)}
   end
 
   def handle_event("new_env_value", _, socket) do
@@ -284,7 +281,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   defp url_panel(assigns) do
     ~H"""
     <.flex class="justify-around items-center">
-      <.truncate_tooltip value={@url} length={72} />
+      <.truncate_tooltip value={potential_url(@form)} length={72} />
     </.flex>
     """
   end
@@ -315,7 +312,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         </.page_header>
         <.grid columns={[sm: 1, lg: 2]}>
           <.name_panel form={@form} />
-          <.url_panel url={@url} />
+          <.url_panel form={@form} />
           <.containers_panel
             target={@myself}
             init_containers={@init_containers}
