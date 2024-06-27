@@ -15,6 +15,7 @@ defmodule ControlServer.Projects do
       :postgres_clusters,
       :redis_clusters,
       :ferret_services,
+      :jupyter_notebooks,
       :knative_services
     ])
     |> Repo.get!(id)

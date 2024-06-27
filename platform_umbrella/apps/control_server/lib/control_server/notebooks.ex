@@ -33,7 +33,11 @@ defmodule ControlServer.Notebooks do
       ** (Ecto.NoResultsError)
 
   """
-  def get_jupyter_lab_notebook!(id), do: Repo.get!(JupyterLabNotebook, id)
+  def get_jupyter_lab_notebook!(id, opts \\ []) do
+    JupyterLabNotebook
+    |> preload(^Keyword.get(opts, :preload, []))
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a jupyter_lab_notebook.

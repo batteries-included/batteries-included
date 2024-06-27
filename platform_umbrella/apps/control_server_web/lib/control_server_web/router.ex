@@ -19,8 +19,8 @@ defmodule ControlServerWeb.Router do
 
   scope "/", ControlServerWeb do
     pipe_through :browser
+
     live "/", Live.Home, :index
-    live "/notebooks", Live.JupyterLabNotebookIndex, :index
     live "/stale", Live.StaleIndex, :index
     live "/deleted_resources", Live.DeletedResourcesIndex, :index
 
@@ -29,7 +29,7 @@ defmodule ControlServerWeb.Router do
     live "/net_sec", Live.NetSecHome, :index
     live "/monitoring", Live.MonitoringHome, :index
     live "/devtools", Live.DevtoolsHome, :index
-    live "/ai", Live.MLHome, :index
+    live "/ai", Live.AIHome, :index
     live "/data", Live.DataHome, :index
   end
 
@@ -121,6 +121,15 @@ defmodule ControlServerWeb.Router do
 
     live "/:id/show", Live.FerretServiceShow, :show
     live "/:id/edit_versions", Live.FerretServiceShow, :edit_versions
+  end
+
+  scope "/notebooks", ControlServerWeb do
+    pipe_through :browser
+
+    live "/", Live.JupyterLabNotebookIndex, :index
+    live "/new", Live.JupyterLabNotebookNew, :new
+    live "/:id", Live.JupyterLabNotebookShow, :show
+    live "/:id/edit", Live.JupyterLabNotebookEdit, :edit
   end
 
   scope "/knative", ControlServerWeb do
