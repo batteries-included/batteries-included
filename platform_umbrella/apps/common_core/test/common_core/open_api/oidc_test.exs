@@ -5,16 +5,16 @@ defmodule CommonCore.OpenAPI.OIDCTest do
 
   @example_response """
     {
-    "issuer": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master",
-    "authorization_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/auth",
-    "token_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/token",
-    "introspection_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/token/introspect",
-    "userinfo_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/userinfo",
-    "end_session_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/logout",
+    "issuer": "http://keycloak.172-18-128-1.batrsinc.co/realms/master",
+    "authorization_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/auth",
+    "token_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/token",
+    "introspection_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/token/introspect",
+    "userinfo_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/userinfo",
+    "end_session_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/logout",
     "frontchannel_logout_session_supported": true,
     "frontchannel_logout_supported": true,
-    "jwks_uri": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/certs",
-    "check_session_iframe": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/login-status-iframe.html",
+    "jwks_uri": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/certs",
+    "check_session_iframe": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/login-status-iframe.html",
     "grant_types_supported": [
       "authorization_code",
       "implicit",
@@ -135,7 +135,7 @@ defmodule CommonCore.OpenAPI.OIDCTest do
       "form_post.jwt",
       "jwt"
     ],
-    "registration_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/clients-registrations/openid-connect",
+    "registration_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/clients-registrations/openid-connect",
     "token_endpoint_auth_methods_supported": [
       "private_key_jwt",
       "client_secret_basic",
@@ -241,7 +241,7 @@ defmodule CommonCore.OpenAPI.OIDCTest do
       "S256"
     ],
     "tls_client_certificate_bound_access_tokens": true,
-    "revocation_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/revoke",
+    "revocation_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/revoke",
     "revocation_endpoint_auth_methods_supported": [
       "private_key_jwt",
       "client_secret_basic",
@@ -265,12 +265,12 @@ defmodule CommonCore.OpenAPI.OIDCTest do
     ],
     "backchannel_logout_supported": true,
     "backchannel_logout_session_supported": true,
-    "device_authorization_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/auth/device",
+    "device_authorization_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/auth/device",
     "backchannel_token_delivery_modes_supported": [
       "poll",
       "ping"
     ],
-    "backchannel_authentication_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/ext/ciba/auth",
+    "backchannel_authentication_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/ext/ciba/auth",
     "backchannel_authentication_request_signing_alg_values_supported": [
       "PS384",
       "ES384",
@@ -283,16 +283,16 @@ defmodule CommonCore.OpenAPI.OIDCTest do
       "RS512"
     ],
     "require_pushed_authorization_requests": false,
-    "pushed_authorization_request_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/ext/par/request",
+    "pushed_authorization_request_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/ext/par/request",
     "mtls_endpoint_aliases": {
-      "token_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/token",
-      "revocation_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/revoke",
-      "introspection_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/token/introspect",
-      "device_authorization_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/auth/device",
-      "registration_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/clients-registrations/openid-connect",
-      "userinfo_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/userinfo",
-      "pushed_authorization_request_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/ext/par/request",
-      "backchannel_authentication_endpoint": "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/protocol/openid-connect/ext/ciba/auth"
+      "token_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/token",
+      "revocation_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/revoke",
+      "introspection_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/token/introspect",
+      "device_authorization_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/auth/device",
+      "registration_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/clients-registrations/openid-connect",
+      "userinfo_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/userinfo",
+      "pushed_authorization_request_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/ext/par/request",
+      "backchannel_authentication_endpoint": "http://keycloak.172-18-128-1.batrsinc.co/realms/master/protocol/openid-connect/ext/ciba/auth"
     }
   }
   """
@@ -316,7 +316,7 @@ defmodule CommonCore.OpenAPI.OIDCTest do
                |> OIDC.OIDCConfiguration.new()
 
       assert parsed.registration_endpoint ==
-               "http://keycloak.core.172-18-128-1.ip.batteriesincl.com/realms/master/clients-registrations/openid-connect"
+               "http://keycloak.172-18-128-1.batrsinc.co/realms/master/clients-registrations/openid-connect"
 
       assert parsed.claim_types_supported == ["normal"]
     end

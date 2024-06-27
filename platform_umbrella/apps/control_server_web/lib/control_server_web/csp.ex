@@ -5,29 +5,41 @@ defmodule ControlServerWeb.CSP do
       "self",
       "unsafe-eval",
       "unsafe-inline",
-      {:url, "http://*.ip.batteriesincl.com"},
-      {:url, "http://*.ip.batteriesincl.com:4000"}
+      {:url, "http://*.batrsinc.co"},
+      {:url, "http://*.batrsinc.co:4000"},
+      {:url, "http://*.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4100"}
     ],
     "default-src" => [
       "self",
-      {:url, "https://rsms.me"},
       "unsafe-inline",
-      {:url, "http://*.ip.batteriesincl.com"},
-      {:url, "http://*.ip.batteriesincl.com:4000"}
+      {:url, "http://*.batrsinc.co"},
+      {:url, "http://*.batrsinc.co:4000"},
+      {:url, "http://*.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4100"}
     ],
     "img-src" => [
       "self",
       {:url, "data:"},
-      {:url, "https://images.unsplash.com"},
-      {:url, "https://robohash.org/"},
-      {:url, "http://*.ip.batteriesincl.com"},
-      {:url, "http://*.ip.batteriesincl.com:4000"}
+      {:url, "http://*.batrsinc.co"},
+      {:url, "http://*.batrsinc.co:4000"},
+      {:url, "http://*.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4100"}
     ],
-    "font-src" => ["self", {:url, "data:"}, {:url, "https://rsms.me"}],
+    "font-src" => [
+      "self",
+      {:url, "data:"},
+      {:url, "http://*.batrsinc.co"},
+      {:url, "http://*.batrsinc.co:4000"},
+      {:url, "http://*.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4100"}
+    ],
     "frame-src" => [
       "self",
-      {:url, "http://*.ip.batteriesincl.com"},
-      {:url, "http://*.ip.batteriesincl.com:4000"},
+      {:url, "http://*.batrsinc.co"},
+      {:url, "http://*.batrsinc.co:4000"},
+      {:url, "http://*.batteriesincl.com"},
+      {:url, "http://*.ip.batteriesincl.com:4100"},
       {:url, "https://www.youtube.com"}
     ]
   }

@@ -93,7 +93,7 @@ defmodule CommonCore.StateSummary.Hosts do
     # up dns look up traversal on the worst case.
     ip = String.replace(ip, ".", "-")
 
-    "#{name}.#{ip}.ip.batteriesincl.com"
+    "#{name}.#{ip}.batrsinc.co"
   end
 
   defp ingress_ips(%StateSummary{} = summary) do

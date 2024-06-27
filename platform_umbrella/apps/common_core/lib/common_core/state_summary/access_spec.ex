@@ -33,7 +33,7 @@ defmodule CommonCore.StateSummary.AccessSpec do
   defp valid_host?(host) do
     host != nil and
       String.length(host) > 0 and
-      !String.contains?(host, "..ip.batteriesincl.com") and
+      !String.contains?(host, "..batrsinc.co") and
       !String.contains?(host, "127-0-0-1") and
       valid_uri?(host)
   end

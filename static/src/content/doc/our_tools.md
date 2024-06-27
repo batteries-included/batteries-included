@@ -180,7 +180,7 @@ changed based on your code changes. This is nice for a fast, inner-loop.
 
 Example
 
-```
+```sh
 bix ex-test
 ```
 
@@ -193,7 +193,7 @@ of time.
 
 Example
 
-```
+```sh
 bix ex-test-quick
 ```
 
@@ -208,7 +208,7 @@ This is also the command that is used in CI.
 
 Example
 
-```
+```sh
 bix ex-test-deep
 ```
 
@@ -243,13 +243,13 @@ any directory in the repo.
 Example:
 
 ```sh
-cd cli && bix m help test
+cd bi && bix m help test
 ```
 
 ## Dashboard
 
 Example: The URL is usually
-[http://control.127.0.0.1.ip.batteriesincl.com:4000/dashboard/home](http://control.127.0.0.1.ip.batteriesincl.com:4000/dashboard/home)
+[http://control.127-0-0-1.batrsinc.co:4000/dashboard/home](http://control.127-0-0-1.batrsinc.co:4000/dashboard/home)
 
 `/dashboard` will get you a view into the ecto db, the Erlang VM, the process
 trees, and HTTP request logger for Phoenix. It's super cool stuff.

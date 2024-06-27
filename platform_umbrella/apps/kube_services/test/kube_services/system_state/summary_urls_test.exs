@@ -15,18 +15,18 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
       sepc = build(:install_spec, usage: :kitchen_sink, kube_provider: :aws)
       send(pid, sepc.target_summary)
 
-      assert "https://keycloak.127-0-0-1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :keycloak)
-      assert "https://forgejo.127-0-0-1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :forgejo)
-      assert "https://smtp4dev.127-0-0-1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :smtp4dev)
+      assert "https://keycloak.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :keycloak)
+      assert "https://forgejo.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :forgejo)
+      assert "https://smtp4dev.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :smtp4dev)
     end
 
     test "returns an HTTP URL when :cert_manager is not installed", %{pid: pid} do
       spec = build(:install_spec, usage: :internal_int_test, kube_provider: :provided)
       send(pid, spec.target_summary)
 
-      assert "http://keycloak.127-0-0-1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :keycloak)
-      assert "http://forgejo.127-0-0-1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :forgejo)
-      assert "http://smtp4dev.127-0-0-1.ip.batteriesincl.com" == SummaryURLs.url_for_battery(pid, :smtp4dev)
+      assert "http://keycloak.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :keycloak)
+      assert "http://forgejo.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :forgejo)
+      assert "http://smtp4dev.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :smtp4dev)
     end
   end
 
@@ -35,7 +35,7 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
       spec = build(:install_spec, usage: :kitchen_sink, kube_provider: :aws)
       send(pid, spec.target_summary)
 
-      assert "https://keycloak.127-0-0-1.ip.batteriesincl.com/realms/test-realm" ==
+      assert "https://keycloak.127-0-0-1.batrsinc.co/realms/test-realm" ==
                SummaryURLs.keycloak_url_for_realm(pid, "test-realm")
     end
   end
