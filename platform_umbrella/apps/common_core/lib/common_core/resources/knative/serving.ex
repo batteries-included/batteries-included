@@ -329,7 +329,7 @@ defmodule CommonCore.Resources.KnativeServing do
     data =
       %{}
       |> maybe_put(ssl, "external-domain-tls", "Enabled")
-      |> maybe_put(ssl, "http-protocol", "Redirected")
+      |> maybe_put(ssl, "http-protocol", "Enabled")
 
     :config_map
     |> B.build_resource()
