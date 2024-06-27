@@ -49,10 +49,10 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
 
   defp build_authz_ext_provider(%SystemBattery{} = battery, %StateSummary{} = state) do
     %{
-      "name" => extension_name(battery, state),
+      "name" => extension_name(battery),
       "envoyExtAuthzHttp" => %{
         "service" => fully_qualified_service_name(battery, state),
-        "port" => port(battery, state),
+        "port" => port(battery),
         # headers sent to the oauth2-proxy in the check request
         "includeRequestHeadersInCheck" => ["authorization", "cookie"],
         # headers sent to backend application when request is allowed.

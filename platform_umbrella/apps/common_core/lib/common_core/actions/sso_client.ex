@@ -34,6 +34,8 @@ defmodule CommonCore.Actions.SSOClient do
     standardFlowEnabled webOrigins
   )a
 
+  def default_client_fields, do: @default_client_fields
+
   defmodule ClientConfigurator do
     @moduledoc false
     @type f :: (SystemBattery.t(), StateSummary.t(), ClientRepresentation.t() -> {ClientRepresentation.t(), keyword()})

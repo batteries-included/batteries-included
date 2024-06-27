@@ -179,7 +179,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
           %{}
           |> Map.put("client-id", client_id)
           |> Map.put("client-secret", client_secret)
-          |> Map.put("cookie-secret", cookie_secret(battery, state))
+          |> Map.put("cookie-secret", cookie_secret(battery))
           |> Secret.encode()
 
         nil ->

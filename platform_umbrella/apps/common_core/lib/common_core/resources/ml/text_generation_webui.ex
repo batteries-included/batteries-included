@@ -113,11 +113,7 @@ defmodule CommonCore.Resources.TextGenerationWebUI do
     spec =
       [hosts: [text_generation_webui_host(state)]]
       |> VirtualService.new!()
-      |> V.prefix(
-        PU.prefix(battery, state),
-        PU.service_name(battery, state),
-        PU.port(battery, state)
-      )
+      |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
       |> V.fallback(@service_name, @http_port)
 
     :istio_virtual_service
@@ -155,7 +151,7 @@ defmodule CommonCore.Resources.TextGenerationWebUI do
       state
       |> text_generation_webui_host()
       |> List.wrap()
-      |> PU.auth_policy(battery, state)
+      |> PU.auth_policy(battery)
       |> B.match_labels_selector(@app_name)
 
     :istio_auth_policy

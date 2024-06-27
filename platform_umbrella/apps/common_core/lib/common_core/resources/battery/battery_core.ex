@@ -5,7 +5,6 @@ defmodule CommonCore.Resources.BatteryCore do
   import CommonCore.Resources.StorageClass
 
   alias CommonCore.Resources.Builder, as: B
-  alias CommonCore.Resources.FilterResource, as: F
 
   resource(:core_namespace, battery, _state) do
     :namespace
@@ -36,8 +35,10 @@ defmodule CommonCore.Resources.BatteryCore do
   end
 
   multi_resource(:storage_class, battery) do
-    Enum.filter(generate_eks_storage_classes(), fn sc ->
-      F.require(sc, battery.config.cluster_type == :aws)
-    end)
+    if battery.config.cluster_type == :aws do
+      generate_eks_storage_classes()
+    else
+      []
+    end
   end
 end
