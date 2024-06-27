@@ -19,7 +19,7 @@ defmodule CommonCore.Defaults.Images do
   def cert_manager_webhook_image, do: "quay.io/jetstack/cert-manager-webhook:#{cert_manager_image_version()}"
   def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.23.2"
   def control_server_image, do: "public.ecr.aws/batteries-included/control-server:latest"
-  def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.21.0"
+  def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.22.0"
   def forgejo_image, do: "codeberg.org/forgejo/forgejo:1.21.11-2"
   def frrouting_frr_image, do: "quay.io/frrouting/frr:8.5.4"
   def grafana_image, do: "grafana/grafana:10.4.5"
