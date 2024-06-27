@@ -83,21 +83,19 @@ defmodule ControlServerWeb.Containers.ContainerModal do
         phx-submit="save_container"
         phx-target={@myself}
       >
-        <.modal show id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
+        <.modal show size="lg" id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
           <:title>Container</:title>
 
-          <.grid columns={[sm: 1, lg: 2]}>
+          <.flex column>
             <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
             <.input label="Image" field={@form[:image]} placeholder="Image" />
-            <div class="col-span-2">
-              <.input
-                name="container[command][]"
-                value={(@form.data.command || []) |> List.first(nil)}
-                label="Command"
-                placeholder="/bin/true"
-              />
-            </div>
-          </.grid>
+            <.input
+              name="container[command][]"
+              value={(@form.data.command || []) |> List.first(nil)}
+              label="Command (optional)"
+              placeholder="/bin/true"
+            />
+          </.flex>
 
           <:actions cancel="Cancel">
             <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>

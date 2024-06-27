@@ -97,7 +97,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
         # Push everything else remaining into kubestate but don't announce anything.
         # This might miss some anouncements between process restarts.
         list_res
-        |> Enum.map(fn r -> clean(state, r) end)
+        |> Enum.map(fn r -> clean(r, state) end)
         |> Enum.reject(&(&1 == nil))
         |> Enum.each(fn r ->
           # Push in what's there now.
@@ -113,7 +113,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   end
 
   # set up watch on resource type
-  defp watch(%{resource_type: resource_type, table_name: table_name, retries: retries} = _state, conn) do
+  defp watch(%{resource_type: resource_type, retries: retries} = state, conn) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
     op = K8s.Client.watch(api_version, kind, namespace: :all)
 
@@ -123,7 +123,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
           handle_watch_event(
             Map.get(event, "type", nil),
             Map.get(event, "object", nil),
-            table_name
+            state
           )
         end)
 
@@ -144,23 +144,40 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
   defp handle_watch_event(event_type, object, state_table_name)
 
-  defp handle_watch_event("ADDED" = _event_type, object, state_table_name),
-    do: KubeServices.KubeState.Runner.add(state_table_name, object)
+  defp handle_watch_event("ADDED" = _event_type, object, %{table_name: state_table_name} = state),
+    do: KubeServices.KubeState.Runner.add(state_table_name, clean(object, state))
 
-  defp handle_watch_event("DELETED" = _event_type, object, state_table_name),
-    do: KubeServices.KubeState.Runner.delete(state_table_name, object)
+  defp handle_watch_event("DELETED" = _event_type, object, %{table_name: state_table_name} = state),
+    do: KubeServices.KubeState.Runner.delete(state_table_name, clean(object, state))
 
-  defp handle_watch_event("MODIFIED" = _event_type, object, state_table_name),
-    do: KubeServices.KubeState.Runner.update(state_table_name, object)
+  defp handle_watch_event("MODIFIED" = _event_type, object, %{table_name: state_table_name} = state),
+    do: KubeServices.KubeState.Runner.update(state_table_name, clean(object, state))
 
-  defp clean(_, {:error, _}), do: nil
+  defp clean({:error, _}, _), do: nil
 
-  defp clean(%{resource_type: resource_type}, resource) when is_map(resource) do
+  defp clean(resource, %{resource_type: resource_type} = state) when is_map(resource) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
 
     resource
     |> Map.put_new("apiVersion", api_version)
     |> Map.put_new("kind", kind)
+    |> clean_inner(state)
+  end
+
+  # For Secrets and ConfigMaps we only want to keep the keys of the data field
+  # This greatly decrease the data size and doesn't change sync behavior since
+  # we rely on sha annotaions.
+  defp clean_inner(resource, %{resource_type: resource_type}) when resource_type in [:config_map, :secret] do
+    resource
+    |> Map.put_new("data", Map.get(resource, "data", %{}))
+    |> update_in(~w(data), fn data ->
+      Map.new(data, fn {k, _v} -> {k, nil} end)
+    end)
+  end
+
+  # Everything else we keep the resource as is.
+  defp clean_inner(resource, _state) do
+    resource
   end
 
   # memoize connection fn

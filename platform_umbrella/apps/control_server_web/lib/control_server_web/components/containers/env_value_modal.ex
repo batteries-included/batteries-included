@@ -113,6 +113,13 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
     extract_source_type(changeset) in [:secret, "secret"]
   end
 
+  defp extract_keys(resources, name) do
+    resources
+    |> Enum.find(%{}, fn r -> name(r) == name end)
+    |> Map.get("data", %{})
+    |> Map.keys()
+  end
+
   defp value_inputs(assigns) do
     ~H"""
     <.input label="Value" field={@form[:value]} placeholder="your.service.creds" />
@@ -129,7 +136,13 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
         placeholder="Select Source"
         options={Enum.map(@resources, &name/1)}
       />
-      <.input label="Key" field={@form[:source_key]} />
+      <.input
+        label="Key"
+        field={@form[:source_key]}
+        type="select"
+        placeholder="Select Key"
+        options={extract_keys(@resources, @form[:source_name].value || "")}
+      />
     </.flex>
     """
   end
@@ -145,7 +158,7 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
         phx-submit="save_env_value"
         phx-target={@myself}
       >
-        <.modal show id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
+        <.modal show size="lg" id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
           <:title>Environment Variable</:title>
 
           <.flex column>
