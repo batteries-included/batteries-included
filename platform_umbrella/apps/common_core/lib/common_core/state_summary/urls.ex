@@ -21,20 +21,21 @@ defmodule CommonCore.StateSummary.URLs do
     |> URI.append_path("/realms/#{realm}")
   end
 
+  @spec keycloak_console_uri_for_realm(StateSummary.t(), String.t()) :: URI.t()
   def keycloak_console_uri_for_realm(state, realm) do
     state
     |> uri_for_battery(:keycloak)
     |> URI.append_path("/admin/#{realm}/console")
   end
 
-  @spec cloud_native_pg_dashboard(CommonCore.StateSummary.t()) :: URI.t()
+  @spec cloud_native_pg_dashboard(StateSummary.t()) :: URI.t()
   def cloud_native_pg_dashboard(state) do
     state
     |> uri_for_battery(:grafana)
     |> URI.append_path("/d/cloudnative-pg/cloudnativepg")
   end
 
-  @spec pod_dashboard(CommonCore.StateSummary.t()) :: URI.t()
+  @spec pod_dashboard(StateSummary.t()) :: URI.t()
   def pod_dashboard(state) do
     state
     |> uri_for_battery(:grafana)

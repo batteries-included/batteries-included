@@ -44,7 +44,7 @@ defmodule CommonCore.Resources.VMAgent do
     spec =
       [hosts: [vmagent_host(state)]]
       |> VirtualService.new!()
-      |> V.prefix(PU.prefix(battery, state), PU.service_name(battery, state), PU.port(battery, state))
+      |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
       |> V.fallback("vmagent-main-agent", @vm_agent_port)
 
     :istio_virtual_service
@@ -79,7 +79,7 @@ defmodule CommonCore.Resources.VMAgent do
       state
       |> vmagent_host()
       |> List.wrap()
-      |> PU.auth_policy(battery, state)
+      |> PU.auth_policy(battery)
       |> B.match_labels_selector("app.kubernetes.io/name", @k8s_name)
       |> B.match_labels_selector("app.kubernetes.io/instance", @instance_name)
 

@@ -20,11 +20,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
     spec =
       [hosts: [smtp4dev_host(state)]]
       |> VirtualService.new!()
-      |> V.prefix(
-        PU.prefix(battery, state),
-        PU.service_name(battery, state),
-        PU.port(battery, state)
-      )
+      |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
       |> V.fallback("smtp-four-dev", @http_port)
 
     :istio_virtual_service
@@ -148,7 +144,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
       state
       |> smtp4dev_host()
       |> List.wrap()
-      |> PU.auth_policy(battery, state)
+      |> PU.auth_policy(battery)
       |> B.match_labels_selector(@app_name)
 
     :istio_auth_policy

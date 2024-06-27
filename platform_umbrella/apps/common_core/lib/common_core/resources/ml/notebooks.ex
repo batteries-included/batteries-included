@@ -32,11 +32,7 @@ defmodule CommonCore.Resources.Notebooks do
       |> Enum.reduce(VirtualService.new!(hosts: [host]), fn nb, vs ->
         V.prefix(vs, base_url(nb), service_name(nb), @container_port)
       end)
-      |> V.prefix(
-        PU.prefix(battery, state),
-        PU.fully_qualified_service_name(battery, state),
-        PU.port(battery, state)
-      )
+      |> V.prefix(PU.prefix(battery), PU.fully_qualified_service_name(battery, state), PU.port(battery))
 
     :istio_virtual_service
     |> B.build_resource()
@@ -148,7 +144,7 @@ defmodule CommonCore.Resources.Notebooks do
       state
       |> notebooks_host()
       |> List.wrap()
-      |> PU.auth_policy(battery, state)
+      |> PU.auth_policy(battery)
       |> B.match_labels_selector(@app_name)
 
     :istio_auth_policy

@@ -8,11 +8,11 @@ defmodule CommonCore.Actions.SSO do
   alias CommonCore.StateSummary.KeycloakSummary
 
   @spec materialize(SystemBattery.t(), StateSummary.t()) :: list(FreshGeneratedAction.t() | nil)
-  def materialize(%SystemBattery{} = system_battery, %StateSummary{} = state_summary) do
-    [ensure_core_realm(system_battery, state_summary), ping()]
+  def materialize(%SystemBattery{} = _system_battery, %StateSummary{} = state_summary) do
+    [ping(), ensure_core_realm(state_summary)]
   end
 
-  defp ensure_core_realm(%SystemBattery{} = _system_battery, %StateSummary{keycloak_state: key_state} = _state_summary) do
+  defp ensure_core_realm(%StateSummary{keycloak_state: key_state} = _state_summary) do
     realm_name = CommonCore.Defaults.Keycloak.realm_name()
     # No action needed if the realm already exists
     if KeycloakSummary.realm_member?(key_state, realm_name) do
