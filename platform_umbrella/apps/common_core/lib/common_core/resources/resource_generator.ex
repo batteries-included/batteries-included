@@ -96,7 +96,7 @@ defmodule CommonCore.Resources.ResourceGenerator do
        |> B.managed_labels()
        |> add_owner(battery)}
     end)
-    # We need Access.key to work so make everyt hing a map
+    # We need Access.key to work so make everything a map
     |> map_spec()
     # If we know app name add the label
     |> maybe_add_app_name(opts)
