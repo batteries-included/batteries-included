@@ -41,4 +41,13 @@ defmodule CommonCore.StateSummary.URLs do
     |> uri_for_battery(:grafana)
     |> URI.append_path("/d/k8s_views_pods/kubernetes-views-pods")
   end
+
+  @spec knative_url(StateSummary.t(), CommonCore.Knative.Service.t()) :: URI.t()
+  def knative_url(state, service) do
+    "http://#{Hosts.knative_host(state, service)}"
+    |> URI.new!()
+    |> then(fn uri ->
+      if SSL.ssl_enabled?(state), do: %URI{uri | scheme: "https", port: 443}, else: uri
+    end)
+  end
 end

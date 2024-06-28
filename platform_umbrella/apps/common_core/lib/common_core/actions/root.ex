@@ -5,6 +5,7 @@ defmodule CommonCore.Actions.RootActionGenerator do
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Actions.Grafana
   alias CommonCore.Actions.Kiali
+  alias CommonCore.Actions.Knative
   alias CommonCore.Actions.Notebooks
   alias CommonCore.Actions.Smtp4dev
   alias CommonCore.Actions.SSO
@@ -18,6 +19,7 @@ defmodule CommonCore.Actions.RootActionGenerator do
     forgejo: Forgejo,
     grafana: Grafana,
     kiali: Kiali,
+    knative: Knative,
     notebooks: Notebooks,
     smtp4dev: Smtp4dev,
     sso: SSO,
