@@ -68,7 +68,7 @@ defmodule CommonCore.Resources.Builder do
 
   @spec add_owner(map(), String.t() | map() | nil) :: any
   def add_owner(resource, %{id: id} = _id_backed_strut), do: owner_label(resource, id)
-  def add_owner(resource, owner_binary) when is_binary(owner_binary), do: add_owner(resource, owner_binary)
+  def add_owner(resource, owner_binary) when is_binary(owner_binary), do: owner_label(resource, owner_binary)
   def add_owner(resource, _), do: resource
 
   @spec owner_label(map(), binary() | nil) :: map()

@@ -25,7 +25,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
 
     :istio_virtual_service
     |> B.build_resource()
-    |> B.name("smtp-dev")
+    |> B.name("smtp-four-dev")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
