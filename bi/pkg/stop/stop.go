@@ -19,7 +19,7 @@ func StopInstall(ctx context.Context, env *installs.InstallEnv, skipCleanKube bo
 		defer progressReporter.Shutdown()
 	}
 
-	if !skipCleanKube {
+	if !skipCleanKube && env.NeedsKubeCleanup() {
 		kubeClient, err := env.NewBatteryKubeClient()
 		if err != nil {
 			return err

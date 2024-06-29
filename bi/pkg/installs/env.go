@@ -98,3 +98,10 @@ func readInstallEnv(slugOrURL string) (string, *InstallEnv, error) {
 
 	return "", nil, fmt.Errorf("No spec found")
 }
+
+func (env *InstallEnv) NeedsKubeCleanup() bool {
+	// Returns true if we should remove all resources in in an install
+	// Returns true if the cluster provider is in [provided, aws]
+	provider := env.Spec.KubeCluster.Provider
+	return provider == "provided" || provider == "aws"
+}
