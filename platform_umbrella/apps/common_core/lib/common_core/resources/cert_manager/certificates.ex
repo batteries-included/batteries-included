@@ -60,7 +60,10 @@ defmodule CommonCore.Resources.CertManager.Certificates.Cert do
   end
 
   defp build_cert_spec(_name, host, issuer) when is_nil(host) or is_nil(issuer), do: nil
+
   defp build_cert_spec(name, host, issuer) when is_binary(host), do: build_cert_spec(name, [host], issuer)
+
+  defp build_cert_spec(_name, [] = _hosts, _issuer), do: nil
 
   defp build_cert_spec(name, hosts, issuer) do
     issuer_ref = B.issuer_ref(group(issuer), kind(issuer), name(issuer))
