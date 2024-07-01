@@ -1,7 +1,7 @@
 defmodule CommonCore.Defaults.Images do
   @moduledoc false
   @cert_manager_image_tag "v1.14.7"
-  @kiali_image_version "v1.85.0"
+  @kiali_image_version "v1.86.1"
 
   def cert_manager_image_version, do: @cert_manager_image_tag
   def vm_cluster_tag, do: "v1.93.9-cluster"
