@@ -7,7 +7,9 @@ defmodule CommonCore.Resources.KnativeServing do
   import CommonCore.StateSummary.SSL
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
+  alias CommonCore.StateSummary.Batteries
 
   resource(:cluster_role_binding_activator, battery, _state) do
     :cluster_role_binding
@@ -235,6 +237,25 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.data(data)
   end
 
+  resource(:config_map_certmanager, battery, state) do
+    battery_ca_issuer = Ymlr.document!(%{kind: "ClusterIssuer", name: "battery-ca"})
+
+    data = %{
+      # "issuerRef" => battery_ca_issuer,
+      # "clusterLocalIssuerRef" => battery_ca_issuer,
+      "systemInternalIssuerRef" => battery_ca_issuer
+    }
+
+    :config_map
+    |> B.build_resource()
+    |> B.name("config-certmanager")
+    |> B.namespace(battery.config.namespace)
+    |> B.component_labels("net-certmanager")
+    |> B.label("networking.knative.dev/certificate-provider", "cert-manager")
+    |> B.data(data)
+    |> F.require_battery(state, :battery_ca)
+  end
+
   resource(:config_map_defaults, battery, _state) do
     data = %{}
 
@@ -324,12 +345,14 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:config_map_network, battery, state) do
-    ssl = ssl_enabled?(state)
+    ssl? = ssl_enabled?(state)
+    battery_ca? = Batteries.batteries_installed?(state, :battery_ca)
 
     data =
       %{}
-      |> maybe_put(ssl, "external-domain-tls", "Enabled")
-      |> maybe_put(ssl, "http-protocol", "Enabled")
+      |> maybe_put(ssl?, "external-domain-tls", "Enabled")
+      |> maybe_put(ssl?, "http-protocol", "Enabled")
+      |> maybe_put(battery_ca?, "system-internal-tls", "Enabled")
 
     :config_map
     |> B.build_resource()
@@ -885,7 +908,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.rules(rules)
   end
 
-  resource(:secret_certs, battery, _state) do
+  resource(:secret_certs, battery, state) do
     data = Secret.encode(%{})
 
     :secret
@@ -895,9 +918,10 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.label("networking.internal.knative.dev/certificate-uid", "serving-certs")
     |> B.label("serving-certs-ctrl", "data-plane")
     |> B.data(data)
+    |> F.disallow_battery(state, :battery_ca)
   end
 
-  resource(:secret_routing_serving_certs, battery, _state) do
+  resource(:secret_routing_serving_certs, battery, state) do
     data = Secret.encode(%{})
 
     :secret
@@ -907,9 +931,10 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.label("networking.internal.knative.dev/certificate-uid", "serving-certs")
     |> B.label("serving-certs-ctrl", "data-plane-routing")
     |> B.data(data)
+    |> F.disallow_battery(state, :battery_ca)
   end
 
-  resource(:secret_serving_certs_ctrl_ca, battery, _state) do
+  resource(:secret_serving_certs_ctrl_ca, battery, state) do
     data = Secret.encode(%{})
 
     :secret
@@ -919,9 +944,10 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.label("networking.internal.knative.dev/certificate-uid", "serving-certs")
     |> B.label("serving-certs-ctrl", "data-plane")
     |> B.data(data)
+    |> F.disallow_battery(state, :battery_ca)
   end
 
-  resource(:secret_webhook_certs, battery, _state) do
+  resource(:secret_webhook_certs, battery, state) do
     data = Secret.encode(%{})
 
     :secret
@@ -930,6 +956,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.namespace(battery.config.namespace)
     |> B.component_labels("webhook")
     |> B.data(data)
+    |> F.disallow_battery(state, :battery_ca)
   end
 
   resource(:service_account_activator, battery, _state) do
