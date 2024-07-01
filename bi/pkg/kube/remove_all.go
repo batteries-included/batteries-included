@@ -22,6 +22,8 @@ import (
 const (
 	// maxConcurrentDeletions is the maximum number of resources that can be deleted concurrently.
 	maxConcurrentDeletions = 10
+	// pollInterval is the interval at which we poll for resource deletion.
+	pollInterval = 5 * time.Second
 )
 
 func (kubeClient *batteryKubeClient) RemoveAll(ctx context.Context) error {
@@ -396,7 +398,7 @@ func (kubeClient *batteryKubeClient) deleteAndWait(ctx context.Context, gvr sche
 
 	// Poll the resource until it's deleted, we could use a watch here but they get
 	// expensive when we have a lot of resources to delete.
-	t := time.NewTicker(5 * time.Second)
+	t := time.NewTicker(pollInterval)
 	defer t.Stop()
 
 	for {
