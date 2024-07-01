@@ -265,7 +265,7 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:config_map_domain, battery, state) do
-    data = Map.put(%{}, knative_base_host(state), "")
+    data = Map.put(%{}, webapp_base_host(state), "")
 
     :config_map
     |> B.build_resource()

@@ -83,7 +83,7 @@ defmodule ControlServerWeb.Live.Timeline do
 
       <.data_list>
         <:item title="Show Backend Service">
-          <.link navigate={~p(/backend_services)}><%= @payload.name %></.link>
+          <.link navigate={~p(/backend/services)}><%= @payload.name %></.link>
         </:item>
       </.data_list>
     </.payload_container>

@@ -12,7 +12,7 @@ defmodule ControlServerWeb.BackendServicesNewLiveTest do
       env_value = :containers_env_value |> params_for() |> Map.drop(~w(source_optional)a)
 
       conn
-      |> start(~p|/backend_services/new|)
+      |> start(~p|/backend/services/new|)
       |> click("button", "Add Container")
       |> submit_form("#container-form", container: container)
       |> click("button", "Add Variable")

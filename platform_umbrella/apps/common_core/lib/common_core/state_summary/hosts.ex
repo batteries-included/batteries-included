@@ -46,13 +46,18 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ip() |> host("kiali")
   end
 
-  def knative_base_host(%StateSummary{} = summary) do
+  def webapp_base_host(%StateSummary{} = summary) do
     summary |> ip() |> host("webapp")
   end
 
   def knative_host(%StateSummary{} = summary, service) do
     namespace = knative_namespace(summary)
-    "#{service.name}.#{namespace}.#{knative_base_host(summary)}"
+    "#{service.name}.#{namespace}.#{webapp_base_host(summary)}"
+  end
+
+  def backend_host(%StateSummary{} = summary, service) do
+    namespace = backend_namespace(summary)
+    "#{service.name}.#{namespace}.#{webapp_base_host(summary)}"
   end
 
   def notebooks_host(%StateSummary{} = summary) do

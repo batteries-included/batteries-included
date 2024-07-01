@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
+  import ControlServerWeb.BackendServicesTable
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.KnativeServicesTable
   import ControlServerWeb.NotebooksTable
@@ -40,8 +41,9 @@ defmodule ControlServerWeb.Projects.ShowLive do
     redis_ids = Enum.map(project.redis_clusters, & &1.id)
     ferret_ids = Enum.map(project.ferret_services, & &1.id)
     knative_ids = Enum.map(project.knative_services, & &1.id)
+    backend_ids = Enum.map(project.backend_services, & &1.id)
 
-    allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids)
+    allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids ++ backend_ids)
     pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
 
     assign(socket, pods: pods)
@@ -91,6 +93,10 @@ defmodule ControlServerWeb.Projects.ShowLive do
             <.dropdown_link navigate={~p"/knative/services/new?project_id=#{@project.id}"}>
               Knative Service
             </.dropdown_link>
+
+            <.dropdown_link navigate={~p"/backend/services/new?project_id=#{@project.id}"}>
+              Backend Service
+            </.dropdown_link>
           </.dropdown>
 
           <.button
@@ -134,6 +140,10 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
       <.panel :if={@project.knative_services != []} variant="gray" title="Knative Services">
         <.knative_services_table abbridged rows={@project.knative_services} />
+      </.panel>
+
+      <.panel :if={@project.backend_services != []} variant="gray" title="Backend Services">
+        <.backend_services_table abbridged rows={@project.backend_services} />
       </.panel>
 
       <.panel title="Pods" class="col-span-2">

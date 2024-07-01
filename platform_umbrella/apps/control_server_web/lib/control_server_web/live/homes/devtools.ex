@@ -17,7 +17,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
      |> assign_batteries()
      |> assign_knative_services()
      |> assign_backend_services()
-     |> assign_current_page()}
+     |> assign_current_page()
+     |> assign_page_title()}
   end
 
   defp assign_batteries(socket) do
@@ -34,6 +35,10 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   defp assign_current_page(socket) do
     assign(socket, current_page: :devtools)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: "Devtools")
   end
 
   defp knative_panel(assigns) do
@@ -57,10 +62,10 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     <.panel title="Backend Services">
       <:menu>
         <.flex>
-          <.a navigate={~p"/backend_services/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Backend Service
+          <.a navigate={~p"/backend/services/new"}>
+            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Service
           </.a>
-          <.link navigate={~p"/backend_services/"}>View All</.link>
+          <.link navigate={~p"/backend/services"}>View All</.link>
         </.flex>
       </:menu>
       <.backend_services_table rows={@services} abbridged />

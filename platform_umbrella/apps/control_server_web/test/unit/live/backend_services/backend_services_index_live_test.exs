@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BackendServicesIndexLiveTest do
+defmodule ControlServerWeb.BackendIndexLiveTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
@@ -7,7 +7,7 @@ defmodule ControlServerWeb.BackendServicesIndexLiveTest do
   describe "index" do
     test "renders an empty list of backend services", %{conn: conn} do
       conn
-      |> start(~p|/backend_services|)
+      |> start(~p|/backend/services|)
       |> assert_html("Backend Services")
     end
 
@@ -16,7 +16,7 @@ defmodule ControlServerWeb.BackendServicesIndexLiveTest do
       insert(:backend_service, name: "Service 2")
 
       conn
-      |> start(~p|/backend_services|)
+      |> start(~p|/backend/services|)
       |> assert_html("Service 1")
       |> assert_html("Service 2")
     end
