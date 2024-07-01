@@ -5,10 +5,11 @@
     "provider": "kind"
   },
   "target_summary": {
+    "knative_services": [],
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_01905065e0ba76a9b4d7dda24acb4102",
+        "id": "batt_01906f0329957c9bac3762bce0084952",
         "type": "istio",
         "config": {
           "type": "istio",
@@ -22,7 +23,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01905065e0bc7740a7d6587d2fbda478",
+        "id": "batt_01906f03299579fcac3b98c01ddfc45c",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
@@ -34,7 +35,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01905065e0bd7e8f8c2e70a6de0c860a",
+        "id": "batt_01906f03299576d2a93c5468c0b27c89",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -48,12 +49,12 @@
           "default_size": "tiny",
           "cluster_name": "dev",
           "server_in_cluster": false,
-          "install_id": "batt_01905065e06e76e6b82075e1babe33b8",
+          "install_id": "batt_01906f0329597ef4b3c51bed68afb601",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "qDbM2t8eumuPVv_-n5PNnzsRm2v4W_ssKb014sFLzO0",
+            "d": "Bw8fpsiL1xjTYvi12iXfDZqqoZxzuPQY8FdcdYNausY",
             "kty": "OKP",
-            "x": "Fo-t5GpO-B-PwWFg3QFEVwUzs5Moqr34PuOn7bDQDFs"
+            "x": "yJJ6uR8ON7S1dNw964X79hUxObGoQcUIA3iOkVWlJFI"
           },
           "image_override": null,
           "bootstrap_image_override": null
@@ -63,15 +64,15 @@
         "updated_at": null
       },
       {
-        "id": "batt_01905065e0c1704d807b527e341ead04",
+        "id": "batt_01906f032997711780a036050f0b0b93",
         "type": "metallb",
         "config": {
           "type": "metallb",
           "controller_image": "quay.io/metallb/controller:v0.13.12",
           "speaker_image": "quay.io/metallb/speaker:v0.13.12",
           "frrouting_image": "quay.io/frrouting/frr:8.5.4",
-          "controller_image_override": null,
           "speaker_image_override": null,
+          "controller_image_override": null,
           "frrouting_image_override": null
         },
         "group": "net_sec",
@@ -79,11 +80,11 @@
         "updated_at": null
       },
       {
-        "id": "batt_01905065e0c1718292417e3c48798109",
+        "id": "batt_01906f032997774e93e533431a994cd3",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
-          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.23.1",
+          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.23.2",
           "image_override": null
         },
         "group": "data",
@@ -91,7 +92,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01905065e0c279159d89de4c05548081",
+        "id": "batt_01906f0329977e9695fb80bf01be34c6",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -133,7 +134,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "U3XKS5ZZPIIHTPBCRSKI6TAD",
+            "password": "VIRPBLDK7SCDRNOLEXJTLDJS",
             "roles": ["createdb", "login"],
             "credential_namespaces": ["battery-core"]
           }
@@ -146,7 +147,6 @@
     "redis_clusters": [],
     "projects": [],
     "ferret_services": [],
-    "knative_services": [],
     "ip_address_pools": []
   },
   "initial_resources": {
@@ -155,7 +155,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "HUYYPOXISS6KQLGBZ75TAW2VYA5TWMGBP43EKMXK2IPQN4HO72AA===="
+          "battery/hash": "WCIG2SR4LDE5FLITDZP2G45F4WLMDGJWPYFQAMHPDDMNH3HWU3EQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -165,7 +165,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01905065e0bd7e8f8c2e70a6de0c860a",
+          "battery/owner": "batt_01906f03299576d2a93c5468c0b27c89",
           "istio-injection": "enabled",
           "version": "latest"
         },

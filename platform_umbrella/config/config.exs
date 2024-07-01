@@ -111,6 +111,8 @@ config :common_core, CommonCore.JWK,
   sign_key: :test,
   verify_keys: [:test_pub, :home_a_pub, :home_b_pub]
 
+config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
+
 config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]}
 
 config :swoosh, :api_client, Swoosh.ApiClient.Finch
