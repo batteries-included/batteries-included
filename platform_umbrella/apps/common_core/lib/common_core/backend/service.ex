@@ -1,8 +1,9 @@
 defmodule CommonCore.Backend.Service do
   @moduledoc false
 
-  use CommonCore, :schema
+  use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
   @service_size_preset [
@@ -70,6 +71,8 @@ defmodule CommonCore.Backend.Service do
     embeds_many :init_containers, CommonCore.Containers.Container, on_replace: :delete
     embeds_many :env_values, CommonCore.Containers.EnvValue, on_replace: :delete
 
+    belongs_to :project, Project
+
     timestamps()
   end
 
@@ -81,6 +84,7 @@ defmodule CommonCore.Backend.Service do
     |> unique_constraint(:name)
   end
 
-  def preset_options_for_select,
-    do: Enum.map(@service_size_preset, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
+  def preset_options_for_select do
+    Enum.map(@service_size_preset, &{String.capitalize(&1.name), &1.name})
+  end
 end

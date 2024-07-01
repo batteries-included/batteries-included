@@ -143,11 +143,13 @@ defmodule ControlServerWeb.Router do
     live "/services/:id/edit_versions", Live.KnativeShow, :edit_versions
   end
 
-  scope "/backend_services", ControlServerWeb do
+  scope "/backend", ControlServerWeb do
     pipe_through :browser
 
-    live "/", Live.BackendServicesIndex, :index
-    live "/new", Live.BackendNew, :index
+    live "/services", Live.BackendIndex, :index
+    live "/services/new", Live.BackendNew, :new
+    live "/services/:id/edit", Live.BackendEdit, :edit
+    live "/services/:id/show", Live.BackendShow, :show
   end
 
   scope "/trivy_reports", ControlServerWeb do

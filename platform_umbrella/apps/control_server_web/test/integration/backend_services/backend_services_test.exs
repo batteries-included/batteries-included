@@ -7,7 +7,7 @@ defmodule ControlServerWeb.BackendServices.BackendServicesTest do
     service_name = "#{@service_name}-#{:rand.uniform(10_000)}"
 
     session
-    |> visit("/backend_services/new")
+    |> visit("/backend/services/new")
     |> assert_text("New Backend Service")
     |> fill_in(text_field("service[name]"), with: service_name)
     |> click(button("Add Container"))

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.BackendServices.FormComponent do
+defmodule ControlServerWeb.Live.Backend.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
@@ -28,15 +28,17 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
   end
 
   @impl Phoenix.LiveComponent
-  def update(%{service: service, title: title, action: action} = _assigns, socket) do
-    changeset = Backend.change_service(service)
+  def update(%{service: service, title: title, action: action} = assigns, socket) do
+    project_id = Map.get(service, :project_id) || assigns[:project_id]
+    changeset = Backend.change_service(service, %{project_id: project_id})
 
     {:ok,
      socket
      |> assign_changeset(changeset)
      |> assign_title(title)
      |> assign_service(service)
-     |> assign_action(action)}
+     |> assign_action(action)
+     |> assign_projects()}
   end
 
   def update(%{container: nil}, socket) do
@@ -156,14 +158,17 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
     assign(socket, action: action)
   end
 
+  defp assign_projects(socket) do
+    assign(socket, projects: ControlServer.Projects.list_projects())
+  end
+
   defp save_service(socket, :new, service_params) do
     case Backend.create_service(service_params) do
-      {:ok, _new_service} ->
+      {:ok, service} ->
         {:noreply,
          socket
          |> put_flash(:global_success, "Backend service created successfully")
-         # TODO: Redirect to the new service
-         |> push_navigate(to: ~p"/backend_services")}
+         |> push_navigate(to: ~p"/backend/services/#{service}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
@@ -172,12 +177,11 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
 
   defp save_service(socket, :edit, service_params) do
     case Backend.update_service(socket.assigns.service, service_params) do
-      {:ok, _updated_service} ->
+      {:ok, service} ->
         {:noreply,
          socket
          |> put_flash(:global_success, "Backend service updated successfully")
-         # TODO: wire up the show view and redirect to it
-         |> push_navigate(to: ~p"/backend_services")}
+         |> push_navigate(to: ~p"/backend/services/#{service}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
@@ -209,30 +213,6 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
     """
   end
 
-  defp advanced_setting_panel(assigns) do
-    ~H"""
-    <.panel variant="gray" title="Advanced Settings">
-      <.flex column>
-        <.input
-          label="Kube Deployment Type"
-          field={@form[:kube_deployment_type]}
-          type="select"
-          options={["Stateful Set": "statefulset", Deployment: "deployment"]}
-        />
-        <.h5 class="mt-2">Number of Instances</.h5>
-        <.input
-          label="Number of Instances"
-          field={@form[:num_instances]}
-          type="range"
-          min="1"
-          max={5}
-          step="1"
-        />
-      </.flex>
-    </.panel>
-    """
-  end
-
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
@@ -244,9 +224,16 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.page_header title={@title} back_link={~p"/backend_services"}>
+        <.page_header
+          title={@title}
+          back_link={
+            if @action == :new,
+              do: ~p"/backend/services",
+              else: ~p"/backend/services/#{@service}/show"
+          }
+        >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
-            Save Backend Service
+            Save Service
           </.button>
         </.page_header>
         <.flex column>
@@ -258,7 +245,34 @@ defmodule ControlServerWeb.Live.BackendServices.FormComponent do
               init_containers={@init_containers}
               containers={@containers}
             />
-            <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} />
+            <.panel variant="gray" title="Advanced Settings">
+              <.flex column>
+                <.input
+                  field={@form[:project_id]}
+                  type="select"
+                  label="Project"
+                  placeholder="No Project"
+                  placeholder_selectable={true}
+                  options={Enum.map(@projects, &{&1.name, &1.id})}
+                />
+                <.input
+                  label="Kube Deployment Type"
+                  field={@form[:kube_deployment_type]}
+                  type="select"
+                  options={["Stateful Set": "statefulset", Deployment: "deployment"]}
+                />
+                <.h5 class="mt-2">Number of Instances</.h5>
+                <.input
+                  label="Number of Instances"
+                  field={@form[:num_instances]}
+                  type="range"
+                  min="1"
+                  max={5}
+                  step="1"
+                />
+              </.flex>
+            </.panel>
+
             <.env_var_panel env_values={@env_values} editable target={@myself} />
             <!-- Hidden inputs for embeds -->
             <.containers_hidden_form field={@form[:containers]} />

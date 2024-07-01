@@ -16,7 +16,8 @@ defmodule ControlServer.Projects do
       :redis_clusters,
       :ferret_services,
       :jupyter_notebooks,
-      :knative_services
+      :knative_services,
+      :backend_services
     ])
     |> Repo.get!(id)
   end
