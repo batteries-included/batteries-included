@@ -17,6 +17,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/discovery"
 	cacheddiscovery "k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -49,6 +50,7 @@ type batteryKubeClient struct {
 	client              *kubernetes.Clientset
 	dynamicClient       *dynamic.DynamicClient
 	apiExtensionsClient *apiextensionsclientset.Clientset
+	discoveryClient     discovery.CachedDiscoveryInterface
 	mapper              *restmapper.DeferredDiscoveryRESTMapper
 	net                 network.Network
 }
@@ -68,6 +70,11 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 	if kubeConfig.UserAgent == "" {
 		kubeConfig.UserAgent = rest.DefaultKubernetesUserAgent()
 	}
+
+	// Set the QPS and Burst to the maximum values to avoid client-side rate
+	// limiting when rapidly creating and deleting resources.
+	kubeConfig.QPS = 50
+	kubeConfig.Burst = 100
 
 	var net network.Network
 	var httpClient *http.Client
@@ -144,6 +151,7 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 		cfg:                 kubeConfig,
 		client:              client,
 		dynamicClient:       dynamicClient,
+		discoveryClient:     discoveryClient,
 		mapper:              mapper,
 		net:                 net,
 		apiExtensionsClient: apiextensionsclient}, nil
