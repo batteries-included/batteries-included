@@ -22,6 +22,18 @@ defmodule CommonCore.Resources.FilterResource do
     end
   end
 
+  @spec disallow_battery(map(), StateSummary.t(), atom() | list(atom())) :: map() | nil
+  def disallow_battery(resource, state, battery_types \\ [])
+
+  def disallow_battery(resource, state, battery_type) when is_atom(battery_type),
+    do: disallow_battery(resource, state, [battery_type])
+
+  def disallow_battery(resource, state, battery_types) when is_list(battery_types) do
+    unless Batteries.batteries_installed?(state, battery_types) do
+      resource
+    end
+  end
+
   @spec require_non_empty(map(), Enumerable.t()) :: map() | nil
   def require_non_empty(resource, enumerable)
   def require_non_empty(_resource, nil), do: nil
