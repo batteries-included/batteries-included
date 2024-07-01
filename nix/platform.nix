@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, self, ... }:
 {
   perSystem =
     { lib, pkgs, ... }:
@@ -25,6 +25,9 @@
         doCheck = false;
         chechPhase = "";
       });
+
+      safeRev = self.shortRev or self.dirtyShortRev;
+      fakeGit = pkgs.writeScriptBin "git" "echo \"${safeRev}\"";
 
       npmlock2nix = pkgs.callPackages inputs.npmlock2nix { };
 
@@ -66,6 +69,7 @@
           src
           mixFodDeps
           pkgs
+          self
           ;
         inherit erlang elixir hex;
         inherit npmlock2nix nodejs;
@@ -75,6 +79,7 @@
           openssl
           cmake
           python312
+          fakeGit
           ;
         inherit gitignoreSource;
 
@@ -95,6 +100,7 @@
           pkg-config
           cmake
           python312
+          fakeGit
         ];
         buildInputs = [ openssl ];
         installPhase = ''
@@ -116,6 +122,7 @@
           openssl
           cmake
           python312
+          fakeGit
           ;
         inherit gitignoreSource;
 
@@ -132,6 +139,7 @@
           openssl
           cmake
           python312
+          fakeGit
           ;
         inherit rebar3;
 
@@ -150,6 +158,7 @@
           openssl
           cmake
           python312
+          fakeGit
           ;
         inherit rebar3;
 
@@ -167,6 +176,7 @@
           gcc
           openssl
           cmake
+          fakeGit
           ;
         inherit rebar3;
 

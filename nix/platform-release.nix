@@ -16,6 +16,7 @@
   hex,
   mixFodDeps,
   gitignoreSource,
+  fakeGit,
   ...
 }:
 let
@@ -53,6 +54,7 @@ beamPackages.mixRelease {
     pkg-config
     nodejs
     python312
+    fakeGit
   ];
 
   buildInputs = [ openssl ];

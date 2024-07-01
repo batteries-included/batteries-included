@@ -32,9 +32,8 @@ _: {
             exec = ''
               [[ -z ''${TRACE:-""} ]] || set -x
               pushd platform_umbrella &> /dev/null
-              mix "do" clean, compile --force
               rm -rf ../bootstrap
-              mix gen.static.installations "../bootstrap"
+              VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} mix "do" clean, compile --force, gen.static.installations "../bootstrap"
               popd &> /dev/null
               treefmt
             '';

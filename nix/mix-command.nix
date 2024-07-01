@@ -17,6 +17,7 @@
   hex,
   rebar3,
   command,
+  fakeGit,
   ...
 }:
 pkgs.stdenv.mkDerivation {
@@ -33,6 +34,7 @@ pkgs.stdenv.mkDerivation {
     cmake
     python312
     openssl
+    fakeGit
   ];
   inherit buildInputs;
 
