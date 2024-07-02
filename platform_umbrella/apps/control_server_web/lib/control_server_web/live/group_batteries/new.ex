@@ -6,13 +6,15 @@ defmodule ControlServerWeb.GroupBatteries.NewLive do
   alias ControlServer.Batteries.Installer
   alias ControlServerWeb.BatteriesFormComponent
 
-  def mount(%{"battery_type" => battery_type}, _session, socket) do
+  def mount(%{"battery_type" => battery_type} = params, _session, socket) do
     battery = Catalog.get(battery_type)
+    redirect_to = Map.get(params, "redirect_to", ~p"/batteries/#{battery.group}")
 
     {:ok,
      socket
      |> assign(:current_page, battery.group)
      |> assign(:page_title, "#{battery.name} Battery")
+     |> assign(:redirect_to, redirect_to)
      |> assign(:battery, battery)
      |> assign(:installing, false)
      |> assign(:completed, false)
@@ -113,7 +115,7 @@ defmodule ControlServerWeb.GroupBatteries.NewLive do
       </.data_list>
 
       <:actions :if={@completed}>
-        <.button variant="secondary" link={~p"/batteries/#{@battery.group}"} icon={:check_circle}>
+        <.button variant="secondary" link={@redirect_to} icon={:check_circle}>
           Done
         </.button>
       </:actions>

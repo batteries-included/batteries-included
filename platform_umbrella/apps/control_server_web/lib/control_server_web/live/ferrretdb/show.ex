@@ -82,7 +82,9 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     <.page_header title={"FerretDB Service: #{@ferret_service.name}"} back_link={~p"/ferretdb"}>
       <:menu>
         <.badge :if={@ferret_service.project_id}>
-          <:item label="Project"><%= @ferret_service.project.name %></:item>
+          <:item label="Project" navigate={~p"/projects/#{@ferret_service.project_id}"}>
+            <%= @ferret_service.project.name %>
+          </:item>
         </.badge>
       </:menu>
 

@@ -18,6 +18,9 @@ defmodule CommonUI.Components.BadgeTest do
     <.badge>
       <:item label="Foo">Bar</:item>
       <:item label="Baz">Qux</:item>
+      <:item label="Navigate" navigate="/">Navigate</:item>
+      <:item label="Patch" patch="/">Patch</:item>
+      <:item label="Href" href="/">Href</:item>
     </.badge>
     """
   end

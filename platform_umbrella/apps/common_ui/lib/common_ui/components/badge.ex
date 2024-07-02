@@ -10,6 +10,9 @@ defmodule CommonUI.Components.Badge do
 
   slot :item do
     attr :label, :any, required: true
+    attr :navigate, :string
+    attr :patch, :string
+    attr :href, :string
   end
 
   def badge(%{minimal: true} = assigns) do
@@ -45,7 +48,14 @@ defmodule CommonUI.Components.Badge do
       <%= for item <- @item do %>
         <div class="flex text-sm px-5 my-2 gap-1">
           <span class="text-gray"><%= item.label %>:</span>
-          <span><%= render_slot(item) %></span>
+
+          <%= if item[:navigate] || item[:patch] || item[:href] do %>
+            <.link class="hover:underline" {assigns_to_attributes(item, [:label])}>
+              <%= render_slot(item) %>
+            </.link>
+          <% else %>
+            <span><%= render_slot(item) %></span>
+          <% end %>
         </div>
       <% end %>
     </div>
