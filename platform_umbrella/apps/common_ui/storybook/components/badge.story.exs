@@ -14,7 +14,8 @@ defmodule Storybook.Components.Badge do
         id: :with_items,
         slots: [
           ~s|<:item label="Foo">Bar</:item>|,
-          ~s|<:item label="Baz">Qux</:item>|
+          ~s|<:item label="Baz">Qux</:item>|,
+          ~s|<:item label="Quux" href="https://www.batteriesincl.com">Quuz</:item>|
         ]
       },
       %Variation{

@@ -11,6 +11,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
   import ControlServerWeb.PostgresClusterTable
   import ControlServerWeb.RedisTable
 
+  alias CommonCore.Batteries.Catalog
   alias ControlServer.Projects
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
@@ -54,10 +55,18 @@ defmodule ControlServerWeb.Projects.ShowLive do
       {:ok, _} ->
         {:noreply, push_navigate(socket, to: ~p"/projects")}
 
-      {:error, _changeset} ->
-        # TODO: Either show a more detailed error message, or maybe just
-        # nullify the project_id in each resource after showing a warning
-        {:noreply, put_flash(socket, :global_error, "Project still has resources")}
+      {:error, _} ->
+        {:noreply, put_flash(socket, :global_error, "Could not delete project")}
+    end
+  end
+
+  defp add_link(battery_type, url) do
+    if SummaryBatteries.battery_installed(battery_type) do
+      url
+    else
+      %{group: battery_group} = Catalog.get(battery_type)
+
+      ~p"/batteries/#{battery_group}/new/#{battery_type}?redirect_to=#{url}"
     end
   end
 
@@ -68,33 +77,44 @@ defmodule ControlServerWeb.Projects.ShowLive do
         <.tooltip target_id="add-tooltip">Add Resources</.tooltip>
         <.tooltip target_id="edit-tooltip">Edit Project</.tooltip>
         <.tooltip :if={@timeline_installed} target_id="history-tooltip">Project History</.tooltip>
+        <.tooltip target_id="delete-tooltip">Delete Project</.tooltip>
         <.flex gaps="0">
           <.dropdown>
             <:trigger>
               <.button id="add-tooltip" variant="icon" icon={:plus} />
             </:trigger>
 
-            <.dropdown_link navigate={~p"/postgres/new?project_id=#{@project.id}"}>
+            <.dropdown_link navigate={
+              add_link(:cloudnative_pg, ~p"/postgres/new?project_id=#{@project.id}")
+            }>
               Postgres
             </.dropdown_link>
 
-            <.dropdown_link navigate={~p"/redis/new?project_id=#{@project.id}"}>
+            <.dropdown_link navigate={add_link(:redis, ~p"/redis/new?project_id=#{@project.id}")}>
               Redis
             </.dropdown_link>
 
-            <.dropdown_link navigate={~p"/ferretdb/new?project_id=#{@project.id}"}>
+            <.dropdown_link navigate={
+              add_link(:ferretdb, ~p"/ferretdb/new?project_id=#{@project.id}")
+            }>
               FerretDB
             </.dropdown_link>
 
-            <.dropdown_link navigate={~p"/notebooks/new?project_id=#{@project.id}"}>
+            <.dropdown_link navigate={
+              add_link(:notebooks, ~p"/notebooks/new?project_id=#{@project.id}")
+            }>
               Jupyter Notebook
             </.dropdown_link>
 
-            <.dropdown_link navigate={~p"/knative/services/new?project_id=#{@project.id}"}>
+            <.dropdown_link navigate={
+              add_link(:knative, ~p"/knative/services/new?project_id=#{@project.id}")
+            }>
               Knative Service
             </.dropdown_link>
 
-            <.dropdown_link navigate={~p"/backend/services/new?project_id=#{@project.id}"}>
+            <.dropdown_link navigate={
+              add_link(:backend_services, ~p"/backend/services/new?project_id=#{@project.id}")
+            }>
               Backend Service
             </.dropdown_link>
           </.dropdown>
@@ -112,6 +132,14 @@ defmodule ControlServerWeb.Projects.ShowLive do
             variant="icon"
             icon={:clock}
             link={~p"/projects/#{@project.id}/timeline"}
+          />
+
+          <.button
+            id="delete-tooltip"
+            variant="icon"
+            icon={:trash}
+            phx-click="delete"
+            data-confirm={"Are you sure you want to delete the \"#{@project.name}\" project? This will not delete any resources."}
           />
         </.flex>
       </.flex>

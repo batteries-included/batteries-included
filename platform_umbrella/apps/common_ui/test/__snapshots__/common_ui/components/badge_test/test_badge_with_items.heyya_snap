@@ -2,12 +2,48 @@
   
     <div class="flex text-sm px-5 my-2 gap-1">
       <span class="text-gray">Foo:</span>
-      <span>Bar</span>
+
+      
+        <span>Bar</span>
+      
     </div>
   
     <div class="flex text-sm px-5 my-2 gap-1">
       <span class="text-gray">Baz:</span>
-      <span>Qux</span>
+
+      
+        <span>Qux</span>
+      
+    </div>
+  
+    <div class="flex text-sm px-5 my-2 gap-1">
+      <span class="text-gray">Navigate:</span>
+
+      
+        <a href="/" data-phx-link="redirect" data-phx-link-state="push" class="hover:underline">
+          Navigate
+        </a>
+      
+    </div>
+  
+    <div class="flex text-sm px-5 my-2 gap-1">
+      <span class="text-gray">Patch:</span>
+
+      
+        <a href="/" data-phx-link="patch" data-phx-link-state="push" class="hover:underline">
+          Patch
+        </a>
+      
+    </div>
+  
+    <div class="flex text-sm px-5 my-2 gap-1">
+      <span class="text-gray">Href:</span>
+
+      
+        <a href="/" class="hover:underline">
+          Href
+        </a>
+      
     </div>
   
 </div>

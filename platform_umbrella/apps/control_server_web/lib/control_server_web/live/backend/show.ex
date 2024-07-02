@@ -32,7 +32,9 @@ defmodule ControlServerWeb.Live.BackendShow do
     <.page_header title={"Backend Service: #{@service.name}"} back_link={back_url()}>
       <:menu>
         <.badge :if={@service.project_id}>
-          <:item label="Project"><%= @service.project.name %></:item>
+          <:item label="Project" navigate={~p"/projects/#{@service.project_id}"}>
+            <%= @service.project.name %>
+          </:item>
         </.badge>
       </:menu>
 
