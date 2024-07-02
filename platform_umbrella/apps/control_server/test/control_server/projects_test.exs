@@ -2,8 +2,8 @@ defmodule ControlServer.ProjectsTest do
   use ControlServer.DataCase
 
   import ControlServer.Factory
-  import ControlServer.Projects
   import ControlServer.Notebooks
+  import ControlServer.Projects
   import ControlServer.ProjectsFixtures
 
   alias CommonCore.Projects.Project
