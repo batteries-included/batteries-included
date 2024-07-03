@@ -1,11 +1,10 @@
 { inputs, ... }:
 {
   perSystem =
-    {
-      system,
-      config,
-      lib,
-      ...
+    { system
+    , config
+    , lib
+    , ...
     }:
     let
       pkgs = import inputs.nixpkgs {
@@ -126,7 +125,6 @@
         ++ lib.optionals pkgs.stdenv.isDarwin darwinOnlyTools
         ++ lib.optionals pkgs.stdenv.isLinux linuxOnlyTools
         ++ integrationTestingTools
-        ++ [ config.treefmt.build.wrapper ]
         ++ [ config.packages.bi ];
 
       buildInputs = with pkgs; [

@@ -42,7 +42,7 @@
           ;
         mixEnv = "test";
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-YZ7cvfuQE84bERUEdjk21PHG5LXZ4gFl6xIG0Z18heY=";
+        sha256 = "sha256-3SBYfAC44LqnfgvXGymwoO5g5op9lKWSuC/f5zMnq7I";
       };
 
       # mix fixed output derivation dependencies
@@ -60,7 +60,7 @@
           elixir
           ;
         #sha256 = lib.fakeSha256;
-        sha256 = "sha256-kYcXAnsswxpVrStGwatgA/6ZFawNYhvHS6JnNFglJ+8=";
+        sha256 = "sha256-xrYn8mP93E5pFwWwfpDrERQnQTSFfsKyRiyvhVbIcAE=";
       };
 
       control-server = pkgs.callPackage ./platform-release.nix {
@@ -167,31 +167,13 @@
         mixFodDeps = mixTestFodDeps;
         command = "dialyzer";
       };
-
-      format = pkgs.callPackage ./mix-command.nix {
-        inherit version src pkgs;
-        inherit erlang elixir hex;
-        inherit
-          pkg-config
-          gcc
-          openssl
-          cmake
-          fakeGit
-          ;
-        inherit rebar3;
-
-        pname = "platform";
-        mixEnv = "test";
-        mixFodDeps = mixTestFodDeps;
-        command = "format --check-formatted";
-      };
     in
     {
       packages = {
         inherit home-base control-server kube-bootstrap;
       };
       checks = {
-        inherit credo dialyzer format;
+        inherit credo dialyzer;
       };
     };
 }

@@ -1,10 +1,10 @@
 ---
-import Breadcrumbs from "~/components/widgets/Breadcrumbs.astro";
-import Layout from "~/layouts/PageLayout.astro";
-import slugify from "slugify";
-import PostList from "~/components/posts/List.astro";
-import type { Post } from "~/types";
-import { fetchPosts } from "~/utils/posts";
+import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import slugify from 'slugify';
+import PostList from '~/components/posts/List.astro';
+import type { Post } from '~/types';
+import { fetchPosts } from '~/utils/posts';
 export const prerender = true;
 
 export async function getStaticPaths() {
@@ -34,19 +34,17 @@ const blogPostsByTag = allBlogPosts.filter((post) => post.tags?.includes(tag));
   <div class="u-container">
     <Breadcrumbs
       items={[
-        { label: "Home", link: "/" },
-        { label: "Tags", link: "/tags" },
+        { label: 'Home', link: '/' },
+        { label: 'Tags', link: '/tags' },
         { label: tag, link: `/tags/${tag}` },
       ]}
     />
   </div>
   <div
-    class="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between"
-  >
+    class="flex flex-col gap-y-4 md:flex-row md:items-center md:justify-between">
     <div>
       <h1
-        class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl"
-      >
+        class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl">
         {metadata.title}
       </h1>
     </div>

@@ -2,17 +2,22 @@
 import type { Form } from '~/types';
 import Button from '~/components/ui/Button.astro';
 
-const { inputs, textarea, disclaimer, button = 'Contact us', description = '' } = Astro.props as Form;
+const {
+  inputs,
+  textarea,
+  disclaimer,
+  button = 'Contact us',
+  description = '',
+} = Astro.props as Form;
 ---
 
 <form
-    data-netlify="true"
-    netlify-honeypot="bot-field"
-    name="contact"
-    method="POST"
-    action="/success"
-    data-netlify="true">
-
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  name="contact"
+  method="POST"
+  action="/success"
+  data-netlify="true">
   <p class="hidden">
     <label>
       Don’t fill this out if you’re human: <input name="bot-field" />
@@ -22,7 +27,13 @@ const { inputs, textarea, disclaimer, button = 'Contact us', description = '' } 
   {
     inputs &&
       inputs.map(
-        ({ type = 'text', name, label = '', autocomplete = 'on', placeholder = '' }) =>
+        ({
+          type = 'text',
+          name,
+          label = '',
+          autocomplete = 'on',
+          placeholder = '',
+        }) =>
           name && (
             <div class="mb-6">
               {label && (
@@ -72,7 +83,9 @@ const { inputs, textarea, disclaimer, button = 'Contact us', description = '' } 
           />
         </div>
         <div class="ml-3">
-          <label for="disclaimer" class="cursor-pointer select-none text-sm text-gray-600 dark:text-gray-400">
+          <label
+            for="disclaimer"
+            class="cursor-pointer select-none text-sm text-gray-600 dark:text-gray-400">
             {disclaimer.label}
           </label>
         </div>
