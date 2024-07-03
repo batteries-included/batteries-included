@@ -254,17 +254,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
       <.flex column>
         <.input field={@form[:rollout_duration]} label="Roll Out Duration" />
         <.input
-          :if={@sso_enabled}
-          field={@form[:oauth2_proxy]}
-          type="switch"
-          label="Protect with OAuth2 Proxy"
-        />
-        <.input
-          :if={@sso_enabled && @form[:oauth2_proxy].value == true}
-          field={@form[:keycloak_realm]}
-          label="Keycloak Realm"
-        />
-        <.input
           field={@form[:project_id]}
           type="select"
           label="Project"
