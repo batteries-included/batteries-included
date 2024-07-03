@@ -47,12 +47,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # treefmt for nix. formats everything but elixir
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # provides custom CLI - e.g. bi commands
     mission-control = {
       url = "github:batteries-included/mission-control";
@@ -60,18 +54,15 @@
   };
 
   outputs =
-    inputs@{
-      flake-utils,
-      treefmt-nix,
-      flake-root,
-      flake-parts,
-      mission-control,
-      ...
+    inputs@{ flake-utils
+    , flake-root
+    , flake-parts
+    , mission-control
+    , ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = flake-utils.lib.defaultSystems;
       imports = [
-        treefmt-nix.flakeModule
         flake-root.flakeModule
         mission-control.flakeModule
         ./nix/shell.nix
@@ -81,7 +72,6 @@
         ./nix/pastebin-containers.nix
         ./nix/platform.nix
         ./nix/platform-containers.nix
-        ./nix/fmt.nix
         ./nix/mission-control.nix
       ];
     };

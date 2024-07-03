@@ -19,6 +19,13 @@ Available options:
 
 -h, --help      Print this help and exit
 -v, --verbose   Print script debug info
+
+Available commands:
+
+- fmt           Format all code in the project
+- check-fmt     Check if all code in the project is formatted
+- start         Start a new installation
+- stop          Stop a running installation
 EOF
     exit
 }
@@ -33,6 +40,7 @@ run_mix() {
     pushd "${root_dir}/platform_umbrella" >/dev/null
     # shellcheck disable=SC2068
     mix $@
+    popd >/dev/null
 }
 
 ## From an install spec file get the slug
@@ -88,6 +96,72 @@ do_bootstrap() {
     spec_path=$(realpath "${spec_path}")
 
     do_start "${spec_path}"
+}
+
+format_mix_code() {
+    local path=${1}
+    pushd "${path}" >/dev/null
+    log "Formatting elixir code in ${BLUE}${path}${NOFORMAT}"
+    run_mix "do" deps.get, format > /dev/null
+    popd >/dev/null
+
+}
+
+check_format_mix_code() {
+    local path=${1}
+    pushd "${path}" >/dev/null
+    log "Checking elixir code in ${BLUE}${path}${NOFORMAT}"
+    run_mix "do" deps.get, format --check-formatted > /dev/null
+    popd >/dev/null
+
+}
+
+format_go_code() {
+    local path=${1}
+    pushd "${path}" >/dev/null
+    log "Formatting golang code in ${BLUE}${path}${NOFORMAT}"
+    gofmt -s -w . > /dev/null
+    popd >/dev/null
+}
+
+check_format_go_code() {
+    local path=${1}
+    pushd "${path}" >/dev/null
+    log "Checking golang code in ${BLUE}${path}${NOFORMAT}"
+    test -z $(gofmt -l .)
+    popd >/dev/null
+}
+
+format_npm_code() {
+    local path=${1}
+    pushd "${path}" >/dev/null
+    log "Formatting npm code in ${BLUE}${path}${NOFORMAT}"
+    npm ci > /dev/null
+    npx prettier --write . > /dev/null
+    popd >/dev/null
+}
+
+check_format_npm_code() {
+    local path=${1}
+    pushd "${path}" >/dev/null
+    log "Checking npm code in ${BLUE}${path}${NOFORMAT}"
+    npm ci > /dev/null
+    npx prettier --check . > /dev/null
+    popd >/dev/null
+}
+
+do_fmt() {
+    format_mix_code "platform_umbrella"
+    format_go_code "bi"
+    format_go_code "pastebin-go"
+    format_npm_code "static"
+}
+
+do_check_fmt() {
+    check_format_mix_code "platform_umbrella"
+    check_format_go_code "bi"
+    check_format_go_code "pastebin-go"
+    check_format_npm_code "static"
 }
 
 cleanup() {
@@ -165,7 +239,8 @@ parse_params() {
     done
 
     if [[ $# -lt 1 ]]; then
-        die "Missing script arguments"
+        log "Missing script arguments"
+        usage
     fi
 
     command="$1"
@@ -181,12 +256,19 @@ setup_trace
 setup_root
 
 case "$command" in
+fmt)
+    do_fmt
+    ;;
+check-fmt)
+    do_check_fmt
+    ;;
 start)
     do_start "${args[@]}"
     ;;
 stop)
     do_stop "${args[@]}"
     ;;
-
-*) ;;
+*) 
+    usage
+    ;;
 esac

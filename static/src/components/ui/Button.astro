@@ -24,16 +24,15 @@ const variants = {
   link: 'cursor-pointer hover:text-primary',
 };
 ---
+
 {
-type === 'button' || type === 'submit' || type === 'reset' ? (
-  <button
-    class={twMerge(variants[variant] || '', className)}
-    type={type}
-    {...rest}
-  >
-    <p class="w-full" set:html={text} />
-    {
-      icon && (
+  type === 'button' || type === 'submit' || type === 'reset' ? (
+    <button
+      class={twMerge(variants[variant] || '', className)}
+      type={type}
+      {...rest}>
+      <p class="w-full" set:html={text} />
+      {icon && (
         <IconFactory
           classes={clsx('w-8 h-8', {
             'text-primary': !isLightIcon,
@@ -41,27 +40,23 @@ type === 'button' || type === 'submit' || type === 'reset' ? (
           })}
           icon={icon}
         />
-      )
-    }
-  </button>
-) : (
-<a
-  class={twMerge(variants[variant] || '', className)}
-  {...target ? { target: target, rel: 'noopener noreferrer' } : {}}
-  {...rest}
->
-  <p class="w-full" set:html={text} />
-  {
-    icon && (
-      <IconFactory
-        classes={clsx('w-8 h-8', {
-          'text-primary': !isLightIcon,
-          'text-white': isLightIcon,
-        })}
-        icon={icon}
-      />
-    )
-  }
-</a>
-)
+      )}
+    </button>
+  ) : (
+    <a
+      class={twMerge(variants[variant] || '', className)}
+      {...(target ? { target: target, rel: 'noopener noreferrer' } : {})}
+      {...rest}>
+      <p class="w-full" set:html={text} />
+      {icon && (
+        <IconFactory
+          classes={clsx('w-8 h-8', {
+            'text-primary': !isLightIcon,
+            'text-white': isLightIcon,
+          })}
+          icon={icon}
+        />
+      )}
+    </a>
+  )
 }

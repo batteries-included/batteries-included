@@ -19,13 +19,11 @@ const variants = {
   primary: 'btn-square btn-square-primary',
   secondary: 'btn-square btn-square-secondary',
 };
-
 ---
 
 <a
-  class={twMerge(variants[variant] || '', className, 'group') }
+  class={twMerge(variants[variant] || '', className, 'group')}
   href={target}
-
   {...target ? { target: target, rel: 'noopener noreferrer' } : {}}
   {...rest}>
   <Fragment set:html={text} />

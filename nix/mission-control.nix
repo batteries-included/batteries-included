@@ -6,15 +6,6 @@ _: {
         wrapperName = "bix";
 
         scripts = {
-          fmt = {
-            description = "Format the codebase";
-            category = "code";
-            exec = ''
-              treefmt
-              ex-fmt
-            '';
-          };
-
           clean = {
             description = "Clean the working tree";
             category = "code";
@@ -35,7 +26,6 @@ _: {
               rm -rf ../bootstrap
               VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} mix "do" clean, compile --force, gen.static.installations "../bootstrap"
               popd &> /dev/null
-              treefmt
             '';
           };
 
@@ -97,15 +87,6 @@ _: {
               go mod tidy
               gomod2nix
               popd &> /dev/null
-            '';
-          };
-
-          ex-fmt = {
-            description = "Format elixir codebase";
-            category = "elixir";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              m format
             '';
           };
 

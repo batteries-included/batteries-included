@@ -1,0 +1,30 @@
+name: BIX
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-fmt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: cachix/cachix-action@v15
+        with:
+          name: batteries-included
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush:
+            ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
+            'push') }}
+      - name: Run the Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Check FMT via bin/bix
+        run: nix develop --command bash -c 'bin/bix check-fmt'

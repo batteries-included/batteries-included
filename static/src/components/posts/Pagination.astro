@@ -22,16 +22,14 @@ const {
     <div class="flex items-center justify-between">
       <a
         class={`${!prevUrl ? 'invisible' : 'flex items-center gap-x-2'}`}
-        href={getPermalink(prevUrl)}
-      >
+        href={getPermalink(prevUrl)}>
         <Icon name="tabler:chevron-left" class="w-6 h-6" />
         <p>{prevText}</p>
       </a>
 
       <a
         class={`${!nextUrl ? 'invisible' : ' flex items-center gap-x-2'}`}
-        href={getPermalink(nextUrl)}
-      >
+        href={getPermalink(nextUrl)}>
         <p>{nextText}</p>
         <Icon name="tabler:chevron-right" class="w-6 h-6" />
       </a>

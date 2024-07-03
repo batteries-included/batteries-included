@@ -16,7 +16,7 @@ const allBlogPosts = await fetchPosts();
 
 const postsByTag = groupBy(
   allBlogPosts.flatMap((post: Post) =>
-    (post.tags|| []).map((tag) => ({ ...post, tag }))
+    (post.tags || []).map((tag) => ({ ...post, tag }))
   ),
   (item) => item.tag
 );
@@ -35,8 +35,7 @@ const postsByTag = groupBy(
     <div class="u-container">
       <div>
         <h1
-          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl"
-        >
+          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl">
           Tags
         </h1>
       </div>
@@ -47,8 +46,7 @@ const postsByTag = groupBy(
               <li class="group">
                 <a
                   class="py-6 group-first:border-transparent border-t flex items-center justify-between text-sm"
-                  href={`/tags/${slugify(key, { lower: true })}`}
-                >
+                  href={`/tags/${slugify(key, { lower: true })}`}>
                   <p>{key}</p>
                   <div class="flex items-center gap-x-2">
                     <FileTextIcon />
