@@ -45,7 +45,7 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
             }
           })
 
-        Logger.debug("Creating new client: #{inspect(value)}")
+        Logger.debug("Creating new client: #{inspect(value["name"])}")
         {:ok, nil}
 
       {:error, :already_exists} ->
