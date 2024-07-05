@@ -24,7 +24,7 @@ defmodule CommonCore.Resources.BackendServices do
     end)
   end
 
-  multi_resource(:service_accoune, battery, state) do
+  multi_resource(:service_account, battery, state) do
     Enum.map(state.backend_services, fn service -> service_account(service, battery, state) end)
   end
 

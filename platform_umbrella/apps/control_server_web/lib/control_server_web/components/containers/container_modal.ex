@@ -43,8 +43,8 @@ defmodule ControlServerWeb.Containers.ContainerModal do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("cancel", _, socket) do
-    ControlServerWeb.Live.Knative.FormComponent.update_container(nil, nil)
+  def handle_event("cancel", _, %{assigns: %{update_func: update_func}} = socket) do
+    update_func.(nil, nil)
     {:noreply, socket}
   end
 
@@ -90,9 +90,9 @@ defmodule ControlServerWeb.Containers.ContainerModal do
             <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
             <.input label="Image" field={@form[:image]} placeholder="Image" />
             <.input
+              label="Command (optional)"
               name="container[command][]"
               value={(@form.data.command || []) |> List.first(nil)}
-              label="Command (optional)"
               placeholder="/bin/true"
             />
           </.flex>
