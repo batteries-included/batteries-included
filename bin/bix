@@ -22,10 +22,11 @@ Available options:
 
 Available commands:
 
-- fmt           Format all code in the project
-- check-fmt     Check if all code in the project is formatted
-- start         Start a new installation
-- stop          Stop a running installation
+- fmt               Format all code in the project
+- check-fmt         Check if all code in the project is formatted
+- start             Start a new installation
+- stop              Stop a running installation
+- gen-static-specs  Generate static installation specs
 EOF
     exit
 }
@@ -102,7 +103,7 @@ format_mix_code() {
     local path=${1}
     pushd "${path}" >/dev/null
     log "Formatting elixir code in ${BLUE}${path}${NOFORMAT}"
-    run_mix "do" deps.get, format > /dev/null
+    run_mix "do" deps.get, format >/dev/null
     popd >/dev/null
 
 }
@@ -111,7 +112,7 @@ check_format_mix_code() {
     local path=${1}
     pushd "${path}" >/dev/null
     log "Checking elixir code in ${BLUE}${path}${NOFORMAT}"
-    run_mix "do" deps.get, format --check-formatted > /dev/null
+    run_mix "do" deps.get, format --check-formatted >/dev/null
     popd >/dev/null
 
 }
@@ -120,7 +121,7 @@ format_go_code() {
     local path=${1}
     pushd "${path}" >/dev/null
     log "Formatting golang code in ${BLUE}${path}${NOFORMAT}"
-    gofmt -s -w . > /dev/null
+    gofmt -s -w . >/dev/null
     popd >/dev/null
 }
 
@@ -136,8 +137,8 @@ format_npm_code() {
     local path=${1}
     pushd "${path}" >/dev/null
     log "Formatting npm code in ${BLUE}${path}${NOFORMAT}"
-    npm ci > /dev/null
-    npx prettier --write . > /dev/null
+    npm ci >/dev/null
+    npx prettier --write . >/dev/null
     popd >/dev/null
 }
 
@@ -145,8 +146,8 @@ check_format_npm_code() {
     local path=${1}
     pushd "${path}" >/dev/null
     log "Checking npm code in ${BLUE}${path}${NOFORMAT}"
-    npm ci > /dev/null
-    npx prettier --check . > /dev/null
+    npm ci >/dev/null
+    npx prettier --check . >/dev/null
     popd >/dev/null
 }
 
@@ -162,6 +163,13 @@ do_check_fmt() {
     check_format_go_code "bi"
     check_format_go_code "pastebin-go"
     check_format_npm_code "static"
+}
+
+do_gen_static_specs() {
+    rm -rf "${root_dir}/bootstrap"
+    VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} \
+        run_mix "do" deps.get, compile, \
+        gen.static.installations "${root_dir}/bootstrap"
 }
 
 cleanup() {
@@ -268,7 +276,10 @@ start)
 stop)
     do_stop "${args[@]}"
     ;;
-*) 
+gen-static-specs)
+    do_gen_static_specs
+    ;;
+*)
     usage
     ;;
 esac
