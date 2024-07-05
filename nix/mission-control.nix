@@ -6,78 +6,6 @@ _: {
         wrapperName = "bix";
 
         scripts = {
-          clean = {
-            description = "Clean the working tree";
-            category = "code";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              git clean -idx \
-                -e .env \
-                -e .iex.exs
-            '';
-          };
-
-          go-test = {
-            description = "Run go tests";
-            category = "go";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              set -e
-              pushd bi &> /dev/null
-              gofmt -s -l -e .
-              go vet -v ./...
-
-              # If trace run tests with --race -v
-              # Otherwise just run the tests
-              if [[ -n ''${TRACE:-""} ]]; then
-                go test --race -v ./...
-              else
-                go test ./...
-              fi
-            '';
-          };
-
-          go-int-test = {
-            description = "Run go tests Including Integration tests";
-            category = "go";
-            exec = ''
-              export INTEGRATION=true
-              [[ -z ''${TRACE:-""} ]] || set -x
-              set -e
-              pushd bi &> /dev/null
-              gofmt -s -l -e .
-              go vet -v ./...
-
-              # If trace run tests with --race -v
-              # Otherwise just run the tests
-              if [[ -n ''${TRACE:-""} ]]; then
-                go test --race -v ./...
-              else
-                go test ./...
-              fi
-            '';
-          };
-
-          go-update-deps = {
-            description = "Run go tests";
-            category = "go";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              set -e
-              pushd bi &> /dev/null
-              go get -u ./...
-              go mod tidy
-              gomod2nix
-              popd &> /dev/null
-
-              pushd pastebin-go &> /dev/null
-              go get -u ./...
-              go mod tidy
-              gomod2nix
-              popd &> /dev/null
-            '';
-          };
-
           ex-test-setup = {
             description = "Run test setup";
             category = "elixir";
@@ -132,19 +60,6 @@ _: {
             '';
           };
 
-          ex-watch = {
-            description = "Watch for changes to elixir source";
-            category = "elixir";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              ${lib.getExe' pkgs.fswatch "fswatch"} \
-                --one-per-batch \
-                --event=Updated \
-                --recursive \
-                platform_umbrella/apps/
-            '';
-          };
-
           m = {
             description = "Run mix commands";
             category = "elixir";
@@ -185,15 +100,6 @@ _: {
             exec = ''
               ${builtins.readFile ./scripts/common-functions.sh}
               do_bootstrap "$@"
-            '';
-          };
-
-          stop = {
-            description = "Stop the kind cluster and all things";
-            category = "fullstack";
-            exec = ''
-              ${builtins.readFile ./scripts/common-functions.sh}
-              do_stop "$@"
             '';
           };
 
@@ -243,22 +149,6 @@ _: {
 
               export MIX_ENV=test
               m "do" compile --force, ecto.reset
-            '';
-          };
-
-          force-remove-namespace = {
-            description = "Forcefully remove the given namespace by removing finalizers";
-            category = "dev";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-                [[ "$#" -ne 1 ]] && { echo "Missing namespace argument"; exit 1;}
-                NAMESPACE="$1"
-
-                # shellcheck disable=2046
-                kubectl get ns -o json $([[ -z ''${TRACE:-""} ]] || echo "-v=4") "$NAMESPACE"  \
-                    | jq '.spec.finalizers = []' \
-                    | kubectl replace $([[ -z ''${TRACE:-""} ]] || echo "-v=4") \
-                        --raw "/api/v1/namespaces/$NAMESPACE/finalize" -f -
             '';
           };
         };
