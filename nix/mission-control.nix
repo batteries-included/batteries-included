@@ -17,18 +17,6 @@ _: {
             '';
           };
 
-          gen-static-specs = {
-            description = "Generate static specs";
-            category = "code";
-            exec = ''
-              [[ -z ''${TRACE:-""} ]] || set -x
-              pushd platform_umbrella &> /dev/null
-              rm -rf ../bootstrap
-              VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} mix "do" clean, compile --force, gen.static.installations "../bootstrap"
-              popd &> /dev/null
-            '';
-          };
-
           go-test = {
             description = "Run go tests";
             category = "go";
