@@ -51,7 +51,7 @@ jobs:
         run: nix develop --command bash -c "TRACE=1 bix ex-int-test"
       - name: Stop Kind
         run:
-          nix develop --command bash -c "TRACE=1 bix stop
+          nix develop --command bash -c "TRACE=1 bin/bix stop
           ./bootstrap/integration-test.spec.json"
       - name: Save screenshots as artifacts
         if: failure()

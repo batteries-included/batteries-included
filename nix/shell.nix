@@ -100,7 +100,6 @@
 
           # Command line tools
           cachix
-          fswatch
           jq
           k9s
           kind

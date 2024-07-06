@@ -28,3 +28,43 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v7
       - name: Check FMT via bin/bix
         run: nix develop --command bash -c 'bin/bix check-fmt'
+
+  go-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: cachix/cachix-action@v15
+        with:
+          name: batteries-included
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush:
+            ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
+            'push') }}
+      - name: Run the Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Run go test
+        run: nix develop --command bash -c 'bin/bix go-test'
+
+  go-int-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: cachix/cachix-action@v15
+        with:
+          name: batteries-included
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush:
+            ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
+            'push') }}
+      - name: Run the Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Run go integration test
+        run: nix develop --command bash -c 'bin/bix go-int-test'

@@ -22,11 +22,20 @@ Available options:
 
 Available commands:
 
-- fmt               Format all code in the project
-- check-fmt         Check if all code in the project is formatted
+
+## Install Related Commands
 - start             Start a new installation
 - stop              Stop a running installation
+
+## Development Commands
+- fmt               Format all code in the project
+- check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
+
+## Go Commands
+- go-update-deps    Update go dependencies
+- go-test           Run go tests
+- go-test-int       Run go integration tests
 EOF
     exit
 }
@@ -53,6 +62,32 @@ get_slug() {
     else
         echo "${input}"
     fi
+}
+
+update_go_deps() {
+    local go_path=${1}
+    pushd "${go_path}" >/dev/null
+    log "${BLUE}Updating go dependencies${NOFORMAT} in ${go_path}"
+    go get -u ./...
+    go mod tidy
+    gomod2nix
+    popd
+}
+
+run_go_test() {
+    local go_path=${1}
+    pushd "${go_path}" >/dev/null
+    log "${BLUE}Running go tests${NOFORMAT} in ${go_path}"
+    gofmt -s -l -e .
+    go vet -v ./...
+    # If trace run tests with --race -v
+    # Otherwise just run the tests
+    if [[ -n ''${TRACE:-""} ]]; then
+        go test --race -v ./...
+    else
+        go test ./...
+    fi
+    popd >/dev/null
 }
 
 get_summary_path() {
@@ -172,6 +207,20 @@ do_gen_static_specs() {
         gen.static.installations "${root_dir}/bootstrap"
 }
 
+do_go_update_deps() {
+    update_go_deps "${root_dir}/bi"
+    update_go_deps "${root_dir}/pastebin-go"
+}
+
+do_go_test() {
+    run_go_test "${root_dir}/bi"
+}
+
+do_go_test_int() {
+    export INTEGRATION=true
+    run_go_test "${root_dir}/bi"
+}
+
 cleanup() {
     trap - SIGINT SIGTERM ERR EXIT
     for tempdir in "${tempdirs[@]}"; do
@@ -278,6 +327,15 @@ stop)
     ;;
 gen-static-specs)
     do_gen_static_specs
+    ;;
+go-update-deps)
+    do_go_update_deps
+    ;;
+go-test)
+    do_go_test
+    ;;
+go-test-int)
+    do_go_test_int
     ;;
 *)
     usage
