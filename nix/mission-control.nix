@@ -6,18 +6,6 @@ _: {
         wrapperName = "bix";
 
         scripts = {
-          ex-test-setup = {
-            description = "Run test setup";
-            category = "elixir";
-            exec = ''
-              ${builtins.readFile ./scripts/common-functions.sh}
-              do_portforward_controlserver
-
-              export MIX_ENV=test
-              m ecto.reset
-            '';
-          };
-
           ex-test = {
             description = "Run stale tests";
             category = "elixir";
@@ -92,39 +80,6 @@ _: {
                     export WALLABY_CHROME_BINARY=\${WALLABY_CHROME_BINARY:-\$chromium_binary}
                     do_integration_test_deep \"$@\"
               ";
-          };
-
-          bootstrap = {
-            description = "Bootstrap the dev environment";
-            category = "fullstack";
-            exec = ''
-              ${builtins.readFile ./scripts/common-functions.sh}
-              do_bootstrap "$@"
-            '';
-          };
-
-          dev = {
-            description = "Start dev environment";
-            category = "dev";
-            exec = ''
-              ${builtins.readFile ./scripts/common-functions.sh}
-              do_portforward_controlserver
-
-              pushd platform_umbrella &> /dev/null
-              iex -S mix phx.server
-            '';
-          };
-
-          dev-no-iex = {
-            description = "Start dev environment without iex";
-            category = "dev";
-            exec = ''
-              ${builtins.readFile ./scripts/common-functions.sh}
-              do_portforward_controlserver
-
-              pushd platform_umbrella &> /dev/null
-              mix phx.server
-            '';
           };
 
           build = {

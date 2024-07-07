@@ -1,15 +1,46 @@
 #!/usr/bin/env bash
 
 set -Eeuo pipefail
-trap cleanup SIGINT SIGTERM ERR EXIT
 
 # Get where the current script is located
-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 # Get the root directory of the project
-root_dir=$(cd "$script_dir/.." &>/dev/null && pwd -P)
-tempdirs=()
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 TRACE=${TRACE-0}
+PORTFORWARD_ENABLED=1
+
+source "${ROOT_DIR}/bin/common-functions.sh"
+
+cleanup() {
+    trap - SIGINT SIGTERM ERR EXIT
+
+    # We can end up in cleaup from a few different places and colors might not be set
+    safe_colors
+
+    local jobs
+    jobs=$(jobs -pr)
+
+    for job in $jobs; do
+        for child in $(pgrep -P $job); do
+            for grandchild in $(pgrep -P $child); do
+                for great in $(pgrep -P $grandchild); do
+                    log "Killing greatgrandchild ${ORANGE}$great${NOFORMAT}"
+                    term_kill "$great"
+                    kill -9 "$great" || true
+                done
+                log "Killing grandchild ${ORANGE}$grandchild${NOFORMAT}"
+                term_kill "$grandchild"
+            done
+            log "Killing child ${ORANGE}$child${NOFORMAT}"
+            term_kill "$child"
+        done
+        log "Killing job ${ORANGE}$job${NOFORMAT}"
+        term_kill "$job"
+    done
+    term_kill $$
+}
+trap cleanup SIGINT SIGTERM ERR EXIT
 
 usage() {
     cat <<EOF
@@ -31,6 +62,9 @@ Available commands:
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
+- bootstrap         Bootstrap a new installation
+- dev               Start a development environment with iex
+- phx-server        Start a phoenix server
 
 ## Go Commands
 - go-update-deps    Update go dependencies
@@ -40,34 +74,10 @@ EOF
     exit
 }
 
-run_bi() {
-    pushd "${root_dir}/bi" >/dev/null
-    # shellcheck disable=SC2068
-    go run bi $@
-}
-
-run_mix() {
-    pushd "${root_dir}/platform_umbrella" >/dev/null
-    # shellcheck disable=SC2068
-    mix $@
-    popd >/dev/null
-}
-
-## From an install spec file get the slug
-get_slug() {
-    local input=${1:-"bootstrap/dev.spec.json"}
-    if [[ -f ${input} ]]; then
-        input=$(realpath "${input}")
-        run_bi debug spec-slug "${input}"
-    else
-        echo "${input}"
-    fi
-}
-
 update_go_deps() {
     local go_path=${1}
     pushd "${go_path}" >/dev/null
-    log "${BLUE}Updating go dependencies${NOFORMAT} in ${go_path}"
+    log "${GREEN}Updating go dependencies${NOFORMAT} in ${go_path}"
     go get -u ./...
     go mod tidy
     gomod2nix
@@ -90,10 +100,31 @@ run_go_test() {
     popd >/dev/null
 }
 
-get_summary_path() {
-    local slug=${1}
-    log "${GREEN}Getting summary path${NOFORMAT} for $slug"
-    run_bi debug install-summary-path "$slug"
+try_portforward() {
+    local slug=${1:-"dev"}
+    local counter=0
+    local lock_dir="${ROOT_DIR}/.flock/"
+    local lock_file="${lock_dir}/portforward.lockfile"
+
+    mkdir -p "${lock_dir}"
+
+    # Loop forever if PORTFORWARD_ENABLED is set to 1
+    # Skip the loop if PORTFORWARD_ENABLED is set to 0
+
+    while [ ${PORTFORWARD_ENABLED} -eq 1 ]; do
+        if ! flock -x -n ${lock_file} ${SCRIPT_DIR}/pg-forward "${slug}"; then
+            log "Port forward failed, retrying..."
+            counter=$((counter + 1))
+
+            local sleep_time
+            if [[ $((counter * 2)) -gt 20 ]]; then
+                sleep_time=20
+            else
+                sleep_time=$((counter * 2))
+            fi
+            sleep "${sleep_time}"
+        fi
+    done
 }
 
 ## Stop a running installation
@@ -110,7 +141,7 @@ do_stop() {
         # Otherwise we can just stop the install path assuming it's a slug already
         slug=${input}
     fi
-    log "${CYAN}Stopping${NOFORMAT} $slug"
+    log "${YELLOW}Stopping${NOFORMAT} $slug"
     run_bi stop "$slug"
 }
 
@@ -123,15 +154,61 @@ do_start() {
     fi
 
     spec_path=$(realpath "${spec_path}")
-    log "${GREEN}Starting${NOFORMAT} ${spec_path}"
+    log "${GREEN}Starting${NOFORMAT} ${CYAN}${spec_path}${NOFORMAT}"
     run_bi start "${spec_path}"
 }
 
 do_bootstrap() {
     local spec_path=${1:-"bootstrap/dev.spec.json"}
+    local summary_path slug
     spec_path=$(realpath "${spec_path}")
 
-    do_start "${spec_path}"
+    do_start "${spec_path}" >/dev/null
+    slug=$(get_slug "${spec_path}")
+    log "${GREEN}Started Successfully${NOFORMAT} ${CYAN}${spec_path}${CYAN} is ${BLUE}${slug}${NOFORMAT}"
+
+    # Here we reach into the internals of `bi`. When we start an installation
+    # there are resources that are calcuated. We need to know what those are
+    # So rather than use the install spec we use the spec from the installation.
+    #
+    # Usually this would be handled by reading the configmap in the kube bootstrap container.
+    summary_path=$(get_summary_path "${slug}")
+
+    # bootstrap_path is the full absolute path to the folder containing the spec file
+    bootstrap_path=$(dirname "${spec_path}")
+
+    log "${GREEN}Running Kube Bootstrap${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
+    run_mix "do" deps.get, compile, kube.bootstrap "${summary_path}" >/dev/null
+    # Start the port forwarder
+    try_portforward "${slug}" &
+
+    portforward_pid=$!
+    log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}${slug}${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
+
+    # Postgres should be up create the database and run the migrations
+    log "${GREEN}Running migrations${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
+    run_mix setup >/dev/null
+    # Add the rows that should be there for what's installed
+    run_mix "do" seed.control "${summary_path}", \
+        seed.home "${bootstrap_path}" >/dev/null
+
+    log "${GREEN}Bootstrap Exited Successfully${NOFORMAT}"
+    exit 0
+}
+
+do_dev() {
+    log "${GREEN}Starting Development Environment${NOFORMAT}"
+    try_portforward "dev" &
+    portforward_pid=$!
+    log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}dev${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
+    pushd "${ROOT_DIR}/platform_umbrella" >/dev/null
+    iex -S mix phx.server
+    popd >/dev/null
+}
+
+do_phx_server() {
+    log "${GREEN}Starting Phoenix Server${NOFORMAT}"
+    run_mix "phx.server"
 }
 
 format_mix_code() {
@@ -201,86 +278,24 @@ do_check_fmt() {
 }
 
 do_gen_static_specs() {
-    rm -rf "${root_dir}/bootstrap"
+    rm -rf "${ROOT_DIR}/bootstrap"
     VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} \
         run_mix "do" deps.get, compile, \
-        gen.static.installations "${root_dir}/bootstrap"
+        gen.static.installations "${ROOT_DIR}/bootstrap"
 }
 
 do_go_update_deps() {
-    update_go_deps "${root_dir}/bi"
-    update_go_deps "${root_dir}/pastebin-go"
+    update_go_deps "${ROOT_DIR}/bi"
+    update_go_deps "${ROOT_DIR}/pastebin-go"
 }
 
 do_go_test() {
-    run_go_test "${root_dir}/bi"
+    run_go_test "${ROOT_DIR}/bi"
 }
 
 do_go_test_int() {
     export INTEGRATION=true
-    run_go_test "${root_dir}/bi"
-}
-
-cleanup() {
-    trap - SIGINT SIGTERM ERR EXIT
-    for tempdir in "${tempdirs[@]}"; do
-        rm -rf "$tempdir" || true
-    done
-
-    for pid in $(pgrep -P $$); do
-        # This is kind of a kludge to get around sending
-        # a signal to the forked off bash, flock,
-        # and bi which is portforwarding
-        for child in $(pgrep -P "$pid"); do
-            log "${ORANGE}Killing child${NOFORMAT} $child"
-            pkill -P "$child" >/dev/null 2>&1 || true
-            kill "$child" >/dev/null 2>&1 || true
-        done
-
-        pkill -P "$pid" >/dev/null 2>&1 || true
-        kill "$pid" >/dev/null 2>&1 || true
-    done
-
-    local jobs
-    jobs=$(jobs -pr)
-
-    for job in $jobs; do
-        log "${ORANGE}Killing job${NOFORMAT} $job"
-        kill "$job" >/dev/null 2>&1 || true
-    done
-
-    pkill -P $$ || true
-}
-
-setup_colors() {
-    if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
-        NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m'
-    else
-        NOFORMAT='' RED='' GREEN='' ORANGE='' BLUE='' PURPLE='' CYAN='' YELLOW=''
-    fi
-}
-
-setup_trace() {
-    if [[ $TRACE -eq 1 ]]; then
-        log "${GREEN}Tracing enabled${NOFORMAT}"
-        set -x
-    fi
-}
-
-setup_root() {
-    log "${GREEN}Entering root directory: $root_dir${NOFORMAT}"
-    pushd "$root_dir" >/dev/null
-}
-
-log() {
-    echo >&2 -e "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*"
-}
-
-die() {
-    local msg=$1
-    local code=${2-1}
-    log "$msg"
-    exit "$code"
+    run_go_test "${ROOT_DIR}/bi"
 }
 
 parse_params() {
@@ -289,6 +304,7 @@ parse_params() {
         -h | --help) usage ;;
         -v | --verbose) TRACE=1 ;;
         --no-color) NO_COLOR=1 ;;
+        --no-forward) PORTFORWARD_ENABLED=0 ;;
         -?*) die "Unknown option: $1" ;;
         *) break ;;
         esac
@@ -327,6 +343,15 @@ stop)
     ;;
 gen-static-specs)
     do_gen_static_specs
+    ;;
+bootstrap)
+    do_bootstrap "${args[@]}"
+    ;;
+dev)
+    do_dev
+    ;;
+phx-server)
+    do_phx_server
     ;;
 go-update-deps)
     do_go_update_deps

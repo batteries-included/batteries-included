@@ -35,3 +35,6 @@ result
 _tmp
 
 wg0.conf
+
+# Flock lock files for bin/bix
+.flock

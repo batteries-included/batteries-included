@@ -43,43 +43,6 @@ function cleanup() {
 
 trap cleanup EXIT SIGINT SIGTERM
 
-function do_stop() {
-  local spec_path=${1:-"bootstrap/dev.spec.json"}
-
-  local slug
-  # If install path is a file then we need to get the slug
-  # from the file
-  if [[ -f ${spec_path} ]]; then
-    slug=$(bi debug spec-slug "${spec_path}")
-  else
-    # Otherwise we can just stop the install path assuming it's a slug already
-    slug=${spec_path}
-  fi
-  bi stop "${slug}"
-}
-
-function do_bootstrap() {
-  do_start "$@"
-  local spec_path summary_path slug
-  spec_path=${1:-"bootstrap/dev.spec.json"}
-  slug=$(bi debug spec-slug "${spec_path}")
-  summary_path=$(bi debug install-summary-path "${slug}")
-
-  # bootstrap_path is the full absolute path to the folder containing the spec file
-  bootstrap_path=$(get_abs_filename "$(dirname "${spec_path}")")
-
-  m "do" deps.get, compile, kube.bootstrap "${summary_path}"
-  # Start the port forwarder
-  do_portforward_controlserver "${slug}"
-
-  # Postgres should be up create the database and run the migrations
-  m setup
-  # Add the rows that should be there for what's installed
-  m "do" seed.control "${summary_path}", \
-    seed.home "${bootstrap_path}"
-  echo "Exited"
-}
-
 function whats_running() {
   log "Checking what's running"
 
