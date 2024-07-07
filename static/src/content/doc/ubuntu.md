@@ -11,7 +11,7 @@ Ubuntu's a nice friendly distro, so lets set it up for development.
 
 ```sh
 sudo apt-get update
-sudo apt-get install -y docker.io
+sudo apt-get install -y docker.io docker-buildx
 sudo systemctl enable docker
 sudo systemctl start docker
 ```
