@@ -50,8 +50,8 @@ install or upgrade and then run the bootstrap procedure via the CLI.
 
 ### Directories
 
-- `bi` This is a small statically compiled golang project that producces the bcli
-  command line application.
+- `bi` This is a small statically compiled golang project that producces the
+  bcli command line application.
 - `bi/cmd` This is the code for the bcli command line application. It's a small
   golang project that uses cobra for command line arguments.
 

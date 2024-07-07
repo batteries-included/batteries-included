@@ -195,5 +195,5 @@ cd bi && bix m help test
 Example: The URL is usually
 [http://control.127-0-0-1.batrsinc.co:4000/dev/dashboard](http://control.127-0-0-1.batrsinc.co:4000/dev/dashboard)
 
-`/dev/dashboard` will get you a view into the ecto db, the Erlang VM, the process
-trees, and HTTP request logger for Phoenix. It's super cool stuff.
+`/dev/dashboard` will get you a view into the ecto db, the Erlang VM, the
+process trees, and HTTP request logger for Phoenix. It's super cool stuff.
