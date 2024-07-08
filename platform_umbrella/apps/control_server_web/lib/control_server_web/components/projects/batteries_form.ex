@@ -241,6 +241,8 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
           "postgres_ids" -> [:cloudnative_pg]
           "redis" -> [:redis]
           "jupyter" -> [:notebooks]
+          "knative" -> [:knative]
+          "backend" -> [:backend_services]
           _ -> nil
         end
       )

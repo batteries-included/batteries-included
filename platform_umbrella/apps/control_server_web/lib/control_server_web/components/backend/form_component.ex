@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.BackendFormSubcomponents
   import ControlServerWeb.Containers.ContainersPanel
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.Containers.HiddenForms
@@ -9,7 +10,6 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
   alias CommonCore.Backend.Service
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
-  alias CommonCore.Util.Memory
   alias ControlServer.Backend
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryBatteries
@@ -188,31 +188,6 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
     end
   end
 
-  defp main_panel(assigns) do
-    ~H"""
-    <.panel>
-      <.grid columns={[sm: 1, lg: 2]}>
-        <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
-        <.input
-          field={@form[:virtual_size]}
-          type="select"
-          label="Size"
-          options={Service.preset_options_for_select()}
-        />
-      </.grid>
-      <.data_list
-        :if={@form[:virtual_size].value != "custom"}
-        variant="horizontal-bolded"
-        class="mt-3 mb-5"
-        data={[
-          {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
-          {"CPU limits:", @form[:cpu_limits].value}
-        ]}
-      />
-    </.panel>
-    """
-  end
-
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
@@ -237,7 +212,9 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
           </.button>
         </.page_header>
         <.flex column>
-          <.main_panel form={@form} />
+          <.panel>
+            <.main_panel form={@form} />
+          </.panel>
 
           <.grid columns={[sm: 1, lg: 2]}>
             <.containers_panel

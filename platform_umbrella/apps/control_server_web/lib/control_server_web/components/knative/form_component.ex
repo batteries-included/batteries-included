@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   import ControlServerWeb.Containers.ContainersPanel
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.Containers.HiddenForms
-  import KubeServices.SystemState.SummaryHosts
+  import ControlServerWeb.KnativeFormSubcomponents
 
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
@@ -13,7 +13,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   alias ControlServer.Knative
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryBatteries
-  alias Phoenix.HTML.Form
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
@@ -74,10 +73,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   def assign_env_value_idx(socket, idx) do
     assign(socket, env_value_idx: idx)
-  end
-
-  defp potential_url(%Form{} = form) do
-    "http://#{knative_host(Changeset.apply_changes(form.source))}"
   end
 
   @impl Phoenix.LiveComponent
@@ -266,20 +261,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     """
   end
 
-  defp name_panel(assigns) do
-    ~H"""
-    <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
-    """
-  end
-
-  defp url_panel(assigns) do
-    ~H"""
-    <.flex class="justify-around items-center">
-      <.truncate_tooltip value={potential_url(@form)} length={72} />
-    </.flex>
-    """
-  end
-
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
@@ -304,21 +285,24 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             Save Service
           </.button>
         </.page_header>
-        <.grid columns={[sm: 1, lg: 2]}>
-          <.name_panel form={@form} />
-          <.url_panel form={@form} />
-          <.containers_panel
-            target={@myself}
-            init_containers={@init_containers}
-            containers={@containers}
-          />
-          <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} projects={@projects} />
-          <.env_var_panel env_values={@env_values} editable target={@myself} />
-          <!-- Hidden inputs for embeds -->
-          <.containers_hidden_form field={@form[:containers]} />
-          <.containers_hidden_form field={@form[:init_containers]} />
-          <.env_values_hidden_form field={@form[:env_values]} />
-        </.grid>
+
+        <.flex column>
+          <.main_panel form={@form} />
+
+          <.grid columns={[sm: 1, lg: 2]}>
+            <.containers_panel
+              target={@myself}
+              init_containers={@init_containers}
+              containers={@containers}
+            />
+            <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} projects={@projects} />
+            <.env_var_panel env_values={@env_values} editable target={@myself} />
+            <!-- Hidden inputs for embeds -->
+            <.containers_hidden_form field={@form[:containers]} />
+            <.containers_hidden_form field={@form[:init_containers]} />
+            <.env_values_hidden_form field={@form[:env_values]} />
+          </.grid>
+        </.flex>
       </.form>
 
       <.live_component
