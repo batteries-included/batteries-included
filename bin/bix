@@ -58,27 +58,30 @@ Available options:
 
 Available commands:
 
-
-## Install Related Commands
+**Install Related Commands**
 - start             Start a new installation
 - stop              Stop a running installation
 - bootstrap         Bootstrap a new installation
 
-## Phoenix Related Commands
+**Phoenix Related Commands**
 - dev               Start a development environment with iex
 - phx-server        Start a phoenix server
 
-## Source Commands
+**Source Commands**
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
 - build-image       Build a docker image
 - build-bi          Build the bi binary
 
-## Go Commands
+**Go Commands**
 - go-update-deps    Update go dependencies
 - go-test           Run go tests
 - go-test-int       Run go integration tests
+
+**Elixir Commands**
+- ex-test-deep      Run all tests with coverage and reset the database
+- ex-test           Run all tests
 EOF
     exit
 }
@@ -345,6 +348,38 @@ do_build_image() {
     esac
 }
 
+do_ex_test_deep() {
+    local slug=${1:-"dev"}
+    log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
+    # Start the port forwarder
+    try_portforward "${slug}" &
+    export MIX_ENV=test
+    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    run_mix compile --warnings-as-errors >/dev/null
+    run_mix ecto.reset >/dev/null
+    run_mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors --all-warnings
+    run_mix test.coverage
+    log "Elixir tests ${GREEN}Passed${NOFORMAT}"
+}
+
+do_ex_test() {
+    local slug=${1:-"dev"}
+    log "${GREEN}Running${NOFORMAT} elixir tests"
+    # Start the port forwarder
+    try_portforward "${slug}" &
+
+    export MIX_ENV=test
+    run_mix test --warnings-as-errors --all-warnings >/dev/null
+    log "Elixir tests ${GREEN}Passed${NOFORMAT}"
+}
+
+do_ex_lint() {
+    run_mix credo
+    run_mix dialyzer
+    log "Elixir lint ${GREEN}Passed${NOFORMAT}"
+
+}
+
 do_build_bi() {
     local version
     version="${BASE_VERSION}-$(version_tag)"
@@ -417,6 +452,15 @@ go-test)
     ;;
 go-test-int)
     do_go_test_int
+    ;;
+ex-test-deep)
+    do_ex_test_deep "${args[@]}"
+    ;;
+ex-test)
+    do_ex_test "${args[@]}"
+    ;;
+ex-lint)
+    do_ex_lint
     ;;
 build-image)
     do_build_image "${args[@]}"

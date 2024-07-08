@@ -23,4 +23,3 @@ jobs:
         run: bin/bix build-image kube-bootstrap
       - name: Build pastebin image
         run: bin/bix build-image pastebin
-
