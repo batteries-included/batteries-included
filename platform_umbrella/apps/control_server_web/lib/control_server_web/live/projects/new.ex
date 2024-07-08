@@ -4,8 +4,10 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
+  alias ControlServer.Backend
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
+  alias ControlServer.Knative
   alias ControlServer.Notebooks
   alias ControlServer.Postgres
   alias ControlServer.Projects
@@ -92,7 +94,9 @@ defmodule ControlServerWeb.Projects.NewLive do
          {:ok, _} <- create_jupyter(project, form_data[AIForm]),
          {:ok, _} <- create_postgres(project, form_data[AIForm]),
          {:ok, _} <- create_postgres(project, form_data[WebForm]),
-         {:ok, _} <- create_redis(project, form_data[WebForm]) do
+         {:ok, _} <- create_redis(project, form_data[WebForm]),
+         {:ok, _} <- create_knative(project, form_data[WebForm]),
+         {:ok, _} <- create_backend(project, form_data[WebForm]) do
       {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
     else
       err ->
@@ -170,6 +174,22 @@ defmodule ControlServerWeb.Projects.NewLive do
   end
 
   defp create_jupyter(_project, _jupyter_data), do: {:ok, nil}
+
+  defp create_knative(project, %{"knative" => knative_data}) do
+    knative_data
+    |> Map.put("project_id", project.id)
+    |> Knative.create_service()
+  end
+
+  defp create_knative(_project, _knative_data), do: {:ok, nil}
+
+  defp create_backend(project, %{"backend" => backend_data}) do
+    backend_data
+    |> Map.put("project_id", project.id)
+    |> Backend.create_service()
+  end
+
+  defp create_backend(_project, _backend_data), do: {:ok, nil}
 
   defp get_default_storage_class do
     case SummaryStorage.default_storage_class() do

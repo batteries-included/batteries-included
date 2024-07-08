@@ -2,9 +2,14 @@ defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  alias CommonCore.Backend.Service, as: BackendService
+  alias CommonCore.Batteries.Catalog
+  alias CommonCore.Knative.Service, as: KnativeService
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
   alias ControlServer.Postgres
+  alias ControlServerWeb.BackendFormSubcomponents
+  alias ControlServerWeb.KnativeFormSubcomponents
   alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.RedisFormSubcomponents
@@ -27,11 +32,25 @@ defmodule ControlServerWeb.Projects.WebForm do
         %{name: "#{project_name}-web"}
       )
 
+    knative_changeset =
+      KnativeService.changeset(
+        %KnativeService{},
+        %{name: "#{project_name}-web"}
+      )
+
+    backend_changeset =
+      BackendService.changeset(
+        KubeServices.SmartBuilder.new_backend_service(),
+        %{name: "#{project_name}-web"}
+      )
+
     form =
       to_form(%{
         "project_type" => "external",
         "postgres" => postgres_changeset,
-        "redis" => redis_changeset
+        "redis" => redis_changeset,
+        "knative" => knative_changeset,
+        "backend" => backend_changeset
       })
 
     {:ok,
@@ -39,11 +58,16 @@ defmodule ControlServerWeb.Projects.WebForm do
      |> assign(assigns)
      |> assign(:class, class)
      |> assign(:db_type, :new)
+     |> assign(:backend_type, :knative)
      |> assign(:form, form)}
   end
 
   def handle_event("db_type", %{"type" => type}, socket) do
     {:noreply, assign(socket, :db_type, String.to_existing_atom(type))}
+  end
+
+  def handle_event("backend_type", %{"type" => type}, socket) do
+    {:noreply, assign(socket, :backend_type, String.to_existing_atom(type))}
   end
 
   def handle_event("validate", params, socket) do
@@ -57,10 +81,22 @@ defmodule ControlServerWeb.Projects.WebForm do
       |> RedisCluster.changeset(params["redis"])
       |> Map.put(:action, :validate)
 
+    knative_changeset =
+      %KnativeService{}
+      |> KnativeService.changeset(params["knative"])
+      |> Map.put(:action, :validate)
+
+    backend_changeset =
+      %BackendService{}
+      |> BackendService.changeset(params["backend"])
+      |> Map.put(:action, :validate)
+
     form =
       params
       |> Map.put("postgres", postgres_changeset)
       |> Map.put("redis", redis_changeset)
+      |> Map.put("knative", knative_changeset)
+      |> Map.put("backend", backend_changeset)
       |> to_form()
 
     {:noreply, assign(socket, :form, form)}
@@ -98,7 +134,9 @@ defmodule ControlServerWeb.Projects.WebForm do
         "project_type",
         if(params["db_type"] == "new", do: "postgres"),
         if(params["db_type"] == "existing", do: "postgres_ids"),
-        if(normalize_value("checkbox", params["need_redis"]), do: "redis")
+        if(normalize_value("checkbox", params["need_redis"]), do: "redis"),
+        if(normalize_value("checkbox", params["need_backend"]) && params["backend_type"] == "knative", do: "knative"),
+        if(normalize_value("checkbox", params["need_backend"]) && params["backend_type"] == "backend", do: "backend")
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -171,6 +209,55 @@ defmodule ControlServerWeb.Projects.WebForm do
           class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
           form={to_form(@form[:redis].value, as: :redis)}
         />
+
+        <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
+
+        <.input field={@form[:need_backend]} type="switch" label="I need a backend" />
+
+        <.flex column class={!normalize_value("checkbox", @form[:need_backend].value) && "hidden"}>
+          <.input type="hidden" name="backend_type" value={@backend_type} />
+
+          <.tab_bar variant="secondary">
+            <:tab
+              phx-click="backend_type"
+              phx-value-type={:knative}
+              phx-target={@myself}
+              selected={@backend_type == :knative}
+            >
+              Knative
+            </:tab>
+
+            <:tab
+              phx-click="backend_type"
+              phx-value-type={:backend}
+              phx-target={@myself}
+              selected={@backend_type == :backend}
+            >
+              Backend Service
+            </:tab>
+          </.tab_bar>
+
+          <.grid columns={2}>
+            <.light_text><%= Catalog.get(:knative).description %></.light_text>
+            <.light_text><%= Catalog.get(:backend_services).description %></.light_text>
+          </.grid>
+
+          <KnativeFormSubcomponents.main_panel
+            form={to_form(@form[:knative].value, as: :knative)}
+            class={
+              (!normalize_value("checkbox", @form[:need_backend].value) || @backend_type != :knative) &&
+                "hidden"
+            }
+          />
+
+          <BackendFormSubcomponents.main_panel
+            form={to_form(@form[:backend].value, as: :backend)}
+            class={
+              (!normalize_value("checkbox", @form[:need_backend].value) || @backend_type != :backend) &&
+                "hidden"
+            }
+          />
+        </.flex>
 
         <:actions>
           <%= render_slot(@inner_block) %>

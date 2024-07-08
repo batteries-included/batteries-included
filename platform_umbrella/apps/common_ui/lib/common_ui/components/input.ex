@@ -19,14 +19,16 @@ defmodule CommonUI.Components.Input do
   attr :label_note, :string, default: nil
   attr :note, :string, default: nil
   attr :placeholder, :string, default: nil
-  attr :placeholder_selectable, :boolean, default: false
   attr :type, :string, default: "text"
   attr :icon, :atom, default: nil
-  attr :options, :list, default: []
   attr :multiple, :boolean, default: false
   attr :debounce, :any, default: "blur"
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(autocomplete autofocus step maxlength disabled required)
+
+  # Used for select field
+  attr :options, :list, default: []
+  attr :placeholder_selectable, :boolean, default: false
 
   # Used for range sliders
   attr :min, :any, default: 0
