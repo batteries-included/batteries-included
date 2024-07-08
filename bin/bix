@@ -82,6 +82,7 @@ Available commands:
 **Elixir Commands**
 - ex-test-deep      Run all tests with coverage and reset the database
 - ex-test           Run all tests
+- ex-lint           Run all linters (dialexir, credo, format)
 EOF
     exit
 }
@@ -232,13 +233,50 @@ format_mix_code() {
 
 }
 
+format_prettier_code() {
+    log "Formatting all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
+    # Some code needs prettier so we use static's install
+    pushd "${ROOT_DIR}/static" >/dev/null
+    npm ci >/dev/null
+    # Run prettier on all the files from inside of static.
+    # This seems to keep prettier happy and not complain about astro-plugin
+    npx prettier --write $(git ls-files ../*.yaml ../*.yml ../*.ts ../*.js) >/dev/null
+    popd >/dev/null
+}
+
+check_format_prettier_code() {
+    log "Checking all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
+    # Some code needs prettier so we use static's install
+    pushd "${ROOT_DIR}/static" >/dev/null
+    npm ci >/dev/null
+    # Run prettier on all the files from inside of static.
+    # This seems to keep prettier happy and not complain about astro-plugin
+    npx prettier --check $(git ls-files ../*.yaml ../*.yml ../*.ts ../*.js) >/dev/null
+    popd >/dev/null
+}
+
+format_sh_code() {
+    log "Formatting all ${BLUE}sh${NOFORMAT} files with shfmt"
+    shfmt -w -i 4 "${ROOT_DIR}/bin"
+    for file in $(git ls-files *.sh); do
+        shfmt -w -i 4 "${file}"
+    done
+}
+
+check_format_sh_code() {
+    log "Checking all ${BLUE}sh${NOFORMAT} files with shfmt"
+    shfmt -d -i 4 "${ROOT_DIR}/bin"
+    for file in $(git ls-files *.sh); do
+        shfmt -d -i 4 "${file}"
+    done
+}
+
 check_format_mix_code() {
     local path=${1}
     pushd "${path}" >/dev/null
     log "Checking elixir code in ${BLUE}${path}${NOFORMAT}"
     run_mix "do" deps.get, format --check-formatted >/dev/null
     popd >/dev/null
-
 }
 
 format_go_code() {
@@ -280,6 +318,8 @@ do_fmt() {
     format_go_code "bi"
     format_go_code "pastebin-go"
     format_npm_code "static"
+    format_prettier_code
+    format_sh_code
 }
 
 do_check_fmt() {
@@ -287,6 +327,8 @@ do_check_fmt() {
     check_format_go_code "bi"
     check_format_go_code "pastebin-go"
     check_format_npm_code "static"
+    check_format_prettier_code
+    check_format_sh_code
 }
 
 do_gen_static_specs() {
@@ -374,10 +416,12 @@ do_ex_test() {
 }
 
 do_ex_lint() {
+    log "${GREEN}Running${NOFORMAT} elixir linters"
+    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
     run_mix credo
     run_mix dialyzer
+    run_mix format --check-formatted
     log "Elixir lint ${GREEN}Passed${NOFORMAT}"
-
 }
 
 do_build_bi() {

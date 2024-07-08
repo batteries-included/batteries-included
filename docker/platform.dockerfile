@@ -61,8 +61,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
   apt-transport-https \
   ca-certificates \
   software-properties-common \
-  locales \
-  && locale-gen $LANG
+  locales &&\
+  locale-gen $LANG
 
 ##########################################################################
 # Fetch app library dependencies
@@ -90,10 +90,10 @@ COPY platform_umbrella/apps/home_base_web/mix.exs platform_umbrella/apps/home_ba
 COPY platform_umbrella/apps/kube_bootstrap/mix.exs platform_umbrella/apps/kube_bootstrap/mix.exs
 COPY platform_umbrella/apps/kube_services/mix.exs platform_umbrella/apps/kube_services/mix.exs
 
-RUN cd platform_umbrella \
-  && mix do local.hex --force, local.rebar --force \
-  && mix deps.get \
-  && mix deps.compile --force --skip-umbrella-children
+RUN cd platform_umbrella && \
+  mix do local.hex --force, local.rebar --force && \
+  mix deps.get && \
+  mix deps.compile --force --skip-umbrella-children
 
 #########################
 ## Download and Build the dependencies
@@ -124,12 +124,11 @@ WORKDIR /source
 
 COPY . /source/
 
-
-RUN cd platform_umbrella \
-  && mix deps.get \
-  && cd apps/control_server_web/assets \
-  && npm run css:deploy \
-  && npm run js:deploy
+RUN cd platform_umbrella && \
+  mix deps.get && \
+  cd apps/control_server_web/assets && \
+  npm run css:deploy && \
+  npm run js:deploy
 
 ##########################################################################
 # Build HomeBase assets
@@ -160,11 +159,11 @@ WORKDIR /source
 
 COPY . /source/
 
-RUN cd platform_umbrella \
-  && mix deps.get \
-  && cd apps/home_base_web/assets \
-  && npm run css:deploy \
-  && npm run js:deploy
+RUN cd platform_umbrella && \
+  mix deps.get && \
+  cd apps/home_base_web/assets && \
+  npm run css:deploy && \
+  npm run js:deploy
 
 ##########################################################################
 # Create release
@@ -184,9 +183,8 @@ COPY . /source/
 COPY --from=home-base-assets /source/platform_umbrella/apps/home_base_web/priv /source/platform_umbrella/apps/home_base_web/priv
 COPY --from=control-assets /source/platform_umbrella/apps/control_server_web/priv /source/platform_umbrella/apps/control_server_web/priv
 
-
-RUN cd /source/platform_umbrella \
-  && mix do phx.digest, compile, release "${RELEASE}"
+RUN cd /source/platform_umbrella && \
+  mix do phx.digest, compile, release "${RELEASE}"
 
 ##########################################################################
 # Create final image that is deployed
@@ -214,20 +212,19 @@ ENV LANG=$LANG \
 
 WORKDIR /app
 
-RUN apt update \
-  && apt install -y libssl3 tini ca-certificates locales \
-  && apt clean
+RUN apt update && \
+  apt install -y libssl3 tini ca-certificates locales && \
+  apt clean
 
 # Create user and group to run under with specific uid
-RUN groupadd --gid 10001 --system "$APP_GROUP" \
-  && useradd --uid 10000 --system -g "$APP_GROUP" --home "$HOME" "$APP_USER"
+RUN groupadd --gid 10001 --system "$APP_GROUP" && \
+  useradd --uid 10000 --system -g "$APP_GROUP" --home "$HOME" "$APP_USER"
 
 # Create app dirs
-RUN mkdir -p "/run/$APP_NAME" \
-  && chown -R "$APP_USER:$APP_GROUP" "/run/$APP_NAME/"
+RUN mkdir -p "/run/$APP_NAME" && \
+  chown -R "$APP_USER:$APP_GROUP" "/run/$APP_NAME/"
 
 USER $APP_USER
-
 
 COPY --from=release --chown="$APP_USER:$APP_GROUP" "/source/platform_umbrella/_build/$MIX_ENV/rel/${RELEASE}" ./
 
