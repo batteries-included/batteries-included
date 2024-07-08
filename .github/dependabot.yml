@@ -29,3 +29,11 @@ updates:
     directory: '/platform_umbrella/'
     schedule:
       interval: daily
+  - package-ecosystem: 'gomod'
+    directory: '/bi/'
+    schedule:
+      interval: daily
+  - package-ecosystem: 'gomod'
+    directory: '/pastebin-go/'
+    schedule:
+      interval: daily

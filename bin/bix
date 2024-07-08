@@ -77,9 +77,9 @@ Available commands:
 - build-bi          Build the bi binary
 
 **Go Commands**
-- go-update-deps    Update go dependencies
 - go-test           Run go tests
 - go-test-int       Run go integration tests
+- go-update-deps    Update go dependencies
 
 **Elixir Commands**
 - ex-test-deep      Run all tests with coverage and reset the database
