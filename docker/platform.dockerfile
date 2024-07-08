@@ -176,7 +176,7 @@ COPY --from=home-base-assets /source/platform_umbrella/apps/home_base_web/priv /
 COPY --from=control-assets /source/platform_umbrella/apps/control_server_web/priv /source/platform_umbrella/apps/control_server_web/priv
 
 RUN cd /source/platform_umbrella \
-  && mix do phx.digest, compile --force, release "${RELEASE}"
+  && mix do phx.digest, compile, release "${RELEASE}"
 
 ##########################################################################
 # Create final image that is deployed

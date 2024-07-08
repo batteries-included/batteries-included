@@ -95,7 +95,7 @@ WORKDIR /source
 COPY . /source/
 
 RUN cd /source/platform_umbrella \
-    && mix do phx.digest, compile --force, release kube_bootstrap
+    && mix do phx.digest, compile, release kube_bootstrap
 
 FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS deploy
 
