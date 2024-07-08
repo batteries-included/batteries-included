@@ -91,9 +91,8 @@ update_go_deps() {
     local go_path=${1}
     pushd "${go_path}" >/dev/null
     log "${GREEN}Updating go dependencies${NOFORMAT} in ${go_path}"
-    go get -u ./...
-    go mod tidy
-    gomod2nix
+    go get -u ./... >/dev/null
+    go mod tidy >/dev/null
     popd
 }
 
