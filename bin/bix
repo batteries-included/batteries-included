@@ -232,46 +232,56 @@ format_mix_code() {
 
 }
 
+# Some code needs prettier so we use static's install
 format_prettier_code() {
     log "Formatting all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
-    # Some code needs prettier so we use static's install
-    bi_pushd "${ROOT_DIR}/static"
-    npm ci >/dev/null
     # Run prettier on all the files from inside of static.
     # This seems to keep prettier happy and not complain about astro-plugin
+    bi_pushd "${ROOT_DIR}/static"
+    npm ci >/dev/null
+
+    # we have to do this
+    FILES=()
     for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
-        npx prettier --write "${file}" >/dev/null
+        FILES+=("${file}")
     done
+
+    npx prettier --write "${FILES[@]}" >/dev/null
+
     bi_popd
 }
 
 check_format_prettier_code() {
     log "Checking all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
-    # Some code needs prettier so we use static's install
     bi_pushd "${ROOT_DIR}/static"
     npm ci >/dev/null
-    # Run prettier on all the files from inside of static.
-    # This seems to keep prettier happy and not complain about astro-plugin
+    FILES=()
     for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
-        npx prettier --check "${file}" >/dev/null
+        FILES+=("${file}")
     done
+    npx prettier --check "${FILES[@]}" >/dev/null
     bi_popd
 }
 
 format_sh_code() {
     log "Formatting all ${BLUE}sh${NOFORMAT} files with shfmt"
     shfmt -w -i 4 "${ROOT_DIR}/bin"
+    FILES=()
     for file in $(git ls-files '*.sh'); do
-        shfmt -w -i 4 "${file}"
+        FILES+=("${file}")
     done
+
+    shfmt -w -i 4 "${FILES[@]}"
 }
 
 check_format_sh_code() {
     log "Checking all ${BLUE}sh${NOFORMAT} files with shfmt"
     shfmt -d -i 4 "${ROOT_DIR}/bin"
+    FILES=()
     for file in $(git ls-files '*.sh'); do
-        shfmt -d -i 4 "${file}"
+        FILES+=("${file}")
     done
+    shfmt -d -i 4 "${FILES[@]}"
 }
 
 check_format_mix_code() {
