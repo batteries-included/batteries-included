@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:experimental
+# syntax=docker/dockerfile:1
 #
 
 ARG ELIXIR_VERSION=1.17.2
@@ -40,7 +40,9 @@ FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS os-deps
 
 ARG LANG
 
-RUN apt update && \
+RUN --mount=type=cache,target=/var/cache/apt \
+  --mount=type=cache,target=/var/lib/apt \
+  apt update && \
   apt install -y \
   build-essential \
   nodejs \
@@ -60,8 +62,7 @@ RUN apt update && \
   ca-certificates \
   software-properties-common \
   locales \
-  && locale-gen $LANG \
-  && apt clean
+  && locale-gen $LANG
 
 ##########################################################################
 # Fetch app library dependencies
@@ -70,6 +71,8 @@ FROM os-deps AS deps
 
 ARG LANG
 ARG MIX_ENV
+
+ENV MIX_ENV=${MIX_ENV}
 
 WORKDIR /source
 
@@ -103,7 +106,7 @@ ARG MIX_ENV
 COPY platform_umbrella/apps/control_server_web/assets/package.json /source/platform_umbrella//apps/control_server_web/assets/package.json
 COPY platform_umbrella/apps/control_server_web/assets/package-lock.json /source/platform_umbrella//apps/control_server_web/assets/package-lock.json
 
-WORKDIR /source/platform_umbrella//apps/control_server_web/assets
+WORKDIR /source/platform_umbrella/apps/control_server_web/assets
 
 RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 
@@ -115,8 +118,12 @@ FROM control-deps AS control-assets
 ARG LANG
 ARG MIX_ENV
 
+ENV MIX_ENV=${MIX_ENV}
+
 WORKDIR /source
+
 COPY . /source/
+
 
 RUN cd platform_umbrella \
   && mix deps.get \
@@ -132,12 +139,10 @@ FROM deps AS home-base-deps
 ARG LANG
 ARG MIX_ENV
 
-
 COPY platform_umbrella/apps/home_base_web/assets/package.json /source/platform_umbrella//apps/home_base_web/assets/package.json
 COPY platform_umbrella/apps/home_base_web/assets/package-lock.json /source/platform_umbrella//apps/home_base_web/assets/package-lock.json
 
-
-WORKDIR /source/platform_umbrella//apps/home_base_web/assets
+WORKDIR /source/platform_umbrella/apps/home_base_web/assets
 
 RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 
@@ -149,7 +154,10 @@ FROM home-base-deps AS home-base-assets
 ARG LANG
 ARG MIX_ENV
 
+ENV MIX_ENV=${MIX_ENV}
+
 WORKDIR /source
+
 COPY . /source/
 
 RUN cd platform_umbrella \
@@ -157,7 +165,6 @@ RUN cd platform_umbrella \
   && cd apps/home_base_web/assets \
   && npm run css:deploy \
   && npm run js:deploy
-
 
 ##########################################################################
 # Create release
@@ -168,6 +175,8 @@ ARG LANG
 ARG MIX_ENV
 ARG RELEASE
 
+ENV MIX_ENV=${MIX_ENV}
+
 WORKDIR /source
 
 COPY . /source/
@@ -175,12 +184,13 @@ COPY . /source/
 COPY --from=home-base-assets /source/platform_umbrella/apps/home_base_web/priv /source/platform_umbrella/apps/home_base_web/priv
 COPY --from=control-assets /source/platform_umbrella/apps/control_server_web/priv /source/platform_umbrella/apps/control_server_web/priv
 
+
 RUN cd /source/platform_umbrella \
   && mix do phx.digest, compile, release "${RELEASE}"
 
 ##########################################################################
 # Create final image that is deployed
-FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS deploy
+FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS final
 
 ARG LANG
 ARG APP_NAME
@@ -199,10 +209,13 @@ ENV LANG=$LANG \
   RELEASE_TMP="/run/$APP_NAME" \
   RELEASE=${RELEASE} \
   BINARY=${BINARY} \
+  MIX_ENV=${MIX_ENV} \
   PORT=4000
 
+WORKDIR /app
 
-RUN apt update && apt install -y libssl3 tini \
+RUN apt update \
+  && apt install -y libssl3 tini ca-certificates locales \
   && apt clean
 
 # Create user and group to run under with specific uid
@@ -215,7 +228,6 @@ RUN mkdir -p "/run/$APP_NAME" \
 
 USER $APP_USER
 
-WORKDIR /app
 
 COPY --from=release --chown="$APP_USER:$APP_GROUP" "/source/platform_umbrella/_build/$MIX_ENV/rel/${RELEASE}" ./
 

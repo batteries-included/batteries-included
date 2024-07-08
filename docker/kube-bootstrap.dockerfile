@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:experimental
+# syntax=docker/dockerfile:1
 #
 # This is almost the same dockerfile as 
 # the platform one, but it doens't need npm or js deps stages.
@@ -29,11 +29,16 @@ ARG APP_DIR=/app
 
 ARG LANG=C.UTF-8
 
+##########################################################################
+# Fetch OS build dependencies
+
 FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS os-deps
 
 ARG LANG
 
-RUN apt update && \
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt update && \
     apt install -y \
     build-essential \
     nodejs \
@@ -53,14 +58,17 @@ RUN apt update && \
     ca-certificates \
     software-properties-common \
     locales \
-    && locale-gen $LANG \
-    && apt clean
+    && locale-gen $LANG
 
+##########################################################################
+# Fetch Elixir dependencies
 
 FROM os-deps AS deps
 
 ARG LANG
 ARG MIX_ENV
+
+ENV MIX_ENV=${MIX_ENV}
 
 WORKDIR /source
 
@@ -90,6 +98,8 @@ FROM deps AS release
 ARG LANG
 ARG MIX_ENV
 
+ENV MIX_ENV=${MIX_ENV}
+
 WORKDIR /source
 
 COPY . /source/
@@ -97,7 +107,10 @@ COPY . /source/
 RUN cd /source/platform_umbrella \
     && mix do phx.digest, compile, release kube_bootstrap
 
-FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS deploy
+##########################################################################
+# The final image
+
+FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS final
 
 ARG LANG
 ARG APP_NAME
@@ -114,13 +127,15 @@ ENV LANG=$LANG \
     HOME=$APP_DIR \
     RELEASE_TMP="/run/$APP_NAME" \
     RELEASE=${RELEASE} \
+    BINARY="bin/kube_bootstrap" \
     PORT=4000
 
+WORKDIR /app
 
 RUN apt update \
-    && apt install -y libssl3 tini ca-certificates locales \
-    && locale-gen $LANG \
-    && apt clean
+    && apt install -y \
+    libssl3 tini ca-certificates locales \
+    && locale-gen $LANG
 
 # Create user and group to run under with specific uid
 RUN groupadd --gid 10001 --system "$APP_GROUP" \
@@ -131,8 +146,6 @@ RUN mkdir -p "/run/$APP_NAME" \
     && chown -R "$APP_USER:$APP_GROUP" "/run/$APP_NAME/"
 
 USER $APP_USER
-
-WORKDIR /app
 
 COPY --from=release --chown="$APP_USER:$APP_GROUP" "/source/platform_umbrella/_build/$MIX_ENV/rel/${RELEASE}" ./
 

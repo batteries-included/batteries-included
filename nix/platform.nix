@@ -15,7 +15,7 @@
 
       LANG = "C.UTF-8";
       src = gitignoreSource ./../platform_umbrella;
-      version = "0.13.0";
+      version = "0.13.1";
 
       beamPackages = beam.packagesWith beam.interpreters.erlang_27;
       inherit (beamPackages) erlang;

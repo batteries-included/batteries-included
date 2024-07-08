@@ -67,3 +67,7 @@ get_summary_path() {
     log "Getting summary path for ${BLUE}${slug}${NOFORMAT}"
     run_bi debug install-summary-path "$slug"
 }
+
+version_tag() {
+    git describe --match="badtagthatnevermatches" --always --dirty
+}

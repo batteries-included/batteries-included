@@ -1,7 +1,9 @@
-# syntax=docker/dockerfile:experimental
+# syntax=docker/dockerfile:1
 
 ARG DEPLOY_IMAGE_NAME=ubuntu
 ARG DEPLOY_IMAGE_TAG=noble-20240605
+ARG LANG=C.UTF-8
+
 
 ###############################################################################
 # OS Dependencies
@@ -13,9 +15,10 @@ FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS os-deps
 
 ARG LANG
 
-RUN apt update && \
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt update && \
     apt install -y \
-    build-essential \
     nodejs \
     npm \
     curl \
@@ -23,18 +26,13 @@ RUN apt update && \
     git \
     cmake \
     libssl-dev \
-    pkg-config \
-    autoconf \
-    m4 \
-    libncurses5-dev \
     unzip \
     gnupg \
     apt-transport-https \
     ca-certificates \
     software-properties-common \
     locales \
-    && locale-gen $LANG \
-    && apt clean
+    && locale-gen $LANG
 
 ###############################################################################
 # Build the assets
@@ -52,7 +50,7 @@ RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci \
 ###############################################################################
 # Build the Go binary
 
-FROM golang:1.22.4 as go-build
+FROM golang:1.22.5 AS go-build
 
 WORKDIR  /source
 
@@ -65,18 +63,26 @@ RUN go mod download \
 ###############################################################################
 # The final image
 
-FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} as final
+FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS final
 
-COPY --from=assets /source/dist /static
-COPY --from=go-build /source/pastebin-go /bin/pastebin-go
+ARG LANG
 
-EXPOSE 8080
-
-RUN apt update && apt install -y tini \
-    && apt clean
+ENV LANG=$LANG \
+    LC_ALL=$LANG 
 
 WORKDIR /
 
+RUN apt update \
+    && apt install -y \
+    libssl3 tini ca-certificates locales \
+    && locale-gen $LANG
+
+
+COPY --from=assets /source/dist /static
+COPY --from=go-build /source/pastebin-go /usr/bin/pastebin-go
+
 ENTRYPOINT [ "/sbin/tini", "--" ]
 
-CMD [ "/bin/pastebin-go" ]
+CMD [ "/usr/bin/pastebin-go" ]
+
+EXPOSE 8080

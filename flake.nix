@@ -67,8 +67,6 @@
         mission-control.flakeModule
         ./nix/shell.nix
         ./nix/bi.nix
-        ./nix/pastebin.nix
-        ./nix/pastebin-static.nix
         ./nix/platform.nix
         ./nix/mission-control.nix
       ];
