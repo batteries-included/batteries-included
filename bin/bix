@@ -330,15 +330,17 @@ do_build_image() {
         ;;
 
     kube-bootstrap)
-        docker build . -f docker/kube-bootstrap.dockerfile \
-            -t kube-bootstrap:${version}
+        docker build . -f docker/platform.dockerfile \
+            -t kube-bootstrap:${version} \
+            --build-arg RELEASE=kube_bootstrap \
+            --build-arg BINARY=bin/kube_bootstrap
         ;;
     pastebin)
         docker build . -f docker/pastebin.dockerfile \
             -t pastebin:${version}
         ;;
     *)
-        die "Unknown image name: ${image_name}"
+        die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
         ;;
     esac
 }
