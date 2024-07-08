@@ -14,6 +14,8 @@ PORTFORWARD_ENABLED=1
 # version in mix.exs for all the apps in platform_umbrella
 BASE_VERSION="0.13.1"
 
+export PATH="${ROOT_DIR}/bin:${PATH}"
+
 source "${ROOT_DIR}/bin/common-functions.sh"
 
 cleanup() {
@@ -447,6 +449,10 @@ do_build_bi() {
     bi_popd
 }
 
+do_version_tag() {
+    version_tag
+}
+
 parse_params() {
     while :; do
         case "${1-}" in
@@ -525,6 +531,10 @@ build-image)
     ;;
 build-bi)
     do_build_bi
+    ;;
+
+version-tag)
+    do_version_tag
     ;;
 *)
     usage

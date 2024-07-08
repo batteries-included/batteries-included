@@ -174,7 +174,10 @@ ARG LANG
 ARG MIX_ENV
 ARG RELEASE
 
-ENV MIX_ENV=${MIX_ENV}
+# Before compiling add the bix binary to the path.
+# It is used in the build process for vversion info.
+ENV MIX_ENV=${MIX_ENV} \
+  PATH="$PATH:/source/bin"
 
 WORKDIR /source
 

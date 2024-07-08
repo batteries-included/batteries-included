@@ -19,7 +19,6 @@ setup_trace() {
 }
 
 setup_root() {
-    log "Entering root directory: ${CYAN}$ROOT_DIR${NOFORMAT}"
     bi_pushd "$ROOT_DIR"
 }
 
