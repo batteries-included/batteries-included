@@ -69,9 +69,7 @@
         ./nix/bi.nix
         ./nix/pastebin.nix
         ./nix/pastebin-static.nix
-        ./nix/pastebin-containers.nix
         ./nix/platform.nix
-        ./nix/platform-containers.nix
         ./nix/mission-control.nix
       ];
     };
