@@ -85,6 +85,8 @@ Available commands:
 - ex-test-deep      Run all tests with coverage and reset the database
 - ex-test           Run all tests
 - ex-lint           Run all linters (dialexir, credo, format)
+- ex-credo          Run credo linter
+- ex-dialyzer       Run dialyzer linter
 EOF
     exit
 }
@@ -439,6 +441,20 @@ do_ex_lint() {
     log "Elixir lint ${GREEN}Passed${NOFORMAT}"
 }
 
+do_ex_credo() {
+    log "${GREEN}Running${NOFORMAT} credo linter"
+    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    run_mix credo
+    log "Credo lint ${GREEN}Passed${NOFORMAT}"
+}
+
+do_ex_dialyzer() {
+    log "${GREEN}Running${NOFORMAT} dialyzer linter"
+    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    run_mix dialyzer
+    log "Dialyzer lint ${GREEN}Passed${NOFORMAT}"
+}
+
 do_build_bi() {
     local version
     version="${BASE_VERSION}-$(version_tag)"
@@ -525,6 +541,12 @@ ex-test)
     ;;
 ex-lint)
     do_ex_lint
+    ;;
+ex-credo)
+    do_ex_credo
+    ;;
+ex-dialyzer)
+    do_ex_dialyzer
     ;;
 build-image)
     do_build_image "${args[@]}"
