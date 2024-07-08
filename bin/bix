@@ -26,9 +26,9 @@ cleanup() {
     jobs=$(jobs -pr)
 
     for job in $jobs; do
-        for child in $(pgrep -P $job); do
-            for grandchild in $(pgrep -P $child); do
-                for great in $(pgrep -P $grandchild); do
+        for child in $(pgrep -P "${job}"); do
+            for grandchild in $(pgrep -P "${child}"); do
+                for great in $(pgrep -P "${grandchild}"); do
                     log "Killing greatgrandchild ${ORANGE}$great${NOFORMAT}"
                     term_kill "$great"
                     kill -9 "$great" || true
@@ -89,7 +89,7 @@ EOF
 
 update_go_deps() {
     local go_path=${1}
-    pushd "${go_path}" >/dev/null
+    bi_pushd "${go_path}"
     log "${GREEN}Updating go dependencies${NOFORMAT} in ${go_path}"
     go get -u ./... >/dev/null
     go mod tidy >/dev/null
@@ -98,7 +98,7 @@ update_go_deps() {
 
 run_go_test() {
     local go_path=${1}
-    pushd "${go_path}" >/dev/null
+    bi_pushd "${go_path}"
     log "${BLUE}Running go tests${NOFORMAT} in ${go_path}"
     gofmt -s -l -e .
     go vet -v ./...
@@ -109,7 +109,7 @@ run_go_test() {
     else
         go test ./...
     fi
-    popd >/dev/null
+    bi_popd
 }
 
 try_portforward() {
@@ -124,7 +124,7 @@ try_portforward() {
     # Skip the loop if PORTFORWARD_ENABLED is set to 0
 
     while [ ${PORTFORWARD_ENABLED} -eq 1 ]; do
-        if ! flock -x -n ${lock_file} ${SCRIPT_DIR}/pg-forward "${slug}"; then
+        if ! flock -x -n "${lock_file}" "${SCRIPT_DIR}/pg-forward" "${slug}"; then
             log "Port forward failed, retrying..."
             counter=$((counter + 1))
 
@@ -213,9 +213,9 @@ do_dev() {
     try_portforward "dev" &
     portforward_pid=$!
     log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}dev${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
-    pushd "${ROOT_DIR}/platform_umbrella" >/dev/null
+    bi_pushd "${ROOT_DIR}/platform_umbrella"
     iex -S mix phx.server
-    popd >/dev/null
+    bi_popd
 }
 
 do_phx_server() {
@@ -225,39 +225,43 @@ do_phx_server() {
 
 format_mix_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Formatting elixir code in ${BLUE}${path}${NOFORMAT}"
     run_mix "do" deps.get, format >/dev/null
-    popd >/dev/null
+    bi_popd
 
 }
 
 format_prettier_code() {
     log "Formatting all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
     # Some code needs prettier so we use static's install
-    pushd "${ROOT_DIR}/static" >/dev/null
+    bi_pushd "${ROOT_DIR}/static"
     npm ci >/dev/null
     # Run prettier on all the files from inside of static.
     # This seems to keep prettier happy and not complain about astro-plugin
-    npx prettier --write $(git ls-files ../*.yaml ../*.yml ../*.ts ../*.js) >/dev/null
-    popd >/dev/null
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
+        npx prettier --write "${file}" >/dev/null
+    done
+    bi_popd
 }
 
 check_format_prettier_code() {
     log "Checking all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
     # Some code needs prettier so we use static's install
-    pushd "${ROOT_DIR}/static" >/dev/null
+    bi_pushd "${ROOT_DIR}/static"
     npm ci >/dev/null
     # Run prettier on all the files from inside of static.
     # This seems to keep prettier happy and not complain about astro-plugin
-    npx prettier --check $(git ls-files ../*.yaml ../*.yml ../*.ts ../*.js) >/dev/null
-    popd >/dev/null
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
+        npx prettier --check "${file}" >/dev/null
+    done
+    bi_popd
 }
 
 format_sh_code() {
     log "Formatting all ${BLUE}sh${NOFORMAT} files with shfmt"
     shfmt -w -i 4 "${ROOT_DIR}/bin"
-    for file in $(git ls-files *.sh); do
+    for file in $(git ls-files '*.sh'); do
         shfmt -w -i 4 "${file}"
     done
 }
@@ -265,51 +269,51 @@ format_sh_code() {
 check_format_sh_code() {
     log "Checking all ${BLUE}sh${NOFORMAT} files with shfmt"
     shfmt -d -i 4 "${ROOT_DIR}/bin"
-    for file in $(git ls-files *.sh); do
+    for file in $(git ls-files '*.sh'); do
         shfmt -d -i 4 "${file}"
     done
 }
 
 check_format_mix_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Checking elixir code in ${BLUE}${path}${NOFORMAT}"
     run_mix "do" deps.get, format --check-formatted >/dev/null
-    popd >/dev/null
+    bi_popd
 }
 
 format_go_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Formatting golang code in ${BLUE}${path}${NOFORMAT}"
     gofmt -s -w . >/dev/null
-    popd >/dev/null
+    bi_popd
 }
 
 check_format_go_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Checking golang code in ${BLUE}${path}${NOFORMAT}"
-    test -z $(gofmt -l .)
-    popd >/dev/null
+    gofmt -l -d .
+    bi_popd
 }
 
 format_npm_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Formatting npm code in ${BLUE}${path}${NOFORMAT}"
     npm ci >/dev/null
     npx prettier --write . >/dev/null
-    popd >/dev/null
+    bi_popd
 }
 
 check_format_npm_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Checking npm code in ${BLUE}${path}${NOFORMAT}"
     npm ci >/dev/null
     npx prettier --check . >/dev/null
-    popd >/dev/null
+    bi_popd
 }
 
 do_fmt() {
@@ -362,26 +366,26 @@ do_build_image() {
     case "${image_name}" in
     control-server)
         docker build . -f docker/platform.dockerfile \
-            -t control-server:${version} \
+            -t "control-server:${version}" \
             --build-arg RELEASE=control_server \
             --build-arg BINARY=bin/control_server
         ;;
     home-base)
         docker build . -f docker/platform.dockerfile \
-            -t home-base:${version} \
+            -t "home-base:${version}" \
             --build-arg RELEASE=home_base \
             --build-arg BINARY=bin/home_base
         ;;
 
     kube-bootstrap)
         docker build . -f docker/platform.dockerfile \
-            -t kube-bootstrap:${version} \
+            -t "kube-bootstrap:${version}" \
             --build-arg RELEASE=kube_bootstrap \
             --build-arg BINARY=bin/kube_bootstrap
         ;;
     pastebin)
         docker build . -f docker/pastebin.dockerfile \
-            -t pastebin:${version}
+            -t "pastebin:${version}"
         ;;
     *)
         die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
@@ -427,10 +431,10 @@ do_build_bi() {
     local version
     version="${BASE_VERSION}-$(version_tag)"
     log "${GREEN}Building${NOFORMAT} bi with version ${version}"
-    pushd "${ROOT_DIR}/bi" >/dev/null
-    rm bi > /dev/null 2>&1 || true
+    bi_pushd "${ROOT_DIR}/bi"
+    rm bi >/dev/null 2>&1 || true
     CGO_ENABLED=0 go build -trimpath -tags "netgo osusergo" -ldflags="-w -s -X 'bi/pkg.Version=${version}'"
-    popd >/dev/null
+    bi_popd
 }
 
 parse_params() {

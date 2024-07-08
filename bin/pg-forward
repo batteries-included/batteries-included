@@ -40,7 +40,6 @@ parse_params() {
     INSTALLATION_SLUG=${1-}
     [[ -z $INSTALLATION_SLUG ]] && log "Missing installation slug" && usage
     shift
-    args=("$@")
 
     return 0
 }
@@ -58,6 +57,6 @@ setup_trace
 setup_root
 
 log "${GREEN}Forwarding postgres port${NOFORMAT} for installation ${BLUE}${INSTALLATION_SLUG}${NOFORMAT}"
-pushd "${ROOT_DIR}/bi" >/dev/null
-run_bi postgres port-forward ${INSTALLATION_SLUG} controlserver -n battery-base >/dev/null
+bi_pushd "${ROOT_DIR}/bi"
+run_bi postgres port-forward "${INSTALLATION_SLUG}" controlserver -n battery-base >/dev/null
 popd

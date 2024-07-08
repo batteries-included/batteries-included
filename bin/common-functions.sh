@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 setup_colors() {
     if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
         NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m'
@@ -19,7 +20,7 @@ setup_trace() {
 
 setup_root() {
     log "Entering root directory: ${CYAN}$ROOT_DIR${NOFORMAT}"
-    pushd "$ROOT_DIR" >/dev/null
+    bi_pushd "$ROOT_DIR"
 }
 
 log() {
@@ -39,16 +40,16 @@ term_kill() {
 }
 
 run_bi() {
-    pushd "${ROOT_DIR}/bi" >/dev/null
+    bi_pushd "${ROOT_DIR}/bi"
     # shellcheck disable=SC2068
     go run bi $@
 }
 
 run_mix() {
-    pushd "${ROOT_DIR}/platform_umbrella" >/dev/null
+    bi_pushd "${ROOT_DIR}/platform_umbrella"
     # shellcheck disable=SC2068
     mix $@
-    popd >/dev/null
+    bi_popd
 }
 
 ## From an install spec file get the slug
@@ -70,4 +71,12 @@ get_summary_path() {
 
 version_tag() {
     git describe --match="badtagthatnevermatches" --always --dirty
+}
+
+bi_pushd() {
+    pushd "$1" >/dev/null || die "Error changing directory to $1"
+}
+
+bi_popd() {
+    popd >/dev/null || die "Error changing directory"
 }
