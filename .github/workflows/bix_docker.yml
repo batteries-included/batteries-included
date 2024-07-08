@@ -14,24 +14,13 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: cachix/cachix-action@v15
-        with:
-          name: batteries-included
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          skipPush:
-            ${{ !(github.ref == 'refs/heads/master' && github.event_name ==
-            'push') }}
-      - name: Run the Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: asdf-vm/actions/install@v3
       - name: Build control-server image
-        run: nix develop --command bash -c 'bin/bix build-image control-server'
+        run: bin/bix build-image control-server
       - name: Build home-base image
-        run: nix develop --command bash -c 'bin/bix build-image home-base'
+        run: bin/bix build-image home-base
       - name: Build kube-bootstrap image
-        run: nix develop --command bash -c 'bin/bix build-image kube-bootstrap'
+        run: bin/bix build-image kube-bootstrap
       - name: Build pastebin image
-        run: nix develop --command bash -c 'bin/bix build-image pastebin'
+        run: bin/bix build-image pastebin
 

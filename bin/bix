@@ -73,6 +73,7 @@ Available commands:
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
 - build-image       Build a docker image
+- build-bi          Build the bi binary
 
 ## Go Commands
 - go-update-deps    Update go dependencies
@@ -306,41 +307,49 @@ do_go_test_int() {
     run_go_test "${ROOT_DIR}/bi"
 }
 
-
 do_build_image() {
     local image_name=${1:-"control-server"}
-    local tag
+    local version
 
-    # Pre-create the tag for all docker build
-    tag="${BASE_VERSION}-$(version_tag)"
-    log "${GREEN}Building${NOFORMAT} container image ${image_name} with tag ${tag}"
+    # Pre-create the  version for all docker build
+    version="${BASE_VERSION}-$(version_tag)"
+    log "${GREEN}Building${NOFORMAT} container image ${image_name} with  version ${version}"
 
     case "${image_name}" in
     control-server)
         docker build . -f docker/platform.dockerfile \
-            -t control-server:${tag} \
+            -t control-server:${version} \
             --build-arg RELEASE=control_server \
             --build-arg BINARY=bin/control_server
         ;;
     home-base)
         docker build . -f docker/platform.dockerfile \
-            -t home-base:${tag} \
+            -t home-base:${version} \
             --build-arg RELEASE=home_base \
             --build-arg BINARY=bin/home_base
         ;;
 
     kube-bootstrap)
         docker build . -f docker/kube-bootstrap.dockerfile \
-            -t kube-bootstrap:${tag}
+            -t kube-bootstrap:${version}
         ;;
     pastebin)
         docker build . -f docker/pastebin.dockerfile \
-            -t pastebin:${tag}
+            -t pastebin:${version}
         ;;
     *)
         die "Unknown image name: ${image_name}"
         ;;
     esac
+}
+
+do_build_bi() {
+    local version
+    version="${BASE_VERSION}-$(version_tag)"
+    log "${GREEN}Building${NOFORMAT} bi with version ${version}"
+    pushd "${ROOT_DIR}/bi" >/dev/null
+    CGO_ENABLED=0 go build -trimpath -tags "netgo osusergo" -ldflags="-X bi/pkg.Version='${version}'"
+    popd >/dev/null
 }
 
 parse_params() {
@@ -409,6 +418,9 @@ go-test-int)
     ;;
 build-image)
     do_build_image "${args[@]}"
+    ;;
+build-bi)
+    do_build_bi
     ;;
 *)
     usage
