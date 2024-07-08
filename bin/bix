@@ -429,7 +429,8 @@ do_build_bi() {
     version="${BASE_VERSION}-$(version_tag)"
     log "${GREEN}Building${NOFORMAT} bi with version ${version}"
     pushd "${ROOT_DIR}/bi" >/dev/null
-    CGO_ENABLED=0 go build -trimpath -tags "netgo osusergo" -ldflags="-X 'bi/pkg.Version=${version}'"
+    rm bi > /dev/null 2>&1 || true
+    CGO_ENABLED=0 go build -trimpath -tags "netgo osusergo" -ldflags="-w -s -X 'bi/pkg.Version=${version}'"
     popd >/dev/null
 }
 
