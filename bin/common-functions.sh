@@ -41,14 +41,12 @@ term_kill() {
 
 run_bi() {
     bi_pushd "${ROOT_DIR}/bi"
-    # shellcheck disable=SC2068
-    go run bi $@
+    go run bi "$@"
 }
 
 run_mix() {
     bi_pushd "${ROOT_DIR}/platform_umbrella"
-    # shellcheck disable=SC2068
-    mix $@
+    mix "$@"
     bi_popd
 }
 
