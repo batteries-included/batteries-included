@@ -50,12 +50,10 @@ install or upgrade and then run the bootstrap procedure via the CLI.
 
 ### Directories
 
-- `cli` This is a small statically compiled rust project that producces the bcli
-  command line application.
-- `cli/src/tasks` These are small composabile bits of functionality that do one
-  thing during install or debugging.
-- `cli/src/commands` These implement the commands that are directly callable
-  from the command line. Currently only `dev`.
+- `bi` This is a small statically compiled golang project that producces the
+  bcli command line application.
+- `bi/cmd` This is the code for the bcli command line application. It's a small
+  golang project that uses cobra for command line arguments.
 
 ## Control Server
 

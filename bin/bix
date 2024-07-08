@@ -1,15 +1,51 @@
 #!/usr/bin/env bash
 
 set -Eeuo pipefail
-trap cleanup SIGINT SIGTERM ERR EXIT
 
 # Get where the current script is located
-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 # Get the root directory of the project
-root_dir=$(cd "$script_dir/.." &>/dev/null && pwd -P)
-tempdirs=()
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 TRACE=${TRACE-0}
+PORTFORWARD_ENABLED=1
+
+# If you are changing this also change the
+# version in mix.exs for all the apps in platform_umbrella
+BASE_VERSION="0.13.1"
+
+source "${ROOT_DIR}/bin/common-functions.sh"
+
+cleanup() {
+    trap - SIGINT SIGTERM ERR EXIT
+
+    # We can end up in cleaup from a few different places and colors might not be set
+    safe_colors
+
+    local jobs
+    jobs=$(jobs -pr)
+
+    for job in $jobs; do
+        for child in $(pgrep -P "${job}"); do
+            for grandchild in $(pgrep -P "${child}"); do
+                for great in $(pgrep -P "${grandchild}"); do
+                    log "Killing greatgrandchild ${ORANGE}$great${NOFORMAT}"
+                    term_kill "$great"
+                    kill -9 "$great" || true
+                done
+                log "Killing grandchild ${ORANGE}$grandchild${NOFORMAT}"
+                term_kill "$grandchild"
+            done
+            log "Killing child ${ORANGE}$child${NOFORMAT}"
+            term_kill "$child"
+        done
+        log "Killing job ${ORANGE}$job${NOFORMAT}"
+        term_kill "$job"
+    done
+    term_kill $$
+}
+
+trap cleanup SIGINT SIGTERM ERR EXIT
 
 usage() {
     cat <<EOF
@@ -22,61 +58,47 @@ Available options:
 
 Available commands:
 
-
-## Install Related Commands
+**Install Related Commands**
 - start             Start a new installation
 - stop              Stop a running installation
+- bootstrap         Bootstrap a new installation
 
-## Development Commands
+**Phoenix Related Commands**
+- dev               Start a development environment with iex
+- phx-server        Start a phoenix server
+
+**Source Commands**
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
+- build-image       Build a docker image
+- build-bi          Build the bi binary
 
-## Go Commands
+**Go Commands**
 - go-update-deps    Update go dependencies
 - go-test           Run go tests
 - go-test-int       Run go integration tests
+
+**Elixir Commands**
+- ex-test-deep      Run all tests with coverage and reset the database
+- ex-test           Run all tests
+- ex-lint           Run all linters (dialexir, credo, format)
 EOF
     exit
 }
 
-run_bi() {
-    pushd "${root_dir}/bi" >/dev/null
-    # shellcheck disable=SC2068
-    go run bi $@
-}
-
-run_mix() {
-    pushd "${root_dir}/platform_umbrella" >/dev/null
-    # shellcheck disable=SC2068
-    mix $@
-    popd >/dev/null
-}
-
-## From an install spec file get the slug
-get_slug() {
-    local input=${1:-"bootstrap/dev.spec.json"}
-    if [[ -f ${input} ]]; then
-        input=$(realpath "${input}")
-        run_bi debug spec-slug "${input}"
-    else
-        echo "${input}"
-    fi
-}
-
 update_go_deps() {
     local go_path=${1}
-    pushd "${go_path}" >/dev/null
-    log "${BLUE}Updating go dependencies${NOFORMAT} in ${go_path}"
-    go get -u ./...
-    go mod tidy
-    gomod2nix
+    bi_pushd "${go_path}"
+    log "${GREEN}Updating go dependencies${NOFORMAT} in ${go_path}"
+    go get -u ./... >/dev/null
+    go mod tidy >/dev/null
     popd
 }
 
 run_go_test() {
     local go_path=${1}
-    pushd "${go_path}" >/dev/null
+    bi_pushd "${go_path}"
     log "${BLUE}Running go tests${NOFORMAT} in ${go_path}"
     gofmt -s -l -e .
     go vet -v ./...
@@ -87,13 +109,34 @@ run_go_test() {
     else
         go test ./...
     fi
-    popd >/dev/null
+    bi_popd
 }
 
-get_summary_path() {
-    local slug=${1}
-    log "${GREEN}Getting summary path${NOFORMAT} for $slug"
-    run_bi debug install-summary-path "$slug"
+try_portforward() {
+    local slug=${1:-"dev"}
+    local counter=0
+    local lock_dir="${ROOT_DIR}/.flock/"
+    local lock_file="${lock_dir}/portforward.lockfile"
+
+    mkdir -p "${lock_dir}"
+
+    # Loop forever if PORTFORWARD_ENABLED is set to 1
+    # Skip the loop if PORTFORWARD_ENABLED is set to 0
+
+    while [ ${PORTFORWARD_ENABLED} -eq 1 ]; do
+        if ! flock -x -n "${lock_file}" "${SCRIPT_DIR}/pg-forward" "${slug}"; then
+            log "Port forward failed, retrying..."
+            counter=$((counter + 1))
+
+            local sleep_time
+            if [[ $((counter * 2)) -gt 20 ]]; then
+                sleep_time=20
+            else
+                sleep_time=$((counter * 2))
+            fi
+            sleep "${sleep_time}"
+        fi
+    done
 }
 
 ## Stop a running installation
@@ -110,7 +153,7 @@ do_stop() {
         # Otherwise we can just stop the install path assuming it's a slug already
         slug=${input}
     fi
-    log "${CYAN}Stopping${NOFORMAT} $slug"
+    log "${YELLOW}Stopping${NOFORMAT} $slug"
     run_bi stop "$slug"
 }
 
@@ -123,67 +166,164 @@ do_start() {
     fi
 
     spec_path=$(realpath "${spec_path}")
-    log "${GREEN}Starting${NOFORMAT} ${spec_path}"
+    log "${GREEN}Starting${NOFORMAT} ${CYAN}${spec_path}${NOFORMAT}"
     run_bi start "${spec_path}"
 }
 
 do_bootstrap() {
     local spec_path=${1:-"bootstrap/dev.spec.json"}
+    local summary_path slug
     spec_path=$(realpath "${spec_path}")
 
-    do_start "${spec_path}"
+    do_start "${spec_path}" >/dev/null
+    slug=$(get_slug "${spec_path}")
+    log "${GREEN}Started Successfully${NOFORMAT} ${CYAN}${spec_path}${CYAN} is ${BLUE}${slug}${NOFORMAT}"
+
+    # Here we reach into the internals of `bi`. When we start an installation
+    # there are resources that are calcuated. We need to know what those are
+    # So rather than use the install spec we use the spec from the installation.
+    #
+    # Usually this would be handled by reading the configmap in the kube bootstrap container.
+    summary_path=$(get_summary_path "${slug}")
+
+    # bootstrap_path is the full absolute path to the folder containing the spec file
+    bootstrap_path=$(dirname "${spec_path}")
+
+    log "${GREEN}Running Kube Bootstrap${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
+    run_mix "do" deps.get, compile, kube.bootstrap "${summary_path}" >/dev/null
+    # Start the port forwarder
+    try_portforward "${slug}" &
+
+    portforward_pid=$!
+    log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}${slug}${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
+
+    # Postgres should be up create the database and run the migrations
+    log "${GREEN}Running migrations${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
+    run_mix setup >/dev/null
+    # Add the rows that should be there for what's installed
+    run_mix "do" seed.control "${summary_path}", \
+        seed.home "${bootstrap_path}" >/dev/null
+
+    log "${GREEN}Bootstrap Exited Successfully${NOFORMAT}"
+    exit 0
+}
+
+do_dev() {
+    log "${GREEN}Starting Development Environment${NOFORMAT}"
+    try_portforward "dev" &
+    portforward_pid=$!
+    log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}dev${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
+    bi_pushd "${ROOT_DIR}/platform_umbrella"
+    iex -S mix phx.server
+    bi_popd
+}
+
+do_phx_server() {
+    log "${GREEN}Starting Phoenix Server${NOFORMAT}"
+    run_mix "phx.server"
 }
 
 format_mix_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Formatting elixir code in ${BLUE}${path}${NOFORMAT}"
     run_mix "do" deps.get, format >/dev/null
-    popd >/dev/null
+    bi_popd
 
+}
+
+# Some code needs prettier so we use static's install
+format_prettier_code() {
+    log "Formatting all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
+    # Run prettier on all the files from inside of static.
+    # This seems to keep prettier happy and not complain about astro-plugin
+    bi_pushd "${ROOT_DIR}/static"
+    npm ci >/dev/null
+
+    # we have to do this
+    FILES=()
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
+        FILES+=("${file}")
+    done
+
+    npx prettier --write "${FILES[@]}" >/dev/null
+
+    bi_popd
+}
+
+check_format_prettier_code() {
+    log "Checking all ${BLUE}yml|yaml|ts|js${NOFORMAT} files with prettier"
+    bi_pushd "${ROOT_DIR}/static"
+    npm ci >/dev/null
+    FILES=()
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
+        FILES+=("${file}")
+    done
+    npx prettier --check "${FILES[@]}" >/dev/null
+    bi_popd
+}
+
+format_sh_code() {
+    log "Formatting all ${BLUE}sh${NOFORMAT} files with shfmt"
+    shfmt -w -i 4 "${ROOT_DIR}/bin"
+    FILES=()
+    for file in $(git ls-files '*.sh'); do
+        FILES+=("${file}")
+    done
+
+    shfmt -w -i 4 "${FILES[@]}"
+}
+
+check_format_sh_code() {
+    log "Checking all ${BLUE}sh${NOFORMAT} files with shfmt"
+    shfmt -d -i 4 "${ROOT_DIR}/bin"
+    FILES=()
+    for file in $(git ls-files '*.sh'); do
+        FILES+=("${file}")
+    done
+    shfmt -d -i 4 "${FILES[@]}"
 }
 
 check_format_mix_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Checking elixir code in ${BLUE}${path}${NOFORMAT}"
     run_mix "do" deps.get, format --check-formatted >/dev/null
-    popd >/dev/null
-
+    bi_popd
 }
 
 format_go_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Formatting golang code in ${BLUE}${path}${NOFORMAT}"
     gofmt -s -w . >/dev/null
-    popd >/dev/null
+    bi_popd
 }
 
 check_format_go_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Checking golang code in ${BLUE}${path}${NOFORMAT}"
-    test -z $(gofmt -l .)
-    popd >/dev/null
+    gofmt -l -d .
+    bi_popd
 }
 
 format_npm_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Formatting npm code in ${BLUE}${path}${NOFORMAT}"
     npm ci >/dev/null
     npx prettier --write . >/dev/null
-    popd >/dev/null
+    bi_popd
 }
 
 check_format_npm_code() {
     local path=${1}
-    pushd "${path}" >/dev/null
+    bi_pushd "${path}"
     log "Checking npm code in ${BLUE}${path}${NOFORMAT}"
     npm ci >/dev/null
     npx prettier --check . >/dev/null
-    popd >/dev/null
+    bi_popd
 }
 
 do_fmt() {
@@ -191,6 +331,8 @@ do_fmt() {
     format_go_code "bi"
     format_go_code "pastebin-go"
     format_npm_code "static"
+    format_prettier_code
+    format_sh_code
 }
 
 do_check_fmt() {
@@ -198,89 +340,111 @@ do_check_fmt() {
     check_format_go_code "bi"
     check_format_go_code "pastebin-go"
     check_format_npm_code "static"
+    check_format_prettier_code
+    check_format_sh_code
 }
 
 do_gen_static_specs() {
-    rm -rf "${root_dir}/bootstrap"
+    rm -rf "${ROOT_DIR}/bootstrap"
     VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} \
         run_mix "do" deps.get, compile, \
-        gen.static.installations "${root_dir}/bootstrap"
+        gen.static.installations "${ROOT_DIR}/bootstrap"
 }
 
 do_go_update_deps() {
-    update_go_deps "${root_dir}/bi"
-    update_go_deps "${root_dir}/pastebin-go"
+    update_go_deps "${ROOT_DIR}/bi"
+    update_go_deps "${ROOT_DIR}/pastebin-go"
 }
 
 do_go_test() {
-    run_go_test "${root_dir}/bi"
+    run_go_test "${ROOT_DIR}/bi"
 }
 
 do_go_test_int() {
     export INTEGRATION=true
-    run_go_test "${root_dir}/bi"
+    run_go_test "${ROOT_DIR}/bi"
 }
 
-cleanup() {
-    trap - SIGINT SIGTERM ERR EXIT
-    for tempdir in "${tempdirs[@]}"; do
-        rm -rf "$tempdir" || true
-    done
+do_build_image() {
+    local image_name=${1:-"control-server"}
+    local version
 
-    for pid in $(pgrep -P $$); do
-        # This is kind of a kludge to get around sending
-        # a signal to the forked off bash, flock,
-        # and bi which is portforwarding
-        for child in $(pgrep -P "$pid"); do
-            log "${ORANGE}Killing child${NOFORMAT} $child"
-            pkill -P "$child" >/dev/null 2>&1 || true
-            kill "$child" >/dev/null 2>&1 || true
-        done
+    # Pre-create the  version for all docker build
+    version="${BASE_VERSION}-$(version_tag)"
+    log "${GREEN}Building${NOFORMAT} container image ${image_name} with  version ${version}"
 
-        pkill -P "$pid" >/dev/null 2>&1 || true
-        kill "$pid" >/dev/null 2>&1 || true
-    done
+    case "${image_name}" in
+    control-server)
+        docker build . -f docker/platform.dockerfile \
+            -t "control-server:${version}" \
+            --build-arg RELEASE=control_server \
+            --build-arg BINARY=bin/control_server
+        ;;
+    home-base)
+        docker build . -f docker/platform.dockerfile \
+            -t "home-base:${version}" \
+            --build-arg RELEASE=home_base \
+            --build-arg BINARY=bin/home_base
+        ;;
 
-    local jobs
-    jobs=$(jobs -pr)
-
-    for job in $jobs; do
-        log "${ORANGE}Killing job${NOFORMAT} $job"
-        kill "$job" >/dev/null 2>&1 || true
-    done
-
-    pkill -P $$ || true
+    kube-bootstrap)
+        docker build . -f docker/platform.dockerfile \
+            -t "kube-bootstrap:${version}" \
+            --build-arg RELEASE=kube_bootstrap \
+            --build-arg BINARY=bin/kube_bootstrap
+        ;;
+    pastebin)
+        docker build . -f docker/pastebin.dockerfile \
+            -t "pastebin:${version}"
+        ;;
+    *)
+        die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
+        ;;
+    esac
 }
 
-setup_colors() {
-    if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
-        NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m'
-    else
-        NOFORMAT='' RED='' GREEN='' ORANGE='' BLUE='' PURPLE='' CYAN='' YELLOW=''
-    fi
+do_ex_test_deep() {
+    local slug=${1:-"dev"}
+    log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
+    # Start the port forwarder
+    try_portforward "${slug}" &
+    export MIX_ENV=test
+    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    run_mix compile --warnings-as-errors >/dev/null
+    run_mix ecto.reset >/dev/null
+    run_mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors --all-warnings
+    run_mix test.coverage
+    log "Elixir tests ${GREEN}Passed${NOFORMAT}"
 }
 
-setup_trace() {
-    if [[ $TRACE -eq 1 ]]; then
-        log "${GREEN}Tracing enabled${NOFORMAT}"
-        set -x
-    fi
+do_ex_test() {
+    local slug=${1:-"dev"}
+    log "${GREEN}Running${NOFORMAT} elixir tests"
+    # Start the port forwarder
+    try_portforward "${slug}" &
+
+    export MIX_ENV=test
+    run_mix test --warnings-as-errors --all-warnings >/dev/null
+    log "Elixir tests ${GREEN}Passed${NOFORMAT}"
 }
 
-setup_root() {
-    log "${GREEN}Entering root directory: $root_dir${NOFORMAT}"
-    pushd "$root_dir" >/dev/null
+do_ex_lint() {
+    log "${GREEN}Running${NOFORMAT} elixir linters"
+    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    run_mix credo
+    run_mix dialyzer
+    run_mix format --check-formatted
+    log "Elixir lint ${GREEN}Passed${NOFORMAT}"
 }
 
-log() {
-    echo >&2 -e "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*"
-}
-
-die() {
-    local msg=$1
-    local code=${2-1}
-    log "$msg"
-    exit "$code"
+do_build_bi() {
+    local version
+    version="${BASE_VERSION}-$(version_tag)"
+    log "${GREEN}Building${NOFORMAT} bi with version ${version}"
+    bi_pushd "${ROOT_DIR}/bi"
+    rm bi >/dev/null 2>&1 || true
+    CGO_ENABLED=0 go build -trimpath -tags "netgo osusergo" -ldflags="-w -s -X 'bi/pkg.Version=${version}'"
+    bi_popd
 }
 
 parse_params() {
@@ -289,6 +453,7 @@ parse_params() {
         -h | --help) usage ;;
         -v | --verbose) TRACE=1 ;;
         --no-color) NO_COLOR=1 ;;
+        --no-forward) PORTFORWARD_ENABLED=0 ;;
         -?*) die "Unknown option: $1" ;;
         *) break ;;
         esac
@@ -328,6 +493,15 @@ stop)
 gen-static-specs)
     do_gen_static_specs
     ;;
+bootstrap)
+    do_bootstrap "${args[@]}"
+    ;;
+dev)
+    do_dev
+    ;;
+phx-server)
+    do_phx_server
+    ;;
 go-update-deps)
     do_go_update_deps
     ;;
@@ -336,6 +510,21 @@ go-test)
     ;;
 go-test-int)
     do_go_test_int
+    ;;
+ex-test-deep)
+    do_ex_test_deep "${args[@]}"
+    ;;
+ex-test)
+    do_ex_test "${args[@]}"
+    ;;
+ex-lint)
+    do_ex_lint
+    ;;
+build-image)
+    do_build_image "${args[@]}"
+    ;;
+build-bi)
+    do_build_bi
     ;;
 *)
     usage

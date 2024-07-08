@@ -2,6 +2,7 @@
 .nix-mix
 .nix-hex
 .nix-elixir.cache
+.flock
 platform_umbrella/.iex.exs
 
 # Local cargo dirs
@@ -35,3 +36,6 @@ result
 _tmp
 
 wg0.conf
+
+# Flock lock files for bin/bix
+.flock

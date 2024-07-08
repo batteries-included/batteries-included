@@ -6,52 +6,33 @@ draft: false
 
 ## `bix`
 
-We use [mission-control](https://github.com/Platonic-Systems/mission-control) to
-provide consistent dev tooling.
-
-If you're using `direnv`, you should see a menu listing all of our commands when
-you enter the repo.
-
-If not, you'll need to enter a nix shell by running something like
-`nix develop`.
-
 Example:
 
 ```sh
+[2024-07-06T16:53:48-0500]: Missing script arguments
+Usage: bix [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+
 Available commands:
 
-## code
 
-  bix fmt  : Format the codebase
+## Install Related Commands
+- start             Start a new installation
+- stop              Stop a running installation
 
-## dev
+## Development Commands
+- fmt               Format all code in the project
+- check-fmt         Check if all code in the project is formatted
+- gen-static-specs  Generate static installation specs
 
-  bix bootstrap               : Bootstrap the dev environment
-  bix build                   : Build the given flake.
-  bix clean                   : Clean the working tree
-  bix dev                     : Start dev environment
-  bix dev-no-iex              : Start dev environment without iex
-  bix force-remove-namespace  : Forcefully remove the given namespace by removing finalizers
-  bix gen-static-specs        : Generate static specs
-  bix nuke-test-db            : Reset test DB
-  bix stop                    : Stop the kind cluster and all things
-  bix uninstall               : Uninstall everything from the kube cluster
-
-## elixir
-
-  bix ex-deep-clean  : Really clean the elixir codebase
-  bix ex-fmt         : Format elixir codebase
-  bix ex-test        : Run stale tests
-  bix ex-test-deep   : Run all tests with coverage and all that jazz
-  bix ex-test-int    : Run integration tests. Used in CI as well.
-  bix ex-test-quick  : Run tests excluding @tag slow
-  bix ex-test-setup  : Run test setup
-  bix ex-watch       : Watch for changes to elixir source
-  bix m              : Run mix commands
-
-## recruiting
-
-  bix package-challenge  : Package up candidate challenge: "bix package-challenge candidate-name [destination-dir] [challenge]"
+## Go Commands
+- go-update-deps    Update go dependencies
+- go-test           Run go tests
+- go-test-int       Run go integration tests
 ```
 
 Most of the scripts will `set -x` if `$TRACE` is set for additional debugging
@@ -60,7 +41,7 @@ assistance.
 Example:
 
 ```sh
-TRACE=1 bix nuke-test-db
+TRACE=1 bin/bix go-test
 ```
 
 ## Bootstrap
@@ -99,58 +80,21 @@ line arguments. The end result is calling `bi start` that will:
 
 Example:
 
-```sh
-bix ex-deep-clean
-```
-
-Every once in a while, there is some caching issue that will cause tests to
-fail, saying some struct doesn't have a protocol implementation that it does
-have. This is a bug in the compiler. It's a nagging issue that only hits
-umbrella apps, so it doesn't get reproduced. (Open source developers swap repos
-all the time == "Works for me")
-
-## Nuke Clusters
-
-Example:
-
-```sh
-bix nuke-clusters && bix bootstrap
-```
-
-Sometimes things on the kind cluster get all messed up, and you don't want to
-wait to see how to clean it up. What's the saying, "When you're holding a
-hammer, you go looking for nails to nuke from orbit and turn everything off and
-back on”? That's what this script does.
-
-Yes, I did start my career at Microsoft. Why are you getting me sidetracked from
-the Nuke Clusters discussion?
-
 ## Gen Static Specs
 
 ```sh
-bix get-static-specs
+bix gen-static-specs
 ```
 
 While developing, we want the bootstrapping process to be stable and free from
 troublesome dependencies as possible while still looking like what a customer
 will see. So rather than run a home application sending the installation spec
-for our dev environments, we have some pre-generated and served with the static
-HTTP content via Netlify.
-
-## Nix Tests
-
-Nix has a check command that will perform all the checks that don't need a
-database.
-
-Example:
-
-```sh
-nix flake check
-```
+for our dev environments, we have some pre-generated
 
 ## Formatting
 
-Rather than wire up markdown, shell, and rust formatters Nix gives it to us.
+Rather than wire up markdown, shell, and rust formatters our command line tool
+has it wired together
 
 Example:
 
@@ -249,7 +193,7 @@ cd bi && bix m help test
 ## Dashboard
 
 Example: The URL is usually
-[http://control.127-0-0-1.batrsinc.co:4000/dashboard/home](http://control.127-0-0-1.batrsinc.co:4000/dashboard/home)
+[http://control.127-0-0-1.batrsinc.co:4000/dev/dashboard](http://control.127-0-0-1.batrsinc.co:4000/dev/dashboard)
 
-`/dashboard` will get you a view into the ecto db, the Erlang VM, the process
-trees, and HTTP request logger for Phoenix. It's super cool stuff.
+`/dev/dashboard` will get you a view into the ecto db, the Erlang VM, the
+process trees, and HTTP request logger for Phoenix. It's super cool stuff.

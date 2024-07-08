@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+TRACE=${TRACE:-0}
+
+source "${ROOT_DIR}/bin/common-functions.sh"
+
+cleanup() {
+    trap - SIGINT SIGTERM ERR EXIT
+    local self_pid=$$
+
+    safe_colors
+
+    log "Cleaning up port-forwarding ${ORANGE}$self_pid${NOFORMAT}"
+    term_kill ${self_pid}
+    pkill -9 -g ${self_pid} || true
+}
+trap cleanup SIGINT SIGTERM ERR EXIT
+
+SLUG=${SLUG-}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) TRACE=1 ;;
+        --no-color) NO_COLOR=1 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    INSTALLATION_SLUG=${1-}
+    [[ -z $INSTALLATION_SLUG ]] && log "Missing installation slug" && usage
+    shift
+
+    return 0
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [--no-color] INSTALLATION_SLUG
+EOF
+    exit
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+
+log "${GREEN}Forwarding postgres port${NOFORMAT} for installation ${BLUE}${INSTALLATION_SLUG}${NOFORMAT}"
+bi_pushd "${ROOT_DIR}/bi"
+run_bi postgres port-forward "${INSTALLATION_SLUG}" controlserver -n battery-base >/dev/null
+popd
