@@ -194,6 +194,7 @@ ARG BINARY
 
 # Set environment vars used by the app
 ENV LANG=$LANG \
+  LC_ALL=$LANG \
   HOME=$APP_DIR \
   RELEASE_TMP="/run/$APP_NAME" \
   RELEASE=${RELEASE} \
@@ -201,7 +202,7 @@ ENV LANG=$LANG \
   PORT=4000
 
 
-RUN apt update && apt install -y libssl3 libncurses5-dev tini \
+RUN apt update && apt install -y libssl3 tini \
   && apt clean
 
 # Create user and group to run under with specific uid

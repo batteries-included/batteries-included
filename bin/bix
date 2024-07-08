@@ -57,14 +57,17 @@ Available commands:
 ## Install Related Commands
 - start             Start a new installation
 - stop              Stop a running installation
+- bootstrap         Bootstrap a new installation
 
-## Development Commands
+## Phoenix Related Commands
+- dev               Start a development environment with iex
+- phx-server        Start a phoenix server
+
+## Source Commands
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
-- bootstrap         Bootstrap a new installation
-- dev               Start a development environment with iex
-- phx-server        Start a phoenix server
+- build-image       Build a docker image
 
 ## Go Commands
 - go-update-deps    Update go dependencies
@@ -298,6 +301,37 @@ do_go_test_int() {
     run_go_test "${ROOT_DIR}/bi"
 }
 
+do_build_image() {
+    local image_name=${1:-"control-server"}
+
+    case "${image_name}" in
+    control-server)
+        docker build . -f docker/platform.dockerfile \
+            -t control-server:latest \
+            --build-arg RELEASE=control_server \
+            --build-arg BINARY=bin/control_server
+        ;;
+    home-base)
+        docker build . -f docker/platform.dockerfile \
+            -t home-base:latest \
+            --build-arg RELEASE=home_base \
+            --build-arg BINARY=bin/home_base
+        ;;
+
+    kube-bootstrap)
+        docker build . -f docker/kube-bootstrap.dockerfile \
+            -t kube-bootstrap:latest
+        ;;
+    pastebin)
+        docker build . -f docker/pastebin.dockerfile \
+            -t pastebin:latest
+        ;;
+    *)
+        die "Unknown image name: ${image_name}"
+        ;;
+    esac
+}
+
 parse_params() {
     while :; do
         case "${1-}" in
@@ -361,6 +395,9 @@ go-test)
     ;;
 go-test-int)
     do_go_test_int
+    ;;
+build-image)
+    do_build_image "${args[@]}"
     ;;
 *)
     usage

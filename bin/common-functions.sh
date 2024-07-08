@@ -35,7 +35,6 @@ die() {
 
 term_kill() {
     local pid=${1}
-    log "Killing ${ORANGE}$pid${NOFORMAT}"
     pkill -TERM -P "$pid" >/dev/null 2>&1 || true
 }
 
