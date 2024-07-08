@@ -73,7 +73,6 @@ Available commands:
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
-- build-image       Build a docker image
 - build-bi          Build the bi binary
 
 **Go Commands**
@@ -87,6 +86,10 @@ Available commands:
 - ex-lint           Run all linters (dialexir, credo, format)
 - ex-credo          Run credo linter
 - ex-dialyzer       Run dialyzer linter
+
+**Docker Commands**
+- build-image       Build a docker image
+- push-images       Push all the container images to a registry
 EOF
     exit
 }
@@ -407,6 +410,49 @@ do_build_image() {
     esac
 }
 
+do_push_images() {
+    TAG_LATEST=1
+
+    while :; do
+        case "${1-}" in
+        --skip-latest) TAG_LATEST=0 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+    args=("$@")
+
+    local registry=${args[0]:-"localhost:5000"}
+    local version
+    version="${BASE_VERSION}-$(version_tag)"
+
+    export TAG_LATEST=${TAG_LATEST}
+
+    tag_push "control-server" "${registry}"
+    tag_push "home-base" "${registry}"
+    tag_push "kube-bootstrap" "${registry}"
+    tag_push "pastebin" "${registry}"
+}
+
+tag_push() {
+    local image_name=${1}
+    local registry=${2}
+
+    local version
+    version="${BASE_VERSION}-$(version_tag)"
+
+    log "${GREEN}Pushing${NOFORMAT} ${image_name} to ${registry}"
+
+    docker tag "${image_name}:${version}" "${registry}/${image_name}:${version}"
+    docker push "${registry}/${image_name}:${version}"
+    if [[ ${TAG_LATEST} -eq 1 ]]; then
+        log "${GREEN}Tagging${NOFORMAT} ${image_name}:${version} as latest"
+        docker tag "${image_name}:${version}" "${registry}/${image_name}:latest"
+        docker push "${registry}/${image_name}:latest"
+    fi
+}
+
 do_ex_test_deep() {
     local slug=${1:-"dev"}
     log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
@@ -550,6 +596,9 @@ ex-dialyzer)
     ;;
 build-image)
     do_build_image "${args[@]}"
+    ;;
+push-images)
+    do_push_images "${args[@]}"
     ;;
 build-bi)
     do_build_bi
