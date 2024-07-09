@@ -233,6 +233,6 @@ COPY --from=release --chown="$APP_USER:$APP_GROUP" "/source/platform_umbrella/_b
 
 EXPOSE $PORT
 
-ENTRYPOINT ["/sbin/tini", "--" ]
+ENTRYPOINT ["/usr/bin/tini", "--" ]
 
 CMD ["${BINARY}", "start"]
