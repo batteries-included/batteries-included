@@ -90,8 +90,9 @@ COPY platform_umbrella/apps/home_base_web/mix.exs platform_umbrella/apps/home_ba
 COPY platform_umbrella/apps/kube_bootstrap/mix.exs platform_umbrella/apps/kube_bootstrap/mix.exs
 COPY platform_umbrella/apps/kube_services/mix.exs platform_umbrella/apps/kube_services/mix.exs
 
-RUN cd platform_umbrella && \
-  mix do local.hex --force, local.rebar --force && \
+WORKDIR /source/platform_umbrella
+
+RUN mix "do" local.hex --force, local.rebar --force && \
   mix deps.get && \
   mix deps.compile --force --skip-umbrella-children
 
@@ -124,8 +125,9 @@ WORKDIR /source
 
 COPY . /source/
 
-RUN cd platform_umbrella && \
-  mix deps.get && \
+WORKDIR /source/platform_umbrella
+
+RUN mix deps.get && \
   cd apps/control_server_web/assets && \
   npm run css:deploy && \
   npm run js:deploy
@@ -186,8 +188,9 @@ COPY . /source/
 COPY --from=home-base-assets /source/platform_umbrella/apps/home_base_web/priv /source/platform_umbrella/apps/home_base_web/priv
 COPY --from=control-assets /source/platform_umbrella/apps/control_server_web/priv /source/platform_umbrella/apps/control_server_web/priv
 
-RUN cd /source/platform_umbrella && \
-  mix do phx.digest, compile, release "${RELEASE}"
+WORKDIR /source/platform_umbrella 
+
+RUN  mix "do" phx.digest, compile, release "${RELEASE}"
 
 ##########################################################################
 # Create final image that is deployed
@@ -230,9 +233,8 @@ RUN mkdir -p "/run/$APP_NAME" && \
 USER $APP_USER
 
 COPY --from=release --chown="$APP_USER:$APP_GROUP" "/source/platform_umbrella/_build/$MIX_ENV/rel/${RELEASE}" ./
+COPY docker/entrypoint.sh .
 
 EXPOSE $PORT
 
-ENTRYPOINT ["/usr/bin/tini", "--" ]
-
-CMD ["${BINARY}", "start"]
+ENTRYPOINT ["./entrypoint.sh"]
