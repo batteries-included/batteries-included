@@ -8,6 +8,14 @@ on:
     branches:
       - master
 
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ECR_ROLE: arn:aws:iam::037532365270:role/GHA-Main-ECR-PowerUser
+  REGISTRY_ALIAS: p2f3z8m1
+
 jobs:
   build-images:
     runs-on: ubuntu-latest
@@ -46,3 +54,26 @@ jobs:
         run: bin/bix build-image kube-bootstrap
       - name: Build pastebin image
         run: bin/bix build-image pastebin
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name ==
+          'push')}}
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ env.ECR_ROLE }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name ==
+          'push')}}
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+      - name: Push image to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name ==
+          'push')}}
+        run: bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS"
