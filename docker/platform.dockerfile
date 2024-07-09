@@ -31,8 +31,6 @@ ARG APP_DIR=/app
 
 ARG LANG=C.UTF-8
 
-ARG BINARY=bin/control_server
-
 ##########################################################################
 # Fetch OS build dependencies
 
@@ -204,16 +202,14 @@ ARG APP_DIR
 
 ARG MIX_ENV
 ARG RELEASE
-ARG BINARY
 
 # Set environment vars used by the app
 ENV LANG=$LANG \
   LC_ALL=$LANG \
   HOME=$APP_DIR \
   RELEASE_TMP="/run/$APP_NAME" \
-  RELEASE=${RELEASE} \
-  BINARY=${BINARY} \
   MIX_ENV=${MIX_ENV} \
+  RELEASE=${RELEASE} \
   PORT=4000
 
 WORKDIR /app
@@ -233,8 +229,9 @@ RUN mkdir -p "/run/$APP_NAME" && \
 USER $APP_USER
 
 COPY --from=release --chown="$APP_USER:$APP_GROUP" "/source/platform_umbrella/_build/$MIX_ENV/rel/${RELEASE}" ./
-COPY docker/entrypoint.sh .
 
 EXPOSE $PORT
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/tini", "--" ]
+
+CMD ["/app/bin/start"]
