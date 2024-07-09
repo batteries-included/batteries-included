@@ -8,7 +8,7 @@ defmodule CommonCore.Projects.Project do
   batt_schema "projects" do
     field :name, :string
     field :description, :string
-    
+
     field :type, Ecto.Enum, values: [:web, :ai, :db], virtual: true
 
     has_many :postgres_clusters, CommonCore.Postgres.Cluster

@@ -50,13 +50,13 @@ defmodule ControlServerWeb.Projects.EditLive do
         <.grid variant="col-2">
           <.input field={@form[:name]} label="Project Name" placeholder="Enter project name" />
 
-        <.input
-          field={@form[:description]}
-          type="textarea"
-          label="Project Description"
-          placeholder="Enter a project description (optional)"
-          maxlength={1000}
-        />
+          <.input
+            field={@form[:description]}
+            type="textarea"
+            label="Project Description"
+            placeholder="Enter a project description (optional)"
+            maxlength={1000}
+          />
         </.grid>
       </.simple_form>
     </.panel>
