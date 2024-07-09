@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Projects.EditLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Projects.Project
   alias ControlServer.Projects
 
   def mount(%{"id" => id}, _session, socket) do
@@ -52,21 +51,13 @@ defmodule ControlServerWeb.Projects.EditLive do
           <.input field={@form[:name]} label="Project Name" placeholder="Enter project name" />
 
           <.input
-            field={@form[:type]}
-            type="select"
-            label="Project Type"
-            placeholder="Select project type"
-            options={Project.type_options_for_select()}
+            field={@form[:description]}
+            type="textarea"
+            label="Project Description"
+            placeholder="Enter a project description (optional)"
+            maxlength={1000}
           />
         </.grid>
-
-        <.input
-          field={@form[:description]}
-          type="textarea"
-          label="Project Description"
-          placeholder="Enter a project description (optional)"
-          maxlength={1000}
-        />
       </.simple_form>
     </.panel>
     """

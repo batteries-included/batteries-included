@@ -4,8 +4,6 @@ defmodule ControlServerWeb.RecentProjectsPanel do
 
   import KubeServices.SystemState.SummaryRecent
 
-  alias CommonCore.Projects.Project
-
   def mount(socket) do
     {:ok, assign(socket, projects: projects())}
   end
@@ -23,8 +21,10 @@ defmodule ControlServerWeb.RecentProjectsPanel do
           rows={@projects}
           row_click={&JS.navigate(~p"/projects/#{&1.id}")}
         >
-          <:col :let={project} label="Project Name"><%= project.name %></:col>
-          <:col :let={project} label="Project Type"><%= Project.type_name(project.type) %></:col>
+          <:col :let={project} label="Name"><%= project.name %></:col>
+          <:col :let={project} label="Description">
+            <.truncate_tooltip :if={project.description} value={project.description} length={72} />
+          </:col>
         </.table>
 
         <div

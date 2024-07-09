@@ -56,7 +56,7 @@ defmodule CommonUI.Components.Table do
             id={@row_id && @row_id.(row)}
             class={[
               "group",
-              @row_click && "hover:bg-gray-lightest dark:hover:bg-gray-darkest"
+              @row_click && "hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint"
             ]}
           >
             <td

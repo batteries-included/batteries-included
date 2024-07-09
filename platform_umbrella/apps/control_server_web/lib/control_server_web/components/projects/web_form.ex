@@ -46,7 +46,7 @@ defmodule ControlServerWeb.Projects.WebForm do
 
     form =
       to_form(%{
-        "project_type" => "external",
+        "web_type" => "external",
         "postgres" => postgres_changeset,
         "redis" => redis_changeset,
         "knative" => knative_changeset,
@@ -131,7 +131,7 @@ defmodule ControlServerWeb.Projects.WebForm do
   def handle_event("save", params, socket) do
     params =
       Map.take(params, [
-        "project_type",
+        "web_type",
         if(params["db_type"] == "new", do: "postgres"),
         if(params["db_type"] == "existing", do: "postgres_ids"),
         if(normalize_value("checkbox", params["need_redis"]), do: "redis"),
@@ -159,7 +159,7 @@ defmodule ControlServerWeb.Projects.WebForm do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:project_type]} type="radio">
+        <.input field={@form[:web_type]} type="radio">
           <:option value="internal">Internal web project</:option>
           <:option value="external">External web project</:option>
         </.input>
