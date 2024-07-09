@@ -8,8 +8,8 @@ defmodule ControlServer.ProjectsTest do
 
   alias CommonCore.Projects.Project
 
-  @valid_attrs %{name: "some name", type: :web, description: "some description"}
-  @update_attrs %{name: "some updated name", type: :ai, description: "some updated description"}
+  @valid_attrs %{name: "some name", description: "some description"}
+  @update_attrs %{name: "some updated name", description: "some updated description"}
   @invalid_attrs %{name: nil, type: nil, description: nil}
 
   setup do
@@ -37,7 +37,6 @@ defmodule ControlServer.ProjectsTest do
       assert {:ok, %Project{} = project} = create_project(@valid_attrs)
       assert project.description == "some description"
       assert project.name == "some name"
-      assert project.type == :web
     end
 
     test "should return error changeset with invalid data" do
@@ -50,7 +49,6 @@ defmodule ControlServer.ProjectsTest do
       assert {:ok, %Project{} = project} = update_project(ctx.project, @update_attrs)
       assert project.description == "some updated description"
       assert project.name == "some updated name"
-      assert project.type == :ai
     end
 
     test "should return error changeset with invalid data", %{project: project} = ctx do

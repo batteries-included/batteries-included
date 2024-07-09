@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Projects.IndexLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Projects.Project
   alias ControlServer.Projects
 
   def mount(_params, _session, socket) do
@@ -21,7 +20,9 @@ defmodule ControlServerWeb.Projects.IndexLive do
     <.panel title="All Projects">
       <.table id="projects" rows={@projects} row_click={&JS.navigate(~p"/projects/#{&1}")}>
         <:col :let={project} label="Name"><%= project.name %></:col>
-        <:col :let={project} label="Type"><%= Project.type_name(project.type) %></:col>
+        <:col :let={project} label="Description">
+          <.truncate_tooltip :if={project.description} value={project.description} length={72} />
+        </:col>
 
         <:action :let={project}>
           <.flex class="justify-items-center">
