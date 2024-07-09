@@ -78,7 +78,7 @@ RUN apt update && \
 COPY --from=assets /source/dist /static
 COPY --from=go-build /source/pastebin-go /usr/bin/pastebin-go
 
-ENTRYPOINT [ "/sbin/tini", "--" ]
+ENTRYPOINT [ "/usr/bin/tini", "--" ]
 
 CMD [ "/usr/bin/pastebin-go" ]
 
