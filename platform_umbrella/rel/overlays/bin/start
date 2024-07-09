@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+
+RELEASE=${RELEASE:-control_server}
+COMMAND=${1:-$RELEASE}
+
+case $COMMAND in
+control_server_init)
+    SEED_CMD=$(printf 'ControlServer.Release.seed("%s")' "${BOOTSTRAP_SUMMARY_PATH:-/etc/init-config/summary.json}")
+    "${DIR}/control_server" eval 'ControlServer.Release.createdb()'
+    "${DIR}/control_server" eval 'ControlServer.Release.migrate()'
+    "${DIR}/control_server" eval "$SEED_CMD"
+    exit 0
+    ;;
+control_server)
+    "${DIR}/control_server" start
+    ;;
+kube_bootstrap)
+    "${DIR}/kube_bootstrap" eval 'KubeBootstrap.Tasks.run'
+    exit 0
+    ;;
+
+home_base_init)
+    echo "TODO"
+    exit 0
+    ;;
+home_base)
+    "${DIR}/home_base" start
+    ;;
+
+*)
+    echo "Unknown command: $COMMAND"
+    exit 1
+    ;;
+esac

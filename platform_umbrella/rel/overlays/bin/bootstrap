@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -exuo pipefail
-
-DIR="${BASH_SOURCE%/*}"
-
-"${DIR}/kube_bootstrap" eval 'KubeBootstrap.Tasks.run'
