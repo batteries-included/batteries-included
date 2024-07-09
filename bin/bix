@@ -389,7 +389,7 @@ do_build_image() {
     home-base)
         docker build . -f docker/platform.dockerfile \
             -t "home-base:${version}" \
-            --build-arg RELEASE=home_base \
+            --build-arg RELEASE=home_base
         ;;
 
     kube-bootstrap)
