@@ -13,15 +13,15 @@ defmodule ControlServerWeb.GroupBatteries.IndexLive do
     {:ok,
      socket
      |> assign(:group, group)
-     |> assign(:current_page, group.id)
-     |> assign(:page_title, "#{group.name} Batteries")
-     |> assign(:catalog_batteries, Catalog.all(group.id))
+     |> assign(:current_page, group.type)
+     |> assign(:page_title, "#{String.trim_trailing(group.name, "s")} Batteries")
+     |> assign(:catalog_batteries, Catalog.all(group.type))
      |> assign_system_batteries(group)}
   end
 
   defp assign_system_batteries(socket, group) do
     system_batteries =
-      group.id
+      group.type
       |> Batteries.list_system_batteries_for_group()
       |> Map.new(&{&1.type, &1})
 
@@ -30,7 +30,7 @@ defmodule ControlServerWeb.GroupBatteries.IndexLive do
 
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={"/#{@group.id}"} />
+    <.page_header title={@page_title} back_link={"/#{@group.type}"} />
 
     <.grid columns={%{sm: 1, md: 2, xl: 3}}>
       <.panel :for={battery <- @catalog_batteries} title={battery.name}>

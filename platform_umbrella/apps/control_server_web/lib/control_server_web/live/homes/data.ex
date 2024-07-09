@@ -10,12 +10,15 @@ defmodule ControlServerWeb.Live.DataHome do
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryRecent
 
+  alias CommonCore.Batteries.Catalog
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign_page_title()
+     |> assign_catalog_group()
      |> assign_current_page()
+     |> assign_page_title()
      |> assign_batteries()
      |> assign_redis_clusters()
      |> assign_postgres_clusters()
@@ -26,12 +29,16 @@ defmodule ControlServerWeb.Live.DataHome do
     assign(socket, batteries: installed_batteries())
   end
 
-  defp assign_page_title(socket) do
-    assign(socket, page_title: "Data Storage")
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:data))
   end
 
   defp assign_current_page(socket) do
-    assign(socket, current_page: :data)
+    assign(socket, current_page: socket.assigns.catalog_group.type)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   defp assign_postgres_clusters(socket) do
@@ -117,11 +124,8 @@ defmodule ControlServerWeb.Live.DataHome do
         <% end %>
       <% end %>
     </.grid>
-    <.empty_home :if={@batteries == []} install_path={install_path()}>
-      <:header>
-        <.h2>Batteries Included Datastores</.h2>
-      </:header>
-    </.empty_home>
+
+    <.empty_home :if={@batteries == []} icon={@catalog_group.icon} install_path={install_path()} />
     """
   end
 end

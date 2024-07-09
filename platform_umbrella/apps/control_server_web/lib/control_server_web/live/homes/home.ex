@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Live.Home do
 
   import ControlServerWeb.Chart
 
+  alias CommonCore.Batteries.Catalog
   alias ControlServer.SnapshotApply.Kube
   alias ControlServerWeb.RecentProjectsPanel
   alias ControlServerWeb.RunningBatteriesPanel
@@ -13,14 +14,23 @@ defmodule ControlServerWeb.Live.Home do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(current_page: :home)
+     |> assign_catalog_group()
+     |> assign_current_page()
      |> assign_page_title()
      |> assign_pods()
      |> assign_status(Kube.get_latest_snapshot_status())}
   end
 
-  def assign_page_title(socket) do
-    assign(socket, page_title: "Home")
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:home))
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, current_page: socket.assigns.catalog_group.type)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   def assign_pods(socket) do

@@ -68,7 +68,7 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
               phx-value-tab="ai"
               phx-target={@myself}
             >
-              ML
+              AI
             </:tab>
             <:tab
               selected={@tab == :magic}

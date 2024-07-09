@@ -10,6 +10,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
   import KubeServices.SystemState.SummaryHosts
   import KubeServices.SystemState.SummaryRecent
 
+  alias CommonCore.Batteries.Catalog
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
@@ -17,6 +19,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
      |> assign_batteries()
      |> assign_knative_services()
      |> assign_backend_services()
+     |> assign_catalog_group()
      |> assign_current_page()
      |> assign_page_title()}
   end
@@ -33,12 +36,16 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     assign(socket, backend_services: backend_services())
   end
 
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:devtools))
+  end
+
   defp assign_current_page(socket) do
-    assign(socket, current_page: :devtools)
+    assign(socket, current_page: socket.assigns.catalog_group.type)
   end
 
   defp assign_page_title(socket) do
-    assign(socket, page_title: "Devtools")
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   defp knative_panel(assigns) do
@@ -118,11 +125,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
       </.flex>
     </.grid>
 
-    <.empty_home :if={@batteries == []} install_path={install_path()}>
-      <:header>
-        <.h2>Batteries Included Devtools</.h2>
-      </:header>
-    </.empty_home>
+    <.empty_home :if={@batteries == []} icon={@catalog_group.icon} install_path={install_path()} />
     """
   end
 end

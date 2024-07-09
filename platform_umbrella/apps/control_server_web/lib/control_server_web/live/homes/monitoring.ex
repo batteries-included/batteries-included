@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Live.MonitoringHome do
   import ControlServerWeb.EmptyHome
   import KubeServices.SystemState.SummaryHosts
 
+  alias CommonCore.Batteries.Catalog
   alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
@@ -13,15 +14,25 @@ defmodule ControlServerWeb.Live.MonitoringHome do
     {:ok,
      socket
      |> assign_batteries()
-     |> assign_current_page()}
+     |> assign_catalog_group()
+     |> assign_current_page()
+     |> assign_page_title()}
   end
 
   defp assign_batteries(socket) do
     assign(socket, batteries: SummaryBatteries.installed_batteries(:monitoring))
   end
 
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:monitoring))
+  end
+
   defp assign_current_page(socket) do
-    assign(socket, current_page: :monitoring)
+    assign(socket, current_page: socket.assigns.catalog_group.type)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   defp battery_link_panel(%{battery: %{type: :grafana}} = assigns) do
@@ -55,7 +66,7 @@ defmodule ControlServerWeb.Live.MonitoringHome do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Monitoring">
+    <.page_header title={@page_title}>
       <.button variant="secondary" icon={:kubernetes} link={install_path()}>
         Manage Batteries
       </.button>
@@ -64,11 +75,8 @@ defmodule ControlServerWeb.Live.MonitoringHome do
     <.flex :if={@batteries && @batteries != []} column class="items-stretch justify-start">
       <.battery_link_panel :for={battery <- @batteries} battery={battery} />
     </.flex>
-    <.empty_home :if={@batteries == []} install_path={install_path()}>
-      <:header>
-        <.h2>Batteries Included Monitoring</.h2>
-      </:header>
-    </.empty_home>
+
+    <.empty_home :if={@batteries == []} icon={@catalog_group.icon} install_path={install_path()} />
     """
   end
 end
