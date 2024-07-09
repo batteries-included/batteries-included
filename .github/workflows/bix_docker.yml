@@ -46,8 +46,6 @@ jobs:
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
-      - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
       - name: Build control-server image
         run: bin/bix build-image control-server
       - name: Build home-base image
@@ -58,15 +56,24 @@ jobs:
         run: bin/bix build-image pastebin
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name ==
+          'push')}}
         with:
           aws-region: us-east-1
           role-to-assume: ${{ env.ECR_ROLE }}
       - name: Login to Amazon ECR
         id: login-ecr
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name ==
+          'push')}}
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
       - name: Push image to ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: bin/bix push-images --skip-latest "$REGISTRY/$REGISTRY_ALIAS"
+        if:
+          ${{ (github.ref == 'refs/heads/master' && github.event_name ==
+          'push')}}
+        run: bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS"
