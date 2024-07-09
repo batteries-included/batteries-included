@@ -92,7 +92,7 @@ defmodule CommonCore.Resources.ControlServer do
           control_container(battery,
             name: "init",
             base: %{
-              "command" => ["control_server_init"],
+              "args" => ["/app/bin/control_server_init"],
               "volumeMounts" => [%{"mountPath" => summary_dir, "name" => "summary"}]
             },
             pg_secret_name: secret_name,
