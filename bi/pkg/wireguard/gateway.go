@@ -28,13 +28,13 @@ type Gateway struct {
 	// Clients is a list of clients that are allowed to connect to the gateway.
 	Clients []Client
 	// Endpoint is the publicly routable endpoint/address of the gateway.
-	Endpoint netip.AddrPort
+	Endpoint string
 	// PostUp are a set of commands to run after the interface is brought up.
 	PostUp []string
 	// PreDown are a set of commands to run before the interface is brought down.
 	PreDown []string
-	// VPCSubnet is the subnet of the VPC that the gateway is connected to.
-	VPCSubnet *net.IPNet
+	// VPCSubnets is a list of subnets that the gateway can route traffic to.
+	VPCSubnets []*net.IPNet
 }
 
 func NewGateway(listenPort uint16, subnet *net.IPNet) (*Gateway, error) {
@@ -148,6 +148,34 @@ func (gw *Gateway) WriteConfig(w io.Writer) error {
 	}
 
 	if _, err := iniConf.WriteTo(w); err != nil {
+		return fmt.Errorf("failed to marshal configuration: %w", err)
+	}
+
+	return nil
+}
+
+func (gw *Gateway) WriteNoisySocketsConfig(w io.Writer) error {
+	conf := &noisysocketsv1alpha2.Config{
+		Name:       "gateway",
+		ListenPort: gw.ListenPort,
+		PrivateKey: gw.PrivateKey,
+		IPs:        []string{gw.Address.String()},
+	}
+
+	for _, client := range gw.Clients {
+		var privateKey noisysocketstypes.NoisePrivateKey
+		if err := privateKey.UnmarshalText([]byte(client.PrivateKey)); err != nil {
+			return fmt.Errorf("failed to unmarshal client private key: %w", err)
+		}
+
+		conf.Peers = append(conf.Peers, noisysocketsv1alpha2.PeerConfig{
+			Name:      client.Name,
+			PublicKey: privateKey.Public().String(),
+			IPs:       []string{client.Address.String()},
+		})
+	}
+
+	if err := noisysocketsconfig.ToYAML(w, conf); err != nil {
 		return fmt.Errorf("failed to marshal configuration: %w", err)
 	}
 

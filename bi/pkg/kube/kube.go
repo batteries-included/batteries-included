@@ -213,9 +213,11 @@ func (c *batteryKubeClient) WatchFor(ctx context.Context, opts *WatchOptions) er
 	for event := range watch.ResultChan() {
 		u, ok := event.Object.(*unstructured.Unstructured)
 		if !ok {
-			slog.Debug("got unexpected event", slog.String("objectType", fmt.Sprintf("%T", event.Object)))
+			slog.Debug("Got unexpected event", slog.String("objectType", fmt.Sprintf("%T", event.Object)))
 			continue
 		}
+
+		slog.Debug("Received watch event", slog.String("eventType", string(event.Type)))
 
 		done, err := opts.Callback(u)
 		if err != nil {
