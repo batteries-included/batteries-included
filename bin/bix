@@ -249,7 +249,7 @@ format_prettier_code() {
 
     # we have to do this
     FILES=()
-    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md'); do
         FILES+=("${file}")
     done
 
@@ -263,7 +263,7 @@ check_format_prettier_code() {
     bi_pushd "${ROOT_DIR}/static"
     npm ci >/dev/null
     FILES=()
-    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js'); do
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md'); do
         FILES+=("${file}")
     done
     npx prettier --check "${FILES[@]}" >/dev/null
@@ -272,7 +272,7 @@ check_format_prettier_code() {
 
 format_sh_code() {
     log "Formatting all ${BLUE}sh${NOFORMAT} files with shfmt"
-    shfmt -w -i 4 "${ROOT_DIR}/bin"
+    shfmt -w -i 4 "${ROOT_DIR}/bin" "${ROOT_DIR}/platform_umbrella/rel/overlays/bin/"
     FILES=()
     for file in $(git ls-files '*.sh'); do
         FILES+=("${file}")
@@ -283,7 +283,7 @@ format_sh_code() {
 
 check_format_sh_code() {
     log "Checking all ${BLUE}sh${NOFORMAT} files with shfmt"
-    shfmt -d -i 4 "${ROOT_DIR}/bin"
+    shfmt -d -i 4 "${ROOT_DIR}/bin" "${ROOT_DIR}/platform_umbrella/rel/overlays/bin/"
     FILES=()
     for file in $(git ls-files '*.sh'); do
         FILES+=("${file}")

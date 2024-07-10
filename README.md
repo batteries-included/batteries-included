@@ -4,7 +4,7 @@ Welcome to Batteries Included's all-inclusive software infrastructure platform!
 We're excited to have you as a part of our all-remote team.
 
 In this repo, you'll find everything you need to contribute to the development
-and growth of our company. From code and scripts to confidential and proprietary
+and growth of our company. From code and scripts to documentation and
 information, this is the hub of all things Batteries Included.
 
 To get started, make sure your operating system is set up and ready to go. We
@@ -17,47 +17,68 @@ Included team. Let's build something amazing together!
 
 ## Setup
 
-### Install Nix
+### ASDF
 
-Nix is what we use to ensure that all dev environments have all the software
-needed. It's a packaging system and more. The Determinate Systems installer is
-the recommended approach for installing.
+ASDF is a version manager for multiple languages. We use it to manage the tools
+that are useful in the project. You will need to install asdf and a few plugins.
 
-No, seriously. We hate piping from curl and having random stuff installed on our
-machines as well but you'll have some issues if you use your distro's package.
-Don't say you haven't been warned!
+#### Linux Dependencies
 
-If you are using a different installer Batteries Included will need experimental
-[nix-command and flakes](https://nixos.wiki/wiki/Flakes) support turned on.
-
-https://github.com/DeterminateSystems/nix-installer
-
-`curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install`
-
-If you are on linux consider NixOS.
-
-### Install Docker
-
-Please install docker. For linux make sure to use a recent version of docker.
-For mac users Rancher Desktop has been widely recommended.
-
-If the `docker` group is present, then Docker Engine will create its socket with
-that group, otherwise it's owned by root. To fix this, just add a `docker` group
-and add yourself to it:
+For ubuntu based systems you will need to install the following dependencies
 
 ```bash
-sudo groupadd docker && sudo usermod -aG docker $USER
+sudo apt-get install -y docker.io docker-buildx build-essential curl \
+    git cmake libssl-dev pkg-config autoconf m4 libncurses5-dev \
+    inotify-tools direnv
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+newgrp docker
 ```
 
-**NB** You need to either `newgrp docker` docker or log out and back in for the
-group changes to be visible.
+### MacOS Dependencies
 
-### Optional: Install direnv
+For MacOS you will need to install the following dependencies in addition to
+docker desktop or podman.
 
-While it's optional it's highly recommended to use direnv. It allows easy use of
-all the things nix installs.
+```bash
+brew install cmake flock direnv
+```
+
+#### ASDF Installation
+
+```bash
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
+```
+
+Then add the following to your bash profile (other shells will vary slightly)
+
+```bash
+. $HOME/.asdf/asdf.sh
+. $HOME/.asdf/completions/asdf.bash
+eval "$(direnv hook bash)"
+```
+
+Then install all the needed software and plugins
+
+```bash
+asdf plugin add erlang
+asdf plugin add elixir
+asdf plugin add nodejs
+asdf plugin add golang
+asdf plugin add kubectl
+asdf plugin add shfmt
+asdf plugin add awscli
+asdf install
+```
 
 ## Code Orgnaization
+
+This monorepo contains multiple parts that come togher to build the Batteries
+Included platform. `bix` is our development tool that helps manage the different
+parts of the project.
+
+TLDR: `bix bootstrap && bix dev`
 
 ### Static
 
@@ -66,8 +87,7 @@ all the things nix installs.
 
 Public posts are in `static/src/content/posts`
 
-There are other non-public pages in `static/src/content/company_docs` and
-`static/src/content/technical_design`
+There are other docs pages in `static/src/content/docs`.
 
 ## Platform Umbrella
 
@@ -115,15 +135,21 @@ bix bootstrap
 ```
 
 Then start the control, and home web servers and background processes. This will
-also open up a iex console where you can explore the process status
+also open up a
+[iex console](https://elixirschool.com/en/lessons/basics/iex_helpers) where you
+can explore the process status
 
 ```bash
 bix dev
 ```
 
-Now there are two web servers accessible. `http://127.0.0.1:4000` for the
-control server, `http://127.0.0.1:4100` for the home base server, and
-`http://127.0.0.1:4200` for the common UI server.
+Now there are two web servers accessible.
+[http://control.127-0-0-1.batrsinc.co:4000](http://control.127-0-0-1.batrsinc.co:4000)
+for the control server,
+[http://home.127-0-0-1.batrsinc.co:4100](http://home.127-0-0-1.batrsinc.co:4100)
+for the home base server, and
+[http://common.127-0-0-1.batrsinc.co:4200](http://common.127-0-0-1.batrsinc.co:4200)
+for the common UI server.
 
 ### VSCode
 
