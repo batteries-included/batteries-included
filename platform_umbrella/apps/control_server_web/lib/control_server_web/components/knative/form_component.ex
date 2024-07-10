@@ -30,7 +30,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   @spec update_container(Container.t() | nil, integer | nil) :: :ok
   def update_container(container, idx) do
-    send_update(__MODULE__, id: "service-form", container: container, idx: idx, is_init: false)
+    send_update(__MODULE__, id: "service-form", container: container, idx: idx)
   end
 
   def update_env_value(env_value, idx) do
@@ -78,7 +78,9 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   @impl Phoenix.LiveComponent
   def update(%{service: service} = assigns, socket) do
     project_id = Map.get(service, :project_id) || assigns[:project_id]
-    changeset = Knative.change_service(service, %{project_id: project_id})
+
+    changeset =
+      Knative.change_service(service, %{project_id: project_id})
 
     {:ok,
      socket
@@ -90,8 +92,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:ok, socket |> assign_container(nil) |> assign_container_idx(nil)}
   end
 
-  def update(%{container: container, idx: nil, is_init: is_init}, %{assigns: %{changeset: changeset}} = socket) do
-    container_field_name = if is_init, do: :init_containers, else: :containers
+  def update(%{container: container, idx: nil}, %{assigns: %{changeset: changeset}} = socket) do
+    container_field_name = container_field_name(container)
     containers = Changeset.get_field(changeset, container_field_name, [])
     changeset = Changeset.put_embed(changeset, container_field_name, [container | containers])
 
@@ -102,10 +104,11 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      |> assign_changeset(changeset)}
   end
 
-  def update(%{container: container, idx: idx, is_init: is_init}, %{assigns: %{changeset: changeset}} = socket) do
-    container_field_name = if is_init, do: :init_containers, else: :containers
+  def update(%{container: container, idx: idx}, %{assigns: %{changeset: changeset}} = socket) do
+    container_field_name = container_field_name(container)
     containers = Changeset.get_field(changeset, container_field_name, [])
     new_containers = List.replace_at(containers, idx, container)
+
     changeset = Changeset.put_embed(changeset, container_field_name, new_containers)
 
     {:ok,
@@ -180,35 +183,24 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:noreply, socket |> assign_container(new_container) |> assign_container_idx(nil)}
   end
 
-  def handle_event(
-        "edit:container",
-        %{"idx" => container_idx, "is-init" => is_init_container},
-        %{assigns: %{changeset: changeset}} = socket
-      ) do
+  def handle_event("edit:container", %{"idx" => container_idx}, %{assigns: %{changeset: changeset}} = socket) do
     {idx, _} = Integer.parse(container_idx)
-    is_init = String.to_existing_atom(is_init_container)
 
-    container_field_name = if is_init, do: :init_containers, else: :containers
-    containers = Changeset.get_field(changeset, container_field_name, [])
-
-    container = Enum.fetch!(containers, idx)
+    container = Enum.fetch!(get_all_containers(changeset), idx)
 
     {:noreply, socket |> assign_container(container) |> assign_container_idx(idx)}
   end
 
-  def handle_event(
-        "del:container",
-        %{"idx" => container_idx, "is-init" => is_init_container},
-        %{assigns: %{changeset: changeset}} = socket
-      ) do
+  def handle_event("del:container", %{"idx" => container_idx}, %{assigns: %{changeset: changeset}} = socket) do
     {idx, _} = Integer.parse(container_idx)
-    is_init = String.to_existing_atom(is_init_container)
 
-    container_field_name = if is_init, do: :init_containers, else: :containers
-    containers = Changeset.get_field(changeset, container_field_name, [])
+    all_containers = get_all_containers(changeset)
+    container = Enum.fetch!(all_containers, idx)
+    container_field_name = container_field_name(container)
 
-    new_containers = List.delete_at(containers, idx)
-    new_changeset = Changeset.put_embed(changeset, container_field_name, new_containers)
+    new_containers = List.delete_at(all_containers, idx)
+    grouped = Enum.group_by(new_containers, &container_field_name/1)
+    new_changeset = Changeset.put_embed(changeset, container_field_name, Map.get(grouped, container_field_name, []))
 
     {:noreply, assign_changeset(socket, new_changeset)}
   end
@@ -241,6 +233,14 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
+  end
+
+  defp container_field_name(container) do
+    if container.is_init?, do: :init_containers, else: :containers
+  end
+
+  defp get_all_containers(cs) do
+    Changeset.get_field(cs, :containers, []) ++ Changeset.get_field(cs, :init_containers, [])
   end
 
   defp advanced_setting_panel(assigns) do

@@ -18,8 +18,8 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
       <.table rows={Enum.with_index(@containers ++ @init_containers)}>
         <:col :let={{c, _idx}} label="Name"><%= c.name %></:col>
         <:col :let={{c, _idx}} label="Image"><%= c.image %></:col>
-        <:col :let={{_c, idx}} label="Init Container">
-          <%= if idx > length(@containers), do: "Yes", else: "No" %>
+        <:col :let={{c, _idx}} label="Init Container">
+          <%= if c.is_init?, do: "Yes", else: "No" %>
         </:col>
 
         <:action :let={{c, idx}}>
@@ -30,7 +30,6 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
             phx-click="del:container"
             phx-target={@target}
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
-            phx-value-is-init={if idx > length(@containers), do: "true", else: "false"}
           />
 
           <.tooltip target_id={"delete_container_" <> String.replace(c.name, " ", "")}>
@@ -44,7 +43,6 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
             phx-target={@target}
             phx-click="edit:container"
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
-            phx-value-is-init={if idx > length(@containers), do: "true", else: "false"}
           />
 
           <.tooltip target_id={"edit_container_" <> String.replace(c.name, " ", "")}>

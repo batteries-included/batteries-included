@@ -95,6 +95,7 @@ defmodule ControlServerWeb.Containers.ContainerModal do
               value={(@form.data.command || []) |> List.first(nil)}
               placeholder="/bin/true"
             />
+            <.input label="Init container?" field={@form[:is_init?]} type="checkbox" />
           </.flex>
 
           <:actions cancel="Cancel">

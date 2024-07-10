@@ -13,6 +13,8 @@ defmodule CommonCore.Containers.Container do
     field :image, :string
     field :name, :string
 
+    field :is_init?, :boolean, default: false
+
     embeds_many(:env_values, CommonCore.Containers.EnvValue, on_replace: :delete)
   end
 
