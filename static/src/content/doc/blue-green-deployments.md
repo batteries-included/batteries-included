@@ -2,6 +2,7 @@
 title: Blue/Green Deployments
 description: Lorem markdownum servat non cava
 tags: ['blue', 'gree', 'web']
+draft: true
 ---
 
 ## Tela sed diu quondam
