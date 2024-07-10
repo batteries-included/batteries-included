@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Live.MagicHome do
   import ControlServerWeb.SnapshotApplyAlert
   import ControlServerWeb.UmbrellaSnapshotsTable
 
+  alias CommonCore.Batteries.Catalog
   alias ControlServer.SnapshotApply.Umbrella
   alias EventCenter.KubeSnapshot, as: KubeSnapshotEventCenter
   alias KubeServices.SnapshotApply.Worker
@@ -20,7 +21,9 @@ defmodule ControlServerWeb.Live.MagicHome do
      |> assign_snapshots()
      |> assign_batteries()
      |> assign_deploys_running()
-     |> assign_current_page()}
+     |> assign_catalog_group()
+     |> assign_current_page()
+     |> assign_page_title()}
   end
 
   defp assign_batteries(socket) do
@@ -36,8 +39,16 @@ defmodule ControlServerWeb.Live.MagicHome do
     assign(socket, :snapshots, snaps)
   end
 
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:magic))
+  end
+
   defp assign_current_page(socket) do
-    assign(socket, current_page: :magic)
+    assign(socket, current_page: socket.assigns.catalog_group.type)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   @impl Phoenix.LiveView
@@ -118,7 +129,7 @@ defmodule ControlServerWeb.Live.MagicHome do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Magic">
+    <.page_header title={@page_title}>
       <.button variant="secondary" icon={:kubernetes} link={~p"/batteries/magic"}>
         Manage Batteries
       </.button>

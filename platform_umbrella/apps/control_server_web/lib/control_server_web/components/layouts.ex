@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Layouts do
   @moduledoc false
   use ControlServerWeb, :html
 
+  alias CommonCore.Batteries.Catalog
+
   embed_templates("layouts/*")
 
   @doc """
@@ -22,56 +24,7 @@ defmodule ControlServerWeb.Layouts do
     />
 
     <ControlServerWeb.SidebarLayout.sidebar_layout
-      main_menu_items={[
-        %{
-          name: :home,
-          label: "Home",
-          path: ~p"/",
-          icon: :home
-        },
-        %{
-          name: :data,
-          label: "Datastores",
-          path: ~p"/data",
-          icon: :circle_stack
-        },
-        %{
-          name: :devtools,
-          label: "Devtools",
-          path: ~p"/devtools",
-          icon: :wrench
-        },
-        %{
-          name: :monitoring,
-          label: "Monitoring",
-          path: ~p"/monitoring",
-          icon: :chart_bar_square
-        },
-        %{
-          name: :net_sec,
-          label: "Net/Security",
-          path: ~p"/net_sec",
-          icon: :shield_check
-        },
-        %{
-          name: :ai,
-          label: "AI",
-          path: ~p"/ai",
-          icon: :beaker
-        },
-        %{
-          name: :kubernetes,
-          label: "Kubernetes",
-          path: ~p"/kube/pods",
-          icon: :globe_alt
-        },
-        %{
-          name: :magic,
-          label: "Magic",
-          path: ~p"/magic",
-          icon: :sparkles
-        }
-      ]}
+      main_menu_items={Catalog.groups_for_nav()}
       bottom_menu_items={[]}
       current_page={if assigns[:current_page], do: @current_page, else: nil}
     >

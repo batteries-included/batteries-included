@@ -14,6 +14,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
   import KubeServices.SystemState.SummaryRecent
   import KubeServices.SystemState.SummaryURLs
 
+  alias CommonCore.Batteries.Catalog
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
@@ -24,7 +26,9 @@ defmodule ControlServerWeb.Live.NetSecHome do
      |> assign_ip_address_pools()
      |> assign_istio_virtual_services()
      |> assign_vulnerability_reports()
-     |> assign_current_page()}
+     |> assign_catalog_group()
+     |> assign_current_page()
+     |> assign_page_title()}
   end
 
   defp assign_batteries(socket) do
@@ -51,8 +55,16 @@ defmodule ControlServerWeb.Live.NetSecHome do
     assign(socket, :virtual_services, virtual_services())
   end
 
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:net_sec))
+  end
+
   defp assign_current_page(socket) do
-    assign(socket, :current_page, :net_sec)
+    assign(socket, :current_page, socket.assigns.catalog_group.type)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   defp sso_panel(assigns) do
@@ -122,7 +134,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Net/Security">
+    <.page_header title={@page_title}>
       <.button variant="secondary" icon={:kubernetes} link={install_path()}>
         Manage Batteries
       </.button>
@@ -146,11 +158,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>
-    <.empty_home :if={@batteries == []} install_path={install_path()}>
-      <:header>
-        <.h2>Batteries Included Network & Security Tools</.h2>
-      </:header>
-    </.empty_home>
+
+    <.empty_home :if={@batteries == []} icon={@catalog_group.icon} install_path={install_path()} />
     """
   end
 end

@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.MLTest do
+defmodule CommonCore.Resources.AITest do
   use ExUnit.Case
 
   import CommonCore.Factory
@@ -8,7 +8,7 @@ defmodule CommonCore.Resources.MLTest do
 
   require Logger
 
-  describe "ML" do
+  describe "AI" do
     test "Can materialize no notebooks" do
       battery = %{config: %{}}
       state = %StateSummary{notebooks: []}

@@ -11,16 +11,16 @@ defmodule CommonCore.Batteries.CatalogTest do
   end
 
   test "groups_for_projects/0" do
-    refute Enum.any?(groups_for_projects(), &(&1.id == :magic))
+    refute Enum.any?(groups_for_projects(), &(&1.type == :magic))
   end
 
   describe "group/1" do
     test "should get group with string" do
-      assert %CatalogGroup{id: :magic} = group("magic")
+      assert %CatalogGroup{type: :magic} = group("magic")
     end
 
     test "should get group" do
-      assert %CatalogGroup{id: :magic} = group(:magic)
+      assert %CatalogGroup{type: :magic} = group(:magic)
     end
   end
 

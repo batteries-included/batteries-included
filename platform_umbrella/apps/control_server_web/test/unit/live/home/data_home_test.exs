@@ -33,7 +33,7 @@ defmodule ControlServerWeb.DataHomeTest do
       # This is to make sure that all the rendering works when filled out
       conn
       |> start("/data")
-      |> assert_html("Data Storage")
+      |> assert_html("Datastores")
       |> assert_html(postgres_cluster.name)
       |> assert_html(redis_cluster.name)
     end
@@ -47,7 +47,7 @@ defmodule ControlServerWeb.DataHomeTest do
       # sure it works whith things turned off
       conn
       |> start("/data")
-      |> assert_html("Data Storage")
+      |> assert_html("Datastores")
       |> refute_html("Redis")
       |> refute_html("Postgres")
     end
@@ -55,7 +55,7 @@ defmodule ControlServerWeb.DataHomeTest do
     test "contains empty home component", %{conn: conn} do
       conn
       |> start("/data")
-      |> assert_html("Data Storage")
+      |> assert_html("Datastores")
       |> assert_html("There are no batteries installed for this group.")
     end
   end

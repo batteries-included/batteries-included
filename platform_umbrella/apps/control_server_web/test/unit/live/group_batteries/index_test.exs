@@ -11,11 +11,11 @@ defmodule ControlServerWeb.GroupBatteries.IndexLiveTest do
     end
   end
 
-  describe "ML group batteries" do
+  describe "AI group batteries" do
     test "can list the group batteries", %{conn: conn} do
       conn
       |> start(~p"/batteries/ai")
-      |> assert_html("Artificial Intelligence Batteries")
+      |> assert_html("AI Batteries")
       |> assert_element(~s(a[href="/ai"]))
     end
   end
@@ -24,7 +24,7 @@ defmodule ControlServerWeb.GroupBatteries.IndexLiveTest do
     test "can list the group batteries", %{conn: conn} do
       conn
       |> start(~p"/batteries/data")
-      |> assert_html("Data Batteries")
+      |> assert_html("Datastore Batteries")
       |> assert_element(~s(a[href="/data"]))
     end
   end
@@ -33,7 +33,7 @@ defmodule ControlServerWeb.GroupBatteries.IndexLiveTest do
     test "can list the group batteries", %{conn: conn} do
       conn
       |> start(~p"/batteries/devtools")
-      |> assert_html("Devtools Batteries")
+      |> assert_html("Devtool Batteries")
       |> assert_element(~s(a[href="/devtools"]))
     end
   end
@@ -51,7 +51,7 @@ defmodule ControlServerWeb.GroupBatteries.IndexLiveTest do
     test "can list the group batteries", %{conn: conn} do
       conn
       |> start(~p"/batteries/net_sec")
-      |> assert_html("Network/Security Batteries")
+      |> assert_html("Net/Security Batteries")
       |> assert_element(~s(a[href="/net_sec"]))
     end
   end

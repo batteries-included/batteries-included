@@ -125,9 +125,9 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
           <:tab
             :for={group <- @groups}
             phx-click="tab"
-            phx-value-id={group.id}
+            phx-value-id={group.type}
             phx-target={@myself}
-            selected={@tab == group.id}
+            selected={@tab == group.type}
           >
             <%= group.name %>
           </:tab>
@@ -148,8 +148,8 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
         <%= for group <- @groups do %>
           <.battery_toggle
-            :for={battery <- search_filter(Catalog.all(group.id), @form[:search].value)}
-            :if={@tab == group.id}
+            :for={battery <- search_filter(Catalog.all(group.type), @form[:search].value)}
+            :if={@tab == group.type}
             installed={has_battery?(@installed, battery)}
             required={has_battery?(@required, battery)}
             battery={battery}

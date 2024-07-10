@@ -11,16 +11,16 @@ defmodule ControlServerWeb.Components.SidebarLayoutTest do
       current_page={:home}
       main_menu_items={[
         %{
-          name: :home,
-          label: "Home",
+          type: :home,
+          name: "Home",
           path: "/",
           icon: :home
         }
       ]}
       bottom_menu_items={[
         %{
-          name: :settings,
-          label: "Settings",
+          type: :settings,
+          name: "Settings",
           path: "/",
           icon: :adjustments_horizontal
         }

@@ -9,13 +9,17 @@ defmodule ControlServerWeb.Live.AIHome do
   import KubeServices.SystemState.SummaryHosts
   import KubeServices.SystemState.SummaryRecent
 
+  alias CommonCore.Batteries.Catalog
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign_batteries()
      |> assign_notebooks()
-     |> assign_current_page()}
+     |> assign_catalog_group()
+     |> assign_current_page()
+     |> assign_page_title()}
   end
 
   defp assign_batteries(socket) do
@@ -26,8 +30,16 @@ defmodule ControlServerWeb.Live.AIHome do
     assign(socket, notebooks: notebooks())
   end
 
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:ai))
+  end
+
   defp assign_current_page(socket) do
-    assign(socket, current_page: :ai)
+    assign(socket, current_page: socket.assigns.catalog_group.type)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   defp notebooks_panel(assigns) do
@@ -62,7 +74,7 @@ defmodule ControlServerWeb.Live.AIHome do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Artificial Intelligence">
+    <.page_header title={@page_title}>
       <.button variant="secondary" icon={:kubernetes} link={install_path()}>
         Manage Batteries
       </.button>
@@ -80,11 +92,8 @@ defmodule ControlServerWeb.Live.AIHome do
         <.battery_link_panel :for={battery <- @batteries} battery={battery} />
       </.flex>
     </.grid>
-    <.empty_home :if={@batteries == []} install_path={install_path()}>
-      <:header>
-        <.h2>Batteries Included AI Tools</.h2>
-      </:header>
-    </.empty_home>
+
+    <.empty_home :if={@batteries == []} icon={@catalog_group.icon} install_path={install_path()} />
     """
   end
 end

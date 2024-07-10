@@ -6,33 +6,67 @@ defmodule CommonCore.Batteries.Catalog do
 
   @groups [
     %CatalogGroup{
-      id: :data,
-      name: "Data",
-      show_for_projects: true
-    },
-    %CatalogGroup{
-      id: :magic,
-      name: "Magic",
+      type: :home,
+      name: "Home",
+      path: "/",
+      icon: :home,
+      show_for_nav: true,
       show_for_projects: false
     },
     %CatalogGroup{
-      id: :devtools,
+      type: :data,
+      name: "Datastores",
+      icon: :circle_stack,
+      path: "/data",
+      show_for_nav: true,
+      show_for_projects: true
+    },
+    %CatalogGroup{
+      type: :devtools,
       name: "Devtools",
+      icon: :wrench,
+      path: "/devtools",
+      show_for_nav: true,
       show_for_projects: false
     },
     %CatalogGroup{
-      id: :ai,
-      name: "Artificial Intelligence",
-      show_for_projects: true
-    },
-    %CatalogGroup{
-      id: :monitoring,
+      type: :monitoring,
       name: "Monitoring",
+      icon: :chart_bar_square,
+      path: "/monitoring",
+      show_for_nav: true,
       show_for_projects: true
     },
     %CatalogGroup{
-      id: :net_sec,
-      name: "Network/Security",
+      type: :net_sec,
+      name: "Net/Security",
+      icon: :shield_check,
+      path: "/net_sec",
+      show_for_nav: true,
+      show_for_projects: false
+    },
+    %CatalogGroup{
+      type: :ai,
+      name: "AI",
+      icon: :beaker,
+      path: "/ai",
+      show_for_nav: true,
+      show_for_projects: true
+    },
+    %CatalogGroup{
+      type: :kubernetes,
+      name: "Kubernetes",
+      icon: :globe_alt,
+      path: "/kube/pods",
+      show_for_nav: true,
+      show_for_projects: false
+    },
+    %CatalogGroup{
+      type: :magic,
+      name: "Magic",
+      icon: :sparkles,
+      path: "/magic",
+      show_for_nav: true,
       show_for_projects: false
     }
   ]
@@ -132,7 +166,7 @@ defmodule CommonCore.Batteries.Catalog do
       name: "SMTP4Dev",
       description: "SMTP4Dev is a dummy SMTP server for development, testing, and debugging of email systems."
     },
-    # ML
+    # AI
     %CatalogBattery{
       group: :ai,
       type: :notebooks,
@@ -300,16 +334,20 @@ defmodule CommonCore.Batteries.Catalog do
 
   def groups, do: @groups
 
+  def groups_for_nav do
+    Enum.filter(@groups, & &1.show_for_nav)
+  end
+
   def groups_for_projects do
     Enum.filter(@groups, & &1.show_for_projects)
   end
 
-  def group(id) when is_binary(id) do
-    group(String.to_existing_atom(id))
+  def group(type) when is_binary(type) do
+    group(String.to_existing_atom(type))
   end
 
-  def group(id) do
-    Enum.find(@groups, &(&1.id == id))
+  def group(type) do
+    Enum.find(@groups, &(&1.type == type))
   end
 
   def all, do: @all

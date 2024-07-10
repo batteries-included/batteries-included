@@ -71,9 +71,9 @@ defmodule ControlServerWeb.SidebarLayout do
                   :for={item <- @main_menu_items}
                   icon={item.icon}
                   navigate={item.path}
-                  selected={item.name == @current_page}
+                  selected={item.type == @current_page}
                 >
-                  <%= item.label %>
+                  <%= item.name %>
                 </:tab>
               </.tab_bar>
 
@@ -82,9 +82,9 @@ defmodule ControlServerWeb.SidebarLayout do
                   :for={item <- @bottom_menu_items}
                   icon={item.icon}
                   navigate={item.path}
-                  selected={item.name == @current_page}
+                  selected={item.type == @current_page}
                 >
-                  <%= item.label %>
+                  <%= item.name %>
                 </:tab>
               </.tab_bar>
             </nav>
