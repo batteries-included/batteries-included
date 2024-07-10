@@ -2,6 +2,7 @@ package installs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -96,12 +97,18 @@ func readInstallEnv(slugOrURL string) (string, *InstallEnv, error) {
 		return p.source, &InstallEnv{Slug: spec.Slug, Spec: spec}, nil
 	}
 
-	return "", nil, fmt.Errorf("No spec found")
+	return "", nil, errors.New("no spec found")
 }
 
+// NeedsKubeCleanup returns true if we should remove all resources in an install
 func (env *InstallEnv) NeedsKubeCleanup() bool {
-	// Returns true if we should remove all resources in in an install
 	// Returns true if the cluster provider is in [provided, aws]
 	provider := env.Spec.KubeCluster.Provider
-	return provider == "provided" || provider == "aws"
+	if !(provider == "provided" || provider == "aws") {
+		return false
+	}
+
+	// Do we have a kube config? Eg. we finished bootstrapping.
+	_, err := os.Stat(env.KubeConfigPath())
+	return err == nil
 }
