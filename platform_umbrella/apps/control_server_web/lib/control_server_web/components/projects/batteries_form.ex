@@ -113,7 +113,6 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
         <.tab_bar variant="secondary">
           <:tab
-            :if={@required != []}
             phx-click="tab"
             phx-target={@myself}
             phx-value-id={:required}
@@ -136,6 +135,10 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
             All Batteries
           </:tab>
         </.tab_bar>
+
+        <p :if={@tab == :required && @required == []} class="text-sm text-gray-light italic">
+          No batteries are required for this project.
+        </p>
 
         <.battery_toggle
           :for={battery <- search_filter(@required, @form[:search].value)}
