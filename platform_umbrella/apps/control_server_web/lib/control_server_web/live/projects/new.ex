@@ -308,5 +308,6 @@ defmodule ControlServerWeb.Projects.NewLive do
   defp steps(:web), do: [ProjectForm, WebForm, BatteriesForm]
   defp steps(:ai), do: [ProjectForm, AIForm, BatteriesForm]
   defp steps(:db), do: [ProjectForm, DatabaseForm, BatteriesForm]
-  defp steps, do: [ProjectForm, BatteriesForm]
+  defp steps(:empty), do: [ProjectForm, BatteriesForm]
+  defp steps, do: steps(:empty)
 end
