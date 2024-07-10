@@ -1,8 +1,7 @@
 module bi
 
 go 1.22.0
-
-toolchain go1.22.1
+toolchain go1.22.5
 
 require (
 	github.com/adrg/xdg v0.5.0
@@ -14,7 +13,7 @@ require (
 	github.com/docker/docker v27.0.3+incompatible
 	github.com/lmittmann/tint v1.0.4
 	github.com/neilotoole/slogt v1.1.0
-	github.com/noisysockets/network v0.20.3
+	github.com/noisysockets/network v0.22.0
 	github.com/noisysockets/noisysockets v0.27.4
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.44.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.4
@@ -147,8 +146,9 @@ require (
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
 	github.com/noisysockets/netstack v0.8.0 // indirect
 	github.com/noisysockets/netutil v0.9.0 // indirect
-	github.com/noisysockets/pinger v0.4.2 // indirect
-	github.com/noisysockets/resolver v0.14.0 // indirect
+	github.com/noisysockets/pinger v0.4.3 // indirect
+	github.com/noisysockets/resolver v0.14.1 // indirect
+	github.com/noisysockets/util v0.1.0 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
