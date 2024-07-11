@@ -28,7 +28,7 @@ defmodule HomeBaseWeb.InstallationStatusContoller do
 
     conn
     |> put_status(:ok)
-    |> put_view(json: HomeBaseWeb.InstallationStatusJSON)
+    |> put_view(json: HomeBaseWeb.JwtJSON)
     |> render(:show, jwt: CommonCore.JWK.sign(install_status))
   end
 
