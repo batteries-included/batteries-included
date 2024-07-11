@@ -11,14 +11,7 @@ defmodule ControlServer.Projects do
 
   def get_project!(id) do
     Project
-    |> preload([
-      :postgres_clusters,
-      :redis_clusters,
-      :ferret_services,
-      :jupyter_notebooks,
-      :knative_services,
-      :backend_services
-    ])
+    |> preload(^Project.resource_types())
     |> Repo.get!(id)
   end
 

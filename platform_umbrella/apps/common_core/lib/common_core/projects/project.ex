@@ -44,4 +44,15 @@ defmodule CommonCore.Projects.Project do
   def type_name(:db), do: "Database Only"
   def type_name(:empty), do: "Empty Project"
   def type_name(type), do: Atom.to_string(type)
+
+  def resource_types do
+    [
+      :postgres_clusters,
+      :redis_clusters,
+      :ferret_services,
+      :jupyter_notebooks,
+      :knative_services,
+      :backend_services
+    ]
+  end
 end
