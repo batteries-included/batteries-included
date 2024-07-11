@@ -1,4 +1,4 @@
-defmodule HomeBaseWeb.InstallationStatusJSON do
+defmodule HomeBaseWeb.JwtJSON do
   @moduledoc false
 
   def show(%{jwt: jwt}) do

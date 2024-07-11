@@ -1,0 +1,10 @@
+defmodule HomeBaseWeb.StableVersionControllerTest do
+  use HomeBaseWeb.ConnCase
+
+  describe "StableVersionController" do
+    test "gets a jwt", %{conn: conn} do
+      conn = get(conn, ~p"/api/v1/stable_version")
+      assert json_response(conn, 200)["jwt"] != nil
+    end
+  end
+end

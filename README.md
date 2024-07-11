@@ -69,6 +69,7 @@ asdf plugin add golang
 asdf plugin add kubectl
 asdf plugin add shfmt
 asdf plugin add awscli
+asdf plugin add kind
 asdf install
 ```
 
