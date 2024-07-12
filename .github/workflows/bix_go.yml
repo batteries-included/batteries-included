@@ -71,7 +71,7 @@ jobs:
         shell: bash
         run: asdf reshim
       - name: Run go integration test
-        run: bin/bix go-int-test
+        run: bin/bix go-test-int
 
   bi-build:
     runs-on: ubuntu-latest
