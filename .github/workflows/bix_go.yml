@@ -8,6 +8,10 @@ on:
     branches:
       - master
 
+env:
+  GOCACHE: /home/runner/.cache/go-cache
+  GOMODCACHE: /home/runner/.cache/go-mod
+
 jobs:
   go-test:
     runs-on: ubuntu-latest
@@ -38,6 +42,19 @@ jobs:
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
+
+      - name: Setup Go cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GOCACHE }}
+            ${{ env.GOMODCACHE }}
+          key:
+            ${{ runner.os }}-go-test-${{ hashFiles('**/go.sum',
+            '.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-go-test-
+
       - name: Run go test
         run: bin/bix go-test
 
@@ -70,6 +87,19 @@ jobs:
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
+
+      - name: Setup Go cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GOCACHE }}
+            ${{ env.GOMODCACHE }}
+          key:
+            ${{ runner.os }}-go-int-test-${{ hashFiles('**/go.sum',
+            '.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-go-int-test-
+
       - name: Run go integration test
         run: bin/bix go-test-int
 
@@ -102,5 +132,18 @@ jobs:
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
+
+      - name: Setup Go cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.GOCACHE }}
+            ${{ env.GOMODCACHE }}
+          key:
+            ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum',
+            '.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-go-build-
+
       - name: Build bi
         run: bin/bix build-bi
