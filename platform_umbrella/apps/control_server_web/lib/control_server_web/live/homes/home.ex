@@ -89,15 +89,9 @@ defmodule ControlServerWeb.Live.Home do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title}>
-      <div class="flex items-center gap-4">
-        <.button variant="dark" icon={:plus} link={~p"/projects/new?return_to=#{~p"/"}"}>
-          New Project
-        </.button>
-
-        <.button variant="secondary" icon={:kubernetes} link={~p"/batteries/magic"}>
-          Manage Batteries
-        </.button>
-      </div>
+      <.button variant="dark" icon={:plus} link={~p"/projects/new?return_to=#{~p"/"}"}>
+        New Project
+      </.button>
     </.page_header>
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-4 lg:mb-6">
