@@ -16,19 +16,6 @@ defmodule ControlServerWeb.DeploymentsTable do
       <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>
       <:col :let={deployment} label="Replicas"><%= replicas(deployment) %></:col>
       <:col :let={deployment} label="Available"><%= available_replicas(deployment) %></:col>
-
-      <:action :let={deployment}>
-        <.button
-          variant="minimal"
-          link={resource_path(deployment)}
-          icon={:eye}
-          id={"show_deployment_" <> to_html_id(deployment)}
-        />
-
-        <.tooltip target_id={"show_deployment_" <> to_html_id(deployment)}>
-          Show Deployment
-        </.tooltip>
-      </:action>
     </.table>
 
     <.light_text :if={@deployments == []}>No deployments available</.light_text>

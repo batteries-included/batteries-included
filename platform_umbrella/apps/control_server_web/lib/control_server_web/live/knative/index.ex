@@ -37,8 +37,8 @@ defmodule ControlServerWeb.Live.KnativeServicesIndex do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/devtools"}>
-      <.button variant="secondary" link={new_url()}>
-        New Service
+      <.button variant="dark" icon={:plus} link={new_url()}>
+        New Knative Service
       </.button>
     </.page_header>
 

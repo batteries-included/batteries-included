@@ -20,7 +20,7 @@ defmodule ControlServerWeb.ResourceComponents do
 
   def events_panel(assigns) do
     ~H"""
-    <.panel variant="gray" title="Events" class={@class}>
+    <.panel title="Events" class={@class}>
       <.table :if={@events && @events != []} rows={@events}>
         <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
         <:col :let={event} label="Message">

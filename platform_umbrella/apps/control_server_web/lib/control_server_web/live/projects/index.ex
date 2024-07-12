@@ -28,17 +28,6 @@ defmodule ControlServerWeb.Projects.IndexLive do
           <.flex class="justify-items-center">
             <.button
               variant="minimal"
-              link={~p"/projects/#{project.id}"}
-              icon={:eye}
-              id={"show_project_" <> project.id}
-            />
-
-            <.tooltip target_id={"show_project_" <> project.id}>
-              Show Project
-            </.tooltip>
-
-            <.button
-              variant="minimal"
               link={~p"/projects/#{project.id}/edit"}
               icon={:pencil}
               id={"edit_project_" <> project.id}

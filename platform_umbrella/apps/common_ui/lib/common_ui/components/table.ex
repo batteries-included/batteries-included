@@ -62,7 +62,10 @@ defmodule CommonUI.Components.Table do
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
-              class={["p-0 px-2 align-top", @row_click && "hover:cursor-pointer"]}
+              class={[
+                "p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg",
+                @row_click && "hover:cursor-pointer"
+              ]}
             >
               <div class="block py-4">
                 <span class={[i == 0 && "font-semibold text-gray-darkest dark:text-gray-lightest"]}>
@@ -70,7 +73,7 @@ defmodule CommonUI.Components.Table do
                 </span>
               </div>
             </td>
-            <td :if={@action} class="w-14 p-0">
+            <td :if={@action} class="w-14 p-0 first:rounded-l-lg last:rounded-r-lg">
               <.flex class="whitespace-nowrap text-sm font-medium justify-around">
                 <div
                   :for={action <- @action}

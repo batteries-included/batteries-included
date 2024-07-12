@@ -269,7 +269,7 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
           }
         >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
-            Save Service
+            Save Backend Service
           </.button>
         </.page_header>
         <.flex column>

@@ -19,14 +19,6 @@ defmodule CommonUI.Components.LinkTest do
     """
   end
 
-  component_snapshot_test "Link icon type" do
-    assigns = %{}
-
-    ~H"""
-    <.a variant="icon" icon={:face_smile} navigate="/">Test Link</.a>
-    """
-  end
-
   component_snapshot_test "Link external" do
     assigns = %{}
 

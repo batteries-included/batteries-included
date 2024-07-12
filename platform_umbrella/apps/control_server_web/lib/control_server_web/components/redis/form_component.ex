@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
           back_link={if @action == :new, do: ~p"/redis", else: ~p"/redis/#{@failover_cluster}/show"}
         >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
-            Save Cluster
+            Save Redis Cluster
           </.button>
         </.page_header>
 

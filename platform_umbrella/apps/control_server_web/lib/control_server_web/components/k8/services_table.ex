@@ -15,19 +15,6 @@ defmodule ControlServerWeb.ServicesTable do
       <:col :let={service} label="Namespace"><%= namespace(service) %></:col>
       <:col :let={service} label="Cluster IP"><%= get_in(service, ~w(spec clusterIP)) %></:col>
       <:col :let={service} label="Ports"><%= display_ports(service) %></:col>
-
-      <:action :let={service}>
-        <.button
-          variant="minimal"
-          link={resource_path(service)}
-          icon={:eye}
-          id={"show_service_" <> to_html_id(service)}
-        />
-
-        <.tooltip target_id={"show_service_" <> to_html_id(service)}>
-          Show Service
-        </.tooltip>
-      </:action>
     </.table>
     """
   end

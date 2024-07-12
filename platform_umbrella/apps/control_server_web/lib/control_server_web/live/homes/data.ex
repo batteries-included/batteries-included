@@ -58,10 +58,8 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="Postgres">
       <:menu>
         <.flex>
-          <.a navigate={~p"/postgres/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New PostgreSQL
-          </.a>
-          <.link navigate={~p"/postgres"}>View All</.link>
+          <.button icon={:plus} link={~p"/postgres/new"}>New PostgreSQL</.button>
+          <.button variant="minimal" link={~p"/postgres"}>View All</.button>
         </.flex>
       </:menu>
       <.postgres_clusters_table rows={@clusters} abridged />
@@ -74,10 +72,8 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="Redis">
       <:menu>
         <.flex>
-          <.a navigate={~p"/redis/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Redis
-          </.a>
-          <.link navigate={~p"/redis"}>View All</.link>
+          <.button icon={:plus} link={~p"/redis/new"}>New Redis</.button>
+          <.button variant="minimal" link={~p"/redis"}>View All</.button>
         </.flex>
       </:menu>
       <.redis_table rows={@clusters} abridged />
@@ -90,10 +86,8 @@ defmodule ControlServerWeb.Live.DataHome do
     <.panel title="FerretDB/MongoDB">
       <:menu>
         <.flex>
-          <.a navigate={~p"/ferretdb/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New FerretDB
-          </.a>
-          <.link navigate={~p"/ferretdb"}>View All</.link>
+          <.button icon={:plus} link={~p"/ferretdb/new"}>New FerretDB</.button>
+          <.button variant="minimal" link={~p"/ferretdb"}>View All</.button>
         </.flex>
       </:menu>
       <.ferret_services_table rows={@ferret_services} abridged />
@@ -111,6 +105,7 @@ defmodule ControlServerWeb.Live.DataHome do
         Manage Batteries
       </.button>
     </.page_header>
+
     <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>
         <%= case battery.type do %>

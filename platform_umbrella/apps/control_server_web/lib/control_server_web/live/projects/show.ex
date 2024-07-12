@@ -197,42 +197,42 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
       <.panel :if={@project.postgres_clusters != []} title="Postgres">
         <:menu>
-          <.link navigate={~p"/postgres"}>View All</.link>
+          <.button variant="minimal" link={~p"/postgres"}>View All</.button>
         </:menu>
         <.postgres_clusters_table abridged rows={@project.postgres_clusters} />
       </.panel>
 
       <.panel :if={@project.redis_clusters != []} title="Redis">
         <:menu>
-          <.link navigate={~p"/redis"}>View All</.link>
+          <.button variant="minimal" link={~p"/redis"}>View All</.button>
         </:menu>
         <.redis_table abridged rows={@project.redis_clusters} />
       </.panel>
 
       <.panel :if={@project.ferret_services != []} title="FerretDB/MongoDB">
         <:menu>
-          <.link navigate={~p"/ferretdb"}>View All</.link>
+          <.button variant="minimal" link={~p"/ferretdb"}>View All</.button>
         </:menu>
         <.ferret_services_table abridged rows={@project.ferret_services} />
       </.panel>
 
       <.panel :if={@project.jupyter_notebooks != []} title="Jupyter Notebooks">
         <:menu>
-          <.link navigate={~p"/notebooks"}>View All</.link>
+          <.button variant="minimal" link={~p"/notebooks"}>View All</.button>
         </:menu>
         <.notebooks_table abridged rows={@project.jupyter_notebooks} />
       </.panel>
 
       <.panel :if={@project.knative_services != []} title="Knative Services">
         <:menu>
-          <.link navigate={~p"/knative/services"}>View All</.link>
+          <.button variant="minimal" link={~p"/knative/services"}>View All</.button>
         </:menu>
         <.knative_services_table abridged rows={@project.knative_services} />
       </.panel>
 
       <.panel :if={@project.backend_services != []} title="Backend Services">
         <:menu>
-          <.link navigate={~p"/backend/services"}>View All</.link>
+          <.button variant="minimal" link={~p"/backend/services"}>View All</.button>
         </:menu>
         <.backend_services_table abridged rows={@project.backend_services} />
       </.panel>

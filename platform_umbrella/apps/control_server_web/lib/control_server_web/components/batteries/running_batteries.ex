@@ -2,20 +2,22 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  alias ControlServer.Batteries
   alias Phoenix.Naming
 
   @impl Phoenix.LiveComponent
-  def mount(socket) do
-    {:ok, assign_batteries(socket, :all)}
+  def update(%{batteries: batteries}, socket) do
+    {:ok,
+     socket
+     |> assign(:batteries, batteries)
+     |> assign_batteries(:all)}
   end
 
   def assign_batteries(socket, tab) do
-    batteries = Enum.filter(Batteries.list_system_batteries_slim(), fn b -> tab == :all || b.group == tab end)
+    filtered_batteries = Enum.filter(socket.assigns.batteries, fn b -> tab == :all || b.group == tab end)
 
     socket
-    |> assign(:batteries, batteries)
     |> assign(:tab, tab)
+    |> assign(:filtered_batteries, filtered_batteries)
   end
 
   @impl Phoenix.LiveComponent
@@ -81,7 +83,7 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
           </.tab_bar>
         </:menu>
 
-        <.table rows={@batteries || []}>
+        <.table rows={@filtered_batteries || []}>
           <:col :let={battery} label="Battery name">
             <%= Naming.humanize(battery.type) %>
           </:col>

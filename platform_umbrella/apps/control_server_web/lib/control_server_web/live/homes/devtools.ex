@@ -53,10 +53,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     <.panel title="Knative Services">
       <:menu>
         <.flex>
-          <.a navigate={~p"/knative/services/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Service
-          </.a>
-          <.link navigate={~p"/knative/services"}>View All</.link>
+          <.button icon={:plus} link={~p"/knative/services/new"}>New Service</.button>
+          <.button variant="minimal" link={~p"/knative/services"}>View All</.button>
         </.flex>
       </:menu>
       <.knative_services_table rows={@services} abridged />
@@ -69,10 +67,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     <.panel title="Backend Services">
       <:menu>
         <.flex>
-          <.a navigate={~p"/backend/services/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Service
-          </.a>
-          <.link navigate={~p"/backend/services"}>View All</.link>
+          <.button icon={:plus} link={~p"/backend/services/new"}>New Service</.button>
+          <.button variant="minimal" link={~p"/backend/services"}>View All</.button>
         </.flex>
       </:menu>
       <.backend_services_table rows={@services} abridged />

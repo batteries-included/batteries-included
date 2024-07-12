@@ -233,7 +233,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           title={@title}
           back_link={if @action == :new, do: ~p"/postgres", else: ~p"/postgres/#{@cluster}/show"}
         >
-          <.button variant="dark" type="submit" phx-disable-with="Saving…">Save Cluster</.button>
+          <.button variant="dark" type="submit" phx-disable-with="Saving…">
+            Save Postgres Cluster
+          </.button>
         </.page_header>
 
         <.flex column>
