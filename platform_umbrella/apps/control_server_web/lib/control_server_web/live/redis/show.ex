@@ -17,7 +17,11 @@ defmodule ControlServerWeb.Live.RedisShow do
     :ok = KubeEventCenter.subscribe(:pod)
     :ok = KubeEventCenter.subscribe(:service)
     :ok = KubeEventCenter.subscribe(:redis_failover)
-    {:ok, socket}
+
+    {:ok,
+     socket
+     |> assign(:current_page, :data)
+     |> assign(:page_title, "Redis Cluster")}
   end
 
   @impl Phoenix.LiveView

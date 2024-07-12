@@ -13,7 +13,7 @@ defmodule ControlServerWeb.RecentProjectsPanel do
     <div class="lg:col-span-7">
       <.panel title="Projects" class="h-full">
         <:menu>
-          <.button variant="minimal" link={~p"/projects"}>View All</.button>
+          <.link navigate={~p"/projects"}>View All</.link>
         </:menu>
 
         <.table

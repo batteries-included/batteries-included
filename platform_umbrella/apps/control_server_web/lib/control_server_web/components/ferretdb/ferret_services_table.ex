@@ -2,51 +2,33 @@ defmodule ControlServerWeb.FerretServicesTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  defp show_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/show"
-  defp edit_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit"
-
   attr :rows, :list, default: []
-  attr :abbridged, :boolean, default: false
+  attr :abridged, :boolean, default: false
 
   def ferret_services_table(assigns) do
     ~H"""
     <.table id="ferret_services" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={ferret_service} label="Name"><%= ferret_service.name %></:col>
-      <:col :let={ferret_service} label="Instances">
-        <%= ferret_service.instances %>
-      </:col>
-      <:col :let={ferret_service} :if={!@abbridged} label="Cpu requested">
-        <%= ferret_service.cpu_requested %>
-      </:col>
-      <:col :let={ferret_service} :if={!@abbridged} label="Memory requested">
-        <%= ferret_service.memory_requested %>
-      </:col>
-      <:action :let={ferret_service}>
+      <:col :let={service} :if={!@abridged} label="ID"><%= service.id %></:col>
+      <:col :let={service} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} label="Instances"><%= service.instances %></:col>
+      <:action :let={service}>
         <.flex class="justify-items-center align-middle">
           <.button
             variant="minimal"
-            link={show_url(ferret_service)}
-            icon={:eye}
-            id={"show_ferret_service_" <> ferret_service.id}
-          />
-
-          <.tooltip target_id={"show_ferret_service_" <> ferret_service.id}>
-            Show FerretDB Service <%= ferret_service.name %>
-          </.tooltip>
-
-          <.button
-            variant="minimal"
-            link={edit_url(ferret_service)}
+            link={edit_url(service)}
             icon={:pencil}
-            id={"edit_pool_" <> ferret_service.id}
+            id={"edit_service_" <> service.id}
           />
 
-          <.tooltip target_id={"edit_pool_" <> ferret_service.id}>
-            Edit FerretDB Service <%= ferret_service.name %>
+          <.tooltip target_id={"edit_service_" <> service.id}>
+            Edit FerretDB Service
           </.tooltip>
         </.flex>
       </:action>
     </.table>
     """
   end
+
+  defp show_url(service), do: ~p"/ferretdb/#{service}/show"
+  defp edit_url(service), do: ~p"/ferretdb/#{service}/edit"
 end

@@ -276,7 +276,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
     ~H"""
     <.page_header title="Edit History" back_link={show_url(@cluster)} />
     <.panel title="Edit History">
-      <.edit_versions_table edit_versions={@edit_versions} abbridged />
+      <.edit_versions_table edit_versions={@edit_versions} abridged />
     </.panel>
     """
   end

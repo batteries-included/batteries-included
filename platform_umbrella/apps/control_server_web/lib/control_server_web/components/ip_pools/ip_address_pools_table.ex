@@ -3,17 +3,28 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
   use ControlServerWeb, :html
 
   attr :rows, :list, default: []
-  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
+  attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def ip_address_pools_table(assigns) do
     ~H"""
     <.table rows={@rows}>
-      <:col :let={pool} :if={!@abbridged} label="ID"><%= pool.id %></:col>
+      <:col :let={pool} :if={!@abridged} label="ID"><%= pool.id %></:col>
       <:col :let={pool} label="Name"><%= pool.name %></:col>
       <:col :let={pool} label="Subnet"><%= pool.subnet %></:col>
 
       <:action :let={pool}>
         <.flex>
+          <.button
+            variant="minimal"
+            link={edit_url(pool)}
+            icon={:pencil}
+            id={"edit_pool_" <> pool.id}
+          />
+
+          <.tooltip target_id={"edit_pool_" <> pool.id}>
+            Edit IP Address Pool
+          </.tooltip>
+
           <.button
             variant="minimal"
             phx-click="delete"
@@ -25,17 +36,6 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
 
           <.tooltip target_id={"delete_pool_" <> pool.id}>
             Delete IP Address Pool
-          </.tooltip>
-
-          <.button
-            variant="minimal"
-            link={edit_url(pool)}
-            icon={:pencil}
-            id={"edit_pool_" <> pool.id}
-          />
-
-          <.tooltip target_id={"edit_pool_" <> pool.id}>
-            Edit IP Address Pool
           </.tooltip>
         </.flex>
       </:action>

@@ -136,7 +136,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
           </:tab>
         </.tab_bar>
 
-        <p :if={@tab == :required && @required == []} class="text-sm text-gray-light italic">
+        <p :if={@tab == :required && @required == []} class="text-sm text-gray-light">
           No batteries are required for this project.
         </p>
 

@@ -11,6 +11,7 @@ defmodule ControlServerWeb.Live.RedisNew do
     {:ok,
      socket
      |> assign(:project_id, params["project_id"])
+     |> assign(:current_page, :data)
      |> assign_failover_cluster()
      |> assign_page_title()}
   end

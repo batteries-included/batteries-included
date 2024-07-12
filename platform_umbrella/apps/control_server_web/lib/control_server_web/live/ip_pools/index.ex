@@ -40,7 +40,7 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
         </.a>
       </:menu>
 
-      <.ip_address_pools_table abbridged rows={@ip_address_pools} />
+      <.ip_address_pools_table abridged rows={@ip_address_pools} />
     </.panel>
     """
   end

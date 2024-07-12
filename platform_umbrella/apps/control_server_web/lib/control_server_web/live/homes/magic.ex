@@ -121,7 +121,7 @@ defmodule ControlServerWeb.Live.MagicHome do
         </.flex>
       </:menu>
       <.pause_alert :if={!@deploys_running} />
-      <.umbrella_snapshots_table abbridged snapshots={@snapshots} />
+      <.umbrella_snapshots_table abridged snapshots={@snapshots} />
     </.panel>
     """
   end

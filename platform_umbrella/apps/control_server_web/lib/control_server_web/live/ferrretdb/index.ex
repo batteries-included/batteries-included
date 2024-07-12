@@ -8,7 +8,10 @@ defmodule ControlServerWeb.Live.FerretServiceIndex do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :ferret_services, FerretDB.list_ferret_services())}
+    {:ok,
+     socket
+     |> assign(:current_page, :data)
+     |> assign(:ferret_services, FerretDB.list_ferret_services())}
   end
 
   @impl Phoenix.LiveView

@@ -7,24 +7,27 @@ defmodule ControlServerWeb.KnativeServicesTable do
   alias CommonCore.Knative.Service
 
   attr :rows, :list, required: true
-  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
+  attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def knative_services_table(assigns) do
     ~H"""
     <.table id="knative-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={service} :if={!@abbridged} label="ID"><%= service.id %></:col>
+      <:col :let={service} :if={!@abridged} label="ID"><%= service.id %></:col>
       <:col :let={service} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} label="Rollout Duration">
+        <%= service.rollout_duration %>
+      </:col>
       <:action :let={service}>
         <.flex class="justify-items-center">
           <.button
             variant="minimal"
-            link={show_url(service)}
-            icon={:eye}
-            id={"show_service_" <> service.id}
+            link={edit_url(service)}
+            icon={:pencil}
+            id={"edit_service_" <> service.id}
           />
 
-          <.tooltip target_id={"show_service_" <> service.id}>
-            Show Service
+          <.tooltip target_id={"edit_service_" <> service.id}>
+            Edit Knative Service
           </.tooltip>
 
           <.button
@@ -33,11 +36,11 @@ defmodule ControlServerWeb.KnativeServicesTable do
             link_type="external"
             target="_blank"
             icon={:arrow_top_right_on_square}
-            id={"running_service_" <> service.id}
+            id={"open_service_" <> service.id}
           />
 
-          <.tooltip target_id={"running_service_" <> service.id}>
-            Running Service
+          <.tooltip target_id={"open_service_" <> service.id}>
+            Open Knative Service
           </.tooltip>
         </.flex>
       </:action>
@@ -46,6 +49,6 @@ defmodule ControlServerWeb.KnativeServicesTable do
   end
 
   defp show_url(%Service{} = service), do: ~p"/knative/services/#{service.id}/show"
-
+  defp edit_url(%Service{} = service), do: ~p"/knative/services/#{service.id}/edit"
   defp service_url(%Service{} = service), do: "http://#{knative_host(service)}"
 end

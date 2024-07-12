@@ -13,6 +13,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookNew do
     {:ok,
      socket
      |> assign(:current_page, :ai)
+     |> assign(:page_title, "New Jupyter Notebook")
      |> assign(:project_id, params["project_id"])
      |> assign(:notebook, notebook)}
   end

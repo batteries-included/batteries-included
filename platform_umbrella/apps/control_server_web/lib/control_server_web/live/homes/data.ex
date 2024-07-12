@@ -64,7 +64,7 @@ defmodule ControlServerWeb.Live.DataHome do
           <.link navigate={~p"/postgres"}>View All</.link>
         </.flex>
       </:menu>
-      <.postgres_clusters_table rows={@clusters} abbridged />
+      <.postgres_clusters_table rows={@clusters} abridged />
     </.panel>
     """
   end
@@ -80,7 +80,7 @@ defmodule ControlServerWeb.Live.DataHome do
           <.link navigate={~p"/redis"}>View All</.link>
         </.flex>
       </:menu>
-      <.redis_table rows={@clusters} abbridged />
+      <.redis_table rows={@clusters} abridged />
     </.panel>
     """
   end
@@ -96,7 +96,7 @@ defmodule ControlServerWeb.Live.DataHome do
           <.link navigate={~p"/ferretdb"}>View All</.link>
         </.flex>
       </:menu>
-      <.ferret_services_table rows={@ferret_services} abbridged />
+      <.ferret_services_table rows={@ferret_services} abridged />
     </.panel>
     """
   end

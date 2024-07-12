@@ -9,12 +9,15 @@ defmodule ControlServerWeb.Live.RedisEdit do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :current_page, :data)}
   end
 
   @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
-    {:noreply, socket |> assign_failover_cluster(id) |> assign_page_title()}
+    {:noreply,
+     socket
+     |> assign_failover_cluster(id)
+     |> assign_page_title()}
   end
 
   defp assign_failover_cluster(socket, id) do

@@ -9,19 +9,19 @@ defmodule ControlServerWeb.Audit.EditVersionsTable do
   attr :edit_versions, :list, required: true
   attr :id, :string, default: "edit_versions-table"
 
-  attr :abbridged, :boolean,
+  attr :abridged, :boolean,
     default: false,
-    doc: "the abbridged property control display of the entity type and entity id column"
+    doc: "the abridged property control display of the entity type and entity id column"
 
   attr :rest, :global
 
   def edit_versions_table(assigns) do
     ~H"""
     <.table id={@id} rows={@edit_versions} {@rest}>
-      <:col :let={edit_version} :if={!@abbridged} label="Entity ID">
+      <:col :let={edit_version} :if={!@abridged} label="Entity ID">
         <%= edit_version.entity_id %>
       </:col>
-      <:col :let={edit_version} :if={!@abbridged} label="Entity Type">
+      <:col :let={edit_version} :if={!@abridged} label="Entity Type">
         <%= edit_version.entity_schema %>
       </:col>
       <:col :let={edit_version} label="Action">

@@ -257,7 +257,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
     <.header service={@service} timeline_installed={@timeline_installed} />
 
     <.panel title="Edit History">
-      <.edit_versions_table edit_versions={@edit_versions} abbridged />
+      <.edit_versions_table edit_versions={@edit_versions} abridged />
     </.panel>
     """
   end
