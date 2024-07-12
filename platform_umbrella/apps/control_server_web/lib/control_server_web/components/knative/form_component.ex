@@ -24,13 +24,19 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      |> assign_projects()
      |> assign_container(nil)
      |> assign_container_idx(nil)
+     |> assign_container_field_name(nil)
      |> assign_env_value(nil)
      |> assign_env_value_idx(nil)}
   end
 
-  @spec update_container(Container.t() | nil, integer | nil) :: :ok
-  def update_container(container, idx) do
-    send_update(__MODULE__, id: "service-form", container: container, idx: idx, is_init: false)
+  @spec update_container(Container.t() | nil, integer | nil, atom()) :: :ok
+  def update_container(container, idx, container_field_name) do
+    send_update(__MODULE__,
+      id: "service-form",
+      container: container,
+      idx: idx,
+      container_field_name: container_field_name
+    )
   end
 
   def update_env_value(env_value, idx) do
@@ -57,6 +63,10 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
 
   defp assign_sso_enabled(socket) do
     assign_new(socket, :sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
+  end
+
+  def assign_container_field_name(socket, cfn) do
+    assign(socket, container_field_name: cfn)
   end
 
   def assign_container(socket, container) do
@@ -87,11 +97,13 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   end
 
   def update(%{container: nil}, socket) do
-    {:ok, socket |> assign_container(nil) |> assign_container_idx(nil)}
+    {:ok, socket |> assign_container(nil) |> assign_container_idx(nil) |> assign_container_field_name(nil)}
   end
 
-  def update(%{container: container, idx: nil, is_init: is_init}, %{assigns: %{changeset: changeset}} = socket) do
-    container_field_name = if is_init, do: :init_containers, else: :containers
+  def update(
+        %{container: container, idx: nil, container_field_name: container_field_name},
+        %{assigns: %{changeset: changeset}} = socket
+      ) do
     containers = Changeset.get_field(changeset, container_field_name, [])
     changeset = Changeset.put_embed(changeset, container_field_name, [container | containers])
 
@@ -99,11 +111,14 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      socket
      |> assign_container(nil)
      |> assign_container_idx(nil)
+     |> assign_container_field_name(nil)
      |> assign_changeset(changeset)}
   end
 
-  def update(%{container: container, idx: idx, is_init: is_init}, %{assigns: %{changeset: changeset}} = socket) do
-    container_field_name = if is_init, do: :init_containers, else: :containers
+  def update(
+        %{container: container, idx: idx, container_field_name: container_field_name},
+        %{assigns: %{changeset: changeset}} = socket
+      ) do
     containers = Changeset.get_field(changeset, container_field_name, [])
     new_containers = List.replace_at(containers, idx, container)
     changeset = Changeset.put_embed(changeset, container_field_name, new_containers)
@@ -112,6 +127,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      socket
      |> assign_container(nil)
      |> assign_container_idx(nil)
+     |> assign_container_field_name(nil)
      |> assign_changeset(changeset)}
   end
 
@@ -175,36 +191,41 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {:noreply, assign_changeset(socket, new_changeset)}
   end
 
-  def handle_event("new_container", _, socket) do
+  def handle_event("new_container", %{"id" => "containers_panel-" <> cfn}, socket) do
     new_container = %Container{}
-    {:noreply, socket |> assign_container(new_container) |> assign_container_idx(nil)}
+
+    {:noreply,
+     socket
+     |> assign_container(new_container)
+     |> assign_container_idx(nil)
+     |> assign_container_field_name(String.to_existing_atom(cfn))}
   end
 
   def handle_event(
         "edit:container",
-        %{"idx" => container_idx, "is-init" => is_init_container},
+        %{"idx" => container_idx, "id" => "containers_panel-" <> cfn},
         %{assigns: %{changeset: changeset}} = socket
       ) do
     {idx, _} = Integer.parse(container_idx)
-    is_init = String.to_existing_atom(is_init_container)
-
-    container_field_name = if is_init, do: :init_containers, else: :containers
+    container_field_name = String.to_existing_atom(cfn)
     containers = Changeset.get_field(changeset, container_field_name, [])
-
     container = Enum.fetch!(containers, idx)
 
-    {:noreply, socket |> assign_container(container) |> assign_container_idx(idx)}
+    {:noreply,
+     socket
+     |> assign_container(container)
+     |> assign_container_idx(idx)
+     |> assign_container_field_name(container_field_name)}
   end
 
   def handle_event(
         "del:container",
-        %{"idx" => container_idx, "is-init" => is_init_container},
+        %{"idx" => container_idx, "id" => "containers_panel-" <> cfn},
         %{assigns: %{changeset: changeset}} = socket
       ) do
     {idx, _} = Integer.parse(container_idx)
-    is_init = String.to_existing_atom(is_init_container)
 
-    container_field_name = if is_init, do: :init_containers, else: :containers
+    container_field_name = String.to_existing_atom(cfn)
     containers = Changeset.get_field(changeset, container_field_name, [])
 
     new_containers = List.delete_at(containers, idx)
@@ -289,10 +310,16 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         <.flex column>
           <.main_panel form={@form} />
 
-          <.grid columns={[sm: 1, lg: 2]}>
+          <.grid columns={[sm: 2, lg: 2]}>
             <.containers_panel
+              id="containers_panel-init_containers"
+              title="Init Containers"
               target={@myself}
-              init_containers={@init_containers}
+              containers={@init_containers}
+            />
+            <.containers_panel
+              id="containers_panel-containers"
+              target={@myself}
               containers={@containers}
             />
             <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} projects={@projects} />
@@ -308,9 +335,10 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
       <.live_component
         :if={@container}
         module={ControlServerWeb.Containers.ContainerModal}
-        update_func={&update_container/2}
+        update_func={&update_container/3}
         container={@container}
         idx={@container_idx}
+        container_field_name={@container_field_name}
         id="container-form-modal"
       />
 

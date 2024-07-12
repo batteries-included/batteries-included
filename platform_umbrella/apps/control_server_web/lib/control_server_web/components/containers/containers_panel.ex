@@ -6,21 +6,19 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
   attr :init_containers, :list, default: []
   attr :target, :any, default: nil
   attr :id, :string, default: "container-panel"
+  attr :title, :string, default: "Containers"
 
   def containers_panel(assigns) do
     ~H"""
-    <.panel title="Containers" id={@id}>
+    <.panel title={@title} id={@id}>
       <:menu>
-        <.button icon={:plus} phx-click="new_container" phx-target={@target}>
+        <.button icon={:plus} phx-click="new_container" phx-target={@target} phx-value-id={@id}>
           Add Container
         </.button>
       </:menu>
       <.table rows={Enum.with_index(@containers ++ @init_containers)}>
         <:col :let={{c, _idx}} label="Name"><%= c.name %></:col>
         <:col :let={{c, _idx}} label="Image"><%= c.image %></:col>
-        <:col :let={{_c, idx}} label="Init Container">
-          <%= if idx > length(@containers), do: "Yes", else: "No" %>
-        </:col>
 
         <:action :let={{c, idx}}>
           <.button
@@ -30,7 +28,7 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
             phx-click="del:container"
             phx-target={@target}
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
-            phx-value-is-init={if idx > length(@containers), do: "true", else: "false"}
+            phx-value-id={@id}
           />
 
           <.tooltip target_id={"delete_container_" <> String.replace(c.name, " ", "")}>
@@ -44,7 +42,7 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
             phx-target={@target}
             phx-click="edit:container"
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
-            phx-value-is-init={if idx > length(@containers), do: "true", else: "false"}
+            phx-value-id={@id}
           />
 
           <.tooltip target_id={"edit_container_" <> String.replace(c.name, " ", "")}>

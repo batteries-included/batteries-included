@@ -81,6 +81,7 @@ defmodule CommonCore.Resources.BackendServices do
         "labels" => %{"battery/managed" => "true"}
       },
       "spec" => %{
+        "initContainers" => init_containers(service, battery, state),
         "containers" => containers(service, battery, state),
         "serviceAccountName" => service_account_name(service)
       }
@@ -88,6 +89,16 @@ defmodule CommonCore.Resources.BackendServices do
     |> B.app_labels(service.name)
     |> B.component_labels(@app_name)
     |> B.add_owner(service)
+  end
+
+  defp init_containers(service, _battery, _state) do
+    Enum.map(service.init_containers, fn container ->
+      %{
+        "name" => container.name,
+        "image" => container.image,
+        "resources" => resources(service)
+      }
+    end)
   end
 
   defp containers(service, _battery, _state) do
