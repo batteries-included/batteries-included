@@ -28,6 +28,13 @@ defmodule CommonCore.StateSummary.URLs do
     |> URI.append_path("/admin/#{realm}/console")
   end
 
+  @spec project_dashboard(StateSummary.t()) :: URI.t()
+  def project_dashboard(state) do
+    state
+    |> uri_for_battery(:grafana)
+    |> URI.append_path("/d/projects/projects")
+  end
+
   @spec cloud_native_pg_dashboard(StateSummary.t()) :: URI.t()
   def cloud_native_pg_dashboard(state) do
     state

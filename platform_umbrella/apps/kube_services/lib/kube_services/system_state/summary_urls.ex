@@ -46,6 +46,19 @@ defmodule KubeServices.SystemState.SummaryURLs do
     {:noreply, new_state}
   end
 
+  @impl GenServer
+  def handle_call({:project_dashboard_url, %{} = project}, _from, %{summary: summary} = state) do
+    query = URI.encode_query(%{"var-project-id" => project.id})
+
+    url =
+      summary
+      |> CommonCore.StateSummary.URLs.project_dashboard()
+      |> URI.append_query(query)
+      |> URI.to_string()
+
+    {:reply, url, state}
+  end
+
   # For a given postgres cluster, return the URL to the cloud native pg dashboard in grafana
   @impl GenServer
   def handle_call({:pg_dashboard_url, %{} = cluster}, _from, %{summary: summary} = state) do
@@ -99,11 +112,15 @@ defmodule KubeServices.SystemState.SummaryURLs do
     URI.to_string(result)
   end
 
+  def project_dashboard_url(target \\ @me, project) do
+    GenServer.call(target, {:project_dashboard_url, project})
+  end
+
   def pg_dashboard_url(target \\ @me, cluster) do
     GenServer.call(target, {:pg_dashboard_url, cluster})
   end
 
-  def pod_dasboard_url(target \\ @me, pod_resource) do
+  def pod_dashboard_url(target \\ @me, pod_resource) do
     GenServer.call(target, {:pod_dashboard_url, pod_resource})
   end
 end

@@ -92,7 +92,7 @@ defmodule ControlServerWeb.PodLive.Show do
   defp assign_grafana_dashboard(%{assigns: %{resource: resource}} = socket) do
     url =
       if SummaryBatteries.battery_installed(:grafana) do
-        SummaryURLs.pod_dasboard_url(resource)
+        SummaryURLs.pod_dashboard_url(resource)
       end
 
     assign(socket, grafana_dashboard_url: url)
@@ -252,7 +252,7 @@ defmodule ControlServerWeb.PodLive.Show do
       <.a variant="bordered" navigate={resource_path(@resource, :events)}>Events</.a>
       <.a variant="bordered" navigate={resource_path(@resource, :labels)}>Labels/Annotations</.a>
       <.a variant="bordered" navigate={raw_resource_path(@resource)}>Raw Kubernetes</.a>
-      <.a :if={@grafana_dashboard_url != nil} variant="bordered" navigate={@grafana_dashboard_url}>
+      <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
         Grafana Dashboard
       </.a>
       <.a :if={@trivy_enabled} variant="bordered" navigate={resource_path(@resource, :security)}>

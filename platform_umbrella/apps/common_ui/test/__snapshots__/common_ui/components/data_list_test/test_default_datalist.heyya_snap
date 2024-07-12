@@ -1,26 +1,26 @@
-<div class="grid grid-cols-[auto,1fr] items-center text-darker dark:text-gray-lighter gap-x-12 gap-y-4 ">
+<div class="grid grid-cols-[auto,1fr] items-start text-darker dark:text-gray-lighter gap-x-12 gap-y-4 ">
   
-    <div class="text-xl font-medium leading-4">
+    <div class="text-gray-light text-md font-medium leading-5">
       First
     </div>
 
-    <div class="text-base leading-4">
+    <div class="text-base leading-5">
       Main Text
     </div>
   
-    <div class="text-xl font-medium leading-4">
+    <div class="text-gray-light text-md font-medium leading-5">
       Field Name
     </div>
 
-    <div class="text-base leading-4">
+    <div class="text-base leading-5">
       More Text
     </div>
   
-    <div class="text-xl font-medium leading-4">
+    <div class="text-gray-light text-md font-medium leading-5">
       Views
     </div>
 
-    <div class="text-base leading-4">
+    <div class="text-base leading-5">
       200
     </div>
   

@@ -50,17 +50,17 @@ defmodule CommonUI.Components.DataList do
     ~H"""
     <div
       class={[
-        "grid grid-cols-[auto,1fr] items-center text-darker dark:text-gray-lighter gap-x-12 gap-y-4",
+        "grid grid-cols-[auto,1fr] items-start text-darker dark:text-gray-lighter gap-x-12 gap-y-4",
         @class
       ]}
       {@rest}
     >
       <%= for item <- @item do %>
-        <div class="text-xl font-medium leading-4">
+        <div class="text-gray-light text-md font-medium leading-5">
           <%= item.title %>
         </div>
 
-        <div class="text-base leading-4">
+        <div class="text-base leading-5">
           <%= render_slot(item) %>
         </div>
       <% end %>

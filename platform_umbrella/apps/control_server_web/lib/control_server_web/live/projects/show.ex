@@ -12,9 +12,11 @@ defmodule ControlServerWeb.Projects.ShowLive do
   import ControlServerWeb.RedisTable
 
   alias CommonCore.Batteries.Catalog
+  alias CommonCore.Projects.Project
   alias ControlServer.Projects
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
+  alias KubeServices.SystemState.SummaryURLs
 
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -23,10 +25,11 @@ defmodule ControlServerWeb.Projects.ShowLive do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign(:page_title, "Project Details")
      |> assign_timeline_installed()
      |> assign_project(id)
-     |> assign_pods()}
+     |> assign_page_title()
+     |> assign_pods()
+     |> assign_grafana_dashboard()}
   end
 
   defp assign_timeline_installed(socket) do
@@ -34,7 +37,20 @@ defmodule ControlServerWeb.Projects.ShowLive do
   end
 
   defp assign_project(socket, id) do
-    assign(socket, project: Projects.get_project!(id))
+    project = Projects.get_project!(id)
+
+    resource_count =
+      Project.resource_types()
+      |> Enum.map(&(project |> Map.get(&1, []) |> Enum.count()))
+      |> Enum.sum()
+
+    socket
+    |> assign(:project, project)
+    |> assign(:resource_count, resource_count)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, :page_title, socket.assigns.project.name)
   end
 
   defp assign_pods(%{assigns: %{project: project}} = socket) do
@@ -47,7 +63,18 @@ defmodule ControlServerWeb.Projects.ShowLive do
     allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids ++ backend_ids)
     pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
 
-    assign(socket, pods: pods)
+    socket
+    |> assign(:pods, pods)
+    |> assign(:pod_count, Enum.count(pods))
+  end
+
+  defp assign_grafana_dashboard(socket) do
+    url =
+      if SummaryBatteries.battery_installed(:grafana) do
+        SummaryURLs.project_dashboard_url(socket.assigns.project)
+      end
+
+    assign(socket, :grafana_dashboard_url, url)
   end
 
   def handle_event("delete", _params, socket) do
@@ -72,11 +99,11 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title <> ": " <> @project.name} back_link={~p"/projects"}>
+    <.page_header title={@page_title} back_link={~p"/projects"}>
       <.flex>
         <.tooltip target_id="add-tooltip">Add Resources</.tooltip>
-        <.tooltip target_id="edit-tooltip">Edit Project</.tooltip>
         <.tooltip :if={@timeline_installed} target_id="history-tooltip">Project History</.tooltip>
+        <.tooltip target_id="edit-tooltip">Edit Project</.tooltip>
         <.tooltip target_id="delete-tooltip">Delete Project</.tooltip>
         <.flex gaps="0">
           <.dropdown>
@@ -120,18 +147,18 @@ defmodule ControlServerWeb.Projects.ShowLive do
           </.dropdown>
 
           <.button
-            id="edit-tooltip"
-            variant="icon"
-            icon={:pencil}
-            link={~p"/projects/#{@project.id}/edit"}
-          />
-
-          <.button
             :if={@timeline_installed}
             id="history-tooltip"
             variant="icon"
             icon={:clock}
             link={~p"/projects/#{@project.id}/timeline"}
+          />
+
+          <.button
+            id="edit-tooltip"
+            variant="icon"
+            icon={:pencil}
+            link={~p"/projects/#{@project.id}/edit"}
           />
 
           <.button
@@ -145,32 +172,68 @@ defmodule ControlServerWeb.Projects.ShowLive do
       </.flex>
     </.page_header>
 
+    <div class="flex flex-wrap gap-4 mb-4">
+      <.badge label="Resources" value={@resource_count} />
+      <.badge label="Pods" value={@pod_count} />
+    </div>
+
     <.grid columns={[sm: 1, lg: 2]}>
-      <.panel :if={@project.description} title="Project Description">
-        <%= @project.description %>
+      <.panel title="Project Details" variant="gray">
+        <.data_list>
+          <:item title="Created">
+            <.relative_display time={@project.inserted_at} />
+          </:item>
+          <:item :if={@project.description} title="Description">
+            <%= @project.description %>
+          </:item>
+        </.data_list>
       </.panel>
 
-      <.panel :if={@project.postgres_clusters != []} variant="gray" title="Postgres">
+      <div>
+        <.a :if={@grafana_dashboard_url} variant="bordered" href={@grafana_dashboard_url}>
+          Grafana Dashboard
+        </.a>
+      </div>
+
+      <.panel :if={@project.postgres_clusters != []} title="Postgres">
+        <:menu>
+          <.link navigate={~p"/postgres"}>View All</.link>
+        </:menu>
         <.postgres_clusters_table abbridged rows={@project.postgres_clusters} />
       </.panel>
 
-      <.panel :if={@project.redis_clusters != []} variant="gray" title="Redis">
+      <.panel :if={@project.redis_clusters != []} title="Redis">
+        <:menu>
+          <.link navigate={~p"/redis"}>View All</.link>
+        </:menu>
         <.redis_table abbridged rows={@project.redis_clusters} />
       </.panel>
 
-      <.panel :if={@project.ferret_services != []} variant="gray" title="FerretDB/MongoDB">
+      <.panel :if={@project.ferret_services != []} title="FerretDB/MongoDB">
+        <:menu>
+          <.link navigate={~p"/ferretdb"}>View All</.link>
+        </:menu>
         <.ferret_services_table abbridged rows={@project.ferret_services} />
       </.panel>
 
-      <.panel :if={@project.jupyter_notebooks != []} variant="gray" title="Jupyter Notebooks">
+      <.panel :if={@project.jupyter_notebooks != []} title="Jupyter Notebooks">
+        <:menu>
+          <.link navigate={~p"/notebooks"}>View All</.link>
+        </:menu>
         <.notebooks_table abbridged rows={@project.jupyter_notebooks} />
       </.panel>
 
-      <.panel :if={@project.knative_services != []} variant="gray" title="Knative Services">
+      <.panel :if={@project.knative_services != []} title="Knative Services">
+        <:menu>
+          <.link navigate={~p"/knative/services"}>View All</.link>
+        </:menu>
         <.knative_services_table abbridged rows={@project.knative_services} />
       </.panel>
 
-      <.panel :if={@project.backend_services != []} variant="gray" title="Backend Services">
+      <.panel :if={@project.backend_services != []} title="Backend Services">
+        <:menu>
+          <.link navigate={~p"/backend/services"}>View All</.link>
+        </:menu>
         <.backend_services_table abbridged rows={@project.backend_services} />
       </.panel>
 
