@@ -380,26 +380,40 @@ do_build_image() {
     version="${BASE_VERSION}-$(version_tag)"
     log "${GREEN}Building${NOFORMAT} container image ${image_name} with  version ${version}"
 
+    declare -a cache_args
+    if [ "${GITHUB_ACTIONS:-""}" = "true" ]; then
+        cache_args+=(--cache-from
+            "type=gha,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
+            --cache-to
+            "type=gha,mode=max,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
+            --builder=container)
+    fi
+
     case "${image_name}" in
     control-server)
-        docker build . -f docker/platform.dockerfile \
+        docker buildx build . -f docker/platform.dockerfile \
             -t "control-server:${version}" \
-            --build-arg RELEASE=control_server
+            --build-arg RELEASE=control_server \
+            "${cache_args[@]}"
         ;;
     home-base)
-        docker build . -f docker/platform.dockerfile \
+        docker buildx build . -f docker/platform.dockerfile \
             -t "home-base:${version}" \
-            --build-arg RELEASE=home_base
+            --build-arg RELEASE=home_base \
+            "${cache_args[@]}"
         ;;
 
     kube-bootstrap)
-        docker build . -f docker/platform.dockerfile \
+        docker buildx build . -f docker/platform.dockerfile \
             -t "kube-bootstrap:${version}" \
-            --build-arg RELEASE=kube_bootstrap
+            --build-arg RELEASE=kube_bootstrap \
+            "${cache_args[@]}"
         ;;
+
     pastebin)
-        docker build . -f docker/pastebin.dockerfile \
-            -t "pastebin:${version}"
+        docker buildx build . -f docker/pastebin.dockerfile \
+            -t "pastebin:${version}" \
+            "${cache_args[@]}"
         ;;
     *)
         die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"

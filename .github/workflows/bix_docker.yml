@@ -46,6 +46,12 @@ jobs:
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
+      - name: Configure builder
+        run: >-
+          docker buildx create --name container --driver docker-container
+          --driver-opt default-load=true
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v3
       - name: Build control-server image
         run: bin/bix build-image control-server
       - name: Build home-base image
