@@ -4,34 +4,19 @@ defmodule ControlServerWeb.Istio.VirtualServicesTable do
   use ControlServerWeb, :html
 
   import CommonCore.Resources.FieldAccessors
-  import ControlServerWeb.ResourceHTMLHelper
 
   attr :rows, :list, default: []
-  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
+  attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def virtual_services_table(assigns) do
     ~H"""
-    <.table rows={@rows}>
+    <.table rows={@rows} row_click={&JS.navigate(show_url(&1))}>
+      <:col :let={virtual_service} :if={!@abridged} label="ID"><%= virtual_service.id %></:col>
       <:col :let={virtual_service} label="Name"><%= name(virtual_service) %></:col>
       <:col :let={virtual_service} label="Namespace"><%= namespace(virtual_service) %></:col>
-      <:col :let={virtual_service} :if={!@abbridged} label="Hosts">
+      <:col :let={virtual_service} :if={!@abridged} label="Hosts">
         <%= format_hosts(virtual_service) %>
       </:col>
-
-      <:action :let={virtual_service}>
-        <.flex>
-          <.button
-            variant="minimal"
-            link={show_url(virtual_service)}
-            icon={:eye}
-            id={"show_vs_" <> to_html_id(virtual_service)}
-          />
-
-          <.tooltip target_id={"show_vs_" <> to_html_id(virtual_service)}>
-            Show Virtual Service
-          </.tooltip>
-        </.flex>
-      </:action>
     </.table>
     """
   end

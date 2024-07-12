@@ -9,7 +9,10 @@ defmodule ControlServerWeb.Live.KnativeEdit do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :current_page, :devtools)}
+    {:ok,
+     socket
+     |> assign(:current_page, :devtools)
+     |> assign(:page_title, "Edit Knative Service")}
   end
 
   @impl Phoenix.LiveView

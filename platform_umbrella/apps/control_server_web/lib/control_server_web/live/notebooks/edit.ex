@@ -11,6 +11,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookEdit do
     {:ok,
      socket
      |> assign(:current_page, :ai)
+     |> assign(:page_title, "Edit Jupyter Notebook")
      |> assign(:notebook, notebook)}
   end
 

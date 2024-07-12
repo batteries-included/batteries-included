@@ -75,7 +75,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
           <.link navigate={~p"/keycloak/realms"}>View All</.link>
         </.flex>
       </:menu>
-      <.keycloak_realms_table rows={@realms} keycloak_url={@keycloak_url} abbridged />
+      <.keycloak_realms_table rows={@realms} keycloak_url={@keycloak_url} abridged />
     </.panel>
     """
   end
@@ -88,7 +88,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
           <.link navigate={~p"/ip_address_pools"}>View All</.link>
         </.flex>
       </:menu>
-      <.ip_address_pools_table rows={@ip_address_pools} abbridged />
+      <.ip_address_pools_table rows={@ip_address_pools} abridged />
     </.panel>
     """
   end
@@ -114,7 +114,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
           <.link navigate={~p"/istio/virtual_services"}>View All</.link>
         </.flex>
       </:menu>
-      <.virtual_services_table abbridged rows={@virtual_services} />
+      <.virtual_services_table abridged rows={@virtual_services} />
     </.panel>
     """
   end

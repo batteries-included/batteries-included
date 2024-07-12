@@ -3,13 +3,13 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
   use ControlServerWeb, :html
 
   attr :snapshots, :list, required: true
-  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
-  attr :skip_date, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
+  attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
+  attr :skip_date, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def umbrella_snapshots_table(assigns) do
     ~H"""
     <.table rows={@snapshots} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={snapshot} :if={!@abbridged} label="ID">
+      <:col :let={snapshot} :if={!@abridged} label="ID">
         <%= snapshot.id %>
       </:col>
       <:col :let={snapshot} :if={!@skip_date} label="Started">

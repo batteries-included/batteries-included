@@ -15,7 +15,7 @@ defmodule ControlServerWeb.FailoverClusterLiveTest do
     test "lists all failover_clusters", %{conn: conn, failover_cluster: failover_cluster} do
       {:ok, _index_live, html} = live(conn, ~p"/redis")
 
-      assert html =~ "Listing Failover clusters"
+      assert html =~ "Redis Clusters"
       assert html =~ failover_cluster.name
     end
 
@@ -23,7 +23,7 @@ defmodule ControlServerWeb.FailoverClusterLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/redis")
 
       index_live
-      |> element("a", "New Redis Cluster")
+      |> element("a", "New Cluster")
       |> render_click()
       |> follow_redirect(conn, ~p"/redis/new")
     end

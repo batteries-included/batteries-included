@@ -54,7 +54,7 @@ defmodule ControlServerWeb.Live.AIHome do
         </.flex>
       </:menu>
 
-      <.notebooks_table rows={@notebooks} abbridged />
+      <.notebooks_table rows={@notebooks} abridged />
     </.panel>
     """
   end

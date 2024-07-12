@@ -4,26 +4,30 @@ defmodule ControlServerWeb.NotebooksTable do
 
   import KubeServices.SystemState.SummaryHosts
 
+  alias CommonCore.Util.Memory
+
   attr :rows, :list, default: []
-  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
+  attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def notebooks_table(assigns) do
     ~H"""
     <.table id="notebook-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={notebook} :if={!@abbridged} label="ID"><%= notebook.id %></:col>
+      <:col :let={notebook} :if={!@abridged} label="ID"><%= notebook.id %></:col>
       <:col :let={notebook} label="Name"><%= notebook.name %></:col>
-      <:col :let={notebook} label="Image"><%= notebook.image %></:col>
+      <:col :let={notebook} :if={!@abridged} label="Storage Size">
+        <%= Memory.humanize(notebook.storage_size) %>
+      </:col>
       <:action :let={notebook}>
         <.flex class="justify-items-center">
           <.button
             variant="minimal"
-            link={show_url(notebook)}
-            icon={:eye}
-            id={"show_notebook_" <> notebook.id}
+            link={edit_url(notebook)}
+            icon={:pencil}
+            id={"edit_notebook_" <> notebook.id}
           />
 
-          <.tooltip target_id={"show_notebook_" <> notebook.id}>
-            Show Notebook
+          <.tooltip target_id={"edit_notebook_" <> notebook.id}>
+            Edit Notebook
           </.tooltip>
 
           <.button
@@ -45,6 +49,6 @@ defmodule ControlServerWeb.NotebooksTable do
   end
 
   defp show_url(notebook), do: ~p"/notebooks/#{notebook}"
-
+  defp edit_url(notebook), do: ~p"/notebooks/#{notebook}/edit"
   defp notebook_path(notebook), do: "//#{notebooks_host()}/#{notebook.name}"
 end

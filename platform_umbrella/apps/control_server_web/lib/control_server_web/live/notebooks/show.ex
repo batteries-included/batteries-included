@@ -12,6 +12,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
 
     {:ok,
      socket
+     |> assign(:current_page, :ai)
      |> assign(:page_title, "Jupyter Notebook")
      |> assign(:notebook, notebook)}
   end

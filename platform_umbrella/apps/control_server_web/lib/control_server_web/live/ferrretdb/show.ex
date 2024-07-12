@@ -142,7 +142,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     ~H"""
     <.page_header title="Edit History" back_link={show_url(@ferret_service)} />
     <.panel title="Edit History">
-      <.edit_versions_table edit_versions={@edit_versions} abbridged />
+      <.edit_versions_table edit_versions={@edit_versions} abridged />
     </.panel>
     """
   end

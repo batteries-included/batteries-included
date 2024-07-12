@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
           <.link navigate={~p"/knative/services"}>View All</.link>
         </.flex>
       </:menu>
-      <.knative_services_table rows={@services} abbridged />
+      <.knative_services_table rows={@services} abridged />
     </.panel>
     """
   end
@@ -75,7 +75,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
           <.link navigate={~p"/backend/services"}>View All</.link>
         </.flex>
       </:menu>
-      <.backend_services_table rows={@services} abbridged />
+      <.backend_services_table rows={@services} abridged />
     </.panel>
     """
   end

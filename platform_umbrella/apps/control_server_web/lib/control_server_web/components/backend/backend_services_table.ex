@@ -8,24 +8,25 @@ defmodule ControlServerWeb.BackendServicesTable do
   alias CommonCore.Backend.Service
 
   attr :rows, :list, required: true
-  attr :abbridged, :boolean, default: false, doc: "the abbridged property control display of the id column and formatting"
+  attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def backend_services_table(assigns) do
     ~H"""
     <.table id="backend-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={service} :if={!@abbridged} label="ID"><%= service.id %></:col>
+      <:col :let={service} :if={!@abridged} label="ID"><%= service.id %></:col>
       <:col :let={service} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} label="Instances"><%= service.num_instances %></:col>
       <:action :let={service}>
         <.flex class="justify-items-center">
           <.button
             variant="minimal"
-            link={show_url(service)}
-            icon={:eye}
-            id={"show_service_" <> service.id}
+            link={edit_url(service)}
+            icon={:pencil}
+            id={"edit_service_" <> service.id}
           />
 
-          <.tooltip target_id={"show_service_" <> service.id}>
-            Show Service <%= service.name %>
+          <.tooltip target_id={"edit_service_" <> service.id}>
+            Edit Backend Service
           </.tooltip>
 
           <.button
@@ -38,7 +39,7 @@ defmodule ControlServerWeb.BackendServicesTable do
           />
 
           <.tooltip target_id={"running_service_" <> service.id}>
-            Running Service
+            Open Backend Service
           </.tooltip>
         </.flex>
       </:action>
@@ -47,5 +48,6 @@ defmodule ControlServerWeb.BackendServicesTable do
   end
 
   defp show_url(%Service{} = service), do: ~p"/backend/services/#{service}/show"
+  defp edit_url(%Service{} = service), do: ~p"/backend/services/#{service}/edit"
   defp service_url(%Service{} = service), do: "//#{backend_host(service)}"
 end
