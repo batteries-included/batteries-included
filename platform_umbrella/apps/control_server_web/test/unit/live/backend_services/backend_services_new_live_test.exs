@@ -13,7 +13,9 @@ defmodule ControlServerWeb.BackendServicesNewLiveTest do
 
       conn
       |> start(~p|/backend/services/new|)
-      |> click("button", "Add Container")
+      |> click("#containers_panel-containers button", "Add Container")
+      |> submit_form("#container-form", container: container)
+      |> click("#containers_panel-init_containers button", "Add Container")
       |> submit_form("#container-form", container: container)
       |> click("button", "Add Variable")
       |> submit_form("#env_value-form", env_value: env_value)
