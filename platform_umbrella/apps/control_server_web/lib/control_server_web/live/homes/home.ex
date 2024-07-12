@@ -5,7 +5,8 @@ defmodule ControlServerWeb.Live.Home do
   import ControlServerWeb.Chart
 
   alias CommonCore.Batteries.Catalog
-  alias ControlServer.SnapshotApply.Kube
+  alias ControlServer.Batteries
+  alias ControlServer.SnapshotApply.Umbrella
   alias ControlServerWeb.RecentProjectsPanel
   alias ControlServerWeb.RunningBatteriesPanel
   alias KubeServices.KubeState
@@ -17,8 +18,9 @@ defmodule ControlServerWeb.Live.Home do
      |> assign_catalog_group()
      |> assign_current_page()
      |> assign_page_title()
-     |> assign_pods()
-     |> assign_status(Kube.get_latest_snapshot_status())}
+     |> assign_latest_snapshot()
+     |> assign_batteries()
+     |> assign_pods()}
   end
 
   defp assign_catalog_group(socket) do
@@ -33,12 +35,26 @@ defmodule ControlServerWeb.Live.Home do
     assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
-  def assign_pods(socket) do
-    assign(socket, pods: KubeState.get_all(:pod))
+  defp assign_latest_snapshot(socket) do
+    snapshots = Umbrella.latest_umbrella_snapshots(1)
+
+    assign(socket, :latest_snapshot, Enum.at(snapshots, 0))
   end
 
-  def assign_status(socket, status) do
-    assign(socket, status: status)
+  defp assign_batteries(socket) do
+    batteries = Batteries.list_system_batteries_slim()
+
+    socket
+    |> assign(:batteries, batteries)
+    |> assign(:batteries_count, Enum.count(batteries))
+  end
+
+  def assign_pods(socket) do
+    pods = KubeState.get_all(:pod)
+
+    socket
+    |> assign(:pods, pods)
+    |> assign(:pod_count, Enum.count(pods))
   end
 
   defp pod_data(pods) do
@@ -61,29 +77,51 @@ defmodule ControlServerWeb.Live.Home do
     }
   end
 
+  defp snapshot_icon(status) do
+    case status do
+      :ok -> :check_circle
+      :error -> :x_circle
+      _ -> :arrow_path
+    end
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title}>
-      <div class="flex items-center gap-4">
-        <.button variant="dark" icon={:plus} link={~p"/projects/new?return_to=#{~p"/"}"}>
-          New Project
-        </.button>
-
-        <.button variant="secondary" icon={:kubernetes} link={~p"/batteries/magic"}>
-          Manage Batteries
-        </.button>
-      </div>
+      <.button variant="dark" icon={:plus} link={~p"/projects/new?return_to=#{~p"/"}"}>
+        New Project
+      </.button>
     </.page_header>
 
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-4 lg:mb-6">
+      <div class="flex flex-wrap gap-4">
+        <.badge label="Batteries Running" value={@batteries_count} />
+        <.badge label="Pods" value={@pod_count} />
+      </div>
+
+      <.button
+        :if={@latest_snapshot}
+        variant="minimal"
+        link={~p"/deploy"}
+        icon={snapshot_icon(@latest_snapshot.kube_snapshot.status)}
+      >
+        Last Deploy: <%= Calendar.strftime(@latest_snapshot.inserted_at, "%b %-d, %-I:%M%p") %>
+      </.button>
+    </div>
+
     <.grid columns={%{sm: 1, lg: 12}} class="w-full">
-      <.flex column class="items-center lg:col-span-5">
+      <.flex column class="items-center max-h-md lg:col-span-5">
         <.h3>Pods by Category</.h3>
         <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
       </.flex>
 
       <.live_component module={RecentProjectsPanel} id="recent_projects" />
-      <.live_component module={RunningBatteriesPanel} id="running_bat_home_hero" />
+      <.live_component
+        module={RunningBatteriesPanel}
+        id="running_bat_home_hero"
+        batteries={@batteries}
+      />
     </.grid>
     """
   end

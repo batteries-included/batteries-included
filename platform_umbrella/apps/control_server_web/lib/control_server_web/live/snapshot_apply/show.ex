@@ -43,7 +43,7 @@ defmodule ControlServerWeb.Live.UmbrellaSnapshotShow do
 
   def render(assigns) do
     ~H"""
-    <.page_header title="Show Deploy" back_link={~p"/magic"}>
+    <.page_header title="Show Deploy" back_link={~p"/deploy"}>
       <.flex>
         <.badge>
           <:item label="Status"><%= total_status(@snapshot) %></:item>

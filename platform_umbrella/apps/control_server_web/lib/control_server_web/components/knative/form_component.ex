@@ -303,7 +303,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           }
         >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
-            Save Service
+            Save Knative Service
           </.button>
         </.page_header>
 

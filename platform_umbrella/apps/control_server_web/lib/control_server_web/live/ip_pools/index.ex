@@ -31,15 +31,13 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/net_sec"} />
+    <.page_header title={@page_title} back_link={~p"/net_sec"}>
+      <.button variant="dark" icon={:plus} link={new_url()}>
+        New IP Address Pool
+      </.button>
+    </.page_header>
 
     <.panel title="IP Addresses">
-      <:menu>
-        <.a variant="icon" icon={:plus} navigate={new_url()}>
-          New IP Address Pool
-        </.a>
-      </:menu>
-
       <.ip_address_pools_table abridged rows={@ip_address_pools} />
     </.panel>
     """

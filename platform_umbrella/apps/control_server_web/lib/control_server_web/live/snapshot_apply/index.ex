@@ -52,12 +52,12 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Deploys" back_link={~p"/batteries/magic"}>
-      <.button :if={@deploys_running} variant="secondary" phx-click="start-deploy">
+    <.page_header title="Deploys" back_link={~p"/magic"}>
+      <.button :if={@deploys_running} variant="dark" icon={:play} phx-click="start-deploy">
         Start Deploy
       </.button>
     </.page_header>
-    <.panel title="Status">
+    <.panel title="All Deploys">
       <.pause_alert :if={!@deploys_running} />
       <.umbrella_snapshots_table snapshots={@snapshots} />
     </.panel>

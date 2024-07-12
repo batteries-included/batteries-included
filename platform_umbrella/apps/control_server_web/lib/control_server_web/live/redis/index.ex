@@ -50,8 +50,8 @@ defmodule ControlServerWeb.Live.Redis do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/data"}>
-      <.button variant="secondary" link={new_url()}>
-        New Cluster
+      <.button variant="dark" icon={:plus} link={new_url()}>
+        New Redis Cluster
       </.button>
     </.page_header>
     <.panel title="All Clusters">

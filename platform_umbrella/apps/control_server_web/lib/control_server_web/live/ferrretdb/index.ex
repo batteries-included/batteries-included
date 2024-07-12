@@ -27,8 +27,8 @@ defmodule ControlServerWeb.Live.FerretServiceIndex do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/data"}>
-      <.button variant="secondary" link={~p"/ferretdb/new"}>
-        New FerretDB
+      <.button variant="dark" icon={:plus} link={~p"/ferretdb/new"}>
+        New FerretDB Service
       </.button>
     </.page_header>
     <.panel title="All FerretDB/MongoDB Services">

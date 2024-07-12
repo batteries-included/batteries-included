@@ -10,19 +10,19 @@
     </thead>
     <tbody id="keycloak-realms-table" class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       <tr class="group hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
-        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
+        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
           <div class="block py-4">
             <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               00-00-00-00-00-00
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
           <div class="block py-4">
             <span class="">
               Keycloak
             </span>
           </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]" class="p-0 px-2 align-top hover:cursor-pointer">
+        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/keycloak/realm/master&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
           <div class="block py-4">
             <span class="">
               
@@ -36,7 +36,7 @@
             </span>
           </div>
         </td>
-        <td class="w-14 p-0">
+        <td class="w-14 p-0 first:rounded-l-lg last:rounded-r-lg">
           <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
   
             <div class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4">

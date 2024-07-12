@@ -47,10 +47,8 @@ defmodule ControlServerWeb.Live.AIHome do
     <.panel title="Jupyter Notebooks">
       <:menu>
         <.flex>
-          <.a navigate={~p"/notebooks/new"}>
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto" /> New Notebook
-          </.a>
-          <.link navigate={~p"/notebooks"}>View All</.link>
+          <.button icon={:plus} link={~p"/notebooks/new"}>New Notebook</.button>
+          <.button variant="minimal" link={~p"/notebooks"}>View All</.button>
         </.flex>
       </:menu>
 

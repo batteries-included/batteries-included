@@ -8,32 +8,32 @@
     </thead>
     <tbody id="keycloak-clients-table" class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
       <tr class="group ">
-        <td class="p-0 px-2 align-top ">
+        <td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
           <div class="block py-4">
             <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
               admin-cli
             </span>
           </div>
-        </td><td class="p-0 px-2 align-top ">
+        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
           <div class="block py-4">
             <span class="">
               Admin CLI
             </span>
           </div>
-        </td><td class="p-0 px-2 align-top ">
+        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
           <div class="block py-4">
             <span class="">
               
             </span>
           </div>
-        </td><td class="p-0 px-2 align-top ">
+        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
           <div class="block py-4">
             <span class="">
               true
             </span>
           </div>
         </td>
-        <td class="w-14 p-0">
+        <td class="w-14 p-0 first:rounded-l-lg last:rounded-r-lg">
           <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
   
             

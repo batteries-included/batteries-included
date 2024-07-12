@@ -17,7 +17,7 @@ defmodule ControlServerWeb.Audit.EditVersionsTable do
 
   def edit_versions_table(assigns) do
     ~H"""
-    <.table id={@id} rows={@edit_versions} {@rest}>
+    <.table id={@id} rows={@edit_versions} {@rest} row_click={&JS.navigate(show_url(&1))}>
       <:col :let={edit_version} :if={!@abridged} label="Entity ID">
         <%= edit_version.entity_id %>
       </:col>
@@ -33,21 +33,6 @@ defmodule ControlServerWeb.Audit.EditVersionsTable do
       <:col :let={edit_version} label="Recorded Time">
         <.relative_display time={edit_version.recorded_at} />
       </:col>
-
-      <:action :let={edit_version}>
-        <.flex class="justify-items-center">
-          <.button
-            variant="minimal"
-            link={show_url(edit_version)}
-            icon={:eye}
-            id={"show_edit_version_" <> edit_version.id}
-          />
-
-          <.tooltip target_id={"show_edit_version_" <> edit_version.id}>
-            Show Edit Version <%= edit_version.id %>
-          </.tooltip>
-        </.flex>
-      </:action>
     </.table>
     """
   end

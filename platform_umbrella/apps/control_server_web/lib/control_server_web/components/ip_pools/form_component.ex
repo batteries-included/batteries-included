@@ -78,24 +78,20 @@ defmodule ControlServerWeb.Live.IPAddressPoolFormComponent do
         phx-submit="save"
         phx-target={@myself}
       >
-        <.page_header title={@title} back_link={cancel_url()} />
+        <.page_header title={@title} back_link={~p"/ip_address_pools"}>
+          <.button variant="dark" type="submit" phx-disable-with="Saving...">
+            Save IP Address Pool
+          </.button>
+        </.page_header>
 
         <.panel>
-          <.input field={@form[:name]} label="Pool Name" autofocus />
-          <.input field={@form[:subnet]} label="Subnet CIDR" />
-
-          <.button variant="secondary" link={cancel_url()} class="mr-3">
-            Cancel
-          </.button>
-
-          <.button variant="primary" type="submit" phx-disable-with="Saving...">
-            Save
-          </.button>
+          <.grid columns={[sm: 1, lg: 2]}>
+            <.input field={@form[:name]} label="Pool Name" autofocus />
+            <.input field={@form[:subnet]} label="Subnet CIDR" />
+          </.grid>
         </.panel>
       </.form>
     </div>
     """
   end
-
-  defp cancel_url, do: ~p"/ip_address_pools"
 end

@@ -108,16 +108,14 @@ defmodule ControlServerWeb.Live.MagicHome do
     <.panel title="Deploys">
       <:menu>
         <.flex>
-          <.a :if={@deploys_running} phx-click="pause-deploy">
-            <.icon name={:pause} class="inline-flex h-5 w-auto my-auto mr-2" />Pause Deploys
-          </.a>
-          <.a :if={!@deploys_running} phx-click="resume-deploy">
-            <.icon name={:play} class="inline-flex h-5 w-auto my-auto mr-2" />Resume Deploys
-          </.a>
-          <.a :if={@deploys_running} phx-click="start-deploy">
-            <.icon name={:plus} class="inline-flex h-5 w-auto my-auto mr-2" />Start Deploy
-          </.a>
-          <.link navigate={~p"/deploy"}>View All</.link>
+          <.button :if={@deploys_running} icon={:play} phx-click="start-deploy">Start Deploy</.button>
+          <.button :if={@deploys_running} icon={:pause} phx-click="pause-deploy">
+            Pause Deploys
+          </.button>
+          <.button :if={!@deploys_running} icon={:arrow_path} phx-click="resume-deploy">
+            Resume Deploys
+          </.button>
+          <.button variant="minimal" link={~p"/deploy"}>View All</.button>
         </.flex>
       </:menu>
       <.pause_alert :if={!@deploys_running} />

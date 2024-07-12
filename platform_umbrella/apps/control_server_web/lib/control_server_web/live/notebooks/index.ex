@@ -31,7 +31,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/ai"}>
-      <.button variant="secondary" link={~p"/notebooks/new"}>
+      <.button variant="dark" icon={:plus} link={~p"/notebooks/new"}>
         New Notebook
       </.button>
     </.page_header>

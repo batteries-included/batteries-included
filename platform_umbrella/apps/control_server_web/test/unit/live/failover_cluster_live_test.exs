@@ -23,7 +23,7 @@ defmodule ControlServerWeb.FailoverClusterLiveTest do
       {:ok, index_live, _html} = live(conn, ~p"/redis")
 
       index_live
-      |> element("a", "New Cluster")
+      |> element("a", "New Redis Cluster")
       |> render_click()
       |> follow_redirect(conn, ~p"/redis/new")
     end

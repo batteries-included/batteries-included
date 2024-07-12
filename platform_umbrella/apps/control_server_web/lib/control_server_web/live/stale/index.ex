@@ -23,34 +23,36 @@ defmodule ControlServerWeb.Live.StaleIndex do
 
   defp stale_table(assigns) do
     ~H"""
-    <.table id="stale-table" rows={@rows}>
-      <:col :let={resource} label="Kind">
-        <%= Naming.humanize(ApiVersionKind.resource_type!(resource)) %>
-      </:col>
-      <:col :let={resource} label="Name">
-        <%= name(resource) %>
-      </:col>
-      <:col :let={resource} label="Namespace">
-        <%= namespace(resource) %>
-      </:col>
+    <.panel title="Stale Queue">
+      <.table id="stale-table" rows={@rows}>
+        <:col :let={resource} label="Kind">
+          <%= Naming.humanize(ApiVersionKind.resource_type!(resource)) %>
+        </:col>
+        <:col :let={resource} label="Name">
+          <%= name(resource) %>
+        </:col>
+        <:col :let={resource} label="Namespace">
+          <%= namespace(resource) %>
+        </:col>
 
-      <:col :let={resource} label="Delete Now">
-        <.button
-          variant="minimal"
-          icon={:trash}
-          phx-click="delete"
-          phx-value-kind={ApiVersionKind.resource_type!(resource)}
-          phx-value-name={name(resource)}
-          phx-value-namespace={namespace(resource)}
-          data-confirm="Are you sure?"
-          id={"delete-#{to_html_id(resource)}"}
-        />
+        <:col :let={resource} label="Delete Now">
+          <.button
+            variant="minimal"
+            icon={:trash}
+            phx-click="delete"
+            phx-value-kind={ApiVersionKind.resource_type!(resource)}
+            phx-value-name={name(resource)}
+            phx-value-namespace={namespace(resource)}
+            data-confirm="Are you sure?"
+            id={"delete-#{to_html_id(resource)}"}
+          />
 
-        <.tooltip target_id={"delete-#{to_html_id(resource)}"}>
-          Delete
-        </.tooltip>
-      </:col>
-    </.table>
+          <.tooltip target_id={"delete-#{to_html_id(resource)}"}>
+            Delete
+          </.tooltip>
+        </:col>
+      </.table>
+    </.panel>
     """
   end
 

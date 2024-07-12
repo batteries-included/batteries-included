@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.EditVersionsList do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/magic"} />
-    <.panel title="All Edit Versions">
+    <.panel title="All Versions">
       <.edit_versions_table edit_versions={@edit_versions} />
     </.panel>
     """
