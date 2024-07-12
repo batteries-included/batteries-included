@@ -109,7 +109,7 @@ defmodule ControlServerWeb.Live.Home do
       <.button
         :if={@latest_snapshot}
         variant="minimal"
-        link={~p"/deploy/#{@latest_snapshot.id}/show"}
+        link={~p"/deploy"}
         icon={snapshot_icon(@latest_snapshot.kube_snapshot.status)}
       >
         Last Deploy: <%= Calendar.strftime(@latest_snapshot.inserted_at, "%b %-d, %-I:%M%p") %>
