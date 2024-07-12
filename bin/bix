@@ -9,6 +9,7 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 TRACE=${TRACE-0}
 PORTFORWARD_ENABLED=1
+MACOSX_SLEEP_TIME=5
 
 # If you are changing this also change the
 # version in mix.exs for all the apps in platform_umbrella
@@ -175,6 +176,16 @@ do_start() {
     spec_path=$(realpath "${spec_path}")
     log "${GREEN}Starting${NOFORMAT} ${CYAN}${spec_path}${NOFORMAT}"
     run_bi start "${spec_path}"
+}
+
+maybe_sleep() {
+    # If we are on a mac calling go run bi -- seems to take a bit of time
+    # and the port forwarder doesn't start in time. So we sleep for a bit
+    # here to make startup less heisenbuggy
+    if [[ $(uname) == "Darwin" ]]; then
+        log "Sleeping for ${ORANGE}${MACOSX_SLEEP_TIME}${NOFORMAT} seconds to allow port forward to start"
+        sleep ${MACOSX_SLEEP_TIME}
+    fi
 }
 
 do_bootstrap() {
