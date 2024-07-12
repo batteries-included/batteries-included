@@ -123,5 +123,19 @@ jobs:
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
+
+      - name: Cache dialyzer
+        uses: actions/cache@v4
+        id: dialyzer-cache
+        with:
+          path: |
+            platform_umbrella/deps
+            platform_umbrella/_build
+            platform_umbrella/.dialyzer
+          key: ${{ runner.os }}-dialyzer-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-dialyzer-
+          save-always: true
+
       - name: Dialyzer Type Analysis
         run: bin/bix ex-dialyzer
