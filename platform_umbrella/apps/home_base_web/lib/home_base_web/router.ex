@@ -94,7 +94,7 @@ defmodule HomeBaseWeb.Router do
   scope "/api/v1/", HomeBaseWeb do
     pipe_through :api
 
-    get "/stable_version", StableVersionController, :show
+    get "/stable_versions", StableVersionsController, :show
 
     scope "/installations/:installation_id" do
       resources "/usage_reports", StoredUsageReportController, only: [:create]

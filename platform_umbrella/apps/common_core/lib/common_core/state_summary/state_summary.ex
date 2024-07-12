@@ -23,6 +23,7 @@ defmodule CommonCore.StateSummary do
   alias CommonCore.Installation
 
   batt_embedded_schema do
+    # Database backed fields
     embeds_many :batteries, SystemBattery
     embeds_many :postgres_clusters, CommonCore.Postgres.Cluster
     embeds_many :ferret_services, CommonCore.FerretDB.FerretService
@@ -33,7 +34,10 @@ defmodule CommonCore.StateSummary do
     embeds_many :ip_address_pools, CommonCore.MetalLB.IPAddressPool
     embeds_many :projects, CommonCore.Projects.Project
 
+    # Fields not from the database
     embeds_one :keycloak_state, CommonCore.StateSummary.KeycloakSummary
+    embeds_one :install_status, CommonCore.ET.InstallStatus
+    embeds_one :stable_versions_report, CommonCore.ET.StableVersionsReport
 
     field :kube_state, :map, default: %{}
   end

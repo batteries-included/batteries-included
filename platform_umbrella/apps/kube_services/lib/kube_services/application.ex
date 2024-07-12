@@ -23,11 +23,15 @@ defmodule KubeServices.Application do
       CommonCore.ConnectionPool,
       {Task.Supervisor, name: @task_supervisor},
       KubeServices.KubeState,
-      KubeServices.SystemState,
       KubeServices.Batteries
     ]
   end
 
   def children(_run),
-    do: [{KubeServices.KubeState, [should_watch: false]}, {KubeServices.SystemState, [should_refresh: false]}]
+    do: [
+      {KubeServices.KubeState, [should_watch: false]},
+      {KubeServices.ET.InstallStatusWorker, [home_client_pid: nil, install_id: nil]},
+      {KubeServices.ET.StableVersionsWorker, [home_client_pid: nil]},
+      {KubeServices.SystemState, [should_refresh: false]}
+    ]
 end

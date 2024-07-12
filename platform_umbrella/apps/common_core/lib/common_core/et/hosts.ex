@@ -13,19 +13,19 @@ defmodule CommonCore.ET.URLs do
     end
   end
 
-  def usage_report_path(state_summary) do
-    "/installations/#{install_id(state_summary)}/usage_reports"
+  def stable_versions_path(%BatteryCoreConfig{} = _config) do
+    "/stable_versions"
   end
 
-  def host_reports_path(state_summary) do
-    "/installations/#{install_id(state_summary)}/host_reports"
+  def usage_report_path(%BatteryCoreConfig{} = config) do
+    "/installations/#{config.install_id}/usage_reports"
   end
 
-  def status_path(state_summary) do
-    "/installations/#{install_id(state_summary)}/status"
+  def host_reports_path(%BatteryCoreConfig{} = config) do
+    "/installations/#{config.install_id}/host_reports"
   end
 
-  defp install_id(state_summary) do
-    CommonCore.StateSummary.Core.config_field(state_summary, :install_id)
+  def status_path(%BatteryCoreConfig{} = config) do
+    "/installations/#{config.install_id}/status"
   end
 end
