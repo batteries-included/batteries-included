@@ -16,7 +16,9 @@ defmodule ControlServer.Umbrella.MixProject do
         flags: ~w[error_handling unmatched_returns unknown]a,
         plt_add_deps: :app_tree,
         plt_add_apps: [:mix, :ex_unit, :dialyzer],
-        plt_ignore_apps: [:bandit, :myxql]
+        plt_ignore_apps: [:bandit, :myxql],
+        plt_local_path: ".dialyzer",
+        plt_core_path: ".dialyzer"
       ]
     ]
   end
