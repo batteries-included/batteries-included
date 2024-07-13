@@ -176,7 +176,7 @@ defmodule CommonCore.Ecto.Schema do
       def new!(opts \\ []), do: with({:ok, value} <- new(opts), do: value)
       def changeset(base_struct, args), do: unquote(__MODULE__).schema_changeset(base_struct, args)
 
-      defoverridable new: 1, changeset: 2, new!: 1
+      defoverridable new: 0, new: 1, changeset: 2, new!: 1
     end
   end
 

@@ -5,8 +5,8 @@ defmodule KubeServices.ET.HomeBaseClient do
 
   alias CommonCore.ET.HostReport
   alias CommonCore.ET.InstallStatus
+  alias CommonCore.ET.StableVersionsReport
   alias CommonCore.ET.UsageReport
-  alias CommonCore.StateSummary
 
   require Logger
 
@@ -15,17 +15,29 @@ defmodule KubeServices.ET.HomeBaseClient do
     use CommonCore, :embedded_schema
 
     batt_embedded_schema do
+      # The URL of the home base
       field :home_url, :string
+
+      # The JWK to use to sign requests from this control server
+      field :control_jwk, :map
+      # The path to send usage reports to
+      field :usage_report_path, :string
+
+      # The path to send host reports to
+      field :host_report_path, :string
+      # Path to get install status
+      field :status_path, :string
+
+      # Path to get stable versions
+      field :stable_versions_path, :string
+
+      # The Tesla client to use to make requests
       field :http_client, :map, default: nil
-      field :control_jwk, :map, default: nil
-      field :usage_report_path, :string, default: nil
-      field :host_report_path, :string, default: nil
-      field :status_path, :string, default: nil
     end
   end
 
   @me __MODULE__
-  @state_opts ~w(home_url)a
+  @state_opts ~w(home_url control_jwk usage_report_path host_report_path status_path stable_versions_path)a
 
   def send_usage(client \\ @me, state_summary) do
     GenServer.call(client, {:send_usage, state_summary})
@@ -38,6 +50,12 @@ defmodule KubeServices.ET.HomeBaseClient do
   @spec get_status(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: {:ok, InstallStatus.t()} | {:error, any()}
   def get_status(client \\ @me) do
     GenServer.call(client, :get_status)
+  end
+
+  @spec get_stable_versions(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) ::
+          {:ok, StableVersionsReport.t()} | {:error, any()}
+  def get_stable_versions(client \\ @me) do
+    GenServer.call(client, :get_stable_versions)
   end
 
   def start_link(opts \\ []) do
@@ -53,42 +71,26 @@ defmodule KubeServices.ET.HomeBaseClient do
   def init(opts) do
     # Get the default url we'll need that to create the http client
     home_url = Keyword.fetch!(opts, :home_url)
-
-    :ok = EventCenter.SystemStateSummary.subscribe()
-
-    control_jwk =
-      Keyword.get_lazy(opts, :control_jwk, fn ->
-        state_summary = KubeServices.SystemState.Summarizer.cached()
-        CommonCore.StateSummary.JWK.jwk(state_summary)
-      end)
-
-    status_path =
-      Keyword.get_lazy(opts, :status_path, fn ->
-        state_summary = KubeServices.SystemState.Summarizer.cached()
-        CommonCore.ET.URLs.status_path(state_summary)
-      end)
+    control_jwk = Keyword.fetch!(opts, :control_jwk)
+    usage_report_path = Keyword.fetch!(opts, :usage_report_path)
+    host_report_path = Keyword.fetch!(opts, :host_report_path)
+    status_path = Keyword.fetch!(opts, :status_path)
+    stable_versions_path = Keyword.fetch!(opts, :stable_versions_path)
 
     state =
       State.new!(
         home_url: home_url,
-        http_client: nil,
         control_jwk: control_jwk,
-        status_path: status_path
+        usage_report_path: usage_report_path,
+        host_report_path: host_report_path,
+        status_path: status_path,
+        stable_versions_path: stable_versions_path,
+        http_client: nil
       )
 
-    {:ok, build_client(state)}
-  end
+    Logger.info("Starting HomeBaseClient with home_url: #{home_url}")
 
-  @impl GenServer
-  def handle_info(%StateSummary{} = state_summary, state) do
-    {:noreply,
-     %State{
-       state
-       | control_jwk: CommonCore.StateSummary.JWK.jwk(state_summary),
-         usage_report_path: CommonCore.ET.URLs.usage_report_path(state_summary),
-         host_report_path: CommonCore.ET.URLs.host_reports_path(state_summary),
-         status_path: CommonCore.ET.URLs.status_path(state_summary)
-     }}
+    {:ok, build_client(state)}
   end
 
   @impl GenServer
@@ -98,12 +100,15 @@ defmodule KubeServices.ET.HomeBaseClient do
   end
 
   def handle_call({:send_hosts, state_summary}, _, state) do
-    Logger.info("Sending hosts to #{state.home_url}")
     {:reply, do_send_host(state, state_summary), state}
   end
 
   def handle_call(:get_status, _from, state) do
     {:reply, do_get_status(state), state}
+  end
+
+  def handle_call(:get_stable_versions, _from, state) do
+    {:reply, do_get_stable_versions(state), state}
   end
 
   defp build_client(%State{home_url: home_url, http_client: nil} = state) do
@@ -116,6 +121,24 @@ defmodule KubeServices.ET.HomeBaseClient do
       {Tesla.Middleware.BaseUrl, base_url},
       Tesla.Middleware.JSON
     ]
+  end
+
+  defp do_get_stable_versions(%State{http_client: client, stable_versions_path: stable_versions_path} = _state) do
+    Logger.debug("Getting stable versions")
+
+    with {:ok, %{body: %{"jwt" => jwt}} = _env} <- Tesla.get(client, stable_versions_path),
+         {:ok, verified_resp} <- CommonCore.JWK.verify(jwt),
+         {:ok, %{} = stable_versions} <- StableVersionsReport.new(verified_resp) do
+      {:ok, stable_versions}
+    else
+      {:error, reason} ->
+        Logger.error("Failed to get stable versions: #{inspect(reason)}")
+        {:error, reason}
+
+      unexpected ->
+        Logger.error("Unexpected response from home")
+        {:error, {:unexpected_response, unexpected}}
+    end
   end
 
   defp do_get_status(%State{http_client: client, status_path: status_path} = _state) do

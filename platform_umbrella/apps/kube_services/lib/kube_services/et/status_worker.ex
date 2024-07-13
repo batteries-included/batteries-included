@@ -61,7 +61,7 @@ defmodule KubeServices.ET.InstallStatusWorker do
   end
 
   defp schedule_inital_report(%State{sleep_time: _} = _state) do
-    Process.send_after(self(), :report, :rand.uniform(90) + 10)
+    Process.send_after(self(), :report, :rand.uniform(90) + 1500)
   end
 
   defp schedule_retry_report(%State{sleep_time: sleep_time} = _state) do
@@ -70,6 +70,16 @@ defmodule KubeServices.ET.InstallStatusWorker do
   end
 
   @impl GenServer
+  def handle_info(:report, %{install_id: nil} = state) do
+    Logger.info("No install_id was provided to the InstallStatusWorker")
+
+    if state.last_status.status == :ok do
+      {:noreply, %State{state | last_status: InstallStatus.new_unknown!()}}
+    else
+      {:noreply, state}
+    end
+  end
+
   def handle_info(:report, %{install_id: install_id} = state) do
     Logger.info("Checking on the status of the installation")
 

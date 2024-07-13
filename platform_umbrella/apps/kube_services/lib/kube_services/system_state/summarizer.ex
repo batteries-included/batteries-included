@@ -91,6 +91,14 @@ defmodule KubeServices.SystemState.Summarizer do
     KeycloakSummarizer.snapshot()
   end
 
+  defp get_install_status do
+    KubeServices.ET.InstallStatusWorker.get_status()
+  end
+
+  defp get_stable_versions do
+    KubeServices.ET.StableVersionsWorker.get_stable_versions()
+  end
+
   @spec new_summary! :: StateSummary.t()
   defp new_summary! do
     # Start a bunch of tasks
@@ -99,15 +107,24 @@ defmodule KubeServices.SystemState.Summarizer do
     tasks = [
       Task.async(&get_db_state/0),
       Task.async(&get_kube_state/0),
-      Task.async(&get_keycloak_state/0)
+      Task.async(&get_keycloak_state/0),
+      Task.async(&get_install_status/0),
+      Task.async(&get_stable_versions/0)
     ]
 
     # Split the result list into something we can use
-    [base_map, kube, keycloak] = Task.await_many(tasks)
+    [base_map, kube, keycloak, install_status, stable_versions_report] = Task.await_many(tasks)
 
     base = struct(StateSummary, base_map)
 
-    summary = %StateSummary{base | keycloak_state: keycloak, kube_state: kube}
+    summary = %StateSummary{
+      base
+      | keycloak_state: keycloak,
+        kube_state: kube,
+        install_status: install_status,
+        stable_versions_report: stable_versions_report
+    }
+
     _ = EventCenter.SystemStateSummary.broadcast(summary)
     summary
   end
