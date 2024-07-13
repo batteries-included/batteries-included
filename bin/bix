@@ -181,16 +181,6 @@ do_start() {
     run_bi start "${spec_path}"
 }
 
-maybe_sleep() {
-    # If we are on a mac calling go run bi -- seems to take a bit of time
-    # and the port forwarder doesn't start in time. So we sleep for a bit
-    # here to make startup less heisenbuggy
-    if [[ $(uname) == "Darwin" ]]; then
-        log "Sleeping for ${ORANGE}${MACOSX_SLEEP_TIME}${NOFORMAT} seconds to allow port forward to start"
-        sleep ${MACOSX_SLEEP_TIME}
-    fi
-}
-
 do_bootstrap() {
     local spec_path=${1:-"bootstrap/dev.spec.json"}
     local summary_path slug
@@ -215,8 +205,6 @@ do_bootstrap() {
     # Start the port forwarder
     try_portforward "${slug}" &
 
-    maybe_sleep
-
     portforward_pid=$!
     log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}${slug}${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
 
@@ -234,8 +222,6 @@ do_bootstrap() {
 do_dev() {
     log "${GREEN}Starting Development Environment${NOFORMAT}"
     try_portforward "dev" &
-
-    maybe_sleep
 
     portforward_pid=$!
     log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}dev${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
