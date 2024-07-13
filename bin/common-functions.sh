@@ -65,6 +65,11 @@ build_bi() {
 }
 
 clean_bi_build() {
+    if [[ ! -d "${BI_BUILD_DIR}" ]]; then
+        # No build directory, nothing to clean
+        return
+    fi
+
     bi_pushd "${BI_BUILD_DIR}"
 
     # shellcheck disable=SC2012
