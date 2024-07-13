@@ -117,7 +117,9 @@ FROM control-deps AS control-assets
 ARG LANG
 ARG MIX_ENV
 
-ENV MIX_ENV=${MIX_ENV}
+ENV MIX_ENV=${MIX_ENV} \
+  LANG=$LANG \
+  LC_ALL=$LANG
 
 WORKDIR /source
 
@@ -153,7 +155,9 @@ FROM home-base-deps AS home-base-assets
 ARG LANG
 ARG MIX_ENV
 
-ENV MIX_ENV=${MIX_ENV}
+ENV MIX_ENV=${MIX_ENV} \
+  LANG=$LANG \
+  LC_ALL=$LANG
 
 WORKDIR /source
 
@@ -175,8 +179,10 @@ ARG MIX_ENV
 ARG RELEASE
 
 # Before compiling add the bix binary to the path.
-# It is used in the build process for vversion info.
+# It is used in the build process for version info.
 ENV MIX_ENV=${MIX_ENV} \
+  LANG=$LANG \
+  LC_ALL=$LANG \
   PATH="$PATH:/source/bin"
 
 WORKDIR /source
