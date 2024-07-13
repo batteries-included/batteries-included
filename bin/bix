@@ -7,7 +7,8 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 # Get the root directory of the project
 ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
-TRACE=${TRACE-0}
+source "${ROOT_DIR}/bin/common-functions.sh"
+
 PORTFORWARD_ENABLED=1
 MACOSX_SLEEP_TIME=5
 
@@ -15,9 +16,8 @@ MACOSX_SLEEP_TIME=5
 # version in mix.exs for all the apps in platform_umbrella
 BASE_VERSION="0.13.1"
 
+# Make sure everything is build with this binary in the path
 export PATH="${ROOT_DIR}/bin:${PATH}"
-
-source "${ROOT_DIR}/bin/common-functions.sh"
 
 cleanup() {
     trap - SIGINT SIGTERM ERR EXIT
@@ -45,7 +45,9 @@ cleanup() {
         log "Killing job ${ORANGE}$job${NOFORMAT}"
         term_kill "$job"
     done
-    term_kill $$
+
+    # Cleanup the bi build directory
+    clean_bi_build
 }
 
 trap cleanup SIGINT SIGTERM ERR EXIT
@@ -80,6 +82,7 @@ Available commands:
 - go-test           Run go tests
 - go-test-int       Run go integration tests
 - go-update-deps    Update go dependencies
+- go-clean-build    Clean the temporary BI build directory
 
 **Elixir Commands**
 - ex-test-deep      Run all tests with coverage and reset the database
@@ -178,16 +181,6 @@ do_start() {
     run_bi start "${spec_path}"
 }
 
-maybe_sleep() {
-    # If we are on a mac calling go run bi -- seems to take a bit of time
-    # and the port forwarder doesn't start in time. So we sleep for a bit
-    # here to make startup less heisenbuggy
-    if [[ $(uname) == "Darwin" ]]; then
-        log "Sleeping for ${ORANGE}${MACOSX_SLEEP_TIME}${NOFORMAT} seconds to allow port forward to start"
-        sleep ${MACOSX_SLEEP_TIME}
-    fi
-}
-
 do_bootstrap() {
     local spec_path=${1:-"bootstrap/dev.spec.json"}
     local summary_path slug
@@ -212,8 +205,6 @@ do_bootstrap() {
     # Start the port forwarder
     try_portforward "${slug}" &
 
-    maybe_sleep
-
     portforward_pid=$!
     log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}${slug}${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
 
@@ -231,8 +222,6 @@ do_bootstrap() {
 do_dev() {
     log "${GREEN}Starting Development Environment${NOFORMAT}"
     try_portforward "dev" &
-
-    maybe_sleep
 
     portforward_pid=$!
     log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}dev${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
@@ -386,6 +375,11 @@ do_go_test() {
 do_go_test_int() {
     export INTEGRATION=true
     run_go_test "${ROOT_DIR}/bi"
+}
+
+do_clean_build() {
+    log "${GREEN}Cleaning${NOFORMAT} the temporary BI build directory"
+    clean_bi_build
 }
 
 do_build_image() {
@@ -605,6 +599,9 @@ go-test)
     ;;
 go-test-int)
     do_go_test_int
+    ;;
+go-clean-build)
+    do_clean_build
     ;;
 ex-test-deep)
     do_ex_test_deep "${args[@]}"

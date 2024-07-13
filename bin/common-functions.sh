@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+TRACE=${TRACE-0}
+BI_BUILD_DIR="${BI_BUILD_DIR:-$HOME/.local/share/bi}"
+KEEP_BUILDS="${KEEP_BUILDS:-10}"
+
 setup_colors() {
     if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
         NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m'
@@ -38,9 +43,60 @@ term_kill() {
     pkill -TERM -P "$pid" >/dev/null 2>&1 || true
 }
 
+build_bi() {
+    local revision
+    revision=$(bi_revision)
+
+    # This is the directory where we will put the binary
+    local bin_dir="${BI_BUILD_DIR}/${revision}"
+
+    # This is the path to the binary
+    # We still want it to be called bi so help works
+    local bin_path="${bin_dir}/bi"
+    mkdir -p "${bin_dir}"
+
+    if [[ ! -f "${bin_path}" ]]; then
+        log "Building bi ${BLUE}${revision}${NOFORMAT}"
+        bi_pushd "${ROOT_DIR}/bi"
+        go build -o "${bin_path}" bi
+        bi_popd
+    fi
+
+}
+
+clean_bi_build() {
+    if [[ ! -d "${BI_BUILD_DIR}" ]]; then
+        # No build directory, nothing to clean
+        return
+    fi
+
+    bi_pushd "${BI_BUILD_DIR}"
+
+    # shellcheck disable=SC2012
+    ls -t1 | tail -n "+${KEEP_BUILDS}" | xargs -I {} rm -rf {}
+    bi_popd
+}
+
 run_bi() {
-    bi_pushd "${ROOT_DIR}/bi"
-    go run bi "$@"
+    local revision
+    revision=$(bi_revision)
+    local bin_path="${BI_BUILD_DIR}/${revision}/bi"
+
+    # go run on mac is really slow sometimes
+    # probably because we are linking in every go
+    # file that google engineers got promoted to write
+    #
+    # So instead we build the binary once per git commit
+    # and assume that it is good enough for the duration of the
+    # git commit.
+    #
+    # In addition our AWS kubernetes needs to go through a VPN
+    # and get aws credentials that all is piped through bi
+    # and referenced in the yaml file for kube. So we want the
+    # path to be stable and reliable.
+    build_bi
+
+    "${bin_path}" "$@"
 }
 
 run_mix() {
@@ -68,6 +124,10 @@ get_summary_path() {
 
 version_tag() {
     git describe --match="badtagthatnevermatches" --always --dirty
+}
+
+bi_revision() {
+    git rev-parse HEAD:bi
 }
 
 bi_pushd() {

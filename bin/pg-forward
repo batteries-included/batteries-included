@@ -7,8 +7,6 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 # Get the root directory of the project
 ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
-TRACE=${TRACE:-0}
-
 source "${ROOT_DIR}/bin/common-functions.sh"
 
 cleanup() {
