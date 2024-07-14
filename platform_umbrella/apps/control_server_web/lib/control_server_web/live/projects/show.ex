@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
+  import CommonUI.Components.Markdown
   import ControlServerWeb.BackendServicesTable
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.KnativeServicesTable
@@ -184,7 +185,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
             <.relative_display time={@project.inserted_at} />
           </:item>
           <:item :if={@project.description} title="Description">
-            <%= @project.description %>
+            <.markdown content={@project.description} />
           </:item>
         </.data_list>
       </.panel>
