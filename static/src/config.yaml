@@ -63,7 +63,7 @@ apps:
 analytics:
   vendors:
     googleAnalytics:
-      id: null # or "G-XXXXXXXXXX"
+      id: 'G-Q2NSHQYFR7'
 
 ui:
   tokens:
