@@ -1,63 +1,57 @@
 import Chart from 'chart.js/auto';
 import { ViewHook } from 'phoenix_live_view';
 
-const colors = [
-  '#fecfe2',
-  '#c8dee7',
-  '#fd79ae',
-  '#66a3bd',
-  '#e33a7d',
-  '#206f90',
-];
-
 export interface ChartHookInterface extends ViewHook {
   chart: Chart;
-  enrichDatasets(datasets: any[]): any[];
 }
 
 export const ChartHook = {
-  updated() {
-    const data = this.el.dataset.chartData
-      ? JSON.parse(this.el.dataset.chartData)
-      : {};
-
-    const enrichedData = {
-      ...data,
-      datasets: this.enrichDatasets(data.datasets),
-    };
-    this.chart.data = enrichedData;
-    this.chart.update('none');
-
-    console.log(enrichedData);
-  },
-  enrichDatasets(datasets) {
-    return datasets.map((ds) => {
-      return { backgroundColor: colors, ...ds };
-    });
-  },
-
   mounted() {
     const canvas = this.el.getElementsByTagName('canvas')[0];
-    const type = this.el.dataset.chartType || '';
-    const data = this.el.dataset.chartData
-      ? JSON.parse(this.el.dataset.chartData)
-      : {};
-    const options = this.el.dataset.chartOptions
-      ? JSON.parse(this.el.dataset.chartOptions)
-      : {
-          responsive: true,
-          plugins: {
-            legend: { position: 'bottom', labels: { font: { size: 16 } } },
-          },
-        };
+
+    this.options = JSON.parse(this.el.dataset.options || '{}');
+    this.data = JSON.parse(this.el.dataset.encoded || '{}');
 
     this.chart = new Chart(canvas, {
-      type: type,
-      data: {
-        ...data,
-        datasets: this.enrichDatasets(data.datasets),
-      },
-      options: options,
+      type: this.el.dataset.type,
+      options: this.options,
+      data: this.data,
+      plugins: [this.overlappingRoundedSegments()],
     });
+  },
+  updated() {
+    const data = JSON.parse(this.el.dataset.encoded || '{}');
+
+    this.chart.data = data;
+    this.chart.update('none');
+  },
+  overlappingRoundedSegments() {
+    return {
+      id: 'overlappingRoundedSegments',
+      afterDatasetsDraw: (chart, args, plugins) => {
+        const { data } = chart.getDatasetMeta(0);
+
+        data.forEach((value, index) => {
+          if (chart.getDataVisibility(index)) {
+            const { innerRadius, outerRadius, endAngle } = data[index];
+            const radius = (outerRadius - innerRadius) / 2;
+
+            const xCoor = (innerRadius + radius) * Math.cos(endAngle + Math.PI);
+            const yCoor = (innerRadius + radius) * Math.sin(endAngle);
+
+            chart.ctx.save();
+
+            chart.ctx.translate(data[0].x, data[0].y);
+            chart.ctx.beginPath();
+            chart.ctx.arc(-xCoor, yCoor, radius, 0, Math.PI * 2, false);
+
+            chart.ctx.fillStyle = this.options.backgroundColor[index];
+            chart.ctx.fill();
+
+            chart.ctx.restore();
+          }
+        });
+      },
+    };
   },
 } as ChartHookInterface;

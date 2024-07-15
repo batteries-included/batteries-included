@@ -5,12 +5,15 @@ defmodule ControlServerWeb.RecentProjectsPanel do
   import KubeServices.SystemState.SummaryRecent
 
   def mount(socket) do
-    {:ok, assign(socket, projects: projects())}
+    {:ok,
+     socket
+     |> assign(:class, nil)
+     |> assign(:projects, projects())}
   end
 
   def render(assigns) do
     ~H"""
-    <div class="lg:col-span-7">
+    <div class={@class}>
       <.panel title="Projects" class="h-full">
         <:menu>
           <.button variant="minimal" link={~p"/projects"}>View All</.button>
@@ -29,7 +32,7 @@ defmodule ControlServerWeb.RecentProjectsPanel do
 
         <div
           :if={@projects == []}
-          class="flex flex-col items-center justify-center h-full text-gray-light italic"
+          class="flex flex-col items-center justify-center h-full text-gray-light"
         >
           <span>You don't have any projects.</span>
         </div>
