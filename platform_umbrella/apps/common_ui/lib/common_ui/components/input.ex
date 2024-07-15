@@ -40,6 +40,10 @@ defmodule CommonUI.Components.Input do
   attr :tick_target, :any, default: nil
   attr :show_value, :boolean, default: true
 
+  # Used for textarea
+  attr :rows, :any, default: nil
+  attr :cols, :any, default: nil
+
   # Used for radio buttons
   slot :option do
     attr :value, :string, required: true
@@ -364,6 +368,8 @@ defmodule CommonUI.Components.Input do
           input_class(@errors),
           @class
         ]}
+        rows={@rows}
+        cols={@cols}
         {@rest}
       ><%= normalize_value("textarea", @value) %></textarea>
 

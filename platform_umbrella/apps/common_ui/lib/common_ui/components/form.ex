@@ -3,6 +3,7 @@ defmodule CommonUI.Components.Form do
   use CommonUI, :component
 
   import CommonUI.Components.FlashGroup
+  import CommonUI.Components.Markdown
   import CommonUI.Components.Panel
   import CommonUI.Components.Typography
   import CommonUI.Gettext, warn: false
@@ -47,8 +48,8 @@ defmodule CommonUI.Components.Form do
         </div>
 
         <div>
-          <.panel :if={@description} title="Info">
-            <p><%= @description %></p>
+          <.panel :if={@description} title="Description">
+            <.markdown content={@description} />
           </.panel>
         </div>
       </div>

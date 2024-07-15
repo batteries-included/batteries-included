@@ -5,8 +5,19 @@ defmodule ControlServerWeb.Projects.ProjectForm do
   alias CommonCore.Projects.Project
   alias ControlServer.Projects
 
+  @default_description """
+  # Project Info
+
+  Here you can describe your project. This is a great place to provide context for your project and help others understand what you're working on.
+
+  ## Operational Runbook
+  - Start incident response documentation
+  - Alert on-call rotations
+  - Start shared commincation
+  """
+
   def mount(socket) do
-    changeset = Projects.change_project(%Project{})
+    changeset = Projects.change_project(%Project{description: @default_description})
 
     {:ok,
      socket
@@ -52,7 +63,9 @@ defmodule ControlServerWeb.Projects.ProjectForm do
         class={@class}
         variant="stepped"
         title="Tell More About Your Project"
-        description="A place for introductory information about this stage of project creation"
+        description={
+          @form[:description].value || "Add a description to help others understand your project."
+        }
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
@@ -75,6 +88,7 @@ defmodule ControlServerWeb.Projects.ProjectForm do
           label="Project Description"
           placeholder="Enter a project description (optional)"
           maxlength={1000}
+          rows="15"
         />
 
         <:actions>

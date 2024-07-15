@@ -47,7 +47,7 @@ defmodule ControlServerWeb.Projects.EditLive do
 
     <.panel>
       <.simple_form for={@form} id="edit-project-form" phx-change="validate" phx-submit="save">
-        <.grid variant="col-2">
+        <.flex column>
           <.input field={@form[:name]} label="Project Name" placeholder="Enter project name" />
 
           <.input
@@ -56,8 +56,9 @@ defmodule ControlServerWeb.Projects.EditLive do
             label="Project Description"
             placeholder="Enter a project description (optional)"
             maxlength={1000}
+            rows="15"
           />
-        </.grid>
+        </.flex>
       </.simple_form>
     </.panel>
     """
