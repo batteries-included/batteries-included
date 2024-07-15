@@ -5,9 +5,15 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
   alias Phoenix.Naming
 
   @impl Phoenix.LiveComponent
-  def update(%{batteries: batteries}, socket) do
+  def mount(socket) do
+    {:ok, assign(socket, :class, nil)}
+  end
+
+  @impl Phoenix.LiveComponent
+  def update(%{batteries: batteries} = assigns, socket) do
     {:ok,
      socket
+     |> assign(assigns)
      |> assign(:batteries, batteries)
      |> assign_batteries(:all)}
   end
@@ -28,7 +34,7 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div class="lg:col-span-12">
+    <div class={@class}>
       <.panel title="Batteries Running" variant="gray">
         <:menu>
           <.tab_bar variant="borderless" class="w-full lg:basis-1/2">

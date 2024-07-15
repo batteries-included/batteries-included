@@ -5,6 +5,7 @@ defmodule ControlServerWeb.Live.Home do
   import ControlServerWeb.Chart
 
   alias CommonCore.Batteries.Catalog
+  alias CommonCore.Defaults.Namespaces
   alias ControlServer.Batteries
   alias ControlServer.SnapshotApply.Umbrella
   alias ControlServerWeb.RecentProjectsPanel
@@ -63,7 +64,7 @@ defmodule ControlServerWeb.Live.Home do
       |> Enum.map(&K8s.Resource.FieldAccessors.namespace/1)
       |> Enum.filter(fn ns -> ns != nil and String.contains?(ns, "battery") end)
       |> Enum.reduce(%{}, fn ns, acc ->
-        Map.update(acc, ns, 1, fn v -> v + 1 end)
+        Map.update(acc, Namespaces.humanize(ns), 1, fn v -> v + 1 end)
       end)
 
     %{
@@ -110,16 +111,22 @@ defmodule ControlServerWeb.Live.Home do
       </.button>
     </div>
 
-    <.grid columns={%{sm: 1, lg: 12}} class="w-full">
-      <.flex column class="items-center max-h-md lg:col-span-5">
+    <.grid columns={%{lg: 1, xl: 12}}>
+      <.flex column class="xl:col-span-6 2xl:col-span-5">
         <.h3>Pods by Category</.h3>
-        <.chart id="pod-chart" type="doughnut" data={pod_data(@pods)} class="max-w-xl" />
+        <.chart id="pod-chart" data={pod_data(@pods)} />
       </.flex>
 
-      <.live_component module={RecentProjectsPanel} id="recent_projects" />
+      <.live_component
+        module={RecentProjectsPanel}
+        id="recent_projects"
+        class="xl:col-start-7 xl:col-span-6"
+      />
+
       <.live_component
         module={RunningBatteriesPanel}
         id="running_bat_home_hero"
+        class="xl:col-span-12"
         batteries={@batteries}
       />
     </.grid>
