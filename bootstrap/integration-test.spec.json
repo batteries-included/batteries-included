@@ -9,26 +9,26 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_01908b6857a67bc4898997d6a231da1d",
+        "id": "batt_0190b3fb44527b158a093fff16641496",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
-          "image": "public.ecr.aws/batteries-included/control-server:latest",
+          "image": "public.ecr.aws/batteries-included/control-server:0.13.1-78b30183-dirty",
           "cluster_type": "kind",
           "core_namespace": "battery-core",
           "base_namespace": "battery-base",
           "data_namespace": "battery-data",
           "ai_namespace": "battery-ai",
-          "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:latest",
+          "bootstrap_image": "public.ecr.aws/batteries-included/kube-bootstrap:0.13.1-78b30183-dirty",
           "default_size": "tiny",
           "cluster_name": "integration-test",
           "server_in_cluster": false,
-          "install_id": "batt_01908b6857887ded8ef867c89cc1242e",
+          "install_id": "batt_0190b3fb44367d51b5a60216c9ce8173",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "V_-Q9T0jWHwp1EyGbKPlsAG-ea5-d7ooU88ZeLC2qfI",
+            "d": "TefIorxaN242zBzp9-w6hn9ZT0MOhf0oHaxRO9kKHes",
             "kty": "OKP",
-            "x": "MaXbkL19whD_b514WbieBHK54CX3TindTRvMqTAmqLE"
+            "x": "DNxc_ZZBjWRFzA0vdSPv10WH-QVh9oBpGAj0toKOmUs"
           },
           "image_override": null,
           "bootstrap_image_override": null
@@ -38,7 +38,7 @@
         "updated_at": null
       }
     ],
-    "backend_services": [],
+    "traditional_services": [],
     "postgres_clusters": [
       {
         "id": null,
@@ -48,6 +48,15 @@
           "name": "control",
           "owner": "battery-control-user"
         },
+        "storage_class": null,
+        "cpu_requested": 500,
+        "cpu_limits": 500,
+        "memory_requested": 536870912,
+        "memory_limits": 536870912,
+        "num_instances": 1,
+        "virtual_size": "tiny",
+        "inserted_at": null,
+        "updated_at": null,
         "users": [
           {
             "position": null,
@@ -64,7 +73,7 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "YB2V5SS3VN5IBGZ5NDRW7H77",
+            "password": "PND2DYBIXN4TFW7HMX4FOSO3",
             "roles": [
               "createdb",
               "login"
@@ -74,15 +83,6 @@
             ]
           }
         ],
-        "cpu_requested": 500,
-        "cpu_limits": 500,
-        "memory_requested": 536870912,
-        "memory_limits": 536870912,
-        "num_instances": 1,
-        "virtual_size": "tiny",
-        "storage_class": null,
-        "inserted_at": null,
-        "updated_at": null,
         "project_id": null,
         "storage_size": 536870912,
         "virtual_storage_size_range_value": 5035931120
@@ -91,7 +91,9 @@
     "redis_clusters": [],
     "projects": [],
     "ferret_services": [],
-    "ip_address_pools": []
+    "ip_address_pools": [],
+    "install_status": null,
+    "stable_versions_report": null
   },
   "initial_resources": {
     "/namespace/battery_core": {
@@ -99,7 +101,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "4W4OWNNVF5LDWVW7GICCIGFMBJC4SQQOLN5L5P2QPG43STEUAPNQ===="
+          "battery/hash": "4H3IHPNWHTPFZF7RRCGFS4VFPJLKAHVNDOK5Z5D3JAF3EQDCVDFA===="
         },
         "labels": {
           "app": "battery-core",
@@ -109,7 +111,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01908b6857a67bc4898997d6a231da1d",
+          "battery/owner": "batt_0190b3fb44527b158a093fff16641496",
           "istio-injection": "enabled",
           "version": "latest"
         },

@@ -4,7 +4,6 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
-  alias ControlServer.Backend
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
   alias ControlServer.Knative
@@ -12,6 +11,7 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias ControlServer.Postgres
   alias ControlServer.Projects
   alias ControlServer.Redis
+  alias ControlServer.TraditionalServices
   alias ControlServerWeb.Projects.AIForm
   alias ControlServerWeb.Projects.BatteriesForm
   alias ControlServerWeb.Projects.DatabaseForm
@@ -186,7 +186,7 @@ defmodule ControlServerWeb.Projects.NewLive do
   defp create_backend(project, %{"backend" => backend_data}) do
     backend_data
     |> Map.put("project_id", project.id)
-    |> Backend.create_service()
+    |> TraditionalServices.create_service()
   end
 
   defp create_backend(_project, _backend_data), do: {:ok, nil}

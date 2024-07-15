@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BackendServicesNewLiveTest do
+defmodule ControlServerWeb.TraditionalServicesNewLiveTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
@@ -12,7 +12,7 @@ defmodule ControlServerWeb.BackendServicesNewLiveTest do
       env_value = :containers_env_value |> params_for() |> Map.drop(~w(source_optional)a)
 
       conn
-      |> start(~p|/backend/services/new|)
+      |> start(~p|/traditional_services/new|)
       |> click("#containers_panel-containers button", "Add Container")
       |> submit_form("#container-form", container: container)
       |> click("#containers_panel-init_containers button", "Add Container")

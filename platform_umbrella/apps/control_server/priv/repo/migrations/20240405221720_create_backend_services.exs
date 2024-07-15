@@ -1,8 +1,8 @@
-defmodule ControlServer.Repo.Migrations.CreateBackendServices do
+defmodule ControlServer.Repo.Migrations.CreateTraditionalServices do
   use Ecto.Migration
 
   def change do
-    create table(:backend_services, primary_key: false) do
+    create table(:traditional_services, primary_key: false) do
       add :id, :binary_id, primary_key: true
 
       add :name, :string
@@ -23,6 +23,6 @@ defmodule ControlServer.Repo.Migrations.CreateBackendServices do
       timestamps()
     end
 
-    create unique_index(:backend_services, [:name])
+    create unique_index(:traditional_services, [:name])
   end
 end

@@ -3,9 +3,9 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import ControlServerWeb.BackendServicesTable
   import ControlServerWeb.EmptyHome
   import ControlServerWeb.KnativeServicesTable
+  import ControlServerWeb.TraditionalServicesTable
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryHosts
   import KubeServices.SystemState.SummaryRecent
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
      socket
      |> assign_batteries()
      |> assign_knative_services()
-     |> assign_backend_services()
+     |> assign_traditional_services()
      |> assign_catalog_group()
      |> assign_current_page()
      |> assign_page_title()}
@@ -32,8 +32,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     assign(socket, knative_services: knative_services())
   end
 
-  defp assign_backend_services(socket) do
-    assign(socket, backend_services: backend_services())
+  defp assign_traditional_services(socket) do
+    assign(socket, traditional_services: traditional_services())
   end
 
   defp assign_catalog_group(socket) do
@@ -62,16 +62,16 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     """
   end
 
-  defp backend_services_panel(assigns) do
+  defp traditional_services_panel(assigns) do
     ~H"""
-    <.panel title="Backend Services">
+    <.panel title="Traditional Services">
       <:menu>
         <.flex>
-          <.button icon={:plus} link={~p"/backend/services/new"}>New Service</.button>
-          <.button variant="minimal" link={~p"/backend/services"}>View All</.button>
+          <.button icon={:plus} link={~p"/traditional_services/new"}>New Service</.button>
+          <.button variant="minimal" link={~p"/traditional_services"}>View All</.button>
         </.flex>
       </:menu>
-      <.backend_services_table rows={@services} abridged />
+      <.traditional_services_table rows={@services} abridged />
     </.panel>
     """
   end
@@ -111,8 +111,8 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
         <%= case battery.type do %>
           <% :knative -> %>
             <.knative_panel services={@knative_services} />
-          <% :backend_services -> %>
-            <.backend_services_panel services={@backend_services} />
+          <% :traditional_services -> %>
+            <.traditional_services_panel services={@traditional_services} />
           <% _ -> %>
         <% end %>
       <% end %>

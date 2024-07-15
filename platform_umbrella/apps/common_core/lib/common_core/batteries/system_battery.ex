@@ -4,7 +4,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   use CommonCore, :schema
 
   alias CommonCore.Batteries.AwsLoadBalancerControllerConfig
-  alias CommonCore.Batteries.BackendServicesConfig
   alias CommonCore.Batteries.BatteryCAConfig
   alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.CertManagerConfig
@@ -30,6 +29,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.StaleResourceCleanerConfig
   alias CommonCore.Batteries.TextGenerationWebUIConfig
   alias CommonCore.Batteries.TimelineConfig
+  alias CommonCore.Batteries.TraditionalServicesConfig
   alias CommonCore.Batteries.TrivyOperatorConfig
   alias CommonCore.Batteries.TrustManagerConfig
   alias CommonCore.Batteries.VictoriaMetricsConfig
@@ -40,7 +40,7 @@ defmodule CommonCore.Batteries.SystemBattery do
 
   @possible_types [
     aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
-    backend_services: BackendServicesConfig,
+    traditional_services: TraditionalServicesConfig,
     battery_ca: BatteryCAConfig,
     battery_core: BatteryCoreConfig,
     cert_manager: CertManagerConfig,

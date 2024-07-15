@@ -1,16 +1,16 @@
-defmodule ControlServerWeb.BackendServicesTable do
+defmodule ControlServerWeb.TraditionalServicesTable do
   @moduledoc false
 
   use ControlServerWeb, :html
 
   import KubeServices.SystemState.SummaryHosts
 
-  alias CommonCore.Backend.Service
+  alias CommonCore.TraditionalServices.Service
 
   attr :rows, :list, required: true
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
-  def backend_services_table(assigns) do
+  def traditional_services_table(assigns) do
     ~H"""
     <.table id="backend-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
       <:col :let={service} :if={!@abridged} label="ID"><%= service.id %></:col>
@@ -26,7 +26,7 @@ defmodule ControlServerWeb.BackendServicesTable do
           />
 
           <.tooltip target_id={"edit_service_" <> service.id}>
-            Edit Backend Service
+            Edit Traditional Service
           </.tooltip>
 
           <.button
@@ -39,7 +39,7 @@ defmodule ControlServerWeb.BackendServicesTable do
           />
 
           <.tooltip target_id={"running_service_" <> service.id}>
-            Open Backend Service
+            Open Traditional Service
           </.tooltip>
         </.flex>
       </:action>
@@ -47,7 +47,7 @@ defmodule ControlServerWeb.BackendServicesTable do
     """
   end
 
-  defp show_url(%Service{} = service), do: ~p"/backend/services/#{service}/show"
-  defp edit_url(%Service{} = service), do: ~p"/backend/services/#{service}/edit"
+  defp show_url(%Service{} = service), do: ~p"/traditional_services/#{service}/show"
+  defp edit_url(%Service{} = service), do: ~p"/traditional_services/#{service}/edit"
   defp service_url(%Service{} = service), do: "//#{backend_host(service)}"
 end

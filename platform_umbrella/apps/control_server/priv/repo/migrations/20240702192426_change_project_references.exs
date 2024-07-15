@@ -2,14 +2,14 @@ defmodule ControlServer.Repo.Migrations.ChangeProjectReferences do
   use Ecto.Migration
 
   def up do
-    drop constraint(:backend_services, "backend_services_project_id_fkey")
+    drop constraint(:traditional_services, "traditional_services_project_id_fkey")
     drop constraint(:ferret_services, "ferret_services_project_id_fkey")
     drop constraint(:jupyter_lab_notebooks, "jupyter_lab_notebooks_project_id_fkey")
     drop constraint(:knative_services, "knative_services_project_id_fkey")
     drop constraint(:pg_clusters, "pg_clusters_project_id_fkey")
     drop constraint(:redis_clusters, "redis_clusters_project_id_fkey")
 
-    alter table(:backend_services) do
+    alter table(:traditional_services) do
       modify :project_id, references(:projects, on_delete: :nilify_all)
     end
 
@@ -39,14 +39,14 @@ defmodule ControlServer.Repo.Migrations.ChangeProjectReferences do
   end
 
   def down do
-    drop constraint(:backend_services, "backend_services_project_id_fkey")
+    drop constraint(:traditional_services, "traditional_services_project_id_fkey")
     drop constraint(:ferret_services, "ferret_services_project_id_fkey")
     drop constraint(:jupyter_lab_notebooks, "jupyter_lab_notebooks_project_id_fkey")
     drop constraint(:knative_services, "knative_services_project_id_fkey")
     drop constraint(:pg_clusters, "pg_clusters_project_id_fkey")
     drop constraint(:redis_clusters, "redis_clusters_project_id_fkey")
 
-    alter table(:backend_services) do
+    alter table(:traditional_services) do
       modify :project_id, references(:projects, on_delete: :nothing)
     end
 

@@ -5,18 +5,18 @@ defmodule ControlServerWeb.BackendIndexLiveTest do
   import ControlServer.Factory
 
   describe "index" do
-    test "renders an empty list of backend services", %{conn: conn} do
+    test "renders an empty list of Traditional Services", %{conn: conn} do
       conn
-      |> start(~p|/backend/services|)
-      |> assert_html("Backend Services")
+      |> start(~p|/traditional_services|)
+      |> assert_html("Traditional Services")
     end
 
-    test "renders a list of backend services", %{conn: conn} do
+    test "renders a list of Traditional Services", %{conn: conn} do
       insert(:backend_service, name: "Service 1")
       insert(:backend_service, name: "Service 2")
 
       conn
-      |> start(~p|/backend/services|)
+      |> start(~p|/traditional_services|)
       |> assert_html("Service 1")
       |> assert_html("Service 2")
     end
