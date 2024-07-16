@@ -2,8 +2,9 @@ defmodule ControlServerWeb.FerretDBFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.FerretDBFormSubcomponents
+
   alias CommonCore.FerretDB.FerretService
-  alias CommonCore.Util.Memory
   alias ControlServer.FerretDB
   alias ControlServer.Postgres
   alias Ecto.Changeset
@@ -28,43 +29,13 @@ defmodule ControlServerWeb.FerretDBFormComponent do
 
         <.grid columns={[sm: 1, lg: 2]}>
           <.panel class="col-span-2">
-            <.grid columns={[sm: 1, lg: 2]}>
-              <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
-              <.input
-                field={@form[:postgres_cluster_id]}
-                label="Postgres Cluster"
-                type="select"
-                placeholder="Choose a postgres cluster"
-                options={Enum.map(@pg_clusters, &{&1.name, &1.id})}
-              />
-              <.input
-                field={@form[:virtual_size]}
-                type="select"
-                label="Size"
-                placeholder="Choose a size"
-                options={FerretService.preset_options_for_select()}
-              />
+            <.size_form form={@form} pg_clusters={@pg_clusters} />
 
-              <.grid columns={[sm: 1, lg: 2]} class="items-center">
-                <.h5>Number of instances</.h5>
-                <.input field={@form[:instances]} type="range" min="1" max="3" step="1" />
-              </.grid>
-            </.grid>
-            <.data_list
-              :if={@form[:virtual_size].value != "custom"}
-              variant="horizontal-bolded"
-              class="mt-3 mb-5"
-              data={[
-                {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
-                {"CPU limits:", @form[:cpu_limits].value}
-              ]}
-            />
+            <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
 
-            <.grid :if={@form[:virtual_size].value == "custom"} columns={[sm: 1, md: 2, xl: 4]}>
-              <.input field={@form[:cpu_requested]} label="Cpu requested" />
-              <.input field={@form[:cpu_limits]} label="Cpu limits" />
-              <.input field={@form[:memory_requested]} label="Memory requested" />
-              <.input field={@form[:memory_limits]} label="Memory limits" />
+            <.grid columns={[sm: 1, lg: 2]} class="items-center">
+              <.h5>Number of instances</.h5>
+              <.input field={@form[:instances]} type="range" min="1" max="3" step="1" />
             </.grid>
           </.panel>
 

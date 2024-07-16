@@ -1,5 +1,6 @@
 defmodule KubeServices.SmartBuilder do
   @moduledoc false
+  alias CommonCore.FerretDB.FerretService
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Postgres.PGDatabase
@@ -37,6 +38,12 @@ defmodule KubeServices.SmartBuilder do
     %RedisCluster{
       num_redis_instances: 1,
       num_sentinel_instances: num_sentinel_instances,
+      virtual_size: Atom.to_string(SummaryBatteries.default_size())
+    }
+  end
+
+  def new_ferretdb do
+    %FerretService{
       virtual_size: Atom.to_string(SummaryBatteries.default_size())
     }
   end

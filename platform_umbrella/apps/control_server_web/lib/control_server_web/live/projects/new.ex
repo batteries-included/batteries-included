@@ -4,8 +4,10 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
+  alias CommonCore.Postgres.Cluster, as: PGCluster
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
+  alias ControlServer.FerretDB
   alias ControlServer.Knative
   alias ControlServer.Notebooks
   alias ControlServer.Postgres
@@ -89,8 +91,9 @@ defmodule ControlServerWeb.Projects.NewLive do
     form_data = socket.assigns.form_data
 
     with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
-         {:ok, _} <- create_postgres(project, form_data[DatabaseForm]),
+         {:ok, pg} <- create_postgres(project, form_data[DatabaseForm]),
          {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
+         {:ok, _} <- create_ferret(project, form_data[DatabaseForm], pg),
          {:ok, _} <- create_jupyter(project, form_data[AIForm]),
          {:ok, _} <- create_postgres(project, form_data[AIForm]),
          {:ok, _} <- create_postgres(project, form_data[WebForm]),
@@ -165,6 +168,15 @@ defmodule ControlServerWeb.Projects.NewLive do
   end
 
   defp create_redis(_project, _redis_data), do: {:ok, nil}
+
+  defp create_ferret(project, %{"ferret" => ferret_data}, %PGCluster{id: pg_id}) do
+    ferret_data
+    |> Map.put("project_id", project.id)
+    |> Map.put("postgres_cluster_id", pg_id)
+    |> FerretDB.create_ferret_service()
+  end
+
+  defp create_ferret(_project, _ferret_data, _pg), do: {:ok, nil}
 
   defp create_jupyter(project, %{"jupyter" => jupyter_data}) do
     jupyter_data

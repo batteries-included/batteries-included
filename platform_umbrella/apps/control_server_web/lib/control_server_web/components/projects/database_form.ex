@@ -2,8 +2,10 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  alias CommonCore.FerretDB.FerretService
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias ControlServerWeb.FerretDBFormSubcomponents
   alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.RedisFormSubcomponents
@@ -26,11 +28,18 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         %{name: project_name}
       )
 
+    ferret_changeset =
+      FerretService.changeset(
+        KubeServices.SmartBuilder.new_ferretdb(),
+        %{name: project_name}
+      )
+
     form =
       to_form(%{
         "need_postgres" => "true",
         "postgres" => postgres_changeset,
-        "redis" => redis_changeset
+        "redis" => redis_changeset,
+        "ferret" => ferret_changeset
       })
 
     {:ok,
@@ -51,10 +60,23 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
       |> RedisCluster.changeset(params["redis"])
       |> Map.put(:action, :validate)
 
+    ferret_changeset =
+      %FerretService{}
+      |> FerretService.changeset(params["ferret"])
+      |> Map.put(:action, :validate)
+
+    params =
+      if params["need_postgres"] == "false" do
+        Map.put(params, "need_ferret", "false")
+      else
+        params
+      end
+
     form =
       params
-      |> Map.put("redis", redis_changeset)
       |> Map.put("postgres", postgres_changeset)
+      |> Map.put("redis", redis_changeset)
+      |> Map.put("ferret", ferret_changeset)
       |> to_form()
 
     {:noreply, assign(socket, :form, form)}
@@ -90,7 +112,10 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
     params =
       Map.take(params, [
         if(normalize_value("checkbox", params["need_postgres"]), do: "postgres"),
-        if(normalize_value("checkbox", params["need_redis"]), do: "redis")
+        if(normalize_value("checkbox", params["need_redis"]), do: "redis"),
+        if(normalize_value("checkbox", params["need_postgres"]) && normalize_value("checkbox", params["need_ferret"]),
+          do: "ferret"
+        )
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -113,7 +138,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:need_postgres]} type="switch" label="I need a postgres instance" />
+        <.input field={@form[:need_postgres]} type="switch" label="I need a Postgres instance" />
 
         <PostgresFormSubcomponents.size_form
           class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}
@@ -122,11 +147,26 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
           ticks={PGCluster.compact_storage_range_ticks()}
         />
 
-        <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
+        <.input field={@form[:need_redis]} type="switch" label="I need a Redis instance" />
 
         <RedisFormSubcomponents.size_form
           class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
           form={to_form(@form[:redis].value, as: :redis)}
+        />
+
+        <.input
+          field={@form[:need_ferret]}
+          type="switch"
+          label="I need a FerretDB/MongoDB instance"
+          disabled={@form[:need_postgres].value == "false"}
+        />
+
+        <FerretDBFormSubcomponents.size_form
+          class={
+            (!normalize_value("checkbox", @form[:need_postgres].value) ||
+               !normalize_value("checkbox", @form[:need_ferret].value)) && "hidden"
+          }
+          form={to_form(@form[:ferret].value, as: :ferret)}
         />
 
         <:actions>
