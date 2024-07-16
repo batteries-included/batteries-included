@@ -2,11 +2,11 @@ defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  alias CommonCore.Backend.Service, as: BackendService
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Knative.Service, as: KnativeService
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias CommonCore.TraditionalServices.Service, as: TraditionalService
   alias ControlServer.Postgres
   alias ControlServerWeb.BackendFormSubcomponents
   alias ControlServerWeb.KnativeFormSubcomponents
@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Projects.WebForm do
       )
 
     backend_changeset =
-      BackendService.changeset(
+      TraditionalService.changeset(
         KubeServices.SmartBuilder.new_backend_service(),
         %{name: "#{project_name}-web"}
       )
@@ -87,8 +87,8 @@ defmodule ControlServerWeb.Projects.WebForm do
       |> Map.put(:action, :validate)
 
     backend_changeset =
-      %BackendService{}
-      |> BackendService.changeset(params["backend"])
+      %TraditionalService{}
+      |> TraditionalService.changeset(params["backend"])
       |> Map.put(:action, :validate)
 
     form =
@@ -233,13 +233,13 @@ defmodule ControlServerWeb.Projects.WebForm do
               phx-target={@myself}
               selected={@backend_type == :backend}
             >
-              Backend Service
+              Traditional Service
             </:tab>
           </.tab_bar>
 
           <.grid columns={2}>
             <.light_text><%= Catalog.get(:knative).description %></.light_text>
-            <.light_text><%= Catalog.get(:backend_services).description %></.light_text>
+            <.light_text><%= Catalog.get(:traditional_services).description %></.light_text>
           </.grid>
 
           <KnativeFormSubcomponents.main_panel

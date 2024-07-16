@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.Backend.FormComponent do
+defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
@@ -7,10 +7,10 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.Containers.HiddenForms
 
-  alias CommonCore.Backend.Service
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
-  alias ControlServer.Backend
+  alias CommonCore.TraditionalServices.Service
+  alias ControlServer.TraditionalServices
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryBatteries
 
@@ -31,7 +31,7 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
   @impl Phoenix.LiveComponent
   def update(%{service: service, title: title, action: action} = assigns, socket) do
     project_id = Map.get(service, :project_id) || assigns[:project_id]
-    changeset = Backend.change_service(service, %{project_id: project_id})
+    changeset = TraditionalServices.change_service(service, %{project_id: project_id})
 
     {:ok,
      socket
@@ -224,12 +224,12 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
   end
 
   defp save_service(socket, :new, service_params) do
-    case Backend.create_service(service_params) do
+    case TraditionalServices.create_service(service_params) do
       {:ok, service} ->
         {:noreply,
          socket
-         |> put_flash(:global_success, "Backend service created successfully")
-         |> push_navigate(to: ~p"/backend/services/#{service}/show")}
+         |> put_flash(:global_success, "Traditional Service created successfully")
+         |> push_navigate(to: ~p"/traditional_services/#{service}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
@@ -237,12 +237,12 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
   end
 
   defp save_service(socket, :edit, service_params) do
-    case Backend.update_service(socket.assigns.service, service_params) do
+    case TraditionalServices.update_service(socket.assigns.service, service_params) do
       {:ok, service} ->
         {:noreply,
          socket
-         |> put_flash(:global_success, "Backend service updated successfully")
-         |> push_navigate(to: ~p"/backend/services/#{service}/show")}
+         |> put_flash(:global_success, "Traditional Service updated successfully")
+         |> push_navigate(to: ~p"/traditional_services/#{service}/show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
@@ -264,12 +264,12 @@ defmodule ControlServerWeb.Live.Backend.FormComponent do
           title={@title}
           back_link={
             if @action == :new,
-              do: ~p"/backend/services",
-              else: ~p"/backend/services/#{@service}/show"
+              do: ~p"/traditional_services",
+              else: ~p"/traditional_services/#{@service}/show"
           }
         >
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
-            Save Backend Service
+            Save Traditional Service
           </.button>
         </.page_header>
         <.flex column>

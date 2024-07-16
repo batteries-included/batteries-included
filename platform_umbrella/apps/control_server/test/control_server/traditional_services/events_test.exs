@@ -1,14 +1,14 @@
-defmodule ControlServer.Backend.BackendEventsTest do
+defmodule ControlServer.TraditionalServices.EventsTest do
   use ControlServer.DataCase
 
   import ControlServer.Factory
 
-  describe "ControlServer.Backend and EventCenter.Database" do
+  describe "ControlServer.TraditionalServices and EventCenter.Database" do
     test "create backend_service broadcasts an insert event" do
       :ok = EventCenter.Database.subscribe(:backend_service)
 
       assert {:ok, service} =
-               ControlServer.Backend.create_service(params_for(:backend_service))
+               ControlServer.TraditionalServices.create_service(params_for(:backend_service))
 
       service_id = service.id
       name = service.name
@@ -32,7 +32,7 @@ defmodule ControlServer.Backend.BackendEventsTest do
       service = insert(:backend_service)
 
       assert {:ok, service} =
-               ControlServer.Backend.update_service(service, %{name: "new-name"})
+               ControlServer.TraditionalServices.update_service(service, %{name: "new-name"})
 
       service_id = service.id
       containers = service.containers

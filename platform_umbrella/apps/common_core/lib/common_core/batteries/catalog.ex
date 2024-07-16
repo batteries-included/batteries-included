@@ -144,9 +144,9 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :devtools,
-      type: :backend_services,
+      type: :traditional_services,
       dependencies: [:battery_core],
-      name: "Backend Services",
+      name: "Traditional Services",
       description:
         "Run containers that don't conform the the serverless http model. " <>
           "This is useful for running long running processes, or for running services that need to be accessed by other services."

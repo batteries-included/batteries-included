@@ -4,13 +4,13 @@ defmodule ControlServerWeb.Projects.ShowLive do
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
   import CommonUI.Components.Markdown
-  import ControlServerWeb.BackendServicesTable
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.KnativeServicesTable
   import ControlServerWeb.NotebooksTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.PostgresClusterTable
   import ControlServerWeb.RedisTable
+  import ControlServerWeb.TraditionalServicesTable
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Projects.Project
@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
     redis_ids = Enum.map(project.redis_clusters, & &1.id)
     ferret_ids = Enum.map(project.ferret_services, & &1.id)
     knative_ids = Enum.map(project.knative_services, & &1.id)
-    backend_ids = Enum.map(project.backend_services, & &1.id)
+    backend_ids = Enum.map(project.traditional_services, & &1.id)
 
     allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids ++ backend_ids)
     pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
@@ -141,9 +141,9 @@ defmodule ControlServerWeb.Projects.ShowLive do
             </.dropdown_link>
 
             <.dropdown_link navigate={
-              add_link(:backend_services, ~p"/backend/services/new?project_id=#{@project.id}")
+              add_link(:traditional_services, ~p"/traditional_services/new?project_id=#{@project.id}")
             }>
-              Backend Service
+              Traditional Service
             </.dropdown_link>
           </.dropdown>
 
@@ -231,11 +231,11 @@ defmodule ControlServerWeb.Projects.ShowLive do
         <.knative_services_table abridged rows={@project.knative_services} />
       </.panel>
 
-      <.panel :if={@project.backend_services != []} title="Backend Services">
+      <.panel :if={@project.traditional_services != []} title="Traditional Services">
         <:menu>
-          <.button variant="minimal" link={~p"/backend/services"}>View All</.button>
+          <.button variant="minimal" link={~p"/traditional_services"}>View All</.button>
         </:menu>
-        <.backend_services_table abridged rows={@project.backend_services} />
+        <.traditional_services_table abridged rows={@project.traditional_services} />
       </.panel>
 
       <.panel title="Pods" class="col-span-2">

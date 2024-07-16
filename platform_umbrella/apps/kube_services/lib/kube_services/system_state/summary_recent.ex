@@ -117,9 +117,9 @@ defmodule KubeServices.SystemState.SummaryRecent do
     GenServer.call(target, {:projects, limit})
   end
 
-  @spec backend_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.Backend.Service.t())
-  def backend_services(target \\ @me, limit \\ 7) do
-    GenServer.call(target, {:backend_services, limit})
+  @spec traditional_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
+          list(CommonCore.TraditionalServices.Service.t())
+  def traditional_services(target \\ @me, limit \\ 7) do
+    GenServer.call(target, {:traditional_services, limit})
   end
 end

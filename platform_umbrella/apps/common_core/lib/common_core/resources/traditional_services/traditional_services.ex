@@ -1,12 +1,12 @@
-defmodule CommonCore.Resources.BackendServices do
+defmodule CommonCore.Resources.TraditionalServices do
   @moduledoc false
 
-  use CommonCore.Resources.ResourceGenerator, app_name: "backend-services"
+  use CommonCore.Resources.ResourceGenerator, app_name: "traditional-services"
 
   import CommonCore.Resources.MapUtils
 
-  alias CommonCore.Backend.Service
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.TraditionalServices.Service
 
   resource(:namespace, battery, _state) do
     :namespace
@@ -16,7 +16,7 @@ defmodule CommonCore.Resources.BackendServices do
   end
 
   multi_resource(:kube_deployment, battery, state) do
-    Enum.map(state.backend_services, fn service ->
+    Enum.map(state.traditional_services, fn service ->
       case service.kube_deployment_type do
         :statefulset -> stateful_set(service, battery, state)
         :deployment -> deployment(service, battery, state)
@@ -25,7 +25,7 @@ defmodule CommonCore.Resources.BackendServices do
   end
 
   multi_resource(:service_account, battery, state) do
-    Enum.map(state.backend_services, fn service -> service_account(service, battery, state) end)
+    Enum.map(state.traditional_services, fn service -> service_account(service, battery, state) end)
   end
 
   defp service_account(%Service{} = service, battery, _state) do

@@ -1,10 +1,10 @@
-defmodule ControlServerWeb.Live.BackendNew do
+defmodule ControlServerWeb.Live.TraditionalServicesNew do
   @moduledoc false
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Backend.Service
-  alias ControlServerWeb.Live.Backend.FormComponent
+  alias CommonCore.TraditionalServices.Service
+  alias ControlServerWeb.Live.TraditionalServices.FormComponent
   alias KubeServices.SystemState.SummaryBatteries
 
   def mount(params, _session, socket) do
@@ -16,7 +16,7 @@ defmodule ControlServerWeb.Live.BackendNew do
     {:ok,
      socket
      |> assign(:current_page, :devtools)
-     |> assign(:page_title, "New Backend Service")
+     |> assign(:page_title, "New Traditional Service")
      |> assign(:project_id, params["project_id"])
      |> assign(:service, service)}
   end

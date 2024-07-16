@@ -1,7 +1,7 @@
-defmodule ControlServer.BackendFixtures do
+defmodule ControlServer.TraditionalServicesFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `ControlServer.Backend` context.
+  entities via the `ControlServer.TraditionalServices` context.
   """
 
   @doc """
@@ -17,7 +17,7 @@ defmodule ControlServer.BackendFixtures do
         virtural_size: "medium",
         name: "some-name"
       })
-      |> ControlServer.Backend.create_service()
+      |> ControlServer.TraditionalServices.create_service()
 
     service
   end

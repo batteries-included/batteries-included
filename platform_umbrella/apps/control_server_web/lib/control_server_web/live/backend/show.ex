@@ -1,35 +1,35 @@
-defmodule ControlServerWeb.Live.BackendShow do
+defmodule ControlServerWeb.Live.TraditionalServicesShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import KubeServices.SystemState.SummaryHosts
 
-  alias CommonCore.Backend.Service
+  alias CommonCore.TraditionalServices.Service
   alias CommonCore.Util.Memory
-  alias ControlServer.Backend
+  alias ControlServer.TraditionalServices
 
   def mount(%{"id" => id}, _session, socket) do
-    service = Backend.get_service!(id, preload: [:project])
+    service = TraditionalServices.get_service!(id, preload: [:project])
 
     {:ok,
      socket
      |> assign(:current_page, :devtools)
-     |> assign(:page_title, "Backend Service")
+     |> assign(:page_title, "Traditional Service")
      |> assign(:service, service)}
   end
 
   def handle_event("delete", _params, socket) do
-    {:ok, _} = Backend.delete_service(socket.assigns.service)
+    {:ok, _} = TraditionalServices.delete_service(socket.assigns.service)
 
     {:noreply,
      socket
      |> put_flash(:global_success, "Backend successfully deleted")
-     |> push_navigate(to: ~p"/backend/services")}
+     |> push_navigate(to: ~p"/traditional_services")}
   end
 
   def render(assigns) do
     ~H"""
-    <.page_header title={"Backend Service: #{@service.name}"} back_link={back_url()}>
+    <.page_header title={"Traditional Service: #{@service.name}"} back_link={back_url()}>
       <:menu>
         <.badge :if={@service.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@service.project_id}"}>
@@ -79,7 +79,7 @@ defmodule ControlServerWeb.Live.BackendShow do
     """
   end
 
-  defp back_url, do: ~p"/backend/services"
-  defp edit_url(service), do: ~p"/backend/services/#{service}/edit"
+  defp back_url, do: ~p"/traditional_services"
+  defp edit_url(service), do: ~p"/traditional_services/#{service}/edit"
   defp service_url(%Service{} = service), do: "//#{backend_host(service)}"
 end

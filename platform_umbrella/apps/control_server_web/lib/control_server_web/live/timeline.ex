@@ -78,12 +78,12 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <div class="text-black font-bold">
-        Backend Service <%= Naming.humanize(@payload.action) %>
+        Traditional Service <%= Naming.humanize(@payload.action) %>
       </div>
 
       <.data_list>
-        <:item title="Show Backend Service">
-          <.link navigate={~p(/backend/services)}><%= @payload.name %></.link>
+        <:item title="Show Traditional Service">
+          <.link navigate={~p(/traditional_services)}><%= @payload.name %></.link>
         </:item>
       </.data_list>
     </.payload_container>

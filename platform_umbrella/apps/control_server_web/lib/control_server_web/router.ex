@@ -143,13 +143,13 @@ defmodule ControlServerWeb.Router do
     live "/services/:id/edit_versions", Live.KnativeShow, :edit_versions
   end
 
-  scope "/backend", ControlServerWeb do
+  scope "/traditional_services", ControlServerWeb do
     pipe_through :browser
 
-    live "/services", Live.BackendIndex, :index
-    live "/services/new", Live.BackendNew, :new
-    live "/services/:id/edit", Live.BackendEdit, :edit
-    live "/services/:id/show", Live.BackendShow, :show
+    live "/", Live.TraditionalServicesIndex, :index
+    live "/new", Live.TraditionalServicesNew, :new
+    live "/:id/edit", Live.TraditionalServicesEdit, :edit
+    live "/:id/show", Live.TraditionalServicesShow, :show
   end
 
   scope "/trivy_reports", ControlServerWeb do
@@ -209,7 +209,7 @@ defmodule ControlServerWeb.Router do
     resources "/postgres/clusters", ClusterController, except: [:new, :edit]
     resources "/redis/clusters", FailoverClusterController, except: [:new, :edit]
     resources "/knative/services", KnativeServiceController, except: [:new, :edit]
-    resources "/backend/services", BackendServiceController, except: [:new, :edit]
+    resources "/traditional_services", TraditionalServicesController, except: [:new, :edit]
     resources "/notebooks/jupyter_lab_notebooks", JupyterLabNotebookController, except: [:new, :edit]
   end
 

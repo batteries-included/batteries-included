@@ -1,13 +1,13 @@
-defmodule ControlServerWeb.BackendServiceJSON do
-  alias CommonCore.Backend.Service
+defmodule ControlServerWeb.TraditionalServicesJSON do
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
+  alias CommonCore.TraditionalServices.Service
 
   @doc """
-  Renders a list of backend_services.
+  Renders a list of traditional_services.
   """
-  def index(%{backend_services: backend_services}) do
-    %{data: for(service <- backend_services, do: data(service))}
+  def index(%{traditional_services: traditional_services}) do
+    %{data: for(service <- traditional_services, do: data(service))}
   end
 
   @doc """

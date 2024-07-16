@@ -30,7 +30,7 @@ defmodule CommonCore.StateSummary do
     embeds_many :redis_clusters, CommonCore.Redis.FailoverCluster
     embeds_many :notebooks, CommonCore.Notebooks.JupyterLabNotebook
     embeds_many :knative_services, CommonCore.Knative.Service
-    embeds_many :backend_services, CommonCore.Backend.Service
+    embeds_many :traditional_services, CommonCore.TraditionalServices.Service
     embeds_many :ip_address_pools, CommonCore.MetalLB.IPAddressPool
     embeds_many :projects, CommonCore.Projects.Project
 

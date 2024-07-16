@@ -1,21 +1,21 @@
-defmodule ControlServer.Backend do
+defmodule ControlServer.TraditionalServices do
   @moduledoc false
 
   use ControlServer, :context
 
-  alias CommonCore.Backend.Service
+  alias CommonCore.TraditionalServices.Service
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
-  Returns the list of backend_services.
+  Returns the list of traditional_services.
 
   ## Examples
 
-      iex> list_backend_services()
+      iex> list_traditional_services()
       [%Service{}, ...]
 
   """
-  def list_backend_services do
+  def list_traditional_services do
     Repo.all(Service)
   end
 

@@ -1,11 +1,11 @@
 defmodule KubeServices.SmartBuilder do
   @moduledoc false
-  alias CommonCore.Backend.Service, as: BackendService
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias CommonCore.TraditionalServices.Service, as: BackendService
   alias KubeServices.SystemState.SummaryBatteries
 
   def new_postgres do

@@ -245,7 +245,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
           "redis" -> [:redis]
           "jupyter" -> [:notebooks]
           "knative" -> [:knative]
-          "backend" -> [:backend_services]
+          "traditional" -> [:traditional_services]
           _ -> nil
         end
       )

@@ -2,7 +2,7 @@ defmodule ControlServerWeb.BackendFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  alias CommonCore.Backend.Service
+  alias CommonCore.TraditionalServices.Service
   alias CommonCore.Util.Memory
 
   attr :class, :any, default: nil

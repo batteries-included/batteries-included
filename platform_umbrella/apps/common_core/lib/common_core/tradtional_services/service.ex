@@ -1,4 +1,4 @@
-defmodule CommonCore.Backend.Service do
+defmodule CommonCore.TraditionalServices.Service do
   @moduledoc false
 
   use CommonCore, {:schema, no_encode: [:project]}
@@ -53,7 +53,7 @@ defmodule CommonCore.Backend.Service do
 
   @required_fields ~w(name num_instances)a
 
-  batt_schema "backend_services" do
+  batt_schema "traditional_services" do
     slug_field :name
 
     field :kube_deployment_type, Ecto.Enum, values: [:statefulset, :deployment], default: :deployment
