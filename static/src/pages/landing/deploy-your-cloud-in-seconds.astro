@@ -1,0 +1,122 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import VideoModal from '~/components/widgets/VideoModal';
+import Image from '~/components/common/Image.astro';
+import Content2 from '~/components/widgets/Content2.astro';
+import InfoWidget from '~/components/widgets/InfoWidget.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+
+const metadata = {
+  title:
+    'Deploy your cloud infrastructure in seconds',
+};
+---
+<Layout metadata={metadata} hideElipses>
+    <Hero classes={{ title: 'text-5xl md:text-6xl leading-tighter', content: {container: 'mt-8 mx-auto max-w-screen-md text-lg lg:text-xl'}}}>
+        <Fragment slot="subtitle">Batteries Included</Fragment>
+        <Fragment slot="title">Deploy your cloud infrastructure in seconds</Fragment>
+        <Fragment slot="content">
+            Batteries Included is the only software infrastructure platform that offers databases, networking, security, and monitoring through a unified interface. Built on Kubernetes [mor things - OSS your trust, K8, Istio, PostGres / other stuff].
+        </Fragment>
+        <div class="mt-12 mx-auto max-w-screen-md">
+          <div class="flex justify-center">
+            <VideoModal
+              url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+              client:load>
+              <button class="btn-fourth !w-full">
+                <p class="flex-shrink-0">Watch the Demo</p>
+                <Image
+                  width={32}
+                  height={32}
+                  src="~/assets/images/icons/play-circle.svg"
+                  alt="play circle"
+                />
+              </button>
+            </VideoModal>
+          </div>
+          <div class="mt-12">
+            <VideoModal
+              url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+              client:load>
+              <button class="aspect-video overflow-hidden group relative">
+                <Image
+                  class="group-hover:blur-sm duration-300"
+                  src="~/assets/images/home/demo.png"
+                  alt="image modal"
+                />
+                <div
+                  class="absolute invisible opacity-0 group-hover:opacity-100 group-hover:visible top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 duration-300">
+                  <Image
+                    class="size-20"
+                    src="~/assets/images/icons/play-circle.svg"
+                    alt="play circle"
+                  />
+                </div>
+              </button>
+            </VideoModal>
+          </div>
+        </div>
+      </Hero>
+      <Content2
+      title="The power of an enterprise platform at your fingertips"
+      items={[
+        {
+          title: 'Deploy web apps at lightning speed',
+          description:
+            'Launch web apps and services with blue/green deployments, dynamic scaling and security',
+        },
+        {
+          title: 'Automated relational database',
+          description:
+            'Fully automated PostgreSQL that works with your existing stack with dynamic configuration and scale',
+        },
+        {
+          title: 'Works with any cloud ',
+          description:
+            'Run your services however you want, wherever you want including AWS, Azure, Google Cloud, or your own Kubernetes cluster',
+        },
+        {
+          title: 'Secure by default',
+          description:
+            'SSO everywhere you need it, Istio mesh networking out of the box, security scanning, automated SSL, and the flexibility to run on any machine',
+        },
+        {
+          title: 'Easy monitoring, easier fixes',
+          description:
+            'Monitor your entire stack in a single pane of glass, and get clarity on product usage, feature prioritization, and auto-remediation. Powered by Grafana and Victoria Metrics.',
+        },
+        {
+          title: 'Purpose-built for AI projects',
+          description:
+            'Managed notebooks for exploring data and building AI models plus LLM hosting powered by OogaBooga',
+        }
+      ]}>
+      <Fragment slot="bg">
+        <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent border-t">
+        </div>
+      </Fragment>
+    </Content2>
+    <InfoWidget title='How does our open-source platform eliminate YAML and simplify tech adoption?' description='We’ve built our platform on industry-standard open source code with a layer of abstraction to give you access to the latest innovation, without you needing to ramp expertise or learn new configurations. Say goodbye to YAML for good.' />
+    <ContactUs
+    title="Join the Batteries Included Beta Waiting List"
+    subtitle="Modern infrastructure for modern product teams."
+    inputs={[
+      {
+        type: 'text',
+        name: 'name',
+        label: 'Name',
+      },
+      {
+        type: 'email',
+        name: 'email',
+        label: 'Email',
+      },
+    ]}
+    disclaimer={{
+      label:
+        'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
+    }}
+    button={'Submit'}
+  />
+</Layout>
