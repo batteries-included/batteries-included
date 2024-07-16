@@ -11,6 +11,7 @@ import (
 	"net/netip"
 	"os"
 	"path"
+	"regexp"
 
 	"bi/pkg/cluster/util"
 	"bi/pkg/wireguard"
@@ -258,10 +259,20 @@ func (e *eks) KubeConfig(ctx context.Context, w io.Writer, _ bool) error {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
 
+	endpoint := e.outputs["cluster"]["endpoint"].Value.(string)
+
+	// Get the region from the cluster endpoint.
+	re := regexp.MustCompile(`\.([^.]+)\.eks\.amazonaws\.com`)
+	matches := re.FindStringSubmatch(endpoint)
+	if len(matches) != 2 {
+		return fmt.Errorf("failed to extract region from endpoint: %s", endpoint)
+	}
+	region := matches[1]
+
 	config := clientcmdapi.Config{
 		Clusters: map[string]*clientcmdapi.Cluster{
 			clusterName: {
-				Server:                   e.outputs["cluster"]["endpoint"].Value.(string),
+				Server:                   endpoint,
 				CertificateAuthorityData: certificateAuthorityData,
 			},
 		},
@@ -274,6 +285,8 @@ func (e *eks) KubeConfig(ctx context.Context, w io.Writer, _ bool) error {
 					Args: []string{
 						"aws",
 						"get-token",
+						"--region=" + region,
+						e.cfg.Slug,
 						clusterName,
 					},
 				},
