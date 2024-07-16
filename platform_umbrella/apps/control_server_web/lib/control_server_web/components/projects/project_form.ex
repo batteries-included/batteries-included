@@ -6,11 +6,12 @@ defmodule ControlServerWeb.Projects.ProjectForm do
   alias ControlServer.Projects
 
   @default_description """
-  # Project Info
+  ## Project Info
 
-  Here you can describe your project. This is a great place to provide context for your project and help others understand what you're working on.
+  Describe your project here. This is a great place to provide context and help others understand what you're working on.
 
-  ## Operational Runbook
+  ## Operational Runbook (Example)
+
   - Start incident response documentation
   - Alert on-call rotations
   - Start shared commincation

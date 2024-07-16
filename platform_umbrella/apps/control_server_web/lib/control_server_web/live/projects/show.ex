@@ -3,7 +3,6 @@ defmodule ControlServerWeb.Projects.ShowLive do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
-  import CommonUI.Components.Markdown
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.KnativeServicesTable
   import ControlServerWeb.NotebooksTable
