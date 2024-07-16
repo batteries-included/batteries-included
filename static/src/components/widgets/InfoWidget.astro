@@ -8,7 +8,7 @@ interface Props {
   description: string;
 }
 
-const {title, description} = Astro.props
+const { title, description } = Astro.props;
 ---
 
 <WidgetWrapper>
@@ -17,9 +17,13 @@ const {title, description} = Astro.props
     </div>
   </Fragment>
   <div class="p-8 lg:p-16 border rounded-2xl text-center lg:text-left">
-    <div class="flex flex-col lg:flex-row gap-y-8 lg:items-start lg:gap-x-12 items-center justify-between">
+    <div
+      class="flex flex-col lg:flex-row gap-y-8 lg:items-start lg:gap-x-12 items-center justify-between">
       <div>
-        <Headline title={title} classes={{container: 'text-center lg:text-left max-w-3xl'}} />
+        <Headline
+          title={title}
+          classes={{ container: 'text-center lg:text-left max-w-3xl' }}
+        />
       </div>
       <div class="hidden lg:block flex-shrink-0">
         <ButtonLink label="Learn More" link="/" variant="secondary" />
@@ -28,7 +32,7 @@ const {title, description} = Astro.props
     <div class="mt-6">
       <div class="mx-auto max-w-screen-md lg:max-w-none">
         <p class="lg:text-lg">
-         {description}
+          {description}
         </p>
         <div class="text-center mt-6 lg:hidden">
           <ButtonLink label="Learn More" link="/" variant="secondary" />

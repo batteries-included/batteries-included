@@ -36,7 +36,7 @@ const {
     title: 'text-5xl md:text-6xl leading-tighter',
     content: {
       container: 'mt-8 max-w-[600px] lg:max-w-[650px] mx-auto',
-      paragraph: 'font-light text-lg lg:text-xl'
+      paragraph: 'font-light text-lg lg:text-xl',
     },
   },
   breadcrumbs,
@@ -84,7 +84,10 @@ const {
           {
             content && (
               <div class={clsx(classes.content?.container)}>
-                <p class={clsx(classes.content?.paragraph)} set:html={content} />
+                <p
+                  class={clsx(classes.content?.paragraph)}
+                  set:html={content}
+                />
               </div>
             )
           }
