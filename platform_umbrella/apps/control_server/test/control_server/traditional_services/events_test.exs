@@ -1,4 +1,4 @@
-defmodule ControlServer.TraditionalServices.BackendEventsTest do
+defmodule ControlServer.TraditionalServices.EventsTest do
   use ControlServer.DataCase
 
   import ControlServer.Factory

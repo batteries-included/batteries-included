@@ -6,7 +6,7 @@ defmodule ControlServerWeb.Projects.WebForm do
   alias CommonCore.Knative.Service, as: KnativeService
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
-  alias CommonCore.TraditionalServices.Service, as: BackendService
+  alias CommonCore.TraditionalServices.Service, as: TraditionalService
   alias ControlServer.Postgres
   alias ControlServerWeb.BackendFormSubcomponents
   alias ControlServerWeb.KnativeFormSubcomponents
@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Projects.WebForm do
       )
 
     backend_changeset =
-      BackendService.changeset(
+      TraditionalService.changeset(
         KubeServices.SmartBuilder.new_backend_service(),
         %{name: "#{project_name}-web"}
       )
@@ -87,8 +87,8 @@ defmodule ControlServerWeb.Projects.WebForm do
       |> Map.put(:action, :validate)
 
     backend_changeset =
-      %BackendService{}
-      |> BackendService.changeset(params["backend"])
+      %TraditionalService{}
+      |> TraditionalService.changeset(params["backend"])
       |> Map.put(:action, :validate)
 
     form =

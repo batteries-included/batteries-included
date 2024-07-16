@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BackendServiceControllerTest do
+defmodule ControlServerWeb.TraditionalServicesControllerTest do
   use ControlServerWeb.ConnCase
 
   import ControlServer.TraditionalServicesFixtures

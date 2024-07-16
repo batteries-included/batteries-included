@@ -1,7 +1,7 @@
 defmodule CommonCore.Resources.TraditionalServices do
   @moduledoc false
 
-  use CommonCore.Resources.ResourceGenerator, app_name: "backend-services"
+  use CommonCore.Resources.ResourceGenerator, app_name: "traditional-services"
 
   import CommonCore.Resources.MapUtils
 

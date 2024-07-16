@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BackendServiceController do
+defmodule ControlServerWeb.TraditionalServicesController do
   use ControlServerWeb, :controller
 
   alias CommonCore.TraditionalServices.Service

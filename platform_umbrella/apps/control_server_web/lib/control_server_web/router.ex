@@ -209,7 +209,7 @@ defmodule ControlServerWeb.Router do
     resources "/postgres/clusters", ClusterController, except: [:new, :edit]
     resources "/redis/clusters", FailoverClusterController, except: [:new, :edit]
     resources "/knative/services", KnativeServiceController, except: [:new, :edit]
-    resources "/traditional_services", BackendServiceController, except: [:new, :edit]
+    resources "/traditional_services", TraditionalServicesController, except: [:new, :edit]
     resources "/notebooks/jupyter_lab_notebooks", JupyterLabNotebookController, except: [:new, :edit]
   end
 

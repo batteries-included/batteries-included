@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BackendServiceJSON do
+defmodule ControlServerWeb.TraditionalServicesJSON do
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
   alias CommonCore.TraditionalServices.Service
