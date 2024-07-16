@@ -19,7 +19,7 @@ defmodule CommonCore.ET.InstallStatus do
   end
 
   def new_unknown! do
-    exp = DateTime.utc_now() |> DateTime.add(1, :hour) |> DateTime.to_unix()
+    exp = DateTime.utc_now() |> DateTime.add(8, :hour) |> DateTime.to_unix()
     new!(status: :unknown, exp: exp)
   end
 
