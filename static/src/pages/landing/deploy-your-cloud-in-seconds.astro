@@ -11,18 +11,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata} hideElipses>
-  <Hero
-    classes={{
-      title: 'text-5xl md:text-6xl leading-tighter',
-      content: { container: 'mt-8 mx-auto max-w-screen-md text-lg lg:text-xl' },
-    }}>
+  <Hero>
     <Fragment slot="title">Deploy your cloud infrastructure in seconds</Fragment
     >
     <Fragment slot="content">
       Batteries Included is the only software infrastructure platform that
       offers databases, networking, security, and monitoring through a unified
-      interface. Built on Kubernetes [mor things - OSS your trust, K8, Istio,
-      PostGres / other stuff].
+      interface. Built on Kubernetes.
     </Fragment>
   </Hero>
   <div class="u-container">
@@ -65,7 +60,7 @@ const metadata = {
         <div class="mt-8 self-stretch h-full">
           <div class="h-full">
             <iframe
-              class="aspect-video lg:h-full w-full lg:aspect-auto rounded-[6px]"
+              class="aspect-video lg:h-full w-full lg:aspect-auto"
               src="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
