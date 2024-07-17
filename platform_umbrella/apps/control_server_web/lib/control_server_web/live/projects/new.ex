@@ -183,8 +183,8 @@ defmodule ControlServerWeb.Projects.NewLive do
     env_value = %EnvValue{
       name: "DATABASE_URL",
       source_type: :secret,
-      source_key: "cloudnative-pg.#{pg.name}.#{user.username}",
-      source_name: "dsn"
+      source_name: "cloudnative-pg.#{pg.name}.#{user.username}",
+      source_key: "dsn"
     }
 
     jupyter_data = Map.put(jupyter_data, "env_values", [env_value])
