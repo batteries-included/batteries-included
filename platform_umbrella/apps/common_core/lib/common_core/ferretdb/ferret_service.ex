@@ -43,7 +43,7 @@ defmodule CommonCore.FerretDB.FerretService do
 
   batt_schema "ferret_services" do
     slug_field :name
-    field :instances, :integer
+    field :instances, :integer, default: 1
     field :cpu_requested, :integer
     field :cpu_limits, :integer
     field :memory_requested, :integer

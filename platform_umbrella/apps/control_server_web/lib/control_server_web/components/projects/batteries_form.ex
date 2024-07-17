@@ -243,6 +243,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
           "postgres" -> [:cloudnative_pg]
           "postgres_ids" -> [:cloudnative_pg]
           "redis" -> [:redis]
+          "ferret" -> [:ferretdb]
           "jupyter" -> [:notebooks]
           "knative" -> [:knative]
           "traditional" -> [:traditional_services]
