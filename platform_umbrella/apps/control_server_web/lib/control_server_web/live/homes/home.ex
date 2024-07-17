@@ -111,8 +111,8 @@ defmodule ControlServerWeb.Live.Home do
       </.button>
     </div>
 
-    <.grid columns={%{lg: 1, xl: 12}}>
-      <.flex column class="xl:col-span-6 2xl:col-span-5">
+    <.grid columns={%{md: 1, lg: 12}}>
+      <.flex column class="lg:col-span-6 xl:col-span-5">
         <.h3>Pods by Category</.h3>
         <.chart id="pod-chart" data={pod_data(@pods)} />
       </.flex>
@@ -120,13 +120,13 @@ defmodule ControlServerWeb.Live.Home do
       <.live_component
         module={RecentProjectsPanel}
         id="recent_projects"
-        class="xl:col-start-7 xl:col-span-6"
+        class="lg:col-start-8 lg:col-span-5"
       />
 
       <.live_component
         module={RunningBatteriesPanel}
         id="running_bat_home_hero"
-        class="xl:col-span-12"
+        class="lg:col-span-12"
         batteries={@batteries}
       />
     </.grid>

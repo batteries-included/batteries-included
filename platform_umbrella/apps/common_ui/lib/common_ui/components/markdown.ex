@@ -6,7 +6,6 @@ defmodule CommonUI.Components.Markdown do
   import Phoenix.HTML
 
   attr :class, :any, default: nil
-  attr :base_class, :any, default: "prose lg:prose-xl"
   attr :tag, :string, default: "section"
   attr :content, :string
   attr :rest, :global
@@ -16,7 +15,7 @@ defmodule CommonUI.Components.Markdown do
     assigns = Map.put(assigns, :content, value)
 
     ~H"""
-    <.dynamic_tag name={@tag} class={[@base_class, @class]} {@rest}>
+    <.dynamic_tag name={@tag} class={["prose", @class]} {@rest}>
       <%= raw(@content) %>
     </.dynamic_tag>
     """

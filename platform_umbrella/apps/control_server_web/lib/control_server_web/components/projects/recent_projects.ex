@@ -2,6 +2,7 @@ defmodule ControlServerWeb.RecentProjectsPanel do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.ProjectsTable
   import KubeServices.SystemState.SummaryRecent
 
   def mount(socket) do
@@ -19,16 +20,7 @@ defmodule ControlServerWeb.RecentProjectsPanel do
           <.button variant="minimal" link={~p"/projects"}>View All</.button>
         </:menu>
 
-        <.table
-          :if={@projects != []}
-          rows={@projects}
-          row_click={&JS.navigate(~p"/projects/#{&1.id}")}
-        >
-          <:col :let={project} label="Name"><%= project.name %></:col>
-          <:col :let={project} label="Description">
-            <.truncate_tooltip :if={project.description} value={project.description} length={72} />
-          </:col>
-        </.table>
+        <.projects_table :if={@projects != []} abridged rows={@projects} />
 
         <div
           :if={@projects == []}

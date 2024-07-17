@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Projects.IndexLive do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.ProjectsTable
+
   alias ControlServer.Projects
 
   def mount(_params, _session, socket) do
@@ -18,27 +20,7 @@ defmodule ControlServerWeb.Projects.IndexLive do
     </.page_header>
 
     <.panel title="All Projects">
-      <.table id="projects" rows={@projects} row_click={&JS.navigate(~p"/projects/#{&1}")}>
-        <:col :let={project} label="Name"><%= project.name %></:col>
-        <:col :let={project} label="Description">
-          <.truncate_tooltip :if={project.description} value={project.description} length={72} />
-        </:col>
-
-        <:action :let={project}>
-          <.flex class="justify-items-center">
-            <.button
-              variant="minimal"
-              link={~p"/projects/#{project.id}/edit"}
-              icon={:pencil}
-              id={"edit_project_" <> project.id}
-            />
-
-            <.tooltip target_id={"edit_project_" <> project.id}>
-              Edit Project
-            </.tooltip>
-          </.flex>
-        </:action>
-      </.table>
+      <.projects_table rows={@projects} />
     </.panel>
     """
   end

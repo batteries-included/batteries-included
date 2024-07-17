@@ -98,7 +98,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
         for={@form}
         class={@class}
         variant="stepped"
-        title="Turn On Batteries You Need"
+        title="Turn On Additional Batteries"
         description="A place for information about the batteries stage of project creation"
         phx-target={@myself}
         phx-change="validate"

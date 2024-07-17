@@ -45,22 +45,28 @@ defmodule ControlServerWeb.Projects.EditLive do
       </.button>
     </.page_header>
 
-    <.panel>
-      <.simple_form for={@form} id="edit-project-form" phx-change="validate" phx-submit="save">
-        <.flex column>
-          <.input field={@form[:name]} label="Project Name" placeholder="Enter project name" />
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-4">
+      <.panel>
+        <.simple_form for={@form} id="edit-project-form" phx-change="validate" phx-submit="save">
+          <.flex column>
+            <.input field={@form[:name]} label="Project Name" placeholder="Enter project name" />
 
-          <.input
-            field={@form[:description]}
-            type="textarea"
-            label="Project Description"
-            placeholder="Enter a project description (optional)"
-            maxlength={1000}
-            rows="15"
-          />
-        </.flex>
-      </.simple_form>
-    </.panel>
+            <.input
+              field={@form[:description]}
+              type="textarea"
+              label="Project Description"
+              placeholder="Enter a project description (optional)"
+              maxlength={1000}
+              rows="15"
+            />
+          </.flex>
+        </.simple_form>
+      </.panel>
+
+      <.panel title="Description">
+        <.markdown content={@form[:description].value} />
+      </.panel>
+    </div>
     """
   end
 end
