@@ -70,7 +70,7 @@ defmodule CommonCore.Resources.ControlServer do
 
   resource(:deployment, battery, state) do
     # This name is important
-    # Do not change it without also changin kube_bootstrap
+    # Do not change it without also changing kube_bootstrap
     #
     # We order the control server to be created last based upon
     # this name for a  deployment.

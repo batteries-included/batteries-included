@@ -51,7 +51,7 @@ defmodule KubeBootstrap do
     # We want to ensure that the control server is created last
     before = Map.get(split, false, [])
 
-    # Rreturn both sets however the control server might not even be present
+    # Return both sets however the control server might not even be present
     {before, before ++ Map.get(split, true, [])}
   end
 
