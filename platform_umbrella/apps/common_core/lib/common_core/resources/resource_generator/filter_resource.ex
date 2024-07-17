@@ -50,4 +50,8 @@ defmodule CommonCore.Resources.FilterResource do
   def require(resource, boolean)
   def require(resource, true), do: resource
   def require(_, _falsey), do: nil
+
+  @spec require_non_nil(map(), term()) :: map() | nil
+  def require_non_nil(_resource, nil), do: nil
+  def require_non_nil(resource, _), do: resource
 end
