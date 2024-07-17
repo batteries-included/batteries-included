@@ -1,16 +1,11 @@
 defmodule KubeBootstrap.Kube do
-  alias CommonCore.Resources.RootResourceGenerator
-  alias CommonCore.StateSummary
-
   require Logger
 
   @max_retries 20
 
-  @spec ensure_exists(K8s.Conn.t(), CommonCore.StateSummary.t()) ::
+  @spec ensure_exists(K8s.Conn.t(), list(map())) ::
           {:error, any()} | {:ok, list()}
-  def ensure_exists(%K8s.Conn{} = conn, %StateSummary{} = summary) do
-    # Use the given summary to generate the resources
-    resources = summary |> RootResourceGenerator.materialize() |> Map.values()
+  def ensure_exists(%K8s.Conn{} = conn, resources) do
     num_retries = @max_retries
     ensure_exists(conn, resources, num_retries)
   end
