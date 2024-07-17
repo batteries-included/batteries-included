@@ -53,32 +53,30 @@ defmodule ControlServerWeb.StatefulSetLive.Show do
     KubeState.get!(@resource_type, namespace, name)
   end
 
-  defp stateful_set_facts_section(assigns) do
-    ~H"""
-    <.badge>
-      <:item label="Namespace"><%= @namespace %></:item>
-      <:item label="Started">
-        <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
-      </:item>
-    </.badge>
-    """
-  end
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@name} back_link={~p"/kube/stateful_sets"}>
-      <.stateful_set_facts_section namespace={@namespace} resource={@resource} />
-    </.page_header>
+    <.page_header title={@name} back_link={~p"/kube/stateful_sets"} />
 
     <div class="flex flex-col gap-8 mb-10">
       <div class="flex flex-wrap gap-4 mt-6">
         <.badge label="Total Replicas" value={Map.get(@status, "replicas", 0)} />
         <.badge label="Available Replicas" value={Map.get(@status, "availableReplicas", 0)} />
-        <.badge label="Current Revision" value={Map.get(@status, "currentRevision", 0)} />
         <.badge label="Updated Replicas" value={Map.get(@status, "updatedReplicas", 0)} />
         <.badge label="Generations" value={Map.get(@status, "observedGeneration", 0)} />
       </div>
+
+      <.panel variant="gray" title="Details">
+        <.data_list>
+          <:item title="Namespace"><%= @namespace %></:item>
+          <:item title="Current Revision">
+            <%= Map.get(@status, "currentRevision", 0) %>
+          </:item>
+          <:item title="Started">
+            <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+          </:item>
+        </.data_list>
+      </.panel>
 
       <.panel title="Pods">
         <.pods_table pods={@pods} />

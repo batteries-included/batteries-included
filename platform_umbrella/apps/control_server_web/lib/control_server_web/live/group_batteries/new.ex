@@ -100,7 +100,10 @@ defmodule ControlServerWeb.GroupBatteries.NewLive do
         <%= step %>
       </div>
 
-      <.data_list :if={@completed && @install_result != nil} class="mt-4 bg-gray-lightest p-6">
+      <.data_list
+        :if={@completed && @install_result != nil}
+        class="mt-4 bg-gray-lightest dark:bg-gray-darkest-tint p-6"
+      >
         <:item title="New Batteries Installed">
           <%= map_size(@install_result.installed) %>
         </:item>

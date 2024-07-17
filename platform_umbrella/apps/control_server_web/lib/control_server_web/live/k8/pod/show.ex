@@ -210,10 +210,10 @@ defmodule ControlServerWeb.PodLive.Show do
             variant="minimal"
             link={resource_path(@resource, :logs, %{container: Map.get(cs, "name", nil)})}
             icon={:document_text}
-            id={"show_resource_" <> to_html_id(@resource)}
+            id={"show_resource_" <> to_html_id(cs)}
           />
 
-          <.tooltip target_id={"show_resource_" <> to_html_id(@resource)}>
+          <.tooltip target_id={"show_resource_" <> to_html_id(cs)}>
             Logs
           </.tooltip>
         </:action>

@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Live.StaleIndex do
   defp empty_state(assigns) do
     ~H"""
     <.panel title="Empty Queue">
-      <div class="max-w-none prose prose-lg my-4">
+      <div class="max-w-none prose prose-lg dark:prose-invert my-4">
         <p>
           There are currently no Kubernetes resources that are stale (no longer referenced in a deploy). Batteries Included control server will continue to monitor and seach for resources to clean up. Any Kubernetes objects found that are not needed will be placed in this queue for eventual deletion.
         </p>

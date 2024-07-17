@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Chart do
     ~H"""
     <div
       id={@id}
-      class={["relative", @class]}
+      class={["relative chart-dark-invert", @class]}
       phx-hook="Chart"
       data-type={@type}
       data-encoded={Jason.encode!(@data)}

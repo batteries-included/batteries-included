@@ -35,7 +35,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
   defp empty_state(assigns) do
     ~H"""
     <.panel title="Empty Delete Archive">
-      <div class="max-w-none prose prose-lg my-4">
+      <div class="max-w-none prose prose-lg dark:prose-invert my-4">
         <p>
           There no deleted resources. If the Batteries Included platform does delete any resources it will
           record that here. Deletes usually come from stale resources that are no longer referenced in

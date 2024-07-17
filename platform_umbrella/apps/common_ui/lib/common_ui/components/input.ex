@@ -345,7 +345,8 @@ defmodule CommonUI.Components.Input do
           "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary",
           "peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter",
           "peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary/50",
-          "dark:peer-checked:peer-disabled:after:bg-primary/50 dark:peer-disabled:hover:border-gray-darker"
+          "dark:peer-checked:peer-disabled:after:bg-primary/30 dark:peer-disabled:hover:border-gray-darker",
+          "dark:peer-disabled:after:bg-gray-darker-tint/50"
         ]} />
       </div>
 
@@ -444,7 +445,8 @@ defmodule CommonUI.Components.Input do
       "placeholder:text-gray-light dark:placeholder:text-gray-dark",
       "border border-gray-lighter dark:border-gray-darker-tint",
       "hover:border-primary dark:hover:border-gray focus:border-primary dark:focus:border-gray",
-      "bg-gray-lightest dark:bg-gray-darkest-tint"
+      "bg-gray-lightest dark:bg-gray-darkest-tint",
+      "disabled:text-gray disabled:hover:border-gray-lighter disabled:dark:hover:border-gray-darker-tint"
     ]
   end
 
