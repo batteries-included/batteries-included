@@ -1,4 +1,4 @@
-<section class="prose">
+<section class="prose dark:prose-invert">
   <p>
   Shows that quotes work in code blocks
 </p>
