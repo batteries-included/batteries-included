@@ -1,0 +1,123 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import NetlifyFormContainer from '~/components/ui/NetlifyForm.astro';
+import Features from '~/components/widgets/Features.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Deploy your cloud infrastructure in seconds',
+};
+---
+
+<Layout metadata={metadata} hideElipses>
+  <Hero>
+    <Fragment slot="title"
+      >Deploy Web Services at the Speed of Your Users
+    </Fragment>
+    <Fragment slot="content">
+      Batteries Included is the fastest way to launch serverless web services on
+      production-ready PostgreSQL with security, monitoring, and scale.
+    </Fragment>
+  </Hero>
+  <div class="u-container">
+    <div class="flex flex-col gap-y-8 lg:flex-row lg:gap-x-12 lg:items-stretch">
+      <div class="lg:w-1/2">
+        <h2
+          class="text-3xl lg:text-4xl font-bold leading-tighter tracking-tighter font-heading dark:text-gray-200">
+          Join the waitlist
+        </h2>
+        <div class="mt-8">
+          <div
+            class="rounded-lg backdrop-blur border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 shadow p-4 sm:p-6 lg:p-8 w-full">
+            <NetlifyFormContainer
+              inputs={[
+                {
+                  type: 'text',
+                  name: 'name',
+                  label: 'Name',
+                },
+                {
+                  type: 'email',
+                  name: 'email',
+                  label: 'Email',
+                },
+              ]}
+              disclaimer={{
+                label:
+                  'By submitting this contact form, you acknowledge and agree to the collection of your personal information.',
+              }}
+              button="Submit"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="lg:w-1/2 min-h-full flex flex-col">
+        <h2
+          class="text-3xl lg:text-4xl font-bold leading-tighter tracking-tighter font-heading dark:text-gray-200">
+          Watch the demo
+        </h2>
+        <div class="mt-8 self-stretch h-full">
+          <div class="h-full">
+            <iframe
+              class="aspect-video lg:h-full w-full lg:aspect-auto"
+              src="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <Features
+    title="The power of an enterprise web infrastructure at your fingertips"
+    columns={3}
+    items={[
+      {
+        title: 'Deploy web apps at lightning speed',
+        description:
+          'Launch web apps and services with blue/green deployments, dynamic scaling and security',
+      },
+      {
+        title: 'Automated relational database',
+        description:
+          'Fully automated PostgreSQL that works with your existing stack with dynamic configuration and scale',
+      },
+      {
+        title: 'Works with any cloud',
+        description:
+          'Run your services however you want, wherever you want including AWS, Azure, Google Cloud, or your own Kubernetes cluster',
+      },
+      {
+        title: 'Secure by default',
+        description:
+          'SSO everywhere you need it, Istio mesh networking out of the box, security scanning, automated SSL, and the flexibility to run on any machine',
+      },
+      {
+        title: 'Easy monitoring, easier fixes',
+        description:
+          'Monitor your entire stack in a single pane of glass, and get clarity on product usage, feature prioritization, and auto-remediation. Powered by Grafana and Victoria Metrics.',
+      },
+      {
+        title: 'Purpose-built for AI projects',
+        description:
+          'Managed notebooks for exploring data and building AI models plus LLM hosting powered by OogaBooga',
+      },
+    ]}
+  />
+  <div class="-mt-12">
+    <CallToAction
+      actions={[
+        {
+          variant: 'primary',
+          text: 'Sign Up Now',
+          href: '/sign-up',
+        },
+      ]}
+      title="Streamlined Innovation: Our Platform Built on Open Source Code"
+      subtitle="We’ve built our platform on industry-standard open source code with a layer of abstraction to give you access to the latest innovation, without you needing to ramp expertise or learn new configurations. Say goodbye to YAML for good."
+    />
+  </div>
+</Layout>
