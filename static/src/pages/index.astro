@@ -4,7 +4,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Features from '~/components/widgets/Features.astro';
 import Content2 from '~/components/widgets/Content2.astro';
-import WhyOpenSource from '~/components/widgets/WhyOpenSource.astro';
+import InfoWidget from '~/components/widgets/InfoWidget.astro';
 import StartBuild from '~/components/widgets/StartBuild.astro';
 import VideoModal from '~/components/widgets/VideoModal';
 import RecentPosts from '~/components/widgets/RecentPosts.astro';
@@ -176,7 +176,10 @@ const metadata = {
     </Fragment>
   </Content2>
 
-  <WhyOpenSource />
+  <InfoWidget
+    title="Why Open Source?"
+    description="We built Batteries Included on a fully-open sourced stack to get you fully-portable, best-in-class technology without the pain. Our solutions are industry standard out of the box, ensuring you can work the way you want, and build the way you want, without being limited by your infrastructure."
+  />
   <!-- Posts Widget ****************** -->
   <RecentPosts />
   <StartBuild />

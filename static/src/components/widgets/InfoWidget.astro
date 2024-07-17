@@ -2,6 +2,13 @@
 import Headline from '~/components/ui/Headline.astro';
 import ButtonLink from '~/components/widgets/ButtonLink.astro';
 import WidgetWrapper from '../ui/WidgetWrapper.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
 ---
 
 <WidgetWrapper>
@@ -10,9 +17,13 @@ import WidgetWrapper from '../ui/WidgetWrapper.astro';
     </div>
   </Fragment>
   <div class="p-8 lg:p-16 border rounded-2xl text-center lg:text-left">
-    <div class="flex flex-col lg:flex-row gap-y-8 items-center justify-between">
+    <div
+      class="flex flex-col lg:flex-row gap-y-8 lg:items-start lg:gap-x-12 items-center justify-between">
       <div>
-        <Headline title="Why Open Source?" />
+        <Headline
+          title={title}
+          classes={{ container: 'text-center lg:text-left max-w-3xl' }}
+        />
       </div>
       <div class="hidden lg:block flex-shrink-0">
         <ButtonLink label="Learn More" link="/" variant="secondary" />
@@ -21,11 +32,7 @@ import WidgetWrapper from '../ui/WidgetWrapper.astro';
     <div class="mt-6">
       <div class="mx-auto max-w-screen-md lg:max-w-none">
         <p class="lg:text-lg">
-          We built Batteries Included on a fully-open sourced stack to get you
-          fully-portable, best-in-class technology without the pain. Our
-          solutions are industry standard out of the box, ensuring you can work
-          the way you want, and build the way you want, without being limited by
-          your infrastructure.
+          {description}
         </p>
         <div class="text-center mt-6 lg:hidden">
           <ButtonLink label="Learn More" link="/" variant="secondary" />

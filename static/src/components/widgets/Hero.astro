@@ -14,6 +14,10 @@ export interface Props {
   classes?: {
     title?: string;
     containter?: string;
+    content?: {
+      container?: string;
+      paragraph?: string;
+    };
   };
   breadcrumbs?: {
     label: string;
@@ -30,6 +34,10 @@ const {
   actions = await Astro.slots.render('actions'),
   classes = {
     title: 'text-5xl md:text-6xl leading-tighter',
+    content: {
+      container: 'mt-8 max-w-[600px] lg:max-w-[650px] mx-auto',
+      paragraph: 'font-light text-lg lg:text-xl',
+    },
   },
   breadcrumbs,
 } = Astro.props;
@@ -64,7 +72,7 @@ const {
               <h1
                 class={clsx(
                   'tracking-tighter font-heading dark:text-gray-200 font-bold',
-                  classes?.title,
+                  classes.title,
                   {
                     'mt-2': subtitle,
                   }
@@ -75,8 +83,11 @@ const {
           }
           {
             content && (
-              <div class="mt-8 max-w-[600px] lg:max-w-[650px] mx-auto">
-                <p class="font-light text-lg lg:text-xl" set:html={content} />
+              <div class={clsx(classes.content?.container)}>
+                <p
+                  class={clsx(classes.content?.paragraph)}
+                  set:html={content}
+                />
               </div>
             )
           }
