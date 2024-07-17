@@ -179,9 +179,14 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   defp create_ferret(_project, _ferret_data, _pg), do: {:ok, nil}
 
-  defp create_jupyter(project, %{"jupyter" => jupyter_data}, %PGCluster{users: [_user]} = _pg) do
-    # TODO: get actual postgres database url
-    env_value = %EnvValue{source_type: :value, name: "DATABASE_URL", value: "postgres://TODO"}
+  defp create_jupyter(project, %{"jupyter" => jupyter_data}, %PGCluster{users: [user]} = pg) do
+    env_value = %EnvValue{
+      name: "DATABASE_URL",
+      source_type: :secret,
+      source_key: "cloudnative-pg.#{pg.name}.#{user.username}",
+      source_name: "dsn"
+    }
+
     jupyter_data = Map.put(jupyter_data, "env_values", [env_value])
 
     create_jupyter(project, %{"jupyter" => jupyter_data}, nil)
