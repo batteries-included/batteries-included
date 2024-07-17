@@ -10,7 +10,6 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 source "${ROOT_DIR}/bin/common-functions.sh"
 
 PORTFORWARD_ENABLED=1
-MACOSX_SLEEP_TIME=5
 
 # If you are changing this also change the
 # version in mix.exs for all the apps in platform_umbrella
@@ -388,6 +387,10 @@ do_build_image() {
 
     # Pre-create the  version for all docker build
     version="${BASE_VERSION}-$(version_tag)"
+    if [ -n "${VERSION_OVERRIDE:-""}" ]; then
+        version="$VERSION_OVERRIDE"
+    fi
+
     log "${GREEN}Building${NOFORMAT} container image ${image_name} with  version ${version}"
 
     declare -a cache_args
@@ -445,8 +448,6 @@ do_push_images() {
     args=("$@")
 
     local registry=${args[0]:-"localhost:5000"}
-    local version
-    version="${BASE_VERSION}-$(version_tag)"
 
     export TAG_LATEST=${TAG_LATEST}
 
@@ -462,12 +463,16 @@ tag_push() {
 
     local version
     version="${BASE_VERSION}-$(version_tag)"
+    if [ -n "${VERSION_OVERRIDE:-""}" ]; then
+        version="$VERSION_OVERRIDE"
+    fi
 
-    log "${GREEN}Pushing${NOFORMAT} ${image_name} to ${registry}"
+    log "${GREEN}Pushing${NOFORMAT} ${image_name}:${version} to ${registry}"
 
     docker tag "${image_name}:${version}" "${registry}/${image_name}:${version}"
     docker push "${registry}/${image_name}:${version}"
-    if [[ ${TAG_LATEST} -eq 1 ]]; then
+    # don't tag any override versions as latest
+    if [[ ${TAG_LATEST} -eq 1 && -z ${VERSION_OVERRIDE} ]]; then
         log "${GREEN}Tagging${NOFORMAT} ${image_name}:${version} as latest"
         docker tag "${image_name}:${version}" "${registry}/${image_name}:latest"
         docker push "${registry}/${image_name}:latest"
