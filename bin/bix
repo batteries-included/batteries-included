@@ -435,7 +435,7 @@ do_build_image() {
 }
 
 do_push_images() {
-    TAG_LATEST=1
+    TAG_LATEST=${TAG_LATEST:-1}
 
     while :; do
         case "${1-}" in
@@ -472,7 +472,7 @@ tag_push() {
     docker tag "${image_name}:${version}" "${registry}/${image_name}:${version}"
     docker push "${registry}/${image_name}:${version}"
     # don't tag any override versions as latest
-    if [[ ${TAG_LATEST} -eq 1 && -z ${VERSION_OVERRIDE} ]]; then
+    if [[ ${TAG_LATEST:-""} -eq 1 && -z ${VERSION_OVERRIDE:-""} ]]; then
         log "${GREEN}Tagging${NOFORMAT} ${image_name}:${version} as latest"
         docker tag "${image_name}:${version}" "${registry}/${image_name}:latest"
         docker push "${registry}/${image_name}:latest"
