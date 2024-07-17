@@ -3,6 +3,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -71,6 +72,8 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true
+
+    embeds_many :env_values, EnvValue, on_replace: :delete
 
     belongs_to :project, Project
 
