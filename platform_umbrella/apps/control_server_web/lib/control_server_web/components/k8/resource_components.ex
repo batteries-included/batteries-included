@@ -75,7 +75,7 @@ defmodule ControlServerWeb.ResourceComponents do
       <div
         id="scroller"
         style="max-height: 70vh"
-        class="max-h-full rounded-md bg-gray-lightest dark:bg-gray-darkest min-h-16"
+        class="max-h-full rounded-md bg-gray-lightest dark:bg-gray-darkest-tint min-h-16"
         phx-hook="ResourceLogsModal"
       >
         <code class="block p-3 overflow-x-scroll dark:text-white">

@@ -37,25 +37,19 @@ defmodule ControlServerWeb.Live.MonitoringHome do
 
   defp battery_link_panel(%{battery: %{type: :grafana}} = assigns) do
     ~H"""
-    <.panel>
-      <.a href={"//#{grafana_host()}/"} variant="external">Grafana</.a>
-    </.panel>
+    <.a href={"//#{grafana_host()}/"} variant="bordered">Grafana</.a>
     """
   end
 
   defp battery_link_panel(%{battery: %{type: :vm_agent}} = assigns) do
     ~H"""
-    <.panel>
-      <.a href={"//#{vmagent_host()}/"} variant="external">VM Agent</.a>
-    </.panel>
+    <.a href={"//#{vmagent_host()}/"} variant="bordered">VM Agent</.a>
     """
   end
 
   defp battery_link_panel(%{battery: %{type: :vm_cluster}} = assigns) do
     ~H"""
-    <.panel>
-      <.a href={"//#{vmselect_host()}/select/0/vmui"} variant="external">VM Select</.a>
-    </.panel>
+    <.a href={"//#{vmselect_host()}/select/0/vmui"} variant="external">VM Select</.a>
     """
   end
 
@@ -72,9 +66,9 @@ defmodule ControlServerWeb.Live.MonitoringHome do
       </.button>
     </.page_header>
 
-    <.flex :if={@batteries && @batteries != []} column class="items-stretch justify-start">
+    <.grid :if={@batteries && @batteries != []}>
       <.battery_link_panel :for={battery <- @batteries} battery={battery} />
-    </.flex>
+    </.grid>
 
     <.empty_home :if={@batteries == []} icon={@catalog_group.icon} install_path={install_path()} />
     """

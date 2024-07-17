@@ -13,13 +13,12 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
   def main_panel(assigns) do
     ~H"""
     <div class={["contents", @class]}>
-      <.grid columns={[sm: 1, lg: 2]}>
-        <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
-
-        <.flex class="justify-around items-center">
-          <.truncate_tooltip value={potential_url(@form)} length={72} />
-        </.flex>
-      </.grid>
+      <.panel>
+        <.grid columns={[sm: 1, lg: 2]}>
+          <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
+          <.input label="URL" name="url" value={potential_url(@form)} disabled />
+        </.grid>
+      </.panel>
     </div>
     """
   end

@@ -15,7 +15,7 @@ defmodule CommonUI.Components.Markdown do
     assigns = Map.put(assigns, :content, value)
 
     ~H"""
-    <.dynamic_tag name={@tag} class={["prose", @class]} {@rest}>
+    <.dynamic_tag name={@tag} class={["prose dark:prose-invert", @class]} {@rest}>
       <%= raw(@content) %>
     </.dynamic_tag>
     """

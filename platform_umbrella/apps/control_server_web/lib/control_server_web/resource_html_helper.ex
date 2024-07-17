@@ -28,6 +28,10 @@ defmodule ControlServerWeb.ResourceHTMLHelper do
     "/kube/raw/#{resource_type}/#{namespace}/#{name}"
   end
 
+  def to_html_id(%{"containerID" => id}) do
+    String.trim_leading(id, "containerd://")
+  end
+
   def to_html_id(resource) do
     [kind(resource), namespace(resource), name(resource)] |> Enum.filter(& &1) |> Enum.join("_") |> String.downcase()
   end
