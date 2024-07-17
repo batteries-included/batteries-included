@@ -9,6 +9,7 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Core
 
   resource(:crd_ingress_) do
@@ -62,6 +63,7 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
 
   resource(:deployment_aws_load_balancer_controller, battery, state) do
     namespace = base_namespace(state)
+    cluster_name = Core.config_field(state, :cluster_name)
 
     template =
       %{}
@@ -98,7 +100,7 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
           },
           "containers" => [
             %{
-              "args" => ["--cluster-name=#{Core.config_field(state, :cluster_name)}", "--ingress-class=alb"],
+              "args" => ["--cluster-name=#{cluster_name}", "--ingress-class=alb"],
               "image" => battery.config.image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
@@ -153,6 +155,7 @@ defmodule CommonCore.Resources.AwsLoadBalancerController do
     |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
+    |> F.require_non_nil(cluster_name)
   end
 
   resource(:ingress_class_alb) do

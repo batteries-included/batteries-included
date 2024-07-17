@@ -37,7 +37,7 @@ defmodule CommonCore.Resources.FerretDB do
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
-    |> F.require(state.ferret_services != [])
+    |> F.require_non_empty(state.ferret_services)
   end
 
   def service_account(%FerretService{} = ferret_service, _battery, %StateSummary{} = state) do
