@@ -21,6 +21,7 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.Projects.WebForm
   alias KubeServices.SystemState.SummaryStorage
+  alias CommonCore.StateSummary.PostgresState
 
   require Logger
 
@@ -183,7 +184,7 @@ defmodule ControlServerWeb.Projects.NewLive do
     env_value = %EnvValue{
       name: "DATABASE_URL",
       source_type: :secret,
-      source_name: "cloudnative-pg.#{pg.name}.#{user.username}",
+      source_name: PostgresState.user_secret(%{}, pg, user),
       source_key: "dsn"
     }
 
