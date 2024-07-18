@@ -136,7 +136,9 @@ defmodule ControlServerWeb.Projects.WebForm do
         if(params["db_type"] == "existing", do: "postgres_ids"),
         if(normalize_value("checkbox", params["need_redis"]), do: "redis"),
         if(normalize_value("checkbox", params["need_service"]) && params["service_type"] == "knative", do: "knative"),
-        if(normalize_value("checkbox", params["need_service"]) && params["service_type"] == "traditional", do: "traditional")
+        if(normalize_value("checkbox", params["need_service"]) && params["service_type"] == "traditional",
+          do: "traditional"
+        )
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -253,7 +255,8 @@ defmodule ControlServerWeb.Projects.WebForm do
           <TraditionalFormSubcomponents.main_panel
             form={to_form(@form[:traditional].value, as: :traditional)}
             class={
-              (!normalize_value("checkbox", @form[:need_service].value) || @service_type != :traditional) &&
+              (!normalize_value("checkbox", @form[:need_service].value) ||
+                 @service_type != :traditional) &&
                 "hidden"
             }
           />
