@@ -156,36 +156,6 @@ defmodule CommonCore.Resources.Notebooks do
     |> F.require_battery(state, :sso)
   end
 
-  defp to_env_vars(%{env_values: evs}), do: Enum.map(evs, &to_env_var/1)
+  defp to_env_vars(%{env_values: evs}), do: Enum.map(evs, &EnvValue.to_k8s_value/1)
   defp to_env_vars(_), do: []
-
-  defp to_env_var(%EnvValue{source_type: :value} = val) do
-    %{"name" => val.name, "value" => val.value}
-  end
-
-  defp to_env_var(%EnvValue{source_type: :config} = val) do
-    %{
-      "name" => val.name,
-      "valueFrom" => %{
-        "configMapKeyRef" => %{
-          "key" => val.source_key,
-          "name" => val.source_name,
-          "optional" => val.source_optional
-        }
-      }
-    }
-  end
-
-  defp to_env_var(%EnvValue{source_type: :secret} = val) do
-    %{
-      "name" => val.name,
-      "valueFrom" => %{
-        "secretKeyRef" => %{
-          "key" => val.source_key,
-          "name" => val.source_name,
-          "optional" => val.source_optional
-        }
-      }
-    }
-  end
 end

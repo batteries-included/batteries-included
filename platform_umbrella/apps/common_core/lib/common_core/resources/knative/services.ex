@@ -70,42 +70,12 @@ defmodule CommonCore.Resources.KnativeServices do
     env =
       base_env_values
       |> Enum.concat(container.env_values)
-      |> Enum.map(&to_env_var/1)
+      |> Enum.map(&EnvValue.to_k8s_value/1)
 
     container
     |> Map.from_struct()
     |> Map.drop(["env_values", :env_values])
     |> Map.put("env", env)
-  end
-
-  defp to_env_var(%EnvValue{source_type: :value} = val) do
-    %{"name" => val.name, "value" => val.value}
-  end
-
-  defp to_env_var(%EnvValue{source_type: :config} = val) do
-    %{
-      "name" => val.name,
-      "valueFrom" => %{
-        "configMapKeyRef" => %{
-          "key" => val.source_key,
-          "name" => val.source_name,
-          "optional" => val.source_optional
-        }
-      }
-    }
-  end
-
-  defp to_env_var(%EnvValue{source_type: :secret} = val) do
-    %{
-      "name" => val.name,
-      "valueFrom" => %{
-        "secretKeyRef" => %{
-          "key" => val.source_key,
-          "name" => val.source_name,
-          "optional" => val.source_optional
-        }
-      }
-    }
   end
 
   multi_resource(:knative_services, battery, state) do
