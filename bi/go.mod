@@ -28,7 +28,7 @@ require (
 	github.com/vbauerster/mpb/v8 v8.7.3
 	golang.org/x/sync v0.7.0
 	gopkg.in/ini.v1 v1.67.0
-	k8s.io/api v0.30.2
+	k8s.io/api v0.30.3
 	k8s.io/apiextensions-apiserver v0.30.2
 	k8s.io/apimachinery v0.30.3
 	k8s.io/client-go v0.30.2
