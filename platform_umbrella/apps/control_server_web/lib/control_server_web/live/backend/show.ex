@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.Containers.EnvValuePanel
+  import ControlServerWeb.PortPanel
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.TraditionalServices.Service
@@ -77,7 +78,8 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
         <.a variant="bordered" href={service_url(@service)}>Running Service</.a>
       </.flex>
 
-      <.env_var_panel env_values={@service.env_values} class="lg:col-span-2" />
+      <.env_var_panel env_values={@service.env_values} class="lg:col-span-1" />
+      <.port_panel ports={@service.ports} class="lg:col-span-1" />
     </.grid>
     """
   end

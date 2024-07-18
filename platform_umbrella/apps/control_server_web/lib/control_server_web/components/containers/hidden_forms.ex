@@ -35,4 +35,20 @@ defmodule ControlServerWeb.Containers.HiddenForms do
     </.inputs_for>
     """
   end
+
+  def ports_hidden_form(assigns) do
+    ~H"""
+    <.inputs_for :let={port} field={@field}>
+      <.single_port_hidden form={port} />
+    </.inputs_for>
+    """
+  end
+
+  def single_port_hidden(assigns) do
+    ~H"""
+    <.input type="hidden" field={@form[:name]} />
+    <.input type="hidden" field={@form[:port]} />
+    <.input type="hidden" field={@form[:protocol]} />
+    """
+  end
 end

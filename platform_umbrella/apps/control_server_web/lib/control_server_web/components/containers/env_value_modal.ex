@@ -65,8 +65,8 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
   end
 
   @impl Phoenix.LiveComponent
-  def handle_event("cancel", _, socket) do
-    ControlServerWeb.Live.Knative.FormComponent.update_env_value(nil, nil)
+  def handle_event("cancel", _, %{assigns: %{update_func: update_func}} = socket) do
+    update_func.(nil, nil)
     {:noreply, socket}
   end
 

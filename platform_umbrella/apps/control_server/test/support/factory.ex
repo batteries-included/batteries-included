@@ -92,6 +92,14 @@ defmodule ControlServer.Factory do
     %CommonCore.Containers.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
   end
 
+  def port_factory do
+    %CommonCore.Port{
+      name: sequence("port-"),
+      port: sequence(:port, [80, 443, 8080, 22, 8000]),
+      protocol: sequence(:protocol, [:tcp, :sctp, :udp])
+    }
+  end
+
   @spec knative_service_factory() :: CommonCore.Knative.Service.t()
   def knative_service_factory do
     %CommonCore.Knative.Service{
