@@ -6,9 +6,11 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
   import ControlServerWeb.Containers.ContainersPanel
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.Containers.HiddenForms
+  import ControlServerWeb.PortPanel
 
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
+  alias CommonCore.Port
   alias CommonCore.TraditionalServices.Service
   alias ControlServer.TraditionalServices
   alias Ecto.Changeset
@@ -25,7 +27,9 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
      |> assign_container_idx(nil)
      |> assign_container_field_name(nil)
      |> assign_env_value(nil)
-     |> assign_env_value_idx(nil)}
+     |> assign_env_value_idx(nil)
+     |> assign_port(nil)
+     |> assign_port_idx(nil)}
   end
 
   @impl Phoenix.LiveComponent
@@ -78,14 +82,14 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
   end
 
   def update(%{env_value: nil}, socket) do
-    {:ok, assign(socket, env_value: nil, env_value_idx: nil)}
+    {:ok, socket |> assign_env_value(nil) |> assign_env_value_idx(nil)}
   end
 
   def update(%{env_value: env_value, idx: nil}, %{assigns: %{changeset: changeset}} = socket) do
     env_values = Changeset.get_field(changeset, :env_values, [])
     changeset = Changeset.put_embed(changeset, :env_values, [env_value | env_values])
 
-    {:ok, socket |> assign(env_value: nil, env_value_idx: nil) |> assign_changeset(changeset)}
+    {:ok, socket |> assign_env_value(nil) |> assign_env_value_idx(nil) |> assign_changeset(changeset)}
   end
 
   def update(%{env_value: env_value, idx: idx}, %{assigns: %{changeset: changeset}} = socket) do
@@ -96,7 +100,29 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
 
     changeset = Changeset.put_embed(changeset, :env_values, env_values)
 
-    {:ok, socket |> assign(env_value: nil, env_value_idx: nil) |> assign_changeset(changeset)}
+    {:ok, socket |> assign_env_value(nil) |> assign_env_value_idx(nil) |> assign_changeset(changeset)}
+  end
+
+  def update(%{port: nil}, socket) do
+    {:ok, socket |> assign_port(nil) |> assign_port_idx(nil)}
+  end
+
+  def update(%{port: port, idx: nil}, %{assigns: %{changeset: changeset}} = socket) do
+    ports = Changeset.get_field(changeset, :ports, [])
+    changeset = Changeset.put_embed(changeset, :ports, [port | ports])
+
+    {:ok, socket |> assign_port(nil) |> assign_port_idx(nil) |> assign_changeset(changeset)}
+  end
+
+  def update(%{port: port, idx: idx}, %{assigns: %{changeset: changeset}} = socket) do
+    ports =
+      changeset
+      |> Changeset.get_field(:ports, [])
+      |> List.replace_at(idx, port)
+
+    changeset = Changeset.put_embed(changeset, :ports, ports)
+
+    {:ok, socket |> assign_port(nil) |> assign_port_idx(nil) |> assign_changeset(changeset)}
   end
 
   @impl Phoenix.LiveComponent
@@ -109,6 +135,10 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
   def handle_event("new_env_value", _, socket) do
     new_env_var = %EnvValue{source_type: :value}
     {:noreply, socket |> assign_env_value(new_env_var) |> assign_env_value_idx(nil)}
+  end
+
+  def handle_event("new_port", _, socket) do
+    {:noreply, socket |> assign_port(%Port{}) |> assign_port_idx(nil)}
   end
 
   def handle_event("new_container", %{"id" => "containers_panel-" <> cfn}, socket) do
@@ -173,6 +203,11 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     send_update(__MODULE__, id: "service-form", env_value: env_value, idx: idx)
   end
 
+  @spec update_port(Port.t() | nil, integer | nil) :: :ok
+  def update_port(port, idx) do
+    send_update(__MODULE__, id: "service-form", port: port, idx: idx)
+  end
+
   def assign_container(socket, container) do
     assign(socket, container: container)
   end
@@ -193,17 +228,27 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     assign(socket, env_value_idx: idx)
   end
 
+  def assign_port(socket, port) do
+    assign(socket, port: port)
+  end
+
+  def assign_port_idx(socket, idx) do
+    assign(socket, port_idx: idx)
+  end
+
   defp assign_changeset(socket, changeset) do
     containers = Changeset.get_field(changeset, :containers, [])
     init_containers = Changeset.get_field(changeset, :init_containers, [])
     env_values = Changeset.get_field(changeset, :env_values, [])
+    ports = Changeset.get_field(changeset, :ports, [])
 
     assign(socket,
       changeset: changeset,
       form: to_form(changeset),
       containers: containers,
       init_containers: init_containers,
-      env_values: env_values
+      env_values: env_values,
+      ports: ports
     )
   end
 
@@ -309,11 +354,13 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
             containers={@containers}
           />
 
-          <.env_var_panel env_values={@env_values} editable target={@myself} class="lg:col-span-2" />
+          <.env_var_panel env_values={@env_values} editable target={@myself} class="lg:col-span-1" />
+          <.port_panel ports={@ports} editable target={@myself} class="lg:col-span-1" />
           <!-- Hidden inputs for embeds -->
           <.containers_hidden_form field={@form[:containers]} />
           <.containers_hidden_form field={@form[:init_containers]} />
           <.env_values_hidden_form field={@form[:env_values]} />
+          <.ports_hidden_form field={@form[:ports]} />
         </.grid>
       </.form>
 
@@ -334,6 +381,15 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
         env_value={@env_value}
         idx={@env_value_idx}
         id="env_value-form-modal"
+      />
+
+      <.live_component
+        :if={@port}
+        module={ControlServerWeb.PortModal}
+        update_func={&update_port/2}
+        port={@port}
+        idx={@port_idx}
+        id="port-form-modal"
       />
     </div>
     """
