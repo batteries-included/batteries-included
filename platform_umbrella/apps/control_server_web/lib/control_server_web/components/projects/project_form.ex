@@ -80,6 +80,7 @@ defmodule ControlServerWeb.Projects.ProjectForm do
             label="Project Type"
             placeholder="Select project type"
             options={Project.type_options_for_select()}
+            help="Determines which types of resources to create and batteries to enable. AI projects create a Jupyter notebook, Web projects create a Knative/Traditional Service, and most projects can include a database. Bare projects don't create any resources."
           />
         </.grid>
 

@@ -2,7 +2,7 @@
   <input type="hidden" name="foo" value="false">
   <input type="checkbox" name="foo" value="true" checked class="size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darkest-tint checked:border-primary checked:hover:border-primary phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900">
 
-  <span class="text-sm text-gray-darkest dark:text-gray-lighter">
+  <span class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter">
     Foobar
     
   </span>

@@ -4,6 +4,7 @@ defmodule CommonUI.Components.Input do
 
   import CommonUI.Components.Dropdown
   import CommonUI.Components.Icon
+  import CommonUI.Components.Tooltip
   import CommonUI.ErrorHelpers
   import Phoenix.HTML.Form
 
@@ -18,6 +19,7 @@ defmodule CommonUI.Components.Input do
   attr :label, :string, default: nil
   attr :label_note, :string, default: nil
   attr :note, :string, default: nil
+  attr :help, :string, default: nil
   attr :placeholder, :string, default: nil
   attr :type, :string, default: "text"
   attr :icon, :atom, default: nil
@@ -69,7 +71,7 @@ defmodule CommonUI.Components.Input do
     <div phx-feedback-for={if !@force_feedback, do: @name}>
       <.dropdown id={"#{@id}-dropdown"} class="!mt-1 max-h-64 !overflow-auto">
         <:trigger>
-          <.label label={@label} />
+          <.label id={@id} label={@label} help={@help} />
 
           <div class={[
             input_class(@errors),
@@ -115,9 +117,11 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "select"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <.label label={@label} />
+      <.label id={@id} label={@label} help={@help} />
 
       <select
         name={@name}
@@ -309,6 +313,8 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "switch"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
     <label
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -317,7 +323,7 @@ defmodule CommonUI.Components.Input do
         @class
       ]}
     >
-      <span class={label_class()}><%= @label %></span>
+      <.label id={@id} label={@label} help={@help} class="inline-flex" />
 
       <div>
         <input
@@ -357,9 +363,11 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "textarea"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <.label label={@label} />
+      <.label id={@id} label={@label} help={@help} />
 
       <textarea
         name={@name}
@@ -393,10 +401,12 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <div class="flex items-center justify-between mb-2">
-        <.label label={@label} class="mb-0" />
+        <.label id={@id} label={@label} help={@help} class="mb-0" />
 
         <div :if={@label_note} class="font-medium text-sm text-gray-light dark:text-gray-dark">
           <%= @label_note %>
@@ -461,18 +471,34 @@ defmodule CommonUI.Components.Input do
     (lower && value < lower) || (upper && value > upper)
   end
 
+  attr :id, :string, required: true
   attr :label, :string, default: nil
+  attr :help, :string, default: nil
   attr :class, :any, default: "mb-2"
+  attr :rest, :global
 
   defp label(assigns) do
     ~H"""
-    <div :if={@label} class={[label_class(), @class]}>
-      <%= @label %>
+    <div :if={@label} class={[label_class(), @class]} {@rest}>
+      <span><%= @label %></span>
+
+      <div :if={@help}>
+        <.icon
+          solid
+          id={"#{@id}-help"}
+          name={:question_mark_circle}
+          class="size-5 opacity-30 hover:opacity-100"
+        />
+
+        <.tooltip target_id={"#{@id}-help"}>
+          <%= @help %>
+        </.tooltip>
+      </div>
     </div>
     """
   end
 
-  defp label_class, do: "text-sm text-gray-darkest dark:text-gray-lighter"
+  defp label_class, do: "flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter"
 
   attr :errors, :list, default: []
   attr :class, :any, default: "mt-2"
