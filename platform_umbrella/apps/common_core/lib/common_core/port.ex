@@ -13,7 +13,7 @@ defmodule CommonCore.Port do
   batt_embedded_schema do
     field :name, :string
     field :port, :integer
-    field :protocol, Ecto.Enum, values: [:tcp, :udp, :sctp], default: :tcp
+    field :protocol, Ecto.Enum, values: Keyword.values(@protocols), default: :tcp
   end
 
   def changeset(struct, params \\ %{}) do
