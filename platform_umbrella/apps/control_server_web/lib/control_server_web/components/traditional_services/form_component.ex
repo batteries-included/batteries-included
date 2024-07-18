@@ -339,6 +339,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
                 type="select"
                 options={["Stateful Set": "statefulset", Deployment: "deployment"]}
               />
+              <.input label="Public?" field={@form[:is_public?]} type="checkbox" />
             </.flex>
           </.panel>
 

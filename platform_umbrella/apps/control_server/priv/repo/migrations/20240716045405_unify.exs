@@ -132,6 +132,7 @@ defmodule ControlServer.Repo.Migrations.Unify do
 
       add :kube_deployment_type, :string
       add :num_instances, :integer
+      add :is_public?, :boolean
 
       add :storage_size, :bigint
       add :storage_class, :string
