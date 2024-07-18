@@ -5,6 +5,7 @@ defmodule CommonCore.Resources.Notebooks do
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
@@ -55,6 +56,8 @@ defmodule CommonCore.Resources.Notebooks do
   defp stateful_set(%{} = notebook, _battery, state) do
     namespace = ai_namespace(state)
 
+    env = [%{"name" => "JUPYTER_ENABLE_LAB", "value" => "yes"}] ++ to_env_vars(notebook)
+
     template =
       %{
         "spec" => %{
@@ -62,9 +65,7 @@ defmodule CommonCore.Resources.Notebooks do
             %{
               "name" => "notebook",
               "image" => notebook.image,
-              "env" => [
-                %{"name" => "JUPYTER_ENABLE_LAB", "value" => "yes"}
-              ],
+              "env" => env,
               "command" => ["start-notebook.sh"],
               "args" => [
                 "--NotebookApp.base_url='#{base_url(notebook)}'",
@@ -154,4 +155,7 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
   end
+
+  defp to_env_vars(%{env_values: evs}), do: Enum.map(evs, &EnvValue.to_k8s_value/1)
+  defp to_env_vars(_), do: []
 end
