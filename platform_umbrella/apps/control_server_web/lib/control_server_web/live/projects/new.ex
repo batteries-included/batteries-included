@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Containers.EnvValue
   alias CommonCore.Postgres.Cluster, as: PGCluster
+  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
   alias CommonCore.StateSummary.PostgresState
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
@@ -93,15 +94,15 @@ defmodule ControlServerWeb.Projects.NewLive do
     form_data = socket.assigns.form_data
 
     with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
-         {:ok, database_pg} <- create_postgres(project, form_data[DatabaseForm]),
-         {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
-         {:ok, _} <- create_ferret(project, form_data[DatabaseForm], database_pg),
+         {:ok, db_pg} <- create_postgres(project, form_data[DatabaseForm]),
+         {:ok, _db_redis} <- create_redis(project, form_data[DatabaseForm]),
+         {:ok, _db_ferret} <- create_ferret(project, form_data[DatabaseForm], db_pg),
          {:ok, ai_pg} <- create_postgres(project, form_data[AIForm]),
-         {:ok, _} <- create_jupyter(project, form_data[AIForm], ai_pg),
-         {:ok, _} <- create_postgres(project, form_data[WebForm]),
-         {:ok, _} <- create_redis(project, form_data[WebForm]),
-         {:ok, _} <- create_knative(project, form_data[WebForm]),
-         {:ok, _} <- create_traditional(project, form_data[WebForm]) do
+         {:ok, _ai_notebook} <- create_jupyter(project, form_data[AIForm], ai_pg),
+         {:ok, web_pg} <- create_postgres(project, form_data[WebForm]),
+         {:ok, web_redis} <- create_redis(project, form_data[WebForm]),
+         {:ok, _web_knative} <- create_knative(project, form_data[WebForm], web_pg, web_redis),
+         {:ok, _web_traditional} <- create_traditional(project, form_data[WebForm], web_pg, web_redis) do
       {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
     else
       err ->
@@ -171,52 +172,83 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   defp create_redis(_project, _redis_data), do: {:ok, nil}
 
-  defp create_ferret(project, %{"ferret" => ferret_data}, %PGCluster{id: pg_id}) do
+  defp create_ferret(project, %{"ferret" => ferret_data}, %PGCluster{} = pg) do
     ferret_data
     |> Map.put("project_id", project.id)
-    |> Map.put("postgres_cluster_id", pg_id)
+    |> Map.put("postgres_cluster_id", pg.id)
     |> FerretDB.create_ferret_service()
   end
 
   defp create_ferret(_project, _ferret_data, _pg), do: {:ok, nil}
 
-  defp create_jupyter(project, %{"jupyter" => jupyter_data}, %PGCluster{users: [user]} = pg) do
-    env_value = %EnvValue{
-      name: "DATABASE_URL",
-      source_type: :secret,
-      source_name: PostgresState.user_secret(%{}, pg, user),
-      source_key: "dsn"
-    }
-
-    jupyter_data = Map.put(jupyter_data, "env_values", [env_value])
-
-    create_jupyter(project, %{"jupyter" => jupyter_data}, nil)
-  end
-
-  defp create_jupyter(project, %{"jupyter" => jupyter_data}, nil) do
+  defp create_jupyter(project, %{"jupyter" => jupyter_data}, pg) do
     jupyter_data
     |> Map.put("project_id", project.id)
+    |> Map.put("env_values", database_env_values(pg))
     |> Map.put_new("storage_class", get_default_storage_class())
     |> Notebooks.create_jupyter_lab_notebook()
   end
 
   defp create_jupyter(_project, _jupyter_data, _pg), do: {:ok, nil}
 
-  defp create_knative(project, %{"knative" => knative_data}) do
+  defp create_knative(project, %{"knative" => knative_data}, pg, redis) do
     knative_data
     |> Map.put("project_id", project.id)
+    |> Map.put("env_values", database_env_values(pg) ++ redis_env_values(redis))
     |> Knative.create_service()
   end
 
-  defp create_knative(_project, _knative_data), do: {:ok, nil}
+  defp create_knative(_project, _knative_data, _pg, _redis), do: {:ok, nil}
 
-  defp create_traditional(project, %{"traditional" => traditional_data}) do
+  defp create_traditional(project, %{"traditional" => traditional_data}, pg, redis) do
     traditional_data
     |> Map.put("project_id", project.id)
+    |> Map.put("env_values", database_env_values(pg) ++ redis_env_values(redis))
     |> TraditionalServices.create_service()
   end
 
-  defp create_traditional(_project, _traditional_data), do: {:ok, nil}
+  defp create_traditional(_project, _traditional_data, _pg, _redis), do: {:ok, nil}
+
+  defp database_env_values(clusters) when is_list(clusters) do
+    clusters
+    |> Enum.with_index()
+    |> Enum.map(fn {{:ok, %PGCluster{users: [user | _]} = pg}, index} ->
+      %EnvValue{
+        name: if(Enum.count(clusters) > 1, do: "DATABASE_URL_#{index + 1}", else: "DATABASE_URL"),
+        source_type: :secret,
+        source_name: PostgresState.user_secret(%{}, pg, user),
+        source_key: "dsn"
+      }
+    end)
+  end
+
+  defp database_env_values(%PGCluster{users: [user | _]} = pg) do
+    [
+      %EnvValue{
+        name: "DATABASE_URL",
+        source_type: :secret,
+        source_name: PostgresState.user_secret(%{}, pg, user),
+        source_key: "dsn"
+      }
+    ]
+  end
+
+  defp database_env_values(_), do: []
+
+  defp redis_env_values(%RedisCluster{} = _redis) do
+    [
+      # TODO: Get a dsn or similar value for the Redis cluster
+      #
+      # %EnvValue{
+      #   name: "REDIS_URL",
+      #   source_type: :secret,
+      #   source_name: "",
+      #   source_key: "dsn"
+      # }
+    ]
+  end
+
+  defp redis_env_values(_), do: []
 
   defp get_default_storage_class do
     case SummaryStorage.default_storage_class() do

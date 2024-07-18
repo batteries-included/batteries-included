@@ -193,7 +193,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
         </.data_list>
       </.panel>
 
-      <div>
+      <div :if={@grafana_dashboard_url}>
         <.a :if={@grafana_dashboard_url} variant="bordered" href={@grafana_dashboard_url}>
           Grafana Dashboard
         </.a>
