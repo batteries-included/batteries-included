@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Containers.EnvValue
   alias CommonCore.Postgres.Cluster, as: PGCluster
+  alias CommonCore.StateSummary.PostgresState
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
   alias ControlServer.FerretDB
@@ -21,7 +22,6 @@ defmodule ControlServerWeb.Projects.NewLive do
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.Projects.WebForm
   alias KubeServices.SystemState.SummaryStorage
-  alias CommonCore.StateSummary.PostgresState
 
   require Logger
 

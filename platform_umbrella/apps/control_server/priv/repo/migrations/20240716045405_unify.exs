@@ -44,7 +44,7 @@ defmodule ControlServer.Repo.Migrations.Unify do
       add :memory_limits, :bigint
 
       add :env_values, :map
-      
+
       add :project_id, references(:projects, on_delete: :nilify_all)
 
       timestamps(type: :utc_datetime_usec)
