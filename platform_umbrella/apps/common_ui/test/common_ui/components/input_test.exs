@@ -8,7 +8,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input name="foo" value="bar" label="Foobar" icon={:magnifying_glass} />
+      <.input id="foo" name="foo" value="bar" label="Foobar" icon={:magnifying_glass} />
       """
     end
 
@@ -16,7 +16,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input name="foo" value="bar" label="Foobar" required icon={:magnifying_glass} />
+      <.input id="foo" name="foo" value="bar" label="Foobar" required icon={:magnifying_glass} />
       """
     end
 
@@ -24,7 +24,23 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input name="foo" value="bar" placeholder="Foobar" errors={["Oh no"]} />
+      <.input id="foo" name="foo" value="bar" placeholder="Foobar" errors={["Oh no"]} />
+      """
+    end
+
+    component_snapshot_test "with help text" do
+      assigns = %{}
+
+      ~H"""
+      <.input
+        id="foo"
+        name="foo"
+        value="bar"
+        placeholder="Foobar"
+        label="Foobar"
+        help="Help text"
+        errors={["Oh no"]}
+      />
       """
     end
   end
@@ -34,7 +50,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="textarea" name="foo" value="bar" label="Foobar" />
+      <.input type="textarea" id="foo" name="foo" value="bar" label="Foobar" />
       """
     end
 
@@ -42,7 +58,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="textarea" name="foo" value="bar" placeholder="Foobar" errors={["Oh no"]} />
+      <.input type="textarea" id="foo" name="foo" value="bar" placeholder="Foobar" errors={["Oh no"]} />
       """
     end
   end
@@ -52,7 +68,14 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="select" name="foo" value="bar" label="Foobar" options={[Foo: "foo", Bar: "bar"]} />
+      <.input
+        type="select"
+        id="foo"
+        name="foo"
+        value="bar"
+        label="Foobar"
+        options={[Foo: "foo", Bar: "bar"]}
+      />
       """
     end
 
@@ -62,6 +85,7 @@ defmodule CommonUI.Components.InputTest do
       ~H"""
       <.input
         type="select"
+        id="foo"
         name="foo"
         value="bar"
         label="Foobar"
@@ -77,6 +101,7 @@ defmodule CommonUI.Components.InputTest do
       ~H"""
       <.input
         type="select"
+        id="foo"
         name="foo"
         value="bar"
         placeholder="Foobar"
@@ -95,7 +120,7 @@ defmodule CommonUI.Components.InputTest do
       ~H"""
       <.input
         type="multiselect"
-        id="foobar"
+        id="foo"
         name="foo"
         value={["bar"]}
         label="Foobar"
@@ -110,7 +135,7 @@ defmodule CommonUI.Components.InputTest do
       ~H"""
       <.input
         type="multiselect"
-        id="foobar"
+        id="foo"
         name="foo"
         value={["bar"]}
         label="Foobar"
@@ -176,7 +201,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" name="foo" value="bar" label="Foobar" checked />
+      <.input type="switch" id="foo" name="foo" value="bar" label="Foobar" checked />
       """
     end
 
@@ -184,7 +209,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" name="foo" value="bar" label="Foobar" checked errors={["Oh no"]} />
+      <.input type="switch" id="foo" name="foo" value="bar" label="Foobar" checked errors={["Oh no"]} />
       """
     end
 
@@ -192,7 +217,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" name="foo" value="true" label="Foobar" checked />
+      <.input type="switch" id="foo" name="foo" value="true" label="Foobar" checked />
       """
     end
 
@@ -200,7 +225,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" name="foo" value="true" label="Foobar" checked disabled />
+      <.input type="switch" id="foo" name="foo" value="true" label="Foobar" checked disabled />
       """
     end
   end

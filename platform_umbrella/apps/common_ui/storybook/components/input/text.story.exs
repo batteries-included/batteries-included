@@ -17,6 +17,15 @@ defmodule Storybook.Components.Input.Text do
         }
       },
       %Variation{
+        id: :with_help,
+        attributes: %{
+          name: "foobar",
+          value: "",
+          label: "Label",
+          help: "This is some help text"
+        }
+      },
+      %Variation{
         id: :with_icon,
         attributes: %{
           name: "foobar",
