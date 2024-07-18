@@ -17,7 +17,7 @@ defmodule EventCenter.Database do
     :system_battery,
     :timeline_event,
     :ferret_service,
-    :backend_service
+    :traditional_service
   ]
 
   def allowed_actions, do: @allowed_actions

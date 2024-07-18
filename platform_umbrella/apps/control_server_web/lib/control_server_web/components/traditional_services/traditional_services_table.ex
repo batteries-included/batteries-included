@@ -12,7 +12,7 @@ defmodule ControlServerWeb.TraditionalServicesTable do
 
   def traditional_services_table(assigns) do
     ~H"""
-    <.table id="backend-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
+    <.table id="traditional-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
       <:col :let={service} :if={!@abridged} label="ID"><%= service.id %></:col>
       <:col :let={service} label="Name"><%= service.name %></:col>
       <:col :let={service} :if={!@abridged} label="Instances"><%= service.num_instances %></:col>
@@ -49,5 +49,5 @@ defmodule ControlServerWeb.TraditionalServicesTable do
 
   defp show_url(%Service{} = service), do: ~p"/traditional_services/#{service}/show"
   defp edit_url(%Service{} = service), do: ~p"/traditional_services/#{service}/edit"
-  defp service_url(%Service{} = service), do: "//#{backend_host(service)}"
+  defp service_url(%Service{} = service), do: "//#{traditional_host(service)}"
 end

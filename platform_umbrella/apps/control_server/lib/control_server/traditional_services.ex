@@ -109,7 +109,7 @@ defmodule ControlServer.TraditionalServices do
   end
 
   defp broadcast({:ok, fc} = result, action) do
-    :ok = DatabaseEventCenter.broadcast(:backend_service, action, fc)
+    :ok = DatabaseEventCenter.broadcast(:traditional_service, action, fc)
     result
   end
 

@@ -58,9 +58,9 @@ defmodule ControlServerWeb.Projects.ShowLive do
     redis_ids = Enum.map(project.redis_clusters, & &1.id)
     ferret_ids = Enum.map(project.ferret_services, & &1.id)
     knative_ids = Enum.map(project.knative_services, & &1.id)
-    backend_ids = Enum.map(project.traditional_services, & &1.id)
+    traditional_ids = Enum.map(project.traditional_services, & &1.id)
 
-    allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids ++ backend_ids)
+    allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids ++ traditional_ids)
     pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
 
     socket

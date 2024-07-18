@@ -6,7 +6,7 @@ defmodule KubeServices.SmartBuilder do
   alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
-  alias CommonCore.TraditionalServices.Service, as: BackendService
+  alias CommonCore.TraditionalServices.Service, as: TraditionalService
   alias KubeServices.SystemState.SummaryBatteries
 
   def new_postgres do
@@ -58,8 +58,8 @@ defmodule KubeServices.SmartBuilder do
     %{virtual_size: Atom.to_string(SummaryBatteries.default_size())}
   end
 
-  def new_backend_service do
-    %BackendService{
+  def new_traditional_service do
+    %TraditionalService{
       virtual_size: Atom.to_string(SummaryBatteries.default_size())
     }
   end

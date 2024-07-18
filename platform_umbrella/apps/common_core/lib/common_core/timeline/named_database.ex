@@ -10,7 +10,7 @@ defmodule CommonCore.Timeline.NamedDatabase do
     :redis_cluster,
     :ferret_service,
     :system_battery,
-    :backend_service
+    :traditional_service
   ]
 
   def possible_schema_types, do: @possible_schema_types

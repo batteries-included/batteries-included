@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
 
     {:noreply,
      socket
-     |> put_flash(:global_success, "Backend successfully deleted")
+     |> put_flash(:global_success, "Service successfully deleted")
      |> push_navigate(to: ~p"/traditional_services")}
   end
 
@@ -86,5 +86,5 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
 
   defp back_url, do: ~p"/traditional_services"
   defp edit_url(service), do: ~p"/traditional_services/#{service}/edit"
-  defp service_url(%Service{} = service), do: "//#{backend_host(service)}"
+  defp service_url(%Service{} = service), do: "//#{traditional_host(service)}"
 end

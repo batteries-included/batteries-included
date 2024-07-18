@@ -118,10 +118,10 @@ defmodule KubeServices.SystemState.SummaryHosts do
     GenServer.call(target, [:knative_host, service])
   end
 
-  @spec backend_host(atom | pid | {atom, any} | {:via, atom, any}, map() | struct()) ::
+  @spec traditional_host(atom | pid | {atom, any} | {:via, atom, any}, map() | struct()) ::
           String.t() | nil
-  def backend_host(target \\ @me, service) do
-    GenServer.call(target, [:backend_host, service])
+  def traditional_host(target \\ @me, service) do
+    GenServer.call(target, [:traditional_host, service])
   end
 
   @spec kiali_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
