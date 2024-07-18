@@ -31,6 +31,13 @@ defmodule ControlServerWeb.BackendFormSubcomponents do
           {"CPU limits:", @form[:cpu_limits].value}
         ]}
       />
+
+      <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
+
+      <.grid columns={[sm: 1, lg: 2]} class="items-center">
+        <.h5>Number of instances</.h5>
+        <.input field={@form[:num_instances]} type="range" min="1" max="5" step="1" />
+      </.grid>
     </div>
     """
   end

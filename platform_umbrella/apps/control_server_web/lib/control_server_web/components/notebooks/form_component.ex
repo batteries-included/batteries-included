@@ -2,14 +2,67 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.Containers.EnvValuePanel
+  import ControlServerWeb.Containers.HiddenForms
+
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.Notebooks
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Util.Memory
   alias ControlServer.Notebooks
   alias ControlServer.Projects
+  alias Ecto.Changeset
 
   def mount(socket) do
-    {:ok, assign_projects(socket)}
+    {:ok,
+     socket
+     |> assign_projects()
+     |> assign_env_value(nil)
+     |> assign_env_value_idx(nil)}
+  end
+
+  defp assign_projects(socket) do
+    assign(socket, projects: Projects.list_projects())
+  end
+
+  defp assign_env_value(socket, env_value) do
+    assign(socket, env_value: env_value)
+  end
+
+  defp assign_env_value_idx(socket, idx) do
+    assign(socket, env_value_idx: idx)
+  end
+
+  defp assign_changeset(socket, changeset) do
+    env_values = Changeset.get_field(changeset, :env_values, [])
+
+    assign(socket,
+      changeset: changeset,
+      form: to_form(changeset),
+      env_values: env_values
+    )
+  end
+
+  def update(%{env_value: nil}, socket) do
+    {:ok, socket |> assign_env_value(nil) |> assign_env_value_idx(nil)}
+  end
+
+  def update(%{env_value: env_value, idx: nil}, %{assigns: %{changeset: changeset}} = socket) do
+    env_values = Changeset.get_field(changeset, :env_values, [])
+    changeset = Changeset.put_embed(changeset, :env_values, [env_value | env_values])
+
+    {:ok, socket |> assign_env_value(nil) |> assign_env_value_idx(nil) |> assign_changeset(changeset)}
+  end
+
+  def update(%{env_value: env_value, idx: idx}, %{assigns: %{changeset: changeset}} = socket) do
+    env_values =
+      changeset
+      |> Changeset.get_field(:env_values, [])
+      |> List.replace_at(idx, env_value)
+
+    changeset = Changeset.put_embed(changeset, :env_values, env_values)
+
+    {:ok, socket |> assign_env_value(nil) |> assign_env_value_idx(nil) |> assign_changeset(changeset)}
   end
 
   def update(assigns, socket) do
@@ -19,11 +72,30 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:form, to_form(changeset))}
+     |> assign_changeset(changeset)}
   end
 
-  defp assign_projects(socket) do
-    assign(socket, projects: Projects.list_projects())
+  def handle_event("new_env_value", _, socket) do
+    new_env_var = %EnvValue{source_type: :value}
+    {:noreply, socket |> assign_env_value(new_env_var) |> assign_env_value_idx(nil)}
+  end
+
+  def handle_event("edit:env_value", %{"idx" => idx_string}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, _} = Integer.parse(idx_string)
+
+    env_values = Changeset.get_field(changeset, :env_values, [])
+    env_value = Enum.fetch!(env_values, idx)
+
+    {:noreply, socket |> assign_env_value(env_value) |> assign_env_value_idx(idx)}
+  end
+
+  def handle_event("del:env_value", %{"idx" => env_value_idx}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, ""} = Integer.parse(env_value_idx)
+
+    env_values = changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(idx)
+    new_changeset = Changeset.put_embed(changeset, :env_values, env_values)
+
+    {:noreply, assign_changeset(socket, new_changeset)}
   end
 
   def handle_event("validate", %{"jupyter_lab_notebook" => params}, socket) do
@@ -32,7 +104,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
       |> Notebooks.change_jupyter_lab_notebook(params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :form, to_form(changeset))}
+    {:noreply, assign_changeset(socket, changeset)}
   end
 
   def handle_event("save", %{"jupyter_lab_notebook" => params}, socket) do
@@ -48,7 +120,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
          |> push_navigate(to: ~p"/notebooks/#{notebook.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :form, to_form(changeset))}
+        {:noreply, assign_changeset(socket, changeset)}
     end
   end
 
@@ -61,8 +133,12 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
          |> push_navigate(to: ~p"/notebooks/#{notebook.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :form, to_form(changeset))}
+        {:noreply, assign_changeset(socket, changeset)}
     end
+  end
+
+  defp update_env_value(env_value, idx) do
+    send_update(__MODULE__, id: "notebook-form", env_value: env_value, idx: idx)
   end
 
   def render(assigns) do
@@ -114,6 +190,10 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
             </.grid>
           </.panel>
 
+          <.env_var_panel env_values={@env_values} editable target={@myself} />
+          <!-- Hidden inputs for embeds -->
+          <.env_values_hidden_form field={@form[:env_values]} />
+
           <.panel title="Advanced Settings" variant="gray">
             <.flex column>
               <.input field={@form[:image]} label="Image" disabled={@action == :edit} />
@@ -130,6 +210,15 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
           </.panel>
         </.grid>
       </.form>
+
+      <.live_component
+        :if={@env_value}
+        module={ControlServerWeb.Containers.EnvValueModal}
+        update_func={&update_env_value/2}
+        env_value={@env_value}
+        idx={@env_value_idx}
+        id="env-form-modal"
+      />
     </div>
     """
   end

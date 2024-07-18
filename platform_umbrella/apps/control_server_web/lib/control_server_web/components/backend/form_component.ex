@@ -272,58 +272,49 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
             Save Traditional Service
           </.button>
         </.page_header>
-        <.flex column>
+
+        <.grid columns={[sm: 1, lg: 2]}>
           <.panel>
             <.main_panel form={@form} />
           </.panel>
 
-          <.grid columns={[sm: 1, lg: 2]}>
-            <.containers_panel
-              id="containers_panel-init_containers"
-              title="Init Containers"
-              target={@myself}
-              containers={@init_containers}
-            />
-            <.containers_panel
-              id="containers_panel-containers"
-              target={@myself}
-              containers={@containers}
-            />
-            <.panel variant="gray" title="Advanced Settings">
-              <.flex column>
-                <.input
-                  field={@form[:project_id]}
-                  type="select"
-                  label="Project"
-                  placeholder="No Project"
-                  placeholder_selectable={true}
-                  options={Enum.map(@projects, &{&1.name, &1.id})}
-                />
-                <.input
-                  label="Kube Deployment Type"
-                  field={@form[:kube_deployment_type]}
-                  type="select"
-                  options={["Stateful Set": "statefulset", Deployment: "deployment"]}
-                />
-                <.h5 class="mt-2">Number of Instances</.h5>
-                <.input
-                  label="Number of Instances"
-                  field={@form[:num_instances]}
-                  type="range"
-                  min="1"
-                  max={5}
-                  step="1"
-                />
-              </.flex>
-            </.panel>
+          <.panel variant="gray" title="Advanced Settings">
+            <.flex column>
+              <.input
+                field={@form[:project_id]}
+                type="select"
+                label="Project"
+                placeholder="No Project"
+                placeholder_selectable={true}
+                options={Enum.map(@projects, &{&1.name, &1.id})}
+              />
+              <.input
+                label="Kube Deployment Type"
+                field={@form[:kube_deployment_type]}
+                type="select"
+                options={["Stateful Set": "statefulset", Deployment: "deployment"]}
+              />
+            </.flex>
+          </.panel>
 
-            <.env_var_panel env_values={@env_values} editable target={@myself} />
-            <!-- Hidden inputs for embeds -->
-            <.containers_hidden_form field={@form[:containers]} />
-            <.containers_hidden_form field={@form[:init_containers]} />
-            <.env_values_hidden_form field={@form[:env_values]} />
-          </.grid>
-        </.flex>
+          <.containers_panel
+            id="containers_panel-init_containers"
+            title="Init Containers"
+            target={@myself}
+            containers={@init_containers}
+          />
+          <.containers_panel
+            id="containers_panel-containers"
+            target={@myself}
+            containers={@containers}
+          />
+
+          <.env_var_panel env_values={@env_values} editable target={@myself} class="lg:col-span-2" />
+          <!-- Hidden inputs for embeds -->
+          <.containers_hidden_form field={@form[:containers]} />
+          <.containers_hidden_form field={@form[:init_containers]} />
+          <.env_values_hidden_form field={@form[:env_values]} />
+        </.grid>
       </.form>
 
       <.live_component

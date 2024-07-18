@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.Containers.EnvValuePanel
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Util.Memory
@@ -78,11 +79,12 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
       <.flex column class="justify-start">
         <.a variant="bordered" href={notebook_path(@notebook)}>Open Notebook</.a>
       </.flex>
+
+      <.env_var_panel env_values={@notebook.env_values} class="lg:col-span-2" />
     </.grid>
     """
   end
 
   defp edit_url(notebook), do: ~p"/notebooks/#{notebook}/edit"
-
   defp notebook_path(notebook), do: "//#{notebooks_host()}/#{notebook.name}"
 end

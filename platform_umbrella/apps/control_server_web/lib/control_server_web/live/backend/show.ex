@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.Containers.EnvValuePanel
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.TraditionalServices.Service
@@ -75,6 +76,8 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
       <.flex column class="justify-start">
         <.a variant="bordered" href={service_url(@service)}>Running Service</.a>
       </.flex>
+
+      <.env_var_panel env_values={@service.env_values} class="lg:col-span-2" />
     </.grid>
     """
   end

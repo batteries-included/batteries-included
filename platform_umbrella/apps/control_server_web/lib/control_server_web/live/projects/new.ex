@@ -4,7 +4,9 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.Postgres.Cluster, as: PGCluster
+  alias CommonCore.StateSummary.PostgresState
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
   alias ControlServer.FerretDB
@@ -91,11 +93,11 @@ defmodule ControlServerWeb.Projects.NewLive do
     form_data = socket.assigns.form_data
 
     with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
-         {:ok, pg} <- create_postgres(project, form_data[DatabaseForm]),
+         {:ok, database_pg} <- create_postgres(project, form_data[DatabaseForm]),
          {:ok, _} <- create_redis(project, form_data[DatabaseForm]),
-         {:ok, _} <- create_ferret(project, form_data[DatabaseForm], pg),
-         {:ok, _} <- create_jupyter(project, form_data[AIForm]),
-         {:ok, _} <- create_postgres(project, form_data[AIForm]),
+         {:ok, _} <- create_ferret(project, form_data[DatabaseForm], database_pg),
+         {:ok, ai_pg} <- create_postgres(project, form_data[AIForm]),
+         {:ok, _} <- create_jupyter(project, form_data[AIForm], ai_pg),
          {:ok, _} <- create_postgres(project, form_data[WebForm]),
          {:ok, _} <- create_redis(project, form_data[WebForm]),
          {:ok, _} <- create_knative(project, form_data[WebForm]),
@@ -178,14 +180,27 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   defp create_ferret(_project, _ferret_data, _pg), do: {:ok, nil}
 
-  defp create_jupyter(project, %{"jupyter" => jupyter_data}) do
+  defp create_jupyter(project, %{"jupyter" => jupyter_data}, %PGCluster{users: [user]} = pg) do
+    env_value = %EnvValue{
+      name: "DATABASE_URL",
+      source_type: :secret,
+      source_name: PostgresState.user_secret(%{}, pg, user),
+      source_key: "dsn"
+    }
+
+    jupyter_data = Map.put(jupyter_data, "env_values", [env_value])
+
+    create_jupyter(project, %{"jupyter" => jupyter_data}, nil)
+  end
+
+  defp create_jupyter(project, %{"jupyter" => jupyter_data}, nil) do
     jupyter_data
     |> Map.put("project_id", project.id)
     |> Map.put_new("storage_class", get_default_storage_class())
     |> Notebooks.create_jupyter_lab_notebook()
   end
 
-  defp create_jupyter(_project, _jupyter_data), do: {:ok, nil}
+  defp create_jupyter(_project, _jupyter_data, _pg), do: {:ok, nil}
 
   defp create_knative(project, %{"knative" => knative_data}) do
     knative_data

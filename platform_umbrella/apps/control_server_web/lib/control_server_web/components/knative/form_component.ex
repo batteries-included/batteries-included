@@ -308,9 +308,13 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
         </.page_header>
 
         <.flex column>
-          <.main_panel form={@form} />
+          <.grid columns={[sm: 1, lg: 2]}>
+            <.panel>
+              <.main_panel form={@form} />
+            </.panel>
 
-          <.grid columns={[sm: 2, lg: 2]}>
+            <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} projects={@projects} />
+
             <.containers_panel
               id="containers_panel-init_containers"
               title="Init Containers"
@@ -322,8 +326,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
               target={@myself}
               containers={@containers}
             />
-            <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} projects={@projects} />
-            <.env_var_panel env_values={@env_values} editable target={@myself} />
+
+            <.env_var_panel env_values={@env_values} editable target={@myself} class="lg:col-span-2" />
             <!-- Hidden inputs for embeds -->
             <.containers_hidden_form field={@form[:containers]} />
             <.containers_hidden_form field={@form[:init_containers]} />
