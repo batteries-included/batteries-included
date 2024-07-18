@@ -113,6 +113,8 @@ config :common_core, CommonCore.JWK,
 
 config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
 
+config :verify, :bi_bin_override, System.get_env("BI_BIN_OVERRIDE", nil)
+
 config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]}
 
 config :swoosh, :api_client, Swoosh.ApiClient.Finch

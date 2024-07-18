@@ -1,42 +1,37 @@
-defmodule KubeBootstrap.MixProject do
+defmodule Verify.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :kube_bootstrap,
+      app: :verify,
       version: "0.13.1",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.15",
+      elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      deps: deps()
     ]
   end
 
   def application do
     [
       extra_applications: [:logger],
-      mod: {KubeBootstrap.Application, []}
+      mod: {Verify.Application, []}
     ]
   end
 
   defp deps do
     [
-      {:common_core, in_umbrella: true},
-      # K8s uses mint and mint_web_socket for HTTP requests
-      # If it's detected as a dependency.
-      {:k8s, "~> 2.6"},
-      {:mint, "~> 1.0"}
+      {:common_core, in_umbrella: true}
     ]
   end
 
   defp aliases do
     [
       setup: ["deps.get"],
-      test: ["test"],
       "ecto.reset": []
     ]
   end
