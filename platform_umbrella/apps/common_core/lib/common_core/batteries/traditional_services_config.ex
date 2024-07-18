@@ -6,6 +6,6 @@ defmodule CommonCore.Batteries.TraditionalServicesConfig do
   alias CommonCore.Defaults
 
   batt_polymorphic_schema type: :traditional_services do
-    defaultable_field :namespace, :string, default: Defaults.Namespaces.backend()
+    defaultable_field :namespace, :string, default: Defaults.Namespaces.traditional()
   end
 end

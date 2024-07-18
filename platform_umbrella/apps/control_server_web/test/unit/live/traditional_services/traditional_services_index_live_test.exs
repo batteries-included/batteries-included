@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BackendIndexLiveTest do
+defmodule ControlServerWeb.TraditionalIndexLiveTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
@@ -12,8 +12,8 @@ defmodule ControlServerWeb.BackendIndexLiveTest do
     end
 
     test "renders a list of Traditional Services", %{conn: conn} do
-      insert(:backend_service, name: "Service 1")
-      insert(:backend_service, name: "Service 2")
+      insert(:traditional_service, name: "Service 1")
+      insert(:traditional_service, name: "Service 2")
 
       conn
       |> start(~p|/traditional_services|)

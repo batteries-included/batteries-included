@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.BackendFormSubcomponents do
+defmodule ControlServerWeb.TraditionalFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 

@@ -55,8 +55,8 @@ defmodule CommonCore.StateSummary.Hosts do
     "#{service.name}.#{namespace}.#{webapp_base_host(summary)}"
   end
 
-  def backend_host(%StateSummary{} = summary, service) do
-    namespace = backend_namespace(summary)
+  def traditional_host(%StateSummary{} = summary, service) do
+    namespace = traditional_namespace(summary)
     "#{service.name}.#{namespace}.#{webapp_base_host(summary)}"
   end
 

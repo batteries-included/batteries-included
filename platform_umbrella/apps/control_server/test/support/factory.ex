@@ -113,7 +113,7 @@ defmodule ControlServer.Factory do
   end
 
   @spec knative_service_factory() :: CommonCore.TraditionalServices.Service.t()
-  def backend_service_factory do
+  def traditional_service_factory do
     %CommonCore.TraditionalServices.Service{
       name: sequence("knative-service-"),
       virtual_size: sequence(:virtual_size, ~w(tiny small medium large xlarge huge)),

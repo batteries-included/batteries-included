@@ -4,11 +4,11 @@ defmodule ControlServer.TraditionalServices.EventsTest do
   import ControlServer.Factory
 
   describe "ControlServer.TraditionalServices and EventCenter.Database" do
-    test "create backend_service broadcasts an insert event" do
-      :ok = EventCenter.Database.subscribe(:backend_service)
+    test "create traditional_service broadcasts an insert event" do
+      :ok = EventCenter.Database.subscribe(:traditional_service)
 
       assert {:ok, service} =
-               ControlServer.TraditionalServices.create_service(params_for(:backend_service))
+               ControlServer.TraditionalServices.create_service(params_for(:traditional_service))
 
       service_id = service.id
       name = service.name
@@ -26,10 +26,10 @@ defmodule ControlServer.TraditionalServices.EventsTest do
                        }}
     end
 
-    test "update backend_service broadcasts an update event" do
-      :ok = EventCenter.Database.subscribe(:backend_service)
+    test "update traditional_service broadcasts an update event" do
+      :ok = EventCenter.Database.subscribe(:traditional_service)
 
-      service = insert(:backend_service)
+      service = insert(:traditional_service)
 
       assert {:ok, service} =
                ControlServer.TraditionalServices.update_service(service, %{name: "new-name"})

@@ -101,7 +101,7 @@ defmodule ControlServerWeb.Projects.NewLive do
          {:ok, _} <- create_postgres(project, form_data[WebForm]),
          {:ok, _} <- create_redis(project, form_data[WebForm]),
          {:ok, _} <- create_knative(project, form_data[WebForm]),
-         {:ok, _} <- create_backend(project, form_data[WebForm]) do
+         {:ok, _} <- create_traditional(project, form_data[WebForm]) do
       {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
     else
       err ->
@@ -210,13 +210,13 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   defp create_knative(_project, _knative_data), do: {:ok, nil}
 
-  defp create_backend(project, %{"backend" => backend_data}) do
-    backend_data
+  defp create_traditional(project, %{"traditional" => traditional_data}) do
+    traditional_data
     |> Map.put("project_id", project.id)
     |> TraditionalServices.create_service()
   end
 
-  defp create_backend(_project, _backend_data), do: {:ok, nil}
+  defp create_traditional(_project, _traditional_data), do: {:ok, nil}
 
   defp get_default_storage_class do
     case SummaryStorage.default_storage_class() do

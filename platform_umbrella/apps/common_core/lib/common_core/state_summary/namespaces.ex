@@ -30,8 +30,8 @@ defmodule CommonCore.StateSummary.Namespaces do
   @spec knative_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def knative_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :knative)
 
-  @spec backend_namespace(CommonCore.StateSummary.t()) :: binary() | nil
-  def backend_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :traditional_services)
+  @spec traditional_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  def traditional_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :traditional_services)
 
   @spec battery_namespace(CommonCore.StateSummary.t(), atom()) :: binary() | nil
   defp battery_namespace(summary, battery) do

@@ -8,16 +8,28 @@ defmodule ControlServerWeb.Projects.WebForm do
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
   alias CommonCore.TraditionalServices.Service, as: TraditionalService
   alias ControlServer.Postgres
-  alias ControlServerWeb.BackendFormSubcomponents
   alias ControlServerWeb.KnativeFormSubcomponents
   alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.RedisFormSubcomponents
+  alias ControlServerWeb.TraditionalFormSubcomponents
 
   def update(assigns, socket) do
     {class, assigns} = Map.pop(assigns, :class)
 
     project_name = get_in(assigns, [:data, ProjectForm, "name"])
+
+    knative_changeset =
+      KnativeService.changeset(
+        %KnativeService{},
+        %{name: "#{project_name}-web"}
+      )
+
+    traditional_changeset =
+      TraditionalService.changeset(
+        KubeServices.SmartBuilder.new_traditional_service(),
+        %{name: "#{project_name}-web"}
+      )
 
     postgres_changeset =
       PGCluster.changeset(
@@ -32,25 +44,13 @@ defmodule ControlServerWeb.Projects.WebForm do
         %{name: "#{project_name}-web"}
       )
 
-    knative_changeset =
-      KnativeService.changeset(
-        %KnativeService{},
-        %{name: "#{project_name}-web"}
-      )
-
-    backend_changeset =
-      TraditionalService.changeset(
-        KubeServices.SmartBuilder.new_backend_service(),
-        %{name: "#{project_name}-web"}
-      )
-
     form =
       to_form(%{
         "web_type" => "external",
-        "postgres" => postgres_changeset,
-        "redis" => redis_changeset,
         "knative" => knative_changeset,
-        "backend" => backend_changeset
+        "traditional" => traditional_changeset,
+        "postgres" => postgres_changeset,
+        "redis" => redis_changeset
       })
 
     {:ok,
@@ -58,7 +58,7 @@ defmodule ControlServerWeb.Projects.WebForm do
      |> assign(assigns)
      |> assign(:class, class)
      |> assign(:db_type, :new)
-     |> assign(:backend_type, :knative)
+     |> assign(:service_type, :knative)
      |> assign(:form, form)}
   end
 
@@ -66,11 +66,21 @@ defmodule ControlServerWeb.Projects.WebForm do
     {:noreply, assign(socket, :db_type, String.to_existing_atom(type))}
   end
 
-  def handle_event("backend_type", %{"type" => type}, socket) do
-    {:noreply, assign(socket, :backend_type, String.to_existing_atom(type))}
+  def handle_event("service_type", %{"type" => type}, socket) do
+    {:noreply, assign(socket, :service_type, String.to_existing_atom(type))}
   end
 
   def handle_event("validate", params, socket) do
+    knative_changeset =
+      %KnativeService{}
+      |> KnativeService.changeset(params["knative"])
+      |> Map.put(:action, :validate)
+
+    traditional_changeset =
+      %TraditionalService{}
+      |> TraditionalService.changeset(params["traditional"])
+      |> Map.put(:action, :validate)
+
     postgres_changeset =
       %PGCluster{}
       |> PGCluster.changeset(params["postgres"], PGCluster.compact_storage_range_ticks())
@@ -81,22 +91,12 @@ defmodule ControlServerWeb.Projects.WebForm do
       |> RedisCluster.changeset(params["redis"])
       |> Map.put(:action, :validate)
 
-    knative_changeset =
-      %KnativeService{}
-      |> KnativeService.changeset(params["knative"])
-      |> Map.put(:action, :validate)
-
-    backend_changeset =
-      %TraditionalService{}
-      |> TraditionalService.changeset(params["backend"])
-      |> Map.put(:action, :validate)
-
     form =
       params
+      |> Map.put("knative", knative_changeset)
+      |> Map.put("traditional", traditional_changeset)
       |> Map.put("postgres", postgres_changeset)
       |> Map.put("redis", redis_changeset)
-      |> Map.put("knative", knative_changeset)
-      |> Map.put("backend", backend_changeset)
       |> to_form()
 
     {:noreply, assign(socket, :form, form)}
@@ -135,8 +135,10 @@ defmodule ControlServerWeb.Projects.WebForm do
         if(params["db_type"] == "new", do: "postgres"),
         if(params["db_type"] == "existing", do: "postgres_ids"),
         if(normalize_value("checkbox", params["need_redis"]), do: "redis"),
-        if(normalize_value("checkbox", params["need_backend"]) && params["backend_type"] == "knative", do: "knative"),
-        if(normalize_value("checkbox", params["need_backend"]) && params["backend_type"] == "backend", do: "backend")
+        if(normalize_value("checkbox", params["need_service"]) && params["service_type"] == "knative", do: "knative"),
+        if(normalize_value("checkbox", params["need_service"]) && params["service_type"] == "traditional",
+          do: "traditional"
+        )
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -212,26 +214,26 @@ defmodule ControlServerWeb.Projects.WebForm do
 
         <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
 
-        <.input field={@form[:need_backend]} type="switch" label="I need a backend" />
+        <.input field={@form[:need_service]} type="switch" label="I need a backend" />
 
-        <.flex column class={!normalize_value("checkbox", @form[:need_backend].value) && "hidden"}>
-          <.input type="hidden" name="backend_type" value={@backend_type} />
+        <.flex column class={!normalize_value("checkbox", @form[:need_service].value) && "hidden"}>
+          <.input type="hidden" name="service_type" value={@service_type} />
 
           <.tab_bar variant="secondary">
             <:tab
-              phx-click="backend_type"
+              phx-click="service_type"
               phx-value-type={:knative}
               phx-target={@myself}
-              selected={@backend_type == :knative}
+              selected={@service_type == :knative}
             >
               Knative
             </:tab>
 
             <:tab
-              phx-click="backend_type"
-              phx-value-type={:backend}
+              phx-click="service_type"
+              phx-value-type={:traditional}
               phx-target={@myself}
-              selected={@backend_type == :backend}
+              selected={@service_type == :traditional}
             >
               Traditional Service
             </:tab>
@@ -245,15 +247,16 @@ defmodule ControlServerWeb.Projects.WebForm do
           <KnativeFormSubcomponents.main_panel
             form={to_form(@form[:knative].value, as: :knative)}
             class={
-              (!normalize_value("checkbox", @form[:need_backend].value) || @backend_type != :knative) &&
+              (!normalize_value("checkbox", @form[:need_service].value) || @service_type != :knative) &&
                 "hidden"
             }
           />
 
-          <BackendFormSubcomponents.main_panel
-            form={to_form(@form[:backend].value, as: :backend)}
+          <TraditionalFormSubcomponents.main_panel
+            form={to_form(@form[:traditional].value, as: :traditional)}
             class={
-              (!normalize_value("checkbox", @form[:need_backend].value) || @backend_type != :backend) &&
+              (!normalize_value("checkbox", @form[:need_service].value) ||
+                 @service_type != :traditional) &&
                 "hidden"
             }
           />

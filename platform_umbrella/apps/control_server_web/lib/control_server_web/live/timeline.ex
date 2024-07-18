@@ -74,7 +74,7 @@ defmodule ControlServerWeb.Live.Timeline do
     """
   end
 
-  defp payload_display(%{payload: %NamedDatabase{schema_type: :backend_service}} = assigns) do
+  defp payload_display(%{payload: %NamedDatabase{schema_type: :traditional_service}} = assigns) do
     ~H"""
     <.payload_container>
       <div class="text-black font-bold">

@@ -2,11 +2,11 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  import ControlServerWeb.BackendFormSubcomponents
   import ControlServerWeb.Containers.ContainersPanel
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.Containers.HiddenForms
   import ControlServerWeb.PortPanel
+  import ControlServerWeb.TraditionalFormSubcomponents
 
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
@@ -300,7 +300,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     <div>
       <.form
         for={@form}
-        id="backend-service-form"
+        id="traditional-service-form"
         phx-change="validate"
         phx-submit="save"
         phx-target={@myself}

@@ -7,7 +7,7 @@ defmodule CommonCore.Defaults.Namespaces do
   def ai, do: "battery-ai"
   def istio, do: "battery-istio"
   def knative, do: "battery-knative"
-  def backend, do: "battery-backend"
+  def traditional, do: "battery-traditional"
 
   def humanize("battery-core"), do: "Core"
   def humanize("battery-base"), do: "Base"
@@ -15,5 +15,5 @@ defmodule CommonCore.Defaults.Namespaces do
   def humanize("battery-ai"), do: "AI"
   def humanize("battery-istio"), do: "Istio"
   def humanize("battery-knative"), do: "Knative"
-  def humanize("battery-backend"), do: "Backend"
+  def humanize("battery-traditional"), do: "Traditional"
 end
