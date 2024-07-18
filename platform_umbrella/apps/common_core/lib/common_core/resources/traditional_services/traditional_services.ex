@@ -6,6 +6,7 @@ defmodule CommonCore.Resources.TraditionalServices do
   import CommonCore.Resources.MapUtils
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.TraditionalServices.Service
 
   resource(:namespace, battery, _state) do
@@ -26,6 +27,27 @@ defmodule CommonCore.Resources.TraditionalServices do
 
   multi_resource(:service_account, battery, state) do
     Enum.map(state.traditional_services, fn service -> service_account(service, battery, state) end)
+  end
+
+  multi_resource(:service, battery, state) do
+    Enum.map(state.traditional_services, fn service -> service(service, battery, state) end)
+  end
+
+  defp service(service, battery, _state) do
+    ports = to_svc_ports(service)
+
+    spec =
+      %{}
+      |> Map.put("ports", ports)
+      |> Map.put("selector", %{"battery/app" => service.name, "battery/component" => @app_name})
+      |> Map.put("type", "ClusterIP")
+
+    :service
+    |> B.build_resource()
+    |> B.name(service.name)
+    |> B.namespace(battery.config.namespace)
+    |> B.spec(spec)
+    |> F.require_non_empty(ports)
   end
 
   defp service_account(%Service{} = service, battery, _state) do
@@ -137,4 +159,9 @@ defmodule CommonCore.Resources.TraditionalServices do
   defp format_cpu_resource(value) do
     "#{value}m"
   end
+
+  defp to_svc_ports(%{ports: ports} = _service), do: Enum.map(ports, &to_svc_port/1)
+  defp to_svc_ports(_), do: []
+
+  defp to_svc_port(port), do: %{name: port.name, port: port.port, protocol: String.upcase(to_string(port.protocol))}
 end
