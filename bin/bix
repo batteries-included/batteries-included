@@ -630,6 +630,9 @@ go-ensure-bi)
 bi-location)
     do_bi_location
     ;;
+build-bi)
+    do_build_bi
+    ;;
 ex-test-deep)
     do_ex_test_deep "${args[@]}"
     ;;
@@ -651,12 +654,11 @@ build-image)
 push-images)
     do_push_images "${args[@]}"
     ;;
-build-bi)
-    do_build_bi
-    ;;
-
 version-tag)
     do_version_tag
+    ;;
+root-dir)
+    echo "${ROOT_DIR}"
     ;;
 *)
     usage

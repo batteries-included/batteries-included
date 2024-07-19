@@ -8,6 +8,8 @@ defmodule Verify.MixProject do
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       lockfile: "../../mix.lock",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
@@ -35,4 +37,10 @@ defmodule Verify.MixProject do
       "ecto.reset": []
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 end

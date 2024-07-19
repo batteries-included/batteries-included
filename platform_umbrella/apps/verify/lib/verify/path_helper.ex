@@ -1,4 +1,4 @@
-defmodule Verify.Bin do
+defmodule Verify.PathHelper do
   @moduledoc false
 
   require Logger
@@ -25,9 +25,14 @@ defmodule Verify.Bin do
     end
   end
 
-  def bi_bin_override, do: Application.get_env(:verify, :bi_bin_override, nil)
+  def root_path do
+    {location, 0} = System.cmd("bix", ["root-dir"])
+    String.trim(location)
+  end
 
-  def internal_location do
+  defp bi_bin_override, do: Application.get_env(:verify, :bi_bin_override, nil)
+
+  defp internal_location do
     {location, 0} = System.cmd("bix", ["bi-location"])
     String.trim(location)
   end

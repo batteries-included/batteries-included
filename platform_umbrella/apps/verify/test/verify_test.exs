@@ -1,5 +1,5 @@
 defmodule VerifyTest do
-  use ExUnit.Case
+  use Verify.TestCase, async: false
 
   @tag :cluster_test
   test "greets the world" do

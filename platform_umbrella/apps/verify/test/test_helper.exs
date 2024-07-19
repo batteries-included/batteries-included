@@ -1,1 +1,1 @@
-ExUnit.start(exclude: [:cluster_test])
+ExUnit.start(exclude: [:cluster_test], timeout: 90 * 60 * 1000)
