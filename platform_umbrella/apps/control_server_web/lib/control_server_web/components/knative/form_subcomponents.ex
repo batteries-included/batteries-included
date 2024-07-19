@@ -16,6 +16,11 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
       <.flex column>
         <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
         <.input label="URL" name="url" value={potential_url(@form)} disabled />
+
+        <.input field={@form[:kube_internal]} type="radio">
+          <:option value="true">Internal</:option>
+          <:option value="false">External</:option>
+        </.input>
       </.flex>
     </div>
     """

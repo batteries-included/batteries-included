@@ -6,6 +6,7 @@ defmodule ControlServerWeb.TraditionalFormSubcomponents do
   alias CommonCore.Util.Memory
 
   attr :class, :any, default: nil
+  attr :with_divider, :boolean, default: true
   attr :form, Phoenix.HTML.Form, required: true
 
   def main_panel(assigns) do
@@ -32,12 +33,20 @@ defmodule ControlServerWeb.TraditionalFormSubcomponents do
         ]}
       />
 
-      <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
+      <.flex
+        :if={@with_divider}
+        class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker"
+      />
 
       <.grid columns={[sm: 1, lg: 2]} class="items-center">
         <.h5>Number of instances</.h5>
         <.input field={@form[:num_instances]} type="range" min="1" max="5" step="1" />
       </.grid>
+
+      <.input field={@form[:kube_internal]} type="radio" class="mt-4">
+        <:option value="true">Internal</:option>
+        <:option value="false">External</:option>
+      </.input>
     </div>
     """
   end

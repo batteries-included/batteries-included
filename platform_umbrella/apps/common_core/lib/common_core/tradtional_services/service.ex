@@ -56,6 +56,7 @@ defmodule CommonCore.TraditionalServices.Service do
   batt_schema "traditional_services" do
     slug_field :name
 
+    field :kube_internal, :boolean, default: false
     field :kube_deployment_type, Ecto.Enum, values: [:statefulset, :deployment], default: :deployment
     field :num_instances, :integer, default: 1
 

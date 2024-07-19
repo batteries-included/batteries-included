@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  alias CommonCore.Batteries.Catalog
   alias CommonCore.Knative.Service, as: KnativeService
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
@@ -46,7 +45,6 @@ defmodule ControlServerWeb.Projects.WebForm do
 
     form =
       to_form(%{
-        "web_type" => "external",
         "knative" => knative_changeset,
         "traditional" => traditional_changeset,
         "postgres" => postgres_changeset,
@@ -131,14 +129,11 @@ defmodule ControlServerWeb.Projects.WebForm do
   def handle_event("save", params, socket) do
     params =
       Map.take(params, [
-        "web_type",
-        if(params["db_type"] == "new", do: "postgres"),
-        if(params["db_type"] == "existing", do: "postgres_ids"),
-        if(normalize_value("checkbox", params["need_redis"]), do: "redis"),
-        if(normalize_value("checkbox", params["need_service"]) && params["service_type"] == "knative", do: "knative"),
-        if(normalize_value("checkbox", params["need_service"]) && params["service_type"] == "traditional",
-          do: "traditional"
-        )
+        if(params["service_type"] == "knative", do: "knative"),
+        if(params["service_type"] == "traditional", do: "traditional"),
+        if(normalize_value("checkbox", params["need_db"]) && params["db_type"] == "new", do: "postgres"),
+        if(normalize_value("checkbox", params["need_db"]) && params["db_type"] == "existing", do: "postgres_ids"),
+        if(normalize_value("checkbox", params["need_redis"]), do: "redis")
       ])
 
     # Don't create the resources yet, send data to parent liveview
@@ -161,49 +156,92 @@ defmodule ControlServerWeb.Projects.WebForm do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:web_type]} type="radio">
-          <:option value="internal">Internal web project</:option>
-          <:option value="external">External web project</:option>
-        </.input>
+        <.input type="hidden" name="service_type" value={@service_type} />
 
         <.tab_bar variant="secondary">
           <:tab
-            phx-click="db_type"
-            phx-value-type={:new}
+            phx-click="service_type"
+            phx-value-type={:knative}
             phx-target={@myself}
-            selected={@db_type == :new}
+            selected={@service_type == :knative}
           >
-            New Database
+            Knative
           </:tab>
 
           <:tab
-            phx-click="db_type"
-            phx-value-type={:existing}
+            phx-click="service_type"
+            phx-value-type={:traditional}
             phx-target={@myself}
-            selected={@db_type == :existing}
+            selected={@service_type == :traditional}
           >
-            Existing Database
+            Traditional Service
           </:tab>
         </.tab_bar>
 
-        <.input type="hidden" name="db_type" value={@db_type} />
+        <.grid columns={2}>
+          <.light_text>
+            Knative services are serverless, and allow you to scale to zero as a request-driven approach to HTTP services.
+          </.light_text>
+          <.light_text>
+            Traditional services are useful for long-running processes that don't conform to serverless. Choose this if you need OAuth support.
+          </.light_text>
+        </.grid>
 
-        <.input
-          :if={@db_type == :existing}
-          field={@form[:postgres_ids]}
-          type="select"
-          label="Existing set of databases"
-          placeholder="Choose a set of databases"
-          options={Postgres.clusters_available_for_project()}
-          multiple
+        <KnativeFormSubcomponents.main_panel
+          form={to_form(@form[:knative].value, as: :knative)}
+          class={@service_type != :knative && "hidden"}
         />
 
-        <PostgresFormSubcomponents.size_form
-          class={@db_type != :new && "hidden"}
-          form={to_form(@form[:postgres].value, as: :postgres)}
-          phx_target={@myself}
-          ticks={PGCluster.compact_storage_range_ticks()}
+        <TraditionalFormSubcomponents.main_panel
+          form={to_form(@form[:traditional].value, as: :traditional)}
+          class={@service_type != :traditional && "hidden"}
+          with_divider={false}
         />
+
+        <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
+
+        <.input field={@form[:need_db]} type="switch" label="I need a database" />
+
+        <.flex column class={!normalize_value("checkbox", @form[:need_db].value) && "hidden"}>
+          <.tab_bar variant="secondary">
+            <:tab
+              phx-click="db_type"
+              phx-value-type={:new}
+              phx-target={@myself}
+              selected={@db_type == :new}
+            >
+              New Database
+            </:tab>
+
+            <:tab
+              phx-click="db_type"
+              phx-value-type={:existing}
+              phx-target={@myself}
+              selected={@db_type == :existing}
+            >
+              Existing Database
+            </:tab>
+          </.tab_bar>
+
+          <.input type="hidden" name="db_type" value={@db_type} />
+
+          <.input
+            :if={@db_type == :existing}
+            field={@form[:postgres_ids]}
+            type="select"
+            label="Existing set of databases"
+            placeholder="Choose a set of databases"
+            options={Postgres.clusters_available_for_project()}
+            multiple
+          />
+
+          <PostgresFormSubcomponents.size_form
+            class={@db_type != :new && "hidden"}
+            form={to_form(@form[:postgres].value, as: :postgres)}
+            phx_target={@myself}
+            ticks={PGCluster.compact_storage_range_ticks()}
+          />
+        </.flex>
 
         <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
 
@@ -211,56 +249,6 @@ defmodule ControlServerWeb.Projects.WebForm do
           class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
           form={to_form(@form[:redis].value, as: :redis)}
         />
-
-        <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
-
-        <.input field={@form[:need_service]} type="switch" label="I need a backend" />
-
-        <.flex column class={!normalize_value("checkbox", @form[:need_service].value) && "hidden"}>
-          <.input type="hidden" name="service_type" value={@service_type} />
-
-          <.tab_bar variant="secondary">
-            <:tab
-              phx-click="service_type"
-              phx-value-type={:knative}
-              phx-target={@myself}
-              selected={@service_type == :knative}
-            >
-              Knative
-            </:tab>
-
-            <:tab
-              phx-click="service_type"
-              phx-value-type={:traditional}
-              phx-target={@myself}
-              selected={@service_type == :traditional}
-            >
-              Traditional Service
-            </:tab>
-          </.tab_bar>
-
-          <.grid columns={2}>
-            <.light_text><%= Catalog.get(:knative).description %></.light_text>
-            <.light_text><%= Catalog.get(:traditional_services).description %></.light_text>
-          </.grid>
-
-          <KnativeFormSubcomponents.main_panel
-            form={to_form(@form[:knative].value, as: :knative)}
-            class={
-              (!normalize_value("checkbox", @form[:need_service].value) || @service_type != :knative) &&
-                "hidden"
-            }
-          />
-
-          <TraditionalFormSubcomponents.main_panel
-            form={to_form(@form[:traditional].value, as: :traditional)}
-            class={
-              (!normalize_value("checkbox", @form[:need_service].value) ||
-                 @service_type != :traditional) &&
-                "hidden"
-            }
-          />
-        </.flex>
 
         <:actions>
           <%= render_slot(@inner_block) %>
