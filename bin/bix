@@ -538,7 +538,7 @@ do_build_bi() {
 }
 
 do_bi_location() {
-    bi_bin_loction
+    bi_bin_location
 }
 
 do_version_tag() {
@@ -547,7 +547,7 @@ do_version_tag() {
 
 do_ensure_bi() {
     local bin_path
-    bin_path=$(bi_bin_loction)
+    bin_path=$(bi_bin_location)
 
     if [ ! -f "${bin_path}" ]; then
         log "bi binary not found at ${bin_path} building..."

@@ -80,7 +80,7 @@ clean_bi_build() {
 
 run_bi() {
     local bin_path
-    bin_path=$(bi_bin_loction)
+    bin_path=$(bi_bin_location)
 
     # go run on mac is really slow sometimes
     # probably because we are linking in every go
@@ -99,7 +99,7 @@ run_bi() {
     "${bin_path}" "$@"
 }
 
-bi_bin_loction() {
+bi_bin_location() {
     local revision
     revision=$(bi_revision)
     echo "${BI_BUILD_DIR}/${revision}/bi"
