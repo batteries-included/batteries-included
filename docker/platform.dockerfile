@@ -87,6 +87,7 @@ COPY platform_umbrella/apps/home_base/mix.exs platform_umbrella/apps/home_base/m
 COPY platform_umbrella/apps/home_base_web/mix.exs platform_umbrella/apps/home_base_web/mix.exs
 COPY platform_umbrella/apps/kube_bootstrap/mix.exs platform_umbrella/apps/kube_bootstrap/mix.exs
 COPY platform_umbrella/apps/kube_services/mix.exs platform_umbrella/apps/kube_services/mix.exs
+COPY platform_umbrella/apps/verify/mix.exs platform_umbrella/apps/verify/mix.exs
 
 WORKDIR /source/platform_umbrella
 

@@ -49,11 +49,12 @@ build_bi() {
 
     # This is the directory where we will put the binary
     local bin_dir="${BI_BUILD_DIR}/${revision}"
+    mkdir -p "${bin_dir}"
 
     # This is the path to the binary
     # We still want it to be called bi so help works
-    local bin_path="${bin_dir}/bi"
-    mkdir -p "${bin_dir}"
+    local bin_path
+    bin_path=$(bi_bin_loction)
 
     if [[ ! -f "${bin_path}" ]]; then
         log "Building bi ${BLUE}${revision}${NOFORMAT}"
@@ -78,9 +79,8 @@ clean_bi_build() {
 }
 
 run_bi() {
-    local revision
-    revision=$(bi_revision)
-    local bin_path="${BI_BUILD_DIR}/${revision}/bi"
+    local bin_path
+    bin_path=$(bi_bin_location)
 
     # go run on mac is really slow sometimes
     # probably because we are linking in every go
@@ -97,6 +97,12 @@ run_bi() {
     build_bi
 
     "${bin_path}" "$@"
+}
+
+bi_bin_location() {
+    local revision
+    revision=$(bi_revision)
+    echo "${BI_BUILD_DIR}/${revision}/bi"
 }
 
 run_mix() {

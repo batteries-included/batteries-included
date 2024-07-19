@@ -537,8 +537,24 @@ do_build_bi() {
     bi_popd
 }
 
+do_bi_location() {
+    bi_bin_location
+}
+
 do_version_tag() {
     version_tag
+}
+
+do_ensure_bi() {
+    local bin_path
+    bin_path=$(bi_bin_location)
+
+    if [ ! -f "${bin_path}" ]; then
+        log "bi binary not found at ${bin_path} building..."
+        build_bi
+    else
+        log "bi binary found at ${bin_path}"
+    fi
 }
 
 parse_params() {
@@ -608,6 +624,15 @@ go-test-int)
 go-clean-build)
     do_clean_build
     ;;
+go-ensure-bi)
+    do_ensure_bi
+    ;;
+bi-location)
+    do_bi_location
+    ;;
+build-bi)
+    do_build_bi
+    ;;
 ex-test-deep)
     do_ex_test_deep "${args[@]}"
     ;;
@@ -629,12 +654,11 @@ build-image)
 push-images)
     do_push_images "${args[@]}"
     ;;
-build-bi)
-    do_build_bi
-    ;;
-
 version-tag)
     do_version_tag
+    ;;
+root-dir)
+    echo "${ROOT_DIR}"
     ;;
 *)
     usage
