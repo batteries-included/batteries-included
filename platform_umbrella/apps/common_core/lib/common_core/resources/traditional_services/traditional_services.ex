@@ -4,10 +4,13 @@ defmodule CommonCore.Resources.TraditionalServices do
   use CommonCore.Resources.ResourceGenerator, app_name: "traditional-services"
 
   import CommonCore.Resources.MapUtils
+  import CommonCore.StateSummary.Hosts
 
+  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Port
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.TraditionalServices.Service
 
   resource(:namespace, battery, _state) do
@@ -15,6 +18,7 @@ defmodule CommonCore.Resources.TraditionalServices do
     |> B.build_resource()
     |> B.name(battery.config.namespace)
     |> B.app_labels(@app_name)
+    |> B.label("istio-injection", "enabled")
   end
 
   multi_resource(:kube_deployment, battery, state) do
@@ -32,6 +36,33 @@ defmodule CommonCore.Resources.TraditionalServices do
 
   multi_resource(:service, battery, state) do
     Enum.map(state.traditional_services, fn service -> service(service, battery, state) end)
+  end
+
+  multi_resource(:virtual_service, battery, state) do
+    Enum.map(state.traditional_services, fn service -> virtual_service(service, battery, state) end)
+  end
+
+  defp virtual_service(%{kube_internal: true}, _battery, _state), do: nil
+  defp virtual_service(%{ports: []}, _battery, _state), do: nil
+
+  defp virtual_service(service, battery, state) do
+    ports = to_svc_ports(service)
+
+    # TODO: allow specifying 'default' port instead of just using the first port?
+    [default_port | _] = ports
+
+    spec =
+      [hosts: [traditional_host(state, service)]]
+      |> VirtualService.new!()
+      |> V.fallback(service.name, default_port.port)
+
+    :istio_virtual_service
+    |> B.build_resource()
+    |> B.namespace(battery.config.namespace)
+    |> B.name(service.name)
+    |> B.spec(spec)
+    |> F.require_battery(state, :istio_gateway)
+    |> F.require_non_empty(ports)
   end
 
   defp service(service, battery, _state) do
