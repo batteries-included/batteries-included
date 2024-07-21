@@ -1,7 +1,7 @@
 defmodule CommonCore.Defaults.Images do
   @moduledoc false
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
-  @cert_manager_image_tag "v1.14.7"
+  @cert_manager_image_tag "v1.15.1"
   @kiali_image_version "v1.86.1"
 
   @spec cert_manager_image_version() :: String.t()

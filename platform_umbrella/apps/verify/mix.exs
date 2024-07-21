@@ -27,7 +27,8 @@ defmodule Verify.MixProject do
 
   defp deps do
     [
-      {:common_core, in_umbrella: true}
+      {:common_core, in_umbrella: true},
+      {:wallaby, "~> 0.30", runtime: false, only: [:test]}
     ]
   end
 

@@ -30,12 +30,10 @@ defmodule ControlServerWeb.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  defp test_paths(:integration), do: ["test/integration"]
-  defp test_paths(:dev), do: ["test/unit", "test/integration"]
-  defp test_paths(_), do: ["test/unit"]
+  defp test_paths(:test), do: ["test"]
+  defp test_paths(_), do: []
 
   # Specifies your project dependencies.
   #
@@ -72,9 +70,8 @@ defmodule ControlServerWeb.MixProject do
       # Development
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       # Testing
-      {:wallaby, "~> 0.30", runtime: false, only: [:test, :integration]},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
-      {:heyya, "~> 0.8", only: [:dev, :test, :integration]}
+      {:ex_machina, "~> 2.7", only: [:dev, :test]},
+      {:heyya, "~> 0.8", only: [:dev, :test]}
     ]
   end
 

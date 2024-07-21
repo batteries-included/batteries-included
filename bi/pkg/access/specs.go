@@ -21,7 +21,7 @@ func (a *AccessSpec) PrintToConsole() error {
 	}
 	// Just in case we add a new line here. Sometime ncurses doesn't remember what line it's on
 	// and the progress bar will overwrite a line.
-	_, err := fmt.Printf("Batteries Included\nControl Server started: %s://%s\n", protocol, a.Hostname)
+	_, err := fmt.Printf("Welcome to your Batteries Included platform: %s://%s\n", protocol, a.Hostname)
 	if err != nil {
 		return fmt.Errorf("failed to print control server URL: %w", err)
 	}

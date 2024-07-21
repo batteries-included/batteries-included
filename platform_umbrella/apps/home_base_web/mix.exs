@@ -27,7 +27,6 @@ defmodule HomeBaseWeb.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:test), do: ["test"]
@@ -51,7 +50,7 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix_live_view, "~> 0.20"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
-      {:heyya, "~> 0.8", only: [:dev, :test, :integration]},
+      {:heyya, "~> 0.8", only: [:dev, :test]},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       # Token/Signing
       {:jose, "~> 1.11"}

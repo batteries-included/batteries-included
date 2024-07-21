@@ -358,7 +358,7 @@ do_check_fmt() {
 do_gen_static_specs() {
     rm -rf "${ROOT_DIR}/bootstrap"
     VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} \
-        run_mix "do" deps.get, compile, \
+        run_mix "do" deps.get, compile --force, \
         gen.static.installations "${ROOT_DIR}/bootstrap"
 }
 

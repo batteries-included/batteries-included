@@ -28,7 +28,6 @@ defmodule KubeServices.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:test), do: ["test"]
@@ -38,13 +37,13 @@ defmodule KubeServices.MixProject do
     [
       {:common_core, in_umbrella: true},
       {:control_server, in_umbrella: true},
-      {:dialyxir, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:event_center, in_umbrella: true},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
+      {:ex_machina, "~> 2.7", only: [:dev, :test]},
       {:jason, "~> 1.4"},
       {:k8s, "~> 2.6"},
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
+      {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.7"},
       {:tesla, "~> 1.11"},
       {:typed_struct, "~> 0.3", runtime: false}

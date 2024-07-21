@@ -24,3 +24,5 @@ verify-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+/screenshots/

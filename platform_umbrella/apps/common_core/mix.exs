@@ -60,8 +60,8 @@ defmodule CommonCore.MixProject do
       {:ex_audit, "~> 0.10"},
 
       # Testing
-      {:mox, "~> 1.0", only: [:dev, :test, :integration], runtime: false},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]}
+      {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:ex_machina, "~> 2.7", only: [:dev, :test]}
     ]
   end
 
@@ -73,7 +73,6 @@ defmodule CommonCore.MixProject do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:test), do: ["test"]

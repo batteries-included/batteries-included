@@ -3,6 +3,7 @@ defmodule Verify.KindInstallWorker do
   use GenServer
   use TypedStruct
 
+  alias CommonCore.Ecto.BatteryUUID
   alias Verify.PathHelper
 
   require Logger
@@ -20,7 +21,7 @@ defmodule Verify.KindInstallWorker do
       opts
       |> Keyword.put_new(:name, __MODULE__)
       |> Keyword.put_new_lazy(:bi_binary, &PathHelper.find_bi/0)
-      |> Keyword.put_new_lazy(:root_path, &PathHelper.root_path/0)
+      |> Keyword.put_new_lazy(:root_path, &PathHelper.tmp_dir!/0)
       |> Keyword.split(@state_opts)
 
     GenServer.start_link(__MODULE__, state_opts, gen_opts)
@@ -34,11 +35,14 @@ defmodule Verify.KindInstallWorker do
     {:ok, state}
   end
 
-  def handle_call({:start, path}, _from, state) do
-    case do_start(state, path) do
-      {_, 0} ->
+  def handle_call({:start, identifier}, _from, state) do
+    path = build_install_spec(identifier, state)
+
+    case System.cmd(state.bi_binary, ["start", path]) do
+      {output, 0} ->
         Logger.debug("Kind install started from #{path}")
-        {:reply, :ok, %State{state | started: [path | state.started]}}
+
+        {:reply, {:ok, extract_url(output)}, %State{state | started: [path | state.started]}}
 
       respone ->
         Logger.warning("Unable to start Kind install from #{path}")
@@ -55,29 +59,34 @@ defmodule Verify.KindInstallWorker do
   end
 
   defp do_stop(state, path) do
-    path = regularize_path(state, path)
     spec = path |> File.read!() |> Jason.decode!()
     slug = Map.fetch!(spec, "slug")
 
     Logger.info("Stopping Kind install with path = #{path} slug #{slug}")
 
     {_, 0} = System.cmd(state.bi_binary, ["stop", slug])
+
+    # Remove the file after stopping the install
+    _ = File.rm_rf(path)
     :ok
   end
 
-  defp do_start(state, path) do
-    path = regularize_path(state, path)
-    Logger.info("Starting Kind install from #{path}")
-
-    System.cmd(state.bi_binary, ["start", path])
+  def build_install_spec(identifier, %{root_path: root_dir} = _state) do
+    install = CommonCore.Installs.Generator.build(Verify.Installs.Generator, identifier)
+    spec = CommonCore.InstallSpec.new!(install)
+    id = BatteryUUID.autogenerate()
+    path = Path.join(root_dir, "#{id}_#{install.slug}.spec.json")
+    string = Jason.encode_to_iodata!(spec, pretty: true, escape: :javascript_safe)
+    File.write!(path, string)
+    path
   end
 
-  defp regularize_path(state, path) do
-    if String.starts_with?(path, "/") do
-      path
-    else
-      Path.join(state.root_path, path)
-    end
+  def extract_url(output) do
+    output
+    |> String.trim()
+    |> String.split(~r|\s+|)
+    |> List.last()
+    |> String.trim()
   end
 
   def start(path) do

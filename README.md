@@ -29,7 +29,7 @@ For ubuntu based systems you will need to install the following dependencies
 ```bash
 sudo apt-get install -y docker.io docker-buildx build-essential curl \
     git cmake libssl-dev pkg-config autoconf m4 libncurses5-dev \
-    inotify-tools direnv
+    inotify-tools direnv jq chromium-browser chromium-chromedriver
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo usermod -aG docker $USER

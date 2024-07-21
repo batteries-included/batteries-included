@@ -1,16 +1,16 @@
 {
-  "id": "batt_0190d3fc7085726c9e9fcbab4a0f52f4",
+  "id": "batt_0190d3fc708570979b84781ffaf9a784",
   "usage": "development",
   "default_size": "small",
   "control_jwk": {
     "crv": "Ed25519",
-    "d": "TrzKqL3aqp-j7hQe9KLZhflp2oVjCwjiSbbUU9XI7uM",
+    "d": "gm52IVwyP07bZ0YoMlyH3_b_zLFZlgxJxAHXJQOh7OM",
     "kty": "OKP",
-    "x": "BbUSABeUk8gET9UuLclNXdsXUmrvIH0IUEOAHePUaH8"
+    "x": "Qbt4oKckVb5TtCFwqrBXjHATiHNZaCgVdlgOydyqxtE"
   },
   "inserted_at": null,
   "updated_at": null,
-  "slug": "jason",
+  "slug": "maurer",
   "kube_provider": "aws",
   "team_id": "batt_0190d3fc70507cf886af0e5416c22ead",
   "kube_provider_config": {},
