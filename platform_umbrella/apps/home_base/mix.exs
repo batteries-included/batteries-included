@@ -30,7 +30,6 @@ defmodule HomeBase.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:test), do: ["test"]
@@ -44,7 +43,7 @@ defmodule HomeBase.MixProject do
       {:common_core, in_umbrella: true},
       {:ecto_sql, "~> 3.11"},
       {:ex_audit, "~> 0.10"},
-      {:ex_machina, "~> 2.7", only: [:dev, :test, :integration]},
+      {:ex_machina, "~> 2.7", only: [:dev, :test]},
       {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
       {:mnemonic_slugs, "~> 0.0.3"},

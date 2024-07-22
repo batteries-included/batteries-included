@@ -150,14 +150,14 @@ defmodule CommonCore.Ecto.Validations do
 
   @spec maybe_fill_in_slug(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   def maybe_fill_in_slug(changeset, field, opts \\ [length: 3]) do
-    length = Keyword.get(opts, :length, 3)
+    generation_enabled = Keyword.get(opts, :autogenerate, true)
 
-    case get_field(changeset, field) do
-      nil ->
-        put_change(changeset, field, MnemonicSlugs.generate_slug(length))
+    case {generation_enabled, get_field(changeset, field)} do
+      {true, nil} ->
+        put_change(changeset, field, MnemonicSlugs.generate_slug(Keyword.get(opts, :length, 3)))
 
-      "" ->
-        put_change(changeset, field, MnemonicSlugs.generate_slug(length))
+      {true, ""} ->
+        put_change(changeset, field, MnemonicSlugs.generate_slug(Keyword.get(opts, :length, 3)))
 
       _ ->
         changeset

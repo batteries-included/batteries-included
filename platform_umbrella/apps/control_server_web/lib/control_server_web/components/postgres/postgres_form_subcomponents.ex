@@ -52,7 +52,12 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     ~H"""
     <.panel title="Users">
       <:menu>
-        <.button icon={:plus} phx-click="toggle_user_modal" phx-target={@phx_target}>
+        <.button
+          icon={:plus}
+          phx-click="toggle_user_modal"
+          phx-target={@phx_target}
+          id="new_user_table-new_user"
+        >
           New User
         </.button>
       </:menu>

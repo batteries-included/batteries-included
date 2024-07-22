@@ -44,3 +44,9 @@ config :logger, level: :error
 config :kube_services, start_services: false, cluster_type: :dev
 
 config :home_base, HomeBase.Mailer, adapter: Swoosh.Adapters.Test
+
+config :wallaby,
+  screenshot_on_failure: true,
+  driver: Wallaby.Chrome,
+  max_wait_time: 60_000,
+  hackney_options: [timeout: :infinity, recv_timeout: :infinity]

@@ -54,7 +54,7 @@ build_bi() {
     # This is the path to the binary
     # We still want it to be called bi so help works
     local bin_path
-    bin_path=$(bi_bin_loction)
+    bin_path=$(bi_bin_location)
 
     if [[ ! -f "${bin_path}" ]]; then
         log "Building bi ${BLUE}${revision}${NOFORMAT}"

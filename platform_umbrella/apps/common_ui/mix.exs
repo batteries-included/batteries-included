@@ -26,7 +26,6 @@ defmodule CommonUI.MixProject do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:integration), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:test), do: ["test"]
@@ -48,7 +47,7 @@ defmodule CommonUI.MixProject do
       {:phoenix_storybook, "~> 0.6"},
       {:md, "~> 0.10"},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
-      {:heyya, "~> 0.8", only: [:dev, :test, :integration]}
+      {:heyya, "~> 0.8", only: [:dev, :test]}
     ]
   end
 

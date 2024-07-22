@@ -25,9 +25,8 @@ defmodule Verify.PathHelper do
     end
   end
 
-  def root_path do
-    {location, 0} = System.cmd("bix", ["root-dir"])
-    String.trim(location)
+  def tmp_dir! do
+    System.tmp_dir!()
   end
 
   defp bi_bin_override, do: Application.get_env(:verify, :bi_bin_override, nil)
