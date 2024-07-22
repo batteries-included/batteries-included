@@ -16,6 +16,10 @@ module.exports = {
         accent: 'var(--bi-color-accent)',
         default: 'var(--bi-color-text-default)',
         muted: 'var(--bi-color-text-muted)',
+        'raisin-black': '#181B22',
+        'davys-grey': '#4E535F',
+        'raisin-black-2': '#21242B',
+        'rich-black': '#111318',
       },
       fontFamily: {
         sans: ['var(--bi-font-sans)', ...defaultTheme.fontFamily.sans],

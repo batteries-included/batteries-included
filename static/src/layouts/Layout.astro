@@ -15,14 +15,15 @@ import type { MetaData as MetaDataType } from '~/types';
 
 export interface Props {
   metadata?: MetaDataType;
+  isDark?: boolean;
 }
 
-const { metadata = {} } = Astro.props;
+const { metadata = {}, isDark = false } = Astro.props;
 const { language, textDirection } = I18N;
 ---
 
 <!doctype html>
-<html lang={language} dir={textDirection} class="">
+<html lang={language} dir={textDirection} class={isDark ? 'dark' : ''}>
   <head>
     <CommonMeta />
     <Favicons />
@@ -32,7 +33,8 @@ const { language, textDirection } = I18N;
     <Analytics />
   </head>
 
-  <body class="antialiased text-default bg-page tracking-tight">
+  <body
+    class="antialiased text-default bg-page dark:bg-raisin-black tracking-tight">
     <slot />
 
     <BasicScripts />

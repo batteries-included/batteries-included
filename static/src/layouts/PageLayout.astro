@@ -10,14 +10,15 @@ import { headerData, footerData } from '~/data/navigation.ts';
 export interface Props {
   metadata?: MetaData;
   hideElipses?: boolean;
+  isDark?: boolean;
 }
 
-const { metadata, hideElipses = false } = Astro.props;
+const { metadata, hideElipses = false, isDark = false } = Astro.props;
 ---
 
-<Layout metadata={metadata}>
+<Layout metadata={metadata} isDark={isDark}>
   <slot name="header">
-    <Header headerData={headerData} isSticky showRssFeed />
+    <Header headerData={headerData} isSticky showRssFeed isDark={isDark} />
   </slot>
   <main>
     {
