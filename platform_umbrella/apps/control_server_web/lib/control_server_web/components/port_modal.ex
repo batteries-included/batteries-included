@@ -85,12 +85,12 @@ defmodule ControlServerWeb.PortModal do
 
           <.flex column>
             <.input label="Name" field={@form[:name]} autofocus placeholder="http" />
-            <.input label="Port" field={@form[:port]} autofocus placeholder="8080" />
+            <.input label="Number " field={@form[:number]} autofocus placeholder="8080" />
             <.input
               field={@form[:Protocol]}
               type="select"
               label="Protocol"
-              placeholder="tcp"
+              placeholder="HTTP2"
               options={Port.protocols()}
             />
           </.flex>

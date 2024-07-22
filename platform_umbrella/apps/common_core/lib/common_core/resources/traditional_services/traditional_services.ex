@@ -5,6 +5,7 @@ defmodule CommonCore.Resources.TraditionalServices do
 
   import CommonCore.Resources.MapUtils
 
+  alias CommonCore.Port
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.TraditionalServices.Service
@@ -163,5 +164,5 @@ defmodule CommonCore.Resources.TraditionalServices do
   defp to_svc_ports(%{ports: ports} = _service), do: Enum.map(ports, &to_svc_port/1)
   defp to_svc_ports(_), do: []
 
-  defp to_svc_port(port), do: %{name: port.name, port: port.port, protocol: String.upcase(to_string(port.protocol))}
+  defp to_svc_port(port), do: %{name: port.name, port: port.number, protocol: Port.k8s_protocol(port)}
 end

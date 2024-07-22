@@ -95,7 +95,7 @@ defmodule ControlServer.Factory do
   def port_factory do
     %CommonCore.Port{
       name: sequence("port-"),
-      port: sequence(:port, [80, 443, 8080, 22, 8000]),
+      number: sequence(:port, [80, 443, 8080, 22, 8000]),
       protocol: sequence(:protocol, [:tcp, :sctp, :udp])
     }
   end
