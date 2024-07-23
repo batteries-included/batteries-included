@@ -1,9 +1,11 @@
 ---
 title: 'Why Open Source Doesn’t Always Pay Off'
 excerpt:
-  The initial excitement about free and flexible tools wanes as the developer spends more time learning and configuring these tools than anticipated. The hidden costs start to add up
+  The initial excitement about free and flexible tools wanes as the developer
+  spends more time learning and configuring these tools than anticipated. The
+  hidden costs start to add up
 publishDate: 2024-07-24
-tags: [ 'open source', 'OSS', 'hidden costs']
+tags: ['open source', 'OSS', 'hidden costs']
 image: /images/posts/post-14.jpg
 draft: false
 ---
