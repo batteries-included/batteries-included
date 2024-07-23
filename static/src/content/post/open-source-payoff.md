@@ -1,16 +1,16 @@
 ---
 title: 'Why Open Source Doesn’t Always Pay Off'
 excerpt:
-  The initial excitement about free and flexible tools wanes as the developer
-  spends more time learning and configuring these tools than anticipated. The
-  hidden costs start to add up
+  The initial excitement about free and flexible tools wanes as developers spend
+  more time learning and configuring these tools than anticipated. The hidden
+  costs start to add up.
 publishDate: 2024-07-24
 tags: ['open source', 'OSS', 'hidden costs']
 image: /images/posts/post-14.jpg
 draft: false
 ---
 
-## And How to Make It Work for You
+# And How to Make It Work for You
 
 Open source software (OSS) has long been heralded as a cost-effective and
 innovative solution for businesses of all sizes. From its grassroots beginnings,
@@ -45,9 +45,9 @@ requires extensive configuration and integration with your existing systems and
 potentially a developer with experience in Go. Now the team moves to develop
 dashboards in [Grafana](https://grafana.com/). Set up in under a day is no
 problem, but the troubleshooting to get accurate reporting takes weeks plus
-learning their language in River. Final step, observability for the DevOps team
-such as with OpenTelemetry. You’ll need to bring in your Java developer plus a
-few more weeks of setup.
+learning their language, River. Final step, observability for the DevOps team
+such as with OpenTelemetry. You’ll need to bring in a Java developer plus a few
+more weeks of setup.
 
 As the developer navigates through setting up SSL for secure access, configuring
 data collectors, and ensuring compatibility across the board, the complexity and
