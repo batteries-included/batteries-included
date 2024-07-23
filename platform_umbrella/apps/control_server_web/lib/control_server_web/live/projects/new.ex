@@ -106,7 +106,9 @@ defmodule ControlServerWeb.Projects.NewLive do
       {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
     else
       err ->
-        # TODO: Handle nested form errors and move to the correct step to show error
+        # This should never be reached since form validation happens
+        # in each step, and you can't move on until they are valid.
+        # Keep this as a failsafe just in case something sneaks through.
         Logger.error(err)
 
         {:noreply,

@@ -2,8 +2,9 @@ defmodule ControlServerWeb.Projects.AIForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  alias CommonCore.Ecto.Validations
   alias CommonCore.Notebooks.JupyterLabNotebook
-  alias CommonCore.Postgres.Cluster
+  alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Util.Memory
   alias ControlServer.Postgres
   alias ControlServerWeb.PostgresFormSubcomponents
@@ -12,23 +13,25 @@ defmodule ControlServerWeb.Projects.AIForm do
   def update(assigns, socket) do
     {class, assigns} = Map.pop(assigns, :class)
 
-    project_name = get_in(assigns, [:data, ProjectForm, "name"])
+    form_data = get_in(assigns, [:data, __MODULE__]) || %{}
+    resource_name = ProjectForm.get_name_for_resource(assigns)
 
     jupyter_changeset =
       JupyterLabNotebook.changeset(
         KubeServices.SmartBuilder.new_jupyter(),
-        %{name: "#{project_name}-notebook"}
+        Map.get(form_data, "jupyter", %{name: resource_name})
       )
 
     postgres_changeset =
-      Cluster.changeset(
+      PGCluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
-        %{name: "#{project_name}-notebook"},
-        Cluster.compact_storage_range_ticks()
+        Map.get(form_data, "postgres", %{name: resource_name}),
+        PGCluster.compact_storage_range_ticks()
       )
 
     form =
       to_form(%{
+        "need_postgres" => Map.get(form_data, "need_postgres", false),
         "jupyter" => to_form(jupyter_changeset, as: :jupyter),
         "postgres" => postgres_changeset
       })
@@ -36,9 +39,9 @@ defmodule ControlServerWeb.Projects.AIForm do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:form, form)
      |> assign(:class, class)
-     |> assign(:db_type, :new)
-     |> assign(:form, form)}
+     |> assign(:db_type, Map.get(form_data, "db_type", :new))}
   end
 
   def handle_event("db_type", %{"type" => type}, socket) do
@@ -52,8 +55,8 @@ defmodule ControlServerWeb.Projects.AIForm do
       |> Map.put(:action, :validate)
 
     postgres_changeset =
-      %Cluster{}
-      |> Cluster.changeset(params["postgres"], Cluster.compact_storage_range_ticks())
+      %PGCluster{}
+      |> PGCluster.changeset(params["postgres"], PGCluster.compact_storage_range_ticks())
       |> Map.put(:action, :validate)
 
     form =
@@ -80,7 +83,7 @@ defmodule ControlServerWeb.Projects.AIForm do
       ) do
     postgres_changeset =
       socket.assigns.form.params["postgres"]
-      |> Cluster.put_storage_size(range_value, Cluster.compact_storage_range_ticks())
+      |> PGCluster.put_storage_size(range_value, PGCluster.compact_storage_range_ticks())
       |> Map.put(:action, :validate)
 
     form =
@@ -93,14 +96,22 @@ defmodule ControlServerWeb.Projects.AIForm do
 
   def handle_event("save", params, socket) do
     params =
-      Map.take(params, [
+      params
+      |> Map.take([
+        "need_postgres",
         "jupyter",
         if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "new", do: "postgres"),
         if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "existing", do: "postgres_ids")
       ])
+      |> Map.put("db_type", socket.assigns.db_type)
 
-    # Don't create the resources yet, send data to parent liveview
-    send(self(), {:next, {__MODULE__, params}})
+    if Validations.subforms_valid?(params, %{
+         "jupyter" => &JupyterLabNotebook.changeset(%JupyterLabNotebook{}, &1),
+         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, PGCluster.compact_storage_range_ticks())
+       }) do
+      # Don't create the resources yet, send data to parent liveview
+      send(self(), {:next, {__MODULE__, params}})
+    end
 
     {:noreply, socket}
   end
@@ -183,7 +194,7 @@ defmodule ControlServerWeb.Projects.AIForm do
             form={to_form(@form[:postgres].value, as: :postgres)}
             phx_target={@myself}
             with_divider={false}
-            ticks={Cluster.compact_storage_range_ticks()}
+            ticks={PGCluster.compact_storage_range_ticks()}
           />
         </div>
 

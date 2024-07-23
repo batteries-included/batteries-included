@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  alias CommonCore.Ecto.Validations
   alias CommonCore.Knative.Service, as: KnativeService
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
@@ -16,35 +17,38 @@ defmodule ControlServerWeb.Projects.WebForm do
   def update(assigns, socket) do
     {class, assigns} = Map.pop(assigns, :class)
 
-    project_name = get_in(assigns, [:data, ProjectForm, "name"])
+    form_data = get_in(assigns, [:data, __MODULE__]) || %{}
+    resource_name = ProjectForm.get_name_for_resource(assigns)
 
     knative_changeset =
       KnativeService.changeset(
         %KnativeService{},
-        %{name: "#{project_name}-web"}
+        Map.get(form_data, "knative", %{name: resource_name})
       )
 
     traditional_changeset =
       TraditionalService.changeset(
         KubeServices.SmartBuilder.new_traditional_service(),
-        %{name: "#{project_name}-web"}
+        Map.get(form_data, "traditional", %{name: resource_name})
       )
 
     postgres_changeset =
       PGCluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
-        %{name: "#{project_name}-web"},
+        Map.get(form_data, "postgres", %{name: resource_name}),
         PGCluster.compact_storage_range_ticks()
       )
 
     redis_changeset =
       RedisCluster.changeset(
         KubeServices.SmartBuilder.new_redis(),
-        %{name: "#{project_name}-web"}
+        Map.get(form_data, "redis", %{name: resource_name})
       )
 
     form =
       to_form(%{
+        "need_postgres" => Map.get(form_data, "need_postgres", false),
+        "need_redis" => Map.get(form_data, "need_redis", false),
         "knative" => knative_changeset,
         "traditional" => traditional_changeset,
         "postgres" => postgres_changeset,
@@ -54,10 +58,10 @@ defmodule ControlServerWeb.Projects.WebForm do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:form, form)
      |> assign(:class, class)
-     |> assign(:db_type, :new)
-     |> assign(:service_type, :knative)
-     |> assign(:form, form)}
+     |> assign(:db_type, Map.get(form_data, "db_type", :new))
+     |> assign(:service_type, Map.get(form_data, "service_type", :knative))}
   end
 
   def handle_event("db_type", %{"type" => type}, socket) do
@@ -128,16 +132,28 @@ defmodule ControlServerWeb.Projects.WebForm do
 
   def handle_event("save", params, socket) do
     params =
-      Map.take(params, [
+      params
+      |> Map.take([
+        "need_postgres",
+        "need_redis",
         if(params["service_type"] == "knative", do: "knative"),
         if(params["service_type"] == "traditional", do: "traditional"),
-        if(normalize_value("checkbox", params["need_db"]) && params["db_type"] == "new", do: "postgres"),
-        if(normalize_value("checkbox", params["need_db"]) && params["db_type"] == "existing", do: "postgres_ids"),
+        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "new", do: "postgres"),
+        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "existing", do: "postgres_ids"),
         if(normalize_value("checkbox", params["need_redis"]), do: "redis")
       ])
+      |> Map.put("db_type", socket.assigns.db_type)
+      |> Map.put("service_type", socket.assigns.service_type)
 
-    # Don't create the resources yet, send data to parent liveview
-    send(self(), {:next, {__MODULE__, params}})
+    if Validations.subforms_valid?(params, %{
+         "knative" => &KnativeService.changeset(%KnativeService{}, &1),
+         "traditional" => &TraditionalService.changeset(%TraditionalService{}, &1),
+         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, PGCluster.compact_storage_range_ticks()),
+         "redis" => &RedisCluster.changeset(%RedisCluster{}, &1)
+       }) do
+      # Don't create the resources yet, send data to parent liveview
+      send(self(), {:next, {__MODULE__, params}})
+    end
 
     {:noreply, socket}
   end
@@ -200,9 +216,9 @@ defmodule ControlServerWeb.Projects.WebForm do
 
         <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
 
-        <.input field={@form[:need_db]} type="switch" label="I need a database" />
+        <.input field={@form[:need_postgres]} type="switch" label="I need a database" />
 
-        <.flex column class={!normalize_value("checkbox", @form[:need_db].value) && "hidden"}>
+        <.flex column class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}>
           <.tab_bar variant="secondary">
             <:tab
               phx-click="db_type"

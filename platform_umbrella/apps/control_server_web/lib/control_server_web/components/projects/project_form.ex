@@ -55,6 +55,14 @@ defmodule ControlServerWeb.Projects.ProjectForm do
     end
   end
 
+  def get_name_for_resource(%{data: %{__MODULE__ => %{"name" => project_name}}}) do
+    project_name
+    |> String.replace(~r/\s+/, "-")
+    |> String.replace(~r/[^a-zA-Z0-9_-]/, "")
+  end
+
+  def get_name_for_resource(_), do: nil
+
   def render(assigns) do
     ~H"""
     <div class="contents">
