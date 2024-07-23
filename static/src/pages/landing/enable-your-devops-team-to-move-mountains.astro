@@ -1,0 +1,204 @@
+---
+import Image from '~/components/common/Image.astro';
+import Headline from '~/components/posts/Headline.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import ButtonLink from '~/components/widgets/ButtonLink.astro';
+import NetlifyFormContainer from '~/components/ui/NetlifyForm.astro';
+
+const metadata = {
+  title: 'Enable your DevOps team to move mountains ',
+};
+---
+
+<Layout metadata={metadata} hideElipses isDark>
+  <div class="pb-12 lg:pb-16 xl:pb-20 relative z-10">
+    <div class="u-container">
+      <Image
+        class="mx-auto"
+        src="~/assets/images/landing/ilustration-1.svg"
+        alt="ilustration 1"
+      />
+      <div class="max-w-screen-sm mx-auto">
+        <div class="text-center">
+          <Headline
+            title="Enable your DevOps team to move mountains"
+            subtitle="Batteries Included is the only software infrastructure platform that offers databases, networking, security, and monitoring through a unified interface. Built on Kubernetes."
+          />
+          <div class="-mt-4 md:-mt-10">
+            <ButtonLink
+              label="Get Started"
+              link="/sign-up"
+              variant="tertiary"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pb-28 bg-rich-black text-white relative">
+    <div class="hidden lg:block absolute -top-[31vw]">
+      <Image
+        src="~/assets/images/landing/bg-curvy-desktop.svg"
+        class="w-full"
+        widths={[1440]}
+        alt="bg curvy desktop"
+        layout="cover"
+      />
+    </div>
+    <div class="lg:hidden absolute -top-[37vw]">
+      <Image
+        src="~/assets/images/landing/bg-curvy-mobile.svg"
+        class="w-full"
+        widths={[375]}
+        alt="bg curvy desktop"
+        layout="cover"
+      />
+    </div>
+    <div class="u-container">
+      <div class="max-w-screen-lg mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="text-center max-w-[368px] mx-auto">
+            <Image
+              class="mx-auto"
+              src="~/assets/images/landing/connection.png"
+              alt="connection"
+            />
+            <h3 class="mt-2 font-bold text-lg lg:text-xl">
+              Deploy Web apps at lightning speed
+            </h3>
+            <p class="mt-1">
+              Launch web apps and services with blue/green deployments,dynamic
+              scaling and security
+            </p>
+          </div>
+          <div class="text-center max-w-[368px] mx-auto">
+            <Image
+              class="mx-auto"
+              src="~/assets/images/landing/stack.png"
+              alt="stack"
+            />
+            <h3 class="mt-2 font-bold text-lg lg:text-xl">
+              Automated relational database
+            </h3>
+            <p class="mt-1">
+              Fully automated PostgreSQL that works with your existing stack
+              with dynamic configuration and scale
+            </p>
+          </div>
+          <div class="text-center max-w-[368px] mx-auto">
+            <Image
+              class="mx-auto"
+              src="~/assets/images/landing/server.png"
+              alt="server"
+            />
+            <h3 class="mt-2 font-bold text-lg lg:text-xl">
+              Works with any cloud
+            </h3>
+            <p class="mt-1">
+              Run your services however you want, wherever you want including
+              AWS, Azure, Google Cloud, or your own Kubernetes cluster
+            </p>
+          </div>
+          <div class="text-center max-w-[368px] mx-auto">
+            <Image
+              class="mx-auto"
+              src="~/assets/images/landing/secure-data.png"
+              alt="secure data"
+            />
+            <h3 class="mt-2 font-bold text-lg lg:text-xl">Secure by default</h3>
+            <p class="mt-1">
+              SSO everywhere you need it, Istio mesh networking out of the box,
+              security scanning, automated SSL, and the flexibility to run on
+              any machine
+            </p>
+          </div>
+          <div class="text-center max-w-[368px] mx-auto">
+            <Image
+              class="mx-auto"
+              src="~/assets/images/landing/evaluation.png"
+              alt="evaluation"
+            />
+            <h3 class="mt-2 font-bold text-lg lg:text-xl">
+              Easy monitoring, easier fixes
+            </h3>
+            <p class="mt-1">
+              Monitor your entire stack in a single pane of glass, and get
+              clarity on product usage, feature prioritization, and
+              auto-remediation. Powered by Grafana and Victoria Metrics.
+            </p>
+          </div>
+          <div class="text-center max-w-[368px] mx-auto">
+            <Image
+              class="mx-auto"
+              src="~/assets/images/landing/artificial-intelligence.png"
+              alt="artificial intelligence"
+            />
+            <h3 class="mt-2 font-bold text-lg lg:text-xl">
+              Purpose-built for AI projects
+            </h3>
+            <p class="mt-1">
+              Managed notebooks for exploring data and building AI models plus
+              LLM hosting powered by OogaBooga
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-12 lg:mt-16 xl:mt-20">
+        <div class="flex flex-col md:flex-row md:items-center md:gap-x-12">
+          <div class="md:w-1/2">
+            <Image
+              class="mx-auto md:mx-0 md:scale-125"
+              src="~/assets/images/landing/ilustration-2.svg"
+              alt="ilustration 2"
+            />
+          </div>
+          <div class="md:w-1/2">
+            <div class="text-center md:text-left">
+              <h2 class="text-3xl lg:text-4xl font-bold">
+                The power of enterprise cloud infrastructure at your fingertips
+              </h2>
+              <p class="mt-4">
+                We’ve built our platform on industry-standard open source code
+                with a layer of abstraction to give you access to the latest
+                innovation, without you needing to ramp expertise or learn new
+                configurations. Say goodbye to YAML for good.
+              </p>
+              <a
+                class="mt-2 inline-block text-primary underline underline-offset-8"
+                href="/">See how Batteries works</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-20 lg:mt-28 xl:mt-32">
+        <div class="mx-auto max-w-screen-md">
+          <div class="bg-raisin-black py-8 px-12 shadow">
+            <div class="text-center">
+              <h3 class="text-2xl lg:text-3xl font-bold">
+                Get early access today
+              </h3>
+              <p class="mt-4">
+                It only takes a minute to sign up and our free starter tier is
+                extremely generous. If you have any questions, our support team
+                would be happy to help you.
+              </p>
+            </div>
+            <div class="mt-8">
+              <NetlifyFormContainer
+                inputs={[
+                  {
+                    type: 'email',
+                    name: 'email',
+                    label: 'Email',
+                  },
+                ]}
+                button="Sign Up Now"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
