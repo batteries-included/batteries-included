@@ -43,7 +43,10 @@ func TestBatteryKubeClient(t *testing.T) {
 	clientConfPath := filepath.Join(outputDir, "client.yaml")
 	clientConfFile, err := os.OpenFile(clientConfPath, os.O_CREATE|os.O_WRONLY, 0o400)
 	require.NoError(t, err)
-	require.NoError(t, clusterProvider.WireGuardConfig(ctx, clientConfFile))
+
+	_, err = clusterProvider.WireGuardConfig(ctx, clientConfFile)
+	require.NoError(t, err)
+
 	require.NoError(t, clientConfFile.Close())
 
 	// Create a new kubernetes client that will send all requests over WireGuard.

@@ -139,14 +139,22 @@ func (env *InstallEnv) WriteWireGuardConfig(ctx context.Context, force bool) err
 
 	provider := env.Spec.KubeCluster.Provider
 
+	var hasConfig bool
 	switch provider {
 	case "aws", "kind":
-		if err := env.clusterProvider.WireGuardConfig(ctx, wireGuardConfigFile); err != nil {
+		hasConfig, err = env.clusterProvider.WireGuardConfig(ctx, wireGuardConfigFile)
+		if err != nil {
 			return fmt.Errorf("error writing wireguard config: %w", err)
 		}
 	case "provided":
 	default:
 		return fmt.Errorf("unknown provider: %s", provider)
+	}
+
+	if !hasConfig {
+		slog.Debug("No wireguard config to write")
+		_ = wireGuardConfigFile.Close()
+		_ = os.Remove(wireGuardConfigPath)
 	}
 
 	return nil

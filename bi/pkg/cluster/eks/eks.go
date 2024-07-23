@@ -314,11 +314,11 @@ func (e *eks) KubeConfig(ctx context.Context, w io.Writer) error {
 	return nil
 }
 
-func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) error {
+func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
 	// Fetch the outputs from the Pulumi state (if needed).
 	if len(e.outputs) == 0 {
 		if err := e.Outputs(ctx, io.Discard); err != nil {
-			return err
+			return true, err
 		}
 	}
 
@@ -327,7 +327,7 @@ func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) error {
 
 	_, vpcSubnet, err := net.ParseCIDR(e.outputs["vpc"]["cidrBlock"].Value.(string))
 	if err != nil {
-		return fmt.Errorf("error parsing vpc subnet: %w", err)
+		return true, fmt.Errorf("error parsing vpc subnet: %w", err)
 	}
 
 	gw := wireguard.Gateway{
@@ -350,10 +350,10 @@ func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) error {
 	}
 
 	if err := installerClient.WriteConfig(w); err != nil {
-		return fmt.Errorf("error writing wireguard config: %w", err)
+		return true, fmt.Errorf("error writing wireguard config: %w", err)
 	}
 
-	return nil
+	return true, nil
 }
 
 // createStack creates the stack with the given program

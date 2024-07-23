@@ -195,9 +195,9 @@ func (p *pulumiProvider) KubeConfig(ctx context.Context, w io.Writer) error {
 	return eks.KubeConfig(ctx, w)
 }
 
-func (p *pulumiProvider) WireGuardConfig(ctx context.Context, w io.Writer) error {
+func (p *pulumiProvider) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
 	if !p.initSuccessful {
-		return fmt.Errorf("attempted to export wireguard config with uninitialized provider")
+		return false, fmt.Errorf("attempted to export wireguard config with uninitialized provider")
 	}
 
 	eks := eks.New(p.toEKSConfig())

@@ -23,5 +23,6 @@ type Provider interface {
 	// KubeConfig returns the kubeconfig for the cluster.
 	KubeConfig(ctx context.Context, w io.Writer) error
 	// WireGuardConfig returns the WireGuard configuration for the cluster.
-	WireGuardConfig(ctx context.Context, w io.Writer) error
+	// The return value indicates if the cluster has WireGuard enabled.
+	WireGuardConfig(ctx context.Context, w io.Writer) (hasConfig bool, err error)
 }
