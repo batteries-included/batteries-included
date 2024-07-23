@@ -409,6 +409,7 @@ defmodule CommonCore.Ecto.Schema do
       chg
       |> CommonCore.Ecto.Validations.maybe_fill_in_slug(name)
       |> CommonCore.Ecto.Validations.downcase_fields([name])
+      |> CommonCore.Ecto.Validations.trim_fields([name])
       |> CommonCore.Ecto.Validations.validate_dns_label(name)
     end)
   end

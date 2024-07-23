@@ -28,6 +28,25 @@ defmodule CommonCore.Ecto.Validations do
     end)
   end
 
+  @doc """
+  Trims whitespace from the values of the given changset fields.
+
+  Returns the updated changeset.
+  """
+  @spec trim_fields(Ecto.Changeset.t(), list(atom())) :: Ecto.Changeset.t()
+  def trim_fields(changeset, fields) do
+    Enum.reduce(fields, changeset, fn f, change ->
+      value = get_field(change, f)
+      trimmed = maybe_trim(value)
+
+      if trimmed != value do
+        put_change(changeset, f, trimmed)
+      else
+        change
+      end
+    end)
+  end
+
   @default_length 64
 
   @doc """
@@ -77,6 +96,12 @@ defmodule CommonCore.Ecto.Validations do
   end
 
   defp maybe_downcase(value), do: value
+
+  defp maybe_trim(value) when is_binary(value) do
+    String.trim(value)
+  end
+
+  defp maybe_trim(value), do: value
 
   # Maybe Set Virtual Size
 

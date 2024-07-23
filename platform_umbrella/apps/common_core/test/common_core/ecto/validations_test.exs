@@ -47,4 +47,33 @@ defmodule CommonCore.Ecto.ValidationsTest do
       assert changeset.changes == %{}
     end
   end
+
+  describe "trim_fields/2" do
+    test "trim string fields" do
+      changeset =
+        %FooStruct{}
+        |> cast(%{"name" => "  John "}, [:name])
+        |> Validations.trim_fields([:name])
+
+      assert changeset.changes.name == "John"
+    end
+
+    test "ignores non-string fields" do
+      changeset =
+        %FooStruct{}
+        |> cast(%{"age" => 42}, [:age])
+        |> Validations.trim_fields([:age])
+
+      assert changeset.changes.age == 42
+    end
+
+    test "ignores nil fields" do
+      changeset =
+        %FooStruct{}
+        |> cast(%{"name" => nil}, [:name])
+        |> Validations.trim_fields([:name])
+
+      assert changeset.changes == %{}
+    end
+  end
 end
