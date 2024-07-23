@@ -10,8 +10,8 @@ defmodule KubeServices.SmartBuilder do
   alias KubeServices.SystemState.SummaryBatteries
 
   def new_postgres do
-    default_user_name = "app"
-    default_permissions = ["login", "createdb", "createrole"]
+    default_user_name = "root"
+    default_permissions = ["login", "superuser"]
 
     %PGCluster{
       virtual_size: Atom.to_string(SummaryBatteries.default_size()),
