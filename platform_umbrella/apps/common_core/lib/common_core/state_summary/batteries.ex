@@ -7,7 +7,7 @@ defmodule CommonCore.StateSummary.Batteries do
   alias CommonCore.StateSummary.Hosts
 
   @doc """
-  Generate a list of tuple mappings of battery type to host.
+  Generate a map of battery type to host.
 
   Filters out any types that don't have a host.
   """
@@ -20,7 +20,7 @@ defmodule CommonCore.StateSummary.Batteries do
   end
 
   @doc """
-  Generate a list of tuple mappings of battery type to host.
+  Generate a map of battery type to host.
 
   Includes battery types with nil host.
   """

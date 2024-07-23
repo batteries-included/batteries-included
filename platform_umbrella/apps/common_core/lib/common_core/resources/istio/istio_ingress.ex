@@ -11,6 +11,7 @@ defmodule CommonCore.Resources.IstioIngress do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.Core
+  alias CommonCore.StateSummary.TraditionalServices
 
   resource(:service_ingressgateway, _battery, state) do
     namespace = istio_namespace(state)
@@ -355,10 +356,18 @@ defmodule CommonCore.Resources.IstioIngress do
 
     ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
 
-    servers =
+    battery_servers =
       state
       |> hosts_by_battery_type()
-      |> Enum.flat_map(fn {type, host} -> build_servers(type, host, ssl_enabled?) end)
+      |> Enum.flat_map(fn {type, host} -> build_battery_servers(type, host, ssl_enabled?) end)
+
+    traditional_service_servers =
+      state
+      |> TraditionalServices.external_hosts_and_ports_by_name()
+      |> Enum.flat_map(&build_traditional_servers(&1, ssl_enabled?))
+      |> Enum.filter(& &1)
+
+    servers = battery_servers ++ traditional_service_servers
 
     spec = %{
       selector: %{istio: "ingressgateway"},
@@ -385,10 +394,10 @@ defmodule CommonCore.Resources.IstioIngress do
     |> B.spec(spec)
   end
 
-  defp build_servers(:forgejo = type, host, ssl_enabled?),
+  defp build_battery_servers(:forgejo = type, host, ssl_enabled?),
     do: [forgejo_ssh_server(host), web_server(sanitize(type), host, ssl_enabled?)]
 
-  defp build_servers(type, host, ssl_enabled?), do: [web_server(sanitize(type), host, ssl_enabled?)]
+  defp build_battery_servers(type, host, ssl_enabled?), do: [web_server(sanitize(type), host, ssl_enabled?)]
 
   defp web_server(type, host, true = _ssl_enabled?) do
     %{
@@ -406,4 +415,15 @@ defmodule CommonCore.Resources.IstioIngress do
   end
 
   defp forgejo_ssh_server(host), do: %{port: %{number: 22, name: "ssh-forgejo", protocol: "TCP"}, hosts: [host]}
+
+  defp build_traditional_servers(_service, true = _ssl_enabled?), do: []
+
+  defp build_traditional_servers({host, ports}, false = _ssl_enabled?) do
+    Enum.map(ports, fn port ->
+      %{
+        port: %{number: port.number, name: port.name, protocol: port.protocol},
+        hosts: [host]
+      }
+    end)
+  end
 end
