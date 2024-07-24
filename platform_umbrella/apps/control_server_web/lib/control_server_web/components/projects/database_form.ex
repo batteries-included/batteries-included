@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  alias CommonCore.Ecto.Validations
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.FailoverCluster, as: RedisCluster
@@ -13,30 +14,33 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   def update(assigns, socket) do
     {class, assigns} = Map.pop(assigns, :class)
 
-    project_name = get_in(assigns, [:data, ProjectForm, "name"])
+    form_data = get_in(assigns, [:data, __MODULE__]) || %{}
+    resource_name = ProjectForm.get_name_for_resource(assigns)
 
     postgres_changeset =
       PGCluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
-        %{name: project_name},
+        Map.get(form_data, "postgres", %{name: resource_name}),
         PGCluster.compact_storage_range_ticks()
       )
 
     redis_changeset =
       RedisCluster.changeset(
         KubeServices.SmartBuilder.new_redis(),
-        %{name: project_name}
+        Map.get(form_data, "redis", %{name: resource_name})
       )
 
     ferret_changeset =
       FerretService.changeset(
         KubeServices.SmartBuilder.new_ferretdb(),
-        %{name: project_name}
+        Map.get(form_data, "ferret", %{name: resource_name})
       )
 
     form =
       to_form(%{
-        "need_postgres" => "true",
+        "need_postgres" => Map.get(form_data, "need_postgres", true),
+        "need_redis" => Map.get(form_data, "need_redis", false),
+        "need_ferret" => Map.get(form_data, "need_ferret", false),
         "postgres" => postgres_changeset,
         "redis" => redis_changeset,
         "ferret" => ferret_changeset
@@ -45,8 +49,8 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:class, class)
-     |> assign(:form, form)}
+     |> assign(:form, form)
+     |> assign(:class, class)}
   end
 
   def handle_event("validate", params, socket) do
@@ -111,6 +115,9 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   def handle_event("save", params, socket) do
     params =
       Map.take(params, [
+        "need_postgres",
+        "need_redis",
+        "need_ferret",
         if(normalize_value("checkbox", params["need_postgres"]), do: "postgres"),
         if(normalize_value("checkbox", params["need_redis"]), do: "redis"),
         if(normalize_value("checkbox", params["need_postgres"]) && normalize_value("checkbox", params["need_ferret"]),
@@ -118,8 +125,14 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         )
       ])
 
-    # Don't create the resources yet, send data to parent liveview
-    send(self(), {:next, {__MODULE__, params}})
+    if Validations.subforms_valid?(params, %{
+         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, PGCluster.compact_storage_range_ticks()),
+         "redis" => &RedisCluster.changeset(%RedisCluster{}, &1),
+         "ferret" => &FerretService.changeset(%FerretService{}, &1)
+       }) do
+      # Don't create the resources yet, send data to parent liveview
+      send(self(), {:next, {__MODULE__, params}})
+    end
 
     {:noreply, socket}
   end

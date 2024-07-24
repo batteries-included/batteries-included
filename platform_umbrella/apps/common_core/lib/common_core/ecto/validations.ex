@@ -28,6 +28,25 @@ defmodule CommonCore.Ecto.Validations do
     end)
   end
 
+  @doc """
+  Trims whitespace from the values of the given changset fields.
+
+  Returns the updated changeset.
+  """
+  @spec trim_fields(Ecto.Changeset.t(), list(atom())) :: Ecto.Changeset.t()
+  def trim_fields(changeset, fields) do
+    Enum.reduce(fields, changeset, fn f, change ->
+      value = get_field(change, f)
+      trimmed = maybe_trim(value)
+
+      if trimmed != value do
+        put_change(changeset, f, trimmed)
+      else
+        change
+      end
+    end)
+  end
+
   @default_length 64
 
   @doc """
@@ -77,6 +96,12 @@ defmodule CommonCore.Ecto.Validations do
   end
 
   defp maybe_downcase(value), do: value
+
+  defp maybe_trim(value) when is_binary(value) do
+    String.trim(value)
+  end
+
+  defp maybe_trim(value), do: value
 
   # Maybe Set Virtual Size
 
@@ -178,5 +203,36 @@ defmodule CommonCore.Ecto.Validations do
     changeset
     |> validate_format(field, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
     |> validate_length(field, max: 160)
+  end
+
+  @doc """
+  Takes a map of params from subforms and validates them against
+  a changeset function defined with the same key. Returns true if
+  all the subforms are valid, and false if not.
+
+  ## Example
+
+      params = %{
+        "form1" => %{"foo" => "bar"},
+        "form2" => %{"baz" => "qux"}
+      }
+
+      changesets = %{
+        "form1" => &Form1.changeset(%Form1{}, &1),
+        "form2" => &Form2.changeset(%Form1{}, &1)
+      }
+
+  """
+  def subforms_valid?(params, changesets) do
+    params
+    |> Enum.filter(fn {key, _} -> Map.has_key?(changesets, key) end)
+    |> Enum.map(fn {key, values} ->
+      {key,
+       values
+       |> changesets[key].()
+       |> apply_action(:insert)}
+    end)
+    |> Enum.filter(fn {_, {status, _}} -> status != :ok end)
+    |> Enum.empty?()
   end
 end
