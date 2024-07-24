@@ -29,8 +29,8 @@ _DevOps_ is a philosophy that seeks to integrate software development and
 operations-- emphasizing collaboration, automation, and integration. While this
 sounds exciting, development teams have differing needs, leading to a
 proliferation of tools and practices like GitOps, YAML workflows, infrastructure
-as code, etc. Ironically, while these are all intended to streamline processes,
-they also inadvertently add layers of complexity.
+as code, etc. While these are intended to streamline processes, they often add
+layers of complexity.
 
 Imagine a scenario where every time you wanted to make a cup of coffee, you had
 to configure a YAML file, push it to a Git repository, and then execute a series
@@ -42,9 +42,9 @@ opposite.
 One of DevOps' primary challenges is addressing friction in the development
 process. As developers encounter obstacles to their workflow, it's not uncommon
 to resort to band-aid fixes or short-sighted workarounds. As time goes on, these
-practices will accumulate technical debt, impeding the introduction of new
-features, bug fixes, and system maintenance, ultimately affecting business
-outcomes and customer satisfaction.
+practices accumulate technical debt, impeding the introduction of new features,
+bug fixes, and system maintenance, ultimately affecting business outcomes and
+customer satisfaction.
 
 ## Silos Aren't Just For Grain
 
@@ -56,24 +56,20 @@ web developers, and product managers, often operate on different schedules and
 priorities. This can turn DevOps into an ancillary team facing unique
 challenges.
 
-DevOps engineers typically focus on deployment, scalability, and infrastructure,
-which tends to differ from product developers who are often more concerned with
+DevOps engineers focus on deployment, scalability, and infrastructure, which
+tends to differ from product developers who are often more concerned with
 business deadlines and feature development. This specialization gap can create
-significant barriers. Introducing complex tools to team members without the
-necessary background can be challenging and may lead to resistance.
+significant barriers to adopting new tools and practices:
 
-Additionally, teams may be skeptical of solutions developed outside their
-immediate circle, a phenomenon known as "Not Invented Here" (NIH) syndrome.
-These factors can significantly impede and slow down the adoption of new tools
-and practices.
-
-Communication challenges further complicate the situation. When DevOps engineers
-develop tools in isolation, there's often limited feedback from potential
-end-users (e.g., the product team). This lack of collaboration can result in
-tools that don't adequately address the product team's needs or haven't
-undergone sufficient testing and evaluation. The absence of regular feedback
-from end-users may lead to misaligned priorities and inefficient resource
-allocation.
+- Introducing new and complex tools to team members without the necessary
+  background may face resistance.
+- Teams may be skeptical of solutions developed outside their immediate circle,
+  a phenomenon known as "Not Invented Here" (NIH) syndrome.
+- When DevOps engineers create tools in isolation, there's often limited input
+  from potential end-users (e.g., the product team), resulting in insufficiently
+  vetted tools.
+- Absence of regular feedback from end-users may lead to misaligned priorities
+  and inefficient resource allocation.
 
 ## Enter the SRE/PE
 
@@ -88,18 +84,23 @@ being part of the team.
 services and [unparalleled scale](https://www.youtube.com/watch?v=3t6L-FlfeaI),
 has been a pioneer in adopting and promoting the SRE model. At Google, SRE is
 not just a role but a philosophy based on the belief that embedding engineers
-with deep operational knowledge directly into product teams is the most
-effective way to ensure system reliability. These SREs work hand-in-hand with
-product developers, ensuring that the software is not only functional but also
-scalable, reliable, and efficient.
+with deep operational knowledge into product teams is the most effective way to
+ensure system reliability. These SREs work hand-in-hand with product developers,
+ensuring that the software is not only functional but also scalable, reliable,
+and efficient.
 
 SREs focus on automating as many operational tasks as possible, adhering to the
-principle that "operations is a software problem." This approach not only
-reduces manual intervention and associated errors but also allows for rapid
-scaling and adaptability. SREs don't simply build tools and automation; they
-immerse themselves in the team, influencing development practices. They act as
-educators, teaching teams how to produce systems that are both functional and
-operable.
+principle that "operations is a software problem." This approach reduces manual
+intervention and associated errors while also allowing for rapid scaling and
+adaptability. SREs don't simply build tools and automation; they immerse
+themselves in the team, influencing development practices. They act as
+educators, teaching teams how to produce more robust systems.
+
+SRE responsibilities are diverse-- a significant portion of time is spent on
+operations work, including emergency incident response, change management, and
+IT infrastructure management. These engineers also support the development team
+in creating new features and stabilizing production systems, while continuously
+improving processes through post-incident reviews and knowledge sharing.
 
 This hands-on approach ensures that both the tools and the team's culture are
 internally developed. When an SRE transitions to their next assignment, they
@@ -125,13 +126,13 @@ As a developer, many times, the most impactful thing you can do for operations
 is to protect operations from yourself.
 
 Testing plays a crucial role in verifying that the software aligns with its
-intended functionality. As Robert C. Martin once aptly noted, _"Truth can only
-be found in one place: the code."_ But what happens when that truth is distorted
-by human error? That is where tests come into play, ensuring that the software
-we envisioned aligns with what's running in production. However, like any tool
-wielded by humans, its effectiveness can vary significantly. Over-testing can
-slow down the development process, while inadequate or irrelevant tests can
-provide a false sense of security. Striking the right balance is crucial.
+intended functionality. As Robert C. Martin once noted, _"Truth can only be
+found in one place: the code."_ But what happens when that truth is distorted by
+human error? That is where tests come into play, ensuring that the software we
+envisioned aligns with what's running in production. However, like any tool
+wielded by humans, its effectiveness varies significantly. Over-testing can slow
+down the development process, while inadequate or irrelevant tests can provide a
+false sense of security. Striking the right balance is crucial.
 
 The good news is, developers aren't resistant to change; they're resistant to
 slowdowns. If presented with tools that enhance safety without compromising
