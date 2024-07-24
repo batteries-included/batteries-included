@@ -15,21 +15,22 @@ traditionally separate domains. Yet, for many organizations, the actual
 implementation of DevOps principles often proves more complex than anticipated.
 
 This article examines these challenges and also explores how we can learn from
-Site Reliability Engineering (SRE) to potentially enhance DevOps practices.
+[Site Reliability Engineering (SRE)](https://sre.google) to enhance DevOps
+practices.
 
-Note: some will correctly argue that SRE is a form of DevOps; for the purposes
-of this discussion, we'll focus on SRE as the engineering role used by
-hyperscalers, and consider DevOps as it is commonly described and applied in
-industry practice today.
+Note: some will argue that SRE is a form of DevOps; for the purposes of this
+discussion, we'll focus on SRE as the engineering role used by hyperscalers, and
+consider DevOps as it is commonly described and applied in industry practice
+today.
 
 ## The DevOps Dilemma
 
-_DevOps_, as its name implies, is a philosophy that seeks to integrate software
-development and operations-- emphasizing collaboration, automation, and
-integration. While this sounds exciting, development teams have differing needs,
-leading to a proliferation of tools and practices like GitOps, YAML workflows,
-infrastructure as code, etc. Ironically, while these are all intended to
-streamline processes, they also inadvertently add layers of complexity.
+_DevOps_ is a philosophy that seeks to integrate software development and
+operations-- emphasizing collaboration, automation, and integration. While this
+sounds exciting, development teams have differing needs, leading to a
+proliferation of tools and practices like GitOps, YAML workflows, infrastructure
+as code, etc. Ironically, while these are all intended to streamline processes,
+they also inadvertently add layers of complexity.
 
 Imagine a scenario where every time you wanted to make a cup of coffee, you had
 to configure a YAML file, push it to a Git repository, and then execute a series
@@ -135,8 +136,8 @@ provide a false sense of security. Striking the right balance is crucial.
 The good news is, developers aren't resistant to change; they're resistant to
 slowdowns. If presented with tools that enhance safety without compromising
 speed, adoption becomes a no-brainer. It's akin to offering a race car driver a
-vehicle that's not only faster but also equipped with the best safety features.
-Who would say no?
+vehicle that's faster and better equipped with the best safety features. Who
+would say no?
 
 Removing old, redundant tests is a step in this direction. While tests are
 crucial, outdated or irrelevant tests can clutter the development process,
