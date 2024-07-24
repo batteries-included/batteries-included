@@ -53,6 +53,12 @@ defmodule CommonCore.Resources.CertManager.Certificates.Cert do
     build_cert_spec(name, hosts, issuer)
   end
 
+  defp spec(name, state, :traditional_services) do
+    hosts = Enum.map(state.traditional_services, &Hosts.traditional_host(state, &1))
+    issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
+    build_cert_spec(name, hosts, issuer)
+  end
+
   defp spec(name, state, battery_type) do
     host = Hosts.for_battery(state, battery_type)
     issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
