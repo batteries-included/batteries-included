@@ -364,8 +364,7 @@ defmodule CommonCore.Resources.IstioIngress do
     traditional_service_servers =
       state
       |> TraditionalServices.external_hosts_and_ports_by_name()
-      |> Enum.flat_map(&build_traditional_servers(&1, ssl_enabled?))
-      |> Enum.filter(& &1)
+      |> Enum.flat_map(fn {host, ports} -> build_server_for_traditional_service(host, ports, ssl_enabled?) end)
 
     servers = battery_servers ++ traditional_service_servers
 
@@ -416,14 +415,29 @@ defmodule CommonCore.Resources.IstioIngress do
 
   defp forgejo_ssh_server(host), do: %{port: %{number: 22, name: "ssh-forgejo", protocol: "TCP"}, hosts: [host]}
 
-  defp build_traditional_servers(_service, true = _ssl_enabled?), do: []
+  defp build_server_for_traditional_service(_host, ports, _ssl_enabled?) when is_nil(ports) or ports == [], do: []
 
-  defp build_traditional_servers({host, ports}, false = _ssl_enabled?) do
-    Enum.map(ports, fn port ->
-      %{
-        port: %{number: port.number, name: port.name, protocol: port.protocol},
-        hosts: [host]
-      }
-    end)
+  defp build_server_for_traditional_service(host, ports, ssl_enabled?) do
+    Enum.map(ports, &build_server_for_traditional_service_port(host, &1, ssl_enabled?))
+  end
+
+  defp build_server_for_traditional_service_port(host, %{protocol: protocol} = port, true = _ssl_enabled?)
+       when protocol in [:http, :http2] do
+    %{
+      port: %{number: 443, name: port.name, protocol: "HTTPS"},
+      tls: %{mode: "SIMPLE", credentialName: "traditional-services-ingress-cert"},
+      hosts: [host]
+    }
+  end
+
+  defp build_server_for_traditional_service_port(host, %{protocol: :tcp} = port, true = _ssl_enabled?) do
+    %{port: %{number: port.number, name: port.name, protocol: "TCP"}, hosts: [host]}
+  end
+
+  defp build_server_for_traditional_service_port(host, port, false = _ssl_enabled?) do
+    %{
+      port: %{number: port.number, name: port.name, protocol: String.upcase(Atom.to_string(port.protocol))},
+      hosts: [host]
+    }
   end
 end
