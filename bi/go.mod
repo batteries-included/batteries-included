@@ -9,12 +9,12 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.30.3
 	github.com/aws/smithy-go v1.20.3
 	github.com/dghubble/ipnets v1.0.0
-	github.com/docker/docker v27.1.0+incompatible
+	github.com/docker/docker v27.1.1+incompatible
 	github.com/lmittmann/tint v1.0.5
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.22.0
 	github.com/noisysockets/noisysockets v0.27.4
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.45.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.46.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.4
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.4
 	github.com/pulumi/pulumi/sdk/v3 v3.126.0
@@ -221,7 +221,6 @@ require (
 	k8s.io/kube-openapi v0.0.0-20240709000822-3c01b740850f // indirect
 	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8 // indirect
 	lukechampine.com/frand v1.4.2 // indirect
-	pgregory.net/rapid v0.6.1 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
