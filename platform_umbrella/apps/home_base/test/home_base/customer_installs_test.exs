@@ -29,6 +29,21 @@ defmodule HomeBase.CustomerInstallsTest do
       assert CustomerInstalls.list_installations(team) == [installation]
     end
 
+    test "count_installations/1 returns the count for a user" do
+      user = insert(:user)
+      installation_fixture(user_id: user.id)
+
+      assert CustomerInstalls.count_installations(user) == 1
+    end
+
+    test "count_installations/1 returns the count for a team" do
+      team = insert(:team)
+      installation_fixture(team_id: team.id)
+      installation_fixture(team_id: team.id)
+
+      assert CustomerInstalls.count_installations(team) == 2
+    end
+
     test "get_installation!/1 returns the installation with given id" do
       installation = installation_fixture()
       assert CustomerInstalls.get_installation!(installation.id) == installation

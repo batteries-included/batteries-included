@@ -27,6 +27,14 @@ defmodule HomeBase.CustomerInstalls do
     Repo.all(from i in Installation, where: i.team_id == ^team.id)
   end
 
+  def count_installations(%User{} = user) do
+    Repo.aggregate(from(i in Installation, where: i.user_id == ^user.id), :count)
+  end
+
+  def count_installations(%Team{} = team) do
+    Repo.aggregate(from(i in Installation, where: i.team_id == ^team.id), :count)
+  end
+
   @doc """
   Gets a single installation.
 
