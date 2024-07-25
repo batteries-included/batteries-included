@@ -2,8 +2,6 @@ defmodule ControlServerWeb.Live.Home do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import ControlServerWeb.Chart
-
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Defaults.Namespaces
   alias ControlServer.Batteries

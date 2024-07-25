@@ -1,6 +1,7 @@
 import 'phoenix_html';
 import { Socket } from 'phoenix';
 import { LiveSocket, ViewHook } from 'phoenix_live_view';
+import { ChartHook } from '../../../common_ui/assets/js/chart';
 import { TooltipHook } from '../../../common_ui/assets/js/tooltip';
 import '../../../common_ui/assets/js/shared';
 
@@ -9,6 +10,7 @@ const csrfToken = document
   ?.getAttribute('content');
 
 const hooks: { [name: string]: Partial<ViewHook> } = {
+  Chart: ChartHook,
   Tooltip: TooltipHook,
 };
 

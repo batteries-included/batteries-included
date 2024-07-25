@@ -27,6 +27,7 @@ defmodule CommonUI do
       import CommonUI.Components.Alert
       import CommonUI.Components.Badge
       import CommonUI.Components.Button
+      import CommonUI.Components.Chart
       import CommonUI.Components.ClickFlip
       import CommonUI.Components.Container
       import CommonUI.Components.DataList
