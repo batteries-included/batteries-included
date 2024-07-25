@@ -47,6 +47,7 @@ defmodule CommonUI do
       import CommonUI.Components.Progress
       import CommonUI.Components.TabBar
       import CommonUI.Components.Table
+      import CommonUI.Components.TodoList
       import CommonUI.Components.Tooltip
       import CommonUI.Components.Typography
       import CommonUI.Components.Video
