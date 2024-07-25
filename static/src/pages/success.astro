@@ -1,6 +1,19 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import HeroText from '~/components/widgets/HeroText.astro';
+import ButtonLink from '~/components/widgets/ButtonLink.astro';
+import Image from '~/components/common/Image.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('post', ({ data }) => {
+  return data.draft !== true;
+});
+const allDocs = await getCollection('doc', ({ data }) => {
+  return data.draft !== true;
+});
+
+const recentPosts = allPosts.sort(
+  (a: any, b: any) => b.data?.publishDate - a.data?.publishDate
+);
 
 const metadata = {
   title: 'Success',
@@ -8,9 +21,73 @@ const metadata = {
 };
 ---
 
-<Layout metadata={metadata}>
-  <HeroText
-    title="Success"
-    tagline="Thank you for joining Batteries Included's platform beta list."
-  />
+<Layout metadata={metadata} hideElipses>
+  <div class="py-12 lg:py-16 xl:py-20">
+    <div class="u-container">
+      <div
+        class="flex flex-col gap-y-12 md:flex-row md:items-center md:gap-x-12 text-center md:text-left">
+        <div class="md:w-1/2">
+          <div>
+            <h1 class="text-5xl lg:text-6xl font-bold">Thank you!</h1>
+            <p class="mt-2 text-lg lg:text-xl">
+              for joining Batteries Included's platform beta list.
+            </p>
+          </div>
+          <div class="mt-6 lg:mt-12">
+            <div>
+              <h2 class="text-2xl lg:text-3xl font-bold">Posts</h2>
+              <ul class="mt-2 space-y-1">
+                {
+                  recentPosts.slice(0, 2).map((post) => {
+                    return (
+                      <li>
+                        <a
+                          class="underline hover:text-primary duration-300"
+                          href={`/posts/${post.slug}`}>
+                          {post.data.title}
+                        </a>
+                      </li>
+                    );
+                  })
+                }
+              </ul>
+            </div>
+            <div class="mt-6">
+              <h2 class="text-2xl lg:text-3xl font-bold">Docs</h2>
+              <ul class="mt-2 space-y-1">
+                {
+                  allDocs.slice(0, 2).map((post) => {
+                    return (
+                      <li>
+                        <a
+                          class="underline hover:text-primary duration-300"
+                          href={`/docs/${post.slug}`}>
+                          {post.data.title}
+                        </a>
+                      </li>
+                    );
+                  })
+                }
+              </ul>
+            </div>
+          </div>
+          <div class="mt-6 lg:mt-12">
+            <p class="text-lg lg:text-xl font-bold">
+              What you want to do next?
+            </p>
+            <div class="mt-4">
+              <ButtonLink label="Go back home" link="/" variant="tertiary" />
+            </div>
+          </div>
+        </div>
+        <div class="md:w-1/2">
+          <Image
+            class="mx-auto"
+            src="~/assets/images/mail-sent.svg"
+            alt="mail sent"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>
