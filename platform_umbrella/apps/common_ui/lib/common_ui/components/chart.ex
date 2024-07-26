@@ -13,13 +13,13 @@ defmodule CommonUI.Components.Chart do
     ~H"""
     <div
       id={@id}
-      class={["relative chart-dark-invert", @class]}
+      class={["relative", @class]}
       phx-hook="Chart"
       data-type={@type}
       data-encoded={Jason.encode!(@data)}
       data-options={Jason.encode!(Map.merge(default_options(@merge_options), @options))}
     >
-      <canvas id={"#{@id}-canvas"} />
+      <canvas id={"#{@id}-canvas"} class="dark:invert dark:hue-rotate-180" />
     </div>
     """
   end
