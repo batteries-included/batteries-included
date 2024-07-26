@@ -58,6 +58,9 @@ inexperienced developers:
   little to no feedback on the potential impact of modifying a field or
   suggesting valid values.
 
+These barriers add considerable onboarding friction and increase the risk of
+errors in development and deployment processes.
+
 ## Automation Challenges in the Software Development Lifecycle
 
 Implementing GitOps at scale requires robust automation, but several factors add
