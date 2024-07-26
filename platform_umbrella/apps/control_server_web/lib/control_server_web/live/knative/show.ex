@@ -9,7 +9,6 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.Audit.EditVersionsTable
-  import ControlServerWeb.Chart
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.PodsTable

@@ -1,0 +1,3 @@
+<div id="test-chart" class="relative chart-dark-invert " phx-hook="Chart" data-type="doughnut" data-encoded="{&quot;datasets&quot;:[{&quot;data&quot;:[1,2,3,4,5,6],&quot;label&quot;:&quot;Test&quot;}]}" data-options="{}">
+  <canvas id="test-chart-canvas"></canvas>
+</div>

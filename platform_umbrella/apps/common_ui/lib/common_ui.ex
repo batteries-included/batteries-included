@@ -27,6 +27,7 @@ defmodule CommonUI do
       import CommonUI.Components.Alert
       import CommonUI.Components.Badge
       import CommonUI.Components.Button
+      import CommonUI.Components.Chart
       import CommonUI.Components.ClickFlip
       import CommonUI.Components.Container
       import CommonUI.Components.DataList
@@ -46,6 +47,7 @@ defmodule CommonUI do
       import CommonUI.Components.Progress
       import CommonUI.Components.TabBar
       import CommonUI.Components.Table
+      import CommonUI.Components.TodoList
       import CommonUI.Components.Tooltip
       import CommonUI.Components.Typography
       import CommonUI.Components.Video
