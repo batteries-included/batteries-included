@@ -16,8 +16,4 @@
       #313145 100%
     );
   }
-
-  .chart-dark-invert canvas {
-    filter: invert(1) hue-rotate(180deg);
-  }
 }

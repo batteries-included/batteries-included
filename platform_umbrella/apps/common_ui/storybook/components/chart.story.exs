@@ -7,12 +7,48 @@ defmodule Storybook.Components.Chart do
   def variations do
     [
       %Variation{
-        id: :default,
+        id: :mixed,
         attributes: %{
           data: %{
-            labels: ["Foo", "Bar", "Baz", "Qux"],
+            labels: ["Foo", "Bar", "Baz", "Qux", "Quux", "Corge", "Grault", "Garply"],
             datasets: [
-              %{label: "Total", data: [1, 2, 3, 4]}
+              %{label: "Total", data: [1, 2, 3, 4, 5, 4, 3, 2]}
+            ]
+          }
+        }
+      },
+      %Variation{
+        id: :mint,
+        attributes: %{
+          variant: "mint",
+          data: %{
+            labels: ["Foo", "Bar", "Baz", "Qux", "Quux", "Corge", "Grault", "Garply"],
+            datasets: [
+              %{label: "Total", data: [1, 2, 3, 4, 5, 4, 3, 2]}
+            ]
+          }
+        }
+      },
+      %Variation{
+        id: :berry,
+        attributes: %{
+          variant: "berry",
+          data: %{
+            labels: ["Foo", "Bar", "Baz", "Qux", "Quux", "Corge", "Grault", "Garply"],
+            datasets: [
+              %{label: "Total", data: [1, 2, 3, 4, 5, 4, 3, 2]}
+            ]
+          }
+        }
+      },
+      %Variation{
+        id: :dark,
+        attributes: %{
+          variant: "dark",
+          data: %{
+            labels: ["Foo", "Bar", "Baz", "Qux", "Quux", "Corge", "Grault", "Garply"],
+            datasets: [
+              %{label: "Total", data: [1, 2, 3, 4, 5, 4, 3, 2]}
             ]
           }
         }
@@ -22,7 +58,7 @@ defmodule Storybook.Components.Chart do
         attributes: %{
           data: %{
             datasets: [
-              %{label: "Total", data: [1, 2, 3, 4, 5, 6]}
+              %{label: "Total", data: [1, 1, 1, 1, 1, 1, 1, 1]}
             ]
           },
           options: %{

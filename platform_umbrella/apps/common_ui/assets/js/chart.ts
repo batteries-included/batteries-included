@@ -45,9 +45,14 @@ export const ChartHook = {
             chart.ctx.beginPath();
             chart.ctx.arc(-xCoor, yCoor, radius, 0, Math.PI * 2, false);
 
-            chart.ctx.fillStyle = this.options.backgroundColor[index];
-            chart.ctx.fill();
+            chart.ctx.fillStyle =
+              this.options.backgroundColor[
+                index >= this.options.backgroundColor.length
+                  ? index - this.options.backgroundColor.length
+                  : index
+              ];
 
+            chart.ctx.fill();
             chart.ctx.restore();
           }
         });
