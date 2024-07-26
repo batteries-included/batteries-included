@@ -13,19 +13,10 @@ defmodule HomeBaseWeb.InstallationNewLive do
 
     {:ok,
      socket
-     |> assign(:welcome, false)
      |> assign(:page, :installations)
      |> assign(:page_title, "Installations")
      |> assign(:installations, installations)
      |> assign(:form, to_form(changeset))}
-  end
-
-  def handle_params(%{"welcome" => _}, _uri, socket) do
-    {:noreply, assign(socket, :welcome, true)}
-  end
-
-  def handle_params(_params, _uri, socket) do
-    {:noreply, socket}
   end
 
   def handle_event("validate", %{"installation" => params}, socket) do
