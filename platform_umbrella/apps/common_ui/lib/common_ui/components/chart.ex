@@ -7,6 +7,7 @@ defmodule CommonUI.Components.Chart do
   attr :type, :string, default: "doughnut"
   attr :data, :map, required: true
   attr :options, :map, default: %{}
+  attr :merge_options, :boolean, default: true
 
   def chart(assigns) do
     ~H"""
@@ -16,14 +17,16 @@ defmodule CommonUI.Components.Chart do
       phx-hook="Chart"
       data-type={@type}
       data-encoded={Jason.encode!(@data)}
-      data-options={Jason.encode!(Map.merge(default_options(), @options))}
+      data-options={Jason.encode!(Map.merge(default_options(@merge_options), @options))}
     >
       <canvas id={"#{@id}-canvas"} />
     </div>
     """
   end
 
-  defp default_options do
+  defp default_options(false), do: %{}
+
+  defp default_options(true) do
     colors = [
       "#E2C1FE",
       "#FFB7D4",
