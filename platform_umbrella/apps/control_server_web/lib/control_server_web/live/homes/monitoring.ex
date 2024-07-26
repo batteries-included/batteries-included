@@ -49,7 +49,7 @@ defmodule ControlServerWeb.Live.MonitoringHome do
 
   defp battery_link_panel(%{battery: %{type: :vm_cluster}} = assigns) do
     ~H"""
-    <.a href={"//#{vmselect_host()}/select/0/vmui"} variant="external">VM Select</.a>
+    <.a href={"//#{vmselect_host()}/select/0/vmui"} variant="bordered">VM Select</.a>
     """
   end
 
