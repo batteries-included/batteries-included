@@ -1,60 +1,100 @@
 ---
-title: 'GitOps Fail at Scale'
+title: 'When GitOps Fails to Scale'
 excerpt:
-  After years of operating systems at scale, we have found that GitOps have
-  serious tradeoffs at scale.
+  While GitOps has revolutionized infrastructure management, years of experience
+  reveal significant tradeoffs when scaling at large.
 publishDate: 2024-12-01
 tags: []
 image: /images/posts/post-4.jpg
 draft: true
 ---
 
+[_GitOps_](https://about.gitlab.com/topics/gitops/) is a modern approach to
+infrastructure management and deployment that leverages Git as its single source
+of truth. GitOps uses Git repositories to store and version all infrastructure
+configurations, application manifests, and deployment specifications.
+
+In recent years, GitOps has gained popularity thanks to its promise of improved
+collaboration, traceability, and consistency in managing infrastructure.
+However, our many years of experience managing large-scale systems have revealed
+that GitOps practices come with some significant trade-offs.
+
+In this article, we'll be exploring pain points that surface when GitOps is
+applied to extensive and complex systems, drawing on practical insights from
+real-world implementations.
+
 ## Speed and Efficiency: The Lag of Large Repositories
 
-Storing operational configuration in Git works well for smaller projects, but as
-repositories grow and changes become more frequent, GitOps can become a
-bottleneck. Large repositories with highly dynamic configurations often suffer
-from slow commit processes:
+GitOps relies on storing operational configurations in Git repositories. While
+simple and effective for smaller projects, it becomes a significant challenge as
+the repository grows and change frequency increases. Issues inherent to Git's
+architecture end up contributing to performance issues:
 
-- _Single Log:_ Git is made of linear linked lists of commits. That means all
-  writes are serialized on a single object. It also means that searching for the
-  past involves operations on a long linear history with very little indexing.
-- _Testing:_ Since most DSLs are turning complete or close, extensive tests are
-  needed to understand the impact of any change.
-- _Deploying:_ Merging changes and deploying them can introduce even more
-  delays. Commit to a branch, merge the branch, and wait for a merge into the
-  production branch. Then, wait for deployment to complete for the last
-  revision.
+- Git uses linear linked lists of commits, resulting in serialized writes and
+  time-consuming history searches.
+- Since most DSLs are turing-complete or near-equivalent, extensive testing is
+  required to understand the impact of any change.
+- The deployment process itself introduces further delays; commit to a branch,
+  merge the branch, wait for the production merge, and finally wait for
+  deployment to complete for the last revision.
 
-## Knowledge Issues for Non-Expert Developers
+All these factors combine to create a system with a deceptive slowness that
+gradually emerges as it scales.
 
-GitOps repositories are filled with text-based domain-specific languages to
-express what should be running where. The user interface for changes (text
-files) is the same as the schema (YAML) shown to tools. While that approach to
-configuration management allows for high sophistication and flexibility, it is a
-double-edged sword. Non-expert developers often find themselves at a
-disadvantage when dealing with GitOps:
+## Knowledge Barriers for Inexperienced Developers
 
-- _Unknown Schema:_ Changing a label in a terraform or YAML file can be scary.
-  There's little way of knowing which tags do what and how they are used.
-- _Complex Solutions_: The text-based nature of Git allows for numerous ways to
-  solve problems, making it challenging for those not deeply embedded in the
-  operations domain to understand and verify changes.
-- _Lack of Context:_ Text editors don't provide feedback about how one field
-  will impact others or give suggestions of values. They lack a customized UI
-  for each file.
+GitOps repositories are filled with text-based _DSLs_ (domain-specific
+languages) to define operational configurations. While allowing for high
+sophistication and flexibility, it's particularly disadvantageous for
+inexperienced developers:
+
+- The schema for configuration files is often ill-defined or unclear, making
+  seemingly simple changes like modifying a label in a YAML file potentially
+  risky.
+- The text-based nature of git allows for numerous ways to solve problems,
+  making it tougher for those not deeply embedded in the domain to understand
+  and verify changes.
+- Standard text editors lack context-aware features for these files, offering
+  little to no feedback on the potential impact of modifying a field or
+  suggesting valid values.
+
+These barriers add considerable onboarding friction and increase the risk of
+errors in development and deployment processes.
 
 ## Automation Challenges in the Software Development Lifecycle
 
-- _Lifecycle Complexity:_ Effective GitOps tools must be aware of and integrate
-  with the entire software development lifecycle. This involves everything from
-  creating working code to deploying it via command-line tools and other
-  automation mechanisms.
-- _Tooling Integration:_ Automation tools must interface with various
-  components, including CI/CD pipelines, deployment environments, and monitoring
-  systems. Achieving seamless integration across these tools can be difficult,
-  leading to fragmentation and inefficiencies.
-- _Flexiblity Required:_ Each project/company will have its own way of deploying
-  GitOps since they are so flexible. That means automation tools are forced to
-  deal with code styles, project layouts, and naming that is almost antagonistic
-  to automated change.
+Implementing GitOps at scale requires robust automation, but several factors add
+friction to this process:
+
+- GitOps tools must integrate with the entire software development lifecycle;
+  this involves everything from code creation to deployment via various
+  command-line tools and automation mechanisms.
+- Automation tools must interface with various components, including CI/CD
+  pipelines, deployment environments, and monitoring systems. Achieving seamless
+  integration across these tools can be difficult, leading to fragmentation and
+  other inefficiencies.
+- The flexibility of GitOps leads to diverse implementations across projects and
+  companies, forcing automation tools to handle a wide variety of code styles,
+  project layouts, and naming conventions.
+
+These challenges can result in fragmented toolchains and reduced efficiency,
+countering the streamlined processes GitOps aims to create.
+
+## Takeaway
+
+While GitOps remains a popular approach for managing infrastructure, our
+experience has demonstrated that it faces significant challenges at scale. These
+issues have guided us towards a more robust solution: using a database as the
+source of truth for configuration.
+
+Databases have some unique advantages compared to text configuration; they offer
+fine-grained locking, strongly-typed schemas with built-in validation and
+references, as well as user-friendly interfaces for non-technical users. At the
+cost of some flexibility, this approach also addresses the performance
+bottlenecks and automation challenges present in large-scale GitOps
+implementations.
+
+As we continue to evolve our infrastructure management practices, it's crucial
+to recognize that no single approach is perfect for all scenarios-- adaptability
+in the face of scaling challenges is key to maintaining efficient and reliable
+systems.
