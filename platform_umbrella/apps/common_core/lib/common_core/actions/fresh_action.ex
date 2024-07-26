@@ -10,7 +10,7 @@ defmodule CommonCore.Actions.FreshGeneratedAction do
   These are transitory and will be re-created at will.
   """
   typedstruct do
-    # create, delete
+    # create, delete, ping
     field :action, atom()
 
     # Realm, client, user
