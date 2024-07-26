@@ -1,16 +1,16 @@
 ---
-title: 'GitOps Fail at Scale'
+title: 'When GitOps Fails to Scale'
 excerpt:
-  After years of operating systems at scale, we have found that GitOps have
-  serious tradeoffs at scale.
+  While GitOps has revolutionized infrastructure management, our years of
+  experience reveal significant tradeoffs when scaling at large.
 publishDate: 2024-12-01
 tags: []
 image: /images/posts/post-4.jpg
 draft: true
 ---
 
-Our extensive experience managing large-scale systems has revealed significant
-trade-offs inherent to GitOps practices.
+Our many years of experience managing large-scale systems have revealed
+significant trade-offs inherent to GitOps practices.
 
 In this article, we'll be exploring pain points that surface when GitOps is
 applied to extensive and complex systems.
