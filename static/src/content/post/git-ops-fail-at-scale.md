@@ -9,10 +9,10 @@ image: /images/posts/post-4.jpg
 draft: true
 ---
 
-_GitOps_ is a modern approach to infrastructure management and deployment that
-leverages Git as its single source of truth. GitOps uses Git repositories to
-store and version all infrastructure configurations, application manifests, and
-deployment specifications.
+[_GitOps_](https://about.gitlab.com/topics/gitops/) is a modern approach to
+infrastructure management and deployment that leverages Git as its single source
+of truth. GitOps uses Git repositories to store and version all infrastructure
+configurations, application manifests, and deployment specifications.
 
 In recent years, GitOps has gained popularity thanks to its promise of improved
 collaboration, traceability, and consistency in managing infrastructure.
@@ -39,7 +39,7 @@ architecture end up contributing to performance issues:
   deployment to complete for the last revision.
 
 All these factors combine to create a system with a deceptive slowness that
-remains unnoticed until it's too late.
+gradually emerges as it scales.
 
 ## Knowledge Barriers for Inexperienced Developers
 
