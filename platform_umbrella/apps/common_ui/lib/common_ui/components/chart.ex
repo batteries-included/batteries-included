@@ -30,9 +30,9 @@ defmodule CommonUI.Components.Chart do
     colors = [
       "#63E2FB",
       "#8ABEFF",
-      "#B7A6F9",
+      "#FFB7D4",
       "#DC8BD6",
-      "#F96AA3",
+      "#B7A6F9",
       "#36E0D4",
       "#86EBE2",
       "#BCF5F0"
