@@ -50,6 +50,7 @@ defmodule CommonCore.Knative.Service do
 
   @doc """
   Function to determine if battery has sso properly configured.
+
   Useful for e.g. `Enum.filter/2`
   """
   @spec sso_configured_properly?(t()) :: boolean()
