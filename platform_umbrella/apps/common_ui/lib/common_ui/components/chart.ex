@@ -28,12 +28,14 @@ defmodule CommonUI.Components.Chart do
 
   defp default_options(true) do
     colors = [
-      "#E2C1FE",
-      "#FFB7D4",
-      "#C1A1E5",
-      "#FF88B7",
-      "#E9D4FF",
-      "#FFE0EC"
+      "#63E2FB",
+      "#8ABEFF",
+      "#B7A6F9",
+      "#DC8BD6",
+      "#F96AA3",
+      "#36E0D4",
+      "#86EBE2",
+      "#BCF5F0",
     ]
 
     %{

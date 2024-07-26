@@ -10,9 +10,9 @@ defmodule Storybook.Components.Chart do
         id: :default,
         attributes: %{
           data: %{
-            labels: ["Foo", "Bar", "Baz", "Qux"],
+            labels: ["Foo", "Bar", "Baz", "Qux", "Quux", "Corge", "Grault", "Garply"],
             datasets: [
-              %{label: "Total", data: [1, 2, 3, 4]}
+              %{label: "Total", data: [1, 2, 3, 4, 5, 6, 7, 8]}
             ]
           }
         }
@@ -22,7 +22,7 @@ defmodule Storybook.Components.Chart do
         attributes: %{
           data: %{
             datasets: [
-              %{label: "Total", data: [1, 2, 3, 4, 5, 6]}
+              %{label: "Total", data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
             ]
           },
           options: %{
