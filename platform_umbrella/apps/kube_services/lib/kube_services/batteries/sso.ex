@@ -8,11 +8,7 @@ defmodule KubeServices.Batteries.SSO do
     _battery = Keyword.fetch!(opts, :battery)
 
     children = [
-      KubeServices.SnapshotApply.KeycloakApply,
-      KubeServices.Keycloak.OIDCSupervisor,
-      # A genserver the watches for failed Keycloak applys.
-      # Starting a new attempt with increasing delays.
-      {KubeServices.SnapshotApply.FailedKeycloakLauncher, max_delay: 91_237}
+      KubeServices.Keycloak.OIDCSupervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

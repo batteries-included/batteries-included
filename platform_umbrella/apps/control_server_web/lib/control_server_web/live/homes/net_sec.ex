@@ -67,7 +67,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
     assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
-  defp sso_panel(assigns) do
+  defp keycloak_panel(assigns) do
     ~H"""
     <.panel title="Realms">
       <:menu>
@@ -143,8 +143,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
     <.grid :if={@batteries && @batteries != []} columns={%{sm: 1, lg: 2}} class="w-full">
       <%= for battery <- @batteries do %>
         <%= case battery.type do %>
-          <% :sso -> %>
-            <.sso_panel realms={@keycloak_realms} keycloak_url={@keycloak_url} />
+          <% :keycloak -> %>
+            <.keycloak_panel realms={@keycloak_realms} keycloak_url={@keycloak_url} />
           <% :metallb -> %>
             <.metallb_panel ip_address_pools={@ip_address_pools} />
           <% :trivy_operator -> %>
