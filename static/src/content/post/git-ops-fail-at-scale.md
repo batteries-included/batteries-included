@@ -1,19 +1,27 @@
 ---
 title: 'When GitOps Fails to Scale'
 excerpt:
-  While GitOps has revolutionized infrastructure management, our years of
-  experience reveal significant tradeoffs when scaling at large.
+  While GitOps has revolutionized infrastructure management, years of experience
+  reveal significant tradeoffs when scaling at large.
 publishDate: 2024-12-01
 tags: []
 image: /images/posts/post-4.jpg
 draft: true
 ---
 
-Our many years of experience managing large-scale systems have revealed
-significant trade-offs inherent to GitOps practices.
+_GitOps_ is a modern approach to infrastructure management and deployment that
+leverages Git as its single source of truth. GitOps uses Git repositories to
+store and version all infrastructure configurations, application manifests, and
+deployment specifications.
+
+In recent years, GitOps has gained popularity thanks to its promise of improved
+collaboration, traceability, and consistency in managing infrastructure.
+However, our many years of experience managing large-scale systems have revealed
+that GitOps practices come with some significant trade-offs.
 
 In this article, we'll be exploring pain points that surface when GitOps is
-applied to extensive and complex systems.
+applied to extensive and complex systems, drawing on practical insights from
+real-world implementations.
 
 ## Speed and Efficiency: The Lag of Large Repositories
 
