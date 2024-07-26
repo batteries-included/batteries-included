@@ -35,7 +35,7 @@ defmodule CommonUI.Components.Chart do
       "#F96AA3",
       "#36E0D4",
       "#86EBE2",
-      "#BCF5F0",
+      "#BCF5F0"
     ]
 
     %{
