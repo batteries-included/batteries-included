@@ -12,8 +12,8 @@ defmodule KubeServices.SnapshotApply.WorkerInnerSupervisor do
   def init(_opts) do
     summary = Summarizer.cached()
 
-    sso_running = Batteries.sso_installed?(summary)
-    children = [{KubeServices.SnapshotApply.Worker, [sso_running: sso_running, running: true]}]
+    keycloak_enabled = Batteries.keycloak_installed?(summary)
+    children = [{KubeServices.SnapshotApply.Worker, [keycloak_enabled: keycloak_enabled, running: true]}]
 
     Supervisor.init(children, strategy: :one_for_one)
   end
