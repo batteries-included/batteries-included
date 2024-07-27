@@ -8,11 +8,13 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   alias CommonCore.Util.Memory
   alias ControlServer.FerretDB
+  alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
+    :ok = KubeEventCenter.subscribe(:pod)
     {:ok, assign_page_title(socket)}
   end
 
@@ -65,6 +67,11 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
   end
 
   defp maybe_assign_edit_versions(socket), do: socket
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, assign_pods(socket)}
+  end
 
   @impl Phoenix.LiveView
   def handle_event("delete", _, socket) do
