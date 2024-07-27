@@ -2,13 +2,13 @@ defmodule CommonCore.Defaults.Images do
   @moduledoc false
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
   @cert_manager_image_tag "v1.15.1"
-  @kiali_image_version "v1.86.1"
+  @kiali_image_version "v1.87.0"
 
   @spec cert_manager_image_version() :: String.t()
   def cert_manager_image_version, do: @cert_manager_image_tag
 
   @spec vm_cluster_tag() :: String.t()
-  def vm_cluster_tag, do: "v1.93.9-cluster"
+  def vm_cluster_tag, do: "v1.102.0-cluster"
 
   @spec vm_tag() :: String.t()
   def vm_tag, do: "v1.93.9"
@@ -69,7 +69,7 @@ defmodule CommonCore.Defaults.Images do
   def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.23.2"
 
   @spec ferretdb_image() :: String.t()
-  def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.22.0"
+  def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.23.0"
 
   @spec forgejo_image() :: String.t()
   def forgejo_image, do: "codeberg.org/forgejo/forgejo:1.21.11-2"
@@ -81,16 +81,16 @@ defmodule CommonCore.Defaults.Images do
   def grafana_image, do: "grafana/grafana:10.4.5"
 
   @spec istio_pilot_image() :: String.t()
-  def istio_pilot_image, do: "docker.io/istio/pilot:1.22.1-distroless"
+  def istio_pilot_image, do: "docker.io/istio/pilot:1.22.3-distroless"
 
   @spec istio_proxy_image() :: String.t()
-  def istio_proxy_image, do: "docker.io/istio/proxyv2:1.22.1-distroless"
+  def istio_proxy_image, do: "docker.io/istio/proxyv2:1.22.3-distroless"
 
   @spec karpenter_image() :: String.t()
   def karpenter_image, do: "public.ecr.aws/karpenter/controller:0.37.0"
 
   @spec keycloak_image() :: String.t()
-  def keycloak_image, do: "quay.io/keycloak/keycloak:24.0.5"
+  def keycloak_image, do: "quay.io/keycloak/keycloak:25.0.2"
 
   @spec kiali_image() :: String.t()
   def kiali_image, do: "quay.io/kiali/kiali:#{kiali_image_version()}"
