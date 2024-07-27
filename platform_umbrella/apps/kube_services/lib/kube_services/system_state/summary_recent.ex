@@ -44,6 +44,20 @@ defmodule KubeServices.SystemState.SummaryRecent do
   end
 
   @impl GenServer
+  def handle_call({_, _}, _from, %{summary: nil} = state) do
+    {:reply, [], state}
+  end
+
+  def handle_call({:keycloak_realms, limit}, _from, %{summary: summary} = state) when summary != nil do
+    list =
+      summary
+      |> Map.get(:keycloak_state, %{})
+      |> Kernel.||(%{})
+      |> Map.get(:realms, []) || []
+
+    {:reply, Enum.take(list, limit), state}
+  end
+
   def handle_call({key, limit}, _from, %{summary: summary} = state) when summary != nil do
     # Get the list of items from the summary
     list = Map.get(summary, key, []) || []
