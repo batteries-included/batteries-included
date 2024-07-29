@@ -257,8 +257,8 @@ github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D
 github.com/mattn/go-localereader v0.0.1 h1:ygSAOl7ZXTx4RdPYinUpg6W99U8jWvWi9Ye2JC/oIi4=
 github.com/mattn/go-localereader v0.0.1/go.mod h1:8fBrzywKY7BI3czFoHkuzRoWE9C+EiG4R1k4Cjx5p88=
 github.com/mattn/go-runewidth v0.0.4/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
-github.com/mattn/go-runewidth v0.0.15 h1:UNAjwbU9l54TA3KzvqLGxwWjHmMgBUVhBiTjelZgg3U=
-github.com/mattn/go-runewidth v0.0.15/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
+github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
+github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/miekg/dns v1.1.61 h1:nLxbwF3XxhwVSm8g9Dghm9MHPaUZuqhPiGL+675ZmEs=
 github.com/miekg/dns v1.1.61/go.mod h1:mnAarhS3nWaW+NVP2wTkYVIZyHNJ098SJZUki3eykwQ=
 github.com/mitchellh/go-ps v1.0.0 h1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=
@@ -350,8 +350,8 @@ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
 github.com/pulumi/esc v0.9.1 h1:HH5eEv8sgyxSpY5a8yePyqFXzA8cvBvapfH8457+mIs=
 github.com/pulumi/esc v0.9.1/go.mod h1:oEJ6bOsjYlQUpjf70GiX+CXn3VBmpwFDxUTlmtUN84c=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.46.0 h1:NbLjkmH/JSgjekyUEoLFL9DnTrMvlQ4cFCTQgJgWtu0=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.46.0/go.mod h1:usNfq3zOPRnAQYNaK9s73sLFA3pQ54h09Q7DMLG7l84=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.47.0 h1:DEbHd7krLB3p3Qr4PlAaEScA5mQR85jifxln0qd8m6Y=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.47.0/go.mod h1:gN/y6Gl/c6R2m1H0DlpyeyxpemtLJNhgHWcYz+vBPdo=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.4 h1:U8xVZ2FAVY8vFixl0MbffemaEBOSstICI2+HF9ftQPs=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.4/go.mod h1:di6Uw9jCLhCaDhKOJbP6hoNC0bAis5HuKR+3WC/PqZs=
 github.com/pulumi/pulumi-tls/sdk/v5 v5.0.4 h1:1XE7RNp2B5+9jKfvUbHWZD/mkxcpNvi5vagnmASaZnk=
@@ -433,8 +433,8 @@ github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaO
 github.com/uber/jaeger-client-go v2.30.0+incompatible/go.mod h1:WVhlPFC8FDjOFMMWRy2pZqQJSXxYSwNYOkTr/Z6d3Kk=
 github.com/uber/jaeger-lib v2.4.1+incompatible h1:td4jdvLcExb4cBISKIpHuGoVXh+dVKhn2Um6rjCsSsg=
 github.com/uber/jaeger-lib v2.4.1+incompatible/go.mod h1:ComeNDZlWwrWnDv8aPp0Ba6+uUTzImX/AauajbLI56U=
-github.com/vbauerster/mpb/v8 v8.7.4 h1:p4f16iMfUt3PkAC73SCzAtgtSf8TYDqEbJUT3odPrPo=
-github.com/vbauerster/mpb/v8 v8.7.4/go.mod h1:r1B5k2Ljj5KJFCekfihbiqyV4VaaRTANYmvWA2btufI=
+github.com/vbauerster/mpb/v8 v8.7.5 h1:hUF3zaNsuaBBwzEFoCvfuX3cpesQXZC0Phm/JcHZQ+c=
+github.com/vbauerster/mpb/v8 v8.7.5/go.mod h1:bRCnR7K+mj5WXKsy0NWB6Or+wctYGvVwKn6huwvxKa0=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
 github.com/xanzy/ssh-agent v0.3.3/go.mod h1:6dzNDKs0J9rVPHPhaGCukekBHKqfl+L3KghI1Bc68Uw=
 github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=

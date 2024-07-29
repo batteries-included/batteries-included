@@ -14,7 +14,7 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.22.0
 	github.com/noisysockets/noisysockets v0.27.4
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.46.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.47.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.4
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.4
 	github.com/pulumi/pulumi/sdk/v3 v3.127.0
@@ -23,7 +23,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.32.0
-	github.com/vbauerster/mpb/v8 v8.7.4
+	github.com/vbauerster/mpb/v8 v8.7.5
 	golang.org/x/sync v0.7.0
 	gopkg.in/ini.v1 v1.67.0
 	k8s.io/api v0.30.3
@@ -124,7 +124,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
-	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/miekg/dns v1.1.61 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
