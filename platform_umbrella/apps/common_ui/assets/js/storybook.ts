@@ -1,4 +1,5 @@
 import { ChartHook } from './chart';
+import { ClipboardHook } from './clipboard';
 import { RangeHook } from './range';
 import { TooltipHook } from './tooltip';
 
@@ -7,6 +8,7 @@ import { TooltipHook } from './tooltip';
     LiveSocketOptions: {},
     Hooks: {
       Chart: ChartHook,
+      Clipboard: ClipboardHook,
       Range: RangeHook,
       Tooltip: TooltipHook,
     },

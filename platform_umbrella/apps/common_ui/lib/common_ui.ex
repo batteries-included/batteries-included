@@ -45,6 +45,7 @@ defmodule CommonUI do
       import CommonUI.Components.Modal
       import CommonUI.Components.Panel
       import CommonUI.Components.Progress
+      import CommonUI.Components.Script
       import CommonUI.Components.TabBar
       import CommonUI.Components.Table
       import CommonUI.Components.TodoList
