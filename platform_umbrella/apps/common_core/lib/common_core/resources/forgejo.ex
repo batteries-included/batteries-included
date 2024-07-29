@@ -30,7 +30,7 @@ defmodule CommonCore.Resources.Forgejo do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: [forgejo_host(state)]]
+      [hosts: forgejo_hosts(state)]
       |> VirtualService.new!()
       |> V.fallback("forgejo-http", @http_listen_port)
       |> V.tcp(@ssh_port, "forgejo-ssh", @ssh_listen_port)

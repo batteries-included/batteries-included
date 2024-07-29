@@ -111,7 +111,7 @@ defmodule CommonCore.Resources.TextGenerationWebUI do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: [text_generation_webui_host(state)]]
+      [hosts: text_generation_webui_hosts(state)]
       |> VirtualService.new!()
       |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
       |> V.fallback(@service_name, @http_port)

@@ -18,7 +18,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: [smtp4dev_host(state)]]
+      [hosts: smtp4dev_hosts(state)]
       |> VirtualService.new!()
       |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
       |> V.fallback("smtp-four-dev", @http_port)

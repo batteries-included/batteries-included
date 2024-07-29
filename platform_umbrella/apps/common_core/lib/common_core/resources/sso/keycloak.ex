@@ -206,7 +206,7 @@ defmodule CommonCore.Resources.Keycloak do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: [keycloak_host(state)]]
+      [hosts: keycloak_hosts(state)]
       |> VirtualService.new!()
       |> V.fallback("keycloak", @web_port)
 

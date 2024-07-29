@@ -42,7 +42,7 @@ defmodule CommonCore.Resources.VMAgent do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: [vmagent_host(state)]]
+      [hosts: vmagent_hosts(state)]
       |> VirtualService.new!()
       |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
       |> V.fallback("vmagent-main-agent", @vm_agent_port)

@@ -26,11 +26,11 @@ defmodule CommonCore.Resources.Notebooks do
 
   resource(:virtual_service, battery, state) do
     namespace = ai_namespace(state)
-    host = notebooks_host(state)
+    hosts = notebooks_hosts(state)
 
     virtual_service =
       state.notebooks
-      |> Enum.reduce(VirtualService.new!(hosts: [host]), fn nb, vs ->
+      |> Enum.reduce(VirtualService.new!(hosts: hosts), fn nb, vs ->
         V.prefix(vs, base_url(nb), service_name(nb), @container_port)
       end)
       |> V.prefix(PU.prefix(battery), PU.fully_qualified_service_name(battery, state), PU.port(battery))

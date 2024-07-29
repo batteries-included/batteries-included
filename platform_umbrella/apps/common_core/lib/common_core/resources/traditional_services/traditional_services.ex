@@ -52,7 +52,7 @@ defmodule CommonCore.Resources.TraditionalServices do
     [default_port | _] = ports
 
     spec =
-      [hosts: [traditional_host(state, service)]]
+      [hosts: traditional_hosts(state, service)]
       |> VirtualService.new!()
       |> V.fallback(service.name, default_port.port)
 

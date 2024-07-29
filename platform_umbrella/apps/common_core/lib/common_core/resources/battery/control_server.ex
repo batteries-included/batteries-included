@@ -17,7 +17,7 @@ defmodule CommonCore.Resources.ControlServer do
 
   resource(:virtual_service, battery, state) do
     spec =
-      [hosts: [control_host(state)]]
+      [hosts: control_hosts(state)]
       |> VirtualService.new!()
       |> V.fallback(@app_name, @web_port)
 
