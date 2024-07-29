@@ -359,12 +359,12 @@ defmodule CommonCore.Resources.IstioIngress do
     battery_servers =
       state
       |> hosts_by_battery_type()
-      |> Enum.flat_map(fn {type, host} -> build_battery_servers(type, host, ssl_enabled?) end)
+      |> Enum.flat_map(fn {type, hosts} -> build_battery_servers(type, hosts, ssl_enabled?) end)
 
     traditional_service_servers =
       state
       |> TraditionalServices.external_hosts_and_ports_by_name()
-      |> Enum.flat_map(fn {host, ports} -> build_server_for_traditional_service(host, ports, ssl_enabled?) end)
+      |> Enum.flat_map(fn {_, {host, ports}} -> build_server_for_traditional_service(host, ports, ssl_enabled?) end)
 
     servers = battery_servers ++ traditional_service_servers
 
@@ -393,51 +393,51 @@ defmodule CommonCore.Resources.IstioIngress do
     |> B.spec(spec)
   end
 
-  defp build_battery_servers(:forgejo = type, host, ssl_enabled?),
-    do: [forgejo_ssh_server(host), web_server(sanitize(type), host, ssl_enabled?)]
+  defp build_battery_servers(:forgejo = type, hosts, ssl_enabled?),
+    do: [forgejo_ssh_server(hosts), web_server(sanitize(type), hosts, ssl_enabled?)]
 
-  defp build_battery_servers(type, host, ssl_enabled?), do: [web_server(sanitize(type), host, ssl_enabled?)]
+  defp build_battery_servers(type, hosts, ssl_enabled?), do: [web_server(sanitize(type), hosts, ssl_enabled?)]
 
-  defp web_server(type, host, true = _ssl_enabled?) do
+  defp web_server(type, hosts, true = _ssl_enabled?) do
     %{
       port: %{number: 443, name: "https-#{type}", protocol: "HTTPS"},
       tls: %{mode: "SIMPLE", credentialName: "#{type}-ingress-cert"},
-      hosts: [host]
+      hosts: hosts
     }
   end
 
-  defp web_server(type, host, false = _ssl_enabled?) do
+  defp web_server(type, hosts, false = _ssl_enabled?) do
     %{
       port: %{number: 80, name: "http2-#{sanitize(type)}", protocol: "HTTP"},
-      hosts: [host]
+      hosts: hosts
     }
   end
 
-  defp forgejo_ssh_server(host), do: %{port: %{number: 22, name: "ssh-forgejo", protocol: "TCP"}, hosts: [host]}
+  defp forgejo_ssh_server(hosts), do: %{port: %{number: 22, name: "ssh-forgejo", protocol: "TCP"}, hosts: hosts}
 
-  defp build_server_for_traditional_service(_host, ports, _ssl_enabled?) when is_nil(ports) or ports == [], do: []
+  defp build_server_for_traditional_service(_hosts, ports, _ssl_enabled?) when is_nil(ports) or ports == [], do: []
 
-  defp build_server_for_traditional_service(host, ports, ssl_enabled?) do
-    Enum.map(ports, &build_server_for_traditional_service_port(host, &1, ssl_enabled?))
+  defp build_server_for_traditional_service(hosts, ports, ssl_enabled?) do
+    Enum.map(ports, &build_server_for_traditional_service_port(hosts, &1, ssl_enabled?))
   end
 
-  defp build_server_for_traditional_service_port(host, %{protocol: protocol} = port, true = _ssl_enabled?)
+  defp build_server_for_traditional_service_port(hosts, %{protocol: protocol} = port, true = _ssl_enabled?)
        when protocol in [:http, :http2] do
     %{
       port: %{number: 443, name: port.name, protocol: "HTTPS"},
       tls: %{mode: "SIMPLE", credentialName: "traditional-services-ingress-cert"},
-      hosts: [host]
+      hosts: hosts
     }
   end
 
-  defp build_server_for_traditional_service_port(host, %{protocol: :tcp} = port, true = _ssl_enabled?) do
-    %{port: %{number: port.number, name: port.name, protocol: "TCP"}, hosts: [host]}
+  defp build_server_for_traditional_service_port(hosts, %{protocol: :tcp} = port, true = _ssl_enabled?) do
+    %{port: %{number: port.number, name: port.name, protocol: "TCP"}, hosts: hosts}
   end
 
-  defp build_server_for_traditional_service_port(host, port, false = _ssl_enabled?) do
+  defp build_server_for_traditional_service_port(hosts, port, false = _ssl_enabled?) do
     %{
       port: %{number: port.number, name: port.name, protocol: String.upcase(Atom.to_string(port.protocol))},
-      hosts: [host]
+      hosts: hosts
     }
   end
 end

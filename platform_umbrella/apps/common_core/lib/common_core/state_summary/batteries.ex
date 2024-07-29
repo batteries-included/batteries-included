@@ -14,7 +14,7 @@ defmodule CommonCore.StateSummary.Batteries do
   @spec hosts_by_battery_type(StateSummary.t()) :: map()
   def hosts_by_battery_type(%StateSummary{batteries: batteries} = state) do
     batteries
-    |> Enum.map(fn %SystemBattery{type: type} -> {type, Hosts.for_battery(state, type)} end)
+    |> Enum.map(fn %SystemBattery{type: type} -> {type, Hosts.hosts_for_battery(state, type)} end)
     |> Enum.filter(&(elem(&1, 1) != nil))
     |> Map.new()
   end
@@ -26,7 +26,7 @@ defmodule CommonCore.StateSummary.Batteries do
   """
   @spec all_hosts_by_battery_type(StateSummary.t()) :: map()
   def all_hosts_by_battery_type(%StateSummary{batteries: batteries} = state) do
-    Map.new(batteries, fn %SystemBattery{type: type} -> {type, Hosts.for_battery(state, type)} end)
+    Map.new(batteries, fn %SystemBattery{type: type} -> {type, Hosts.hosts_for_battery(state, type)} end)
   end
 
   @doc """
