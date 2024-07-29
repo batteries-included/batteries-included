@@ -1,8 +1,8 @@
-awscli 2.17.10
+awscli 2.17.18
 elixir 1.17.2-otp-27
-erlang 27.0
+erlang 27.0.1
 golang 1.22.5
 kind 0.23.0
-kubectl 1.30.2
-nodejs 22.4.0
+kubectl 1.30.3
+nodejs 22.5.1
 shfmt 3.8.0
