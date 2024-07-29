@@ -132,10 +132,10 @@ defmodule CommonCore.Defaults.Images do
   def text_generation_webui_image, do: "atinoda/text-generation-webui:default-cpu-2024.06.23"
 
   @spec trivy_operator_image() :: String.t()
-  def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.21.3"
+  def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.22.0"
 
   @spec aqua_node_collector() :: String.t()
-  def aqua_node_collector, do: "ghcr.io/aquasecurity/node-collector:0.2.1"
+  def aqua_node_collector, do: "ghcr.io/aquasecurity/node-collector:0.3.1"
 
   @spec aqua_trivy_checks() :: String.t()
   def aqua_trivy_checks, do: "ghcr.io/aquasecurity/trivy-checks:0.13.0"
