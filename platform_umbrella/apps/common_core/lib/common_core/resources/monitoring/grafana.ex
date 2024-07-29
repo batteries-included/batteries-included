@@ -551,7 +551,7 @@ defmodule CommonCore.Resources.Grafana do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: [grafana_host(state)]]
+      [hosts: grafana_hosts(state)]
       |> VirtualService.new!()
       |> V.fallback("grafana", @service_http_port)
 

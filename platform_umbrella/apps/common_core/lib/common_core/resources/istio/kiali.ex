@@ -313,7 +313,7 @@ defmodule CommonCore.Resources.Kiali do
     namespace = istio_namespace(state)
 
     spec =
-      [hosts: [kiali_host(state)]]
+      [hosts: kiali_hosts(state)]
       |> VirtualService.new!()
       |> V.fallback("kiali", @http_port)
 
