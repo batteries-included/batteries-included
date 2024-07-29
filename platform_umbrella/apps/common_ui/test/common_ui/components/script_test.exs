@@ -7,7 +7,7 @@ defmodule CommonUI.Components.ScriptTest do
     assigns = %{}
 
     ~H"""
-    <.script id="foobar" src="https://install.batrsinc.co/8ej3l" />
+    <.script id="foobar" src="https://install.example.com/8ej3l" />
     """
   end
 
@@ -15,7 +15,7 @@ defmodule CommonUI.Components.ScriptTest do
     assigns = %{}
 
     ~H"""
-    <.script id="foobar" src="https://install.batrsinc.co/8ej3l" template="wget @src" />
+    <.script id="foobar" src="https://install.example.com/8ej3l" template="wget @src" />
     """
   end
 end

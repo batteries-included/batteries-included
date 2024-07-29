@@ -11,13 +11,13 @@ defmodule Storybook.Components.Script do
       %Variation{
         id: :default,
         attributes: %{
-          src: "https://install.batrsinc.co/8ej3l"
+          src: "https://install.example.com/8ej3l"
         }
       },
       %Variation{
         id: :with_template,
         attributes: %{
-          src: "https://install.batrsinc.co/8ej3l",
+          src: "https://install.example.com/8ej3l",
           template: "wget @src"
         }
       }
