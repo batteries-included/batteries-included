@@ -58,8 +58,11 @@ defmodule CommonCore.Factory do
 
     kube_provider = Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, [:kind, :aws, :provided]) end)
 
-    kube_provider_config =
-      Map.get_lazy(attrs, :kube_provider_config, fn -> sequence(:kube_provider, [:kind, :aws, :provided]) end)
+    kube_provider_config = Map.get_lazy(attrs, :kube_provider_config, fn -> %{} end)
+
+    control_jwk = Map.get_lazy(attrs, :control_jwk, fn -> CommonCore.JWK.generate_key() end)
+
+    user_id = Map.get(attrs, :user_id, nil)
 
     attrs = Map.take(attrs, ~w(slug kube_provider kube_provider_config default_size initial_oauth_email)a)
 
@@ -69,6 +72,8 @@ defmodule CommonCore.Factory do
       kube_provider_config: kube_provider_config,
       usage: usage,
       initial_oauth_email: nil,
+      control_jwk: control_jwk,
+      user_id: user_id,
       default_size: sequence(:default_size, [:tiny, :small, :medium, :large, :xlarge, :huge])
     }
     |> merge_attributes(attrs)
