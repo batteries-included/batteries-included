@@ -71,7 +71,7 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix_live_reload, "~> 1.3", only: :dev},
       # Testing
       {:ex_machina, "~> 2.7", only: [:dev, :test]},
-      {:heyya, "~> 0.8", only: [:dev, :test]}
+      {:heyya, "~> 1.0", only: [:dev, :test]}
     ]
   end
 
