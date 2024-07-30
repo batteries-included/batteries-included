@@ -3,7 +3,7 @@ title: 'Heyya Testing Library Reaches Version 1.0.0'
 excerpt:
   Heyya testing library reaches version 1.0.0 adding snapshot testing for live
   views in addition to the existing componet snapshot testing.
-publishDate: 2024-06-30
+publishDate: 2024-07-30
 tags: ['phoenix', 'elixir', 'testing']
 image: /images/posts/post-15.jpg
 draft: false
