@@ -33,7 +33,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     # Friday: 4
     # Saturday: 5
     # Sunday: 6
-    field :upgrade_days_of_week, {:array, :boolean}, default: [true, true, true, true, true, false, false]
+    field :upgrade_days_of_week, {:array, :boolean}, default: [true, true, true, true, false, false, false]
     # Time in UTC when the upgrade can start take place
     field :upgrade_start_hour, :integer, default: 18
     field :upgrade_end_hour, :integer, default: 23

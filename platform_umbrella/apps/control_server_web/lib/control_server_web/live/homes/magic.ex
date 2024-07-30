@@ -97,6 +97,7 @@ defmodule ControlServerWeb.Live.MagicHome do
     <.a variant="bordered" href="http://home.127-0-0-1.batrsinc.co:4900/">
       Batteries Included Home
     </.a>
+    <.a variant="bordered" navigate={~p"/state_summary"}>Latest State Summary</.a>
     <.a variant="bordered" navigate={~p"/content_addressable"}>Content Addressable Storage</.a>
     """
   end

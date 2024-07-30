@@ -23,6 +23,7 @@ defmodule ControlServerWeb.Router do
     live "/", Live.Home, :index
     live "/stale", Live.StaleIndex, :index
     live "/deleted_resources", Live.DeletedResourcesIndex, :index
+    live "/state_summary", Live.StateSummary, :index
 
     # Homes
     live "/magic", Live.MagicHome, :index

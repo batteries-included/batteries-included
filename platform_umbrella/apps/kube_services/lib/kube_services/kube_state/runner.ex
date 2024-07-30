@@ -52,6 +52,7 @@ defmodule KubeServices.KubeState.Runner do
     |> Enum.reduce(%{}, fn {{resource_type, _, _}, resource}, snap ->
       update_in(snap, [resource_type], fn l -> [resource | l || []] end)
     end)
+    |> Map.drop(~w(event)a)
   end
 
   @doc """

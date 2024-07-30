@@ -62,4 +62,9 @@ defmodule CommonCore.StateSummary.Core do
 
     day_ok && hour_ok
   end
+
+  def upgrade_days_of_week(%StateSummary{} = summary) do
+    config = battery_core_config(summary)
+    Enum.zip(~w(monday tuesday wednesday thursday friday saturday sunday)a, config.upgrade_days_of_week)
+  end
 end
