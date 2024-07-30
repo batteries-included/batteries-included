@@ -1,7 +1,7 @@
 defmodule CommonCore.Factory do
   @moduledoc """
 
-  Factory for creating db represenetions needed in kube_resources
+  Factory for creating ecto represenetions needed in common_core
   """
   use ExMachina
 
@@ -11,18 +11,69 @@ defmodule CommonCore.Factory do
   alias CommonCore.StateSummary.KeycloakSummary
 
   # with Ecto
+  def state_summary_factory(attrs \\ %{}) do
+    # Ensure this is a map
+    attrs = Map.new(attrs)
+
+    # use install spec factory to get the batteries and and a good starting place.
+    install_spec = build(:install_spec, attrs)
+
+    batteries = Map.get_lazy(attrs, :batteries, fn -> install_spec.target_summary.batteries end)
+    captured_at = Map.get_lazy(attrs, :captured_at, fn -> DateTime.utc_now() end)
+    stable_versions_report = Map.get_lazy(attrs, :stable_versions_report, fn -> build(:stable_versions_report, attrs) end)
+    attrs = Map.take(attrs, [:batteries, :captured_at, :stable_versions_report])
+
+    merge_attributes(
+      %CommonCore.StateSummary{
+        batteries: batteries,
+        captured_at: captured_at,
+        stable_versions_report: stable_versions_report
+      },
+      attrs
+    )
+  end
+
+  def stable_versions_report_factory(attrs \\ %{}) do
+    # Ensure this is a map
+    attrs = Map.new(attrs)
+
+    attrs = Map.take(attrs, [:control_server])
+
+    merge_attributes(
+      %CommonCore.ET.StableVersionsReport{
+        control_server: Map.get(attrs, :control_server, "public.ecr.aws/batteries-included/control-server:v100.0.0")
+      },
+      attrs
+    )
+  end
+
   def installation_factory(attrs) do
+    # Ensure this is a map
+    attrs = Map.new(attrs)
+
     usage =
       Map.get_lazy(attrs, :usage, fn ->
         sequence(:usage, [:internal_dev, :internal_int_test, :development, :production, :kitchen_sink])
       end)
 
+    kube_provider = Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, [:kind, :aws, :provided]) end)
+
+    kube_provider_config = Map.get_lazy(attrs, :kube_provider_config, fn -> %{} end)
+
+    control_jwk = Map.get_lazy(attrs, :control_jwk, fn -> CommonCore.JWK.generate_key() end)
+
+    user_id = Map.get(attrs, :user_id, nil)
+
+    attrs = Map.take(attrs, ~w(slug kube_provider kube_provider_config default_size initial_oauth_email)a)
+
     %CommonCore.Installation{
       slug: sequence("test-installation"),
-      kube_provider: sequence(:kube_provider, [:kind, :aws, :provided]),
-      kube_provider_config: %{},
+      kube_provider: kube_provider,
+      kube_provider_config: kube_provider_config,
       usage: usage,
       initial_oauth_email: nil,
+      control_jwk: control_jwk,
+      user_id: user_id,
       default_size: sequence(:default_size, [:tiny, :small, :medium, :large, :xlarge, :huge])
     }
     |> merge_attributes(attrs)
@@ -98,7 +149,7 @@ defmodule CommonCore.Factory do
     installation = build(:installation, attrs)
 
     # Drop properties that install uses
-    clean_attrs = Map.drop(attrs, [:usage, :kube_provider, :kube_provider_config, :default_size])
+    clean_attrs = Map.take(attrs, ~w(slug kube_cluster target_summary initial_resources)a)
 
     # merge attributes and evaluate lazy attributes at the end to emulate
     # ExMachina's default behavior

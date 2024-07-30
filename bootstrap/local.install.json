@@ -1,18 +1,18 @@
 {
-  "id": "batt_0190d3fc708576dd97d4887c218c9bf6",
+  "id": "batt_019101b626f37b849503be8dcae32f18",
   "usage": "development",
   "default_size": "tiny",
   "control_jwk": {
     "crv": "Ed25519",
-    "d": "RgcxUmHEBI04cR3qTn_hKJu18OYE42iEnrOSZVdvKc0",
+    "d": "Yu_rB-boxUS4mvi3BCM6r5yNQ1qhWQ-jViRS7LQ1h6E",
     "kty": "OKP",
-    "x": "W6yNR89ad64nKe9DBugMiOHbJOK-pMoUc9F24SNK7EI"
+    "x": "GIepE3PeqZabvnqxw-2nEjeFX6omSDbdpFg1WtWb_q8"
   },
   "inserted_at": null,
   "updated_at": null,
   "slug": "local",
   "kube_provider": "kind",
-  "team_id": "batt_0190d3fc70507cf886af0e5416c22ead",
+  "team_id": "batt_019101b626c87f22a33325524d14220b",
   "kube_provider_config": {},
   "sso_enabled": false,
   "initial_oauth_email": null,

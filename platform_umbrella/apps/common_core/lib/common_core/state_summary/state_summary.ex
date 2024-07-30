@@ -39,6 +39,8 @@ defmodule CommonCore.StateSummary do
     embeds_one :install_status, CommonCore.ET.InstallStatus
     embeds_one :stable_versions_report, CommonCore.ET.StableVersionsReport
 
+    field :captured_at, :utc_datetime_usec
+
     field :kube_state, :map, default: %{}
   end
 

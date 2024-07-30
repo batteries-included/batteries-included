@@ -28,7 +28,6 @@ defmodule CommonCore.Resources.BatteryTest do
   defp control_battery do
     %SystemBattery{
       config: %BatteryCoreConfig{
-        image: Defaults.Images.control_server_image(),
         secret_key: Defaults.random_key_string(),
         server_in_cluster: true
       },
