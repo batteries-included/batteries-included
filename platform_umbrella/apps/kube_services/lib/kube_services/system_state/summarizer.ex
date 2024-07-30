@@ -122,7 +122,8 @@ defmodule KubeServices.SystemState.Summarizer do
       | keycloak_state: keycloak,
         kube_state: kube,
         install_status: install_status,
-        stable_versions_report: stable_versions_report
+        stable_versions_report: stable_versions_report,
+        captured_at: DateTime.utc_now()
     }
 
     _ = EventCenter.SystemStateSummary.broadcast(summary)

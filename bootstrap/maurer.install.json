@@ -1,18 +1,18 @@
 {
-  "id": "batt_0190d3fc708570979b84781ffaf9a784",
+  "id": "batt_019101b626f47f19862014447271bff5",
   "usage": "development",
   "default_size": "small",
   "control_jwk": {
     "crv": "Ed25519",
-    "d": "gm52IVwyP07bZ0YoMlyH3_b_zLFZlgxJxAHXJQOh7OM",
+    "d": "ScTV85IaqpUyGMhQhlZT7EqJh2H1pgRVnLbN6RB6R84",
     "kty": "OKP",
-    "x": "Qbt4oKckVb5TtCFwqrBXjHATiHNZaCgVdlgOydyqxtE"
+    "x": "cowgBpriLruevXaHfOuzlMiynBTHKdLrPaW0D2ueCmw"
   },
   "inserted_at": null,
   "updated_at": null,
   "slug": "maurer",
   "kube_provider": "aws",
-  "team_id": "batt_0190d3fc70507cf886af0e5416c22ead",
+  "team_id": "batt_019101b626c87f22a33325524d14220b",
   "kube_provider_config": {},
   "sso_enabled": false,
   "initial_oauth_email": null,

@@ -94,7 +94,7 @@ defmodule CommonCore.Resources.ControlServer do
         "serviceAccount" => @app_name,
         "serviceAccountName" => @app_name,
         "initContainers" => [
-          control_container(battery,
+          control_container(battery, state,
             name: "init",
             base: %{
               "command" => ["/app/bin/start", "control_server_init"],
@@ -106,7 +106,7 @@ defmodule CommonCore.Resources.ControlServer do
           )
         ],
         "containers" => [
-          control_container(battery,
+          control_container(battery, state,
             name: name,
             base: %{
               "command" => ["/app/bin/start", "control_server"],
@@ -139,10 +139,10 @@ defmodule CommonCore.Resources.ControlServer do
     |> F.require(battery.config.server_in_cluster)
   end
 
-  defp control_container(battery, options) do
+  defp control_container(battery, state, options) do
     base = Keyword.get(options, :base, %{})
     name = Keyword.get(options, :name, "control-server")
-    image = Keyword.get(options, :image, battery.config.image)
+    image = Keyword.get(options, :image, CommonCore.StateSummary.Core.controlserver_image(state))
     host = Keyword.get(options, :pg_host)
     secret_name = Keyword.get(options, :pg_secret_name)
     summary_path = Keyword.get(options, :summary_path, "")
