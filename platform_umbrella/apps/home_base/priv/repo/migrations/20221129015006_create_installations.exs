@@ -11,10 +11,6 @@ defmodule HomeBase.Repo.Migrations.CreateInstallations do
       add :kube_provider, :string
       add :kube_provider_config, :map
 
-      # Fields for SSO
-      add :sso_enabled, :boolean
-      add :initial_oauth_email, :string
-
       # Default size for the installation
       add :default_size, :string
 

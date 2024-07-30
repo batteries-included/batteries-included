@@ -34,10 +34,6 @@ defmodule CommonCore.Installation do
     field :kube_provider, Ecto.Enum, values: Keyword.values(@providers)
     field :kube_provider_config, :map, default: %{}
 
-    # Fields for SSO
-    field :sso_enabled, :boolean, default: false
-    field :initial_oauth_email, :string
-
     # Default size for the installation
     field :default_size, Ecto.Enum, values: @sizes, default: :medium
 
@@ -53,9 +49,7 @@ defmodule CommonCore.Installation do
   def changeset(installation, attrs \\ %{}) do
     installation
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
-    |> maybe_require_oauth_email(attrs)
     |> maybe_add_control_jwk()
-    |> validate_email_address(:initial_oauth_email)
     |> foreign_key_constraint(:slug)
   end
 
@@ -84,7 +78,6 @@ defmodule CommonCore.Installation do
       |> Keyword.put_new(:kube_provider, provider_type)
       |> Keyword.put_new(:kube_provider_config, default_provider_config(provider_type, usage))
       |> Keyword.put_new(:usage, @default_usage)
-      |> Keyword.put_new(:initial_oauth_email, nil)
       |> Keyword.put_new(:default_size, default_size(provider_type, usage))
 
     with {:ok, installation} <- new(opts) do
@@ -132,12 +125,6 @@ defmodule CommonCore.Installation do
   def default_size(_, _), do: :medium
 
   defp default_provider_config(_, _), do: %{}
-
-  defp maybe_require_oauth_email(changeset, %{"sso_enabled" => true}) do
-    validate_required(changeset, [:initial_oauth_email])
-  end
-
-  defp maybe_require_oauth_email(changeset, _attrs), do: changeset
 
   defp maybe_add_control_jwk(changeset) do
     case get_field(changeset, :control_jwk) do

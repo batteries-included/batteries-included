@@ -86,14 +86,6 @@ defmodule HomeBaseWeb.InstallationNewLive do
             label="Default Size"
             options={Installation.size_options()}
           />
-
-          <.input field={@form[:sso_enabled]} type="switch" label="Use Single Sign On" />
-
-          <.input
-            :if={normalize_value("checkbox", @form[:sso_enabled].value)}
-            field={@form[:initial_oauth_email]}
-            placeholder="Initial OAuth Email"
-          />
         </.panel>
       </.grid>
     </.form>
