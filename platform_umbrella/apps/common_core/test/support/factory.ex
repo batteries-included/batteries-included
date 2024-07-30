@@ -71,7 +71,6 @@ defmodule CommonCore.Factory do
       kube_provider: kube_provider,
       kube_provider_config: kube_provider_config,
       usage: usage,
-      initial_oauth_email: nil,
       control_jwk: control_jwk,
       user_id: user_id,
       default_size: sequence(:default_size, [:tiny, :small, :medium, :large, :xlarge, :huge])
