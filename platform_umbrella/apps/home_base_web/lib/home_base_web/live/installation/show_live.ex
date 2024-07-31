@@ -4,11 +4,13 @@ defmodule HomeBaseWeb.InstallationShowLive do
 
   alias CommonCore.Installation
   alias HomeBase.CustomerInstalls
+  alias HomeBaseWeb.InstallationNewLive
   alias HomeBaseWeb.UserAuth
 
   def mount(%{"id" => id}, _session, socket) do
     owner = UserAuth.current_team_or_user(socket)
     installation = CustomerInstalls.get_installation!(id, owner)
+    provider = Installation.provider_label(installation.kube_provider)
     changeset = CustomerInstalls.change_installation(installation)
 
     {:ok,
@@ -16,6 +18,8 @@ defmodule HomeBaseWeb.InstallationShowLive do
      |> assign(:page, :installations)
      |> assign(:page_title, installation.slug)
      |> assign(:installation, installation)
+     |> assign(:provider, provider)
+     |> assign(:installed?, false)
      |> assign(:form, to_form(changeset))}
   end
 
@@ -51,13 +55,34 @@ defmodule HomeBaseWeb.InstallationShowLive do
     end
   end
 
+  def render(%{live_action: :success} = assigns) do
+    ~H"""
+    <div class="flex flex-col items-center justify-center min-h-full">
+      <h2 class="text-4xl font-bold mb-12">Installation Created 🎉</h2>
+
+      <.panel class="mb-8">
+        <p class="leading-6 mb-4">
+          To download and install the Batteries Included control server in <%= @provider %>, run the script below.
+        </p>
+        <!-- TODO: update script src to actual installation script -->
+        <.script src="https://install.example.com/8ej3l" class="mt-4 mb-8" />
+        <.markdown content={explanation(@installation)} />
+      </.panel>
+
+      <.button variant="primary" link={~p"/"} icon={:arrow_right} icon_position={:right}>
+        Continue to Dashboard
+      </.button>
+    </div>
+    """
+  end
+
   def render(assigns) do
     ~H"""
     <div class="flex items-center justify-between mb-2">
       <.h2><%= @installation.slug %></.h2>
 
       <div>
-        <.button variant="icon" icon={:pencil} phx-click={show_modal("edit-installation")} />
+        <.button variant="icon" icon={:pencil} link={~p"/installations/#{@installation}/edit"} />
 
         <.button
           variant="icon"
@@ -69,55 +94,41 @@ defmodule HomeBaseWeb.InstallationShowLive do
     </div>
 
     <.grid columns={%{md: 1, lg: 2}}>
-      <.panel>
-        <.data_list>
-          <:item title="Usage"><%= @installation.usage %></:item>
-          <:item title="Provider"><%= @installation.kube_provider %></:item>
-          <:item title="Default Size"><%= @installation.default_size %></:item>
-          <:item title="Created"><%= @installation.inserted_at %></:item>
-        </.data_list>
-      </.panel>
+      <div>
+        <.panel :if={!@installed?} title="Installation Instructions">
+          <p class="leading-6 mb-4">
+            We havn't heard from your installation yet! To download and install the Batteries Included control server in <%= @provider %>, run the script below.
+          </p>
+          <!-- TODO: update script src to actual installation script -->
+          <.script src="https://install.example.com/8ej3l" class="mb-8" />
+          <.markdown content={explanation(@installation)} />
+        </.panel>
+      </div>
 
       <div>
+        <.panel title="Details">
+          <.data_list>
+            <:item title="Usage"><%= @installation.usage %></:item>
+            <:item title="Provider"><%= @installation.kube_provider %></:item>
+            <:item title="Default Size"><%= @installation.default_size %></:item>
+            <:item title="Created"><%= @installation.inserted_at %></:item>
+          </.data_list>
+        </.panel>
+      </div>
+
+      <div :if={@installed?} class="flex flex-col gap-4">
         <!-- TODO: Link to installation's control server -->
         <.a variant="bordered" href={~p"/"}>Control Server</.a>
       </div>
     </.grid>
+    """
+  end
 
-    <.modal id="edit-installation">
-      <:title>Edit Installation</:title>
+  defp explanation(installation) do
+    """
+    ## What will this do?
 
-      <.simple_form for={@form} phx-change="validate" phx-submit="save">
-        <.input field={@form[:slug]} label="Slug" placeholder="Choose a slug" />
-
-        <.input
-          field={@form[:usage]}
-          type="select"
-          label="How will this installation be used?"
-          placeholder="Select usage type"
-          options={Installation.usage_options()}
-        />
-
-        <.input
-          field={@form[:kube_provider]}
-          type="select"
-          label="Where will this be installed?"
-          placeholder="Select provider"
-          options={Installation.provider_options()}
-        />
-
-        <.input
-          field={@form[:default_size]}
-          type="select"
-          label="Default Size"
-          options={Installation.size_options()}
-        />
-
-        <:actions>
-          <.button variant="primary" type="submit">Save</.button>
-        </:actions>
-      </.simple_form>
-    </.modal>
+    #{InstallationNewLive.explanation_more(installation.usage, installation.kube_provider)}
     """
   end
 end
