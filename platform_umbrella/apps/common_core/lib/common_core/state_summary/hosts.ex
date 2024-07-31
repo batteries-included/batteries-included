@@ -208,16 +208,16 @@ defmodule CommonCore.StateSummary.Hosts do
       } ->
         values
         |> Enum.filter(fn pos -> pos != nil end)
-        |> Enum.flat_map(&get_ip_from_ingress_status/1)
+        |> Enum.flat_map(&get_ips_from_ingress_status/1)
 
       _ ->
         nil
     end)
   end
 
-  defp get_ip_from_ingress_status(%{"ip" => ip} = _ingress), do: [ip]
+  defp get_ips_from_ingress_status(%{"ip" => ip} = _ingress), do: [ip]
 
-  defp get_ip_from_ingress_status(%{"hostname" => hostname} = _ingress) do
+  defp get_ips_from_ingress_status(%{"hostname" => hostname} = _ingress) do
     erl_host = to_charlist(hostname)
 
     case :inet.getaddrs(erl_host, :inet) do
