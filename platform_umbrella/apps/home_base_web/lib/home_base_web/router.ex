@@ -81,7 +81,9 @@ defmodule HomeBaseWeb.Router do
 
       live "/installations/", InstallationLive
       live "/installations/new", InstallationNewLive
-      live "/installations/:id", InstallationShowLive
+      live "/installations/:id", InstallationShowLive, :show
+      live "/installations/:id/success", InstallationShowLive, :success
+      live "/installations/:id/edit", InstallationEditLive
 
       live "/teams/new", TeamsNewLive
 
