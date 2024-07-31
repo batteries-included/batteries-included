@@ -19,13 +19,16 @@ defmodule CommonUI.Components.Script do
     ~H"""
     <div
       class={[
-        "flex items-center rounded-lg whitespace-nowrap overflow-auto",
-        "bg-gray-darkest-tint text-white text-lg tracking-tighter font-mono font-bold"
+        "relative flex items-center rounded-lg overflow-hidden h-14",
+        "bg-gray-darkest-tint text-white text-lg tracking-tighter font-mono font-bold",
+        @class
       ]}
       {@rest}
     >
-      <div id={@id} class="flex-1 px-5 overflow-auto">
-        <%= String.replace(@template, "@src", @src) %>
+      <div class="relative flex-1 h-full">
+        <div id={@id} class="flex items-center absolute inset-0 whitespace-nowrap overflow-auto px-5">
+          <%= String.replace(@template, "@src", @src) %>
+        </div>
       </div>
 
       <.link id={"#{@id}-clipboard"} class={link_class()} phx-hook="Clipboard" data-to={"##{@id}"}>
@@ -45,6 +48,6 @@ defmodule CommonUI.Components.Script do
   end
 
   defp link_class do
-    "bg-gray-darkest-tint border-l border-l-gray-darker-tint p-4 hover:bg-gray-darker-tint"
+    "flex items-center justify-center size-14 bg-gray-darkest-tint border-l border-l-gray-darker-tint hover:bg-gray-darker-tint"
   end
 end

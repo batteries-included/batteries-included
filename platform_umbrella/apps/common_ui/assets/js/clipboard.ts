@@ -11,7 +11,7 @@ export interface ClipboardHookInterface extends ViewHook {
 
 export const ClipboardHook = {
   mounted() {
-    this.contents = document.querySelector(this.el.dataset.to).innerHTML;
+    this.contents = document.querySelector(this.el.dataset.to).innerHTML.trim();
     this.clipboardIcon = document.querySelector(`#${this.el.id}-icon`);
     this.checkmarkIcon = document.querySelector(`#${this.el.id}-check`);
 
