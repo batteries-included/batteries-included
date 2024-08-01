@@ -24,7 +24,7 @@ defmodule ControlServerWeb.PortPanel do
     <.panel title="Ports" class={@class}>
       <.table rows={@ports}>
         <:col :let={p} label="Name"><%= p.name %></:col>
-        <:col :let={p} label="Number"><%= p.number %></:col>
+        <:col :let={p} label="Port"><%= p.number %></:col>
         <:col :let={p} label="Protocol"><%= p.protocol %></:col>
       </.table>
     </.panel>
