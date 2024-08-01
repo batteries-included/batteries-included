@@ -224,6 +224,7 @@ export const footerData = {
       links: [
         { text: 'Docs', href: '/docs' },
         { text: 'Github', href: 'https://github.com/batteries-included' },
+        { text: 'Batteries Included License', href: '/LICENSE-1.0' },
       ],
     },
   ],

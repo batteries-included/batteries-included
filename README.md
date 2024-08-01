@@ -1,19 +1,17 @@
 # Welcome
 
 Welcome to Batteries Included's all-inclusive software infrastructure platform!
-We're excited to have you as a part of our all-remote team.
 
-In this repo, you'll find everything you need to contribute to the development
-and growth of our company. From code and scripts to documentation and
-information, this is the hub of all things Batteries Included.
+In this repo, you'll find everything you need to contribute to the development.
+From code and scripts to documentation and information, this is the hub of all
+things Batteries Included.
 
 To get started, make sure your operating system is set up and ready to go. We
 recommend using a Linux machine, but our code should work on any system with a
 docker daemon and a Unix-like shell. Follow the steps in the Set up operating
 system section to get started.
 
-We can't wait to see what you'll bring to the table as a member of the Batteries
-Included team. Let's build something amazing together!
+Let's build something amazing together!
 
 ## Setup
 
