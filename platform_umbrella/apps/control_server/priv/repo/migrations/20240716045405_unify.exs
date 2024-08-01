@@ -129,6 +129,7 @@ defmodule ControlServer.Repo.Migrations.Unify do
       add :init_containers, :map
       add :env_values, :map
       add :ports, :map
+      add :volumes, :map
 
       add :kube_internal, :boolean
       add :kube_deployment_type, :string

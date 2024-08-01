@@ -137,7 +137,8 @@ defmodule CommonCore.Resources.TraditionalServices do
       "spec" => %{
         "initContainers" => init_containers(service, battery, state),
         "containers" => containers(service, battery, state),
-        "serviceAccountName" => service_account_name(service)
+        "serviceAccountName" => service_account_name(service),
+        "volumes" => volumes(service, battery, state)
       }
     }
     |> B.app_labels(service.name)
@@ -163,6 +164,10 @@ defmodule CommonCore.Resources.TraditionalServices do
         "resources" => resources(service)
       }
     end)
+  end
+
+  defp volumes(service, _battery, _state) do
+    Enum.map(service.volumes, &CommonCore.TraditionalServices.Volume.to_k8s_volume/1)
   end
 
   defp resources(%Service{} = service) do
