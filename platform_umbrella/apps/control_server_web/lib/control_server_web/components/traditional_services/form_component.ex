@@ -137,8 +137,44 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     {:noreply, socket |> assign_env_value(new_env_var) |> assign_env_value_idx(nil)}
   end
 
+  def handle_event("edit:env_value", %{"idx" => idx_string}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, _} = Integer.parse(idx_string)
+
+    env_values = Changeset.get_field(changeset, :env_values, [])
+    env_value = Enum.fetch!(env_values, idx)
+
+    {:noreply, socket |> assign_env_value(env_value) |> assign_env_value_idx(idx)}
+  end
+
+  def handle_event("del:env_value", %{"idx" => env_value_idx}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, ""} = Integer.parse(env_value_idx)
+
+    env_values = changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(idx)
+    new_changeset = Changeset.put_embed(changeset, :env_values, env_values)
+
+    {:noreply, assign_changeset(socket, new_changeset)}
+  end
+
   def handle_event("new_port", _, socket) do
     {:noreply, socket |> assign_port(%Port{}) |> assign_port_idx(nil)}
+  end
+
+  def handle_event("edit:port", %{"idx" => idx_string}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, _} = Integer.parse(idx_string)
+
+    ports = Changeset.get_field(changeset, :ports, [])
+    port = Enum.fetch!(ports, idx)
+
+    {:noreply, socket |> assign_port(port) |> assign_port_idx(idx)}
+  end
+
+  def handle_event("del:port", %{"idx" => idx_string}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, ""} = Integer.parse(idx_string)
+
+    ports = changeset |> Changeset.get_field(:ports, []) |> List.delete_at(idx)
+    new_changeset = Changeset.put_embed(changeset, :ports, ports)
+
+    {:noreply, assign_changeset(socket, new_changeset)}
   end
 
   def handle_event("new_container", %{"id" => "containers_panel-" <> cfn}, socket) do

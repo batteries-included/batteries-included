@@ -174,7 +174,6 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     {idx, _} = Integer.parse(idx_string)
 
     env_values = Changeset.get_field(changeset, :env_values, [])
-
     env_value = Enum.fetch!(env_values, idx)
 
     {:noreply, socket |> assign_env_value(env_value) |> assign_env_value_idx(idx)}
@@ -183,9 +182,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   def handle_event("del:env_value", %{"idx" => env_value_idx}, %{assigns: %{changeset: changeset}} = socket) do
     {idx, ""} = Integer.parse(env_value_idx)
 
-    env_values =
-      changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(idx)
-
+    env_values = changeset |> Changeset.get_field(:env_values, []) |> List.delete_at(idx)
     new_changeset = Changeset.put_embed(changeset, :env_values, env_values)
 
     {:noreply, assign_changeset(socket, new_changeset)}

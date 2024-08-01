@@ -49,7 +49,11 @@ defmodule ControlServerWeb.PortModal do
 
   @impl Phoenix.LiveComponent
   def handle_event("validate_port", %{"port" => params}, socket) do
-    changeset = Port.changeset(socket.assigns.port, params)
+    changeset =
+      socket.assigns.port
+      |> Port.changeset(params)
+      |> Map.put(:action, :validate)
+
     {:noreply, assign_changeset(socket, changeset)}
   end
 
@@ -58,7 +62,10 @@ defmodule ControlServerWeb.PortModal do
         %{"port" => params},
         %{assigns: %{port: port, idx: idx, update_func: update_func}} = socket
       ) do
-    changeset = Port.changeset(port, params)
+    changeset =
+      port
+      |> Port.changeset(params)
+      |> Map.put(:action, :validate)
 
     if changeset.valid? do
       new_port = Changeset.apply_changes(changeset)
@@ -84,13 +91,12 @@ defmodule ControlServerWeb.PortModal do
           <:title>Port</:title>
 
           <.flex column>
-            <.input label="Name" field={@form[:name]} autofocus placeholder="http" />
-            <.input label="Number " field={@form[:number]} autofocus placeholder="8080" />
+            <.input label="Name" field={@form[:name]} autofocus />
+            <.input label="Port" field={@form[:number]} />
             <.input
-              field={@form[:Protocol]}
+              field={@form[:protocol]}
               type="select"
               label="Protocol"
-              placeholder="HTTP2"
               options={Port.protocols()}
             />
           </.flex>

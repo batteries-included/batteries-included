@@ -58,7 +58,11 @@ defmodule ControlServerWeb.Containers.ContainerModal do
 
   @impl Phoenix.LiveComponent
   def handle_event("validate_container", %{"container" => params}, socket) do
-    changeset = Container.changeset(socket.assigns.container, params)
+    changeset =
+      socket.assigns.container
+      |> Container.changeset(params)
+      |> Map.put(:action, :validate)
+
     {:noreply, assign_changeset(socket, changeset)}
   end
 
@@ -69,7 +73,10 @@ defmodule ControlServerWeb.Containers.ContainerModal do
         %{assigns: %{container: container, idx: idx, container_field_name: cfn, update_func: update_func}} = socket
       ) do
     # Create a new changeset for the container
-    changeset = Container.changeset(container, params)
+    changeset =
+      container
+      |> Container.changeset(params)
+      |> Map.put(:action, :validate)
 
     if changeset.valid? do
       # Get the resulting container from the changeset

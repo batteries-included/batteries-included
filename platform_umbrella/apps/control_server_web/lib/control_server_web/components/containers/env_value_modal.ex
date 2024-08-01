@@ -72,7 +72,11 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
 
   @impl Phoenix.LiveComponent
   def handle_event("validate_env_value", %{"env_value" => params}, socket) do
-    changeset = EnvValue.changeset(socket.assigns.env_value, params)
+    changeset =
+      socket.assigns.env_value
+      |> EnvValue.changeset(params)
+      |> Map.put(:action, :validate)
+
     {:noreply, assign_changeset(socket, changeset)}
   end
 
@@ -86,7 +90,10 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
         %{"env_value" => params},
         %{assigns: %{env_value: env_value, idx: idx, update_func: update_func}} = socket
       ) do
-    changeset = EnvValue.changeset(env_value, params)
+    changeset =
+      env_value
+      |> EnvValue.changeset(params)
+      |> Map.put(:action, :validate)
 
     if changeset.valid? do
       new_env_value = Changeset.apply_changes(changeset)
