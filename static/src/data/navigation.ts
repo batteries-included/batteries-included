@@ -224,7 +224,13 @@ export const footerData = {
       links: [
         { text: 'Docs', href: '/docs' },
         { text: 'Github', href: 'https://github.com/batteries-included' },
+      ],
+    },
+    {
+      title: 'Legal',
+      links: [
         { text: 'Batteries Included License', href: '/LICENSE-1.0' },
+        { text: 'Copyrights', href: '/copyrights' },
       ],
     },
   ],
