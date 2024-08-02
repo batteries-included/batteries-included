@@ -14,6 +14,7 @@ defmodule CommonCore.Containers.Container do
     field :name, :string
 
     embeds_many(:env_values, CommonCore.Containers.EnvValue, on_replace: :delete)
+    embeds_many(:mounts, CommonCore.Containers.Mount, on_replace: :delete)
   end
 
   def changeset(struct, params \\ %{}) do
