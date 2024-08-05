@@ -58,6 +58,8 @@ defmodule CommonCore.MixProject do
       {:plug, "~> 1.16"},
       # History
       {:ex_audit, "~> 0.10"},
+      # Pagination
+      {:flop, "~> 0.23"},
 
       # Testing
       {:mox, "~> 1.0", only: [:dev, :test], runtime: false},

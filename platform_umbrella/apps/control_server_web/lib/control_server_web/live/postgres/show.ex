@@ -193,7 +193,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp sync_status_table(assigns) do
     ~H"""
-    <.table rows={all_roles(@status)}>
+    <.table id="postgres-sync-status-table" rows={all_roles(@status)}>
       <:col :let={user} label="Name"><%= user %></:col>
       <:col :let={user} label="Status"><%= get_role_status(@status, user) %></:col>
       <:col :let={user} label="Password Resource">

@@ -22,7 +22,7 @@ defmodule ControlServerWeb.PortPanel do
   def port_panel(%{editable: false} = assigns) do
     ~H"""
     <.panel title="Ports" class={@class}>
-      <.table rows={@ports}>
+      <.table id="ports-table" rows={@ports}>
         <:col :let={p} label="Name"><%= p.name %></:col>
         <:col :let={p} label="Port"><%= p.number %></:col>
         <:col :let={p} label="Protocol"><%= p.protocol %></:col>
@@ -40,7 +40,7 @@ defmodule ControlServerWeb.PortPanel do
         </.button>
       </:menu>
 
-      <.table rows={Enum.with_index(@ports)}>
+      <.table id="ports-table" rows={Enum.with_index(@ports)}>
         <:col :let={{p, _idx}} label="Name"><%= p.name %></:col>
         <:col :let={{p, _idx}} label="Port"><%= p.number %></:col>
         <:col :let={{p, _idx}} label="Protocol"><%= p.protocol %></:col>

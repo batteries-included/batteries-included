@@ -1,45 +1,25 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="w-[40rem] mt-4 sm:w-full">
-    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray">
+  <table id="keycloak-clients-table" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
       <tr>
-        <th class="p-0 pb-4 font-normal">Client Id</th><th class="p-0 pb-4 font-normal">Name</th><th class="p-0 pb-4 font-normal">Url</th><th class="p-0 pb-4 font-normal">Enabled</th>
+        <th class="pb-4">Client Id</th><th class="pb-4">Name</th><th class="pb-4">Url</th><th class="pb-4">Enabled</th>
         
       </tr>
     </thead>
-    <tbody id="keycloak-clients-table" class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
-      <tr class="group ">
-        <td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
-              admin-cli
-            </span>
-          </div>
-        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="">
-              Admin CLI
-            </span>
-          </div>
-        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="">
-              
-            </span>
-          </div>
-        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="">
-              true
-            </span>
-          </div>
-        </td>
-        <td class="w-14 p-0 first:rounded-l-lg last:rounded-r-lg">
-          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
-  
-            
+
+    <tbody id="keycloak-clients-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      <tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          admin-cli
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          Admin CLI
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
           
-</div>
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          true
         </td>
+
+        
       </tr>
     </tbody>
   </table>

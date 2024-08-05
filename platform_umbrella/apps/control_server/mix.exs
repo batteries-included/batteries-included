@@ -41,7 +41,6 @@ defmodule ControlServer.MixProject do
       {:event_center, in_umbrella: true},
       {:ecto_sql, "~> 3.11"},
       {:ex_audit, "~> 0.10"},
-      {:flop, "~> 0.23"},
       {:jason, "~> 1.4"},
 
       # K8s uses mint and mint_web_socket for HTTP requests

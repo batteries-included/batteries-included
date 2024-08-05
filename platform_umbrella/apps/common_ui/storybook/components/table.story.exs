@@ -3,6 +3,7 @@ defmodule Storybook.Components.Table do
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Components.Table.table/1
+  def imports, do: [{CommonUI.Components.Icon, icon: 1}]
   def container, do: {:div, class: "w-full p-2"}
 
   def variations do
@@ -18,7 +19,8 @@ defmodule Storybook.Components.Table do
         slots: [
           ~s|<:col :let={row} label="ID"><%= row.id %></:col>|,
           ~s|<:col :let={row} label="Name"><%= row.name %></:col>|,
-          ~s|<:col :let={row} label="Email"><%= row.email %></:col>|
+          ~s|<:col :let={row} label="Email"><%= row.email %></:col>|,
+          ~s|<:action><.icon name={:face_smile} class="size-6" /></:action>|
         ]
       }
     ]

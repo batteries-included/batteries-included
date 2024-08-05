@@ -4,7 +4,7 @@ defmodule ControlServerWeb.TrivyReports.VulnerabilitiesTable do
 
   def vulnerabilities_table(assigns) do
     ~H"""
-    <.table rows={@rows}>
+    <.table id="vulnerabilities-table" rows={@rows}>
       <:col :let={vuln} label="Severity"><%= get_in(vuln, ~w(severity)) %></:col>
       <:col :let={vuln} label="Title">
         <.link href={get_in(vuln, ~w(primaryLink))}>

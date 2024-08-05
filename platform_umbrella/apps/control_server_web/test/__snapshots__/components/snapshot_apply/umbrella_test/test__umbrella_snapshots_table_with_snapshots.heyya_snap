@@ -1,46 +1,34 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="w-[40rem] mt-4 sm:w-full">
-    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray">
+  <table id="umbrella-snapshots-table" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
       <tr>
-        <th class="p-0 pb-4 font-normal">ID</th><th class="p-0 pb-4 font-normal">Kube Status</th><th class="p-0 pb-4 font-normal">Keycloak Status</th>
-        <th class="p-0 pb-4">
+        <th class="pb-4">ID</th><th class="pb-4">Kube Status</th><th class="pb-4">Keycloak Status</th>
+        <th class="pb-4">
           <span class="sr-only">Actions</span>
         </th>
       </tr>
     </thead>
-    <tbody class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
-      <tr class="group hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
-        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
-          <div class="block py-4">
-            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
-              
+
+    <tbody id="umbrella-snapshots-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      <tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
+          
     success-umbrella-id
   
-            </span>
-          </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
-          <div class="block py-4">
-            <span class="">
-              
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
+          
     Success
   
-            </span>
-          </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
-          <div class="block py-4">
-            <span class="">
-              
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/success-umbrella-id/show&quot;}]]">
+          
     Skipped
 
   
-            </span>
-          </div>
         </td>
-        <td class="w-14 p-0 first:rounded-l-lg last:rounded-r-lg">
-          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
-  
-            <div class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4">
-              
+
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          <div class="flex items-center justify-end gap-3 lg:gap-4 px-2 whitespace-nowrap text-sm font-semibold">
+            
     <div class="hidden" id="tooltip-show_deploy_success-umbrella-id" phx-hook="Tooltip" data-target="show_deploy_success-umbrella-id" data-tippy-options="{}">
   <div>
     
@@ -49,41 +37,26 @@
   </div>
 </div>
   
-            </div>
-          
-</div>
+          </div>
         </td>
-      </tr><tr class="group hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
-        <td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
-          <div class="block py-4">
-            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
-              
+      </tr><tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
+          
     failure-umbrella-id
   
-            </span>
-          </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
-          <div class="block py-4">
-            <span class="">
-              
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
+          
     Failed
   
-            </span>
-          </div>
-        </td><td phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]" class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg hover:cursor-pointer">
-          <div class="block py-4">
-            <span class="">
-              
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/deploy/failure-umbrella-id/show&quot;}]]">
+          
     Failed
   
-            </span>
-          </div>
         </td>
-        <td class="w-14 p-0 first:rounded-l-lg last:rounded-r-lg">
-          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
-  
-            <div class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4">
-              
+
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          <div class="flex items-center justify-end gap-3 lg:gap-4 px-2 whitespace-nowrap text-sm font-semibold">
+            
     <div class="hidden" id="tooltip-show_deploy_failure-umbrella-id" phx-hook="Tooltip" data-target="show_deploy_failure-umbrella-id" data-tippy-options="{}">
   <div>
     
@@ -92,9 +65,7 @@
   </div>
 </div>
   
-            </div>
-          
-</div>
+          </div>
         </td>
       </tr>
     </tbody>
