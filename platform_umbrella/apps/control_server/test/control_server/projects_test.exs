@@ -26,6 +26,13 @@ defmodule ControlServer.ProjectsTest do
     end
   end
 
+  describe "list_projects/1" do
+    test "should list paginated projects", ctx do
+      assert {:ok, {[project], _}} = list_projects(%{limit: 1})
+      assert project == ctx.project
+    end
+  end
+
   describe "get_project!/1" do
     test "should return the project with given id", ctx do
       assert get_project!(ctx.project.id).name == ctx.project.name

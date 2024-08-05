@@ -9,6 +9,10 @@ defmodule ControlServer.Projects do
     Repo.all(Project)
   end
 
+  def list_projects(params) do
+    Repo.Flop.validate_and_run(Project, params, for: Project)
+  end
+
   def get_project!(id) do
     Project
     |> preload(^Project.resource_types())

@@ -5,26 +5,33 @@ defmodule ControlServerWeb.ProjectsTable do
   alias CommonCore.Projects.Project
 
   attr :rows, :list, default: []
+  attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def projects_table(assigns) do
     ~H"""
-    <.table id="project-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={project} :if={!@abridged} label="ID"><%= project.id %></:col>
-      <:col :let={project} label="Name"><%= project.name %></:col>
-      <:action :let={project}>
-        <.flex>
-          <.button
-            variant="minimal"
-            link={edit_url(project)}
-            icon={:pencil}
-            id={"edit_project_" <> project.id}
-          />
+    <.table
+      id="projects-table"
+      variant={@meta && "paginated"}
+      rows={@rows}
+      meta={@meta}
+      path={~p"/projects"}
+      row_click={&JS.navigate(show_url(&1))}
+    >
+      <:col :let={project} :if={!@abridged} field={:id} label="ID"><%= project.id %></:col>
+      <:col :let={project} field={:name} label="Name"><%= project.name %></:col>
 
-          <.tooltip target_id={"edit_project_" <> project.id}>
-            Edit Project
-          </.tooltip>
-        </.flex>
+      <:action :let={project}>
+        <.button
+          variant="minimal"
+          link={edit_url(project)}
+          icon={:pencil}
+          id={"edit_project_" <> project.id}
+        />
+
+        <.tooltip target_id={"edit_project_" <> project.id}>
+          Edit Project
+        </.tooltip>
       </:action>
     </.table>
     """
