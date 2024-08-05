@@ -360,8 +360,7 @@ do_gen_static_specs() {
     # VERSION_OVERRIDE generates different bytecode for
     # the current version. We don't want that to be left
     # around for developers. It makes tests fail.
-    VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} \
-        run_mix "do" clean, deps.get, compile
+    run_mix clean
     VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} \
         run_mix "do" deps.get, compile --force, \
         gen.static.installations "${ROOT_DIR}/bootstrap"
