@@ -3,23 +3,31 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
   use ControlServerWeb, :html
 
   attr :snapshots, :list, required: true
+  attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
   attr :skip_date, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def umbrella_snapshots_table(assigns) do
     ~H"""
-    <.table rows={@snapshots} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={snapshot} :if={!@abridged} label="ID">
+    <.table
+      id="umbrella-snapshots-table"
+      variant={@meta && "paginated"}
+      rows={@snapshots}
+      meta={@meta}
+      path={~p"/deploy"}
+      row_click={&JS.navigate(show_url(&1))}
+    >
+      <:col :let={snapshot} :if={!@abridged} field={:id} label="ID">
         <%= snapshot.id %>
       </:col>
-      <:col :let={snapshot} :if={!@skip_date} label="Started">
+      <:col :let={snapshot} :if={!@skip_date} field={:inserted_at} label="Started">
         <.relative_display time={snapshot.inserted_at} />
       </:col>
 
-      <:col :let={snapshot} label="Kube Status">
+      <:col :let={snapshot} field={:kube_snapshot} label="Kube Status">
         <.kube_status snapshot={snapshot.kube_snapshot} />
       </:col>
-      <:col :let={snapshot} label="Keycloak Status">
+      <:col :let={snapshot} field={:keycloak_snapshot} label="Keycloak Status">
         <.keycloak_snapshot snapshot={snapshot.keycloak_snapshot} />
       </:col>
       <:action :let={snapshot}>

@@ -43,7 +43,7 @@ defmodule ControlServer.ContentAddressable do
   end
 
   def paginated_documents(opts \\ %{}) do
-    Repo.Flop.validate_and_run!(
+    Repo.Flop.validate_and_run(
       from(car in Document),
       opts,
       for: Document
