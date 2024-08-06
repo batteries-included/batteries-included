@@ -94,7 +94,7 @@ Available commands:
 - build-image       Build a docker image
 - push-images       Push all the container images to a registry
 EOF
-    exit
+    exit 1
 }
 
 update_go_deps() {
