@@ -56,6 +56,7 @@ defmodule CommonCore.Defaults.Images do
 
   @spec cert_manager_cainjector_image() :: String.t()
   def cert_manager_cainjector_image, do: "quay.io/jetstack/cert-manager-cainjector:#{cert_manager_image_version()}"
+
   @spec cert_manager_controller_image() :: String.t()
   def cert_manager_controller_image, do: "quay.io/jetstack/cert-manager-controller:#{cert_manager_image_version()}"
 
@@ -79,6 +80,12 @@ defmodule CommonCore.Defaults.Images do
 
   @spec grafana_image() :: String.t()
   def grafana_image, do: "grafana/grafana:10.4.5"
+
+  @spec home_base_image() :: String.t()
+  def home_base_image do
+    ver = batteries_included_version()
+    "public.ecr.aws/batteries-included/home-base:#{ver}"
+  end
 
   @spec istio_pilot_image() :: String.t()
   def istio_pilot_image, do: "docker.io/istio/pilot:1.22.3-distroless"

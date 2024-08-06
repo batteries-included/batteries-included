@@ -6,6 +6,7 @@ defmodule ControlServer.Seed do
   alias ControlServer.MetalLB
   alias ControlServer.Postgres
   alias ControlServer.Redis
+  alias ControlServer.TraditionalServices
 
   require Logger
 
@@ -22,6 +23,7 @@ defmodule ControlServer.Seed do
     :ok = seed_postgres(summary)
     :ok = seed_ip_address_pools(summary)
     :ok = seed_batteries(summary)
+    :ok = seed_traditional_services(summary)
   end
 
   defp seed_batteries(summary) do
@@ -77,5 +79,14 @@ defmodule ControlServer.Seed do
     end)
 
     :ok
+  end
+
+  def seed_traditional_services(summary) do
+    Logger.debug("Seeding traditional services.")
+
+    summary
+    |> Map.get("traditional_services")
+    |> Enum.map(&to_fresh_args/1)
+    |> Enum.each(fn svc -> {:ok, _} = TraditionalServices.create_service(svc) end)
   end
 end

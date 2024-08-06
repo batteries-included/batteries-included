@@ -85,6 +85,9 @@ defmodule CommonCore.Installs.Batteries do
         |> Enum.reject(fn cb -> cb.type in [:karpenter, :aws_load_balancer] end)
         |> Enum.map(fn cb -> cb.type end)
 
+      :development ->
+        ~w(metallb traditional_services)a ++ @standard_battery_types
+
       _ ->
         ~w(metallb)a ++ @standard_battery_types
     end
@@ -115,7 +118,7 @@ defmodule CommonCore.Installs.Batteries do
         |> Enum.map(fn cb -> cb.type end)
 
       _ ->
-        ~w(metallb)a ++ @standard_battery_types
+        @standard_battery_types
     end
   end
 end
