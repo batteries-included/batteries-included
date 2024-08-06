@@ -52,7 +52,7 @@ defmodule ControlServerWeb.Live.StateSummary do
           <% end %>
         </ul>
       </.panel>
-      <.panel title="Install Status">
+      <.panel :if={@state_summary.install_status} title="Install Status">
         <.data_list>
           <:item title="Status"><%= @state_summary.install_status.status %></:item>
           <:item title="Message"><%= @state_summary.install_status.message %></:item>
@@ -62,6 +62,9 @@ defmodule ControlServerWeb.Live.StateSummary do
 
       <.panel title="Stable Versions">
         <.data_list>
+          <:item title="Current Control Server Image">
+            <%= CommonCore.Defaults.Images.control_server_image() %>
+          </:item>
           <:item title="Stable Control Server Image">
             <%= @upgrade_control_server %>
           </:item>
@@ -77,7 +80,7 @@ defmodule ControlServerWeb.Live.StateSummary do
           <% end %>
         </ul>
       </.panel>
-      <.panel title="Kube Status">
+      <.panel :if={@state_summary.kube_state} title="Kube Status">
         <.data_list>
           <:item :for={{type, res} <- @state_summary.kube_state} title={type}>
             <%= length(res) %>

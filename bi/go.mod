@@ -14,7 +14,7 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.22.0
 	github.com/noisysockets/noisysockets v0.27.4
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.47.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.48.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.4
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.4
 	github.com/pulumi/pulumi/sdk/v3 v3.127.0
@@ -24,7 +24,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.32.0
 	github.com/vbauerster/mpb/v8 v8.7.5
-	golang.org/x/sync v0.7.0
+	golang.org/x/sync v0.8.0
 	gopkg.in/ini.v1 v1.67.0
 	k8s.io/api v0.30.3
 	k8s.io/apiextensions-apiserver v0.30.3
