@@ -42,25 +42,25 @@ RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt \
   apt update && \
   apt install -y \
+  apt-transport-https \
+  autoconf \
   build-essential \
+  ca-certificates \
+  cmake \
+  curl \
+  git \
+  gnupg \
+  libncurses5-dev \
+  libssl-dev \
+  locales \
+  m4 \
   nodejs \
   npm \
-  curl \
-  wget \
-  git \
-  cmake \
-  libssl-dev \
   pkg-config \
-  autoconf \
-  m4 \
-  libncurses5-dev \
-  unzip \
-  gnupg \
-  apt-transport-https \
-  ca-certificates \
   software-properties-common \
-  locales &&\
-  locale-gen $LANG
+  unzip \
+  wget \
+  && locale-gen $LANG
 
 ##########################################################################
 # Fetch app library dependencies

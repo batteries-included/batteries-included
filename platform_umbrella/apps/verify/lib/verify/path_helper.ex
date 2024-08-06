@@ -18,8 +18,8 @@ defmodule Verify.PathHelper do
         Logger.info("Using internal BI binary at #{internal}")
         internal
       else
-        Logger.info("BI binary not found at #{internal}, building BI via bix ensure-bi")
-        {_, 0} = System.cmd("bix", ["ensure-bi"])
+        Logger.info("BI binary not found at #{internal}, building BI via bix go-ensure-bi")
+        {_, 0} = System.cmd("bix", ["go-ensure-bi"])
         internal
       end
     end

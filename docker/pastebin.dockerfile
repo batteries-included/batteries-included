@@ -18,20 +18,20 @@ RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt \
     apt update && \
     apt install -y \
-    nodejs \
-    npm \
-    curl \
-    wget \
-    git \
-    cmake \
-    libssl-dev \
-    unzip \
-    gnupg \
     apt-transport-https \
     ca-certificates \
+    cmake \
+    curl \
+    git \
+    gnupg \
+    libssl-dev \
+    locales \
+    nodejs \
+    npm \
     software-properties-common \
-    locales &&\
-    locale-gen $LANG
+    unzip \
+    wget \
+    && locale-gen $LANG
 
 ###############################################################################
 # Build the assets
