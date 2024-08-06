@@ -43,6 +43,7 @@ type KubeClient interface {
 	WaitForConnection(time.Duration) error
 	WatchFor(context.Context, *WatchOptions) error
 	GetAccessInfo(ctx context.Context, namespace string) (*access.AccessSpec, error)
+	GetPostgresAccessInfo(ctx context.Context, namespace string, clusterName string, userName string) (*access.PostgresAccessSpec, error)
 }
 
 type batteryKubeClient struct {
