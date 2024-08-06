@@ -29,13 +29,14 @@ type IPAddressPoolSpec struct {
 }
 
 type StateSummarySpec struct {
-	Batteries        []BatterySpec            `json:"batteries"`
-	IPAddressPools   []IPAddressPoolSpec      `json:"ip_address_pools"`
-	KnativeServices  []map[string]interface{} `json:"knative_services"`
-	Notebooks        []map[string]interface{} `json:"notebooks"`
-	PostgresClusters []map[string]interface{} `json:"postgres_clusters"`
-	FerretServices   []map[string]interface{} `json:"ferret_services"`
-	RedisClusters    []map[string]interface{} `json:"redis_clusters"`
+	Batteries           []BatterySpec            `json:"batteries"`
+	IPAddressPools      []IPAddressPoolSpec      `json:"ip_address_pools"`
+	FerretServices      []map[string]interface{} `json:"ferret_services"`
+	KnativeServices     []map[string]interface{} `json:"knative_services"`
+	Notebooks           []map[string]interface{} `json:"notebooks"`
+	PostgresClusters    []map[string]interface{} `json:"postgres_clusters"`
+	RedisClusters       []map[string]interface{} `json:"redis_clusters"`
+	TraditionalServices []map[string]interface{} `json:"traditional_services"`
 }
 
 type InstallSpec struct {

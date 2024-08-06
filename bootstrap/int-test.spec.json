@@ -1,0 +1,166 @@
+{
+  "slug": "int-test",
+  "kube_cluster": {
+    "config": {},
+    "provider": "kind"
+  },
+  "target_summary": {
+    "knative_services": [],
+    "notebooks": [],
+    "batteries": [
+      {
+        "id": "batt_019128b8cc767749a173d7f7f85c59d3",
+        "type": "battery_core",
+        "config": {
+          "type": "battery_core",
+          "cluster_type": "kind",
+          "core_namespace": "battery-core",
+          "base_namespace": "battery-base",
+          "data_namespace": "battery-data",
+          "ai_namespace": "battery-ai",
+          "default_size": "medium",
+          "cluster_name": "int-test",
+          "server_in_cluster": false,
+          "install_id": "batt_019128b8cc717fe989b20bce14207587",
+          "control_jwk": {
+            "crv": "Ed25519",
+            "d": "bQdAXmsliqZSMV3gMaK1klU1kL_ZqhUXawIRAcvvehI",
+            "kty": "OKP",
+            "x": "GrV6s9SLSwWBbKr3Wtx1wS86tx--mEGKk_aiVZ_Q5EU"
+          },
+          "upgrade_days_of_week": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
+          ],
+          "upgrade_start_hour": 18,
+          "upgrade_end_hour": 23
+        },
+        "group": "magic",
+        "inserted_at": null,
+        "updated_at": null
+      }
+    ],
+    "traditional_services": [
+      {
+        "id": null,
+        "name": "home-base",
+        "ports": [
+          {
+            "name": "http",
+            "protocol": "http2",
+            "number": 4000
+          }
+        ],
+        "inserted_at": null,
+        "updated_at": null,
+        "env_values": [],
+        "num_instances": 1,
+        "virtual_size": "medium",
+        "cpu_requested": 4000,
+        "cpu_limits": 4000,
+        "memory_requested": 8589934592,
+        "memory_limits": 8589934592,
+        "project_id": null,
+        "containers": [
+          {
+            "args": null,
+            "command": null,
+            "name": "home-base",
+            "image": "public.ecr.aws/batteries-included/home-base:latest",
+            "env_values": [],
+            "mounts": []
+          }
+        ],
+        "kube_internal": false,
+        "init_containers": [],
+        "volumes": [],
+        "kube_deployment_type": "deployment"
+      }
+    ],
+    "postgres_clusters": [
+      {
+        "id": null,
+        "name": "controlserver",
+        "type": "internal",
+        "database": {
+          "name": "control",
+          "owner": "battery-control-user"
+        },
+        "users": [
+          {
+            "position": null,
+            "username": "battery-local-user",
+            "password": "not-real",
+            "roles": [
+              "superuser",
+              "createrole",
+              "createdb",
+              "login"
+            ],
+            "credential_namespaces": []
+          },
+          {
+            "position": null,
+            "username": "battery-control-user",
+            "password": "3KFVXJ5ZVGJ3SBQIUGMJNW7U",
+            "roles": [
+              "createdb",
+              "login"
+            ],
+            "credential_namespaces": [
+              "battery-core"
+            ]
+          }
+        ],
+        "storage_class": null,
+        "inserted_at": null,
+        "updated_at": null,
+        "num_instances": 1,
+        "virtual_size": "medium",
+        "cpu_requested": 4000,
+        "cpu_limits": 4000,
+        "memory_requested": 8589934592,
+        "memory_limits": 8589934592,
+        "project_id": null,
+        "storage_size": 68719476736,
+        "virtual_storage_size_range_value": 470590976688
+      }
+    ],
+    "redis_clusters": [],
+    "projects": [],
+    "ferret_services": [],
+    "ip_address_pools": [],
+    "stable_versions_report": null,
+    "captured_at": null,
+    "install_status": null
+  },
+  "initial_resources": {
+    "/namespace/battery_core": {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "AKR7FBXWAQXNJZ2FGLBDGJZENH2SILCNYL7CDH5M4654XCDXNAUA===="
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "battery/owner": "batt_019128b8cc767749a173d7f7f85c59d3",
+          "istio-injection": "enabled",
+          "version": "latest"
+        },
+        "name": "battery-core"
+      }
+    }
+  }
+}

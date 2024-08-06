@@ -44,9 +44,7 @@ defmodule CommonCore.Installs.Generator do
     GenServer.call(target, {:build, identifier})
   end
 
-  def available_builds do
-    [:dev, :local, :elliott, :jason, :maurer, :damian]
-  end
+  def available_builds, do: ~w(dev int_test local elliott jason maurer damian)a
 
   defp build_base_team do
     Team.new!(
@@ -61,6 +59,16 @@ defmodule CommonCore.Installs.Generator do
     Installation.new!("dev",
       kube_provider: :kind,
       usage: :internal_dev,
+      team_id: team_id,
+      id: BatteryUUID.autogenerate()
+    )
+  end
+
+  defp do_build(:int_test, team_id) do
+    Installation.new!("int_test",
+      default_size: :medium,
+      kube_provider: :kind,
+      usage: :internal_int_test,
       team_id: team_id,
       id: BatteryUUID.autogenerate()
     )
