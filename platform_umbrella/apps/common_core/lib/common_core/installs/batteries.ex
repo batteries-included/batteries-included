@@ -74,7 +74,7 @@ defmodule CommonCore.Installs.Batteries do
       # We have a special case where kind is used for integration tests
       # that needs to be slim for now to keep GH's runners happy. They run on fucking potatos.
       :internal_int_test ->
-        ~w(battery_core)a
+        ~w(battery_core traditional_services)a
 
       :internal_dev ->
         ~w(metallb)a ++ @standard_battery_types
@@ -84,9 +84,6 @@ defmodule CommonCore.Installs.Batteries do
         Catalog.all()
         |> Enum.reject(fn cb -> cb.type in [:karpenter, :aws_load_balancer] end)
         |> Enum.map(fn cb -> cb.type end)
-
-      :development ->
-        ~w(metallb traditional_services)a ++ @standard_battery_types
 
       _ ->
         ~w(metallb)a ++ @standard_battery_types
