@@ -12,6 +12,13 @@ type AccessSpec struct {
 	SSL      StringableBool `json:"ssl"`
 }
 
+type PostgresAccessSpec struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Hostname string `json:"hostname"`
+	DSN      string `json:"dsn"`
+}
+
 func (a *AccessSpec) PrintToConsole() error {
 	// Display a clickable URL
 	// If SSL is enabled, use https, otherwise use http
@@ -36,6 +43,25 @@ func NewFromConfigMap(config *v1.ConfigMap) (*AccessSpec, error) {
 	}
 
 	accessSpec := &AccessSpec{}
+	if err := json.Unmarshal(jsonBytes, accessSpec); err != nil {
+		return nil, err
+	}
+	return accessSpec, nil
+}
+
+func NewPostgresAccessSpecFromSecret(secret *v1.Secret) (*PostgresAccessSpec, error) {
+	decodedMap := make(map[string]string, len(secret.Data))
+	// base64 decode every value in the secret
+	for key, value := range secret.Data {
+		decodedMap[key] = string(value)
+	}
+
+	jsonBytes, err := json.Marshal(decodedMap)
+	if err != nil {
+		return nil, err
+	}
+
+	accessSpec := &PostgresAccessSpec{}
 	if err := json.Unmarshal(jsonBytes, accessSpec); err != nil {
 		return nil, err
 	}

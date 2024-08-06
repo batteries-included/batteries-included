@@ -3,6 +3,7 @@ package kube
 import (
 	"bi/pkg/access"
 	"context"
+	"fmt"
 	"log/slog"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,4 +24,23 @@ func (batteryKube *batteryKubeClient) GetAccessInfo(ctx context.Context, namespa
 	}
 
 	return accessSpec, nil
+}
+
+func (batteryKube *batteryKubeClient) GetPostgresAccessInfo(ctx context.Context, namespace string, clusterName string, userName string) (*access.PostgresAccessSpec, error) {
+	secretName := potgresSecretName(clusterName, userName)
+	slog.Debug("Getting postgres access info", slog.String("namespace", namespace), slog.String("secret", secretName))
+
+	secret, err := batteryKube.client.CoreV1().Secrets(namespace).Get(ctx, secretName, metav1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get postgres secret: %w", err)
+	}
+	postgresAccessSpec, err := access.NewPostgresAccessSpecFromSecret(secret)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get postgres secret: %w", err)
+	}
+	return postgresAccessSpec, nil
+}
+
+func potgresSecretName(clusterName string, userName string) string {
+	return fmt.Sprintf("cloudnative-pg.pg-%s.%s", clusterName, userName)
 }
