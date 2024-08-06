@@ -134,10 +134,13 @@ defmodule ControlServerWeb.Live.EditVersionShow do
 
   defp patch_table(assigns) do
     ~H"""
-    <.table rows={
-      @edit_version.patch
-      |> Enum.reject(fn {field, _v} -> to_string(field) |> String.starts_with?("virtual") end)
-    }>
+    <.table
+      id="version-patch-table"
+      rows={
+        @edit_version.patch
+        |> Enum.reject(fn {field, _v} -> to_string(field) |> String.starts_with?("virtual") end)
+      }
+    >
       <:col :let={{field, _change}} label="Field">
         <%= field %>
       </:col>

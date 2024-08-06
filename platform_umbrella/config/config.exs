@@ -83,6 +83,10 @@ config :common_ui, CommonUIWeb.Endpoint,
   pubsub_server: CommonUI.PubSub,
   live_view: [signing_salt: "CGM/Nu66"]
 
+config :flop_phoenix,
+  pagination: [opts: {CommonUI.Components.Table, :pagination_opts}],
+  table: [opts: {CommonUI.Components.Table, :paginated_table_opts}]
+
 # Configures Elixir's Logger
 config :logger,
   level: :debug,

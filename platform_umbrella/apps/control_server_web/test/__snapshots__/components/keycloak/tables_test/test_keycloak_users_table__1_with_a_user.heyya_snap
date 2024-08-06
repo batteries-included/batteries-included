@@ -1,62 +1,42 @@
 <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-  <table class="w-[40rem] mt-4 sm:w-full">
-    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray">
+  <table id="keycloak-users-table" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
       <tr>
-        <th class="p-0 pb-4 font-normal">Id</th><th class="p-0 pb-4 font-normal">Username</th><th class="p-0 pb-4 font-normal">Enabled</th><th class="p-0 pb-4 font-normal">Email Verified</th>
-        <th class="p-0 pb-4">
+        <th class="pb-4">Id</th><th class="pb-4">Username</th><th class="pb-4">Enabled</th><th class="pb-4">Email Verified</th>
+        <th class="pb-4">
           <span class="sr-only">Actions</span>
         </th>
       </tr>
     </thead>
-    <tbody id="keycloak-users-table" class="relative border-t border-gray-lighter dark:border-gray-darker text-sm leading-6 text-gray-darkest dark:text-gray-lighter">
-      <tr class="group ">
-        <td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="font-semibold text-gray-darkest dark:text-gray-lightest">
-              00-00-00-00-00-00-00-00-00-00-01
-            </span>
-          </div>
-        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="">
-              root
-            </span>
-          </div>
-        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="">
-              true
-            </span>
-          </div>
-        </td><td class="p-0 px-2 align-top first:rounded-l-lg last:rounded-r-lg ">
-          <div class="block py-4">
-            <span class="">
-              false
-            </span>
-          </div>
+
+    <tbody id="keycloak-users-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      <tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          00-00-00-00-00-00-00-00-00-00-01
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          root
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          true
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          false
         </td>
-        <td class="w-14 p-0 first:rounded-l-lg last:rounded-r-lg">
-          <div class="gap-4 lg:gap-6 flex whitespace-nowrap text-sm font-medium justify-around">
-  
-            <div class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4">
-              
+
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          <div class="flex items-center justify-end gap-3 lg:gap-4 px-2 whitespace-nowrap text-sm font-semibold">
+            
     <a href="#" class="font-medium text-primary hover:text-primary-dark hover:underline" phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
   
       Reset Password
     
 </a>
   
-            </div><div class="font-semibold leading-6 text-gray-darkest dark:text-gray-lightest p-4">
-              
     <a href="#" class="font-medium text-primary hover:text-primary-dark hover:underline" phx-click="make_realm_admin" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
   
       Make Realm Admin
     
 </a>
   
-            </div>
-          
-</div>
+          </div>
         </td>
       </tr>
     </tbody>

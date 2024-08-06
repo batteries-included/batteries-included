@@ -21,14 +21,24 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
     </.page_header>
 
     <.panel title="Resources">
-      <.documents_table resources={elem(@resources, 0)} />
+      <.documents_table resources={@resources} meta={@meta} />
     </.panel>
     """
   end
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_stats() |> assign_resources()}
+    {:ok, assign_stats(socket)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(params, _session, socket) do
+    with {:ok, {resources, meta}} <- ContentAddressable.paginated_documents(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:resources, resources)}
+    end
   end
 
   defp assign_stats(socket) do
@@ -38,9 +48,5 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
     |> assign(:count, cnt)
     |> assign(:oldest, oldest)
     |> assign(:newest, newest)
-  end
-
-  defp assign_resources(socket) do
-    assign(socket, :resources, ContentAddressable.paginated_documents())
   end
 end

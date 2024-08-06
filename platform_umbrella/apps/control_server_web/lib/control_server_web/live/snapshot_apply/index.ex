@@ -14,12 +14,26 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     :ok = KubeSnapshotEventCenter.subscribe()
-    {:ok, socket |> assign_snapshots() |> assign_deploys_running()}
+    {:ok, assign_deploys_running(socket)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(params, _session, socket) do
+    with {:ok, {snaps, meta}} <- Umbrella.paginated_umbrella_snapshots(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:snapshots, snaps)}
+    end
   end
 
   def assign_snapshots(socket) do
-    {:ok, {snaps, _}} = Umbrella.paginated_umbrella_snapshots()
-    assign(socket, :snapshots, snaps)
+    {:ok, {snaps, meta}} = Umbrella.paginated_umbrella_snapshots()
+
+    socket
+    |> assign(:meta, meta)
+    |> assign(:snapshots, snaps)
+    |> push_patch(to: ~p"/deploy")
   end
 
   defp assign_deploys_running(socket) do
@@ -57,9 +71,10 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
         Start Deploy
       </.button>
     </.page_header>
+
     <.panel title="All Deploys">
       <.pause_alert :if={!@deploys_running} />
-      <.umbrella_snapshots_table snapshots={@snapshots} />
+      <.umbrella_snapshots_table snapshots={@snapshots} meta={@meta} />
     </.panel>
     """
   end

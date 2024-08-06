@@ -40,6 +40,7 @@ defmodule CommonUI.MixProject do
       {:swoosh, "~> 1.16"},
       {:premailex, "~> 0.3"},
       {:floki, "~> 0.36"},
+      {:flop_phoenix, "~> 0.22"},
       {:gettext, "~> 0.20"},
       {:phoenix, "~> 1.7"},
       {:phoenix_html, "~> 4.1"},

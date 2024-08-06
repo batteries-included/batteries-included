@@ -1,0 +1,38 @@
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table id="foobar" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
+      <tr>
+        <th class="pb-4">A</th><th class="pb-4">B</th>
+        
+      </tr>
+    </thead>
+
+    <tbody id="foobar-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      <tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          100
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          test
+        </td>
+
+        
+      </tr><tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          102
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          testing
+        </td>
+
+        
+      </tr><tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          420
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          anyone there?
+        </td>
+
+        
+      </tr>
+    </tbody>
+  </table>
+</div>

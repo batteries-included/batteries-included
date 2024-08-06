@@ -7,10 +7,23 @@ defmodule ControlServerWeb.Projects.IndexLive do
   alias ControlServer.Projects
 
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:page_title, "Projects")
-     |> assign(:projects, Projects.list_projects())}
+    {:ok, assign(socket, :page_title, "Projects")}
+  end
+
+  def handle_params(params, _session, socket) do
+    with {:ok, {projects, meta}} <- Projects.list_projects(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:projects, projects)
+       |> assign(:form, to_form(meta))}
+    end
+  end
+
+  def handle_event("search", params, socket) do
+    params = Map.delete(params, "_target")
+
+    {:noreply, push_patch(socket, to: ~p"/projects?#{params}")}
   end
 
   def render(assigns) do
@@ -20,7 +33,16 @@ defmodule ControlServerWeb.Projects.IndexLive do
     </.page_header>
 
     <.panel title="All Projects">
-      <.projects_table rows={@projects} />
+      <:menu>
+        <.table_search
+          meta={@meta}
+          fields={[name: [op: :ilike]]}
+          placeholder="Filter by name"
+          on_change="search"
+        />
+      </:menu>
+
+      <.projects_table rows={@projects} meta={@meta} />
     </.panel>
     """
   end

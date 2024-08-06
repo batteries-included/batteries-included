@@ -5,6 +5,11 @@ defmodule CommonCore.Projects.Project do
 
   @required_fields ~w(name)a
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name]
+  }
+
   batt_schema "projects" do
     field :name, :string
     field :description, :string

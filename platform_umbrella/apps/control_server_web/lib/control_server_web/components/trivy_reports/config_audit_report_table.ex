@@ -6,7 +6,7 @@ defmodule ControlServerWeb.ConfigAuditReportTable do
 
   def config_audit_reports_table(assigns) do
     ~H"""
-    <.table rows={@reports}>
+    <.table id="config-audit-reports-table" rows={@reports}>
       <:col :let={report} label="Name"><%= name(report) %></:col>
       <:col :let={report} label="Namespace"><%= namespace(report) %></:col>
       <:col :let={report} label="Critical">

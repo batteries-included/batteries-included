@@ -7,7 +7,7 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
 
   def ip_address_pools_table(assigns) do
     ~H"""
-    <.table rows={@rows}>
+    <.table id="ip-address-pools-table" rows={@rows}>
       <:col :let={pool} :if={!@abridged} label="ID"><%= pool.id %></:col>
       <:col :let={pool} label="Name"><%= pool.name %></:col>
       <:col :let={pool} label="Subnet"><%= pool.subnet %></:col>

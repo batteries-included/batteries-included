@@ -21,7 +21,7 @@ defmodule ControlServerWeb.ResourceComponents do
   def events_panel(assigns) do
     ~H"""
     <.panel title="Events" class={@class}>
-      <.table :if={@events && @events != []} rows={@events}>
+      <.table :if={@events && @events != []} id="resource-events-table" rows={@events}>
         <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
         <:col :let={event} label="Message">
           <.truncate_tooltip value={event |> get_in(~w(message))} />

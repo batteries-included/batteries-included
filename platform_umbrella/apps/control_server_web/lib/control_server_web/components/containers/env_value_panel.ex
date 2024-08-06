@@ -22,7 +22,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
   def env_var_panel(%{editable: false} = assigns) do
     ~H"""
     <.panel title="Environment Variables" class={@class}>
-      <.table rows={@env_values}>
+      <.table id="env-var-table" rows={@env_values}>
         <:col :let={ev} label="Name"><%= ev.name %></:col>
         <:col :let={ev} label="Value"><.env_value_value env_value={ev} /></:col>
       </.table>
@@ -39,7 +39,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
         </.button>
       </:menu>
 
-      <.table rows={Enum.with_index(@env_values)}>
+      <.table id="env-var-table" rows={Enum.with_index(@env_values)}>
         <:col :let={{ev, _idx}} label="Name"><%= ev.name %></:col>
         <:col :let={{ev, _idx}} label="Value"><.env_value_value env_value={ev} /></:col>
         <:action :let={{ev, idx}}>

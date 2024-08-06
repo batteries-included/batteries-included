@@ -55,7 +55,10 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
       </.panel>
 
       <.panel title="HTTP" class="col-span-2">
-        <.table rows={@virtual_service |> spec() |> Map.get("http") |> Enum.with_index()}>
+        <.table
+          id="http-services-table"
+          rows={@virtual_service |> spec() |> Map.get("http") |> Enum.with_index()}
+        >
           <:col :let={{service, idx}} label="Name"><%= service |> Map.get("name") || idx %></:col>
           <:col :let={{service, _idx}} label="Match">
             <.match_display match={service |> Map.get("match") |> List.first()} />

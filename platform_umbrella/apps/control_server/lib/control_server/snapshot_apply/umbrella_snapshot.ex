@@ -7,7 +7,6 @@ defmodule ControlServer.SnapshotApply.UmbrellaSnapshot do
     Flop.Schema,
     filterable: [],
     sortable: [:inserted_at, :id],
-    default_limit: 12,
     default_order: %{
       order_by: [:inserted_at, :id],
       order_directions: [:desc, :desc]
