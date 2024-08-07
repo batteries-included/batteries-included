@@ -12,10 +12,12 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
   alias ControlServer.Notebooks
   alias ControlServer.Projects
   alias Ecto.Changeset
+  alias KubeServices.SystemState.SummaryBatteries
 
   def mount(socket) do
     {:ok,
      socket
+     |> assign_new(:namespace, fn -> SummaryBatteries.ai_namespace() end)
      |> assign_projects()
      |> assign_env_value(nil)
      |> assign_env_value_idx(nil)}
@@ -214,6 +216,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
       <.live_component
         :if={@env_value}
         module={ControlServerWeb.Containers.EnvValueModal}
+        namespace={@namespace}
         update_func={&update_env_value/2}
         env_value={@env_value}
         idx={@env_value_idx}
