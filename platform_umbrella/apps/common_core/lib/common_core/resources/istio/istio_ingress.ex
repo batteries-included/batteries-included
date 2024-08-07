@@ -434,10 +434,20 @@ defmodule CommonCore.Resources.IstioIngress do
     %{port: %{number: port.number, name: port.name, protocol: "TCP"}, hosts: hosts}
   end
 
-  defp build_server_for_traditional_service_port(hosts, port, false = _ssl_enabled?) do
+  defp build_server_for_traditional_service_port(hosts, %{protocol: protocol} = port, false = _ssl_enabled?)
+       when protocol in [:http, :http2] do
     %{
-      port: %{number: port.number, name: port.name, protocol: String.upcase(Atom.to_string(port.protocol))},
+      port: %{number: 80, name: port.name, protocol: normalize_protocol(port.protocol)},
       hosts: hosts
     }
   end
+
+  defp build_server_for_traditional_service_port(hosts, port, false = _ssl_enabled?) do
+    %{
+      port: %{number: port.number, name: port.name, protocol: normalize_protocol(port.protocol)},
+      hosts: hosts
+    }
+  end
+
+  defp normalize_protocol(proto), do: String.upcase(Atom.to_string(proto))
 end

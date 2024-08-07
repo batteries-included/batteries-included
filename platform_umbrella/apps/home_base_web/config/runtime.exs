@@ -1,7 +1,5 @@
 import Config
 
-web_host = System.get_env("WEB_HOST", "anton2")
-web_port = System.get_env("WEB_PORT", "8081")
 port = System.get_env("PORT", "4000")
 
 postgres_username =
@@ -36,19 +34,19 @@ secret_key_base =
     """
 
 config :home_base, HomeBase.Repo,
-  ssl: true,
-  username: postgres_username,
-  password: postgres_password,
   database: postgres_database,
   hostname: postgres_host,
+  log: false,
+  password: postgres_password,
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+  ssl: true,
+  ssl_opts: [verify: :verify_none],
+  username: postgres_username
 
 config :home_base_web, HomeBaseWeb.Endpoint,
   http: [
-    port: String.to_integer(port),
-    # url: [host: web_host, port: String.to_integer(web_port)],
-    transport_options: [socket_opts: [:inet6]]
+    port: String.to_integer(port)
   ],
   check_origin: false,
   secret_key_base: secret_key_base,
