@@ -6,6 +6,7 @@ defmodule CommonCore.Resources.TraditionalServices do
   import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
 
+  alias CommonCore.Containers.EnvValue
   alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Port
   alias CommonCore.Resources.Builder, as: B
@@ -135,8 +136,8 @@ defmodule CommonCore.Resources.TraditionalServices do
         "labels" => %{"battery/managed" => "true"}
       },
       "spec" => %{
-        "initContainers" => init_containers(service, battery, state),
-        "containers" => containers(service, battery, state),
+        "initContainers" => containers(service.init_containers, service, battery, state),
+        "containers" => containers(service.containers, service, battery, state),
         "serviceAccountName" => service_account_name(service),
         "volumes" => volumes(service, battery, state)
       }
@@ -146,24 +147,14 @@ defmodule CommonCore.Resources.TraditionalServices do
     |> B.add_owner(service)
   end
 
-  defp init_containers(service, _battery, _state) do
-    Enum.map(service.init_containers, fn container ->
+  defp containers(containers, service, _battery, _state) do
+    Enum.map(containers, fn container ->
       %{
         "name" => container.name,
         "image" => container.image,
         "resources" => resources(service),
-        "volumeMounts" => volume_mounts(container)
-      }
-    end)
-  end
-
-  defp containers(service, _battery, _state) do
-    Enum.map(service.containers, fn container ->
-      %{
-        "name" => container.name,
-        "image" => container.image,
-        "resources" => resources(service),
-        "volumeMounts" => volume_mounts(container)
+        "volumeMounts" => volume_mounts(container),
+        "env" => env(service, container)
       }
     end)
   end
@@ -190,6 +181,12 @@ defmodule CommonCore.Resources.TraditionalServices do
       |> maybe_put("memory", format_resource(service.memory_requested))
 
     %{} |> maybe_put("limits", limits) |> maybe_put("requests", requests)
+  end
+
+  defp env(service, container) do
+    service.env_values
+    |> Enum.concat(container.env_values)
+    |> Enum.map(&EnvValue.to_k8s_value/1)
   end
 
   defp service_account_name(%Service{} = service) do
