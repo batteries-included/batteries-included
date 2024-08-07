@@ -24,7 +24,10 @@ kube_bootstrap)
     ;;
 
 home_base_init)
-    echo "TODO"
+    SEED_CMD=$(printf 'HomeBase.Release.seed("%s")' "${BOOTSTRAP_SUMMARY_PATH:-/etc/init-config/}")
+    "${DIR}/home_base" eval 'HomeBase.Release.createdb()'
+    "${DIR}/home_base" eval 'HomeBase.Release.migrate()'
+    "${DIR}/home_base" eval "$SEED_CMD"
     exit 0
     ;;
 home_base)
