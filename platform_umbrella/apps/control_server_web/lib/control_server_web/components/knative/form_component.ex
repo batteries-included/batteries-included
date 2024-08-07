@@ -20,6 +20,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      socket
      |> assign_new(:save_info, fn -> "service:save" end)
      |> assign_new(:save_target, fn -> nil end)
+     |> assign_new(:namespace, fn -> SummaryBatteries.knative_namespace() end)
      |> assign_sso_enabled()
      |> assign_projects()
      |> assign_container(nil)
@@ -346,6 +347,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
       <.live_component
         :if={@env_value}
         module={ControlServerWeb.Containers.EnvValueModal}
+        namespace={@namespace}
         update_func={&update_env_value/2}
         env_value={@env_value}
         idx={@env_value_idx}

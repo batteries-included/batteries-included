@@ -23,6 +23,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
      |> assign_new(:save_info, fn -> "service:save" end)
      |> assign_new(:save_target, fn -> nil end)
      |> assign_new(:sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
+     |> assign_new(:namespace, fn -> SummaryBatteries.traditional_namespace() end)
      |> assign_container(nil)
      |> assign_container_idx(nil)
      |> assign_container_field_name(nil)
@@ -413,6 +414,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
       <.live_component
         :if={@env_value}
         module={ControlServerWeb.Containers.EnvValueModal}
+        namespace={@namespace}
         update_func={&update_env_value/2}
         env_value={@env_value}
         idx={@env_value_idx}

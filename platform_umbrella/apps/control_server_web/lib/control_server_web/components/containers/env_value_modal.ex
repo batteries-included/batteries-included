@@ -13,9 +13,10 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
   end
 
   @impl Phoenix.LiveComponent
-  def update(%{env_value: env_value, idx: idx, update_func: update_func, id: id} = _assigns, socket) do
+  def update(%{env_value: env_value, idx: idx, update_func: update_func, namespace: namespace, id: id} = _assigns, socket) do
     {:ok,
      socket
+     |> assign(namespace: namespace)
      |> assign_id(id)
      |> assign_idx(idx)
      |> assign_env_value(env_value)
@@ -45,9 +46,7 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
     assign(socket, changeset: changeset, form: to_form(changeset))
   end
 
-  defp assign_configs(socket) do
-    namespace = "battery-knative"
-
+  defp assign_configs(%{assigns: %{namespace: namespace}} = socket) do
     assign(socket,
       configs:
         :config_map
@@ -56,9 +55,7 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
     )
   end
 
-  defp assign_secrets(socket) do
-    namespace = "battery-knative"
-
+  defp assign_secrets(%{assigns: %{namespace: namespace}} = socket) do
     assign(socket,
       secrets: :secret |> KubeServices.KubeState.get_all() |> Enum.filter(&(namespace(&1) == namespace))
     )

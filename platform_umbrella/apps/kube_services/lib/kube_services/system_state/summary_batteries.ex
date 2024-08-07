@@ -75,8 +75,20 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     {:reply, StateSummary.Core.config_field(summary, :default_size) || :tiny, state}
   end
 
+  def handle_call(:ai_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, StateSummary.Namespaces.ai_namespace(summary), state}
+  end
+
   def handle_call(:core_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
     {:reply, StateSummary.Namespaces.core_namespace(summary), state}
+  end
+
+  def handle_call(:knative_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, StateSummary.Namespaces.knative_namespace(summary), state}
+  end
+
+  def handle_call(:traditional_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, StateSummary.Namespaces.traditional_namespace(summary), state}
   end
 
   # Is the battery installed?
@@ -99,7 +111,19 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     GenServer.call(target, :default_size)
   end
 
+  def ai_namespace(target \\ @me) do
+    GenServer.call(target, :ai_namespace)
+  end
+
   def core_namespace(target \\ @me) do
     GenServer.call(target, :core_namespace)
+  end
+
+  def knative_namespace(target \\ @me) do
+    GenServer.call(target, :knative_namespace)
+  end
+
+  def traditional_namespace(target \\ @me) do
+    GenServer.call(target, :traditional_namespace)
   end
 end
