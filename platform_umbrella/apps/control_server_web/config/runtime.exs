@@ -34,15 +34,15 @@ secret_key_base =
     """
 
 config :control_server, ControlServer.Repo,
-  ssl: true,
-  username: postgres_username,
-  password: postgres_password,
   database: postgres_database,
   hostname: postgres_host,
-  port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
+  log: false,
+  password: postgres_password,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  port: String.to_integer(System.get_env("POSTGRES_PORT") || "5432"),
+  ssl: true,
   ssl_opts: [verify: :verify_none],
-  log: false
+  username: postgres_username
 
 config :control_server_web, ControlServerWeb.Endpoint,
   adapter: Bandit.PhoenixAdapter,
