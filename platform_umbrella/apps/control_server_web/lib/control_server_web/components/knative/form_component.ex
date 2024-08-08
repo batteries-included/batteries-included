@@ -311,7 +311,11 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
               <.main_panel form={@form} />
             </.panel>
 
-            <.advanced_setting_panel form={@form} keycloak_enabled={@keycloak_enabled} projects={@projects} />
+            <.advanced_setting_panel
+              form={@form}
+              keycloak_enabled={@keycloak_enabled}
+              projects={@projects}
+            />
 
             <.containers_panel
               id="containers_panel-init_containers"
