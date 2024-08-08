@@ -2,6 +2,7 @@ package kube
 
 import (
 	"bi/pkg/access"
+	"bi/pkg/rage"
 	"context"
 	"fmt"
 	"io"
@@ -44,6 +45,7 @@ type KubeClient interface {
 	WatchFor(context.Context, *WatchOptions) error
 	GetAccessInfo(ctx context.Context, namespace string) (*access.AccessSpec, error)
 	GetPostgresAccessInfo(ctx context.Context, namespace string, clusterName string, userName string) (*access.PostgresAccessSpec, error)
+	ListPodsRage(ctx context.Context) ([]rage.PodRageInfo, error)
 }
 
 type batteryKubeClient struct {

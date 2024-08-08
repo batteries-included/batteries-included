@@ -18,6 +18,10 @@ func (env *InstallEnv) SpecPath() string {
 	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug, "spec.json")
 }
 
+func (env *InstallEnv) BaseLogPath() string {
+	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug, "logs")
+}
+
 func (env *InstallEnv) DebugLogPath(cmdPath string) string {
 	now := time.Now()
 	pid := os.Getpid()

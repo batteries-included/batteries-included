@@ -180,6 +180,8 @@ func (env *InstallEnv) tryAddMetalIPs(ctx context.Context) error {
 		}
 		pools = append(pools, newIpSpec)
 		env.Spec.TargetSummary.IPAddressPools = pools
+	} else {
+		slog.Warn("Failed to get metal lb ips: ", slog.Any("err", err))
 	}
 	return nil
 }
