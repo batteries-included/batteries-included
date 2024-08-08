@@ -10,7 +10,7 @@ defmodule ControlServer.TraditionalServicesTest do
 
     @invalid_attrs %{name: nil, containers: nil, init_containers: nil, env_values: nil}
 
-    test "list_traditional_services/0 returns all traditional_services" do
+    test "list_traditional_services/0 returns all traditional services" do
       service = service_fixture()
       assert 1 == length(TraditionalServices.list_traditional_services())
       [found] = TraditionalServices.list_traditional_services()
@@ -19,6 +19,14 @@ defmodule ControlServer.TraditionalServicesTest do
       assert found.containers == service.containers
       assert found.init_containers == service.init_containers
       assert found.env_values == service.env_values
+    end
+
+    test "list_traditional_services/1 returns paginated traditional services" do
+      service1 = service_fixture()
+      _service2 = service_fixture()
+
+      assert {:ok, {[service], _}} = TraditionalServices.list_traditional_services(%{limit: 1})
+      assert service.id == service1.id
     end
 
     test "get_service!/1 returns the service with given id" do

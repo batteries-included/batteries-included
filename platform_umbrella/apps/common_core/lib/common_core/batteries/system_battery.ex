@@ -38,6 +38,17 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.VMOperatorConfig
   alias CommonCore.Ecto.PolymorphicType
 
+  @derive {
+    Flop.Schema,
+    filterable: [],
+    sortable: [:type, :group, :inserted_at, :updated_at],
+    default_limit: 5,
+    default_order: %{
+      order_by: [:updated_at],
+      order_directions: [:desc]
+    }
+  }
+
   @possible_types [
     aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
     traditional_services: TraditionalServicesConfig,

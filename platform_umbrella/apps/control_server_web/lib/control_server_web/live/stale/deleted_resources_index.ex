@@ -7,23 +7,24 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :page_title, "Deleted Resources")}
   end
 
   @impl Phoenix.LiveView
-  def handle_params(_params, _uri, socket) do
-    {:noreply,
-     socket
-     |> assign_page_title("Deleted Resources")
-     |> assign_deleted_resources(DeleteArchivist.list_deleted_resources())}
+  def handle_params(params, _session, socket) do
+    with {:ok, {deleted_resources, meta}} <- DeleteArchivist.list_deleted_resources(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:deleted_resources, deleted_resources)
+       |> assign(:form, to_form(meta))}
+    end
   end
 
-  def assign_deleted_resources(socket, deleted_resources) do
-    assign(socket, deleted_resources: deleted_resources)
-  end
-
-  def assign_page_title(socket, page_title) do
-    assign(socket, page_title: page_title)
+  @impl Phoenix.LiveView
+  def handle_event("search", params, socket) do
+    params = Map.delete(params, "_target")
+    {:noreply, push_patch(socket, to: ~p"/deleted_resources?#{params}")}
   end
 
   @impl Phoenix.LiveView
@@ -50,17 +51,32 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
   defp deleted_resources_table(assigns) do
     ~H"""
     <.panel>
-      <.table id="deleted-resources-table" rows={@rows}>
-        <:col :let={resource} label="Kind">
+      <:menu>
+        <.table_search
+          meta={@meta}
+          fields={[name: [op: :ilike]]}
+          placeholder="Filter by name"
+          on_change="search"
+        />
+      </:menu>
+
+      <.table
+        id="deleted-resources-table"
+        variant="paginated"
+        rows={@rows}
+        meta={@meta}
+        path={~p"/deleted_resources"}
+      >
+        <:col :let={resource} field={:kind} label="Kind">
           <%= resource.kind %>
         </:col>
-        <:col :let={resource} label="Name">
+        <:col :let={resource} field={:name} label="Name">
           <%= resource.name %>
         </:col>
-        <:col :let={resource} label="Namespace">
+        <:col :let={resource} field={:namespace} label="Namespace">
           <%= resource.namespace %>
         </:col>
-        <:col :let={resource} label="When">
+        <:col :let={resource} field={:kind} label="When">
           <%= CommonCore.Util.Time.from_now(resource.inserted_at) %>
         </:col>
         <:col :let={resource} label="Restore">
@@ -71,10 +87,10 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
             phx-click="undelete"
             phx-value-id={resource.id}
             data-confirm="Are you sure?"
-            id={"unkdelete-#{resource.id}"}
+            id={"undelete-#{resource.id}"}
           />
 
-          <.tooltip target_id={"unkdelete-#{resource.id}"}>
+          <.tooltip target_id={"undelete-#{resource.id}"}>
             Restore this resource
           </.tooltip>
         </:col>

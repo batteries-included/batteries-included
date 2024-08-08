@@ -10,21 +10,25 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign_page_title()
-     |> assign_notebooks()
-     |> assign_current_page()}
+     |> assign(:current_page, :ai)
+     |> assign(:page_title, "Jupyter Notebooks")}
   end
 
-  defp assign_page_title(socket) do
-    assign(socket, :page_title, "Jupyter Notebooks")
+  @impl Phoenix.LiveView
+  def handle_params(params, _session, socket) do
+    with {:ok, {notebooks, meta}} <- Notebooks.list_jupyter_lab_notebooks(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:notebooks, notebooks)
+       |> assign(:form, to_form(meta))}
+    end
   end
 
-  defp assign_notebooks(socket) do
-    assign(socket, :notebooks, Notebooks.list_jupyter_lab_notebooks())
-  end
-
-  defp assign_current_page(socket) do
-    assign(socket, :current_page, :ai)
+  @impl Phoenix.LiveView
+  def handle_event("search", params, socket) do
+    params = Map.delete(params, "_target")
+    {:noreply, push_patch(socket, to: ~p"/notebooks?#{params}")}
   end
 
   @impl Phoenix.LiveView
@@ -37,7 +41,16 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookIndex do
     </.page_header>
 
     <.panel title="All Notebooks">
-      <.notebooks_table rows={@notebooks} />
+      <:menu>
+        <.table_search
+          meta={@meta}
+          fields={[name: [op: :ilike]]}
+          placeholder="Filter by name"
+          on_change="search"
+        />
+      </:menu>
+
+      <.notebooks_table rows={@notebooks} meta={@meta} />
     </.panel>
     """
   end

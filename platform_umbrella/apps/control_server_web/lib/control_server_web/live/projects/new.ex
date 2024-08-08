@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Projects.NewLive do
+defmodule ControlServerWeb.Live.ProjectsNew do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
@@ -26,6 +26,7 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   require Logger
 
+  @impl Phoenix.LiveView
   def mount(params, _session, socket) do
     # Allow the back button to be dynamic and go back steps
     return_to = Map.get(params, "return_to", ~p"/projects")
@@ -44,6 +45,7 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   # Moves back to the previous step, or navigates to the `return_to` URL query if on the first
   # step. This allows the back button to be dynamic and either move steps or do a live navigation.
+  @impl Phoenix.LiveView
   def handle_event("back", params, socket) do
     prev_index = Enum.find_index(socket.assigns.steps, &(&1 == socket.assigns.current_step)) - 1
     prev_step = Enum.at(socket.assigns.steps, prev_index)
@@ -57,6 +59,7 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   # Updates the project steps when the type changes in the new project subform.
   # It also resets the form data so we don't create resources from a previously-selected type.
+  @impl Phoenix.LiveView
   def handle_info({:project_type, project_type}, socket) do
     {:noreply,
      socket
@@ -66,6 +69,7 @@ defmodule ControlServerWeb.Projects.NewLive do
 
   # Moves to the next step when sub-forms are submitted. This will store the sub-form data in the
   # assigns until the end of the new project flow, when all the resources will be created at once.
+  @impl Phoenix.LiveView
   def handle_info({:next, {step, step_data}}, socket) do
     form_data = Map.put(socket.assigns.form_data, step, step_data)
     next_index = Enum.find_index(socket.assigns.steps, &(&1 == step)) + 1
@@ -87,6 +91,7 @@ defmodule ControlServerWeb.Projects.NewLive do
     end
   end
 
+  @impl Phoenix.LiveView
   def handle_info({:async_installer, {:install_complete, _}}, socket) do
     # Pause for a moment to make sure the sexy loader is shown
     Process.sleep(1000)
@@ -118,6 +123,7 @@ defmodule ControlServerWeb.Projects.NewLive do
     end
   end
 
+  @impl Phoenix.LiveView
   def handle_info({:async_installer, _}, socket), do: {:noreply, socket}
 
   defp install_batteries(data) do
@@ -262,6 +268,7 @@ defmodule ControlServerWeb.Projects.NewLive do
     end
   end
 
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <div class="flex flex-col h-full gap-8">

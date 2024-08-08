@@ -11,7 +11,6 @@ defmodule ControlServer.MetalLBFixtures do
     {:ok, ip_address_pool} =
       attrs
       |> Enum.into(%{
-        name: "some-name",
         subnet: "some subnet"
       })
       |> ControlServer.MetalLB.create_ip_address_pool()

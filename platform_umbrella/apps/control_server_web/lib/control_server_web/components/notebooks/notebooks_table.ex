@@ -7,15 +7,26 @@ defmodule ControlServerWeb.NotebooksTable do
   alias CommonCore.Util.Memory
 
   attr :rows, :list, default: []
+  attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def notebooks_table(assigns) do
     ~H"""
-    <.table id="notebook-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={notebook} :if={!@abridged} label="ID"><%= notebook.id %></:col>
-      <:col :let={notebook} label="Name"><%= notebook.name %></:col>
-      <:col :let={notebook} :if={!@abridged} label="Storage Size">
+    <.table
+      id="notebook-display-table"
+      variant={@meta && "paginated"}
+      rows={@rows}
+      meta={@meta}
+      path={~p"/notebooks"}
+      row_click={&JS.navigate(show_url(&1))}
+    >
+      <:col :let={notebook} :if={!@abridged} field={:id} label="ID"><%= notebook.id %></:col>
+      <:col :let={notebook} field={:name} label="Name"><%= notebook.name %></:col>
+      <:col :let={notebook} :if={!@abridged} field={:storage_size} label="Storage Size">
         <%= Memory.humanize(notebook.storage_size) %>
+      </:col>
+      <:col :let={notebook} :if={!@abridged} field={:memory_limits} label="Memory Limits">
+        <%= Memory.humanize(notebook.memory_limits) %>
       </:col>
       <:action :let={notebook}>
         <.flex class="justify-items-center">

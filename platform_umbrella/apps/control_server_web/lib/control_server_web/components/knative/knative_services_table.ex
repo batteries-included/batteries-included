@@ -7,14 +7,22 @@ defmodule ControlServerWeb.KnativeServicesTable do
   alias CommonCore.Knative.Service
 
   attr :rows, :list, required: true
+  attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def knative_services_table(assigns) do
     ~H"""
-    <.table id="knative-display-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={service} :if={!@abridged} label="ID"><%= service.id %></:col>
-      <:col :let={service} label="Name"><%= service.name %></:col>
-      <:col :let={service} :if={!@abridged} label="Rollout Duration">
+    <.table
+      id="knative-display-table"
+      variant={@meta && "paginated"}
+      rows={@rows}
+      meta={@meta}
+      path={~p"/knative/services"}
+      row_click={&JS.navigate(show_url(&1))}
+    >
+      <:col :let={service} :if={!@abridged} field={:id} label="ID"><%= service.id %></:col>
+      <:col :let={service} field={:name} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} field={:rollout_duration} label="Rollout Duration">
         <%= service.rollout_duration %>
       </:col>
       <:action :let={service}>

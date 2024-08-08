@@ -6,6 +6,11 @@ defmodule CommonCore.FerretDB.FerretService do
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name, :instances]
+  }
+
   @required_fields ~w(instances postgres_cluster_id)a
 
   @presets [

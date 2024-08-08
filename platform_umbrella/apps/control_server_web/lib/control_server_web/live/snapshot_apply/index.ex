@@ -19,21 +19,12 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
 
   @impl Phoenix.LiveView
   def handle_params(params, _session, socket) do
-    with {:ok, {snaps, meta}} <- Umbrella.paginated_umbrella_snapshots(params) do
+    with {:ok, {snapshots, meta}} <- Umbrella.list_umbrella_snapshots(params) do
       {:noreply,
        socket
        |> assign(:meta, meta)
-       |> assign(:snapshots, snaps)}
+       |> assign(:snapshots, snapshots)}
     end
-  end
-
-  def assign_snapshots(socket) do
-    {:ok, {snaps, meta}} = Umbrella.paginated_umbrella_snapshots()
-
-    socket
-    |> assign(:meta, meta)
-    |> assign(:snapshots, snaps)
-    |> push_patch(to: ~p"/deploy")
   end
 
   defp assign_deploys_running(socket) do
@@ -41,14 +32,9 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
   end
 
   @impl Phoenix.LiveView
-  def handle_info(_unused, socket) do
-    {:noreply, assign_snapshots(socket)}
-  end
-
-  @impl Phoenix.LiveView
   def handle_event("start-deploy", _params, socket) do
     _ = Worker.start()
-    {:noreply, assign_snapshots(socket)}
+    {:noreply, push_patch(socket, to: ~p"/deploy")}
   end
 
   @impl Phoenix.LiveView
@@ -62,6 +48,9 @@ defmodule ControlServerWeb.Live.SnapshotApplyIndex do
     _ = Worker.set_running(true)
     {:noreply, assign_deploys_running(socket)}
   end
+
+  @impl Phoenix.LiveView
+  def handle_info(_, socket), do: {:noreply, socket}
 
   @impl Phoenix.LiveView
   def render(assigns) do

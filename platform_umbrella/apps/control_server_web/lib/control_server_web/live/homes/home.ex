@@ -18,8 +18,18 @@ defmodule ControlServerWeb.Live.Home do
      |> assign_current_page()
      |> assign_page_title()
      |> assign_latest_snapshot()
-     |> assign_batteries()
      |> assign_pods()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(params, _session, socket) do
+    with {:ok, {batteries, meta}} <- Batteries.list_system_batteries(params) do
+      {:noreply,
+       socket
+       |> assign(:batteries, batteries)
+       |> assign(:batteries_meta, meta)
+       |> assign(:batteries_count, meta.total_count)}
+    end
   end
 
   defp assign_catalog_group(socket) do
@@ -38,14 +48,6 @@ defmodule ControlServerWeb.Live.Home do
     snapshots = Umbrella.latest_umbrella_snapshots(1)
 
     assign(socket, :latest_snapshot, Enum.at(snapshots, 0))
-  end
-
-  defp assign_batteries(socket) do
-    batteries = Batteries.list_system_batteries_slim()
-
-    socket
-    |> assign(:batteries, batteries)
-    |> assign(:batteries_count, Enum.count(batteries))
   end
 
   def assign_pods(socket) do
@@ -126,6 +128,7 @@ defmodule ControlServerWeb.Live.Home do
         id="running_bat_home_hero"
         class="lg:col-span-12"
         batteries={@batteries}
+        meta={@batteries_meta}
       />
     </.grid>
     """

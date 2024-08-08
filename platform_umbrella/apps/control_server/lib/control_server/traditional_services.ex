@@ -19,6 +19,10 @@ defmodule ControlServer.TraditionalServices do
     Repo.all(Service)
   end
 
+  def list_traditional_services(params) do
+    Repo.Flop.validate_and_run(Service, params, for: Service)
+  end
+
   @doc """
   Gets a single service.
 

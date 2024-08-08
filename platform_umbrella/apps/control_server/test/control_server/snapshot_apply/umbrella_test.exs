@@ -8,9 +8,17 @@ defmodule ControlServer.SnapshotApply.UmbrellaTest do
 
     alias ControlServer.SnapshotApply.UmbrellaSnapshot
 
-    test "list_umbrella_snapshots/0 returns all umbrella_snapshots" do
+    test "list_umbrella_snapshots/0 returns all umbrella snapshots" do
       umbrella_snapshot = umbrella_snapshot_fixture()
       assert Umbrella.list_umbrella_snapshots() == [umbrella_snapshot]
+    end
+
+    test "list_umbrella_snapshots/1 returns paginated umbrella snapshots" do
+      _umbrella_snapshot1 = umbrella_snapshot_fixture()
+      umbrella_snapshot2 = umbrella_snapshot_fixture()
+
+      assert {:ok, {[umbrella_snapshot], _}} = Umbrella.list_umbrella_snapshots(%{limit: 1})
+      assert umbrella_snapshot.id == umbrella_snapshot2.id
     end
 
     test "get_umbrella_snapshot!/1 returns the umbrella_snapshot with given id" do

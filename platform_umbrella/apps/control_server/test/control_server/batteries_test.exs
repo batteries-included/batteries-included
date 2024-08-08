@@ -11,9 +11,18 @@ defmodule ControlServer.BatteriesTest do
 
     @invalid_attrs %{config: nil, group: nil, type: nil}
 
-    test "list_system_batteries/0 returns all system_batteries" do
+    test "list_system_batteries/0 returns all system batteries" do
       system_battery = system_battery_fixture()
       assert Batteries.list_system_batteries() == [system_battery]
+    end
+
+    test "list_system_batteries/1 returns paginated system batteries" do
+      _system_battery1 = system_battery_fixture()
+      system_battery2 = system_battery_fixture(%{type: :ferretdb})
+
+      assert {:ok, {[system_battery], _}} = Batteries.list_system_batteries(%{limit: 1})
+      assert system_battery.id == system_battery2.id
+      refute system_battery.config
     end
 
     test "get_system_battery!/1 returns the system_battery with given id" do

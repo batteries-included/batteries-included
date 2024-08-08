@@ -89,17 +89,23 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
           </.tab_bar>
         </:menu>
 
-        <.table id="running-batteries-table" rows={@filtered_batteries || []}>
-          <:col :let={battery} label="Battery name">
+        <.table
+          id="running-batteries-table"
+          variant="paginated"
+          rows={@filtered_batteries || []}
+          meta={@meta}
+          path={~p"/"}
+        >
+          <:col :let={battery} field={:type} label="Battery name">
             <%= Naming.humanize(battery.type) %>
           </:col>
-          <:col :let={battery} label="Type">
+          <:col :let={battery} field={:group} label="Type">
             <%= battery.group %>
           </:col>
-          <:col :let={battery} label="Installed">
+          <:col :let={battery} field={:inserted_at} label="Installed">
             <.relative_display time={battery.inserted_at} />
           </:col>
-          <:col :let={battery} label="Last Updated">
+          <:col :let={battery} field={:updated_at} label="Last Updated">
             <.relative_display time={battery.updated_at} />
           </:col>
         </.table>

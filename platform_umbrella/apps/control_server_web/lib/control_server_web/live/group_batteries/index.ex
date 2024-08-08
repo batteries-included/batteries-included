@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.GroupBatteries.IndexLive do
+defmodule ControlServerWeb.Live.GroupBatteriesIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 

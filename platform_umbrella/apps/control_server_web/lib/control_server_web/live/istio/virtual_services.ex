@@ -32,7 +32,7 @@ defmodule ControlServerWeb.Live.IstioVirtualServicesIndex do
     <.page_header title={@page_title} back_link={~p"/net_sec"} />
 
     <.panel title="Virtual Services">
-      <.virtual_services_table abridged rows={@virtual_services} />
+      <.virtual_services_table rows={@virtual_services} />
     </.panel>
     """
   end

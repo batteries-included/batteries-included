@@ -6,6 +6,11 @@ defmodule CommonCore.Redis.FailoverCluster do
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name, :num_redis_instances, :num_sentinel_instances, :memory_limits]
+  }
+
   @presets [
     %{
       name: "tiny",

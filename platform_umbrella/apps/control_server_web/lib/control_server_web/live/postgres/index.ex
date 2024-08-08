@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Live.PostgresClusters do
+defmodule ControlServerWeb.Live.PostgresIndex do
   @moduledoc """
   Live web app for database stored json configs.
   """
@@ -6,37 +6,32 @@ defmodule ControlServerWeb.Live.PostgresClusters do
 
   import ControlServerWeb.PostgresClusterTable
 
-  alias CommonCore.Postgres.Cluster
   alias ControlServer.Postgres
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(current_page: :data)
-     |> assign_clusters(list_clusters())
-     |> assign_page_title("Postgres Clusters")}
+     |> assign(:current_page, :data)
+     |> assign(:page_title, "Postgres Clusters")}
   end
 
   @impl Phoenix.LiveView
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+  def handle_params(params, _session, socket) do
+    with {:ok, {clusters, meta}} <- Postgres.list_clusters(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:clusters, clusters)
+       |> assign(:form, to_form(meta))}
+    end
   end
 
-  def assign_clusters(socket, clusters) do
-    assign(socket, clusters: clusters)
+  @impl Phoenix.LiveView
+  def handle_event("search", params, socket) do
+    params = Map.delete(params, "_target")
+    {:noreply, push_patch(socket, to: ~p"/postgres?#{params}")}
   end
-
-  def assign_page_title(socket, page_title) do
-    assign(socket, page_title: page_title)
-  end
-
-  @spec list_clusters() :: list(Cluster.t())
-  defp list_clusters do
-    Postgres.list_clusters()
-  end
-
-  defp new_url, do: ~p"/postgres/new"
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -46,9 +41,21 @@ defmodule ControlServerWeb.Live.PostgresClusters do
         New Postgres Cluster
       </.button>
     </.page_header>
+
     <.panel title="All Clusters">
-      <.postgres_clusters_table rows={@clusters} />
+      <:menu>
+        <.table_search
+          meta={@meta}
+          fields={[name: [op: :ilike]]}
+          placeholder="Filter by name"
+          on_change="search"
+        />
+      </:menu>
+
+      <.postgres_clusters_table rows={@clusters} meta={@meta} />
     </.panel>
     """
   end
+
+  defp new_url, do: ~p"/postgres/new"
 end

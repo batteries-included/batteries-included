@@ -18,13 +18,10 @@ defmodule ControlServer.SnapshotApply.Umbrella do
     Repo.all(UmbrellaSnapshot)
   end
 
-  def paginated_umbrella_snapshots(opts \\ %{}) do
+  def list_umbrella_snapshots(params) do
     from(ks in UmbrellaSnapshot)
     |> preload([:kube_snapshot, :keycloak_snapshot])
-    |> Repo.Flop.validate_and_run(
-      opts,
-      for: UmbrellaSnapshot
-    )
+    |> Repo.Flop.validate_and_run(params, for: UmbrellaSnapshot)
   end
 
   def latest_umbrella_snapshots(limit \\ 10) do

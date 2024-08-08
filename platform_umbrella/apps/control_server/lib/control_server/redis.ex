@@ -19,6 +19,10 @@ defmodule ControlServer.Redis do
     Repo.all(FailoverCluster)
   end
 
+  def list_failover_clusters(params) do
+    Repo.Flop.validate_and_run(FailoverCluster, params, for: FailoverCluster)
+  end
+
   @doc """
   Gets a single failover_cluster.
 

@@ -13,19 +13,30 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
     {:ok,
      socket
      |> assign(:page_title, "MetalLB")
-     |> assign(:ip_address_pools, MetalLB.list_ip_address_pools())
      |> assign(:current_page, :net_sec)}
   end
 
   @impl Phoenix.LiveView
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+  def handle_params(params, _session, socket) do
+    with {:ok, {ip_address_pools, meta}} <- MetalLB.list_ip_address_pools(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:ip_address_pools, ip_address_pools)
+       |> assign(:form, to_form(meta))}
+    end
   end
 
   @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     {:ok, _} = id |> MetalLB.get_ip_address_pool!() |> MetalLB.delete_ip_address_pool()
     {:noreply, push_navigate(socket, to: ~p"/ip_address_pools")}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("search", params, socket) do
+    params = Map.delete(params, "_target")
+    {:noreply, push_patch(socket, to: ~p"/ip_address_pools?#{params}")}
   end
 
   @impl Phoenix.LiveView
@@ -38,7 +49,16 @@ defmodule ControlServerWeb.Live.IPAddressPoolIndex do
     </.page_header>
 
     <.panel title="IP Addresses">
-      <.ip_address_pools_table abridged rows={@ip_address_pools} />
+      <:menu>
+        <.table_search
+          meta={@meta}
+          fields={[name: [op: :ilike]]}
+          placeholder="Filter by name"
+          on_change="search"
+        />
+      </:menu>
+
+      <.ip_address_pools_table rows={@ip_address_pools} meta={@meta} />
     </.panel>
     """
   end

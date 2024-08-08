@@ -19,6 +19,10 @@ defmodule ControlServer.Notebooks do
     Repo.all(JupyterLabNotebook)
   end
 
+  def list_jupyter_lab_notebooks(params) do
+    Repo.Flop.validate_and_run(JupyterLabNotebook, params, for: JupyterLabNotebook)
+  end
+
   @doc """
   Gets a single jupyter_lab_notebook.
 

@@ -6,6 +6,11 @@ defmodule CommonCore.Postgres.Cluster do
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name, :type, :num_instances, :users, :storage_size]
+  }
+
   @presets [
     %{
       name: "tiny",

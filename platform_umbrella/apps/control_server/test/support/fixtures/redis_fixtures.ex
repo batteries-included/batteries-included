@@ -11,7 +11,6 @@ defmodule ControlServer.RedisFixtures do
     {:ok, failover_cluster} =
       attrs
       |> Enum.into(%{
-        name: "some-name",
         type: :standard,
         virtual_size: nil,
         memory_limits: 100,

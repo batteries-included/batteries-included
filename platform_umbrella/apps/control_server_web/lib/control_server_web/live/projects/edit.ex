@@ -1,9 +1,10 @@
-defmodule ControlServerWeb.Projects.EditLive do
+defmodule ControlServerWeb.Live.ProjectsEdit do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias ControlServer.Projects
 
+  @impl Phoenix.LiveView
   def mount(%{"id" => id}, _session, socket) do
     project = Projects.get_project!(id)
     changeset = Projects.change_project(project)
@@ -15,6 +16,7 @@ defmodule ControlServerWeb.Projects.EditLive do
      |> assign(:project, project)}
   end
 
+  @impl Phoenix.LiveView
   def handle_event("validate", %{"project" => params}, socket) do
     changeset =
       socket.assigns.project
@@ -24,6 +26,7 @@ defmodule ControlServerWeb.Projects.EditLive do
     {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
+  @impl Phoenix.LiveView
   def handle_event("save", %{"project" => params}, socket) do
     case Projects.update_project(socket.assigns.project, params) do
       {:ok, project} ->
@@ -37,6 +40,7 @@ defmodule ControlServerWeb.Projects.EditLive do
     end
   end
 
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}"}>

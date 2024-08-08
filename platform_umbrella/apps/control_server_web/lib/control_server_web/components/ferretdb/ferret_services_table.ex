@@ -3,14 +3,24 @@ defmodule ControlServerWeb.FerretServicesTable do
   use ControlServerWeb, :html
 
   attr :rows, :list, default: []
+  attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false
 
   def ferret_services_table(assigns) do
     ~H"""
-    <.table id="ferret_services" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={service} :if={!@abridged} label="ID"><%= service.id %></:col>
-      <:col :let={service} label="Name"><%= service.name %></:col>
-      <:col :let={service} :if={!@abridged} label="Instances"><%= service.instances %></:col>
+    <.table
+      id="ferret_services"
+      variant={@meta && "paginated"}
+      rows={@rows}
+      meta={@meta}
+      path={~p"/ferretdb"}
+      row_click={&JS.navigate(show_url(&1))}
+    >
+      <:col :let={service} :if={!@abridged} field={:id} label="ID"><%= service.id %></:col>
+      <:col :let={service} field={:name} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} field={:instances} label="Instances">
+        <%= service.instances %>
+      </:col>
       <:action :let={service}>
         <.flex class="justify-items-center align-middle">
           <.button

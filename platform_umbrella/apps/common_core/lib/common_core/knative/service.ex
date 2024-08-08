@@ -5,6 +5,11 @@ defmodule CommonCore.Knative.Service do
 
   alias CommonCore.Projects.Project
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name, :rollout_duration]
+  }
+
   @required_fields ~w(name)a
 
   batt_schema "knative_services" do

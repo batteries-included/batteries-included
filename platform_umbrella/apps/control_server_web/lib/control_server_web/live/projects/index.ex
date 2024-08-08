@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Projects.IndexLive do
+defmodule ControlServerWeb.Live.ProjectsIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
@@ -6,10 +6,12 @@ defmodule ControlServerWeb.Projects.IndexLive do
 
   alias ControlServer.Projects
 
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :page_title, "Projects")}
   end
 
+  @impl Phoenix.LiveView
   def handle_params(params, _session, socket) do
     with {:ok, {projects, meta}} <- Projects.list_projects(params) do
       {:noreply,
@@ -20,12 +22,13 @@ defmodule ControlServerWeb.Projects.IndexLive do
     end
   end
 
+  @impl Phoenix.LiveView
   def handle_event("search", params, socket) do
     params = Map.delete(params, "_target")
-
     {:noreply, push_patch(socket, to: ~p"/projects?#{params}")}
   end
 
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/"}>

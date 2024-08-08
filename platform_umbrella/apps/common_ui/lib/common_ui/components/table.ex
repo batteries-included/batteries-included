@@ -101,7 +101,7 @@ defmodule CommonUI.Components.Table do
           class={tbody_class()}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
         >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class={tbody_tr_class()}>
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class={@row_click && tbody_tr_class()}>
             <td :for={col <- @col} class={tbody_td_class()} phx-click={@row_click && @row_click.(row)}>
               <%= render_slot(col, @row_item.(row)) %>
             </td>

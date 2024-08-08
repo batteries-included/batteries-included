@@ -3,12 +3,12 @@ defmodule CommonCore.Projects.Project do
 
   use CommonCore, :schema
 
-  @required_fields ~w(name)a
-
   @derive {
     Flop.Schema,
     filterable: [:name], sortable: [:id, :name]
   }
+
+  @required_fields ~w(name)a
 
   batt_schema "projects" do
     field :name, :string

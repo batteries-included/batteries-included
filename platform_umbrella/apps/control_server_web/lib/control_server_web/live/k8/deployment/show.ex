@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.DeploymentLive.Show do
+defmodule ControlServerWeb.Live.DeploymentShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 

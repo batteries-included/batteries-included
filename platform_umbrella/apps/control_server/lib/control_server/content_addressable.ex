@@ -9,6 +9,10 @@ defmodule ControlServer.ContentAddressable do
     Repo.all(Document)
   end
 
+  def list_documents(params) do
+    Repo.Flop.validate_and_run(Document, params, for: Document)
+  end
+
   def count_documents do
     Repo.aggregate(Document, :count)
   end
@@ -39,14 +43,6 @@ defmodule ControlServer.ContentAddressable do
           newest: max(car.inserted_at),
           record_count: count(car.id)
         }
-    )
-  end
-
-  def paginated_documents(opts \\ %{}) do
-    Repo.Flop.validate_and_run(
-      from(car in Document),
-      opts,
-      for: Document
     )
   end
 end

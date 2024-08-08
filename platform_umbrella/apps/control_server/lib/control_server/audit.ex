@@ -11,6 +11,10 @@ defmodule ControlServer.Audit do
     |> Repo.all()
   end
 
+  def list_edit_versions(params) do
+    Repo.Flop.validate_and_run(EditVersion, params, for: EditVersion)
+  end
+
   def history(%{id: id, __struct__: struct} = _entity, opts \\ []) do
     limit = Keyword.get(opts, :limit, 10)
 

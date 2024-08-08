@@ -51,22 +51,22 @@ defmodule ControlServerWeb.Router do
     live "/:umbrella_id/keycloak/:id", Live.KeycloakSnapshotShow, :index
   end
 
-  scope "/batteries", ControlServerWeb.GroupBatteries do
+  scope "/batteries", ControlServerWeb do
     pipe_through :browser
 
-    live "/:group", IndexLive
-    live "/:group/new/:battery_type", NewLive
-    live "/:group/edit/:battery_type", EditLive
+    live "/:group", Live.GroupBatteriesIndex
+    live "/:group/new/:battery_type", Live.GroupBatteriesNew
+    live "/:group/edit/:battery_type", Live.GroupBatteriesEdit
   end
 
-  scope "/projects", ControlServerWeb.Projects do
+  scope "/projects", ControlServerWeb do
     pipe_through :browser
 
-    live "/", IndexLive
-    live "/new", NewLive
-    live "/:id", ShowLive
-    live "/:id/edit", EditLive
-    live "/:id/timeline", TimelineLive
+    live "/", Live.ProjectsIndex
+    live "/new", Live.ProjectsNew
+    live "/:id", Live.ProjectsShow
+    live "/:id/edit", Live.ProjectsEdit
+    live "/:id/timeline", Live.ProjectsTimeline
   end
 
   scope "/kube", ControlServerWeb do
@@ -80,21 +80,21 @@ defmodule ControlServerWeb.Router do
 
     live "/raw/:resource_type/:namespace/:name", Live.RawResource, :index
 
-    live "/pod/:namespace/:name/events", PodLive.Show, :events
-    live "/pod/:namespace/:name/labels", PodLive.Show, :labels
-    live "/pod/:namespace/:name/security", PodLive.Show, :security
-    live "/pod/:namespace/:name/logs", PodLive.Show, :logs
-    live "/pod/:namespace/:name/show", PodLive.Show, :index
+    live "/pod/:namespace/:name/events", Live.PodShow, :events
+    live "/pod/:namespace/:name/labels", Live.PodShow, :labels
+    live "/pod/:namespace/:name/security", Live.PodShow, :security
+    live "/pod/:namespace/:name/logs", Live.PodShow, :logs
+    live "/pod/:namespace/:name/show", Live.PodShow, :index
 
-    live "/deployment/:namespace/:name/show", DeploymentLive.Show
-    live "/stateful_set/:namespace/:name/show", StatefulSetLive.Show
-    live "/service/:namespace/:name/show", ServiceLive.Show
+    live "/deployment/:namespace/:name/show", Live.DeploymentShow
+    live "/stateful_set/:namespace/:name/show", Live.StatefulSetShow
+    live "/service/:namespace/:name/show", Live.ServiceShow
   end
 
   scope "/redis", ControlServerWeb do
     pipe_through :browser
 
-    live "/", Live.Redis, :index
+    live "/", Live.RedisIndex, :index
     live "/new", Live.RedisNew, :new
     live "/:id/edit", Live.RedisEdit, :edit
     live "/:id/show", Live.RedisShow, :show
@@ -104,7 +104,7 @@ defmodule ControlServerWeb.Router do
   scope "/postgres", ControlServerWeb do
     pipe_through :browser
 
-    live "/", Live.PostgresClusters, :index
+    live "/", Live.PostgresIndex, :index
     live "/new", Live.PostgresNew, :new
     live "/:id/edit", Live.PostgresEdit, :edit
     live "/:id/show", Live.PostgresShow, :show
@@ -136,7 +136,7 @@ defmodule ControlServerWeb.Router do
   scope "/knative", ControlServerWeb do
     pipe_through :browser
 
-    live "/services", Live.KnativeServicesIndex, :index
+    live "/services", Live.KnativeIndex, :index
     live "/services/new", Live.KnativeNew, :new
     live "/services/:id/edit", Live.KnativeEdit, :edit
     live "/services/:id/show", Live.KnativeShow, :show
