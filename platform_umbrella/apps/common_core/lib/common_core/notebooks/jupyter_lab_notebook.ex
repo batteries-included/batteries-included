@@ -7,6 +7,11 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name, :storage_size, :memory_limits]
+  }
+
   @presets [
     %{
       name: "tiny",

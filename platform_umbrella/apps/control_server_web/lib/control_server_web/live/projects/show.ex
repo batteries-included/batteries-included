@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.Projects.ShowLive do
+defmodule ControlServerWeb.Live.ProjectsShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
@@ -18,10 +18,12 @@ defmodule ControlServerWeb.Projects.ShowLive do
   alias KubeServices.SystemState.SummaryBatteries
   alias KubeServices.SystemState.SummaryURLs
 
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
@@ -77,6 +79,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
     assign(socket, :grafana_dashboard_url, url)
   end
 
+  @impl Phoenix.LiveView
   def handle_event("delete", _params, socket) do
     case Projects.delete_project(socket.assigns.project) do
       {:ok, _} ->
@@ -97,6 +100,7 @@ defmodule ControlServerWeb.Projects.ShowLive do
     end
   end
 
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/projects"}>

@@ -11,16 +11,24 @@ defmodule ControlServerWeb.Live.FerretServiceIndex do
     {:ok,
      socket
      |> assign(:current_page, :data)
-     |> assign(:ferret_services, FerretDB.list_ferret_services())}
+     |> assign(:page_title, "Listing FerretDB services")}
   end
 
   @impl Phoenix.LiveView
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  def handle_params(params, _session, socket) do
+    with {:ok, {ferret_services, meta}} <- FerretDB.list_ferret_services(params) do
+      {:noreply,
+       socket
+       |> assign(:meta, meta)
+       |> assign(:ferret_services, ferret_services)
+       |> assign(:form, to_form(meta))}
+    end
   end
 
-  defp apply_action(socket, :index, _params) do
-    assign(socket, :page_title, "Listing FerretDB services")
+  @impl Phoenix.LiveView
+  def handle_event("search", params, socket) do
+    params = Map.delete(params, "_target")
+    {:noreply, push_patch(socket, to: ~p"/ferretdb?#{params}")}
   end
 
   @impl Phoenix.LiveView
@@ -31,8 +39,18 @@ defmodule ControlServerWeb.Live.FerretServiceIndex do
         New FerretDB Service
       </.button>
     </.page_header>
+
     <.panel title="All FerretDB/MongoDB Services">
-      <.ferret_services_table rows={@ferret_services} />
+      <:menu>
+        <.table_search
+          meta={@meta}
+          fields={[name: [op: :ilike]]}
+          placeholder="Filter by name"
+          on_change="search"
+        />
+      </:menu>
+
+      <.ferret_services_table rows={@ferret_services} meta={@meta} />
     </.panel>
     """
   end

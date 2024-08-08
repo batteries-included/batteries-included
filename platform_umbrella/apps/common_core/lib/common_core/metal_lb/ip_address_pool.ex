@@ -3,6 +3,11 @@ defmodule CommonCore.MetalLB.IPAddressPool do
 
   use CommonCore, :schema
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name, :subnet]
+  }
+
   @required_fields [:name, :subnet]
 
   batt_schema "ip_address_pools" do

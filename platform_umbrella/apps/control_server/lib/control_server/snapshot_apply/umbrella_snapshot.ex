@@ -6,7 +6,7 @@ defmodule ControlServer.SnapshotApply.UmbrellaSnapshot do
   @derive {
     Flop.Schema,
     filterable: [],
-    sortable: [:inserted_at, :id],
+    sortable: [:id, :inserted_at],
     default_order: %{
       order_by: [:inserted_at, :id],
       order_directions: [:desc, :desc]

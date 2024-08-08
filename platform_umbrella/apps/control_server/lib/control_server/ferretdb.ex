@@ -19,6 +19,10 @@ defmodule ControlServer.FerretDB do
     Repo.all(FerretService)
   end
 
+  def list_ferret_services(params) do
+    Repo.Flop.validate_and_run(FerretService, params, for: FerretService)
+  end
+
   @doc """
   Gets a single ferret_service.
 

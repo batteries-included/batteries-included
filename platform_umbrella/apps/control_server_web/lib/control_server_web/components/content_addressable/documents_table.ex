@@ -1,16 +1,16 @@
-defmodule ControlServerWeb.ContentAddressable.ResourceTable do
+defmodule ControlServerWeb.ContentAddressable.DocumentsTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  attr :resources, :list, required: true
+  attr :rows, :list, default: []
   attr :meta, :map, default: nil
 
   def documents_table(%{} = assigns) do
     ~H"""
     <.table
-      id="resources-table"
+      id="documents-table"
       variant={@meta && "paginated"}
-      rows={@resources || []}
+      rows={@rows}
       meta={@meta}
       path={~p"/content_addressable"}
     >

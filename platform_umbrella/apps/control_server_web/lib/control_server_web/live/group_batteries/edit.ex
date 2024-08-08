@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.GroupBatteries.EditLive do
+defmodule ControlServerWeb.Live.GroupBatteriesEdit do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 

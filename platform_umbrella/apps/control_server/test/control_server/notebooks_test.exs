@@ -18,9 +18,17 @@ defmodule ControlServer.NotebooksTest do
       Map.put(jupyter_lab_notebook, :virtual_size, nil)
     end
 
-    test "list_jupyter_lab_notebooks/0 returns all jupyter_lab_notebooks" do
+    test "list_jupyter_lab_notebooks/0 returns all jupyter lab notebooks" do
       jupyter_lab_notebook = jupyter_lab_notebook_fixture()
       assert Notebooks.list_jupyter_lab_notebooks() == [jupyter_lab_notebook]
+    end
+
+    test "list_jupyter_lab_notebooks/1 returns paginated jupyter lab notebooks" do
+      jupyter_lab_notebook1 = jupyter_lab_notebook_fixture()
+      _jupyter_lab_notebook2 = jupyter_lab_notebook_fixture()
+
+      assert {:ok, {[jupyter_lab_notebook], _}} = Notebooks.list_jupyter_lab_notebooks(%{limit: 1})
+      assert jupyter_lab_notebook.id == jupyter_lab_notebook1.id
     end
 
     test "get_jupyter_lab_notebook!/1 returns the jupyter_lab_notebook with given id" do

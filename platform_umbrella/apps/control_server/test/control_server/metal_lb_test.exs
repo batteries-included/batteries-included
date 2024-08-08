@@ -9,9 +9,17 @@ defmodule ControlServer.MetalLBTest do
 
     @invalid_attrs %{name: nil, subnet: nil}
 
-    test "list_ip_address_pools/0 returns all ip_address_pools" do
+    test "list_ip_address_pools/0 returns all ip address pools" do
       ip_address_pool = ip_address_pool_fixture()
       assert MetalLB.list_ip_address_pools() == [ip_address_pool]
+    end
+
+    test "list_ip_address_pools/1 returns paginated ip address pools" do
+      ip_address_pool1 = ip_address_pool_fixture()
+      _ip_address_pool2 = ip_address_pool_fixture()
+
+      assert {:ok, {[ip_address_pool], _}} = MetalLB.list_ip_address_pools(%{limit: 1})
+      assert ip_address_pool.id == ip_address_pool1.id
     end
 
     test "get_ip_address_pool!/1 returns the ip_address_pool with given id" do

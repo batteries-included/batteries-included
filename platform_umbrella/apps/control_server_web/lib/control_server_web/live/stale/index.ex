@@ -13,12 +13,40 @@ defmodule ControlServerWeb.Live.StaleIndex do
   require Logger
 
   @impl Phoenix.LiveView
-  def render(assigns) do
-    ~H"""
-    <.page_header title={@page_title} back_link={~p"/magic"} />
-    <.stale_table :if={@stale != nil && @stale != []} rows={@stale} />
-    <.empty_state :if={@stale == nil || @stale == []} />
-    """
+  def mount(_params, _session, socket) do
+    {:ok, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(_params, _uri, socket) do
+    {:noreply,
+     socket
+     |> assign(:stale, fetch_stale())
+     |> assign(:page_title, "Stale Deleter Queue")}
+  end
+
+  defp fetch_stale, do: Stale.find_potential_stale()
+
+  @impl Phoenix.LiveView
+  def handle_event("delete", %{"kind" => kind, "name" => name, "namespace" => namespace} = _params, socket) do
+    with %{} = res <-
+           get_resource(socket.assigns.stale, String.to_existing_atom(kind), name, namespace),
+         {:ok, deleted_resource} <- ResourceDeleter.delete(res) do
+      Logger.debug("Deleted and got back #{inspect(deleted_resource)}")
+      Process.sleep(500)
+      {:noreply, assign(socket, :stale, fetch_stale())}
+    else
+      e ->
+        Logger.debug("Error, #{inspect(e)}")
+        {:noreply, socket}
+    end
+  end
+
+  defp get_resource(stale_list, wanted_kind, wanted_name, wanted_namespace) do
+    Enum.find(stale_list, nil, fn r ->
+      ApiVersionKind.resource_type!(r) == wanted_kind && name(r) == wanted_name &&
+        namespace(r) == wanted_namespace
+    end)
   end
 
   defp stale_table(assigns) do
@@ -70,47 +98,11 @@ defmodule ControlServerWeb.Live.StaleIndex do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("delete", %{"kind" => kind, "name" => name, "namespace" => namespace} = _params, socket) do
-    with %{} = res <-
-           get_resource(socket.assigns.stale, String.to_existing_atom(kind), name, namespace),
-         {:ok, deleted_resource} <- ResourceDeleter.delete(res) do
-      Logger.debug("Deleted and got back #{inspect(deleted_resource)}")
-      Process.sleep(500)
-      {:noreply, assign_stale(socket, fetch_stale())}
-    else
-      e ->
-        Logger.debug("Error, #{inspect(e)}")
-        {:noreply, socket}
-    end
+  def render(assigns) do
+    ~H"""
+    <.page_header title={@page_title} back_link={~p"/magic"} />
+    <.stale_table :if={@stale != nil && @stale != []} rows={@stale} />
+    <.empty_state :if={@stale == nil || @stale == []} />
+    """
   end
-
-  defp get_resource(stale_list, wanted_kind, wanted_name, wanted_namespace) do
-    Enum.find(stale_list, nil, fn r ->
-      ApiVersionKind.resource_type!(r) == wanted_kind && name(r) == wanted_name &&
-        namespace(r) == wanted_namespace
-    end)
-  end
-
-  @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_params(_params, _uri, socket) do
-    {:noreply,
-     socket
-     |> assign_stale(fetch_stale())
-     |> assign_page_title("Stale Deleter Queue")}
-  end
-
-  def assign_stale(socket, stale) do
-    assign(socket, stale: stale)
-  end
-
-  def assign_page_title(socket, page_title) do
-    assign(socket, page_title: page_title)
-  end
-
-  defp fetch_stale, do: Stale.find_potential_stale()
 end

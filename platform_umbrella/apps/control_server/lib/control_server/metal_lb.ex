@@ -18,6 +18,10 @@ defmodule ControlServer.MetalLB do
     Repo.all(IPAddressPool)
   end
 
+  def list_ip_address_pools(params) do
+    Repo.Flop.validate_and_run(IPAddressPool, params, for: IPAddressPool)
+  end
+
   @doc """
   Gets a single ip_address_pool.
 

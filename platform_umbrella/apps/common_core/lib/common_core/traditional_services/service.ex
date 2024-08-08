@@ -6,6 +6,11 @@ defmodule CommonCore.TraditionalServices.Service do
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
+  @derive {
+    Flop.Schema,
+    filterable: [:name], sortable: [:id, :name, :num_instances]
+  }
+
   @service_size_preset [
     %{
       name: "tiny",

@@ -5,6 +5,19 @@ defmodule CommonCore.Audit.EditVersion do
 
   import Ecto.Changeset
 
+  @derive [
+    {Jason.Encoder, except: [:__meta__]},
+    {
+      Flop.Schema,
+      filterable: [],
+      sortable: [:entity_id, :entity_schema, :action, :rollback, :recorded_at],
+      default_order: %{
+        order_by: [:recorded_at],
+        order_directions: [:desc]
+      }
+    }
+  ]
+
   # We can't use the standard CommonCore schema
   # because EditVersions are inserted via a backround
   # tranasacion. That transaction relies on the :binary_id
@@ -12,8 +25,6 @@ defmodule CommonCore.Audit.EditVersion do
   # to the database adapter for generation)
   @primary_key {:id, :binary_id, autogenerate: true}
   @timestamps_opts [type: :utc_datetime_usec]
-
-  @derive {Jason.Encoder, except: [:__meta__]}
 
   @optional_fields ~w(rollback)a
   @required_fields ~w(patch entity_id entity_schema action recorded_at)a

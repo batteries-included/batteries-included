@@ -13,9 +13,17 @@ defmodule ControlServer.RedisTest do
       num_sentinel_instances: nil
     }
 
-    test "list_failover_clusters/0 returns all failover_clusters" do
+    test "list_failover_clusters/0 returns all failover clusters" do
       failover_cluster = failover_cluster_fixture()
       assert Redis.list_failover_clusters() == [failover_cluster]
+    end
+
+    test "list_failover_clusters/1 returns paginated failover clusters" do
+      failover_cluster1 = failover_cluster_fixture()
+      _failover_cluster2 = failover_cluster_fixture()
+
+      assert {:ok, {[failover_cluster], _}} = Redis.list_failover_clusters(%{limit: 1})
+      assert failover_cluster.id == failover_cluster1.id
     end
 
     test "get_failover_cluster!/1 returns the failover_cluster with given id" do

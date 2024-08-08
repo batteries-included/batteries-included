@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.ServiceLive.Show do
+defmodule ControlServerWeb.Live.ServiceShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.StatefulSetLive.Show do
+defmodule ControlServerWeb.Live.StatefulSetShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 

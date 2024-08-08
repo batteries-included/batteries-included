@@ -20,6 +20,10 @@ defmodule ControlServer.Postgres do
     Repo.all(Cluster)
   end
 
+  def list_clusters(params) do
+    Repo.Flop.validate_and_run(Cluster, params, for: Cluster)
+  end
+
   def internal_clusters do
     Repo.all(from c in Cluster, where: c.type == :internal)
   end

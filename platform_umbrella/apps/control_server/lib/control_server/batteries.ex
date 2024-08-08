@@ -20,12 +20,11 @@ defmodule ControlServer.Batteries do
     Repo.all(SystemBattery)
   end
 
-  @spec list_system_batteries_slim() :: [SystemBattery.t()]
-  def list_system_batteries_slim do
+  @spec list_system_batteries(map()) :: {atom(), {[SystemBattery.t()], Flop.Meta.t()}}
+  def list_system_batteries(params) do
     from(sb in SystemBattery)
     |> select([:id, :group, :type, :inserted_at, :updated_at])
-    |> order_by(desc: :updated_at)
-    |> Repo.all()
+    |> Repo.Flop.validate_and_run(params, for: SystemBattery)
   end
 
   def list_system_batteries_for_group(group, repo \\ Repo) do

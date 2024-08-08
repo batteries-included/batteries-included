@@ -41,6 +41,14 @@ defmodule ControlServer.PostgresTest do
       assert Postgres.list_clusters() == [cluster]
     end
 
+    test "list_clusters/1 returns paginated clusters" do
+      cluster1 = cluster_fixture()
+      _cluster2 = cluster_fixture(%{name: "another-name"})
+
+      assert {:ok, {[cluster], _}} = Postgres.list_clusters(%{limit: 1})
+      assert cluster.id == cluster1.id
+    end
+
     test "get_cluster!/1 returns the cluster with given id" do
       cluster = cluster_fixture()
       assert Postgres.get_cluster!(cluster.id) == cluster

@@ -1,4 +1,4 @@
-defmodule ControlServerWeb.PodLive.Show do
+defmodule ControlServerWeb.Live.PodShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 

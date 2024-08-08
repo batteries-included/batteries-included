@@ -14,8 +14,7 @@ defmodule ControlServer.TraditionalServicesFixtures do
         containers: [],
         env_values: [],
         init_containers: [],
-        virtural_size: "medium",
-        name: "some-name"
+        virtural_size: "medium"
       })
       |> ControlServer.TraditionalServices.create_service()
 

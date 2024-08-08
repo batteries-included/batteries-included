@@ -3,14 +3,21 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
   use ControlServerWeb, :html
 
   attr :rows, :list, default: []
+  attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def ip_address_pools_table(assigns) do
     ~H"""
-    <.table id="ip-address-pools-table" rows={@rows}>
-      <:col :let={pool} :if={!@abridged} label="ID"><%= pool.id %></:col>
-      <:col :let={pool} label="Name"><%= pool.name %></:col>
-      <:col :let={pool} label="Subnet"><%= pool.subnet %></:col>
+    <.table
+      id="ip-address-pools-table"
+      variant={@meta && "paginated"}
+      rows={@rows}
+      meta={@meta}
+      path={~p"/ip_address_pools"}
+    >
+      <:col :let={pool} :if={!@abridged} field={:id} label="ID"><%= pool.id %></:col>
+      <:col :let={pool} field={:name} label="Name"><%= pool.name %></:col>
+      <:col :let={pool} field={:subnet} label="Subnet"><%= pool.subnet %></:col>
 
       <:action :let={pool}>
         <.flex>

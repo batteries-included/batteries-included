@@ -7,17 +7,29 @@ defmodule ControlServerWeb.PostgresClusterTable do
 
   attr :id, :string, default: "postgres-cluster-table"
   attr :rows, :list, required: true
+  attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
 
   def postgres_clusters_table(assigns) do
     ~H"""
-    <.table id={@id} rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={pg} :if={!@abridged} label="ID"><%= pg.id %></:col>
-      <:col :let={pg} label="Name"><%= pg.name %></:col>
-      <:col :let={pg} :if={!@abridged} label="Type"><%= pg.type %></:col>
-      <:col :let={pg} :if={!@abridged} label="Instances"><%= pg.num_instances %></:col>
-      <:col :let={pg} :if={!@abridged} label="User Count"><%= length(pg.users) %></:col>
-      <:col :let={pg} :if={!@abridged} label="Storage Size">
+    <.table
+      variant={@meta && "paginated"}
+      id={@id}
+      rows={@rows}
+      meta={@meta}
+      path={~p"/postgres"}
+      row_click={&JS.navigate(show_url(&1))}
+    >
+      <:col :let={pg} :if={!@abridged} field={:id} label="ID"><%= pg.id %></:col>
+      <:col :let={pg} field={:name} label="Name"><%= pg.name %></:col>
+      <:col :let={pg} :if={!@abridged} field={:type} label="Type"><%= pg.type %></:col>
+      <:col :let={pg} :if={!@abridged} field={:num_instances} label="Instances">
+        <%= pg.num_instances %>
+      </:col>
+      <:col :let={pg} :if={!@abridged} field={:users} label="User Count">
+        <%= length(pg.users) %>
+      </:col>
+      <:col :let={pg} :if={!@abridged} field={:storage_size} label="Storage Size">
         <%= Memory.humanize(pg.storage_size) %>
       </:col>
       <:action :let={pg}>

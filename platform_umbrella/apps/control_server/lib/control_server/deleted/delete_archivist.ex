@@ -17,17 +17,8 @@ defmodule ControlServer.Deleted.DeleteArchivist do
     |> repo.transaction()
   end
 
-  @doc """
-  Returns the list of DeletedResources.
-
-  ## Examples
-
-      iex> list_deleted_resource()
-      [%DeletedResource{}, ...]
-
-  """
-  def list_deleted_resources(limit \\ 25) do
-    Repo.all(DeletedResource, order_by: [desc: :updated_at], limit: limit)
+  def list_deleted_resources(params) do
+    Repo.Flop.validate_and_run(DeletedResource, params, for: DeletedResource)
   end
 
   @doc """

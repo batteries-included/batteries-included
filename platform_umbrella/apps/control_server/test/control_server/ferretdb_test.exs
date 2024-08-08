@@ -10,9 +10,17 @@ defmodule ControlServer.FerretDBTest do
 
     @invalid_attrs %{instances: nil, cpu_requested: nil, cpu_limits: nil, memory_requested: nil, memory_limits: nil}
 
-    test "list_ferret_services/0 returns all ferret_services" do
+    test "list_ferret_services/0 returns all ferret services" do
       ferret_service = ferret_service_fixture()
       assert FerretDB.list_ferret_services() == [ferret_service]
+    end
+
+    test "list_ferret_services/1 returns paginated ferret services" do
+      ferret_service1 = ferret_service_fixture()
+      _ferret_service2 = ferret_service_fixture()
+
+      assert {:ok, {[ferret_service], _}} = FerretDB.list_ferret_services(%{limit: 1})
+      assert ferret_service.id == ferret_service1.id
     end
 
     test "get_ferret_service!/1 returns the ferret_service with given id" do
