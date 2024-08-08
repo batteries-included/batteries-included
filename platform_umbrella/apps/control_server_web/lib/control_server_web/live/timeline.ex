@@ -26,7 +26,7 @@ defmodule ControlServerWeb.Live.Timeline do
 
   defp payload_container(assigns) do
     ~H"""
-    <.flex column class="rounded-xl border-gray-lighter p-4 border">
+    <.flex column class="rounded-sm bg-gray-lighter/15 px-6 py-4">
       <%= render_slot(@inner_block) %>
     </.flex>
     """
@@ -163,21 +163,21 @@ defmodule ControlServerWeb.Live.Timeline do
 
   defp payload_display(assigns) do
     ~H"""
-    <.flex column class="rounded-xl border-gray-lighter p-4 border">
+    <.payload_container>
       <pre class="text-sm overflow-x-auto">
         <%= inspect(@payload) %>
       </pre>
-    </.flex>
+    </.payload_container>
     """
   end
 
   defp event_item(assigns) do
     ~H"""
-    <.grid columns="12">
-      <div class="text-2xl col-span-3 m-4">
+    <.grid columns={[sm: 1, lg: 12]}>
+      <div class="text-sm font-bold font-mono tracking-tight lg:col-span-3 sm: mt-4 lg:m-4">
         <.relative_display time={@event.inserted_at} />
       </div>
-      <div class="col-span-9">
+      <div class="lg:col-span-9">
         <.payload_display payload={@event.payload} />
       </div>
     </.grid>
@@ -189,7 +189,8 @@ defmodule ControlServerWeb.Live.Timeline do
   def render(assigns) do
     ~H"""
     <.page_header title="Timeline" back_link={~p"/magic"} />
-    <.flex column class="rounded-xl border-gray-lighter dark:border-gray-darkest p-0 border">
+
+    <.flex column class="rounded-xl border border-gray-lighter dark:border-gray-darkest p-6">
       <.event_item :for={event <- @events} event={event} />
     </.flex>
     """
