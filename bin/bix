@@ -75,9 +75,9 @@ Available commands:
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
-- build-bi          Build the bi binary
 
 **Go Commands**
+- go-build-bi       Build the bi binary
 - go-test           Run go tests
 - go-test-int       Run go integration tests
 - go-update-deps    Update go dependencies
@@ -535,14 +535,11 @@ do_ex_dialyzer() {
     log "Dialyzer lint ${GREEN}Passed${NOFORMAT}"
 }
 
-do_build_bi() {
-    local version
-    version="${BASE_VERSION}-$(version_tag)"
-    log "${GREEN}Building${NOFORMAT} bi with version ${version}"
-    bi_pushd "${ROOT_DIR}/bi"
-    rm bi >/dev/null 2>&1 || true
-    CGO_ENABLED=0 go build -trimpath -tags "netgo osusergo" -ldflags="-w -s -X 'bi/pkg.Version=${version}'"
-    bi_popd
+do_go_build_bi() {
+    build_bi_final "linux" "amd64"
+    build_bi_final "linux" "arm64"
+    build_bi_final "windows" "amd64"
+    build_bi_final "darwin" "arm64"
 }
 
 do_bi_location() {
@@ -635,11 +632,11 @@ go-clean-build)
 go-ensure-bi)
     do_ensure_bi
     ;;
+go-build-bi)
+    do_go_build_bi
+    ;;
 bi-location)
     do_bi_location
-    ;;
-build-bi)
-    do_build_bi
     ;;
 ex-test-deep)
     do_ex_test_deep "${args[@]}"
