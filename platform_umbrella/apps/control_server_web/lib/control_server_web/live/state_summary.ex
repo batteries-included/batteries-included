@@ -20,6 +20,7 @@ defmodule ControlServerWeb.Live.StateSummary do
       upgrade_control_server:
         state_summary
         |> Map.get(:stable_versions_report, %{})
+        |> Kernel.||(%{})
         |> Map.get(:control_server, CommonCore.Defaults.Images.control_server_image())
     )
   end
@@ -44,7 +45,7 @@ defmodule ControlServerWeb.Live.StateSummary do
       ) %>
     </.page_header>
 
-    <.grid columns={%{sm: 1, lg: 2, xl: 3}}>
+    <.grid columns={%{sm: 1, xl: 2}}>
       <.panel title="Batteries">
         <ul>
           <%= for battery <- @state_summary.batteries do %>
