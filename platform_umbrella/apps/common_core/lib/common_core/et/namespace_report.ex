@@ -4,6 +4,7 @@ defmodule CommonCore.ET.NamespaceReport do
 
   import CommonCore.ET.ReportTools
 
+  alias CommonCore.Ecto.Schema
   alias CommonCore.Resources.FieldAccessors
   alias CommonCore.StateSummary
 
@@ -14,10 +15,10 @@ defmodule CommonCore.ET.NamespaceReport do
   def new(%StateSummary{} = state_summary) do
     pod_counts = count_pods_by(state_summary, &FieldAccessors.namespace/1)
 
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, pod_counts: pod_counts)
+    Schema.schema_new(__MODULE__, pod_counts: pod_counts)
   end
 
   def new(opts) do
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, opts)
+    Schema.schema_new(__MODULE__, opts)
   end
 end

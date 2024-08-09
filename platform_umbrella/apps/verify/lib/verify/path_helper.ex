@@ -7,10 +7,7 @@ defmodule Verify.PathHelper do
   def find_bi do
     override = bi_bin_override()
 
-    if override != nil do
-      Logger.info("Using BI binary override at #{override}")
-      override
-    else
+    if override == nil do
       internal = internal_location()
       file_exists = File.exists?(internal)
 
@@ -22,6 +19,9 @@ defmodule Verify.PathHelper do
         {_, 0} = System.cmd("bix", ["go-ensure-bi"])
         internal
       end
+    else
+      Logger.info("Using BI binary override at #{override}")
+      override
     end
   end
 

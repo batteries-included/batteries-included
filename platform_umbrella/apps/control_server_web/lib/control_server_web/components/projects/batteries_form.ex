@@ -36,10 +36,10 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   def handle_event("tab", %{"id" => id}, socket) do
     # Clear search input if visiting a tab other than "All Batteries"
     params =
-      if id != :all do
-        Map.put(socket.assigns.form.params, "search", "")
-      else
+      if id == :all do
         socket.assigns.form.params
+      else
+        Map.put(socket.assigns.form.params, "search", "")
       end
 
     {:noreply,
@@ -73,7 +73,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
   def handle_event("validate", %{"search" => search} = params, socket) do
     # switch to the "All Batteries" tab when searching
-    socket = if search != "", do: assign(socket, :tab, :all), else: socket
+    socket = if search == "", do: socket, else: assign(socket, :tab, :all)
 
     form = socket.assigns.form.params |> Map.merge(params) |> to_form()
 

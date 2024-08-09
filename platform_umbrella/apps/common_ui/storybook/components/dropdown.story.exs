@@ -2,14 +2,11 @@ defmodule Storybook.Components.Dropdown do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.Components.Dropdown.dropdown/1
+  alias CommonUI.Components.Dropdown
 
-  def imports,
-    do: [
-      {CommonUI.Components.Button, button: 1},
-      {CommonUI.Components.Dropdown, dropdown_link: 1},
-      {CommonUI.Components.Dropdown, dropdown_hr: 1}
-    ]
+  def function, do: &Dropdown.dropdown/1
+
+  def imports, do: [{CommonUI.Components.Button, button: 1}, {Dropdown, dropdown_link: 1}, {Dropdown, dropdown_hr: 1}]
 
   def variations do
     [

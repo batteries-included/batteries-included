@@ -1,14 +1,16 @@
 defmodule CommonCore.Resources.ResourceGeneratorTest do
   use ExUnit.Case
 
+  alias CommonCore.Resources.ExampleGenerator
+
   describe "CommonCore.Resources.ResourceGenerator" do
     test "Test the generator works" do
-      result = CommonCore.Resources.ExampleGenerator.materialize(%{config: %{}}, %{})
+      result = ExampleGenerator.materialize(%{config: %{}}, %{})
       assert %{"/service_account/main" => _} = result
     end
 
     test "The multi resource with a list works" do
-      result = CommonCore.Resources.ExampleGenerator.materialize(%{config: %{}}, %{})
+      result = ExampleGenerator.materialize(%{config: %{}}, %{})
 
       assert %{
                "/service_account/multi_list_0" => _,
@@ -25,7 +27,7 @@ defmodule CommonCore.Resources.ResourceGeneratorTest do
     end
 
     test "The multi resource with a map" do
-      result = CommonCore.Resources.ExampleGenerator.materialize(%{config: %{}}, %{})
+      result = ExampleGenerator.materialize(%{config: %{}}, %{})
 
       assert %{
                "/map_0/service_account/map_0" => _,

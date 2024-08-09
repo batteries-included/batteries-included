@@ -62,6 +62,8 @@ defmodule CommonUI.EmailHelpers do
 
   '''
 
+  alias CommonUI.Components.Email
+
   defmacro __using__(opts) do
     endpoint = Keyword.fetch!(opts, :endpoint)
     from = Keyword.get(opts, :from)
@@ -104,14 +106,14 @@ defmodule CommonUI.EmailHelpers do
   end
 
   def render_text(email, module) do
-    assigns = Map.put_new(email.assigns, :layout, {CommonUI.Components.Email, "email_text_layout"})
+    assigns = Map.put_new(email.assigns, :layout, {Email, "email_text_layout"})
     text = Phoenix.Template.render_to_string(module, "text", "text", assigns)
 
     Swoosh.Email.text_body(email, text)
   end
 
   def render_html(email, module) do
-    assigns = Map.put_new(email.assigns, :layout, {CommonUI.Components.Email, "email_html_layout"})
+    assigns = Map.put_new(email.assigns, :layout, {Email, "email_html_layout"})
 
     html =
       module

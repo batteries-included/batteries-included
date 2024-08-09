@@ -23,10 +23,10 @@ defmodule CommonCore.Defaults.Images do
       |> Application.get_env(CommonCore.Defaults)
       |> Keyword.get(:version_override, nil)
 
-    if override != nil do
-      override
-    else
+    if override == nil do
       @batteries_included_base
+    else
+      override
     end
   end
 

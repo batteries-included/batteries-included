@@ -3,6 +3,7 @@ defmodule CommonCore.Knative.Service do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Containers.Container
   alias CommonCore.Projects.Project
 
   @derive {
@@ -19,8 +20,8 @@ defmodule CommonCore.Knative.Service do
     field :kube_internal, :boolean, default: false
     field :keycloak_realm, :string
 
-    embeds_many :containers, CommonCore.Containers.Container, on_replace: :delete
-    embeds_many :init_containers, CommonCore.Containers.Container, on_replace: :delete
+    embeds_many :containers, Container, on_replace: :delete
+    embeds_many :init_containers, Container, on_replace: :delete
     embeds_many :env_values, CommonCore.Containers.EnvValue, on_replace: :delete
 
     belongs_to :project, Project

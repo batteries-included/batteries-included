@@ -4,6 +4,7 @@ defmodule KubeServices.ET.StableVersionsWorker do
   use TypedStruct
 
   alias CommonCore.ET.StableVersionsReport
+  alias KubeServices.ET.HomeBaseClient
 
   require Logger
 
@@ -11,7 +12,7 @@ defmodule KubeServices.ET.StableVersionsWorker do
 
   typedstruct module: State do
     field :cached, StableVersionsReport.t()
-    field :home_base_client_pid, :atom, default: KubeServices.ET.HomeBaseClient
+    field :home_base_client_pid, :atom, default: HomeBaseClient
   end
 
   def start_link(args) do
@@ -22,7 +23,7 @@ defmodule KubeServices.ET.StableVersionsWorker do
   def init(args) do
     state = struct!(%State{}, args)
 
-    if state.home_base_client_pid != nil do
+    unless state.home_base_client_pid == nil do
       start_short_timer()
     end
 
@@ -37,7 +38,7 @@ defmodule KubeServices.ET.StableVersionsWorker do
   def handle_info(:fetch_versions, %State{home_base_client_pid: client} = state) do
     _ = start_timer()
 
-    case KubeServices.ET.HomeBaseClient.get_stable_versions(client) do
+    case HomeBaseClient.get_stable_versions(client) do
       {:ok, %StableVersionsReport{} = report} ->
         {:noreply, %State{state | cached: report}}
 

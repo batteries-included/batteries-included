@@ -4,6 +4,8 @@ defmodule ControlServer.KubeSnapshotApplyFixtures do
   entities via the `ControlServer.SnapshotApply` context.
   """
 
+  alias ControlServer.SnapshotApply.Kube
+
   @doc """
   Generate a resource_path.
   """
@@ -17,7 +19,7 @@ defmodule ControlServer.KubeSnapshotApplyFixtures do
         namespace: "default",
         type: :pod
       })
-      |> ControlServer.SnapshotApply.Kube.create_resource_path()
+      |> Kube.create_resource_path()
 
     resource_path
   end
@@ -31,7 +33,7 @@ defmodule ControlServer.KubeSnapshotApplyFixtures do
       |> Enum.into(%{
         status: :creation
       })
-      |> ControlServer.SnapshotApply.Kube.create_kube_snapshot()
+      |> Kube.create_kube_snapshot()
 
     kube_snapshot
   end

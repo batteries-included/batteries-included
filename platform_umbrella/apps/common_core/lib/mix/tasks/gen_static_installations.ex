@@ -4,6 +4,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
   @moduledoc "Create the json for static installations that can be used during dev cluster bring up."
   use Mix.Task
 
+  alias CommonCore.Installs.Generator
   alias CommonCore.InstallSpec
 
   def run(args) do
@@ -11,11 +12,11 @@ defmodule Mix.Tasks.Gen.Static.Installations do
 
     File.mkdir_p!(directory)
 
-    {:ok, pid} = CommonCore.Installs.Generator.start_link()
+    {:ok, pid} = Generator.start_link()
 
-    CommonCore.Installs.Generator.available_builds()
+    Generator.available_builds()
     |> Enum.map(fn identifier ->
-      CommonCore.Installs.Generator.build(pid, identifier)
+      Generator.build(pid, identifier)
     end)
     |> Enum.flat_map(fn install ->
       [
@@ -24,7 +25,7 @@ defmodule Mix.Tasks.Gen.Static.Installations do
       ]
     end)
     |> Enum.concat([
-      {Path.join(directory, "team.json"), CommonCore.Installs.Generator.base_team()}
+      {Path.join(directory, "team.json"), Generator.base_team()}
     ])
     |> Enum.each(fn {path, contents} ->
       write!(path, contents)

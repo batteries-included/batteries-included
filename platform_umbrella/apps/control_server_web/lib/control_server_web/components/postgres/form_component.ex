@@ -7,6 +7,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   alias ControlServer.Postgres
   alias ControlServerWeb.PostgresFormSubcomponents
   alias Ecto.Changeset
+  alias KubeServices.SystemState.SummaryStorage
 
   @impl Phoenix.LiveComponent
   def update(%{cluster: cluster} = assigns, socket) do
@@ -314,8 +315,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     |> add_default_storage_class()
   end
 
-  defp possible_storage_classes,
-    do: Enum.map(KubeServices.SystemState.SummaryStorage.storage_classes(), &get_in(&1, ["metadata", "name"]))
+  defp possible_storage_classes, do: Enum.map(SummaryStorage.storage_classes(), &get_in(&1, ["metadata", "name"]))
 
   defp possible_namespaces,
     do: :namespace |> KubeServices.KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
@@ -351,7 +351,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   end
 
   defp get_default_storage_class do
-    case KubeServices.SystemState.SummaryStorage.default_storage_class() do
+    case SummaryStorage.default_storage_class() do
       nil ->
         nil
 

@@ -134,12 +134,13 @@ defmodule CommonCore.Ecto.Schema do
   end
   ```
   """
+  import CommonCore.Ecto.Validations
+
   require TypedEctoSchema
 
   defmacro __using__(_ots \\ []) do
     quote do
       use TypedEctoSchema
-      @before_compile {unquote(__MODULE__), :__before_compile__}
 
       import CommonCore.Ecto.Schema,
         only: [
@@ -159,6 +160,8 @@ defmodule CommonCore.Ecto.Schema do
       import CommonCore.Ecto.Validations
       import Ecto.Changeset
       import Ecto.Query
+
+      @before_compile {unquote(__MODULE__), :__before_compile__}
 
       Module.register_attribute(__MODULE__, :__defaultable_fields, accumulate: true)
       Module.register_attribute(__MODULE__, :__generated_secrets, accumulate: true)
@@ -367,10 +370,10 @@ defmodule CommonCore.Ecto.Schema do
     # If its nil we don't need to do anything
     poly = struct.__schema__(:polymorphic_type)
 
-    if poly != nil do
-      Ecto.Changeset.put_change(changeset, :type, poly)
-    else
+    if poly == nil do
       changeset
+    else
+      Ecto.Changeset.put_change(changeset, :type, poly)
     end
   end
 
@@ -398,7 +401,7 @@ defmodule CommonCore.Ecto.Schema do
     :generated_secrets
     |> struct.__schema__()
     |> Enum.reduce(changeset, fn [name, opts], chg ->
-      CommonCore.Ecto.Validations.maybe_set_random(chg, name, opts)
+      maybe_set_random(chg, name, opts)
     end)
   end
 
@@ -407,10 +410,10 @@ defmodule CommonCore.Ecto.Schema do
     |> struct.__schema__()
     |> Enum.reduce(changeset, fn name, chg ->
       chg
-      |> CommonCore.Ecto.Validations.maybe_fill_in_slug(name)
-      |> CommonCore.Ecto.Validations.downcase_fields([name])
-      |> CommonCore.Ecto.Validations.trim_fields([name])
-      |> CommonCore.Ecto.Validations.validate_dns_label(name)
+      |> maybe_fill_in_slug(name)
+      |> downcase_fields([name])
+      |> trim_fields([name])
+      |> validate_dns_label(name)
     end)
   end
 

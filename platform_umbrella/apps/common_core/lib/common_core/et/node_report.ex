@@ -5,6 +5,7 @@ defmodule CommonCore.ET.NodeReport do
   import CommonCore.ET.ReportTools
   import CommonCore.Resources.Quantity
 
+  alias CommonCore.Ecto.Schema
   alias CommonCore.Resources.FieldAccessors
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.FromKubeState
@@ -47,7 +48,7 @@ defmodule CommonCore.ET.NodeReport do
     avg_cores = if node_count > 0, do: cpu_count / node_count, else: 0.0
     avg_mem = if node_count > 0, do: memory_count / node_count, else: 0.0
 
-    CommonCore.Ecto.Schema.schema_new(__MODULE__,
+    Schema.schema_new(__MODULE__,
       pod_counts: pod_counts,
       avg_cores: avg_cores,
       avg_mem: avg_mem
@@ -55,7 +56,7 @@ defmodule CommonCore.ET.NodeReport do
   end
 
   def new(opts) do
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, opts)
+    Schema.schema_new(__MODULE__, opts)
   end
 
   ## Pods list the host address not the hostname.

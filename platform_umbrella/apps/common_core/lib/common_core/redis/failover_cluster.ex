@@ -86,7 +86,7 @@ defmodule CommonCore.Redis.FailoverCluster do
   end
 
   def to_fresh_cluster(%{} = args) do
-    clean_args = Map.drop(args, [:id])
+    clean_args = Map.delete(args, :id)
 
     %__MODULE__{}
     |> changeset(clean_args)

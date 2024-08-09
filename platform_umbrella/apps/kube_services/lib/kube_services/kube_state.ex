@@ -4,6 +4,7 @@ defmodule KubeServices.KubeState do
 
   alias CommonCore.ApiVersionKind
   alias CommonCore.ConnectionPool
+  alias CommonCore.Resources.ResourceVersion
   alias K8s.Resource
   alias KubeServices.KubeState.Runner
 
@@ -87,7 +88,7 @@ defmodule KubeServices.KubeState do
   def get_all(t \\ @default_table, res_type) do
     t
     |> Runner.get_all(res_type)
-    |> Enum.sort_by(&CommonCore.Resources.ResourceVersion.sortable_resource_version/1)
+    |> Enum.sort_by(&ResourceVersion.sortable_resource_version/1)
   end
 
   @spec get_owned_resources(atom() | :ets.tid(), atom(), list(String.t()) | map) :: list(map)
@@ -116,7 +117,7 @@ defmodule KubeServices.KubeState do
     table
     |> Runner.get_all(:event)
     |> Enum.filter(fn e -> get_in(e, ~w(involvedObject uid)) == involved_uid end)
-    |> Enum.sort_by(&CommonCore.Resources.ResourceVersion.sortable_resource_version/1)
+    |> Enum.sort_by(&ResourceVersion.sortable_resource_version/1)
   end
 
   def get_events(_, _), do: []

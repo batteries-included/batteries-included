@@ -9,30 +9,48 @@
 # move said applications out of the umbrella.
 import Config
 
-# Configure Mix tasks and generators
-config :control_server,
-  ecto_repos: [ControlServer.Repo]
+alias CommonUI.Components.Table
+
+config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
+
+config :common_core, CommonCore.JWK,
+  paths: [
+    home_a: "apps/common_core/priv/keys/home_a.pem",
+    home_b: "apps/common_core/priv/keys/home_b.pem"
+  ],
+  sign_key: :test,
+  verify_keys: [:test_pub, :home_a_pub, :home_b_pub]
+
+config :common_core, CommonCore.Resources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
+
+config :common_ui, CommonUIWeb.Endpoint,
+  url: [host: "127.0.0.1"],
+  adapter: Bandit.PhoenixAdapter,
+  secret_key_base: "dpF0Aw3Ikl8AYXURcYog79/++RUd24ocEYlSz1QNXcfVt5itGnOSc572cKW6Fa09",
+  pubsub_server: CommonUI.PubSub,
+  live_view: [signing_salt: "CGM/Nu66"]
 
 config :control_server, ControlServer.Repo,
   migration_primary_key: [type: :uuid],
   migration_timestamps: [type: :utc_datetime_usec]
 
-config :home_base,
-  ecto_repos: [HomeBase.Repo]
+# Configure Mix tasks and generators
+config :control_server,
+  ecto_repos: [ControlServer.Repo]
 
-config :home_base, HomeBase.Repo,
-  migration_primary_key: [type: :uuid],
-  migration_timestamps: [type: :utc_datetime_usec]
+# Configures the endpoints
+config :control_server_web, ControlServerWeb.Endpoint,
+  url: [host: "127.0.0.1"],
+  adapter: Bandit.PhoenixAdapter,
+  secret_key_base: "+BsWyvsUA0yzXCZIedcDcji/t0CVxE2kofuBpouA44103zsGXTg4w4rSszEXaEfh",
+  render_errors: [
+    formats: [html: ControlServerWeb.ErrorHTML, json: ControlServerWeb.ErrorJSON],
+    layout: false
+  ],
+  pubsub_server: ControlServer.PubSub,
+  live_view: [signing_salt: "IprBitsK"]
 
 config :control_server_web,
-  ecto_repos: [ControlServer.Repo],
-  generators: [context_app: :control_server, binary_id: true]
-
-config :home_base_web,
-  ecto_repos: [HomeBase.Repo],
-  generators: [context_app: :home_base, binary_id: true]
-
-config :kube_services,
   ecto_repos: [ControlServer.Repo],
   generators: [context_app: :control_server, binary_id: true]
 
@@ -53,17 +71,16 @@ config :ex_audit,
     DateTime
   ]
 
-# Configures the endpoints
-config :control_server_web, ControlServerWeb.Endpoint,
-  url: [host: "127.0.0.1"],
-  adapter: Bandit.PhoenixAdapter,
-  secret_key_base: "+BsWyvsUA0yzXCZIedcDcji/t0CVxE2kofuBpouA44103zsGXTg4w4rSszEXaEfh",
-  render_errors: [
-    formats: [html: ControlServerWeb.ErrorHTML, json: ControlServerWeb.ErrorJSON],
-    layout: false
-  ],
-  pubsub_server: ControlServer.PubSub,
-  live_view: [signing_salt: "IprBitsK"]
+config :flop_phoenix,
+  pagination: [opts: {Table, :pagination_opts}],
+  table: [opts: {Table, :paginated_table_opts}]
+
+config :home_base, HomeBase.Repo,
+  migration_primary_key: [type: :uuid],
+  migration_timestamps: [type: :utc_datetime_usec]
+
+config :home_base,
+  ecto_repos: [HomeBase.Repo]
 
 config :home_base_web, HomeBaseWeb.Endpoint,
   url: [host: "127.0.0.1"],
@@ -76,16 +93,19 @@ config :home_base_web, HomeBaseWeb.Endpoint,
   pubsub_server: HomeBase.PubSub,
   live_view: [signing_salt: "zAzBezt3"]
 
-config :common_ui, CommonUIWeb.Endpoint,
-  url: [host: "127.0.0.1"],
-  adapter: Bandit.PhoenixAdapter,
-  secret_key_base: "dpF0Aw3Ikl8AYXURcYog79/++RUd24ocEYlSz1QNXcfVt5itGnOSc572cKW6Fa09",
-  pubsub_server: CommonUI.PubSub,
-  live_view: [signing_salt: "CGM/Nu66"]
+config :home_base_web,
+  ecto_repos: [HomeBase.Repo],
+  generators: [context_app: :home_base, binary_id: true]
 
-config :flop_phoenix,
-  pagination: [opts: {CommonUI.Components.Table, :pagination_opts}],
-  table: [opts: {CommonUI.Components.Table, :paginated_table_opts}]
+config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
+  delay: 900_000,
+  failing_delay: 10_000
+
+config :kube_services,
+  ecto_repos: [ControlServer.Repo],
+  generators: [context_app: :control_server, binary_id: true]
+
+config :kube_services, start_services: true
 
 # Configures Elixir's Logger
 config :logger,
@@ -99,29 +119,11 @@ config :logger,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :kube_services, start_services: true
-
-config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
-  delay: 900_000,
-  failing_delay: 10_000
-
-config :common_core, CommonCore.Resources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
-
-config :common_core, CommonCore.JWK,
-  paths: [
-    home_a: "apps/common_core/priv/keys/home_a.pem",
-    home_b: "apps/common_core/priv/keys/home_b.pem"
-  ],
-  sign_key: :test,
-  verify_keys: [:test_pub, :home_a_pub, :home_b_pub]
-
-config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
-
-config :verify, :bi_bin_override, System.get_env("BI_BIN_OVERRIDE", nil)
+config :swoosh, :api_client, Swoosh.ApiClient.Finch
 
 config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]}
 
-config :swoosh, :api_client, Swoosh.ApiClient.Finch
+config :verify, :bi_bin_override, System.get_env("BI_BIN_OVERRIDE", nil)
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

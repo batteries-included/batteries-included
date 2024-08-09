@@ -2,8 +2,10 @@ defmodule Storybook.Components.TodoList do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.Components.TodoList.todo_list/1
-  def imports, do: [{CommonUI.Components.TodoList, todo_list_item: 1}]
+  alias CommonUI.Components.TodoList
+
+  def function, do: &TodoList.todo_list/1
+  def imports, do: [{TodoList, todo_list_item: 1}]
 
   def variations do
     [

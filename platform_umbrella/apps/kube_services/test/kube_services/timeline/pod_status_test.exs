@@ -98,12 +98,12 @@ defmodule KubeServices.Timeline.PodStatusTest do
         for {other, _} <- get_container_status_mapping() ++ [unknown: "Unknown"] do
           pod = with_conditions(pod, build(:conditions, condition: other))
 
-          if other != condition do
-            # status has changed, new status should be other
-            assert {true, ^other} = PodStatus.status_changed?(:test, pod)
-          else
+          if other == condition do
             # status hasn't changed, new and old status are the same other == condition
             assert {false, ^other} = PodStatus.status_changed?(:test, pod)
+          else
+            # status has changed, new status should be other
+            assert {true, ^other} = PodStatus.status_changed?(:test, pod)
           end
         end
       end
