@@ -11,6 +11,7 @@ defmodule KubeServices.SystemState.SummaryURLs do
   alias CommonCore.Resources.FieldAccessors
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.PostgresState
+  alias CommonCore.StateSummary.URLs
   alias EventCenter.SystemStateSummary
   alias KubeServices.SystemState.Summarizer
 
@@ -52,7 +53,7 @@ defmodule KubeServices.SystemState.SummaryURLs do
 
     url =
       summary
-      |> CommonCore.StateSummary.URLs.project_dashboard()
+      |> URLs.project_dashboard()
       |> URI.append_query(query)
       |> URI.to_string()
 
@@ -67,7 +68,7 @@ defmodule KubeServices.SystemState.SummaryURLs do
 
     url =
       summary
-      |> CommonCore.StateSummary.URLs.cloud_native_pg_dashboard()
+      |> URLs.cloud_native_pg_dashboard()
       |> URI.append_query(query)
       |> URI.to_string()
 
@@ -83,7 +84,7 @@ defmodule KubeServices.SystemState.SummaryURLs do
 
     url =
       summary
-      |> CommonCore.StateSummary.URLs.pod_dashboard()
+      |> URLs.pod_dashboard()
       |> URI.append_query(query)
       |> URI.to_string()
 
@@ -91,7 +92,7 @@ defmodule KubeServices.SystemState.SummaryURLs do
   end
 
   def handle_call([method | args], _from, %{summary: summary} = state) do
-    {:reply, apply(CommonCore.StateSummary.URLs, method, [summary | args]), state}
+    {:reply, apply(URLs, method, [summary | args]), state}
   end
 
   @spec url_for_battery(atom | pid | {atom, any} | {:via, atom, any}, atom()) :: String.t() | nil

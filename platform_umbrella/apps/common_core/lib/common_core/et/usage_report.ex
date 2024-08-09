@@ -2,6 +2,7 @@ defmodule CommonCore.ET.UsageReport do
   @moduledoc false
   use CommonCore, :embedded_schema
 
+  alias CommonCore.Ecto.Schema
   alias CommonCore.ET.NamespaceReport
   alias CommonCore.ET.NodeReport
   alias CommonCore.ET.PostgresReport
@@ -27,7 +28,7 @@ defmodule CommonCore.ET.UsageReport do
          {:ok, redis_report} <- RedisReport.new(state_summary) do
       battery_names = batteries(state_summary)
 
-      CommonCore.Ecto.Schema.schema_new(__MODULE__,
+      Schema.schema_new(__MODULE__,
         node_report: node_report,
         namespace_report: namespace_report,
         postgres_report: postgres_report,
@@ -39,7 +40,7 @@ defmodule CommonCore.ET.UsageReport do
   end
 
   def new(opts) do
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, opts)
+    Schema.schema_new(__MODULE__, opts)
   end
 
   defp batteries(%StateSummary{batteries: batteries} = _state_summary) do

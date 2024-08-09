@@ -1,6 +1,7 @@
 defmodule CommonCore.Installs.Postgres do
   @moduledoc false
   alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.Defaults.ControlDB
   alias CommonCore.Installation
 
   # Currently we only include the
@@ -17,12 +18,12 @@ defmodule CommonCore.Installs.Postgres do
          usage: usage,
          default_size: default_size
        }) do
-    cluster = CommonCore.Defaults.ControlDB.control_cluster([config.core_namespace], default_size)
+    cluster = ControlDB.control_cluster([config.core_namespace], default_size)
 
     case usage do
       internal when internal in [:internal_dev, :internal_int_test] ->
         # For local development we add a user with a known password and roles
-        users = [CommonCore.Defaults.ControlDB.local_user() | Map.get(cluster, :users, [])]
+        users = [ControlDB.local_user() | Map.get(cluster, :users, [])]
         %{cluster | users: users}
 
       _ ->

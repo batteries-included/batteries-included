@@ -1,6 +1,8 @@
 defmodule CommonCore.Resources.OwnerRefernceTest do
   use ExUnit.Case
 
+  alias CommonCore.Resources.OwnerReference
+
   @empty %{}
   @empty_metadata %{"metadata" => %{}}
   @empty_owner_metadata %{"metadata" => %{"ownerReferences" => []}}
@@ -43,14 +45,14 @@ defmodule CommonCore.Resources.OwnerRefernceTest do
 
   describe "CommonCore.Resources.OwnerRefernce" do
     test "return nil for un owned" do
-      assert nil == CommonCore.Resources.OwnerReference.get_owner(@empty)
-      assert nil == CommonCore.Resources.OwnerReference.get_owner(@empty_metadata)
-      assert nil == CommonCore.Resources.OwnerReference.get_owner(@empty_owner_metadata)
+      assert nil == OwnerReference.get_owner(@empty)
+      assert nil == OwnerReference.get_owner(@empty_metadata)
+      assert nil == OwnerReference.get_owner(@empty_owner_metadata)
     end
 
     test "return the uid for an owned" do
       assert "8f92fa99-ea9c-493f-b16d-79ee42770571" ==
-               CommonCore.Resources.OwnerReference.get_owner(@real_example)
+               OwnerReference.get_owner(@real_example)
     end
   end
 end

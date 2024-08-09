@@ -2,6 +2,7 @@ defmodule CommonCore.ET.HostReport do
   @moduledoc false
   use CommonCore, :embedded_schema
 
+  alias CommonCore.Ecto.Schema
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.Hosts
 
@@ -12,10 +13,10 @@ defmodule CommonCore.ET.HostReport do
   end
 
   def new(%StateSummary{} = state_summary) do
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, control_server_host: Hosts.control_host(state_summary))
+    Schema.schema_new(__MODULE__, control_server_host: Hosts.control_host(state_summary))
   end
 
   def new(opts) do
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, opts)
+    Schema.schema_new(__MODULE__, opts)
   end
 end

@@ -2,6 +2,7 @@ defmodule CommonCore.ET.PostgresReport do
   @moduledoc false
   use CommonCore, :embedded_schema
 
+  alias CommonCore.Ecto.Schema
   alias CommonCore.StateSummary
 
   batt_embedded_schema do
@@ -15,10 +16,10 @@ defmodule CommonCore.ET.PostgresReport do
         {"#{cluster.type}.#{cluster.name}", cluster.num_instances}
       end)
 
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, instance_counts: instance_counts)
+    Schema.schema_new(__MODULE__, instance_counts: instance_counts)
   end
 
   def new(opts) do
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, opts)
+    Schema.schema_new(__MODULE__, opts)
   end
 end

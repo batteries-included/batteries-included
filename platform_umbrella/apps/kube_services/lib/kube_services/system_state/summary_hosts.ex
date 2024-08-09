@@ -20,6 +20,7 @@ defmodule KubeServices.SystemState.SummaryHosts do
   use GenServer
 
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Hosts
   alias EventCenter.SystemStateSummary
   alias KubeServices.SystemState.Summarizer
 
@@ -54,12 +55,12 @@ defmodule KubeServices.SystemState.SummaryHosts do
 
   @impl GenServer
   def handle_call(method, _from, %{summary: summary} = state) when is_atom(method) do
-    {:reply, apply(CommonCore.StateSummary.Hosts, method, [summary]), state}
+    {:reply, apply(Hosts, method, [summary]), state}
   end
 
   @impl GenServer
   def handle_call([method | args], _from, %{summary: summary} = state) do
-    {:reply, apply(CommonCore.StateSummary.Hosts, method, [summary | args]), state}
+    {:reply, apply(Hosts, method, [summary | args]), state}
   end
 
   @spec control_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil

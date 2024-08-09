@@ -2,6 +2,9 @@ defmodule CommonCore.JWK do
   @moduledoc """
   JSON Web Key (JWK) utilities.
   """
+  alias CommonCore.JWK.BadKeyError
+  alias CommonCore.JWK.Cache
+
   require Logger
 
   @default_curve {:okp, :Ed25519}
@@ -41,31 +44,31 @@ defmodule CommonCore.JWK do
 
   def sign(payload) do
     jwk_name = sign_key()
-    jwk = CommonCore.JWK.Cache.get(jwk_name)
+    jwk = Cache.get(jwk_name)
     jwk |> JOSE.JWT.sign(payload) |> elem(1)
   end
 
-  def verify!(nil), do: raise(CommonCore.JWK.BadKeyError.exception())
+  def verify!(nil), do: raise(BadKeyError.exception())
 
   def verify!(token) do
     case first_verified(token) do
-      nil -> raise CommonCore.JWK.BadKeyError.exception()
+      nil -> raise BadKeyError.exception()
       value -> value
     end
   end
 
-  def verify(nil), do: {:error, CommonCore.JWK.BadKeyError.exception()}
+  def verify(nil), do: {:error, BadKeyError.exception()}
 
   def verify(token) do
     case first_verified(token) do
-      nil -> {:error, CommonCore.JWK.BadKeyError.exception()}
+      nil -> {:error, BadKeyError.exception()}
       value -> {:ok, value}
     end
   end
 
   defp first_verified(token) do
     Enum.find_value(verify_keys(), nil, fn key_name ->
-      jwk = CommonCore.JWK.Cache.get(key_name)
+      jwk = Cache.get(key_name)
       try_verify_single(jwk, token)
     end)
   end

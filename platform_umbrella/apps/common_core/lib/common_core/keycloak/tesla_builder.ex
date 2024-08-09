@@ -1,5 +1,8 @@
 defmodule CommonCore.Keycloak.TeslaBuilder do
   @moduledoc false
+  alias Tesla.Middleware.BaseUrl
+  alias Tesla.Middleware.JSON
+
   @spec build_client(
           binary,
           nil | binary,
@@ -18,15 +21,14 @@ defmodule CommonCore.Keycloak.TeslaBuilder do
   end
 
   @spec middleware(String.t()) :: list(module() | {module(), any()})
-  defp middleware(base_url),
-    do: [{Tesla.Middleware.BaseUrl, base_url}, Tesla.Middleware.FormUrlencoded, Tesla.Middleware.JSON]
+  defp middleware(base_url), do: [{BaseUrl, base_url}, Tesla.Middleware.FormUrlencoded, JSON]
 
   @spec middleware(String.t(), String.t()) :: list(module() | {module(), any()})
   defp middleware(base_url, token) do
     [
       {Tesla.Middleware.BearerAuth, token: token},
-      {Tesla.Middleware.BaseUrl, base_url},
-      Tesla.Middleware.JSON
+      {BaseUrl, base_url},
+      JSON
     ]
   end
 end

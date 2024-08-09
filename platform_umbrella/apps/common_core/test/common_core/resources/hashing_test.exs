@@ -96,7 +96,7 @@ defmodule CommonCore.Resources.HashingTest do
 
   test "recompute hash stable" do
     stripped =
-      update_in(@service_two, ~w(metadata), fn meta -> Map.drop(meta || %{}, ["annotations"]) end)
+      update_in(@service_two, ~w(metadata), fn meta -> Map.delete(meta || %{}, "annotations") end)
 
     assert false == Hashing.different?(@service_two, stripped)
   end

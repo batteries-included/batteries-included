@@ -299,7 +299,7 @@ defmodule Mix.Tasks.Gen.Resource do
     |> update_in(["metadata"], fn meta ->
       Map.drop(meta || %{}, ["annotations", "creationTimestamp"])
     end)
-    |> Map.drop(["state"])
+    |> Map.delete("state")
     |> Ymlr.document!()
   end
 
@@ -320,7 +320,7 @@ defmodule Mix.Tasks.Gen.Resource do
 
     normal_pipeline =
       resource
-      |> Map.drop(["data"])
+      |> Map.delete("data")
       |> resource_pipeline(:config_map, app_name)
       |> add_data_from_var()
 
@@ -341,11 +341,11 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp templated_spec_method(resource, method_name, resource_type, app_name, spec, template) do
     template_pipeline = template_pipeline(template)
-    spec_pipeline = spec |> clean_spec(app_name) |> Map.drop(["template"]) |> spec_pipeline() |> add_template_from_var()
+    spec_pipeline = spec |> clean_spec(app_name) |> Map.delete("template") |> spec_pipeline() |> add_template_from_var()
 
     normal_pipeline =
       resource
-      |> Map.drop(["spec"])
+      |> Map.delete("spec")
       |> resource_pipeline(resource_type, app_name)
       |> add_spec_from_var()
 
@@ -357,7 +357,7 @@ defmodule Mix.Tasks.Gen.Resource do
 
     normal_pipeline =
       resource
-      |> Map.drop(["spec"])
+      |> Map.delete("spec")
       |> resource_pipeline(resource_type, app_name)
       |> add_spec_from_var()
 
@@ -367,7 +367,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp rules_method(resource, method_name, resource_type, app_name, rules) do
     normal_pipeline =
       resource
-      |> Map.drop(["rules"])
+      |> Map.delete("rules")
       |> resource_pipeline(resource_type, app_name)
       |> add_rules_from_var()
 
@@ -377,7 +377,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp cluster_rules_method(resource, method_name, resource_type, app_name, rules) do
     normal_pipeline =
       resource
-      |> Map.drop(["rules"])
+      |> Map.delete("rules")
       |> resource_pipeline(resource_type, app_name)
       |> add_rules_from_var()
 

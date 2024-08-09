@@ -9,6 +9,7 @@ defmodule KubeServices.Batteries.InstalledWatcher do
   """
   use GenServer
 
+  alias CommonCore.Batteries.SystemBattery
   alias EventCenter.Database
 
   require Logger
@@ -57,14 +58,14 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     {:noreply, state}
   end
 
-  @spec start_batteries([CommonCore.Batteries.SystemBattery.t()]) :: [
+  @spec start_batteries([SystemBattery.t()]) :: [
           DynamicSupervisor.on_start_child()
         ]
   defp start_batteries(batteries) do
     Enum.map(batteries, &start_battery/1)
   end
 
-  @spec start_battery(CommonCore.Batteries.SystemBattery.t()) ::
+  @spec start_battery(SystemBattery.t()) ::
           DynamicSupervisor.on_start_child()
   defp start_battery(%{type: type} = battery) do
     mod = Keyword.get(@default_battery_type_mapping, type)
@@ -80,7 +81,7 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     end
   end
 
-  @spec stop_battery(CommonCore.Batteries.SystemBattery.t()) :: :ok | {:error, :not_found}
+  @spec stop_battery(SystemBattery.t()) :: :ok | {:error, :not_found}
   defp stop_battery(%{id: id} = _battery) do
     case Registry.lookup(@registry, id) do
       [{pid, _}] ->

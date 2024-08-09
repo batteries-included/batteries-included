@@ -14,6 +14,7 @@ defmodule ControlServer.Factory do
   alias CommonCore.Resources.Hashing
   alias CommonCore.Timeline
   alias CommonCore.Timeline.TimelineEvent
+  alias ControlServer.ContentAddressable.Document
 
   def umbrella_snapshot_factory do
     %ControlServer.SnapshotApply.UmbrellaSnapshot{}
@@ -124,14 +125,14 @@ defmodule ControlServer.Factory do
     }
   end
 
-  @spec content_addressable_document_factory() :: ControlServer.ContentAddressable.Document.t()
+  @spec content_addressable_document_factory() :: Document.t()
   def content_addressable_document_factory do
     value = %{name: sequence("value-name-"), age: sequence(:age, [1, 2, 3, 4, 5])}
     hash = Hashing.compute_hash(value)
 
-    %ControlServer.ContentAddressable.Document{
+    %Document{
       hash: hash,
-      id: ControlServer.ContentAddressable.Document.hash_to_uuid!(hash),
+      id: Document.hash_to_uuid!(hash),
       value: value
     }
   end

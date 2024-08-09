@@ -2,8 +2,10 @@ defmodule Storybook.Components.Alert do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  def function, do: &CommonUI.Components.Alert.alert/1
-  def imports, do: [{CommonUI.Components.Button, button: 1}, {CommonUI.Components.Alert, show_alert: 1}]
+  alias CommonUI.Components.Alert
+
+  def function, do: &Alert.alert/1
+  def imports, do: [{CommonUI.Components.Button, button: 1}, {Alert, show_alert: 1}]
 
   def variations do
     [

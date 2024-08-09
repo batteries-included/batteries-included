@@ -238,7 +238,7 @@ defmodule CommonCore.Resources.TrivyOperator do
       |> Map.put("scanJob.compressLogs", "true")
       |> Map.put(
         "scanJob.podTemplateContainerSecurityContext",
-        "{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"readOnlyRootFilesystem\":true}"
+        ~s({"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true})
       )
       |> Map.put("vulnerabilityReports.scanner", "Trivy")
       |> Map.put("nodeCollector.volumeMounts", get_resource(:nodecollector_volumemounts))

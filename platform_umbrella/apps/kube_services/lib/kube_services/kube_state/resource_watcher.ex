@@ -15,6 +15,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   use GenServer
 
   alias CommonCore.ApiVersionKind
+  alias KubeServices.KubeState.Runner
 
   require Logger
 
@@ -102,7 +103,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
         |> Enum.each(fn r ->
           # Push in what's there now.
           # but
-          KubeServices.KubeState.Runner.add(table_name, r, skip_broadcast: true)
+          Runner.add(table_name, r, skip_broadcast: true)
         end)
 
       _ ->
@@ -145,13 +146,13 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   defp handle_watch_event(event_type, object, state_table_name)
 
   defp handle_watch_event("ADDED" = _event_type, object, %{table_name: state_table_name} = state),
-    do: KubeServices.KubeState.Runner.add(state_table_name, clean(object, state))
+    do: Runner.add(state_table_name, clean(object, state))
 
   defp handle_watch_event("DELETED" = _event_type, object, %{table_name: state_table_name} = state),
-    do: KubeServices.KubeState.Runner.delete(state_table_name, clean(object, state))
+    do: Runner.delete(state_table_name, clean(object, state))
 
   defp handle_watch_event("MODIFIED" = _event_type, object, %{table_name: state_table_name} = state),
-    do: KubeServices.KubeState.Runner.update(state_table_name, clean(object, state))
+    do: Runner.update(state_table_name, clean(object, state))
 
   defp clean({:error, _}, _), do: nil
 

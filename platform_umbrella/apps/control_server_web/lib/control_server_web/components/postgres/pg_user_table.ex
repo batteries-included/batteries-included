@@ -2,6 +2,7 @@ defmodule ControlServerWeb.PgUserTable do
   @moduledoc false
   use ControlServerWeb, :html
 
+  alias CommonCore.Defaults.Namespaces
   alias CommonCore.StateSummary.PostgresState
 
   attr :users, :list, required: true
@@ -19,8 +20,8 @@ defmodule ControlServerWeb.PgUserTable do
     """
   end
 
-  defp cluster_namespace(:internal = _cluster_type), do: CommonCore.Defaults.Namespaces.base()
-  defp cluster_namespace(_cluster_type), do: CommonCore.Defaults.Namespaces.data()
+  defp cluster_namespace(:internal = _cluster_type), do: Namespaces.base()
+  defp cluster_namespace(_cluster_type), do: Namespaces.data()
 
   defp namespaces(user, cluster) do
     user.credential_namespaces

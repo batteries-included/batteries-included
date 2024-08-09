@@ -33,6 +33,13 @@ secret_key_base =
     You can generate one by calling: mix phx.gen.secret
     """
 
+config :common_core, CommonCore.JWK,
+  paths: [],
+  sign_key: :home_a,
+  verify_keys: [:home_a_pub, :home_b_pub]
+
+config :common_core, :clusters, default: :service_account
+
 config :control_server, ControlServer.Repo,
   database: postgres_database,
   hostname: postgres_host,
@@ -50,12 +57,5 @@ config :control_server_web, ControlServerWeb.Endpoint,
   check_origin: false,
   secret_key_base: secret_key_base,
   server: true
-
-config :common_core, :clusters, default: :service_account
-
-config :common_core, CommonCore.JWK,
-  paths: [],
-  sign_key: :home_a,
-  verify_keys: [:home_a_pub, :home_b_pub]
 
 config :kube_services, cluster_type: :prod

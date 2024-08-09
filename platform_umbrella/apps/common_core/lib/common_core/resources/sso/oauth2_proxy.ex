@@ -10,6 +10,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
+  alias CommonCore.StateSummary.KeycloakSummary
 
   @serve_port 80
   @web_port 4180
@@ -135,7 +136,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     name = name(battery)
     redirect_url = state |> uri_for_battery(battery.type) |> URI.to_string()
 
-    case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
+    case KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
       %{realm: realm, client: %{}} ->
         keycloak_url = state |> keycloak_uri_for_realm(realm) |> URI.to_string()
 
@@ -174,7 +175,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     namespace = core_namespace(state)
 
     data =
-      case CommonCore.StateSummary.KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
+      case KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
         %{realm: _realm, client: %{clientId: client_id, secret: client_secret}} ->
           %{}
           |> Map.put("client-id", client_id)

@@ -119,7 +119,7 @@ defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
   defp action_args(%KeycloakSnapshot{} = snap, %FreshGeneratedAction{} = base_action, raw_document, now) do
     base_action
     |> Map.from_struct()
-    |> Map.drop([:value])
+    |> Map.delete(:value)
     |> Map.merge(%{
       # `insert_all` only generates `:id` and `:binary_id` so we'll need to generate the BatteryUUID
       # https://hexdocs.pm/ecto/Ecto.Repo.html#c:insert_all/3

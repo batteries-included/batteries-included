@@ -9,11 +9,12 @@ defmodule CommonUI.Components.Input do
   import Phoenix.HTML.Form
 
   alias CommonUI.IDHelpers
+  alias Phoenix.HTML.FormField
 
   attr :name, :any
   attr :value, :any
   attr :checked, :boolean
-  attr :field, Phoenix.HTML.FormField
+  attr :field, FormField
   attr :errors, :list, default: []
   attr :force_feedback, :boolean, default: false
   attr :label, :string, default: nil
@@ -54,7 +55,7 @@ defmodule CommonUI.Components.Input do
 
   slot :inner_block
 
-  def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+  def input(%{field: %FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))

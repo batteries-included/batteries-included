@@ -2,6 +2,7 @@ defmodule CommonCore.ET.RedisReport do
   @moduledoc false
   use CommonCore, :embedded_schema
 
+  alias CommonCore.Ecto.Schema
   alias CommonCore.StateSummary
 
   batt_embedded_schema do
@@ -20,14 +21,14 @@ defmodule CommonCore.ET.RedisReport do
         {cluster_key(cluster), cluster.num_sentinel_instances}
       end)
 
-    CommonCore.Ecto.Schema.schema_new(__MODULE__,
+    Schema.schema_new(__MODULE__,
       instance_counts: instance_counts,
       sentinel_instance_counts: sentinel_instance_counts
     )
   end
 
   def new(opts) do
-    CommonCore.Ecto.Schema.schema_new(__MODULE__, opts)
+    Schema.schema_new(__MODULE__, opts)
   end
 
   defp cluster_key(cluster) do

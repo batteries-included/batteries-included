@@ -34,11 +34,11 @@ import Config
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
 
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  level: :debug
+config :common_ui, CommonUIWeb.Endpoint, server: false
 
 config :kube_services, :clusters, default: :service_account
 config :kube_services, cluster_type: :prod
 
-config :common_ui, CommonUIWeb.Endpoint, server: false
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  level: :debug

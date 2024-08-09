@@ -3,6 +3,7 @@ defmodule CommonCore.TraditionalServices.Service do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Containers.Container
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -73,8 +74,8 @@ defmodule CommonCore.TraditionalServices.Service do
     field :memory_requested, :integer
     field :memory_limits, :integer
 
-    embeds_many :containers, CommonCore.Containers.Container, on_replace: :delete
-    embeds_many :init_containers, CommonCore.Containers.Container, on_replace: :delete
+    embeds_many :containers, Container, on_replace: :delete
+    embeds_many :init_containers, Container, on_replace: :delete
     embeds_many :env_values, CommonCore.Containers.EnvValue, on_replace: :delete
     embeds_many :ports, CommonCore.Port, on_replace: :delete
     embeds_many :volumes, CommonCore.TraditionalServices.Volume, on_replace: :delete

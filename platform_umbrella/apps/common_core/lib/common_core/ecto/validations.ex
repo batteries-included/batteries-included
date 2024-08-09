@@ -20,10 +20,10 @@ defmodule CommonCore.Ecto.Validations do
       value = get_field(change, f)
       down = maybe_downcase(value)
 
-      if down != value do
-        put_change(changeset, f, down)
-      else
+      if down == value do
         change
+      else
+        put_change(changeset, f, down)
       end
     end)
   end
@@ -39,10 +39,10 @@ defmodule CommonCore.Ecto.Validations do
       value = get_field(change, f)
       trimmed = maybe_trim(value)
 
-      if trimmed != value do
-        put_change(changeset, f, trimmed)
-      else
+      if trimmed == value do
         change
+      else
+        put_change(changeset, f, trimmed)
       end
     end)
   end
@@ -126,10 +126,10 @@ defmodule CommonCore.Ecto.Validations do
       nil ->
         matching_preset = find_matching_preset(changeset, presets)
 
-        if matching_preset != nil do
-          put_change(changeset, :virtual_size, matching_preset)
-        else
+        if matching_preset == nil do
           put_change(changeset, :virtual_size, "custom")
+        else
+          put_change(changeset, :virtual_size, matching_preset)
         end
 
       _ ->
