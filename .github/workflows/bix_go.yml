@@ -146,4 +146,4 @@ jobs:
             ${{ runner.os }}-go-build-
 
       - name: Build bi
-        run: bin/bix build-bi
+        run: bin/bix go-build-bi
