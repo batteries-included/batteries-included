@@ -22,6 +22,7 @@ defmodule ControlServer.Repo.Migrations.Unify do
       add :num_instances, :integer
       add :type, :string
       add :users, :map
+      add :password_versions, :map
       add :database, :map
 
       add :project_id, references(:projects, on_delete: :nilify_all)

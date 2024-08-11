@@ -3,6 +3,7 @@ defmodule CommonCore.Postgres.Cluster do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Postgres.PGPasswordVersion
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -82,6 +83,7 @@ defmodule CommonCore.Postgres.Cluster do
     field :virtual_storage_size_range_value, :integer, virtual: true
 
     embeds_many :users, CommonCore.Postgres.PGUser, on_replace: :delete
+    embeds_many :password_versions, PGPasswordVersion, on_replace: :delete
     embeds_one :database, CommonCore.Postgres.PGDatabase, on_replace: :delete
 
     belongs_to :project, Project
@@ -94,6 +96,7 @@ defmodule CommonCore.Postgres.Cluster do
     cluster
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
+    |> validate_password_versions_exits()
     |> put_range_value_from_storage_size(range_ticks || storage_range_ticks())
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
@@ -103,6 +106,34 @@ defmodule CommonCore.Postgres.Cluster do
     |> foreign_key_constraint(:project_id)
     |> validate_required([:storage_size])
     |> validate_storage_size()
+  end
+
+  def validate_password_versions_exits(changeset) do
+    users = get_field(changeset, :users)
+
+    # For every user, check if there is a password version
+    Enum.reduce(users, changeset, fn user, acc ->
+      ensure_user_password_version(acc, user)
+    end)
+  end
+
+  # For a given user ensure that that the changeset has a password version for that user.
+  defp ensure_user_password_version(changeset, user) do
+    password_versions = get_field(changeset, :password_versions) || []
+
+    if Enum.any?(password_versions, &(&1.username == user.username)) do
+      changeset
+    else
+      new_version = Enum.reduce(password_versions, 0, fn pv, acc -> max(acc, pv.version) end) + 1
+
+      new_password_version = %PGPasswordVersion{
+        username: user.username,
+        version: new_version,
+        password: CommonCore.Defaults.random_key_string(24)
+      }
+
+      put_change(changeset, :password_versions, [new_password_version | password_versions])
+    end
   end
 
   def put_storage_size(changeset, range_value, range_ticks \\ nil) do

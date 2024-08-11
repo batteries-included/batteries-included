@@ -77,6 +77,9 @@ defmodule CommonCore.Ecto.Validations do
       nil ->
         put_change(changeset, field, key_func.(new_length))
 
+      "" ->
+        put_change(changeset, field, key_func.(new_length))
+
       _ ->
         changeset
     end

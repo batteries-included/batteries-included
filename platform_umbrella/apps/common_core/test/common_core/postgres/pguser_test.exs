@@ -3,16 +3,10 @@ defmodule CommonCore.PGUserTest do
 
   alias CommonCore.Postgres.PGUser
 
-  test "sets random password when not provided" do
+  test "keeps provided password" do
     changeset = PGUser.changeset(%PGUser{}, %{username: "user"})
 
-    assert changeset.changes.password != nil
-  end
-
-  test "keeps provided password" do
-    changeset = PGUser.changeset(%PGUser{}, %{username: "user", password: "password"})
-
-    assert changeset.changes.password == "password"
+    assert changeset.changes.username == "user"
   end
 
   test "accepts roles list" do

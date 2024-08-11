@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_019128b8cc767749a173d7f7f85c59d3",
+        "id": "batt_01913caebe57714bbd3d4f802c779e59",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -21,12 +21,12 @@
           "default_size": "medium",
           "cluster_name": "int-test",
           "server_in_cluster": false,
-          "install_id": "batt_019128b8cc717fe989b20bce14207587",
+          "install_id": "batt_01913caebe547ee18be201771d5ff4d2",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "bQdAXmsliqZSMV3gMaK1klU1kL_ZqhUXawIRAcvvehI",
+            "d": "ZFQr3Om-AdSkWsNP_TDiuXTzRYDvROjBQLxJCI4s9hc",
             "kty": "OKP",
-            "x": "GrV6s9SLSwWBbKr3Wtx1wS86tx--mEGKk_aiVZ_Q5EU"
+            "x": "lZdiLh6Q1LpwOEnENzSnK1kalhY9TSS8AbC1opFk2HI"
           },
           "upgrade_days_of_week": [
             true,
@@ -41,6 +41,18 @@
           "upgrade_end_hour": 23
         },
         "group": "magic",
+        "inserted_at": null,
+        "updated_at": null
+      },
+      {
+        "id": "batt_01913caebe577a17bf363ce87460e586",
+        "type": "traditional_services",
+        "config": {
+          "type": "traditional_services",
+          "namespace": "battery-traditional",
+          "namespace_override": null
+        },
+        "group": "devtools",
         "inserted_at": null,
         "updated_at": null
       }
@@ -95,7 +107,6 @@
           {
             "position": null,
             "username": "battery-local-user",
-            "password": "not-real",
             "roles": [
               "superuser",
               "createrole",
@@ -107,7 +118,6 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "password": "3KFVXJ5ZVGJ3SBQIUGMJNW7U",
             "roles": [
               "createdb",
               "login"
@@ -122,6 +132,18 @@
         "updated_at": null,
         "num_instances": 1,
         "virtual_size": "medium",
+        "password_versions": [
+          {
+            "version": 2,
+            "username": "battery-control-user",
+            "password": "63XX5GKYHOEGUUDHI4MYFG6Y"
+          },
+          {
+            "version": 1,
+            "username": "battery-local-user",
+            "password": "not-real"
+          }
+        ],
         "cpu_requested": 4000,
         "cpu_limits": 4000,
         "memory_requested": 8589934592,
@@ -145,7 +167,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "AKR7FBXWAQXNJZ2FGLBDGJZENH2SILCNYL7CDH5M4654XCDXNAUA===="
+          "battery/hash": "LROL6MSE42GCQP6GU2CS6VRZLKJ6RR6FRG7U3GADNZ7TSGPMCMGA===="
         },
         "labels": {
           "app": "battery-core",
@@ -155,7 +177,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019128b8cc767749a173d7f7f85c59d3",
+          "battery/owner": "batt_01913caebe57714bbd3d4f802c779e59",
           "istio-injection": "enabled",
           "version": "latest"
         },

@@ -16,6 +16,7 @@ defmodule CommonCore.Defaults.ForgejoDB do
           credential_namespaces: ["battery-core"]
         }
       ],
+      :password_versions => [],
       :database => %{name: "forgejo", owner: @username}
     }
   end
