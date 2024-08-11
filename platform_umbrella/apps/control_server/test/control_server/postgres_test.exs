@@ -59,7 +59,7 @@ defmodule ControlServer.PostgresTest do
       assert cluster.name == "some-name"
       assert cluster.num_instances == 2
       assert cluster.storage_size == 209_715_200
-      assert [%PGUser{username: "userone", roles: ["superuser"], password: _}] = cluster.users
+      assert [%PGUser{username: "userone", roles: ["superuser"]}] = cluster.users
     end
 
     test "create_cluster/1 with invalid data returns error changeset" do

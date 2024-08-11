@@ -48,7 +48,6 @@ defmodule ControlServer.Factory do
   def postgres_user_factory do
     %Postgres.PGUser{
       username: sequence("postgres-cluster-"),
-      password: sequence("postgres-password-"),
       roles: ["login"]
     }
   end

@@ -47,7 +47,7 @@ defmodule CommonCore.Resources.BatteryTest do
       %Cluster{
         name: Defaults.ControlDB.cluster_name(),
         type: :internal,
-        users: [%PGUser{username: Defaults.ControlDB.user_name(), password: "test"}]
+        users: [%PGUser{username: Defaults.ControlDB.user_name()}]
       }
     ]
   end

@@ -203,9 +203,13 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       |> Enum.sort_by(& &1.version, :desc)
       |> Enum.find(cluster.password_versions, &(&1.username == user.username))
 
-    password = password_version.password
-    dsn = "postgresql://#{user.username}:#{password}@#{hostname}/#{cluster.database.name}"
-    %{dsn: dsn, username: user.username, password: password, hostname: hostname}
+    if password_version == nil do
+      %{}
+    else
+      password = password_version.password
+      dsn = "postgresql://#{user.username}:#{password}@#{hostname}/#{cluster.database.name}"
+      %{dsn: dsn, username: user.username, password: password, hostname: hostname}
+    end
   end
 
   defp pg_user_to_pg_role(state, %Cluster{} = cluster, user) do

@@ -10,9 +10,9 @@ defmodule CommonCore.PGUserTest do
   end
 
   test "keeps provided password" do
-    changeset = PGUser.changeset(%PGUser{}, %{username: "user", password: "password"})
+    changeset = PGUser.changeset(%PGUser{}, %{username: "user"})
 
-    assert changeset.changes.password == "password"
+    assert changeset.changes.username == "user"
   end
 
   test "accepts roles list" do
