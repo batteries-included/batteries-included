@@ -5,11 +5,10 @@ defmodule CommonCore.Postgres.PGUser do
 
   import CommonCore.Postgres
 
-  @required_fields ~w(username password roles)a
+  @required_fields ~w(username roles)a
 
   batt_embedded_schema do
     field :username, :string
-    secret_field :password, length: 24
     field :roles, {:array, :string}, default: []
     field :credential_namespaces, {:array, :string}, default: []
     field :position, :integer, virtual: true

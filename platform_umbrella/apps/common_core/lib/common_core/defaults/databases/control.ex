@@ -6,7 +6,11 @@ defmodule CommonCore.Defaults.ControlDB do
   @database_name "control"
 
   def local_user do
-    %{username: "battery-local-user", roles: ["superuser", "createrole", "createdb", "login"], password: "not-real"}
+    %{username: "battery-local-user", roles: ["superuser", "createrole", "createdb", "login"]}
+  end
+
+  def local_user_password_version do
+    %{username: "battery-local-user", version: 1, password: "not-real"}
   end
 
   def control_cluster(additional_namespaces \\ [], size \\ :tiny) do
@@ -18,6 +22,7 @@ defmodule CommonCore.Defaults.ControlDB do
       :users => [
         %{username: @username, roles: ["createdb", "login"], credential_namespaces: additional_namespaces}
       ],
+      :password_versions => [],
       :database => %{name: @database_name, owner: @username}
     }
   end

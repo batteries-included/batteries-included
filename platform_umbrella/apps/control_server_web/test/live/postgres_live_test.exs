@@ -68,7 +68,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       params =
         :postgres_cluster
         |> params_for(project_id: project.id)
-        |> Map.drop(~w(id users project type storage_class storage_size database)a)
+        |> Map.drop(~w(id users project type storage_class storage_size database password_versions)a)
 
       conn
       |> start(~p"/postgres/new")
@@ -206,6 +206,34 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
       assert html =~ "Storage Class"
       assert html =~ CommonCore.Util.Memory.humanize(cluster.storage_size)
+    end
+
+    test "editing a cluster with a user", %{conn: conn} do
+      valid_user_params = %{"roles" => ["login"], "username" => "my_user"}
+
+      conn
+      |> start(~p|/postgres/new|)
+      |> click("button", "New User")
+      |> submit_form("#user-form", %{"pg_user" => valid_user_params})
+      |> assert_html(valid_user_params["username"])
+      |> submit_form("#cluster-form", @valid_attrs)
+
+      cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
+
+      updated_user_params = %{"roles" => ["login", "superuser"], "username" => "my_user"}
+
+      conn
+      |> start(~p"/postgres/#{cluster.id}/edit")
+      |> click("#edit_user_#{valid_user_params["username"]}")
+      |> submit_form("#user-form", %{"pg_user" => updated_user_params})
+      |> submit_form("#cluster-form", @valid_attrs)
+
+      updated_cluster = Repo.get(Cluster, cluster.id)
+
+      # Ensure that the users password is not reset
+      previous_user = Enum.find(cluster.password_versions, &(&1.username == updated_user_params["username"]))
+      new_user = Enum.find(updated_cluster.password_versions, &(&1.username == updated_user_params["username"]))
+      assert previous_user.password == new_user.password
     end
   end
 

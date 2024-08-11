@@ -23,8 +23,13 @@ defmodule CommonCore.Installs.Postgres do
     case usage do
       internal when internal in [:internal_dev, :internal_int_test] ->
         # For local development we add a user with a known password and roles
-        users = [ControlDB.local_user() | Map.get(cluster, :users, [])]
-        %{cluster | users: users}
+        local_user = CommonCore.Defaults.ControlDB.local_user()
+        users = [local_user | Map.get(cluster, :users, [])]
+
+        local_user_password_version = CommonCore.Defaults.ControlDB.local_user_password_version()
+        password_versions = [local_user_password_version | Map.get(config, :password_versions, [])]
+
+        %{cluster | users: users, password_versions: password_versions}
 
       _ ->
         cluster

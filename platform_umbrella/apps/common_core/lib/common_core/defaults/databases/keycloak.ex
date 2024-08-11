@@ -13,6 +13,7 @@ defmodule CommonCore.Defaults.KeycloakDB do
       :users => [
         %{username: @keycloak_username, roles: ["createdb", "login"], credential_namespaces: ["battery-core"]}
       ],
+      :password_versions => [],
       :database => %{name: "keycloak", owner: @keycloak_username}
     }
   end
