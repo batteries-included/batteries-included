@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Projects.WebForm do
   alias CommonCore.Ecto.Validations
   alias CommonCore.Knative.Service, as: KnativeService
   alias CommonCore.Postgres.Cluster, as: PGCluster
-  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias CommonCore.Redis.RedisInstance, as: RedisCluster
   alias CommonCore.TraditionalServices.Service, as: TraditionalService
   alias ControlServer.Postgres
   alias ControlServerWeb.KnativeFormSubcomponents

@@ -2,7 +2,7 @@ defmodule ControlServerWeb.RedisFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  alias CommonCore.Redis.FailoverCluster
+  alias CommonCore.Redis.RedisInstance
   alias CommonCore.Util.Memory
 
   attr :class, :any, default: nil
@@ -14,14 +14,23 @@ defmodule ControlServerWeb.RedisFormSubcomponents do
     <div class={["contents", @class]}>
       <.grid columns={[sm: 1, lg: 2]} class="items-center">
         <.input field={@form[:name]} label="Name" disabled={@action == :edit} />
-
         <.input
-          field={@form[:virtual_size]}
+          field={@form[:instance_type]}
+          label="Type"
+          disabled={@action == :edit}
           type="select"
-          label="Size"
-          placeholder="Choose a size"
-          options={FailoverCluster.preset_options_for_select()}
+          options={RedisInstance.type_options_for_select()}
         />
+
+        <div class="lg:col-span-2">
+          <.input
+            field={@form[:virtual_size]}
+            type="select"
+            label="Size"
+            placeholder="Choose a size"
+            options={RedisInstance.preset_options_for_select()}
+          />
+        </div>
       </.grid>
 
       <.data_list

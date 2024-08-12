@@ -1,30 +1,29 @@
-defmodule ControlServerWeb.FailoverClusterJSON do
-  alias CommonCore.Redis.FailoverCluster
+defmodule ControlServerWeb.RedisInstanceJSON do
+  alias CommonCore.Redis.RedisInstance
 
   @doc """
-  Renders a list of failover_clusters.
+  Renders a list of redis_instances.
   """
-  def index(%{failover_clusters: failover_clusters}) do
-    %{data: for(failover_cluster <- failover_clusters, do: data(failover_cluster))}
+  def index(%{redis_instances: redis_instances}) do
+    %{data: for(redis_instance <- redis_instances, do: data(redis_instance))}
   end
 
   @doc """
-  Renders a single failover_cluster.
+  Renders a single redis_instance.
   """
-  def show(%{failover_cluster: failover_cluster}) do
-    %{data: data(failover_cluster)}
+  def show(%{redis_instance: redis_instance}) do
+    %{data: data(redis_instance)}
   end
 
-  defp data(%FailoverCluster{} = failover_cluster) do
+  defp data(%RedisInstance{} = redis_instance) do
     %{
-      id: failover_cluster.id,
-      name: failover_cluster.name,
-      num_redis_instances: failover_cluster.num_redis_instances,
-      num_sentinel_instances: failover_cluster.num_sentinel_instances,
-      cpu_requested: failover_cluster.cpu_requested,
-      memory_requested: failover_cluster.memory_requested,
-      memory_limits: failover_cluster.memory_limits,
-      type: failover_cluster.type
+      id: redis_instance.id,
+      name: redis_instance.name,
+      num_instances: redis_instance.num_instances,
+      cpu_requested: redis_instance.cpu_requested,
+      memory_requested: redis_instance.memory_requested,
+      memory_limits: redis_instance.memory_limits,
+      type: redis_instance.type
     }
   end
 end

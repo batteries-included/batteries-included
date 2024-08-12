@@ -5,10 +5,10 @@ defmodule ControlServer.RedisFixtures do
   """
 
   @doc """
-  Generate a failover_cluster.
+  Generate a redis_instance.
   """
-  def failover_cluster_fixture(attrs \\ %{}) do
-    {:ok, failover_cluster} =
+  def redis_instance_fixture(attrs \\ %{}) do
+    {:ok, redis_instance} =
       attrs
       |> Enum.into(%{
         type: :standard,
@@ -17,11 +17,10 @@ defmodule ControlServer.RedisFixtures do
         memory_requested: 90,
         cpu_limits: 101,
         cpu_requested: 91,
-        num_redis_instances: 42,
-        num_sentinel_instances: 43
+        num_instances: 42
       })
-      |> ControlServer.Redis.create_failover_cluster()
+      |> ControlServer.Redis.create_redis_instance()
 
-    Map.put(failover_cluster, :virtual_size, nil)
+    Map.put(redis_instance, :virtual_size, nil)
   end
 end

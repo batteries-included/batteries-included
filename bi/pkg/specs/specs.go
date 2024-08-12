@@ -35,7 +35,7 @@ type StateSummarySpec struct {
 	KnativeServices     []map[string]interface{} `json:"knative_services"`
 	Notebooks           []map[string]interface{} `json:"notebooks"`
 	PostgresClusters    []map[string]interface{} `json:"postgres_clusters"`
-	RedisClusters       []map[string]interface{} `json:"redis_clusters"`
+	RedisInstances      []map[string]interface{} `json:"redis_instances"`
 	TraditionalServices []map[string]interface{} `json:"traditional_services"`
 }
 

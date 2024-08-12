@@ -12,7 +12,7 @@ defmodule ControlServerWeb.Live.RedisNew do
      socket
      |> assign(:project_id, params["project_id"])
      |> assign(:current_page, :data)
-     |> assign_failover_cluster()
+     |> assign_redis_instance()
      |> assign_page_title()}
   end
 
@@ -21,21 +21,21 @@ defmodule ControlServerWeb.Live.RedisNew do
     {:noreply, socket}
   end
 
-  defp assign_failover_cluster(socket) do
-    assign(socket, :failover_cluster, KubeServices.SmartBuilder.new_redis())
+  defp assign_redis_instance(socket) do
+    assign(socket, :redis_instance, KubeServices.SmartBuilder.new_redis())
   end
 
   defp assign_page_title(socket) do
     assign(socket, :page_title, "New Redis Cluster")
   end
 
-  def update(%{failover_cluster: _failover_cluster} = assigns, socket) do
+  def update(%{redis_instance: _redis_instance} = assigns, socket) do
     {:ok, assign(socket, assigns)}
   end
 
   @impl Phoenix.LiveView
-  def handle_info({"failover_cluster:save", %{"failover_cluster" => failover_cluster}}, socket) do
-    new_path = ~p"/redis/#{failover_cluster}/show"
+  def handle_info({"redis_instance:save", %{"redis_instance" => redis_instance}}, socket) do
+    new_path = ~p"/redis/#{redis_instance}/show"
 
     {:noreply, push_navigate(socket, to: new_path)}
   end
@@ -46,8 +46,8 @@ defmodule ControlServerWeb.Live.RedisNew do
     <div>
       <.live_component
         module={FormComponent}
-        failover_cluster={@failover_cluster}
-        id={@failover_cluster.id || "new-failover-cluster-form"}
+        redis_instance={@redis_instance}
+        id={@redis_instance.id || "new-failover-cluster-form"}
         title={@page_title}
         action={:new}
         save_target={self()}

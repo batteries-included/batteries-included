@@ -20,7 +20,7 @@ defmodule ControlServerWeb.Live.DataHome do
      |> assign_current_page()
      |> assign_page_title()
      |> assign_batteries()
-     |> assign_redis_clusters()
+     |> assign_redis_instances()
      |> assign_postgres_clusters()
      |> assign_ferret_services()}
   end
@@ -45,8 +45,8 @@ defmodule ControlServerWeb.Live.DataHome do
     assign(socket, postgres_clusters: postgres_clusters())
   end
 
-  defp assign_redis_clusters(socket) do
-    assign(socket, redis_clusters: redis_clusters())
+  defp assign_redis_instances(socket) do
+    assign(socket, redis_instances: redis_instances())
   end
 
   defp assign_ferret_services(socket) do
@@ -114,7 +114,7 @@ defmodule ControlServerWeb.Live.DataHome do
           <% :ferretdb -> %>
             <.ferretdb_panel ferret_services={@ferret_services} />
           <% :redis -> %>
-            <.redis_panel clusters={@redis_clusters} />
+            <.redis_panel clusters={@redis_instances} />
           <% _ -> %>
         <% end %>
       <% end %>

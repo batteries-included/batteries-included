@@ -2,7 +2,7 @@ defmodule ControlServerWeb.RedisTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  alias CommonCore.Redis.FailoverCluster
+  alias CommonCore.Redis.RedisInstance
   alias CommonCore.Util.Memory
 
   attr :rows, :list, default: []
@@ -21,11 +21,8 @@ defmodule ControlServerWeb.RedisTable do
     >
       <:col :let={redis} :if={!@abridged} field={:id} label="ID"><%= redis.id %></:col>
       <:col :let={redis} field={:name} label="Name"><%= redis.name %></:col>
-      <:col :let={redis} :if={!@abridged} field={:num_redis_instances} label="Instances">
-        <%= redis.num_redis_instances %>
-      </:col>
-      <:col :let={redis} :if={!@abridged} field={:num_sentinel_instances} label="Sentinel Instances">
-        <%= redis.num_sentinel_instances %>
+      <:col :let={redis} :if={!@abridged} field={:num_instances} label="Instances">
+        <%= redis.num_instances %>
       </:col>
       <:col :let={redis} :if={!@abridged} field={:memory_limits} label="Memory Limits">
         <%= Memory.humanize(redis.memory_limits) %>
@@ -48,6 +45,6 @@ defmodule ControlServerWeb.RedisTable do
     """
   end
 
-  def show_url(%FailoverCluster{} = cluster), do: ~p"/redis/#{cluster}/show"
-  def edit_url(%FailoverCluster{} = cluster), do: ~p"/redis/#{cluster}/edit"
+  def show_url(%RedisInstance{} = cluster), do: ~p"/redis/#{cluster}/show"
+  def edit_url(%RedisInstance{} = cluster), do: ~p"/redis/#{cluster}/edit"
 end

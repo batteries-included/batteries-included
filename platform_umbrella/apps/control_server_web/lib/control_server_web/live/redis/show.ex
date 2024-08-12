@@ -31,7 +31,7 @@ defmodule ControlServerWeb.Live.RedisShow do
      |> assign_timeline_installed()
      |> assign(:id, id)
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:failover_cluster, Redis.get_failover_cluster!(id, preload: [:project]))
+     |> assign(:redis_instance, Redis.get_redis_instance!(id, preload: [:project]))
      |> assign(:k8_failover, k8_failover(id))
      |> assign(:k8_services, k8_services(id))
      |> assign(:k8_pods, k8_pods(id))}
@@ -52,7 +52,7 @@ defmodule ControlServerWeb.Live.RedisShow do
 
   @impl Phoenix.LiveView
   def handle_event("delete", _, socket) do
-    {:ok, _} = Redis.delete_failover_cluster(socket.assigns.failover_cluster)
+    {:ok, _} = Redis.delete_redis_instance(socket.assigns.redis_instance)
 
     {:noreply, push_navigate(socket, to: ~p"/redis")}
   end
@@ -60,11 +60,11 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl Phoenix.LiveView
   def render(%{live_action: :show} = assigns) do
     ~H"""
-    <.page_header title={"Redis Cluster: #{@failover_cluster.name}"} back_link={~p"/redis"}>
+    <.page_header title={"Redis Cluster: #{@redis_instance.name}"} back_link={~p"/redis"}>
       <:menu>
-        <.badge :if={@failover_cluster.project_id}>
-          <:item label="Project" navigate={~p"/projects/#{@failover_cluster.project_id}"}>
-            <%= @failover_cluster.project.name %>
+        <.badge :if={@redis_instance.project_id}>
+          <:item label="Project" navigate={~p"/projects/#{@redis_instance.project_id}"}>
+            <%= @redis_instance.project.name %>
           </:item>
         </.badge>
       </:menu>
@@ -73,7 +73,7 @@ defmodule ControlServerWeb.Live.RedisShow do
         <.tooltip target_id="edit-tooltip">Edit Cluster</.tooltip>
         <.tooltip target_id="delete-tooltip">Delete Cluster</.tooltip>
         <.flex gaps="0">
-          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@failover_cluster)} />
+          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@redis_instance)} />
           <.button
             id="delete-tooltip"
             variant="icon"
@@ -89,13 +89,10 @@ defmodule ControlServerWeb.Live.RedisShow do
       <.panel title="Details" variant="gray">
         <.data_list>
           <:item title="Instances">
-            <%= @failover_cluster.num_redis_instances %>
+            <%= @redis_instance.num_instances %>
           </:item>
-          <:item title="Sentinel Instances">
-            <%= @failover_cluster.num_sentinel_instances %>
-          </:item>
-          <:item :if={@failover_cluster.memory_limits} title="Memory Limits">
-            <%= Memory.humanize(@failover_cluster.memory_limits) %>
+          <:item :if={@redis_instance.memory_limits} title="Memory Limits">
+            <%= Memory.humanize(@redis_instance.memory_limits) %>
           </:item>
           <:item title="Started">
             <.relative_display time={creation_timestamp(@k8_failover)} />
@@ -104,7 +101,7 @@ defmodule ControlServerWeb.Live.RedisShow do
       </.panel>
 
       <.flex column class="justify-start">
-        <.a variant="bordered" navigate={services_url(@failover_cluster)}>Services</.a>
+        <.a variant="bordered" navigate={services_url(@redis_instance)}>Services</.a>
       </.flex>
 
       <.panel title="Pods" class="col-span-2">
@@ -117,7 +114,7 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl Phoenix.LiveView
   def render(%{live_action: :services} = assigns) do
     ~H"""
-    <.page_header title="Services" back_link={show_url(@failover_cluster)} />
+    <.page_header title="Services" back_link={show_url(@redis_instance)} />
 
     <.panel>
       <.services_table services={@k8_services} />
@@ -128,9 +125,9 @@ defmodule ControlServerWeb.Live.RedisShow do
   defp page_title(:show), do: "Redis Cluster"
   defp page_title(:services), do: "Redis Cluster Services"
 
-  defp edit_url(failover_cluster), do: ~p"/redis/#{failover_cluster}/edit"
-  defp show_url(failover_cluster), do: ~p"/redis/#{failover_cluster}/show"
-  defp services_url(failover_cluster), do: ~p"/redis/#{failover_cluster}/services"
+  defp edit_url(redis_instance), do: ~p"/redis/#{redis_instance}/edit"
+  defp show_url(redis_instance), do: ~p"/redis/#{redis_instance}/show"
+  defp services_url(redis_instance), do: ~p"/redis/#{redis_instance}/services"
 
   defp k8_failover(id) do
     Enum.find(KubeState.get_all(:redis_failover), nil, fn pg -> id == labeled_owner(pg) end)

@@ -5,7 +5,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   alias CommonCore.Ecto.Validations
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Postgres.Cluster, as: PGCluster
-  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias CommonCore.Redis.RedisInstance, as: RedisCluster
   alias ControlServerWeb.FerretDBFormSubcomponents
   alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm

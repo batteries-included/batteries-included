@@ -119,14 +119,22 @@
             "position": null,
             "username": "battery-local-user",
             "password": "not-real",
-            "roles": ["superuser", "createrole", "createdb", "login"],
+            "roles": [
+              "superuser",
+              "createrole",
+              "createdb",
+              "login"
+            ],
             "credential_namespaces": []
           },
           {
             "position": null,
             "username": "battery-control-user",
             "password": "XS53SLUQUOUAMBCJD2EFQAYD",
-            "roles": ["createdb", "login"],
+            "roles": [
+              "createdb",
+              "login"
+            ],
             "credential_namespaces": []
           }
         ],
@@ -140,7 +148,7 @@
     ],
     "knative_services": [],
     "ip_address_pools": [],
-    "redis_clusters": [],
+    "redis_instances": [],
     "projects": [],
     "kube_state": {}
   },

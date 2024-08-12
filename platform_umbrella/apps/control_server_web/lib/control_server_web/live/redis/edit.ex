@@ -16,12 +16,12 @@ defmodule ControlServerWeb.Live.RedisEdit do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign_failover_cluster(id)
+     |> assign_redis_instance(id)
      |> assign_page_title()}
   end
 
-  defp assign_failover_cluster(socket, id) do
-    assign(socket, :failover_cluster, Redis.get_failover_cluster!(id))
+  defp assign_redis_instance(socket, id) do
+    assign(socket, :redis_instance, Redis.get_redis_instance!(id))
   end
 
   defp assign_page_title(socket) do
@@ -29,7 +29,7 @@ defmodule ControlServerWeb.Live.RedisEdit do
   end
 
   @impl Phoenix.LiveView
-  def handle_info({"failover_cluster:save", %{"failover_cluster" => cluster}}, socket) do
+  def handle_info({"redis_instance:save", %{"redis_instance" => cluster}}, socket) do
     {:noreply, push_navigate(socket, to: ~p"/redis/#{cluster}/show")}
   end
 
@@ -39,8 +39,8 @@ defmodule ControlServerWeb.Live.RedisEdit do
     <div>
       <.live_component
         module={FormComponent}
-        failover_cluster={@failover_cluster}
-        id={@failover_cluster.id || "edit-failover-cluster-form"}
+        redis_instance={@redis_instance}
+        id={@redis_instance.id || "edit-failover-cluster-form"}
         action={:edit}
         title={@page_title}
       />

@@ -178,8 +178,7 @@ defmodule CommonCore.Factory do
   def redis_factory do
     %{
       name: sequence("test-redis-failover"),
-      num_redis_instances: sequence(:num_redis_instances, [3, 5, 7, 9]),
-      num_sentinel_instances: sequence(:num_sentinel_instances, [1, 2, 3])
+      num_instances: sequence(:num_instances, [3, 5, 7, 9])
     }
   end
 

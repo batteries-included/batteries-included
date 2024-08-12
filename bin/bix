@@ -508,7 +508,11 @@ do_ex_test() {
     try_portforward "${slug}" &
 
     export MIX_ENV=test
-    run_mix test --warnings-as-errors --all-warnings >/dev/null
+    if [[ $TRACE -eq 1 ]]; then
+        run_mix test --trace --warnings-as-errors --all-warnings
+    else
+        run_mix test --warnings-as-errors --all-warnings >/dev/null
+    fi
     log "Elixir tests ${GREEN}Passed${NOFORMAT}"
 }
 

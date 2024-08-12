@@ -57,7 +57,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
 
   defp assign_pods(%{assigns: %{project: project}} = socket) do
     postgres_ids = Enum.map(project.postgres_clusters, & &1.id)
-    redis_ids = Enum.map(project.redis_clusters, & &1.id)
+    redis_ids = Enum.map(project.redis_instances, & &1.id)
     ferret_ids = Enum.map(project.ferret_services, & &1.id)
     knative_ids = Enum.map(project.knative_services, & &1.id)
     traditional_ids = Enum.map(project.traditional_services, & &1.id)
@@ -210,11 +210,11 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         <.postgres_clusters_table abridged rows={@project.postgres_clusters} />
       </.panel>
 
-      <.panel :if={@project.redis_clusters != []} title="Redis">
+      <.panel :if={@project.redis_instances != []} title="Redis">
         <:menu>
           <.button variant="minimal" link={~p"/redis"}>View All</.button>
         </:menu>
-        <.redis_table abridged rows={@project.redis_clusters} />
+        <.redis_table abridged rows={@project.redis_instances} />
       </.panel>
 
       <.panel :if={@project.ferret_services != []} title="FerretDB/MongoDB">

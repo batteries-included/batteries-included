@@ -70,24 +70,28 @@ defmodule ControlServer.Repo.Migrations.Unify do
 
     create unique_index(:knative_services, [:name])
 
-    create table(:redis_clusters, primary_key: false) do
+    create table(:redis_instances, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :type, :string, null: false
 
-      add :num_redis_instances, :integer
-      add :num_sentinel_instances, :integer
+      add :instance_type, :string
+      add :storage_size, :bigint
+      add :storage_class, :string
+
+      add :num_instances, :integer
       add :cpu_requested, :integer
       add :cpu_limits, :bigint
       add :memory_requested, :bigint
       add :memory_limits, :bigint
 
       add :project_id, references(:projects, on_delete: :nilify_all)
+      add :replication_redis_instance_id, references(:redis_instances)
 
       timestamps(type: :utc_datetime_usec)
     end
 
-    create unique_index(:redis_clusters, [:type, :name])
+    create unique_index(:redis_instances, [:type, :name])
 
     create table(:ip_address_pools, primary_key: false) do
       add :id, :binary_id, primary_key: true

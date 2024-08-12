@@ -6,7 +6,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Containers.EnvValue
   alias CommonCore.Postgres.Cluster, as: PGCluster
-  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias CommonCore.Redis.RedisInstance, as: RedisCluster
   alias CommonCore.StateSummary.PostgresState
   alias ControlServer.Batteries
   alias ControlServer.Batteries.Installer
@@ -175,7 +175,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   defp create_redis(project, %{"redis" => redis_data}) do
     redis_data
     |> Map.put("project_id", project.id)
-    |> Redis.create_failover_cluster()
+    |> Redis.create_redis_instance()
   end
 
   defp create_redis(_project, _redis_data), do: {:ok, nil}

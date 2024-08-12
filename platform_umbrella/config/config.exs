@@ -64,7 +64,7 @@ config :ex_audit,
     CommonCore.Knative.Service,
     CommonCore.MetalLB.IPAddressPool,
     CommonCore.Postgres.Cluster,
-    CommonCore.Redis.FailoverCluster
+    CommonCore.Redis.RedisInstance
   ],
   primitive_structs: [
     Date,
