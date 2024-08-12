@@ -9,5 +9,7 @@ defmodule CommonCore.Batteries.MetalLBConfig do
     defaultable_field :speaker_image, :string, default: Defaults.Images.metallb_speaker_image()
     defaultable_field :controller_image, :string, default: Defaults.Images.metallb_controller_image()
     defaultable_field :frrouting_image, :string, default: Defaults.Images.frrouting_frr_image()
+
+    field :enable_pod_monitor, :boolean, default: false
   end
 end

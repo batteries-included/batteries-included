@@ -7,7 +7,7 @@ defmodule CommonCore.Resources.MetalLBMonitoring do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
 
-  resource(:monitoring_pod_monitor_controller, _battery, state) do
+  resource(:monitoring_pod_monitor_controller, battery, state) do
     namespace = base_namespace(state)
 
     spec =
@@ -17,7 +17,7 @@ defmodule CommonCore.Resources.MetalLBMonitoring do
       |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "monitoring"}])
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => "metallb", "battery/component" => "metallb"}}
+        %{"matchLabels" => %{"battery/app" => "metallb", "battery/component" => "controller"}}
       )
 
     :monitoring_pod_monitor
@@ -26,9 +26,10 @@ defmodule CommonCore.Resources.MetalLBMonitoring do
     |> B.component_labels("controller")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
+    |> F.require(battery.config.enable_pod_monitor)
   end
 
-  resource(:monitoring_pod_monitor_speaker, _battery, state) do
+  resource(:monitoring_pod_monitor_speaker, battery, state) do
     namespace = base_namespace(state)
 
     spec =
@@ -38,7 +39,7 @@ defmodule CommonCore.Resources.MetalLBMonitoring do
       |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "monitoring"}])
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => "metallb", "battery/component" => "metallb"}}
+        %{"matchLabels" => %{"battery/app" => "metallb", "battery/component" => "speaker"}}
       )
 
     :monitoring_pod_monitor
@@ -47,6 +48,7 @@ defmodule CommonCore.Resources.MetalLBMonitoring do
     |> B.component_labels("speaker")
     |> B.spec(spec)
     |> F.require_battery(state, :victoria_metrics)
+    |> F.require(battery.config.enable_pod_monitor)
   end
 
   resource(:monitoring_service_monitor_controller, _battery, state) do
@@ -100,7 +102,7 @@ defmodule CommonCore.Resources.MetalLBMonitoring do
       %{}
       |> Map.put("clusterIP", "None")
       |> Map.put("ports", [%{"name" => "metrics", "port" => 7472, "targetPort" => 7472}])
-      |> Map.put("selector", %{"battery/app" => "metallb", "battery/component" => "metallb"})
+      |> Map.put("selector", %{"battery/app" => "metallb", "battery/component" => "controller"})
       |> Map.put("sessionAffinity", "None")
 
     :service
@@ -122,7 +124,7 @@ defmodule CommonCore.Resources.MetalLBMonitoring do
         %{"name" => "metrics", "port" => 7472, "targetPort" => 7472},
         %{"name" => "frrmetrics", "port" => 7473, "targetPort" => 7473}
       ])
-      |> Map.put("selector", %{"battery/app" => "metallb", "battery/component" => "metallb"})
+      |> Map.put("selector", %{"battery/app" => "metallb", "battery/component" => "speaker"})
       |> Map.put("sessionAffinity", "None")
 
     :service
