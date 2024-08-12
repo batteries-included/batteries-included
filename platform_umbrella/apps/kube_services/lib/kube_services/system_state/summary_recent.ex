@@ -83,10 +83,10 @@ defmodule KubeServices.SystemState.SummaryRecent do
     GenServer.call(target, {:postgres_clusters, limit})
   end
 
-  @spec redis_clusters(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.Redis.FailoverCluster.t())
-  def redis_clusters(target \\ @me, limit \\ 7) do
-    GenServer.call(target, {:redis_clusters, limit})
+  @spec redis_instances(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
+          list(CommonCore.Redis.RedisInstance.t())
+  def redis_instances(target \\ @me, limit \\ 7) do
+    GenServer.call(target, {:redis_instances, limit})
   end
 
   @spec knative_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::

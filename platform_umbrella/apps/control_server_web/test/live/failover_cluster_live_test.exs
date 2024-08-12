@@ -1,22 +1,22 @@
-defmodule ControlServerWeb.FailoverClusterLiveTest do
+defmodule ControlServerWeb.RedisInstanceLiveTest do
   use ControlServerWeb.ConnCase
 
   import ControlServer.RedisFixtures
   import Phoenix.LiveViewTest
 
-  defp create_failover_cluster(_) do
-    failover_cluster = failover_cluster_fixture()
-    %{failover_cluster: failover_cluster}
+  defp create_redis_instance(_) do
+    redis_instance = redis_instance_fixture()
+    %{redis_instance: redis_instance}
   end
 
   describe "Index" do
-    setup [:create_failover_cluster]
+    setup [:create_redis_instance]
 
-    test "lists all failover_clusters", %{conn: conn, failover_cluster: failover_cluster} do
+    test "lists all redis_instances", %{conn: conn, redis_instance: redis_instance} do
       {:ok, _index_live, html} = live(conn, ~p"/redis")
 
       assert html =~ "Redis Clusters"
-      assert html =~ failover_cluster.name
+      assert html =~ redis_instance.name
     end
 
     test "links to new cluster form", %{conn: conn} do

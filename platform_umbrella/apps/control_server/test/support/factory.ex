@@ -10,7 +10,7 @@ defmodule ControlServer.Factory do
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres
-  alias CommonCore.Redis.FailoverCluster
+  alias CommonCore.Redis.RedisInstance
   alias CommonCore.Resources.Hashing
   alias CommonCore.Timeline
   alias CommonCore.Timeline.TimelineEvent
@@ -68,10 +68,9 @@ defmodule ControlServer.Factory do
   end
 
   def redis_cluster_factory do
-    %FailoverCluster{
+    %RedisInstance{
       name: sequence("redis-cluster-"),
-      num_redis_instances: sequence(:num_redis_instances, [1, 2, 3, 4, 5, 9]),
-      num_sentinel_instances: sequence(:num_sentinel_instances, [1, 2, 3, 4, 5, 9]),
+      num_instances: sequence(:num_instances, [1, 2, 3, 4, 5, 9]),
       type: sequence(:redis_type, [:standard, :internal])
     }
   end

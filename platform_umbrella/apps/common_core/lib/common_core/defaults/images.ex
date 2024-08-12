@@ -130,7 +130,13 @@ defmodule CommonCore.Defaults.Images do
   def promtail_image, do: "grafana/promtail:2.9.8"
 
   @spec redis_operator_image() :: String.t()
-  def redis_operator_image, do: "quay.io/spotahome/redis-operator:v1.2.4"
+  def redis_operator_image, do: "ghcr.io/ot-container-kit/redis-operator/redis-operator:v0.18.0"
+
+  @spec redis_exporter_image() :: String.t()
+  def redis_exporter_image, do: "quay.io/opstree/redis-exporter:v1.45.0"
+
+  @spec redis_image() :: String.t()
+  def redis_image, do: "quay.io/opstree/redis:v7.2.3"
 
   @spec smtp4dev_image() :: String.t()
   def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"

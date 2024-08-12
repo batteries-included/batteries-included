@@ -5,7 +5,7 @@ defmodule KubeServices.SmartBuilder do
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGUser
-  alias CommonCore.Redis.FailoverCluster, as: RedisCluster
+  alias CommonCore.Redis.RedisInstance, as: RedisCluster
   alias CommonCore.TraditionalServices.Service, as: TraditionalService
   alias KubeServices.SystemState.SummaryBatteries
 
@@ -27,17 +27,8 @@ defmodule KubeServices.SmartBuilder do
   end
 
   def new_redis do
-    # Anything but tiny will default to 1 sentinel instance
-    num_sentinel_instances =
-      if SummaryBatteries.default_size() == :tiny do
-        0
-      else
-        1
-      end
-
     %RedisCluster{
-      num_redis_instances: 1,
-      num_sentinel_instances: num_sentinel_instances,
+      num_instances: 1,
       virtual_size: Atom.to_string(SummaryBatteries.default_size())
     }
   end

@@ -1,14 +1,13 @@
-defmodule ControlServerWeb.FailoverClusterControllerTest do
+defmodule ControlServerWeb.RedisInstanceControllerTest do
   use ControlServerWeb.ConnCase
 
   import ControlServer.Factory
 
-  alias CommonCore.Redis.FailoverCluster
+  alias CommonCore.Redis.RedisInstance
 
   @invalid_attrs %{
     name: nil,
-    num_redis_instances: nil,
-    num_sentinel_instances: nil,
+    num_instances: nil,
     type: nil
   }
 
@@ -17,16 +16,16 @@ defmodule ControlServerWeb.FailoverClusterControllerTest do
   end
 
   describe "index" do
-    test "lists all failover_clusters", %{conn: conn} do
+    test "lists all redis_instances", %{conn: conn} do
       conn = get(conn, ~p"/api/redis/clusters")
       assert json_response(conn, 200)["data"] == []
     end
   end
 
-  describe "create failover_cluster" do
-    test "renders failover_cluster when data is valid", %{conn: conn} do
+  describe "create redis_instance" do
+    test "renders redis_instance when data is valid", %{conn: conn} do
       attrs = params_for(:redis_cluster, name: "some-name")
-      conn = post(conn, ~p"/api/redis/clusters", failover_cluster: attrs)
+      conn = post(conn, ~p"/api/redis/clusters", redis_instance: attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
@@ -38,27 +37,26 @@ defmodule ControlServerWeb.FailoverClusterControllerTest do
                "memory_limits" => _,
                "memory_requested" => _,
                "name" => "some-name",
-               "num_redis_instances" => _,
-               "num_sentinel_instances" => _,
+               "num_instances" => _,
                "type" => _
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/redis/clusters", failover_cluster: @invalid_attrs)
+      conn = post(conn, ~p"/api/redis/clusters", redis_instance: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "update failover_cluster" do
-    setup [:create_failover_cluster]
+  describe "update redis_instance" do
+    setup [:create_redis_instance]
 
-    test "renders failover_cluster when data is valid", %{
+    test "renders redis_instance when data is valid", %{
       conn: conn,
-      failover_cluster: %FailoverCluster{id: id} = failover_cluster
+      redis_instance: %RedisInstance{id: id} = redis_instance
     } do
       update_attrs = params_for(:redis_cluster, name: "some-updated-name")
-      conn = put(conn, ~p"/api/redis/clusters/#{failover_cluster}", failover_cluster: update_attrs)
+      conn = put(conn, ~p"/api/redis/clusters/#{redis_instance}", redis_instance: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/redis/clusters/#{id}")
@@ -69,33 +67,32 @@ defmodule ControlServerWeb.FailoverClusterControllerTest do
                "memory_limits" => _,
                "memory_requested" => _,
                "name" => "some-updated-name",
-               "num_redis_instances" => _,
-               "num_sentinel_instances" => _,
+               "num_instances" => _,
                "type" => _
              } = json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, failover_cluster: failover_cluster} do
-      conn = put(conn, ~p"/api/redis/clusters/#{failover_cluster}", failover_cluster: @invalid_attrs)
+    test "renders errors when data is invalid", %{conn: conn, redis_instance: redis_instance} do
+      conn = put(conn, ~p"/api/redis/clusters/#{redis_instance}", redis_instance: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
-  describe "delete failover_cluster" do
-    setup [:create_failover_cluster]
+  describe "delete redis_instance" do
+    setup [:create_redis_instance]
 
-    test "deletes chosen failover_cluster", %{conn: conn, failover_cluster: failover_cluster} do
-      conn = delete(conn, ~p"/api/redis/clusters/#{failover_cluster}")
+    test "deletes chosen redis_instance", %{conn: conn, redis_instance: redis_instance} do
+      conn = delete(conn, ~p"/api/redis/clusters/#{redis_instance}")
       assert response(conn, 204)
 
       assert_error_sent 404, fn ->
-        get(conn, ~p"/api/redis/clusters/#{failover_cluster}")
+        get(conn, ~p"/api/redis/clusters/#{redis_instance}")
       end
     end
   end
 
-  defp create_failover_cluster(_) do
-    failover_cluster = insert(:redis_cluster)
-    %{failover_cluster: failover_cluster}
+  defp create_redis_instance(_) do
+    redis_instance = insert(:redis_cluster)
+    %{redis_instance: redis_instance}
   end
 end

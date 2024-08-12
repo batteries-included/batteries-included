@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_019143fa5e657c11bd50ba64c0a4b0a2",
+        "id": "batt_01914818d46a7e349c88cb2e34d27e7d",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -21,12 +21,12 @@
           "default_size": "medium",
           "cluster_name": "int-test",
           "server_in_cluster": false,
-          "install_id": "batt_019143fa5e62719486a2a01320431ea9",
+          "install_id": "batt_01914818d46777359580f20ad5d73702",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "WU3iO7osTjk2xWhoQhVMSg9Jhoh9oxj9YbEJ4n8bbSY",
+            "d": "XQSmD4eYnrSz6-RT8glfGTUe4A-knv_I19M1KvGU3Ak",
             "kty": "OKP",
-            "x": "uoyx882em45QKgBYwxjtSLLcPqGq6SLyc64IN4_Gh38"
+            "x": "3PH7IMrA424L35kfTnetAzt0UfLnwbNms9SA5FEwWtA"
           },
           "upgrade_days_of_week": [
             true,
@@ -45,7 +45,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_019143fa5e66787d91b8d5a54e32c2c1",
+        "id": "batt_01914818d46a7fa0846e8d5c8a847a61",
         "type": "traditional_services",
         "config": {
           "type": "traditional_services",
@@ -136,7 +136,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "JV6BMBP52M5AAP4QXHX3L7VJ"
+            "password": "KAAR2AQGVKB3L7IEXTOYTYJM"
           },
           {
             "version": 1,
@@ -153,7 +153,7 @@
         "virtual_storage_size_range_value": 470590976688
       }
     ],
-    "redis_clusters": [],
+    "redis_instances": [],
     "projects": [],
     "ferret_services": [],
     "ip_address_pools": [],
@@ -167,7 +167,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "E4GYZBS5K7PGTC2K6VKJASFB2CFJI5PYTLZUSA5Y2QP35R7Z7LFQ===="
+          "battery/hash": "RVI5PNDXGJXADT6RJ3NSUMGGJMIWPHLXX5JPR5LKJIOGW7COB7UA===="
         },
         "labels": {
           "app": "battery-core",
@@ -177,7 +177,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019143fa5e657c11bd50ba64c0a4b0a2",
+          "battery/owner": "batt_01914818d46a7e349c88cb2e34d27e7d",
           "istio-injection": "enabled",
           "version": "latest"
         },

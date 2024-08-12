@@ -208,7 +208,7 @@ defmodule ControlServerWeb.Router do
 
     get "/system_state", SystemStateController, :index
     resources "/postgres/clusters", ClusterController, except: [:new, :edit]
-    resources "/redis/clusters", FailoverClusterController, except: [:new, :edit]
+    resources "/redis/clusters", RedisInstanceController, except: [:new, :edit]
     resources "/knative/services", KnativeServiceController, except: [:new, :edit]
     resources "/traditional_services", TraditionalServicesController, except: [:new, :edit]
     resources "/notebooks/jupyter_lab_notebooks", JupyterLabNotebookController, except: [:new, :edit]

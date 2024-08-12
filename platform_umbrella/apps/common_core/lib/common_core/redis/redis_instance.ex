@@ -1,4 +1,4 @@
-defmodule CommonCore.Redis.FailoverCluster do
+defmodule CommonCore.Redis.RedisInstance do
   @moduledoc false
 
   use CommonCore, {:schema, no_encode: [:project]}
@@ -8,7 +8,7 @@ defmodule CommonCore.Redis.FailoverCluster do
 
   @derive {
     Flop.Schema,
-    filterable: [:name], sortable: [:id, :name, :num_redis_instances, :num_sentinel_instances, :memory_limits]
+    filterable: [:name], sortable: [:id, :name, :num_instances, :memory_limits]
   }
 
   @presets [
@@ -37,17 +37,37 @@ defmodule CommonCore.Redis.FailoverCluster do
 
   @required_fields ~w(type name)a
 
-  batt_schema "redis_clusters" do
+  batt_schema "redis_instances" do
     slug_field :name
+    field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
 
-    field :num_redis_instances, :integer, default: 1
-    field :num_sentinel_instances, :integer
+    # What kind of redis setup is this?
+    #
+    # - standalone: A single redis instance. No replication or clustering. Num instances is always 1.
+    # - replication: A master and one or more slaves.
+    # - sentinel: A set of processes that watch a redis replication setup and can failover to a new master if the current master fails.
+    # - cluster: A cluster of redis instances with sharding and replication.
+    field :instance_type, Ecto.Enum, values: [:standalone, :replication, :sentinel, :cluster], default: :standalone
+
+    # Not used on :standalone
+    field :num_instances, :integer, default: 1
+
+    # Only used on :sentinel this will point to redis replication instances.
+    belongs_to :replication_redis_instance, __MODULE__
+
+    # Only used on :replication
+    has_many :sentinel_instances, __MODULE__, foreign_key: :replication_redis_instance_id
+
+    # Resources
     field :cpu_requested, :integer
     field :cpu_limits, :integer
     field :memory_requested, :integer
     field :memory_limits, :integer
 
-    field :type, Ecto.Enum, values: [:standard, :internal], default: :standard
+    # Storage Info
+    # If storage size is set then redis will get a persistent volume.
+    field :storage_size, :integer
+    field :storage_class, :string
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true
@@ -65,9 +85,14 @@ defmodule CommonCore.Redis.FailoverCluster do
 
   def preset_options_for_select, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
 
+  # Note that Sentinel is not a valid option for the user to select.
+  # that's until we have a proper ui for it.
+  def type_options_for_select,
+    do: Enum.map([:standalone, :replication, :cluster], &{String.capitalize(to_string(&1)), &1})
+
   @doc false
-  def changeset(failover_cluster, attrs) do
-    failover_cluster
+  def changeset(redis_instance, attrs) do
+    redis_instance
     |> CommonCore.Ecto.Schema.schema_changeset(attrs)
     |> maybe_set_virtual_size(@presets)
     |> unique_constraint([:type, :name])

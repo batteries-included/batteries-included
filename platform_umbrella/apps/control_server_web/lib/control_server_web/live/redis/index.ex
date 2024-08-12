@@ -16,11 +16,11 @@ defmodule ControlServerWeb.Live.RedisIndex do
 
   @impl Phoenix.LiveView
   def handle_params(params, _session, socket) do
-    with {:ok, {failover_clusters, meta}} <- Redis.list_failover_clusters(params) do
+    with {:ok, {redis_instances, meta}} <- Redis.list_redis_instances(params) do
       {:noreply,
        socket
        |> assign(:meta, meta)
-       |> assign(:failover_clusters, failover_clusters)
+       |> assign(:redis_instances, redis_instances)
        |> assign(:form, to_form(meta))}
     end
   end
@@ -50,7 +50,7 @@ defmodule ControlServerWeb.Live.RedisIndex do
         />
       </:menu>
 
-      <.redis_table rows={@failover_clusters} meta={@meta} />
+      <.redis_table rows={@redis_instances} meta={@meta} />
     </.panel>
     """
   end

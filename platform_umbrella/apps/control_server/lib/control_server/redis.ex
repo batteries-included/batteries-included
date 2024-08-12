@@ -3,113 +3,113 @@ defmodule ControlServer.Redis do
 
   use ControlServer, :context
 
-  alias CommonCore.Redis.FailoverCluster
+  alias CommonCore.Redis.RedisInstance
   alias EventCenter.Database, as: DatabaseEventCenter
 
   @doc """
-  Returns the list of failover_clusters.
+  Returns the list of redis_instances.
 
   ## Examples
 
-      iex> list_failover_clusters()
-      [%FailoverCluster{}, ...]
+      iex> list_redis_instances()
+      [%RedisInstance{}, ...]
 
   """
-  def list_failover_clusters do
-    Repo.all(FailoverCluster)
+  def list_redis_instances do
+    Repo.all(RedisInstance)
   end
 
-  def list_failover_clusters(params) do
-    Repo.Flop.validate_and_run(FailoverCluster, params, for: FailoverCluster)
+  def list_redis_instances(params) do
+    Repo.Flop.validate_and_run(RedisInstance, params, for: RedisInstance)
   end
 
   @doc """
-  Gets a single failover_cluster.
+  Gets a single redis_instance.
 
-  Raises `Ecto.NoResultsError` if the Failover cluster does not exist.
+  Raises `Ecto.NoResultsError` if the Redis instance does not exist.
 
   ## Examples
 
-      iex> get_failover_cluster!(123)
-      %FailoverCluster{}
+      iex> get_redis_instance!(123)
+      %RedisInstance{}
 
-      iex> get_failover_cluster!(456)
+      iex> get_redis_instance!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_failover_cluster!(id, opts \\ []) do
-    FailoverCluster
+  def get_redis_instance!(id, opts \\ []) do
+    RedisInstance
     |> preload(^Keyword.get(opts, :preload, []))
     |> Repo.get!(id)
   end
 
   @doc """
-  Creates a failover_cluster.
+  Creates a redis_instance.
 
   ## Examples
 
-      iex> create_failover_cluster(%{field: value})
-      {:ok, %FailoverCluster{}}
+      iex> create_redis_instance(%{field: value})
+      {:ok, %RedisInstance{}}
 
-      iex> create_failover_cluster(%{field: bad_value})
+      iex> create_redis_instance(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_failover_cluster(attrs \\ %{}) do
-    %FailoverCluster{}
-    |> FailoverCluster.changeset(attrs)
+  def create_redis_instance(attrs \\ %{}) do
+    %RedisInstance{}
+    |> RedisInstance.changeset(attrs)
     |> Repo.insert()
     |> broadcast(:insert)
   end
 
   @doc """
-  Updates a failover_cluster.
+  Updates a redis_instance.
 
   ## Examples
 
-      iex> update_failover_cluster(failover_cluster, %{field: new_value})
-      {:ok, %FailoverCluster{}}
+      iex> update_redis_instance(redis_instance, %{field: new_value})
+      {:ok, %RedisInstance{}}
 
-      iex> update_failover_cluster(failover_cluster, %{field: bad_value})
+      iex> update_redis_instance(redis_instance, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_failover_cluster(%FailoverCluster{} = failover_cluster, attrs) do
-    failover_cluster
-    |> FailoverCluster.changeset(attrs)
+  def update_redis_instance(%RedisInstance{} = redis_instance, attrs) do
+    redis_instance
+    |> RedisInstance.changeset(attrs)
     |> Repo.update()
     |> broadcast(:update)
   end
 
   @doc """
-  Deletes a failover_cluster.
+  Deletes a redis_instance.
 
   ## Examples
 
-      iex> delete_failover_cluster(failover_cluster)
-      {:ok, %FailoverCluster{}}
+      iex> delete_redis_instance(redis_instance)
+      {:ok, %RedisInstance{}}
 
-      iex> delete_failover_cluster(failover_cluster)
+      iex> delete_redis_instance(redis_instance)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_failover_cluster(%FailoverCluster{} = failover_cluster) do
-    failover_cluster
+  def delete_redis_instance(%RedisInstance{} = redis_instance) do
+    redis_instance
     |> Repo.delete()
     |> broadcast(:delete)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking failover_cluster changes.
+  Returns an `%Ecto.Changeset{}` for tracking redis_instance changes.
 
   ## Examples
 
-      iex> change_failover_cluster(failover_cluster)
-      %Ecto.Changeset{data: %FailoverCluster{}}
+      iex> change_redis_instance(redis_instance)
+      %Ecto.Changeset{data: %RedisInstance{}}
 
   """
-  def change_failover_cluster(%FailoverCluster{} = failover_cluster, attrs \\ %{}) do
-    FailoverCluster.changeset(failover_cluster, attrs)
+  def change_redis_instance(%RedisInstance{} = redis_instance, attrs \\ %{}) do
+    RedisInstance.changeset(redis_instance, attrs)
   end
 
   def find_or_create(attrs, transaction_repo \\ Repo) do
@@ -117,10 +117,10 @@ defmodule ControlServer.Redis do
     |> Multi.run(:selected, fn repo, _ ->
       {:ok,
        repo.one(
-         from(failover_cluster in FailoverCluster,
+         from(redis_instance in RedisInstance,
            where:
-             failover_cluster.type == ^attrs.type and
-               failover_cluster.name == ^attrs.name
+             redis_instance.type == ^attrs.type and
+               redis_instance.name == ^attrs.name
          )
        )}
     end)
@@ -131,13 +131,13 @@ defmodule ControlServer.Redis do
   end
 
   defp maybe_insert(nil = _selected, repo, attrs) do
-    %FailoverCluster{}
-    |> FailoverCluster.changeset(attrs)
+    %RedisInstance{}
+    |> RedisInstance.changeset(attrs)
     |> repo.insert()
     |> broadcast(:insert)
   end
 
-  defp maybe_insert(%FailoverCluster{} = _selected, _repo, _attrs) do
+  defp maybe_insert(%RedisInstance{} = _selected, _repo, _attrs) do
     {:ok, nil}
   end
 

@@ -27,7 +27,7 @@ defmodule CommonCore.StateSummary do
     embeds_many :batteries, SystemBattery
     embeds_many :postgres_clusters, CommonCore.Postgres.Cluster
     embeds_many :ferret_services, CommonCore.FerretDB.FerretService
-    embeds_many :redis_clusters, CommonCore.Redis.FailoverCluster
+    embeds_many :redis_instances, CommonCore.Redis.RedisInstance
     embeds_many :notebooks, CommonCore.Notebooks.JupyterLabNotebook
     embeds_many :knative_services, CommonCore.Knative.Service
     embeds_many :traditional_services, CommonCore.TraditionalServices.Service

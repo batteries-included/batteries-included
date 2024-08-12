@@ -1,43 +1,43 @@
-defmodule ControlServerWeb.FailoverClusterController do
+defmodule ControlServerWeb.RedisInstanceController do
   use ControlServerWeb, :controller
 
-  alias CommonCore.Redis.FailoverCluster
+  alias CommonCore.Redis.RedisInstance
   alias ControlServer.Redis
 
   action_fallback ControlServerWeb.FallbackController
 
   def index(conn, _params) do
-    failover_clusters = Redis.list_failover_clusters()
-    render(conn, :index, failover_clusters: failover_clusters)
+    redis_instances = Redis.list_redis_instances()
+    render(conn, :index, redis_instances: redis_instances)
   end
 
-  def create(conn, %{"failover_cluster" => failover_cluster_params}) do
-    with {:ok, %FailoverCluster{} = failover_cluster} <- Redis.create_failover_cluster(failover_cluster_params) do
+  def create(conn, %{"redis_instance" => redis_instance_params}) do
+    with {:ok, %RedisInstance{} = redis_instance} <- Redis.create_redis_instance(redis_instance_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/redis/clusters/#{failover_cluster}")
-      |> render(:show, failover_cluster: failover_cluster)
+      |> put_resp_header("location", ~p"/api/redis/clusters/#{redis_instance}")
+      |> render(:show, redis_instance: redis_instance)
     end
   end
 
   def show(conn, %{"id" => id}) do
-    failover_cluster = Redis.get_failover_cluster!(id)
-    render(conn, :show, failover_cluster: failover_cluster)
+    redis_instance = Redis.get_redis_instance!(id)
+    render(conn, :show, redis_instance: redis_instance)
   end
 
-  def update(conn, %{"id" => id, "failover_cluster" => failover_cluster_params}) do
-    failover_cluster = Redis.get_failover_cluster!(id)
+  def update(conn, %{"id" => id, "redis_instance" => redis_instance_params}) do
+    redis_instance = Redis.get_redis_instance!(id)
 
-    with {:ok, %FailoverCluster{} = failover_cluster} <-
-           Redis.update_failover_cluster(failover_cluster, failover_cluster_params) do
-      render(conn, :show, failover_cluster: failover_cluster)
+    with {:ok, %RedisInstance{} = redis_instance} <-
+           Redis.update_redis_instance(redis_instance, redis_instance_params) do
+      render(conn, :show, redis_instance: redis_instance)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    failover_cluster = Redis.get_failover_cluster!(id)
+    redis_instance = Redis.get_redis_instance!(id)
 
-    with {:ok, %FailoverCluster{}} <- Redis.delete_failover_cluster(failover_cluster) do
+    with {:ok, %RedisInstance{}} <- Redis.delete_redis_instance(redis_instance) do
       send_resp(conn, :no_content, "")
     end
   end

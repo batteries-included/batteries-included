@@ -1,14 +1,29 @@
 defmodule CommonCore.Resources.RedisOperator do
   @moduledoc false
   use CommonCore.IncludeResource,
-    redisfailovers_databases_spotahome_com: "priv/manifests/redis_operator/redisfailovers_databases_spotahome_com.yaml"
+    redis_redis_redis_opstreelabs_in: "priv/manifests/redis-operator/redis_redis_redis_opstreelabs_in.yaml",
+    redisclusters_redis_redis_opstreelabs_in:
+      "priv/manifests/redis-operator/redisclusters_redis_redis_opstreelabs_in.yaml",
+    redisreplications_redis_redis_opstreelabs_in:
+      "priv/manifests/redis-operator/redisreplications_redis_redis_opstreelabs_in.yaml",
+    redissentinels_redis_redis_opstreelabs_in:
+      "priv/manifests/redis-operator/redissentinels_redis_redis_opstreelabs_in.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "redis-operator"
 
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
-  alias CommonCore.Resources.FilterResource, as: F
+
+  resource(:service_account_redis_operator, _battery, state) do
+    namespace = core_namespace(state)
+
+    :service_account
+    |> B.build_resource()
+    |> Map.put("automountServiceAccountToken", true)
+    |> B.name("redis-operator")
+    |> B.namespace(namespace)
+  end
 
   resource(:cluster_role_binding_redis_operator, _battery, state) do
     namespace = core_namespace(state)
@@ -23,37 +38,73 @@ defmodule CommonCore.Resources.RedisOperator do
   resource(:cluster_role_redis_operator) do
     rules = [
       %{
-        "apiGroups" => ["databases.spotahome.com"],
-        "resources" => ["redisfailovers", "redisfailovers/finalizers"],
+        "apiGroups" => ["redis.redis.opstreelabs.in"],
+        "resources" => [
+          "rediss",
+          "redisclusters",
+          "redisreplications",
+          "redis",
+          "rediscluster",
+          "redissentinel",
+          "redissentinels",
+          "redisreplication"
+        ],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
+      %{"nonResourceURLs" => ["*"], "verbs" => ["get"]},
       %{
         "apiGroups" => ["apiextensions.k8s.io"],
         "resources" => ["customresourcedefinitions"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["redis.redis.opstreelabs.in"],
+        "resources" => [
+          "redis/finalizers",
+          "rediscluster/finalizers",
+          "redisclusters/finalizers",
+          "redissentinel/finalizers",
+          "redissentinels/finalizers",
+          "redisreplication/finalizers",
+          "redisreplications/finalizers"
+        ],
+        "verbs" => ["update"]
+      },
+      %{
+        "apiGroups" => ["redis.redis.opstreelabs.in"],
+        "resources" => [
+          "redis/status",
+          "rediscluster/status",
+          "redisclusters/status",
+          "redissentinel/status",
+          "redissentinels/status",
+          "redisreplication/status",
+          "redisreplications/status"
+        ],
+        "verbs" => ["get", "patch", "update"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => [
+          "secrets",
+          "pods/exec",
+          "pods",
+          "services",
+          "configmaps",
+          "events",
+          "persistentvolumeclaims",
+          "namespace"
+        ],
+        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["statefulsets"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
       %{
         "apiGroups" => ["coordination.k8s.io"],
         "resources" => ["leases"],
-        "verbs" => ["create", "get", "list", "update"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => [
-          "pods",
-          "services",
-          "endpoints",
-          "events",
-          "configmaps",
-          "persistentvolumeclaims",
-          "persistentvolumeclaims/finalizers"
-        ],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get"]},
-      %{
-        "apiGroups" => ["apps"],
-        "resources" => ["deployments", "statefulsets"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
       %{
@@ -66,138 +117,83 @@ defmodule CommonCore.Resources.RedisOperator do
     :cluster_role
     |> B.build_resource()
     |> B.name("redis-operator")
-    |> B.component_labels("redis-operator")
     |> B.rules(rules)
   end
 
-  resource(:crd_redisfailovers_databases_spotahome_com) do
-    YamlElixir.read_all_from_string!(get_resource(:redisfailovers_databases_spotahome_com))
+  resource(:crd_redis_redis_redis_opstreelabs_in) do
+    YamlElixir.read_all_from_string!(get_resource(:redis_redis_redis_opstreelabs_in))
+  end
+
+  resource(:crd_redisclusters_redis_redis_opstreelabs_in) do
+    YamlElixir.read_all_from_string!(get_resource(:redisclusters_redis_redis_opstreelabs_in))
+  end
+
+  resource(:crd_redisreplications_redis_redis_opstreelabs_in) do
+    YamlElixir.read_all_from_string!(get_resource(:redisreplications_redis_redis_opstreelabs_in))
+  end
+
+  resource(:crd_redissentinels_redis_redis_opstreelabs_in) do
+    YamlElixir.read_all_from_string!(get_resource(:redissentinels_redis_redis_opstreelabs_in))
   end
 
   resource(:deployment_redis_operator, battery, state) do
     namespace = core_namespace(state)
 
+    template =
+      %{}
+      |> Map.put("metadata", %{"labels" => %{"battery/managed" => "true"}})
+      |> Map.put(
+        "spec",
+        %{
+          "automountServiceAccountToken" => true,
+          "containers" => [
+            %{
+              "args" => ["--leader-elect"],
+              "command" => ["/manager"],
+              "env" => [%{"name" => "ENABLE_WEBHOOKS", "value" => "false"}],
+              "image" => battery.config.operator_image,
+              "imagePullPolicy" => "Always",
+              "name" => "redis-operator",
+              "resources" => %{
+                "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
+                "requests" => %{"cpu" => "500m", "memory" => "500Mi"}
+              },
+              "securityContext" => %{}
+            }
+          ],
+          "securityContext" => %{},
+          "serviceAccount" => "redis-operator",
+          "serviceAccountName" => "redis-operator"
+        }
+      )
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
+
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put(
-        "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name,
-            "battery/component" => "redis-operator"
-          }
-        }
-      )
-      |> Map.put("strategy", %{"type" => "RollingUpdate"})
-      |> Map.put(
-        "template",
-        %{
-          "metadata" => %{
-            "labels" => %{
-              "battery/app" => @app_name,
-              "battery/component" => "redis-operator",
-              "battery/managed" => "true"
-            }
-          },
-          "spec" => %{
-            "containers" => [
-              %{
-                "image" => battery.config.operator_image,
-                "imagePullPolicy" => "IfNotPresent",
-                "livenessProbe" => %{
-                  "failureThreshold" => 6,
-                  "initialDelaySeconds" => 30,
-                  "periodSeconds" => 5,
-                  "successThreshold" => 1,
-                  "tcpSocket" => %{"port" => 9710},
-                  "timeoutSeconds" => 5
-                },
-                "name" => "redis-operator",
-                "ports" => [%{"containerPort" => 9710, "name" => "metrics", "protocol" => "TCP"}],
-                "readinessProbe" => %{
-                  "initialDelaySeconds" => 10,
-                  "periodSeconds" => 3,
-                  "tcpSocket" => %{"port" => 9710},
-                  "timeoutSeconds" => 3
-                },
-                "resources" => %{
-                  "limits" => %{"cpu" => "100m", "memory" => "128Mi"},
-                  "requests" => %{"cpu" => "100m", "memory" => "128Mi"}
-                },
-                "securityContext" => %{
-                  "readOnlyRootFilesystem" => true,
-                  "runAsNonRoot" => true,
-                  "runAsUser" => 1000
-                }
-              }
-            ],
-            "serviceAccountName" => "redis-operator"
-          }
-        }
-      )
+      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
+      |> B.template(template)
 
     :deployment
     |> B.build_resource()
     |> B.name("redis-operator")
     |> B.namespace(namespace)
-    |> B.component_labels("redis-operator")
     |> B.spec(spec)
   end
 
-  resource(:service_account_redis_operator, _battery, state) do
-    namespace = core_namespace(state)
-
-    :service_account
-    |> B.build_resource()
-    |> B.name("redis-operator")
-    |> B.namespace(namespace)
-    |> B.component_labels("redis-operator")
-  end
-
-  resource(:service_monitor_redis_operator, _battery, state) do
+  resource(:service_webhook, _battery, state) do
     namespace = core_namespace(state)
 
     spec =
       %{}
-      |> Map.put("endpoints", [%{"interval" => "15s", "port" => "metrics"}])
-      |> Map.put("namespaceSelector", %{"matchNames" => [namespace]})
-      |> Map.put(
-        "selector",
-        %{
-          "matchLabels" => %{
-            "battery/app" => @app_name,
-            "battery/component" => "redis-operator"
-          }
-        }
-      )
-
-    :monitoring_service_monitor
-    |> B.build_resource()
-    |> B.name("redis-operator")
-    |> B.namespace(namespace)
-    |> B.component_labels("redis-operator")
-    |> B.spec(spec)
-    |> F.require_battery(state, :victoria_metrics)
-  end
-
-  resource(:service_redis_operator, _battery, state) do
-    namespace = core_namespace(state)
-
-    spec =
-      %{}
-      |> Map.put("ports", [%{"name" => "metrics", "port" => 9710, "protocol" => "TCP"}])
-      |> Map.put(
-        "selector",
-        %{"battery/app" => @app_name, "battery/component" => "redis-operator"}
-      )
+      |> Map.put("ports", [%{"port" => 443, "protocol" => "TCP", "targetPort" => 9443}])
+      |> Map.put("selector", %{"battery/app" => @app_name})
 
     :service
     |> B.build_resource()
-    |> B.name("redis-operator")
+    |> B.name("webhook-service")
     |> B.namespace(namespace)
-    |> B.component_labels("redis-operator")
     |> B.spec(spec)
-    |> F.require_battery(state, :victoria_metrics)
   end
 end
