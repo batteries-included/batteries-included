@@ -1,18 +1,18 @@
 {
-  "id": "batt_01913caebe547fe19fcc0c56d541db86",
+  "id": "batt_019143fa5e627babbf2a0eec6ceddd90",
   "usage": "development",
   "default_size": "small",
   "control_jwk": {
     "crv": "Ed25519",
-    "d": "3dh0Pqnp6PUipx0re_D_fhskHtbV_pibuBMiE0_t8T4",
+    "d": "1XNFgmNKUObHdWFhrlEqnLQyAhuQykNOSHuSgx3IkqQ",
     "kty": "OKP",
-    "x": "I9tlT7zVOs-mNnpKKNfwl5r8MFCG0vjNUaxkQOquuGM"
+    "x": "UOZ5M4hFnaRtdYw5y5vMtTbG1LZ4lIbO-uhdIlVit_s"
   },
   "inserted_at": null,
   "updated_at": null,
   "slug": "elliott",
   "kube_provider": "aws",
-  "team_id": "batt_01913caebe1e76069ad2235eb40fd586",
+  "team_id": "batt_019143fa5e327aae94eae662da8b1ab8",
   "kube_provider_config": {},
   "user_id": null
 }

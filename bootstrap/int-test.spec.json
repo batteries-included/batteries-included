@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_01913caebe57714bbd3d4f802c779e59",
+        "id": "batt_019143fa5e657c11bd50ba64c0a4b0a2",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -21,12 +21,12 @@
           "default_size": "medium",
           "cluster_name": "int-test",
           "server_in_cluster": false,
-          "install_id": "batt_01913caebe547ee18be201771d5ff4d2",
+          "install_id": "batt_019143fa5e62719486a2a01320431ea9",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "ZFQr3Om-AdSkWsNP_TDiuXTzRYDvROjBQLxJCI4s9hc",
+            "d": "WU3iO7osTjk2xWhoQhVMSg9Jhoh9oxj9YbEJ4n8bbSY",
             "kty": "OKP",
-            "x": "lZdiLh6Q1LpwOEnENzSnK1kalhY9TSS8AbC1opFk2HI"
+            "x": "uoyx882em45QKgBYwxjtSLLcPqGq6SLyc64IN4_Gh38"
           },
           "upgrade_days_of_week": [
             true,
@@ -45,7 +45,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01913caebe577a17bf363ce87460e586",
+        "id": "batt_019143fa5e66787d91b8d5a54e32c2c1",
         "type": "traditional_services",
         "config": {
           "type": "traditional_services",
@@ -136,7 +136,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "63XX5GKYHOEGUUDHI4MYFG6Y"
+            "password": "JV6BMBP52M5AAP4QXHX3L7VJ"
           },
           {
             "version": 1,
@@ -167,7 +167,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "LROL6MSE42GCQP6GU2CS6VRZLKJ6RR6FRG7U3GADNZ7TSGPMCMGA===="
+          "battery/hash": "E4GYZBS5K7PGTC2K6VKJASFB2CFJI5PYTLZUSA5Y2QP35R7Z7LFQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -177,7 +177,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01913caebe57714bbd3d4f802c779e59",
+          "battery/owner": "batt_019143fa5e657c11bd50ba64c0a4b0a2",
           "istio-injection": "enabled",
           "version": "latest"
         },

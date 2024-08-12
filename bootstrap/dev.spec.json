@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_01913caebe5472c4bb22fef7418c85e3",
+        "id": "batt_019143fa5e627fa5889db0724a5d3b92",
         "type": "istio",
         "config": {
           "type": "istio",
@@ -23,7 +23,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01913caebe547ac7badbba03511c15c7",
+        "id": "batt_019143fa5e627a2b99375a42dd2b6ed5",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
@@ -35,7 +35,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01913caebe547b2bb6871d9ec85eb3d2",
+        "id": "batt_019143fa5e6271c98ce421ac8a9d8b51",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -47,12 +47,12 @@
           "default_size": "tiny",
           "cluster_name": "dev",
           "server_in_cluster": false,
-          "install_id": "batt_01913caebe1e7d2c993b75a74fa900ae",
+          "install_id": "batt_019143fa5e337033972d043cff8aff98",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "PO0lsWDB-xaBL8SrbCp4CUw-7BHPoKlEpl6KVJqsJCI",
+            "d": "UyipEcaXJq52gP7-j_gM7VKKxlekzBJVTdvT6tmB_Qk",
             "kty": "OKP",
-            "x": "DlyFbx6gvoVP4xN_7-DJkO87YuuwKycUrr98EU2ulc8"
+            "x": "GCZCzdaOQ0TrLcw3ej6jJoq3oLNMRbmtyoSaToc4IwU"
           },
           "upgrade_days_of_week": [
             true,
@@ -71,13 +71,13 @@
         "updated_at": null
       },
       {
-        "id": "batt_01913caebe5474e1ae815dd93b213d57",
+        "id": "batt_019143fa5e6273b4a1d74060891093d2",
         "type": "metallb",
         "config": {
           "type": "metallb",
-          "controller_image": "quay.io/metallb/controller:v0.13.12",
-          "speaker_image": "quay.io/metallb/speaker:v0.13.12",
-          "frrouting_image": "quay.io/frrouting/frr:8.5.4",
+          "controller_image": "quay.io/metallb/controller:v0.14.8",
+          "speaker_image": "quay.io/metallb/speaker:v0.14.8",
+          "frrouting_image": "quay.io/frrouting/frr:9.1.0",
           "speaker_image_override": null,
           "controller_image_override": null,
           "frrouting_image_override": null
@@ -87,7 +87,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01913caebe547404b7561bdef3549f5b",
+        "id": "batt_019143fa5e6378b7970c51403b54153b",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
@@ -99,7 +99,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01913caebe5479c7887f3f35da4ec999",
+        "id": "batt_019143fa5e63724fa7969a20c6c2f43e",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -154,7 +154,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "7DJE6IDTKXQV5CFUWY7ST2VO"
+            "password": "7563SWHWNLNCITBWXBOSETVP"
           },
           {
             "version": 1,
@@ -185,7 +185,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "P6ZL3FFLQIVVDFWNFNG6HDA5RJDGJVQTOYEXIPBZ44S4AJGCC7WA===="
+          "battery/hash": "H7QU3KP24Q7KQ5B6GR3QEJF7QRDDISUS7BOCXOTCGFVYQQVAT5CQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -195,7 +195,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01913caebe547b2bb6871d9ec85eb3d2",
+          "battery/owner": "batt_019143fa5e6271c98ce421ac8a9d8b51",
           "istio-injection": "enabled",
           "version": "latest"
         },

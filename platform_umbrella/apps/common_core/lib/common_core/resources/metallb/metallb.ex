@@ -1,13 +1,13 @@
 defmodule CommonCore.Resources.MetalLB do
   @moduledoc false
   use CommonCore.IncludeResource,
-    addresspools_metallb_io: "priv/manifests/metallb/addresspools_metallb_io.yaml",
     bfdprofiles_metallb_io: "priv/manifests/metallb/bfdprofiles_metallb_io.yaml",
     bgpadvertisements_metallb_io: "priv/manifests/metallb/bgpadvertisements_metallb_io.yaml",
     bgppeers_metallb_io: "priv/manifests/metallb/bgppeers_metallb_io.yaml",
     communities_metallb_io: "priv/manifests/metallb/communities_metallb_io.yaml",
     ipaddresspools_metallb_io: "priv/manifests/metallb/ipaddresspools_metallb_io.yaml",
     l2advertisements_metallb_io: "priv/manifests/metallb/l2advertisements_metallb_io.yaml",
+    servicel2statuses_metallb_io: "priv/manifests/metallb/servicel2statuses_metallb_io.yaml",
     daemons: "priv/raw_files/metallb/daemons",
     excludel2_yaml: "priv/raw_files/metallb/excludel2.yaml",
     frr_conf: "priv/raw_files/metallb/frr.conf"
@@ -17,8 +17,27 @@ defmodule CommonCore.Resources.MetalLB do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
-  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
+
+  resource(:service_account_controller, _battery, state) do
+    namespace = base_namespace(state)
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("metallb-controller")
+    |> B.namespace(namespace)
+    |> B.component_labels("controller")
+  end
+
+  resource(:service_account_speaker, _battery, state) do
+    namespace = base_namespace(state)
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("metallb-speaker")
+    |> B.namespace(namespace)
+    |> B.component_labels("speaker")
+  end
 
   resource(:cluster_role_binding_controller, _battery, state) do
     namespace = base_namespace(state)
@@ -30,14 +49,47 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.subject(B.build_service_account("metallb-controller", namespace))
   end
 
-  resource(:cluster_role_binding_speaker, _battery, state) do
+  resource(:role_binding_controller, _battery, state) do
     namespace = base_namespace(state)
 
-    :cluster_role_binding
+    :role_binding
     |> B.build_resource()
-    |> B.name("metallb:speaker")
-    |> B.role_ref(B.build_cluster_role_ref("metallb:speaker"))
-    |> B.subject(B.build_service_account("metallb-speaker", namespace))
+    |> B.name("metallb-controller")
+    |> B.namespace(namespace)
+    |> B.role_ref(B.build_role_ref("metallb-controller"))
+    |> B.subject(B.build_service_account("metallb-controller", namespace))
+  end
+
+  resource(:role_controller, _battery, state) do
+    namespace = base_namespace(state)
+
+    rules = [
+      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["create", "get", "list", "watch"]},
+      %{"apiGroups" => [""], "resourceNames" => ["metallb-memberlist"], "resources" => ["secrets"], "verbs" => ["list"]},
+      %{
+        "apiGroups" => ["apps"],
+        "resourceNames" => ["metallb-controller"],
+        "resources" => ["deployments"],
+        "verbs" => ["get"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["secrets"],
+        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
+      },
+      %{"apiGroups" => ["metallb.io"], "resources" => ["ipaddresspools"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["bgppeers"], "verbs" => ["get", "list"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["bgpadvertisements"], "verbs" => ["get", "list"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["l2advertisements"], "verbs" => ["get", "list"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["communities"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["bfdprofiles"], "verbs" => ["get", "list", "watch"]}
+    ]
+
+    :role
+    |> B.build_resource()
+    |> B.name("metallb-controller")
+    |> B.namespace(namespace)
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_controller) do
@@ -60,7 +112,6 @@ defmodule CommonCore.Resources.MetalLB do
       %{
         "apiGroups" => ["apiextensions.k8s.io"],
         "resourceNames" => [
-          "addresspools.metallb.io",
           "bfdprofiles.metallb.io",
           "bgpadvertisements.metallb.io",
           "bgppeers.metallb.io",
@@ -81,6 +132,16 @@ defmodule CommonCore.Resources.MetalLB do
     :cluster_role |> B.build_resource() |> B.name("metallb:controller") |> B.rules(rules)
   end
 
+  resource(:cluster_role_binding_speaker, _battery, state) do
+    namespace = base_namespace(state)
+
+    :cluster_role_binding
+    |> B.build_resource()
+    |> B.name("metallb:speaker")
+    |> B.role_ref(B.build_cluster_role_ref("metallb:speaker"))
+    |> B.subject(B.build_service_account("metallb-speaker", namespace))
+  end
+
   resource(:cluster_role_speaker) do
     rules = [
       %{
@@ -89,42 +150,47 @@ defmodule CommonCore.Resources.MetalLB do
         "verbs" => ["get", "list", "watch"]
       },
       %{"apiGroups" => ["discovery.k8s.io"], "resources" => ["endpointslices"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]}
+      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["servicel2statuses", "servicel2statuses/status"], "verbs" => ["*"]}
     ]
 
-    :cluster_role |> B.build_resource() |> B.name("metallb:speaker") |> B.rules(rules)
-  end
-
-  resource(:config_map_excludel2, _battery, state) do
-    namespace = base_namespace(state)
-    data = Map.put(%{}, "excludel2.yaml", get_resource(:excludel2_yaml))
-
-    :config_map
+    :cluster_role
     |> B.build_resource()
-    |> B.name("metallb-excludel2")
-    |> B.namespace(namespace)
-    |> B.data(data)
+    |> B.name("metallb:speaker")
+    |> B.rules(rules)
   end
 
-  resource(:config_map_frr_startup, _battery, state) do
+  resource(:role_pod_lister, _battery, state) do
     namespace = base_namespace(state)
 
-    data =
-      %{}
-      |> Map.put("vtysh.conf", "service integrated-vtysh-config\n")
-      |> Map.put("daemons", get_resource(:daemons))
-      |> Map.put("frr.conf", get_resource(:frr_conf))
+    rules = [
+      %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["list", "get"]},
+      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["bfdprofiles"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["bgppeers"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["l2advertisements"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["bgpadvertisements"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["ipaddresspools"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => ["metallb.io"], "resources" => ["communities"], "verbs" => ["get", "list", "watch"]}
+    ]
 
-    :config_map
+    :role
     |> B.build_resource()
-    |> B.name("metallb-frr-startup")
+    |> B.name("metallb-pod-lister")
     |> B.namespace(namespace)
-    |> B.component_labels("speaker")
-    |> B.data(data)
+    |> B.rules(rules)
   end
 
-  resource(:crd_addresspools_io) do
-    YamlElixir.read_all_from_string!(get_resource(:addresspools_metallb_io))
+  resource(:role_binding_pod_lister, _battery, state) do
+    namespace = base_namespace(state)
+
+    :role_binding
+    |> B.build_resource()
+    |> B.name("metallb-pod-lister")
+    |> B.namespace(namespace)
+    |> B.role_ref(B.build_role_ref("metallb-pod-lister"))
+    |> B.subject(B.build_service_account("metallb-speaker", namespace))
   end
 
   resource(:crd_bfdprofiles_io) do
@@ -151,18 +217,25 @@ defmodule CommonCore.Resources.MetalLB do
     YamlElixir.read_all_from_string!(get_resource(:l2advertisements_metallb_io))
   end
 
+  resource(:crd_servicel2statuses_io) do
+    YamlElixir.read_all_from_string!(get_resource(:servicel2statuses_metallb_io))
+  end
+
   resource(:daemon_set_speaker, battery, state) do
     namespace = base_namespace(state)
 
     template =
-      %{
-        "metadata" => %{
-          "labels" => %{"battery/app" => @app_name, "battery/component" => "speaker", "battery/managed" => "true"}
-        },
-        "spec" => %{
+      %{}
+      |> Map.put(
+        "metadata",
+        %{"labels" => %{"battery/app" => @app_name, "battery/component" => "metallb", "battery/managed" => "true"}}
+      )
+      |> Map.put(
+        "spec",
+        %{
           "containers" => [
             %{
-              "args" => ["--port=7472", "--log-level=debug"],
+              "args" => ["--port=7472", "--log-level=info"],
               "env" => [
                 %{"name" => "METALLB_NODE_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "spec.nodeName"}}},
                 %{"name" => "METALLB_HOST", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "status.hostIP"}}},
@@ -175,7 +248,8 @@ defmodule CommonCore.Resources.MetalLB do
                 %{"name" => "METALLB_ML_SECRET_KEY_PATH", "value" => "/etc/ml_secret_key"},
                 %{"name" => "FRR_CONFIG_FILE", "value" => "/etc/frr_reloader/frr.conf"},
                 %{"name" => "FRR_RELOADER_PID_FILE", "value" => "/etc/frr_reloader/reloader.pid"},
-                %{"name" => "METALLB_BGP_TYPE", "value" => "frr"}
+                %{"name" => "METALLB_BGP_TYPE", "value" => "frr"},
+                %{"name" => "METALLB_POD_NAME", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}}
               ],
               "image" => battery.config.speaker_image,
               "livenessProbe" => %{
@@ -221,7 +295,7 @@ defmodule CommonCore.Resources.MetalLB do
               "image" => battery.config.frrouting_image,
               "livenessProbe" => %{
                 "failureThreshold" => 3,
-                "httpGet" => %{"path" => "/livez", "port" => 7473},
+                "httpGet" => %{"path" => "livez", "port" => 7473},
                 "initialDelaySeconds" => 10,
                 "periodSeconds" => 10,
                 "successThreshold" => 1,
@@ -254,6 +328,7 @@ defmodule CommonCore.Resources.MetalLB do
             %{
               "args" => ["--metrics-port=7473"],
               "command" => ["/etc/frr_metrics/frr-metrics"],
+              "env" => [%{"name" => "VTYSH_HISTFILE", "value" => "/dev/null"}],
               "image" => battery.config.frrouting_image,
               "name" => "frr-metrics",
               "ports" => [%{"containerPort" => 7473, "name" => "monitoring"}],
@@ -277,13 +352,13 @@ defmodule CommonCore.Resources.MetalLB do
               ]
             },
             %{
-              "command" => ["/bin/sh", "-c", "cp -f /frr-reloader.sh /etc/frr_reloader/"],
+              "command" => ["/cp-tool", "/frr-reloader.sh", "/etc/frr_reloader/frr-reloader.sh"],
               "image" => battery.config.speaker_image,
               "name" => "cp-reloader",
               "volumeMounts" => [%{"mountPath" => "/etc/frr_reloader", "name" => "reloader"}]
             },
             %{
-              "command" => ["/bin/sh", "-c", "cp -f /frr-metrics /etc/frr_metrics/"],
+              "command" => ["/cp-tool", "/frr-metrics", "/etc/frr_metrics/frr-metrics"],
               "image" => battery.config.speaker_image,
               "name" => "cp-metrics",
               "volumeMounts" => [%{"mountPath" => "/etc/frr_metrics", "name" => "metrics"}]
@@ -307,16 +382,18 @@ defmodule CommonCore.Resources.MetalLB do
             %{"emptyDir" => %{}, "name" => "metrics"}
           ]
         }
-      }
+      )
       |> B.app_labels(@app_name)
-      |> B.component_labels("speaker")
       |> B.add_owner(battery)
 
     spec =
       %{}
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}})
-      |> B.template(template)
+      |> Map.put(
+        "selector",
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}}
+      )
       |> Map.put("updateStrategy", %{"type" => "RollingUpdate"})
+      |> B.template(template)
 
     :daemon_set
     |> B.build_resource()
@@ -330,14 +407,17 @@ defmodule CommonCore.Resources.MetalLB do
     namespace = base_namespace(state)
 
     template =
-      %{
-        "metadata" => %{
-          "labels" => %{"battery/app" => @app_name, "battery/component" => "controller", "battery/managed" => "true"}
-        },
-        "spec" => %{
+      %{}
+      |> Map.put(
+        "metadata",
+        %{"labels" => %{"battery/app" => @app_name, "battery/component" => "metallb", "battery/managed" => "true"}}
+      )
+      |> Map.put(
+        "spec",
+        %{
           "containers" => [
             %{
-              "args" => ["--port=7472", "--log-level=info", "--cert-service-name=metallb-webhook-service"],
+              "args" => ["--port=7472", "--log-level=info", "--tls-min-version=VersionTLS12"],
               "env" => [
                 %{"name" => "METALLB_ML_SECRET_NAME", "value" => "metallb-memberlist"},
                 %{"name" => "METALLB_DEPLOYMENT", "value" => "metallb-controller"},
@@ -379,18 +459,17 @@ defmodule CommonCore.Resources.MetalLB do
           "securityContext" => %{"fsGroup" => 65_534, "runAsNonRoot" => true, "runAsUser" => 65_534},
           "serviceAccountName" => "metallb-controller",
           "terminationGracePeriodSeconds" => 0,
-          "volumes" => [%{"name" => "cert", "secret" => %{"defaultMode" => 420, "secretName" => "webhook-server-cert"}}]
+          "volumes" => [%{"name" => "cert", "secret" => %{"defaultMode" => 420, "secretName" => "metallb-webhook-cert"}}]
         }
-      }
+      )
       |> B.app_labels(@app_name)
-      |> B.component_labels("controller")
       |> B.add_owner(battery)
 
     spec =
       %{}
       |> Map.put(
         "selector",
-        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}}
+        %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "metallb"}}
       )
       |> Map.put("strategy", %{"type" => "RollingUpdate"})
       |> B.template(template)
@@ -403,149 +482,15 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.spec(spec)
   end
 
-  resource(:monitoring_pod_monitor_controller, _battery, state) do
-    namespace = base_namespace(state)
-
-    spec =
-      %{}
-      |> Map.put("jobLabel", "app.kubernetes.io/name")
-      |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "monitoring"}])
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "controller"}})
-
-    :monitoring_pod_monitor
-    |> B.build_resource()
-    |> B.name("metallb-controller")
-    |> B.namespace(namespace)
-    |> B.component_labels("controller")
-    |> B.spec(spec)
-    |> F.require_battery(state, :victoria_metrics)
-  end
-
-  resource(:monitoring_pod_monitor_speaker, _battery, state) do
-    namespace = base_namespace(state)
-
-    spec =
-      %{}
-      |> Map.put("jobLabel", "app.kubernetes.io/name")
-      |> Map.put("podMetricsEndpoints", [%{"path" => "/metrics", "port" => "monitoring"}])
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "speaker"}})
-
-    :monitoring_pod_monitor
-    |> B.build_resource()
-    |> B.name("metallb-speaker")
-    |> B.namespace(namespace)
-    |> B.component_labels("speaker")
-    |> B.spec(spec)
-    |> F.require_battery(state, :victoria_metrics)
-  end
-
-  resource(:role_binding_controller, _battery, state) do
-    namespace = base_namespace(state)
-
-    :role_binding
-    |> B.build_resource()
-    |> B.name("metallb-controller")
-    |> B.namespace(namespace)
-    |> B.role_ref(B.build_role_ref("metallb-controller"))
-    |> B.subject(B.build_service_account("metallb-controller", namespace))
-  end
-
-  resource(:role_binding_pod_lister, _battery, state) do
-    namespace = base_namespace(state)
-
-    :role_binding
-    |> B.build_resource()
-    |> B.name("metallb-pod-lister")
-    |> B.namespace(namespace)
-    |> B.role_ref(B.build_role_ref("metallb-pod-lister"))
-    |> B.subject(B.build_service_account("metallb-speaker", namespace))
-  end
-
-  resource(:role_controller, _battery, state) do
-    namespace = base_namespace(state)
-
-    rules = [
-      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["create", "get", "list", "watch"]},
-      %{"apiGroups" => [""], "resourceNames" => ["metallb-memberlist"], "resources" => ["secrets"], "verbs" => ["list"]},
-      %{
-        "apiGroups" => ["apps"],
-        "resourceNames" => ["metallb-controller"],
-        "resources" => ["deployments"],
-        "verbs" => ["get"]
-      },
-      %{
-        "apiGroups" => [""],
-        "resources" => ["secrets"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{"apiGroups" => ["metallb.io"], "resources" => ["addresspools"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["ipaddresspools"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["bgppeers"], "verbs" => ["get", "list"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["bgpadvertisements"], "verbs" => ["get", "list"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["l2advertisements"], "verbs" => ["get", "list"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["communities"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["bfdprofiles"], "verbs" => ["get", "list", "watch"]}
-    ]
-
-    :role
-    |> B.build_resource()
-    |> B.name("metallb-controller")
-    |> B.namespace(namespace)
-    |> B.rules(rules)
-  end
-
-  resource(:role_pod_lister, _battery, state) do
-    namespace = base_namespace(state)
-
-    rules = [
-      %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["list"]},
-      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["addresspools"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["bfdprofiles"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["bgppeers"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["l2advertisements"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["bgpadvertisements"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["ipaddresspools"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["metallb.io"], "resources" => ["communities"], "verbs" => ["get", "list", "watch"]}
-    ]
-
-    :role
-    |> B.build_resource()
-    |> B.name("metallb-pod-lister")
-    |> B.namespace(namespace)
-    |> B.rules(rules)
-  end
-
-  resource(:secret_webhook_server_cert, _battery, state) do
+  resource(:secret_webhook_cert, _battery, state) do
     namespace = base_namespace(state)
     data = Secret.encode(%{})
 
     :secret
     |> B.build_resource()
-    |> B.name("webhook-server-cert")
+    |> B.name("metallb-webhook-cert")
     |> B.namespace(namespace)
     |> B.data(data)
-  end
-
-  resource(:service_account_controller, _battery, state) do
-    namespace = base_namespace(state)
-
-    :service_account
-    |> B.build_resource()
-    |> B.name("metallb-controller")
-    |> B.namespace(namespace)
-    |> B.component_labels("controller")
-  end
-
-  resource(:service_account_speaker, _battery, state) do
-    namespace = base_namespace(state)
-
-    :service_account
-    |> B.build_resource()
-    |> B.name("metallb-speaker")
-    |> B.namespace(namespace)
-    |> B.component_labels("speaker")
   end
 
   resource(:service_webhook, _battery, state) do
@@ -554,7 +499,7 @@ defmodule CommonCore.Resources.MetalLB do
     spec =
       %{}
       |> Map.put("ports", [%{"port" => 443, "targetPort" => 9443}])
-      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "controller"})
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => "metallb"})
 
     :service
     |> B.build_resource()
@@ -563,9 +508,7 @@ defmodule CommonCore.Resources.MetalLB do
     |> B.spec(spec)
   end
 
-  resource(:validating_webhook_config_configuration, _battery, state) do
-    namespace = base_namespace(state)
-
+  resource(:validating_webhook_config_configuration) do
     :validating_webhook_config
     |> B.build_resource()
     |> B.name("metallb-webhook-configuration")
@@ -575,28 +518,7 @@ defmodule CommonCore.Resources.MetalLB do
         "clientConfig" => %{
           "service" => %{
             "name" => "metallb-webhook-service",
-            "namespace" => namespace,
-            "path" => "/validate-metallb-io-v1beta1-addresspool"
-          }
-        },
-        "failurePolicy" => "Fail",
-        "name" => "addresspoolvalidationwebhook.metallb.io",
-        "rules" => [
-          %{
-            "apiGroups" => ["metallb.io"],
-            "apiVersions" => ["v1beta1"],
-            "operations" => ["CREATE", "UPDATE"],
-            "resources" => ["addresspools"]
-          }
-        ],
-        "sideEffects" => "None"
-      },
-      %{
-        "admissionReviewVersions" => ["v1"],
-        "clientConfig" => %{
-          "service" => %{
-            "name" => "metallb-webhook-service",
-            "namespace" => namespace,
+            "namespace" => "battery-base",
             "path" => "/validate-metallb-io-v1beta2-bgppeer"
           }
         },
@@ -617,7 +539,7 @@ defmodule CommonCore.Resources.MetalLB do
         "clientConfig" => %{
           "service" => %{
             "name" => "metallb-webhook-service",
-            "namespace" => namespace,
+            "namespace" => "battery-base",
             "path" => "/validate-metallb-io-v1beta1-ipaddresspool"
           }
         },
@@ -638,7 +560,7 @@ defmodule CommonCore.Resources.MetalLB do
         "clientConfig" => %{
           "service" => %{
             "name" => "metallb-webhook-service",
-            "namespace" => namespace,
+            "namespace" => "battery-base",
             "path" => "/validate-metallb-io-v1beta1-bgpadvertisement"
           }
         },
@@ -659,7 +581,7 @@ defmodule CommonCore.Resources.MetalLB do
         "clientConfig" => %{
           "service" => %{
             "name" => "metallb-webhook-service",
-            "namespace" => namespace,
+            "namespace" => "battery-base",
             "path" => "/validate-metallb-io-v1beta1-community"
           }
         },
@@ -680,7 +602,7 @@ defmodule CommonCore.Resources.MetalLB do
         "clientConfig" => %{
           "service" => %{
             "name" => "metallb-webhook-service",
-            "namespace" => namespace,
+            "namespace" => "battery-base",
             "path" => "/validate-metallb-io-v1beta1-bfdprofile"
           }
         },
@@ -701,7 +623,7 @@ defmodule CommonCore.Resources.MetalLB do
         "clientConfig" => %{
           "service" => %{
             "name" => "metallb-webhook-service",
-            "namespace" => namespace,
+            "namespace" => "battery-base",
             "path" => "/validate-metallb-io-v1beta1-l2advertisement"
           }
         },
@@ -718,5 +640,33 @@ defmodule CommonCore.Resources.MetalLB do
         "sideEffects" => "None"
       }
     ])
+  end
+
+  resource(:config_map_excludel2, _battery, state) do
+    namespace = base_namespace(state)
+    data = Map.put(%{}, "excludel2.yaml", get_resource(:excludel2_yaml))
+
+    :config_map
+    |> B.build_resource()
+    |> B.name("metallb-excludel2")
+    |> B.namespace(namespace)
+    |> B.data(data)
+  end
+
+  resource(:config_map_frr_startup, _battery, state) do
+    namespace = base_namespace(state)
+
+    data =
+      %{}
+      |> Map.put("vtysh.conf", "service integrated-vtysh-config\n")
+      |> Map.put("daemons", get_resource(:daemons))
+      |> Map.put("frr.conf", get_resource(:frr_conf))
+
+    :config_map
+    |> B.build_resource()
+    |> B.name("metallb-frr-startup")
+    |> B.namespace(namespace)
+    |> B.component_labels("speaker")
+    |> B.data(data)
   end
 end

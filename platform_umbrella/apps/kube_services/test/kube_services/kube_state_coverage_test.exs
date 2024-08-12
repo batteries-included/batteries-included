@@ -23,6 +23,7 @@ defmodule KubeServices.KubeStateCoverageTest do
     {"metallb.io/v1beta2", "BGPPeer"},
     {"metallb.io/v1beta1", "Community"},
     {"metallb.io/v1beta1", "BFDProfile"},
+    {"metallb.io/v1beta1", "ServiceL2Status"},
 
     # Istio has EVERYTHING
     {"networking.istio.io/v1beta1", "WorkloadGroup"},

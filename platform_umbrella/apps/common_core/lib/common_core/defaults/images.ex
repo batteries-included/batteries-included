@@ -75,9 +75,6 @@ defmodule CommonCore.Defaults.Images do
   @spec forgejo_image() :: String.t()
   def forgejo_image, do: "codeberg.org/forgejo/forgejo:1.21.11-2"
 
-  @spec frrouting_frr_image() :: String.t()
-  def frrouting_frr_image, do: "quay.io/frrouting/frr:8.5.4"
-
   @spec grafana_image() :: String.t()
   def grafana_image, do: "grafana/grafana:10.4.5"
 
@@ -112,10 +109,13 @@ defmodule CommonCore.Defaults.Images do
   def loki_image, do: "grafana/loki:2.9.8"
 
   @spec metallb_controller_image() :: String.t()
-  def metallb_controller_image, do: "quay.io/metallb/controller:v0.13.12"
+  def metallb_controller_image, do: "quay.io/metallb/controller:v0.14.8"
 
   @spec metallb_speaker_image() :: String.t()
-  def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.13.12"
+  def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.14.8"
+
+  @spec frrouting_frr_image() :: String.t()
+  def frrouting_frr_image, do: "quay.io/frrouting/frr:9.1.0"
 
   @spec metrics_server_image() :: String.t()
   def metrics_server_image, do: "registry.k8s.io/metrics-server/metrics-server:v0.7.1"
