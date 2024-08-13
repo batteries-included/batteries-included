@@ -6,13 +6,13 @@
   </div>
 
   <div class="relative">
-    <input id="foo-input" type="range" name="foo" value="5" min="2" max="10" list="foo-ticks" class="relative z-30 appearance-none bg-transparent cursor-pointer w-full slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint h-[32px] slider-thumb:size-[32px]" id="foo">
+    <input id="foo-input" type="range" name="foo" value="5" min="2" max="10" list="foo-ticks" class="peer relative z-30 appearance-none bg-transparent cursor-pointer w-full slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint slider-thumb:disabled:border-primary-light disabled:cursor-not-allowed h-[32px] slider-thumb:size-[32px]" id="foo">
 
     <div id="foo-progress-bg" phx-update="ignore" class="absolute h-[4px] z-10 bg-gray-lighter dark:bg-gray-darkest-tint w-full rounded pointer-events-none top-[14px]"></div>
 
-    <div id="foo-progress" phx-update="ignore" class="absolute h-[4px] z-20 bg-primary rounded-l pointer-events-none top-[14px]"></div>
+    <div id="foo-progress" phx-update="ignore" class="absolute h-[4px] z-20 rounded-l pointer-events-none bg-primary peer-disabled:bg-primary-light top-[14px]"></div>
 
-    <div id="foo-value" phx-update="ignore" class="absolute top-0 bottom-0 inline-flex items-center justify-center size-[32px] z-30 font-semibold text-primary pointer-events-none">
+    <div id="foo-value" phx-update="ignore" class="absolute top-0 bottom-0 inline-flex items-center justify-center size-[32px] z-30 font-semibold pointer-events-none text-primary peer-disabled:text-primary-light">
       5
     </div>
   </div>

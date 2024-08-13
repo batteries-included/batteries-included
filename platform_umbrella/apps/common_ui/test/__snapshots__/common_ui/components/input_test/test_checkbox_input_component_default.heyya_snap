@@ -1,8 +1,8 @@
 <label phx-feedback-for="foo" class="flex flex-wrap items-center gap-x-2 cursor-pointer ">
   <input type="hidden" name="foo" value="false">
-  <input type="checkbox" name="foo" value="true" checked class="size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darkest-tint checked:border-primary checked:hover:border-primary border-gray-lighter dark:border-gray-darker-tint hover:border-primary">
+  <input type="checkbox" name="foo" value="true" checked class="border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary size-5 text-primary rounded bg-white dark:bg-gray-darkest-tint cursor-pointer disabled:cursor-not-allowed disabled:opacity-65 checked:border-primary checked:hover:border-primary peer">
 
-  <span class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter">
+  <span class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
     Foobar
     
   </span>

@@ -50,6 +50,7 @@ defmodule CommonUI.Components.Input do
   # Used for radio buttons
   slot :option do
     attr :value, :string, required: true
+    attr :disabled, :boolean
     attr :class, :any
   end
 
@@ -94,17 +95,20 @@ defmodule CommonUI.Components.Input do
 
         <label
           :for={option <- @options}
-          class="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-lightest dark:hover:bg-gray-darker cursor-pointer"
+          class={[
+            "flex items-center gap-3 px-3 py-2 text-sm",
+            Map.get(option, :disabled) && "cursor-not-allowed opacity-50",
+            !Map.get(option, :disabled) &&
+              "cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darker"
+          ]}
         >
           <input
             type="checkbox"
             name={@name <> "[]"}
             value={option.value}
             checked={Enum.member?(@value, option.value)}
-            class={[
-              "size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darker-tint",
-              "checked:border-primary checked:hover:border-primary"
-            ]}
+            disabled={Map.get(option, :disabled, false)}
+            class={checkbox_class()}
           />
 
           <%= option.name %>
@@ -130,8 +134,8 @@ defmodule CommonUI.Components.Input do
         required={!@multiple && !@placeholder_selectable}
         class={[
           input_class(@errors),
-          "invalid:text-gray-light dark:invalid:text-gray-dark",
-          @multiple == false && "bg-caret bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer",
+          "invalid:text-gray-light dark:invalid:text-gray-dark cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
+          @multiple == false && "bg-caret bg-[length:9px] bg-[right_0.8rem_center]",
           @class
         ]}
         {@rest}
@@ -166,17 +170,11 @@ defmodule CommonUI.Components.Input do
         name={@name}
         value="true"
         checked={@checked}
-        class={[
-          "size-5 text-primary rounded cursor-pointer bg-white dark:bg-gray-darkest-tint",
-          "checked:border-primary checked:hover:border-primary",
-          @errors == [] && "border-gray-lighter dark:border-gray-darker-tint hover:border-primary",
-          @errors != [] &&
-            "phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900"
-        ]}
+        class={[checkbox_class(@errors), "peer"]}
         {@rest}
       />
 
-      <span class={label_class()}>
+      <span class={[label_class(), "peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"]}>
         <%= @label %>
         <%= render_slot(@inner_block) %>
       </span>
@@ -203,14 +201,17 @@ defmodule CommonUI.Components.Input do
           value={option.value}
           checked={to_string(@value) == to_string(option.value)}
           class={[
-            "size-5 text-primary rounded-full cursor-pointer bg-white dark:bg-gray-darkest-tint",
+            "peer size-5 text-primary rounded-full bg-white dark:bg-gray-darkest-tint",
+            "cursor-pointer disabled:cursor-not-allowed disabled:opacity-75",
             "checked:border-primary checked:hover:border-primary",
-            @errors == [] && "border-gray-lighter dark:border-gray-darker-tint hover:border-primary",
+            @errors == [] &&
+              "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary",
             @errors != [] && "phx-feedback:bg-red-50 phx-feedback:border-red-200"
           ]}
+          {@rest}
         />
 
-        <span class={label_class()}>
+        <span class={[label_class(), "peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"]}>
           <%= render_slot(option) %>
         </span>
       </label>
@@ -268,10 +269,11 @@ defmodule CommonUI.Components.Input do
           data-upper-boundary={@upper_boundary}
           list={"#{@id}-ticks"}
           class={[
-            "relative z-30 appearance-none bg-transparent cursor-pointer w-full",
+            "peer relative z-30 appearance-none bg-transparent cursor-pointer w-full",
             "slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full",
             "slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary",
             "slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint",
+            "slider-thumb:disabled:border-primary-light disabled:cursor-not-allowed",
             @show_value && "h-[32px] slider-thumb:size-[32px]",
             !@show_value && "h-[24px] slider-thumb:size-[24px] "
           ]}
@@ -292,7 +294,7 @@ defmodule CommonUI.Components.Input do
           id={"#{@id}-progress"}
           phx-update="ignore"
           class={[
-            "absolute h-[4px] z-20 bg-primary rounded-l pointer-events-none",
+            "absolute h-[4px] z-20 rounded-l pointer-events-none bg-primary peer-disabled:bg-primary-light",
             @show_value && "top-[14px]",
             !@show_value && "top-[10px]"
           ]}
@@ -302,7 +304,10 @@ defmodule CommonUI.Components.Input do
           :if={@show_value}
           id={"#{@id}-value"}
           phx-update="ignore"
-          class="absolute top-0 bottom-0 inline-flex items-center justify-center size-[32px] z-30 font-semibold text-primary pointer-events-none"
+          class={[
+            "absolute top-0 bottom-0 inline-flex items-center justify-center size-[32px] z-30 font-semibold pointer-events-none",
+            "text-primary peer-disabled:text-primary-light"
+          ]}
         >
           <%= @value %>
         </div>
@@ -455,9 +460,32 @@ defmodule CommonUI.Components.Input do
       "text-sm text-gray-darkest dark:text-gray-lighter",
       "placeholder:text-gray-light dark:placeholder:text-gray-dark",
       "border border-gray-lighter dark:border-gray-darker-tint",
-      "hover:border-primary dark:hover:border-gray focus:border-primary dark:focus:border-gray",
+      "enabled:hover:border-primary enabled:dark:hover:border-gray",
+      "focus:border-primary dark:focus:border-gray",
       "bg-gray-lightest dark:bg-gray-darkest-tint",
-      "disabled:text-gray disabled:hover:border-gray-lighter disabled:dark:hover:border-gray-darker-tint"
+      "disabled:opacity-50"
+    ]
+  end
+
+  defp checkbox_class([_ | _] = _errors) do
+    [
+      "phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900",
+      checkbox_class()
+    ]
+  end
+
+  defp checkbox_class(_) do
+    [
+      "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary",
+      checkbox_class()
+    ]
+  end
+
+  defp checkbox_class do
+    [
+      "size-5 text-primary rounded bg-white dark:bg-gray-darkest-tint",
+      "cursor-pointer disabled:cursor-not-allowed disabled:opacity-65",
+      "checked:border-primary checked:hover:border-primary"
     ]
   end
 
