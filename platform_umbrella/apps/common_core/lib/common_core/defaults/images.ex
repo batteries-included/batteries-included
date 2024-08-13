@@ -161,23 +161,23 @@ defmodule CommonCore.Defaults.Images do
   def vm_operator_image, do: "victoriametrics/operator:v0.44.0"
 
   @spec knative_serving_queue_image() :: String.t()
-  def knative_serving_queue_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.14.1"
+  def knative_serving_queue_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.15.1"
 
   @spec knative_serving_activator_image() :: String.t()
-  def knative_serving_activator_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/activator:v1.14.1"
+  def knative_serving_activator_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/activator:v1.15.1"
 
   @spec knative_serving_autoscaler_image() :: String.t()
-  def knative_serving_autoscaler_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler:v1.14.1"
+  def knative_serving_autoscaler_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler:v1.15.1"
 
   @spec knative_serving_controller_image() :: String.t()
-  def knative_serving_controller_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/controller:v1.14.1"
+  def knative_serving_controller_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/controller:v1.15.1"
 
   @spec knative_serving_webhook_image() :: String.t()
-  def knative_serving_webhook_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/webhook:v1.14.1"
+  def knative_serving_webhook_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/webhook:v1.15.1"
 
   @spec knative_istio_controller_image() :: String.t()
-  def knative_istio_controller_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/controller:v1.14.1"
+  def knative_istio_controller_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/controller:v1.15.1"
 
   @spec knative_istio_webhook_image() :: String.t()
-  def knative_istio_webhook_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook:v1.14.1"
+  def knative_istio_webhook_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook:v1.15.1"
 end
