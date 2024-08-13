@@ -18,13 +18,14 @@ defmodule CommonCore.Resources.BatteryCore do
     |> B.build_resource()
     |> B.name(battery.config.base_namespace)
     |> B.label("elbv2.k8s.aws/service-webhook", "disabled")
+    |> B.label("istio-injection", "disabled")
   end
 
   resource(:data_namespace, battery, _state) do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.data_namespace)
-    |> B.label("istio-injection", "enabled")
+    |> B.label("istio-injection", "disabled")
   end
 
   resource(:ai_namespace, battery, _state) do
