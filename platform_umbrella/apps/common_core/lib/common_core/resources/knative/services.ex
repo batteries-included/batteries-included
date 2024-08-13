@@ -74,7 +74,7 @@ defmodule CommonCore.Resources.KnativeServices do
 
     container
     |> Map.from_struct()
-    |> Map.drop(["env_values", :env_values])
+    |> Map.drop(["env_values", :env_values, "mounts", :mounts])
     |> Map.put("env", env)
   end
 
