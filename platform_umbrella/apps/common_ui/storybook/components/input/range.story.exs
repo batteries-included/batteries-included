@@ -31,6 +31,18 @@ defmodule Storybook.Components.Input.Range do
         }
       },
       %Variation{
+        id: :disabled,
+        attributes: %{
+          type: "range",
+          name: "foobar",
+          value: 2,
+          step: 1,
+          max: 5,
+          min: 1,
+          disabled: true
+        }
+      },
+      %Variation{
         id: :with_error,
         attributes: %{
           type: "range",

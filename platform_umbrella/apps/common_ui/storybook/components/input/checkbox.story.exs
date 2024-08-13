@@ -16,6 +16,16 @@ defmodule Storybook.Components.Input.Checkbox do
         }
       },
       %Variation{
+        id: :disabled,
+        attributes: %{
+          type: "checkbox",
+          name: "foobar",
+          label: "Label",
+          checked: false,
+          disabled: true
+        }
+      },
+      %Variation{
         id: :with_error,
         attributes: %{
           type: "checkbox",

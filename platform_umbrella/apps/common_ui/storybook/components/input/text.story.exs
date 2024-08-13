@@ -45,6 +45,15 @@ defmodule Storybook.Components.Input.Text do
         }
       },
       %Variation{
+        id: :disabled,
+        attributes: %{
+          name: "foobar",
+          value: "Foobar",
+          label: "Label",
+          disabled: true
+        }
+      },
+      %Variation{
         id: :with_error,
         attributes: %{
           name: "foobar",

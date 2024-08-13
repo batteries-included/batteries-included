@@ -19,6 +19,19 @@ defmodule Storybook.Components.Input.Radio do
         ]
       },
       %Variation{
+        id: :disabled,
+        attributes: %{
+          type: "radio",
+          name: "foobar",
+          value: "",
+          disabled: true
+        },
+        slots: [
+          ~s|<:option value="foo">Foo</:option>|,
+          ~s|<:option value="bar">Bar</:option>|
+        ]
+      },
+      %Variation{
         id: :with_error,
         attributes: %{
           type: "radio",

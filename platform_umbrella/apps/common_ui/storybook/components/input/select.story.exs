@@ -31,6 +31,18 @@ defmodule Storybook.Components.Input.Select do
         }
       },
       %Variation{
+        id: :disabled,
+        attributes: %{
+          type: "select",
+          name: "foobar",
+          value: "",
+          label: "Label",
+          placeholder: "Choose an option",
+          options: [Foo: "foo", Bar: "bar"],
+          disabled: true
+        }
+      },
+      %Variation{
         id: :with_error,
         attributes: %{
           type: "select",
