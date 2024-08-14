@@ -63,7 +63,7 @@ func (env *InstallEnv) startLocal(ctx context.Context, progressReporter *util.Pr
 		return fmt.Errorf("error creating local cluster: %w", err)
 	}
 
-	if err := env.tryAddMetalIPs(ctx); err != nil {
+	if err := env.addMetalIPs(ctx); err != nil {
 		return fmt.Errorf("error adding metal ips: %w", err)
 	}
 
@@ -165,23 +165,26 @@ func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
 	return nil
 }
 
-func (env *InstallEnv) tryAddMetalIPs(ctx context.Context) error {
+func (env *InstallEnv) addMetalIPs(ctx context.Context) error {
 	net, err := kind.GetMetalLBIPs(ctx)
-	if err == nil {
-		newIpSpec := specs.IPAddressPoolSpec{Name: "kind", Subnet: net}
-		slog.Debug("Adding docker ips for metal lb: ", slog.Any("range", newIpSpec))
-		pools := []specs.IPAddressPoolSpec{}
-		for _, pool := range env.Spec.TargetSummary.IPAddressPools {
-			if pool.Name != "kind" {
-				pools = append(pools, pool)
-			} else {
-				slog.Debug("Skipping existing kind pool", slog.Any("pool", pool))
-			}
-		}
-		pools = append(pools, newIpSpec)
-		env.Spec.TargetSummary.IPAddressPools = pools
-	} else {
-		slog.Warn("Failed to get metal lb ips: ", slog.Any("err", err))
+	if err != nil {
+		return fmt.Errorf("error getting metal lb ips: %w", err)
 	}
+
+	newIpSpec := specs.IPAddressPoolSpec{Name: "kind", Subnet: net}
+
+	slog.Debug("Adding docker ips for metal lb: ", slog.Any("range", newIpSpec))
+
+	pools := []specs.IPAddressPoolSpec{}
+	for _, pool := range env.Spec.TargetSummary.IPAddressPools {
+		if pool.Name != "kind" {
+			pools = append(pools, pool)
+		} else {
+			slog.Debug("Skipping existing kind pool", slog.Any("pool", pool))
+		}
+	}
+	pools = append(pools, newIpSpec)
+	env.Spec.TargetSummary.IPAddressPools = pools
+
 	return nil
 }
