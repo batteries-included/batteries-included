@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"net/http"
 	"os"
 	"time"
 
@@ -26,7 +25,6 @@ import (
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/portforward"
-	"k8s.io/client-go/transport"
 )
 
 type KubeClient interface {
@@ -80,13 +78,7 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 	kubeConfig.Burst = 100
 
 	var net network.Network
-	var httpClient *http.Client
 	if wireGuardConfigPath != "" {
-		httpClient, err = rest.HTTPClientFor(kubeConfig)
-		if err != nil {
-			return nil, fmt.Errorf("error creating http client: %w", err)
-		}
-
 		// Read the wireguard config
 		wireGuardConfigFile, err := os.Open(wireGuardConfigPath)
 		if err != nil {
@@ -105,37 +97,18 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 			return nil, fmt.Errorf("error opening wireguard network: %w", err)
 		}
 
-		// Create a http client that will send all requests over wireguard
-		transportConfig, err := kubeConfig.TransportConfig()
-		if err != nil {
-			return nil, fmt.Errorf("error getting transport config: %w", err)
-		}
-
-		transportConfig.DialHolder = &transport.DialHolder{
-			Dial: net.DialContext,
-		}
-
-		// Replace the transport with our own wireguard based transport
-		httpClient.Transport, err = transport.New(transportConfig)
-		if err != nil {
-			return nil, fmt.Errorf("error creating http transport: %w", err)
-		}
-	} else {
-		// No wireguard config, assume we are accessing a local cluster without a gateway
-		httpClient, err = rest.HTTPClientFor(kubeConfig)
-		if err != nil {
-			return nil, fmt.Errorf("error creating http client: %w", err)
-		}
+		// Turns out we can just set a net.Dialer on the *rest.Config.
+		kubeConfig.Dial = net.DialContext
 	}
 
 	// Create a new kubernetes client for discovery and watching job results
-	client, err := kubernetes.NewForConfigAndClient(kubeConfig, httpClient)
+	client, err := kubernetes.NewForConfig(kubeConfig)
 	if err != nil {
 		return nil, fmt.Errorf("error creating kubernetes client: %w", err)
 	}
 
 	// Dynamic client for creating resources from intial resources
-	dynamicClient, err := dynamic.NewForConfigAndClient(kubeConfig, httpClient)
+	dynamicClient, err := dynamic.NewForConfig(kubeConfig)
 	if err != nil {
 		return nil, fmt.Errorf("error creating kubernetes dynamic client: %w", err)
 	}
@@ -145,7 +118,7 @@ func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClien
 	mapper := restmapper.NewDeferredDiscoveryRESTMapper(discoveryClient)
 
 	// This allows us to remove CRD's
-	apiextensionsclient, err := apiextensionsclientset.NewForConfigAndClient(kubeConfig, httpClient)
+	apiextensionsclient, err := apiextensionsclientset.NewForConfig(kubeConfig)
 	if err != nil {
 		return nil, fmt.Errorf("error creating apiextensions client: %w", err)
 	}
@@ -213,9 +186,11 @@ func (c *batteryKubeClient) WatchFor(ctx context.Context, opts *WatchOptions) er
 	for event := range watch.ResultChan() {
 		u, ok := event.Object.(*unstructured.Unstructured)
 		if !ok {
-			slog.Debug("got unexpected event", slog.String("objectType", fmt.Sprintf("%T", event.Object)))
+			slog.Debug("Got unexpected event", slog.String("objectType", fmt.Sprintf("%T", event.Object)))
 			continue
 		}
+
+		slog.Debug("Received watch event", slog.String("eventType", string(event.Type)))
 
 		done, err := opts.Callback(u)
 		if err != nil {

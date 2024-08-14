@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"strconv"
 
 	"bi/pkg/cluster/util"
 	"bi/pkg/wireguard"
@@ -237,7 +238,7 @@ func (e *eks) Outputs(ctx context.Context, out io.Writer) error {
 	return nil
 }
 
-func (e *eks) KubeConfig(ctx context.Context, w io.Writer, _ bool) error {
+func (e *eks) KubeConfig(ctx context.Context, w io.Writer) error {
 	// Fetch the outputs from the Pulumi state (if needed).
 	if len(e.outputs) == 0 {
 		if err := e.Outputs(ctx, io.Discard); err != nil {
@@ -321,8 +322,8 @@ func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
 		}
 	}
 
-	gwEndpoint := netip.AddrPortFrom(netip.MustParseAddr(e.outputs["gateway"]["publicIP"].Value.(string)),
-		uint16(e.outputs["gateway"]["publicPort"].Value.(float64)))
+	gwEndpoint := net.JoinHostPort(e.outputs["gateway"]["publicIP"].Value.(string),
+		strconv.Itoa(int(e.outputs["gateway"]["publicPort"].Value.(float64))))
 
 	_, vpcSubnet, err := net.ParseCIDR(e.outputs["vpc"]["cidrBlock"].Value.(string))
 	if err != nil {
@@ -338,7 +339,7 @@ func (e *eks) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
 		Nameservers: []netip.Addr{
 			netip.MustParseAddr("169.254.169.253"),
 		},
-		VPCSubnet: vpcSubnet,
+		VPCSubnets: []*net.IPNet{vpcSubnet},
 	}
 
 	installerClient := wireguard.Client{

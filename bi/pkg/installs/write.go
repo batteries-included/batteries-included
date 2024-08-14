@@ -107,7 +107,7 @@ func (env *InstallEnv) WriteKubeConfig(ctx context.Context, force bool) error {
 	switch provider {
 	case "aws", "kind":
 		// Kind does not use wireguard, so we'll need an external kubeconfig.
-		return env.clusterProvider.KubeConfig(ctx, kubeConfigFile, provider != "kind")
+		return env.clusterProvider.KubeConfig(ctx, kubeConfigFile)
 	case "provided":
 	default:
 		return fmt.Errorf("unknown provider: %s", provider)

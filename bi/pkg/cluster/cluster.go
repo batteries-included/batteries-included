@@ -21,9 +21,7 @@ type Provider interface {
 	// This is typically a loosely structured set of key-values encoded in JSON.
 	Outputs(context.Context, io.Writer) error
 	// KubeConfig returns the kubeconfig for the cluster.
-	// The internal flag indicated we should use an internal address for the cluster
-	// (eg. the address you would use from inside the cluster).
-	KubeConfig(ctx context.Context, w io.Writer, internal bool) error
+	KubeConfig(ctx context.Context, w io.Writer) error
 	// WireGuardConfig returns the WireGuard configuration for the cluster.
 	// The return value indicates if the cluster has WireGuard enabled.
 	WireGuardConfig(ctx context.Context, w io.Writer) (hasConfig bool, err error)

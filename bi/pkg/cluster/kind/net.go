@@ -2,14 +2,15 @@ package kind
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 
 	"github.com/dghubble/ipnets"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 )
 
@@ -20,15 +21,10 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	if len(networks) == 0 {
-		return "", fmt.Errorf("no kind networks found")
-	}
-
 	slog.Debug("Found kind networks: ", slog.Int("networks", len(networks)))
-	for _, subnet := range networks[0].IPAM.Config {
-		_, net, err := net.ParseCIDR(subnet.Subnet)
-		if err == nil && net.IP.To4() != nil {
-			split, err := split(net)
+	for _, subnet := range networks {
+		if subnet.IP.To4() != nil {
+			split, err := split(subnet)
 			if err != nil {
 				return "", fmt.Errorf("error splitting network: %w", err)
 			}
@@ -38,7 +34,7 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("no kind network subnets found")
+	return "", errors.New("no kind networks found")
 }
 
 // Given a Network suck as 172.18.0.0/16
@@ -55,21 +51,34 @@ func split(ipNet *net.IPNet) (*net.IPNet, error) {
 	return subnets[1], nil
 }
 
-func getKindNetwork(ctx context.Context) ([]types.NetworkResource, error) {
-	apiClient, err := client.NewClientWithOpts(client.FromEnv)
+func getKindNetwork(ctx context.Context) ([]*net.IPNet, error) {
+	dockerClient, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return []types.NetworkResource{}, err
+		return nil, err
 	}
-	defer apiClient.Close()
-	apiClient.NegotiateAPIVersion(ctx)
+	defer dockerClient.Close()
 
-	// Filter for kind networks
-	filters := filters.NewArgs()
-	filters.Add("name", "kind")
-
-	networks, err := apiClient.NetworkList(ctx, types.NetworkListOptions{Filters: filters})
+	networks, err := dockerClient.NetworkList(ctx, network.ListOptions{
+		Filters: filters.NewArgs(filters.Arg("name", "kind")),
+	})
 	if err != nil {
-		return []types.NetworkResource{}, err
+		return nil, err
 	}
-	return networks, nil
+
+	if len(networks) == 0 {
+		return nil, errors.New("no kind networks found")
+	}
+
+	var ipNets []*net.IPNet
+	for _, network := range networks {
+		for _, config := range network.IPAM.Config {
+			_, ipNet, err := net.ParseCIDR(config.Subnet)
+			if err != nil {
+				return nil, fmt.Errorf("error parsing subnet: %w", err)
+			}
+			ipNets = append(ipNets, ipNet)
+		}
+	}
+
+	return ipNets, nil
 }
