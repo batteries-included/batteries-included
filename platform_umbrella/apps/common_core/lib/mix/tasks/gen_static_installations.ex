@@ -15,21 +15,15 @@ defmodule Mix.Tasks.Gen.Static.Installations do
     {:ok, pid} = Generator.start_link()
 
     Generator.available_builds()
-    |> Enum.map(fn identifier ->
-      Generator.build(pid, identifier)
-    end)
+    |> Enum.map(fn identifier -> Generator.build(pid, identifier) end)
     |> Enum.flat_map(fn install ->
       [
         {Path.join(directory, "#{install.slug}.spec.json"), InstallSpec.new!(install)},
         {Path.join(directory, "#{install.slug}.install.json"), install}
       ]
     end)
-    |> Enum.concat([
-      {Path.join(directory, "team.json"), Generator.base_team()}
-    ])
-    |> Enum.each(fn {path, contents} ->
-      write!(path, contents)
-    end)
+    |> Enum.concat([{Path.join(directory, "team.json"), Generator.base_team()}])
+    |> Enum.each(fn {path, contents} -> write!(path, contents) end)
   end
 
   def write!(path, data) do
