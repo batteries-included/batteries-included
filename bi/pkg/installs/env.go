@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"bi/pkg/specs"
 
@@ -44,10 +45,16 @@ func (env *InstallEnv) init(ctx context.Context) error {
 	}
 
 	provider := env.Spec.KubeCluster.Provider
+	usage, err := env.Spec.GetBatteryConfigField("battery_core", "usage")
+
+	if err != nil {
+		return fmt.Errorf("error getting usage: %w", err)
+	}
 
 	switch provider {
 	case "kind":
-		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug)
+		gatewayEnabled := runtime.GOOS != "linux" && usage != "internal_dev" || os.Getenv("INTEGRATION") != ""
+		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)
 	case "provided":

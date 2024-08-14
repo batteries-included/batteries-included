@@ -9,20 +9,10 @@ defmodule CommonCore.Installation do
   use CommonCore, {:schema, no_encode: [:user, :team]}
 
   alias CommonCore.Accounts.User
+  alias CommonCore.Installs.Options
   alias CommonCore.Teams.Team
-  alias CommonCore.Teams.TeamRole
 
   @required_fields ~w(usage kube_provider slug)a
-
-  @sizes [:tiny, :small, :medium, :large, :xlarge, :huge]
-  @providers [Kind: :kind, AWS: :aws, Provided: :provided]
-  @usages [
-    "Kitchen Sink": :kitchen_sink,
-    "Internal Dev": :internal_dev,
-    "Internal Test": :internal_int_test,
-    Development: :development,
-    Production: :production
-  ]
 
   batt_schema "installations" do
     slug_field :slug
@@ -30,13 +20,13 @@ defmodule CommonCore.Installation do
     # This will be the main switch for specialization
     # of the installation after choosing the where the kubernetes
     # cluster is hosted.
-    field :usage, Ecto.Enum, values: Keyword.values(@usages), default: :development
+    field :usage, Ecto.Enum, values: Keyword.values(Options.usages()), default: :development
 
-    field :kube_provider, Ecto.Enum, values: Keyword.values(@providers)
+    field :kube_provider, Ecto.Enum, values: Keyword.values(Options.providers())
     field :kube_provider_config, :map, default: %{}
 
     # Default size for the installation
-    field :default_size, Ecto.Enum, values: @sizes, default: :medium
+    field :default_size, Ecto.Enum, values: Options.sizes(), default: :medium
 
     field :control_jwk, :map, redact: true
 
@@ -91,29 +81,6 @@ defmodule CommonCore.Installation do
     name = Keyword.fetch!(opts, :name)
 
     new!(name, opts)
-  end
-
-  @spec size_options() :: list(String.t())
-  def size_options, do: Enum.map(@sizes, &{&1 |> Atom.to_string() |> String.capitalize(), &1})
-
-  # TODO: Add batteries included team ID that is allowed to create internal installations
-  def usage_options(%TeamRole{id: "INTERNAL_TEAM_ID"}), do: @usages
-
-  def usage_options(_role) do
-    Enum.reject(@usages, fn {key, _} ->
-      key |> Atom.to_string() |> String.starts_with?("Internal")
-    end)
-  end
-
-  def provider_options(:production), do: Enum.filter(@providers, &(elem(&1, 1) != :kind))
-  def provider_options(_environment), do: @providers
-  def provider_options, do: @providers
-
-  def provider_label(provider) do
-    @providers
-    |> Enum.find(&(elem(&1, 1) == provider))
-    |> elem(0)
-    |> Atom.to_string()
   end
 
   @spec default_size(atom(), atom()) :: :large | :medium | :small | :tiny
