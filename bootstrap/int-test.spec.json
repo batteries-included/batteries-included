@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_019151f3e4487b64bb1137e090e7041d",
+        "id": "batt_0191526c546f722889aef1e7111902a5",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -22,12 +22,12 @@
           "default_size": "medium",
           "cluster_name": "int-test",
           "server_in_cluster": false,
-          "install_id": "batt_019151f3e445763584ffcd28a7c95acf",
+          "install_id": "batt_0191526c546a7a90a5e5ec8cb8a1db11",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "-nOZrL2oLFMi6dmI3C0V5R_UcvDAqZRVcx0vhEwvdjY",
+            "d": "4RUHS0VDFFW3QpBz_DROBXwCgvbpuQ1QS6jNt0ePseA",
             "kty": "OKP",
-            "x": "nCqaz2930JQpCO13b3rIDwoq9v-JlWm8l52a4UsZ6QU"
+            "x": "F7uRegX2XnNENE0a0llSvFDlPSjc1JgecLiivBOoicU"
           },
           "upgrade_days_of_week": [
             true,
@@ -44,57 +44,9 @@
         "group": "magic",
         "inserted_at": null,
         "updated_at": null
-      },
-      {
-        "id": "batt_019151f3e448735c8787107842d7f565",
-        "type": "traditional_services",
-        "config": {
-          "type": "traditional_services",
-          "namespace": "battery-traditional",
-          "namespace_override": null
-        },
-        "group": "devtools",
-        "inserted_at": null,
-        "updated_at": null
       }
     ],
-    "traditional_services": [
-      {
-        "id": null,
-        "name": "home-base",
-        "ports": [
-          {
-            "name": "http",
-            "protocol": "http2",
-            "number": 4000
-          }
-        ],
-        "inserted_at": null,
-        "updated_at": null,
-        "env_values": [],
-        "num_instances": 1,
-        "virtual_size": "medium",
-        "cpu_requested": 4000,
-        "cpu_limits": 4000,
-        "memory_requested": 8589934592,
-        "memory_limits": 8589934592,
-        "project_id": null,
-        "containers": [
-          {
-            "args": null,
-            "command": null,
-            "name": "home-base",
-            "image": "public.ecr.aws/batteries-included/home-base:latest",
-            "env_values": [],
-            "mounts": []
-          }
-        ],
-        "kube_internal": false,
-        "init_containers": [],
-        "volumes": [],
-        "kube_deployment_type": "deployment"
-      }
-    ],
+    "traditional_services": [],
     "postgres_clusters": [
       {
         "id": null,
@@ -137,7 +89,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "CL5ZBVWXV54LZ27VRM2BDWJ5"
+            "password": "MKXR7LAOX7CBOJKYTJTZUR3T"
           },
           {
             "version": 1,
@@ -168,7 +120,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "KWMJ2G2IBTTPQXDJMOWLNPOSOWNLV6YVZDY4KZXIOCCRARZQ5PHA===="
+          "battery/hash": "46ZOBTPXB76DHBCUROYGV6V6TWALUHGGIUI3CGKEPDGS7Z4Q4BYA===="
         },
         "labels": {
           "app": "battery-core",
@@ -178,7 +130,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019151f3e4487b64bb1137e090e7041d",
+          "battery/owner": "batt_0191526c546f722889aef1e7111902a5",
           "istio-injection": "enabled",
           "version": "latest"
         },

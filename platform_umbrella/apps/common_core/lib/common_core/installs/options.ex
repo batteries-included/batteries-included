@@ -9,6 +9,7 @@ defmodule CommonCore.Installs.Options do
     "Kitchen Sink": :kitchen_sink,
     "Internal Dev": :internal_dev,
     "Internal Test": :internal_int_test,
+    "Internal Production": :internal_prod,
     Development: :development,
     Production: :production
   ]

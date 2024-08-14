@@ -3,10 +3,11 @@ defmodule CommonCore.Installs.Postgres do
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Defaults.ControlDB
   alias CommonCore.Installation
+  alias CommonCore.Installs.TraditionalServices
 
   # Currently we only include the
   # Control Server db. That's to make onboarding as
-  # simple as possible. Most configuraiton should
+  # simple as possible. Most configuration should
   # be done post install.
   def cluster_arg_list(batteries, installation) do
     batteries
@@ -41,6 +42,29 @@ defmodule CommonCore.Installs.Postgres do
 
   defp cluster_args(%SystemBattery{type: :keycloak}, %Installation{default_size: default_size}),
     do: CommonCore.Defaults.KeycloakDB.pg_cluster(default_size)
+
+  defp cluster_args(%SystemBattery{type: :traditional_services, config: config}, %Installation{
+         usage: usage,
+         default_size: default_size
+       }) do
+    case usage do
+      :internal_prod ->
+        name = TraditionalServices.name()
+
+        %{
+          :name => name,
+          :num_instances => 1,
+          :virtual_size => to_string(default_size),
+          :type => :internal,
+          :users => [%{username: name, roles: ["createdb", "login"], credential_namespaces: [config.namespace]}],
+          :password_versions => [],
+          :database => %{name: name, owner: name}
+        }
+
+      _ ->
+        nil
+    end
+  end
 
   defp cluster_args(_, _), do: nil
 end

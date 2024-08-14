@@ -52,8 +52,7 @@ defmodule CommonCore.Factory do
     # Ensure this is a map
     attrs = Map.new(attrs)
 
-    usage =
-      Map.get_lazy(attrs, :usage, fn -> sequence(:usage, Keyword.values(Options.usages())) end)
+    usage = Map.get_lazy(attrs, :usage, fn -> sequence(:usage, Keyword.values(Options.usages())) end)
 
     kube_provider =
       Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, Keyword.values(Options.providers())) end)
