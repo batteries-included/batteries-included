@@ -58,7 +58,7 @@ defmodule CommonCore.RootResourceGeneratorTest do
     @tag :slow
     test "all battery resources are valid" do
       :install_spec
-      |> build(usage: :intenal_int_test, kube_provider: :kind)
+      |> build(usage: :internal_int_test, kube_provider: :kind)
       |> then(fn install_spec -> install_spec.target_summary end)
       |> RootResourceGenerator.materialize()
       |> Map.values()

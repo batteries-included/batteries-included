@@ -6,6 +6,7 @@ defmodule CommonCore.Factory do
   use ExMachina
 
   alias CommonCore.Ecto.BatteryUUID
+  alias CommonCore.Installs.Options
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.StateSummary.KeycloakSummary
@@ -52,11 +53,10 @@ defmodule CommonCore.Factory do
     attrs = Map.new(attrs)
 
     usage =
-      Map.get_lazy(attrs, :usage, fn ->
-        sequence(:usage, [:internal_dev, :internal_int_test, :development, :production, :kitchen_sink])
-      end)
+      Map.get_lazy(attrs, :usage, fn -> sequence(:usage, Keyword.values(Options.usages())) end)
 
-    kube_provider = Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, [:kind, :aws, :provided]) end)
+    kube_provider =
+      Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, Keyword.values(Options.providers())) end)
 
     kube_provider_config = Map.get_lazy(attrs, :kube_provider_config, fn -> %{} end)
 
@@ -73,7 +73,7 @@ defmodule CommonCore.Factory do
       usage: usage,
       control_jwk: control_jwk,
       user_id: user_id,
-      default_size: sequence(:default_size, [:tiny, :small, :medium, :large, :xlarge, :huge])
+      default_size: sequence(:default_size, Options.sizes())
     }
     |> merge_attributes(attrs)
     |> evaluate_lazy_attributes()

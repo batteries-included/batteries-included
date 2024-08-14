@@ -53,7 +53,6 @@ defmodule ControlServer.Seed do
     Logger.debug("Seeding Redis failover clusters")
 
     summary
-    |> dbg()
     |> Map.get("redis_instances")
     |> Enum.map(&to_fresh_args/1)
     |> Enum.each(fn redis_instance ->

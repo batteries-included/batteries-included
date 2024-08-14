@@ -52,8 +52,8 @@ defmodule CommonCore.InstallSpec do
           initial_resources: initial_resources
         )
 
-      {:error, _} ->
-        {:error, "Failed to create target summary"}
+      {:error, e} ->
+        {:error, "Failed to create target summary for installation: #{inspect(installation)}: #{inspect(e)}"}
     end
   end
 
