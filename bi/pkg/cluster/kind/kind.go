@@ -48,9 +48,6 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 		return fmt.Errorf("neither docker nor podman are available")
 	}
 
-	// The gateway is only enabled on non-linux platforms (and for integration tests).
-	// c.gatewayEnabled = runtime.GOOS != "linux" || os.Getenv("INTEGRATION") != ""
-
 	if c.gatewayEnabled {
 		c.dockerClient, err = dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
 		if err != nil {
