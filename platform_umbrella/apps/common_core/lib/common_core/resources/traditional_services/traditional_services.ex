@@ -154,7 +154,9 @@ defmodule CommonCore.Resources.TraditionalServices do
         "image" => container.image,
         "resources" => resources(service),
         "volumeMounts" => volume_mounts(container),
-        "env" => env(service, container)
+        "env" => env(service, container),
+        "command" => container.command,
+        "args" => container.args
       }
     end)
   end
