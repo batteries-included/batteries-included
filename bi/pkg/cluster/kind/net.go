@@ -23,7 +23,7 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 
 	slog.Debug("Found kind networks: ", slog.Int("networks", len(networks)))
 	for _, subnet := range networks {
-		if subnet.IP.To4() == nil {
+		if subnet.IP.To4() != nil {
 			split, err := split(subnet)
 			if err != nil {
 				return "", fmt.Errorf("error splitting network: %w", err)
