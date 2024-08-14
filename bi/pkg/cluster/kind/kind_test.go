@@ -20,7 +20,7 @@ func TestKindClusterProvider(t *testing.T) {
 
 	name := fmt.Sprintf("test-cluster-%d", os.Getpid())
 
-	p := kind.NewClusterProvider(logger, name)
+	p := kind.NewClusterProvider(logger, name, false)
 
 	require.NoError(t, p.Init(ctx))
 

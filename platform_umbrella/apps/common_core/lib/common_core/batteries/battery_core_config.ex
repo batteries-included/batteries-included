@@ -4,6 +4,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
   use CommonCore, {:embedded_schema, no_encode: [:secret_key]}
 
   alias CommonCore.Defaults
+  alias CommonCore.Installs.Options
 
   @required_fields ~w(cluster_type)a
 
@@ -14,9 +15,12 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     field :ai_namespace, :string, default: Defaults.Namespaces.ai()
 
     secret_field :secret_key
-    field :cluster_type, Ecto.Enum, values: [:kind, :aws, :provided], default: :kind
-    field :default_size, Ecto.Enum, values: [:tiny, :small, :medium, :large, :xlarge, :huge]
+    field :cluster_type, Ecto.Enum, values: Keyword.values(Options.providers()), default: :kind
+    field :default_size, Ecto.Enum, values: Options.sizes()
     field :cluster_name, :string
+
+    # The decalared usage of the cluster
+    field :usage, Ecto.Enum, values: Keyword.values(Options.usages()), default: :development
 
     field :server_in_cluster, :boolean, default: false
 

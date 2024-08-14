@@ -9,8 +9,6 @@ import (
 	"log/slog"
 	"net"
 	"net/netip"
-	"os"
-	"runtime"
 
 	dockerclient "github.com/docker/docker/client"
 	slogmulti "github.com/samber/slog-multi"
@@ -32,10 +30,11 @@ type KindClusterProvider struct {
 	wgClient       *wireguard.Client
 }
 
-func NewClusterProvider(logger *slog.Logger, name string) *KindClusterProvider {
+func NewClusterProvider(logger *slog.Logger, name string, gatewayEnabled bool) *KindClusterProvider {
 	return &KindClusterProvider{
-		logger: logger,
-		name:   name,
+		logger:         logger,
+		name:           name,
+		gatewayEnabled: gatewayEnabled,
 	}
 }
 
@@ -48,9 +47,6 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 	if c.nodeProvider == nil {
 		return fmt.Errorf("neither docker nor podman are available")
 	}
-
-	// The gateway is only enabled on non-linux platforms (and for integration tests).
-	c.gatewayEnabled = runtime.GOOS != "linux" || os.Getenv("INTEGRATION") != ""
 
 	if c.gatewayEnabled {
 		c.dockerClient, err = dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())

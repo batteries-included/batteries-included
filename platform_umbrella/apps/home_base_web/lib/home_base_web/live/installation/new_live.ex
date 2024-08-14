@@ -67,7 +67,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
               field={@form[:usage]}
               type="select"
               placeholder="Select usage type"
-              options={Installation.usage_options(@current_role)}
+              options={CommonCore.Installs.Options.usage_options(@current_role)}
             />
           </.input_panel>
 
@@ -79,7 +79,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
               field={@form[:kube_provider]}
               type="select"
               placeholder="Choose a provider"
-              options={Installation.provider_options(@form[:usage].value)}
+              options={CommonCore.Installs.Options.provider_options(@form[:usage].value)}
             />
           </.input_panel>
 
@@ -87,7 +87,11 @@ defmodule HomeBaseWeb.InstallationNewLive do
             title="What instance size should we default to?"
             description="This can still be customized for individual resources when they are created."
           >
-            <.input field={@form[:default_size]} type="select" options={Installation.size_options()} />
+            <.input
+              field={@form[:default_size]}
+              type="select"
+              options={CommonCore.Installs.Options.size_options()}
+            />
           </.input_panel>
         </.flex>
 

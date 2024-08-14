@@ -99,11 +99,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
       # Materialize the battery with the generators
       # We do all generators in one step rather than
       # flat map to allow for conflict resolution of paths.
-      materialize_system_battery(
-        sb,
-        state,
-        Keyword.fetch!(@default_generator_mappings, type)
-      )
+      materialize_system_battery(sb, state, Keyword.fetch!(@default_generator_mappings, type))
     end)
     |> Enum.reduce(%{}, &Map.merge/2)
   end

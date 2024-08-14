@@ -43,6 +43,7 @@ defmodule CommonCore.Installs.Batteries do
             cluster_name: slug,
             install_id: id,
             control_jwk: control_jwk,
+            usage: usage,
             server_in_cluster: !Enum.member?([:internal_dev, :internal_int_test], usage)
         }
 

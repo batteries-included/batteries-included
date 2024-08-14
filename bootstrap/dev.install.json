@@ -1,18 +1,18 @@
 {
-  "id": "batt_01914818d43d7441a36ce7a3a5f19dbd",
+  "id": "batt_019151f3e40d7f2e82fcd25a34b285f4",
   "usage": "internal_dev",
   "default_size": "tiny",
   "control_jwk": {
     "crv": "Ed25519",
-    "d": "Ghqdu0hMgX9m3Jb9YTli-8InvXIhGSy6WbUCZVZh0wc",
+    "d": "1FXDQmu6sOm8e9HIov83ATOKaP2b9JMoJ2cs1waXrZ4",
     "kty": "OKP",
-    "x": "BtIJe8bO1qdjxwIocKh-Tvc6-ZPkGT_xM-Q0AxZ4KB8"
+    "x": "HZ9a6azkngp76iqwAaSUWxoZtf8T0vsrA1YkR3JSFjU"
   },
   "inserted_at": null,
   "updated_at": null,
   "slug": "dev",
   "kube_provider": "kind",
-  "team_id": "batt_01914818d43d73cabcc79fcd7e2cff77",
+  "team_id": "batt_019151f3e40d7814bfd240df062c89bb",
   "kube_provider_config": {},
   "user_id": null
 }

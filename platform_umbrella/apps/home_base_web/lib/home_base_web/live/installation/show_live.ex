@@ -10,7 +10,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
   def mount(%{"id" => id}, _session, socket) do
     owner = UserAuth.current_team_or_user(socket)
     installation = CustomerInstalls.get_installation!(id, owner)
-    provider = Installation.provider_label(installation.kube_provider)
+    provider = provider_label(installation.kube_provider)
     changeset = CustomerInstalls.change_installation(installation)
 
     {:ok,
@@ -53,6 +53,13 @@ defmodule HomeBaseWeb.InstallationShowLive do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
     end
+  end
+
+  def provider_label(provider) do
+    CommonCore.Installs.Options.providers()
+    |> Enum.find(&(elem(&1, 1) == provider))
+    |> elem(0)
+    |> Atom.to_string()
   end
 
   def render(%{live_action: :success} = assigns) do

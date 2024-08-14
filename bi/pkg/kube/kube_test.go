@@ -17,7 +17,7 @@ func TestBatteryKubeClient(t *testing.T) {
 	testutil.IntegrationTest(t)
 
 	t.Log("Creating kind cluster")
-	clusterProvider := kind.NewClusterProvider(slogt.New(t), "bi-wg-test")
+	clusterProvider := kind.NewClusterProvider(slogt.New(t), "bi-wg-test", true)
 
 	ctx := context.Background()
 	require.NoError(t, clusterProvider.Init(ctx))
