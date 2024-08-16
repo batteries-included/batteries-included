@@ -1,8 +1,6 @@
 defmodule CommonCore.Actions.BatteryCore do
   @moduledoc false
 
-  use CommonCore.Actions.SSOClient, client_name: "battery_core"
-
   alias CommonCore.Actions.FreshGeneratedAction
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.StateSummary

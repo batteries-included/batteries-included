@@ -5,6 +5,8 @@ defmodule KubeServices.Batteries.BatteryCore do
   alias CommonCore.ET.URLs
   alias KubeServices.ET.HomeBaseClient
 
+  require Logger
+
   def init(opts) do
     battery = Keyword.fetch!(opts, :battery)
 
@@ -27,6 +29,8 @@ defmodule KubeServices.Batteries.BatteryCore do
       KubeServices.Stale.Reaper,
       KubeServices.ResourceDeleter
     ]
+
+    Logger.debug("Starting BatteryCore")
 
     Supervisor.init(children, strategy: :one_for_one)
   end

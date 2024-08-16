@@ -40,6 +40,9 @@ defmodule KubeServices.ET.InstallStatusWorker do
       )
 
     _ = schedule_inital_report(state)
+
+    Logger.debug("Starting InstallStatusWorker with sleep time #{sleep_time} pid = #{inspect(self())}")
+
     {:ok, state}
   end
 

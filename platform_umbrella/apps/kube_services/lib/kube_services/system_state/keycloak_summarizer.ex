@@ -5,7 +5,9 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
 
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.StateSummary.KeycloakSummary
+  alias CommonCore.StateSummary.RealmOIDCConfiguration
   alias KubeServices.Keycloak.AdminClient
+  alias KubeServices.Keycloak.WellknownClient
 
   require Logger
 
@@ -42,6 +44,7 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
           realms
           |> add_all_clients()
           |> add_all_users()
+          |> get_realm_configurations()
           |> to_summary()
 
         {:reply, summary, state}
@@ -54,8 +57,8 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
     end
   end
 
-  defp to_summary(enriched_realms) do
-    %KeycloakSummary{realms: enriched_realms}
+  defp to_summary({enriched_realms, realm_configurations}) do
+    %KeycloakSummary{realms: enriched_realms, realm_configurations: realm_configurations}
   end
 
   defp try_get_realms do
@@ -86,6 +89,28 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
 
       _ ->
         realm
+    end
+  end
+
+  defp get_realm_configurations(realms) do
+    # For each realm try and get the OIDC configuration
+    #
+    # A bunch of urls that we need to get all the open id connect info.
+    realm_configs =
+      realms
+      |> Enum.map(&get_realm_configuration/1)
+      |> Enum.filter(&(&1 != nil))
+
+    {realms, realm_configs}
+  end
+
+  defp get_realm_configuration(%RealmRepresentation{realm: name}) do
+    with {:ok, configuration} <- WellknownClient.get(name),
+         {:ok, realm_config} <- RealmOIDCConfiguration.new(realm: name, oidc_configuration: configuration) do
+      realm_config
+    else
+      _ ->
+        nil
     end
   end
 

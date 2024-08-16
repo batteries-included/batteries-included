@@ -5,11 +5,13 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
 
   alias CommonCore.OpenAPI.KeycloakAdminSchema
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.StateSummary.RealmOIDCConfiguration
 
   require Logger
 
   batt_embedded_schema do
     embeds_many :realms, KeycloakAdminSchema.RealmRepresentation
+    embeds_many :realm_configurations, RealmOIDCConfiguration
   end
 
   @spec realm_member?(nil | t(), any) :: boolean

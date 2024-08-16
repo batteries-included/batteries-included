@@ -10,7 +10,13 @@ defmodule ControlServerWeb.Router do
     plug :put_root_layout, {ControlServerWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers, ControlServerWeb.CSP.new()
-    plug KubeServices.ET.StatusPlug
+  end
+
+  pipeline :auth do
+    plug ControlServerWeb.Plug.SessionID
+    plug ControlServerWeb.Plug.InstallStatus
+    plug ControlServerWeb.Plug.RefreshToken
+    plug ControlServerWeb.Plug.SSOAuth
   end
 
   pipeline :api do
@@ -19,6 +25,13 @@ defmodule ControlServerWeb.Router do
 
   scope "/", ControlServerWeb do
     pipe_through :browser
+
+    get "/sso/callback", SSOController, :callback
+    delete "/sso/delete", SSOController, :delete
+  end
+
+  scope "/", ControlServerWeb do
+    pipe_through [:browser, :auth]
 
     live "/", Live.Home, :index
     live "/stale", Live.StaleIndex, :index
@@ -35,7 +48,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/ip_address_pools", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.IPAddressPoolIndex, :index
     live "/new", Live.IPAddressPoolNew, :index
@@ -43,7 +56,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/deploy", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.SnapshotApplyIndex, :index
     live "/:id/show", Live.UmbrellaSnapshotShow, :index
@@ -52,7 +65,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/batteries", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/:group", Live.GroupBatteriesIndex
     live "/:group/new/:battery_type", Live.GroupBatteriesNew
@@ -60,7 +73,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/projects", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.ProjectsIndex
     live "/new", Live.ProjectsNew
@@ -70,7 +83,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/kube", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/deployments", Live.ResourceList, :deployment
     live "/stateful_sets", Live.ResourceList, :stateful_set
@@ -92,7 +105,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/redis", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.RedisIndex, :index
     live "/new", Live.RedisNew, :new
@@ -102,7 +115,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/postgres", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.PostgresIndex, :index
     live "/new", Live.PostgresNew, :new
@@ -114,7 +127,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/ferretdb", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.FerretServiceIndex, :index
     live "/:id/edit", Live.FerretServiceEdit, :show
@@ -125,7 +138,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/notebooks", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.JupyterLabNotebookIndex, :index
     live "/new", Live.JupyterLabNotebookNew, :new
@@ -134,7 +147,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/knative", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/services", Live.KnativeIndex, :index
     live "/services/new", Live.KnativeNew, :new
@@ -145,7 +158,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/traditional_services", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.TraditionalServicesIndex, :index
     live "/new", Live.TraditionalServicesNew, :new
@@ -154,7 +167,7 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/trivy_reports", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/config_audit_report", Live.TrivyReportsIndex, :aqua_config_audit_report
 
@@ -172,33 +185,34 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/istio", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/virtual_services", Live.IstioVirtualServicesIndex, :index
     live "/virtual_service/:namespace/:name", Live.IstioVirtualServiceShow, :index
   end
 
   scope "/keycloak", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/realms", Live.KeycloakRealmsList
     live "/realm/:name", Live.KeycloakRealm
   end
 
   scope "/history", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/timeline", Live.Timeline, :index
   end
 
   scope "/edit_versions", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
+
     live "/", Live.EditVersionsList, :index
     live "/:id", Live.EditVersionShow, :show
   end
 
   scope "/content_addressable", ControlServerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/", Live.ContentAddressableIndex, :index
   end

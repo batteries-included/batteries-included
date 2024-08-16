@@ -1,5 +1,6 @@
-defmodule KubeServices.ET.StatusPlug do
+defmodule ControlServerWeb.Plug.InstallStatus do
   @moduledoc false
+  import Phoenix.Controller
   import Plug.Conn
 
   alias CommonCore.ET.InstallStatus
@@ -10,7 +11,7 @@ defmodule KubeServices.ET.StatusPlug do
   end
 
   def call(conn, _opts) do
-    if KubeServices.Application.start_services?() do
+    if battery_services_running?() do
       status = InstallStatusWorker.get_status()
       maybe_redirect(conn, status)
     else
@@ -26,10 +27,10 @@ defmodule KubeServices.ET.StatusPlug do
       conn
     else
       conn
-      |> resp(:found, "")
-      |> put_resp_header("location", InstallStatus.redirect_path(status))
-      |> send_resp()
+      |> redirect(to: InstallStatus.redirect_path(status))
       |> halt()
     end
   end
+
+  def battery_services_running?, do: KubeServices.Application.start_services?()
 end

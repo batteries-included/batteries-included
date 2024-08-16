@@ -13,6 +13,7 @@ defmodule KubeServices.Keycloak.AdminClient do
   alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
   alias KubeServices.Keycloak.TokenStrategy
   alias KubeServices.Keycloak.WellknownClient
+  alias OAuth2.AccessToken
 
   require Logger
 
@@ -221,7 +222,7 @@ defmodule KubeServices.Keycloak.AdminClient do
   @impl GenServer
   def handle_call(request, _from, state) do
     case to_client(state) do
-      {%{} = client, %State{} = new_state} ->
+      {:ok, {%{} = client, %State{} = new_state}} ->
         {:reply, run(request, client), new_state}
 
       {:error, reason} ->
@@ -337,19 +338,25 @@ defmodule KubeServices.Keycloak.AdminClient do
       |> maybe_login()
       |> maybe_refresh_token()
 
-    if new_state.token == nil do
-      Logger.error("Failed to get a token")
-      {:error, "Failed to get a token"}
-    else
-      client =
-        TokenStrategy.new(
-          client_id: state.client_id,
-          token: state.token,
-          authorize_url: state.authorization_url,
-          token_url: state.token_url
-        )
+    cond do
+      new_state.token == nil ->
+        Logger.error("Failed to get a token")
+        {:error, "Failed to get a token"}
 
-      {client, new_state}
+      AccessToken.expired?(new_state.token) ->
+        Logger.error("Token expired")
+        {:error, "Token expired"}
+
+      true ->
+        client =
+          TokenStrategy.new(
+            client_id: new_state.client_id,
+            token: new_state.token,
+            authorize_url: new_state.authorization_url,
+            token_url: new_state.token_url
+          )
+
+        {:ok, {client, new_state}}
     end
   end
 
@@ -375,6 +382,8 @@ defmodule KubeServices.Keycloak.AdminClient do
            [realm: realm, client_id: client_id]
            |> TokenStrategy.new()
            |> OAuth2.Client.get_token(username: state.username, password: state.password) do
+      Logger.info("Logged in getting a token that expires at #{inspect(Map.get(client.token, :expires_at, nil))}")
+
       %State{
         state
         | token: client.token,
@@ -401,10 +410,12 @@ defmodule KubeServices.Keycloak.AdminClient do
            |> TokenStrategy.new()
            |> OAuth2.Client.refresh_token() do
         {:ok, client} ->
+          Logger.debug("Refreshed token that expires at #{inspect(Map.get(client.token || %{}, :expires_at, nil))}")
           %State{state | token: client.token}
 
-        {:error, _} ->
-          maybe_login(state)
+        {:error, error} ->
+          Logger.warning("Failed to refresh token #{inspect(error)}", error: error)
+          maybe_login(%State{state | token: nil})
       end
     else
       state

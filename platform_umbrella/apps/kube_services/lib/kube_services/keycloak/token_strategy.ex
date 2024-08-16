@@ -7,19 +7,20 @@ defmodule KubeServices.Keycloak.TokenStrategy do
   alias KubeServices.SystemState.Summarizer
 
   def new(params \\ []) do
-    realm = Keyword.get(params, :realm, "master")
-
     client_id =
       Keyword.get_lazy(params, :client_id, fn ->
         # TODO: Get the client_id from control servers's created client
         "admin-cli"
       end)
 
+    client_secret = Keyword.get(params, :client_secret, "")
+
     param_authorize_url = Keyword.get(params, :authorize_url, nil)
     param_token_url = Keyword.get(params, :token_url, nil)
 
     {authorize_url, token_url} =
       if !param_authorize_url || !param_token_url do
+        realm = Keyword.get(params, :realm, "master")
         {:ok, well_known} = WellknownClient.get(realm)
         {well_known.authorization_endpoint, well_known.token_endpoint}
       else
@@ -32,6 +33,7 @@ defmodule KubeServices.Keycloak.TokenStrategy do
       authorize_url: authorize_url,
       token_url: token_url,
       client_id: client_id,
+      client_secret: client_secret,
       site: "#{url.scheme}://#{url.authority}",
       token: Keyword.get(params, :token, nil),
       token_method: :post
@@ -79,18 +81,29 @@ defmodule KubeServices.Keycloak.TokenStrategy do
 
   def redirect_uri(params) do
     return_to = Keyword.get(params, :return_to, nil)
+    control_server_url = get_control_server_url(params)
+
+    uri = control_server_url |> URI.parse() |> URI.append_path("/sso/callback")
 
     if return_to do
-      uri = URI.parse(return_to)
-      # forcefully set host since we know they want to come back to this host.
-      "#{uri.scheme}://#{uri.authority}/sso/callback?return_to=#{return_to}"
+      uri
+      |> URI.append_query(URI.encode_query(%{"return_to" => return_to}))
+      |> URI.to_string()
     else
-      control_server_url =
-        Keyword.get_lazy(params, :control_server_url, fn ->
-          Summarizer.cached() |> URLs.uri_for_battery(:control_server) |> URI.to_string()
-        end)
+      URI.to_string(uri)
+    end
+  end
 
-      "#{control_server_url}/sso/callback"
+  defp get_control_server_url(params) do
+    return_to = Keyword.get(params, :return_to, nil)
+
+    if return_to && !String.starts_with?(return_to, "/") do
+      return_uri = URI.parse(return_to)
+      "#{return_uri.scheme}://#{return_uri.authority}"
+    else
+      Keyword.get_lazy(params, :battery_core_url, fn ->
+        Summarizer.cached() |> URLs.uri_for_battery(:battery_core) |> URI.to_string()
+      end)
     end
   end
 

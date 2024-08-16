@@ -20,7 +20,16 @@ defmodule KubeServices.SystemState.ReconfigCanary do
 
   @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts)
+    GenServer.start_link(
+      __MODULE__,
+      # Unless the user passed in a state summary this is where will
+      # get the baseline state summary. It's important to do this early before
+      # any other processes can be started. This ensures there is no race.
+      Keyword.put_new_lazy(opts, :state_summary, &Summarizer.cached/0),
+
+      # We never provide a name for ReconfigCanary; it's only purpose is to perish.
+      []
+    )
   end
 
   @impl GenServer
@@ -28,8 +37,8 @@ defmodule KubeServices.SystemState.ReconfigCanary do
   def init(opts) do
     :ok = EventCenter.SystemStateSummary.subscribe()
 
-    methods = Keyword.get(opts, :methods, [])
-    {:ok, %State{state_summary: Summarizer.cached(), methods: methods}}
+    state = struct!(State, opts)
+    {:ok, state}
   end
 
   @impl GenServer
@@ -52,7 +61,7 @@ defmodule KubeServices.SystemState.ReconfigCanary do
     {nil, method.(summary)}
   rescue
     reason ->
-      Logger.warning("Error in summary method #{method}, reason: #{inspect(reason)}")
+      Logger.warning("Error in summary method reason: #{inspect(reason)}")
       {reason, nil}
   catch
     _ ->
