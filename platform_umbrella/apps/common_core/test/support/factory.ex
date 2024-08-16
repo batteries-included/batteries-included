@@ -52,7 +52,11 @@ defmodule CommonCore.Factory do
     # Ensure this is a map
     attrs = Map.new(attrs)
 
-    usage = Map.get_lazy(attrs, :usage, fn -> sequence(:usage, Keyword.values(Options.usages())) end)
+    usage =
+      Map.get_lazy(attrs, :usage, fn ->
+        # skip :internal_prod for testing as it tries to read from the file system
+        sequence(:usage, Options.usages() |> Keyword.values() |> Enum.reject(&(&1 == :internal_prod)))
+      end)
 
     kube_provider =
       Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, Keyword.values(Options.providers())) end)
