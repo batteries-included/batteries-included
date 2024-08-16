@@ -58,7 +58,6 @@ defmodule ControlServerWeb.MixProject do
 
       # We use this to generate some names
       {:mnemonic_slugs, "~> 0.0.3"},
-      {:oidcc, "~> 3.2"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.6"},
       {:phoenix_html, "~> 4.1"},
