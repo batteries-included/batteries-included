@@ -6,9 +6,11 @@ defmodule CommonCore.Resources.BootstrapRoot do
   Anything here can be used as an input for our initial bootstrap.
   """
   alias CommonCore.Resources.Bootstrap.BatteryCore
+  alias CommonCore.Resources.Bootstrap.TraditionalServices
 
   @generator_mappings [
-    battery_core: BatteryCore
+    battery_core: BatteryCore,
+    traditional_services: TraditionalServices
   ]
 
   def materialize(%{batteries: batteries} = state) do
