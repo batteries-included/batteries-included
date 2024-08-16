@@ -46,7 +46,8 @@ defmodule KubeServices.MixProject do
       {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.7"},
       {:tesla, "~> 1.11"},
-      {:typed_struct, "~> 0.3", runtime: false}
+      {:typed_struct, "~> 0.3", runtime: false},
+      {:oauth2, "~> 2.0"}
     ]
   end
 

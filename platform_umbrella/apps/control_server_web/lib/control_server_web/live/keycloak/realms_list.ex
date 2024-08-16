@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
 
   import ControlServerWeb.Keycloak.RealmsTable
 
-  alias CommonCore.Keycloak.AdminClient
+  alias KubeServices.Keycloak.AdminClient
   alias KubeServices.SystemState.SummaryURLs
 
   @impl Phoenix.LiveView

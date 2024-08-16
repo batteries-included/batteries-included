@@ -3,12 +3,12 @@ defmodule KubeServices.Keycloak.UserManager do
   use GenServer
   use TypedStruct
 
-  alias CommonCore.Keycloak.AdminClient
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
   alias EventCenter.Keycloak.Payload
+  alias KubeServices.Keycloak.AdminClient
 
   require Logger
 
@@ -85,7 +85,7 @@ defmodule KubeServices.Keycloak.UserManager do
          # access to the realm settings
          %{} = managment_client <- find_realm_managment_client(clients),
          # Get all the roles for the realm management client
-         {:ok, roles} <- AdminClient.list_client_roles(realm, managment_client.id),
+         {:ok, roles} <- AdminClient.client_roles(realm, managment_client.id),
          # Frind the one that makes us and admin
          %{} = role <- find_realm_admin_role(roles),
          # Create a payload to add the role to the user

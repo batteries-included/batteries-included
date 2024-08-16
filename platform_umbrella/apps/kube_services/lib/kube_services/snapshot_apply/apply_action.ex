@@ -1,10 +1,11 @@
 defmodule KubeServices.SnapshotApply.ApplyAction do
   @moduledoc false
 
-  alias CommonCore.Keycloak.AdminClient
   alias ControlServer.ContentAddressable.Document
   alias ControlServer.SnapshotApply.KeycloakAction
   alias EventCenter.Keycloak.Payload
+  alias KubeServices.Keycloak.AdminClient
+  alias KubeServices.Keycloak.WellknownClient
 
   require Logger
 
@@ -80,7 +81,9 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
   end
 
   def apply(%KeycloakAction{action: :ping, type: :realm}) do
-    case AdminClient.ping() do
+    # For ping we check that the openid wellknown
+    # for the master realm (which is always created on startup)
+    case WellknownClient.get("master") do
       {:ok, _} ->
         {:ok, nil}
 
