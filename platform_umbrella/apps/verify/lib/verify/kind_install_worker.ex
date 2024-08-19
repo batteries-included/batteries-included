@@ -73,7 +73,7 @@ defmodule Verify.KindInstallWorker do
 
   def build_install_spec(identifier, %{root_path: root_dir} = _state) do
     install = CommonCore.Installs.Generator.build(Verify.Installs.Generator, identifier)
-    spec = CommonCore.InstallSpec.new!(install, %CommonCore.Installs.HomeBaseInitData{})
+    spec = CommonCore.InstallSpec.new!(install)
     id = BatteryUUID.autogenerate()
     path = Path.join(root_dir, "#{id}_#{install.slug}.spec.json")
     string = Jason.encode_to_iodata!(spec, pretty: true, escape: :javascript_safe)

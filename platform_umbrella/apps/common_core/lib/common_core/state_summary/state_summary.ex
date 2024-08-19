@@ -21,6 +21,7 @@ defmodule CommonCore.StateSummary do
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Installation
+  alias CommonCore.Installs.HomeBaseInitData
 
   batt_embedded_schema do
     # Database backed fields
@@ -38,14 +39,15 @@ defmodule CommonCore.StateSummary do
     embeds_one :keycloak_state, CommonCore.StateSummary.KeycloakSummary
     embeds_one :install_status, CommonCore.ET.InstallStatus
     embeds_one :stable_versions_report, CommonCore.ET.StableVersionsReport
-    embeds_one :home_base_init_data, CommonCore.Installs.HomeBaseInitData
+    embeds_one :home_base_init_data, HomeBaseInitData
 
     field :captured_at, :utc_datetime_usec
 
     field :kube_state, :map, default: %{}
   end
 
-  def target_summary(%Installation{} = installation, home_base_init_data) do
+  def target_summary(%Installation{} = installation, opts \\ []) do
+    home_base_init_data = Keyword.get(opts, :home_base_init_data, %HomeBaseInitData{})
     batteries = CommonCore.Installs.Batteries.default_batteries(installation)
 
     %__MODULE__{}

@@ -27,7 +27,10 @@ defmodule Mix.Tasks.Gen.Static.Installations do
 
     installs
     |> Enum.map(fn install ->
-      {Path.join(directory, "#{install.slug}.spec.json"), InstallSpec.new!(install, home_base_init_data)}
+      {
+        Path.join(directory, "#{install.slug}.spec.json"),
+        InstallSpec.new!(install, home_base_init_data: home_base_init_data)
+      }
     end)
     |> Enum.each(fn {path, contents} -> write!(path, contents) end)
   end
