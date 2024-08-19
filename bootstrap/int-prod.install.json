@@ -1,18 +1,18 @@
 {
-  "id": "batt_0191526c546a7161b162d0c54e7dcb88",
+  "id": "batt_01916b9b73c07747bae51001923b3c06",
   "usage": "internal_prod",
   "default_size": "medium",
   "control_jwk": {
     "crv": "Ed25519",
-    "d": "5HVc73Kg6rCm7DQSGSihidgMVaW58VXPIDBbsf1mJAM",
+    "d": "LNWLSEryXVA1AvkxLYrNXafqirQL-fbWVbHfXx-A0us",
     "kty": "OKP",
-    "x": "_DRBRsnGjd3ZBlyWeYGoyB4QNnYH1sh25H60wYz2MLM"
+    "x": "VT5lE-HXHs8k2-RIgj8DrIriB1TUgreZxymsOa8_T8o"
   },
   "inserted_at": null,
   "updated_at": null,
   "slug": "int-prod",
   "kube_provider": "kind",
-  "team_id": "batt_0191526c5420729ebffff64074a99205",
+  "team_id": "batt_01916b9b736579e88804a35fedbcd600",
   "kube_provider_config": {},
   "user_id": null
 }

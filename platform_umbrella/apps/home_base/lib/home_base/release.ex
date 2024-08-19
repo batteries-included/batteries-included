@@ -38,27 +38,35 @@ defmodule HomeBase.Release do
   end
 
   def seed(path) do
-    # List the files then for every file in the
-    # list if it matches the a different
-    # pattern add the filename to a list for that type
-    #
-    # *team.json is for teams (Currently only one team is emitted)
-    # *install.json is for installations
-    # Everything else is ignored
+    if File.exists?(path) do
+      :ok = load_app()
 
-    :ok =
-      path
-      |> File.ls!()
-      |> Enum.reduce(%{teams: [], installations: []}, fn file_name, acc ->
-        full_path = Path.join(path, file_name)
+      # List the files then for every file in the
+      # list if it matches the a different
+      # pattern add the filename to a list for that type
+      #
+      # *team.json is for teams (Currently only one team is emitted)
+      # *install.json is for installations
+      # Everything else is ignored
+      :ok = do_seed(path)
+    else
+      Logger.warning("File does not exist: #{path}. Skipping seed.")
+    end
+  end
 
-        cond do
-          String.ends_with?(file_name, "team.json") -> %{acc | teams: [full_path | acc.teams]}
-          String.ends_with?(file_name, "install.json") -> %{acc | installations: [full_path | acc.installations]}
-          true -> acc
-        end
-      end)
-      |> HomeBase.Seed.seed_files()
+  defp do_seed(path) do
+    path
+    |> File.ls!()
+    |> Enum.reduce(%{teams: [], installations: []}, fn file_name, acc ->
+      full_path = Path.join(path, file_name)
+
+      cond do
+        String.ends_with?(file_name, "team.json") -> %{acc | teams: [full_path | acc.teams]}
+        String.ends_with?(file_name, "install.json") -> %{acc | installations: [full_path | acc.installations]}
+        true -> acc
+      end
+    end)
+    |> HomeBase.Seed.seed_files()
   end
 
   def rollback(repo, version) do

@@ -50,7 +50,8 @@ defmodule CommonCore.Installs.Generator do
     Team.new!(
       name: "Batteries Included Team",
       op_email: "elliott@batteriesincl.com",
-      id: BatteryUUID.autogenerate()
+      id: BatteryUUID.autogenerate(),
+      roles: []
     )
   end
 

@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_0191526c546f722889aef1e7111902a5",
+        "id": "batt_01916b9b73d4766f92f50092975e6f86",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -22,12 +22,12 @@
           "default_size": "medium",
           "cluster_name": "int-test",
           "server_in_cluster": false,
-          "install_id": "batt_0191526c546a7a90a5e5ec8cb8a1db11",
+          "install_id": "batt_01916b9b73bf7e9180c9b4bab82e9b83",
           "control_jwk": {
             "crv": "Ed25519",
-            "d": "4RUHS0VDFFW3QpBz_DROBXwCgvbpuQ1QS6jNt0ePseA",
+            "d": "0X8wbW0mCZY3BJUN1nuM_hR1T6Fw6y7oTFDIA2sa3nA",
             "kty": "OKP",
-            "x": "F7uRegX2XnNENE0a0llSvFDlPSjc1JgecLiivBOoicU"
+            "x": "gv9Wf2sc-cTDk6R1ngm3EouPKeNbSDjHGGa0z8WUECI"
           },
           "upgrade_days_of_week": [
             true,
@@ -89,7 +89,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "MKXR7LAOX7CBOJKYTJTZUR3T"
+            "password": "UMYJKDSLW42FY4MIWQBISTEO"
           },
           {
             "version": 1,
@@ -120,7 +120,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "46ZOBTPXB76DHBCUROYGV6V6TWALUHGGIUI3CGKEPDGS7Z4Q4BYA===="
+          "battery/hash": "COR3JOFBRZ3GVUWRQ3ZA7L6ZHZXNYWR6U4BHKSFVGSH4GDLIC3SQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -130,7 +130,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_0191526c546f722889aef1e7111902a5",
+          "battery/owner": "batt_01916b9b73d4766f92f50092975e6f86",
           "istio-injection": "enabled",
           "version": "latest"
         },
