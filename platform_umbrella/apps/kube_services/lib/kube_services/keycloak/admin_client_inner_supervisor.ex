@@ -24,7 +24,9 @@ defmodule KubeServices.Keycloak.AdminClientInnerSupervisor do
 
     children = [
       # Start the AdminClient with the latest credentials and base_url
-      {AdminClient, [base_url: base_url, username: username, password: password]}
+      {KubeServices.Keycloak.WellknownClient, [base_url: base_url]},
+      {AdminClient, [base_url: base_url, username: username, password: password]},
+      {KubeServices.Keycloak.AdminClient, [username: username, password: password]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

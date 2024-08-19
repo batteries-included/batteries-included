@@ -5,8 +5,8 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   import ControlServerWeb.Keycloak.ClientsTable
   import ControlServerWeb.Keycloak.UsersTable
 
-  alias CommonCore.Keycloak.AdminClient
   alias ControlServerWeb.Keycloak.NewUserForm
+  alias KubeServices.Keycloak.AdminClient
   alias KubeServices.Keycloak.UserManager
   alias KubeServices.SystemState.SummaryURLs
 

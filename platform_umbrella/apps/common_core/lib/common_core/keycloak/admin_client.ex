@@ -39,6 +39,8 @@ defmodule CommonCore.Keycloak.AdminClient do
   use GenServer
   use TypedStruct
 
+  import CommonCore.Util.Tesla
+
   alias CommonCore.Keycloak.TeslaBuilder
   alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.OpenAPI.KeycloakAdminSchema
@@ -48,7 +50,6 @@ defmodule CommonCore.Keycloak.AdminClient do
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
-  alias CommonCore.OpenAPI.OIDC.OIDCConfiguration
 
   require Logger
 
@@ -214,15 +215,15 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:groups, realm_name})
   end
 
-  @spec groups(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
+  @spec roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
           {:ok, list(RoleRepresentation.t())} | {:error, any()}
   def roles(target \\ @me, realm_name) do
     GenServer.call(target, {:roles, realm_name})
   end
 
-  @spec list_client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary()) ::
+  @spec client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary()) ::
           {:ok, list(ClientRepresentation.t())} | {:error, any()}
-  def list_client_roles(target \\ @me, realm_name, client_id) do
+  def client_roles(target \\ @me, realm_name, client_id) do
     GenServer.call(target, {:client_roles, realm_name, client_id})
   end
 
@@ -240,14 +241,6 @@ defmodule CommonCore.Keycloak.AdminClient do
         ) :: any
   def reset_password_user(target \\ @me, realm_name, user_id, creds) do
     GenServer.call(target, {:reset_password_user, realm_name, user_id, creds})
-  end
-
-  def openid_wellknown_configuration(target \\ @me, realm_name) do
-    GenServer.call(target, {:get_openid_wellknown, realm_name})
-  end
-
-  def ping(target \\ @me) do
-    GenServer.call(target, :ping)
   end
 
   def handle_call(:refresh, _from, state) do
@@ -358,18 +351,6 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   def handle_call({:add_client_roles, realm_name, user_id, client_id, roles_payload}, _from, state) do
     with_auth(state, fn new_state -> do_add_client_roles(realm_name, user_id, client_id, roles_payload, new_state) end)
-  end
-
-  #
-  # Misc
-  #
-
-  def handle_call({:get_openid_wellknown, realm_name}, _from, %State{} = state) do
-    {:reply, do_get_openid_wellknown(realm_name, state), state}
-  end
-
-  def handle_call(:ping, _from, %State{} = state) do
-    {:reply, do_ping(state), state}
   end
 
   defp with_auth(state, fun) do
@@ -607,69 +588,5 @@ defmodule CommonCore.Keycloak.AdminClient do
     client
     |> Tesla.post(@base_path <> realm_name <> "/users/" <> user_id <> "/role-mappings/clients/" <> client_id, role)
     |> to_result(nil)
-  end
-
-  #
-  # Miscellaneous http methods
-  #
-
-  defp do_get_openid_wellknown(realm_name, %State{base_client: client} = _state) do
-    client
-    |> Tesla.get("realms/" <> realm_name <> "/.well-known/openid-configuration")
-    |> to_result(&OIDCConfiguration.new!/1)
-  end
-
-  defp do_ping(%State{base_client: client} = _state) do
-    client
-    |> Tesla.options(@base_path)
-    |> to_result(nil)
-  end
-
-  #
-  # Helpers
-  #
-
-  defp to_result({:ok, %{status: 200, body: body}}, mapper) when is_list(body) do
-    {:ok, Enum.map(body, mapper)}
-  end
-
-  defp to_result({:ok, %{status: 200, body: body}}, nil) do
-    {:ok, body}
-  end
-
-  defp to_result({:ok, %{status: 200, body: body}}, mapper) do
-    {:ok, mapper.(body)}
-  end
-
-  defp to_result({:ok, %{status: 204}}, _mapper) do
-    {:ok, :success}
-  end
-
-  defp to_result({:ok, %{status: 201, headers: headers}}, nil) do
-    location =
-      headers
-      |> Enum.filter(fn {key, _} -> key == "location" end)
-      |> Enum.map(fn {_, value} -> value end)
-      |> List.first()
-
-    {:ok, location}
-  end
-
-  defp to_result({:ok, %{status: 409, body: %{"error" => _error}}}, _mapper) do
-    {:error, :error_already_exists}
-  end
-
-  defp to_result({:ok, %{body: %{"error" => error}}}, _mapper) do
-    {:error, error}
-  end
-
-  defp to_result({:ok, %Tesla.Env{body: %{"errorMessage" => error}}}, _mapper) do
-    {:error, error}
-  end
-
-  defp to_result({:error, error}, _mapper), do: {:error, error}
-
-  defp to_result(_error, _mapper) do
-    {:error, :unknown_keycloak_error}
   end
 end
