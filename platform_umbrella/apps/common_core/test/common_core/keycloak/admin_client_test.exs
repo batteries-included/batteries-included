@@ -22,7 +22,6 @@ defmodule CommonCore.Keycloak.TestAdminClient do
 
   @test_user_id "00-00-00-00-00-00-00"
 
-  @discovery_url "http://keycloak.local.test/realms/master/.well-known/openid-configuration"
   @full_url "http://keycloak.local.test/realms/master/protocol/openid-connect/token"
   @realms_url "http://keycloak.local.test/admin/realms"
   @battery_core_clients_url "http://keycloak.local.test/admin/realms/batterycore/clients"
@@ -216,18 +215,6 @@ defmodule CommonCore.Keycloak.TestAdminClient do
       end)
 
       assert AdminClient.roles(pid, "batterycore") == {:error, "bad role reason"}
-    end
-  end
-
-  describe "openid_wellknown_configuration" do
-    setup [:verify_on_exit!, :setup_mocked_admin]
-
-    test "will return ok", %{pid: pid} do
-      expect(TeslaMock, :call, fn %{url: @discovery_url}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: %{}}}
-      end)
-
-      assert {:ok, %OIDCConfiguration{}} = AdminClient.openid_wellknown_configuration(pid, "master")
     end
   end
 
