@@ -9,7 +9,6 @@ defmodule CommonCore.Keycloak.TestAdminClient do
   alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.GroupRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
-  alias CommonCore.OpenAPI.OIDC.OIDCConfiguration
 
   @access_key_value "VALUE_KEY_HERE"
   @refresh_key_value "REFRESH_KEY_HERE"
