@@ -40,8 +40,8 @@ defmodule CommonCore.InstallSpec do
     {:ok, struct!(__MODULE__, m)}
   end
 
-  def new(%Installation{} = installation) do
-    case CommonCore.StateSummary.target_summary(installation) do
+  def new(%Installation{} = installation, home_base_init_data) do
+    case CommonCore.StateSummary.target_summary(installation, home_base_init_data) do
       {:ok, target_summary} ->
         initial_resources = CommonCore.Resources.BootstrapRoot.materialize(target_summary)
 
@@ -57,7 +57,8 @@ defmodule CommonCore.InstallSpec do
     end
   end
 
-  def new!(%Installation{} = installation), do: with({:ok, spec} <- new(installation), do: spec)
+  def new!(%Installation{} = installation, home_base_init_data),
+    do: with({:ok, spec} <- new(installation, home_base_init_data), do: spec)
 
   defp kube_cluster(%{kube_provider: kube_provider, kube_provider_config: config} = _installation) do
     %{provider: kube_provider, config: config}

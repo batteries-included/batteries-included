@@ -3,7 +3,6 @@ defmodule CommonCore.Resources.Bootstrap.TraditionalServices do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "traditional-services"
 
-  # import CommonCore.Resources.StorageClass
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Core
@@ -17,23 +16,26 @@ defmodule CommonCore.Resources.Bootstrap.TraditionalServices do
 
   resource(:config_map_homebase, battery, state) do
     usage = Core.config_field(state, :usage)
-    data = home_base_data(usage)
+    data = home_base_data(usage, state)
 
     :config_map
     |> B.build_resource()
-    |> B.name("home-base-specs")
+    |> B.name("home-base-seed-data")
     |> B.namespace(battery.config.namespace)
     |> B.data(data)
     |> F.require_non_empty(data)
   end
 
-  defp home_base_data(usage) when usage in [:internal_prod] do
-    path = "../bootstrap"
+  defp home_base_data(usage, state) when usage in [:internal_prod] do
+    installs =
+      Enum.map(state.home_base_init_data.installs, fn install -> {"#{install.slug}.install.json", to_json!(install)} end)
 
-    path
-    |> File.ls!()
-    |> Map.new(fn file_name -> {file_name, File.read!(Path.join(path, file_name))} end)
+    teams = Enum.map(state.home_base_init_data.teams, fn team -> {"#{team.id}.team.json", to_json!(team)} end)
+
+    Map.new(installs ++ teams)
   end
 
-  defp home_base_data(_usage), do: %{}
+  defp home_base_data(_usage, _state), do: %{}
+
+  defp to_json!(data), do: Jason.encode!(data, pretty: false, escape: :javascript_safe)
 end

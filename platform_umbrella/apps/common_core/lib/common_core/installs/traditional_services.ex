@@ -19,16 +19,16 @@ defmodule CommonCore.Installs.TraditionalServices do
             image: Images.home_base_image(),
             command: ["/app/bin/start"],
             args: ["home_base_init"],
-            mounts: [%{volume_name: "home-base-specs", mount_path: "/etc/init-config/", read_only: true}]
+            mounts: [%{volume_name: "home-base-seed-data", mount_path: "/etc/init-config/", read_only: true}]
           }
         ],
         containers: [%{name: @name, image: Images.home_base_image()}],
         ports: [%{name: "http", number: 4000, protocol: :http2}],
         volumes: [
           %{
-            name: "home-base-specs",
+            name: "home-base-seed-data",
             type: :config_map,
-            config: %{type: :config_map, name: "home-base-specs", optional: true}
+            config: %{type: :config_map, name: "home-base-seed-data", optional: true}
           }
         ],
         env_values: env()
