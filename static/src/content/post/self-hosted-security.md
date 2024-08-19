@@ -7,7 +7,7 @@ publishDate: 2024-08-18
 tags:
   ['Cybersecurity', 'Self-Hosting', 'SaaS', 'Data Protection', 'Cloud Security']
 image: /images/posts/post-17.jpg
-draft: trie
+draft: true
 ---
 
 As unfortunate as it is, we find ourselves in an era where data breaches make
