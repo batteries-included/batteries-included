@@ -26,6 +26,7 @@ defmodule CommonCore.Actions.SSOClient do
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.KeycloakSummary
+  alias CommonCore.StateSummary.URLs
 
   @default_client_fields ~w(
     adminUrl baseUrl clientId directAccessGrantsEnabled
@@ -109,14 +110,16 @@ defmodule CommonCore.Actions.SSOClient do
       ) do
     realm = CommonCore.Defaults.Keycloak.realm_name()
 
-    root_url = summary |> CommonCore.StateSummary.URLs.uri_for_battery(battery_type) |> URI.to_string()
+    root_url = summary |> URLs.uri_for_battery(battery_type) |> URI.to_string()
+    root_urls = URLs.uris_for_battery(summary, battery_type)
 
     case BatteryUUID.dump(battery_uuid) do
       {:ok, raw_id} ->
-        # get the default settings
-        base_client = default_client(Base.encode16(raw_id), client_name, root_url)
-        # and the additional fields as proscribed by calling module
-        {client, additional_client_fields} = func.(battery, summary, base_client)
+        {client, additional_client_fields} =
+          raw_id
+          |> Base.encode16()
+          |> default_client(client_name, root_url, root_urls)
+          |> then(&func.(battery, summary, &1))
 
         # need the list of fields that we're populating so we know if something has changed
         fields = unquote(@default_client_fields) ++ additional_client_fields
@@ -131,8 +134,8 @@ defmodule CommonCore.Actions.SSOClient do
   @doc """
   Sets up the default Keycloak client settings for OpenID Connect.
   """
-  @spec default_client(String.t(), String.t(), String.t()) :: ClientRepresentation.t()
-  def default_client(id, name, root_url) do
+  @spec default_client(String.t(), String.t(), String.t(), list(URI.t())) :: ClientRepresentation.t()
+  def default_client(id, name, root_url, root_urls) do
     %ClientRepresentation{
       adminUrl: root_url,
       baseUrl: root_url,
@@ -144,10 +147,10 @@ defmodule CommonCore.Actions.SSOClient do
       name: name,
       protocol: "openid-connect",
       publicClient: false,
-      redirectUris: ["#{root_url}/*"],
+      redirectUris: Enum.map(root_urls, &URLs.append_path_to_string(&1, "/*")),
       rootUrl: root_url,
       standardFlowEnabled: true,
-      webOrigins: [root_url]
+      webOrigins: Enum.map(root_urls, &URI.to_string/1)
     }
   end
 

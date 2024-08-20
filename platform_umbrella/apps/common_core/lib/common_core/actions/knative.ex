@@ -45,8 +45,9 @@ defmodule CommonCore.Actions.Knative do
     |> Enum.filter(&Service.sso_configured_properly?/1)
     |> Enum.map(fn %{keycloak_realm: realm, name: name} = service ->
       id = name |> Base.encode16() |> String.slice(0..35)
-      url = URLs.knative_url(state_summary, service)
-      client = SSOClient.default_client(id, name, URI.to_string(url))
+      urls = URLs.knative_urls(state_summary, service)
+      root_url = urls |> List.first() |> URI.to_string()
+      client = SSOClient.default_client(id, name, root_url, urls)
       SSOClient.determine_action(key_state, realm, client, SSOClient.default_client_fields())
     end)
   end

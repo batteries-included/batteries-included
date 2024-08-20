@@ -8,12 +8,6 @@ defmodule CommonCore.Actions.BatteryCore do
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.KeycloakSummary
 
-  @impl ClientConfigurator
-  def configure(_battery, _state, client) do
-    opts = [baseUrl: nil, redirectUris: ["*"], webOrigins: []]
-    {struct!(client, opts), Keyword.keys(opts)}
-  end
-
   @spec materialize(SystemBattery.t(), StateSummary.t()) :: list(FreshGeneratedAction.t() | nil)
   def materialize(%SystemBattery{} = _system_battery, %StateSummary{} = state_summary) do
     [ensure_core_realm(state_summary)]
