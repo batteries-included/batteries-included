@@ -1,9 +1,9 @@
 defmodule CommonUI.Components.Alert do
   @moduledoc false
   use CommonUI, :component
+  use Gettext, backend: CommonUI.Gettext, warn: false
 
   import CommonUI.Components.Icon
-  import CommonUI.Gettext, warn: false
 
   alias CommonUI.IDHelpers
 

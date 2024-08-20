@@ -42,7 +42,8 @@ defmodule HomeBaseWeb do
         namespace: HomeBaseWeb,
         formats: [:html, :json]
 
-      import CommonUI.Gettext
+      use Gettext, backend: CommonUI.Gettext
+
       import Plug.Conn
 
       unquote(verified_routes())
@@ -97,8 +98,8 @@ defmodule HomeBaseWeb do
       # HTML escaping functionality
       # Core UI components and translation
       use CommonUI
+      use Gettext, backend: CommonUI.Gettext
 
-      import CommonUI.Gettext
       import Phoenix.HTML
       import Phoenix.HTML.Form
 

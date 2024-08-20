@@ -1,12 +1,12 @@
 defmodule CommonUI.Components.Form do
   @moduledoc false
   use CommonUI, :component
+  use Gettext, backend: CommonUI.Gettext, warn: false
 
   import CommonUI.Components.FlashGroup
   import CommonUI.Components.Markdown
   import CommonUI.Components.Panel
   import CommonUI.Components.Typography
-  import CommonUI.Gettext, warn: false
 
   @doc """
   Renders a simple form with a css grid based 2 column layout.
