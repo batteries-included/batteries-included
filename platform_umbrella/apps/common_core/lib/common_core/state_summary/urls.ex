@@ -104,6 +104,9 @@ defmodule CommonCore.StateSummary.URLs do
     |> Enum.map(&build_host(&1, SSL.ssl_enabled?(state)))
   end
 
+  @spec append_path_to_string(URI.t(), String.t()) :: String.t()
+  def append_path_to_string(uri, path), do: uri |> URI.append_path(path) |> URI.to_string()
+
   defp build_host(host, false = _ssl_enabled?), do: URI.new!("http://#{host}")
   defp build_host(host, true = _ssl_enabled?), do: %URI{URI.new!("https://#{host}") | scheme: "https", port: 443}
 end
