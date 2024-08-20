@@ -111,14 +111,14 @@ defmodule CommonCore.Actions.SSOClient do
     realm = CommonCore.Defaults.Keycloak.realm_name()
 
     root_url = summary |> URLs.uri_for_battery(battery_type) |> URI.to_string()
-    root_urls = URLs.uris_for_battery(summary, battery_type)
+    root_uris = URLs.uris_for_battery(summary, battery_type)
 
     case BatteryUUID.dump(battery_uuid) do
       {:ok, raw_id} ->
         {client, additional_client_fields} =
           raw_id
           |> Base.encode16()
-          |> default_client(client_name, root_url, root_urls)
+          |> default_client(client_name, root_url, root_uris)
           |> then(&func.(battery, summary, &1))
 
         # need the list of fields that we're populating so we know if something has changed
@@ -135,7 +135,7 @@ defmodule CommonCore.Actions.SSOClient do
   Sets up the default Keycloak client settings for OpenID Connect.
   """
   @spec default_client(String.t(), String.t(), String.t(), list(URI.t())) :: ClientRepresentation.t()
-  def default_client(id, name, root_url, root_urls) do
+  def default_client(id, name, root_url, root_uris) do
     %ClientRepresentation{
       adminUrl: root_url,
       baseUrl: root_url,
@@ -147,10 +147,10 @@ defmodule CommonCore.Actions.SSOClient do
       name: name,
       protocol: "openid-connect",
       publicClient: false,
-      redirectUris: Enum.map(root_urls, &URLs.append_path_to_string(&1, "/*")),
+      redirectUris: Enum.map(root_uris, &URLs.append_path_to_string(&1, "/*")),
       rootUrl: root_url,
       standardFlowEnabled: true,
-      webOrigins: Enum.map(root_urls, &URI.to_string/1)
+      webOrigins: Enum.map(root_uris, &URI.to_string/1)
     }
   end
 
