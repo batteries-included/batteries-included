@@ -7,12 +7,13 @@ defmodule CommonCore.Actions.Grafana do
 
   @impl ClientConfigurator
   def configure(battery, state, client) do
-    redirect_uris =
-      state
-      |> URLs.uris_for_battery(battery.type)
-      |> Enum.map(&URLs.append_path_to_string(&1, "/login/generic_oauth"))
+    uris = URLs.uris_for_battery(state, battery.type)
 
-    opts = [redirectUris: redirect_uris]
+    opts = [
+      redirectUris: Enum.map(uris, &URLs.append_path_to_string(&1, "/login/generic_oauth")),
+      webOrigins: Enum.map(uris, &URI.to_string/1)
+    ]
+
     {struct!(client, opts), Keyword.keys(opts)}
   end
 end
