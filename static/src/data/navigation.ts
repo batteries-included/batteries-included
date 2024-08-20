@@ -50,7 +50,7 @@ export const headerData = [
       {
         label: 'Operational Tools',
         description:
-          'Ahe best tools for ops integrated into a single control panel.',
+          'All the best tools for ops integrated into a single control center.',
         icon: 'automation',
         link: '/solutions/sre_tools',
       },
