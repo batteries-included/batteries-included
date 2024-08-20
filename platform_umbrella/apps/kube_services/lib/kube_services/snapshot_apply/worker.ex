@@ -14,10 +14,9 @@ defmodule KubeServices.SnapshotApply.Worker do
   require Logger
 
   @me __MODULE__
-  @state_opts [:keycloak_enabled, :running]
+  @state_opts [:running, :init_delay, :delay]
 
   typedstruct module: State do
-    field :keycloak_enabled, boolean(), default: false
     field :running, boolean(), default: true
     field :init_delay, non_neg_integer(), default: 5_000
     field :delay, non_neg_integer(), default: 300_000
@@ -105,43 +104,48 @@ defmodule KubeServices.SnapshotApply.Worker do
   end
 
   defp do_perform(umbrella_snapshot, state) do
+    summary = summary(state)
+
     # Prepare
-    {:ok, kube_snap} = kube_prepare(umbrella_snapshot, state)
-    {:ok, keycloak_snap} = keycloak_prepare(umbrella_snapshot, state)
+    {:ok, kube_snap} = kube_prepare(umbrella_snapshot, summary)
+    {:ok, keycloak_snap} = keycloak_prepare(umbrella_snapshot, summary)
 
     # Generation phase
     # Write everything to the database that we will be targeting
     # however as an optimization, we pass that data along to the
     # apply phase rather than re-fetching it from the db.
-    summary = summary(state)
-    {:ok, kube_gen_payload} = kube_generate(kube_snap, summary, state)
-    {:ok, keycloak_gen_payload} = keycloak_generate(keycloak_snap, summary, state)
+    {:ok, kube_gen_payload} = kube_generate(kube_snap, summary)
+    {:ok, keycloak_gen_payload} = keycloak_generate(keycloak_snap, summary)
 
     # Apply phase.
     # Take the target database state and try applying it to the system.
-    {:ok, _} = kube_apply(kube_snap, kube_gen_payload, state)
-    {:ok, _} = keycloak_apply(keycloak_snap, keycloak_gen_payload, state)
+    {:ok, _} = kube_apply(kube_snap, kube_gen_payload)
+    {:ok, _} = keycloak_apply(keycloak_snap, keycloak_gen_payload)
 
     :ok
   end
 
   # Prepare
-  defp kube_prepare(us, _state), do: KubeApply.prepare(us)
-  defp keycloak_prepare(_us, %State{keycloak_enabled: false}), do: {:ok, nil}
-  defp keycloak_prepare(us, %State{keycloak_enabled: true}), do: KeycloakApply.prepare(us)
+  defp kube_prepare(us, _summary), do: KubeApply.prepare(us)
+
+  defp keycloak_prepare(us, summary) do
+    if CommonCore.StateSummary.Batteries.batteries_installed?(summary, :keycloak) do
+      KeycloakApply.prepare(us)
+    else
+      {:ok, nil}
+    end
+  end
 
   # Generate
   defp summary(_state), do: Summarizer.new()
 
-  defp kube_generate(%KubeSnapshot{} = kube_snap, summary, _state), do: KubeApply.generate(kube_snap, summary)
+  defp kube_generate(%KubeSnapshot{} = kube_snap, summary), do: KubeApply.generate(kube_snap, summary)
 
-  defp keycloak_generate(nil = _key_cloak_snapshot, _, _), do: {:ok, nil}
-
-  defp keycloak_generate(%KeycloakSnapshot{} = key_snap, summary, _), do: KeycloakApply.generate(key_snap, summary)
+  defp keycloak_generate(nil = _key_cloak_snapshot, _), do: {:ok, nil}
+  defp keycloak_generate(%KeycloakSnapshot{} = key_snap, summary), do: KeycloakApply.generate(key_snap, summary)
 
   # Apply
-  defp kube_apply(kube_snap, gen_payload, _state), do: KubeApply.apply(kube_snap, gen_payload)
-  defp keycloak_apply(nil = _keycloak_snap, _gen_payload, _state), do: {:ok, nil}
-
-  defp keycloak_apply(%KeycloakSnapshot{} = key_snap, actions, _state), do: KeycloakApply.apply(key_snap, actions)
+  defp kube_apply(kube_snap, gen_payload), do: KubeApply.apply(kube_snap, gen_payload)
+  defp keycloak_apply(nil = _keycloak_snap, _gen_payload), do: {:ok, nil}
+  defp keycloak_apply(%KeycloakSnapshot{} = key_snap, actions), do: KeycloakApply.apply(key_snap, actions)
 end
