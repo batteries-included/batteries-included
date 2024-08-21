@@ -51,7 +51,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
   def changeset(%__MODULE__{} = config, attrs) do
     config
     |> Schema.schema_changeset(attrs)
-    |> put_upgrade_days_of_week()
+    |> put_upgrade_days_of_week_from_virtual()
   end
 
   @doc """
@@ -59,22 +59,25 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
   This converts the array of day names that comes from the config UI form
   to the array of booleans and back as needed.
   """
-  def put_upgrade_days_of_week(changeset) do
-    days_of_week = Time.days_of_week()
-
+  def put_upgrade_days_of_week_from_virtual(changeset) do
     if virtual_upgrade_days_of_week = get_change(changeset, :virtual_upgrade_days_of_week) do
-      upgrade_days_of_week = Enum.map(days_of_week, &Enum.member?(virtual_upgrade_days_of_week, &1))
+      upgrade_days_of_week = Enum.map(Time.days_of_week(), &Enum.member?(virtual_upgrade_days_of_week, &1))
 
       put_change(changeset, :upgrade_days_of_week, upgrade_days_of_week)
     else
-      virtual_upgrade_days_of_week =
-        changeset
-        |> get_field(:upgrade_days_of_week)
-        |> Enum.with_index()
-        |> Enum.map(fn {value, index} -> if(value, do: Enum.at(days_of_week, index)) end)
-        |> Enum.reject(&is_nil(&1))
-
-      put_change(changeset, :virtual_upgrade_days_of_week, virtual_upgrade_days_of_week)
+      put_virtual_from_upgrade_days_of_week(changeset)
     end
+  end
+
+  defp put_virtual_from_upgrade_days_of_week(changeset) do
+    upgrade_days_of_week = get_field(changeset, :upgrade_days_of_week)
+
+    virtual_upgrade_days_of_week =
+      upgrade_days_of_week
+      |> Enum.with_index()
+      |> Enum.map(fn {value, index} -> if(value, do: Enum.at(Time.days_of_week(), index)) end)
+      |> Enum.reject(&is_nil(&1))
+
+    put_change(changeset, :virtual_upgrade_days_of_week, virtual_upgrade_days_of_week)
   end
 end
