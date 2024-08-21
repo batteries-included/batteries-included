@@ -146,7 +146,16 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   end
 
   def handle_event("uninstall", _params, socket) do
-     {:noreply, socket}
+    case Batteries.delete_system_battery(socket.assigns.system_battery) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:global_success, "Battery has been uninstalled")
+         |> push_navigate(to: ~p"/batteries/#{socket.assigns.catalog_battery.group}")}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not uninstall battery")}
+    end
   end
 
   def render(assigns) do
@@ -176,6 +185,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
               icon={:power}
               phx-click="uninstall"
               phx-target={@myself}
+              data-confirm={"Are you sure you want to uninstall the #{@catalog_battery.name} battery?"}
             >
               Uninstall
             </.button>
