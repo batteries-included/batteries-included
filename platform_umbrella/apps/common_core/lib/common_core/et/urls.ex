@@ -4,14 +4,13 @@ defmodule CommonCore.ET.URLs do
 
   @local_home "http://home.traditional-service.127-0-0-1.batrsinc.co:4100/api/v1"
   @prod_home "https://home.prod.batteriesincl.com/api/v1"
+  @bi_home "http://home-base.battery-traditional.svc.cluster.local:4000/api/v1"
 
-  def home_base_url(%BatteryCoreConfig{} = config) do
-    if config.server_in_cluster do
-      @prod_home
-    else
-      @local_home
-    end
-  end
+  def home_base_url(%BatteryCoreConfig{usage: usage} = _config) when usage in [:internal_prod, :internal_test],
+    do: @bi_home
+
+  def home_base_url(%BatteryCoreConfig{server_in_cluster: true} = _config), do: @prod_home
+  def home_base_url(%BatteryCoreConfig{} = _config), do: @local_home
 
   def stable_versions_path(%BatteryCoreConfig{} = _config) do
     "/stable_versions"
