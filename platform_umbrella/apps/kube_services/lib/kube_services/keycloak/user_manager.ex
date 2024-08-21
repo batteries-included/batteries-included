@@ -93,6 +93,14 @@ defmodule KubeServices.Keycloak.UserManager do
          # Tell Keycloak to add the role to the user
          {:ok, _success} <- AdminClient.add_client_roles(realm, user_id, managment_client.id, payload) do
       {:reply, :ok, state}
+    else
+      {:error, res} ->
+        Logger.warning("Unable to make user realm admin: #{inspect(res)}")
+        {:reply, {:error, res}, state}
+
+      res ->
+        Logger.warning("Unable to make user realm admin unkown error: #{inspect(res)}")
+        {:reply, {:error, res}, state}
     end
   end
 

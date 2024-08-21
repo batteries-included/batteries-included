@@ -19,7 +19,8 @@ defmodule KubeServices.Batteries.Keycloak do
       KubeServices.SnapshotApply.KeycloakApply,
       # A genserver the watches for failed Keycloak applys.
       # Starting a new attempt with increasing delays.
-      {KubeServices.SnapshotApply.FailedKeycloakLauncher, max_delay: 91_237}
+      {KubeServices.SnapshotApply.FailedKeycloakLauncher, max_delay: 91_237},
+      KubeServices.SnapshotApply.MissingKeycloakLauncher
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

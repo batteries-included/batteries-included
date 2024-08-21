@@ -1,5 +1,6 @@
 defmodule CommonCore.Actions.SSO do
   @moduledoc false
+
   @behaviour CommonCore.Actions.ActionGenerator
 
   alias CommonCore.Actions.FreshGeneratedAction

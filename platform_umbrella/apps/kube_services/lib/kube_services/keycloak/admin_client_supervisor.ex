@@ -5,6 +5,8 @@ defmodule KubeServices.Keycloak.AdminClientSupervisor do
   alias CommonCore.StateSummary.Creds
   alias CommonCore.StateSummary.URLs
 
+  require Logger
+
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, opts)
   end
@@ -19,6 +21,8 @@ defmodule KubeServices.Keycloak.AdminClientSupervisor do
       # Start the supervisor that starts AdminClient with the most recent keycloak Settings
       KubeServices.Keycloak.AdminClientInnerSupervisor
     ]
+
+    Logger.debug("Starting AdminClientSupervisor")
 
     Supervisor.init(children, strategy: :one_for_all)
   end
