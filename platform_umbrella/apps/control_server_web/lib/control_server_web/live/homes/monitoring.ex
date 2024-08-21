@@ -7,16 +7,24 @@ defmodule ControlServerWeb.Live.MonitoringHome do
   import KubeServices.SystemState.SummaryHosts
 
   alias CommonCore.Batteries.Catalog
+  alias EventCenter.SystemStateSummary, as: SystemStateSummaryEventCenter
   alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
+    :ok = SystemStateSummaryEventCenter.subscribe()
+
     {:ok,
      socket
      |> assign_batteries()
      |> assign_catalog_group()
      |> assign_current_page()
      |> assign_page_title()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, assign_batteries(socket)}
   end
 
   defp assign_batteries(socket) do
