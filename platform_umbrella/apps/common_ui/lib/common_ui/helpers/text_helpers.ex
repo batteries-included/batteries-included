@@ -24,4 +24,25 @@ defmodule CommonUI.TextHelpers do
         "#{String.slice(text, 0, length_with_omission)}#{omission}"
     end
   end
+
+  @doc """
+  This is a method to obfuscate a string by replacing a chunk in the middle with asterisks.
+  """
+  def obfuscate(text, opts \\ []) do
+    keep = Keyword.get(opts, :keep, 4)
+    char = Keyword.get(opts, :char, "*")
+    char_limit = Keyword.get(opts, :char_limit, 30)
+
+    if String.length(text) <= keep * 2 do
+      text
+    else
+      left = String.slice(text, 0..(keep - 1))
+      right = String.slice(text, -keep..-1)
+
+      mid_count = String.length(text) - keep * 2
+      mid = String.duplicate(char, min(char_limit, mid_count))
+
+      left <> mid <> right
+    end
+  end
 end

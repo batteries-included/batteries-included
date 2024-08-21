@@ -11,35 +11,41 @@ defmodule ControlServer.Batteries.Installer do
 
   require Logger
 
-  def install!(type, update_target \\ nil) do
-    with {:ok, result} <- install(type, update_target) do
+  def install!(type, opts \\ []) do
+    with {:ok, result} <- install(type, opts) do
       result
     end
   end
 
-  def install(type, update_target \\ nil)
+  def install(type, opts \\ [])
 
-  def install(type, update_target) when is_binary(type), do: install(String.to_existing_atom(type), update_target)
+  def install(type, opts) when is_binary(type), do: install(String.to_existing_atom(type), opts)
 
-  def install(type, update_target) when is_atom(type) do
+  def install(type, opts) when is_atom(type) do
     Logger.info("Begining install of #{type}")
 
     type
     |> Catalog.get()
-    |> install(update_target)
+    |> install(opts)
   end
 
-  def install(%CatalogBattery{} = catalog_battery, update_target) do
-    catalog_battery
-    |> CatalogBattery.to_fresh_args()
+  def install(%CatalogBattery{} = catalog_battery, opts) do
+    config = Keyword.get(opts, :config, %{})
+    args = CatalogBattery.to_fresh_args(catalog_battery)
+
+    args
+    |> Map.put(:config, Map.merge(args.config, config))
     |> List.wrap()
-    |> install_all(update_target)
+    |> install_all(opts)
   end
 
-  def install(%SystemBattery{} = system_battery, update_target), do: install_all([system_battery], update_target)
+  def install(%SystemBattery{} = system_battery, opts), do: install_all([system_battery], opts)
 
-  def install_all(batteries, update_target \\ nil) do
+  def install_all(batteries, opts \\ []) do
+    update_target = Keyword.get(opts, :update_target)
+
     update_progress(update_target, :starting)
+
     # For every battery that's passed in get the dependencies
     # as catalog batteries (`CommonCore.Batteries.CatalogBattery`).
     #

@@ -3,36 +3,29 @@ defmodule ControlServerWeb.Live.GroupBatteriesEdit do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias CommonCore.Batteries.Catalog
+  alias ControlServer.Batteries
   alias ControlServerWeb.BatteriesFormComponent
 
-  def mount(%{"battery_type" => battery_type}, _session, socket) do
-    battery = Catalog.get(battery_type)
+  def mount(%{"id" => id}, _session, socket) do
+    system_battery = Batteries.get_system_battery!(id)
+    catalog_battery = Catalog.get(system_battery.type)
 
     {:ok,
      socket
-     |> assign(:battery, battery)
-     |> assign(:current_page, battery.group)
-     |> assign(:page_title, "#{battery.name} Battery")}
-  end
-
-  def handle_event("validate", _params, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_event("save", _params, socket) do
-    {:noreply,
-     socket
-     |> put_flash(:global_success, "Battery has been updated")
-     |> push_navigate(to: ~p"/batteries/#{socket.assigns.battery.group}")}
+     |> assign(:current_page, catalog_battery.group)
+     |> assign(:page_title, "#{catalog_battery.name} Battery")
+     |> assign(:system_battery, system_battery)
+     |> assign(:catalog_battery, catalog_battery)}
   end
 
   def render(assigns) do
     ~H"""
     <.live_component
       module={BatteriesFormComponent}
-      id="edit-batteries-form"
+      id="edit-battery-form"
       action={:edit}
-      battery={@battery}
+      system_battery={@system_battery}
+      catalog_battery={@catalog_battery}
     />
     """
   end
