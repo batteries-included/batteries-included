@@ -7,7 +7,7 @@ defmodule CommonCore.StateSummary.RealmOIDCConfiguration do
     field :oidc_configuration, CommonCore.OpenAPI.OIDC.OIDCConfiguration
   end
 
-  def get_realm_configuraion(state, realm) do
+  def get_realm_configuration(state, realm) do
     Enum.find(state.realm_configurations || [], &(&1.realm == realm))
   end
 end
