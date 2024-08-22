@@ -11,14 +11,27 @@ defmodule ControlServerWeb.Live.DataHome do
   import KubeServices.SystemState.SummaryRecent
 
   alias CommonCore.Batteries.Catalog
+  alias EventCenter.SystemStateSummary, as: SystemStateSummaryEventCenter
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
+    :ok = SystemStateSummaryEventCenter.subscribe()
+
     {:ok,
      socket
+     |> assign_batteries()
+     |> assign_redis_instances()
+     |> assign_postgres_clusters()
+     |> assign_ferret_services()
      |> assign_catalog_group()
      |> assign_current_page()
-     |> assign_page_title()
+     |> assign_page_title()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply,
+     socket
      |> assign_batteries()
      |> assign_redis_instances()
      |> assign_postgres_clusters()

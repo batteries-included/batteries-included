@@ -8,13 +8,13 @@ defmodule ControlServerWeb.Live.MagicHome do
 
   alias CommonCore.Batteries.Catalog
   alias ControlServer.SnapshotApply.Umbrella
-  alias EventCenter.KubeSnapshot, as: KubeSnapshotEventCenter
+  alias EventCenter.SystemStateSummary, as: SystemStateSummaryEventCenter
   alias KubeServices.SnapshotApply.Worker
   alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = KubeSnapshotEventCenter.subscribe()
+    :ok = SystemStateSummaryEventCenter.subscribe()
 
     {:ok,
      socket
@@ -24,31 +24,6 @@ defmodule ControlServerWeb.Live.MagicHome do
      |> assign_catalog_group()
      |> assign_current_page()
      |> assign_page_title()}
-  end
-
-  defp assign_batteries(socket) do
-    assign(socket, batteries: SummaryBatteries.installed_batteries())
-  end
-
-  defp assign_deploys_running(socket) do
-    assign(socket, deploys_running: Worker.get_running())
-  end
-
-  def assign_snapshots(socket) do
-    snaps = Umbrella.latest_umbrella_snapshots()
-    assign(socket, :snapshots, snaps)
-  end
-
-  defp assign_catalog_group(socket) do
-    assign(socket, catalog_group: Catalog.group(:magic))
-  end
-
-  defp assign_current_page(socket) do
-    assign(socket, current_page: socket.assigns.catalog_group.type)
-  end
-
-  defp assign_page_title(socket) do
-    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   @impl Phoenix.LiveView
@@ -76,6 +51,31 @@ defmodule ControlServerWeb.Live.MagicHome do
   def handle_event("resume-deploy", _params, socket) do
     _ = Worker.set_running(true)
     {:noreply, assign_deploys_running(socket)}
+  end
+
+  defp assign_batteries(socket) do
+    assign(socket, batteries: SummaryBatteries.installed_batteries())
+  end
+
+  defp assign_deploys_running(socket) do
+    assign(socket, deploys_running: Worker.get_running())
+  end
+
+  def assign_snapshots(socket) do
+    snaps = Umbrella.latest_umbrella_snapshots()
+    assign(socket, :snapshots, snaps)
+  end
+
+  defp assign_catalog_group(socket) do
+    assign(socket, catalog_group: Catalog.group(:magic))
+  end
+
+  defp assign_current_page(socket) do
+    assign(socket, current_page: socket.assigns.catalog_group.type)
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
   defp battery_link_panel(%{battery: %{type: :timeline}} = assigns) do
