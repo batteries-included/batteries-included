@@ -3,19 +3,18 @@ defmodule ControlServerWeb.Live.GroupBatteriesNew do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias CommonCore.Batteries.Catalog
-  alias ControlServer.Batteries.Installer
   alias ControlServerWeb.BatteriesFormComponent
 
   def mount(%{"battery_type" => battery_type} = params, _session, socket) do
-    battery = Catalog.get(battery_type)
-    redirect_to = Map.get(params, "redirect_to", ~p"/batteries/#{battery.group}")
+    catalog_battery = Catalog.get(battery_type)
+    redirect_to = Map.get(params, "redirect_to", ~p"/batteries/#{catalog_battery.group}")
 
     {:ok,
      socket
-     |> assign(:current_page, battery.group)
-     |> assign(:page_title, "#{battery.name} Battery")
+     |> assign(:current_page, catalog_battery.group)
+     |> assign(:page_title, "#{catalog_battery.name} Battery")
+     |> assign(:catalog_battery, catalog_battery)
      |> assign(:redirect_to, redirect_to)
-     |> assign(:battery, battery)
      |> assign(:installing, false)
      |> assign(:completed, false)
      |> assign(:install_result, nil)
@@ -26,29 +25,7 @@ defmodule ControlServerWeb.Live.GroupBatteriesNew do
      |> assign(:current_step, -1)}
   end
 
-  def handle_event("validate", _params, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_event("save", _params, socket) do
-    target = self()
-
-    _ =
-      Task.async(fn ->
-        # Yes these are sleeps to make this slower.
-        #
-        # There's a lot going on here an showing the user
-        # that is somewhat important. Giving some time inbetween
-        # these steps show that there's stuff happening to them.
-        Process.sleep(800)
-        Installer.install!(socket.assigns.battery.type, target)
-        Process.sleep(800)
-        send(target, {:async_installer, :starting_kube})
-        KubeServices.SnapshotApply.Worker.start()
-        Process.sleep(800)
-        send(target, {:async_installer, {:apply_complete, "Started"}})
-      end)
-
+  def handle_info({:async_installer, :start}, socket) do
     {:noreply, assign(socket, :installing, true)}
   end
 
@@ -86,13 +63,13 @@ defmodule ControlServerWeb.Live.GroupBatteriesNew do
     ~H"""
     <.live_component
       module={BatteriesFormComponent}
-      id="new-batteries-form"
+      id="new-battery-form"
       action={:new}
-      battery={@battery}
+      catalog_battery={@catalog_battery}
     />
 
     <.modal :if={@installing} id="install-modal" allow_close={false} show>
-      <:title>Installing <%= @battery.name %></:title>
+      <:title>Installing <%= @catalog_battery.name %></:title>
 
       <.progress total={install_steps() |> Enum.count()} current={max(@current_step, 0)} />
 

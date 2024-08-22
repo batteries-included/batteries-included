@@ -6,25 +6,14 @@ defmodule ControlServerWeb.BatteriesFormComponentTest do
   alias CommonCore.Batteries.Catalog
   alias ControlServerWeb.BatteriesFormComponent
 
-  @battery Catalog.get(:redis)
+  @catalog_battery Catalog.get(:battery_core)
 
   test "should render batteries installation form" do
     assert render_component(BatteriesFormComponent,
-             id: "batteries-form",
-             inner_block: [],
-             battery: @battery,
-             action: :new
-           ) =~
-             "Redis"
-  end
-
-  test "should render edit battery form" do
-    assert render_component(BatteriesFormComponent,
-             id: "batteries-form",
-             inner_block: [],
-             battery: @battery,
-             action: :edit
-           ) =~
-             "Redis"
+             id: "new-battery-form",
+             action: :new,
+             catalog_battery: @catalog_battery,
+             inner_block: []
+           ) =~ "Upgrade Schedule"
   end
 end

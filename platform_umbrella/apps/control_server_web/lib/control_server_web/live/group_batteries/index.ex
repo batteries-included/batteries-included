@@ -35,11 +35,14 @@ defmodule ControlServerWeb.Live.GroupBatteriesIndex do
     <.grid columns={%{sm: 1, md: 2, xl: 3}}>
       <.panel :for={battery <- @catalog_batteries} title={battery.name}>
         <:menu>
-          <%= if Map.has_key?(@system_batteries, battery.type) do %>
+          <%= if system_battery = Map.get(@system_batteries, battery.type) do %>
             <div class="flex items-center justify-between flex-1">
               <.badge minimal label="ACTIVE" class="bg-green-500 text-white" />
 
-              <.button link={~p"/batteries/#{battery.group}/edit/#{battery.type}"} icon={:pencil}>
+              <.button
+                link={~p"/batteries/#{system_battery.group}/edit/#{system_battery.id}"}
+                icon={:pencil}
+              >
                 Edit
               </.button>
             </div>

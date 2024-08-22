@@ -91,6 +91,13 @@ defmodule CommonCore.Batteries.SystemBattery do
 
   def possible_types, do: Keyword.keys(@possible_types)
 
+  def for_type(type, possibles \\ @possible_types) do
+    case Enum.find(possibles, fn {key, _} -> key == type end) do
+      {_, config} -> config
+      _ -> nil
+    end
+  end
+
   batt_schema "system_batteries" do
     field :group, Ecto.Enum, values: @possible_groups
 

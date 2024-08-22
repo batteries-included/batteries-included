@@ -3,28 +3,190 @@ defmodule ControlServerWeb.BatteriesFormComponent do
 
   use ControlServerWeb, :live_component
 
-  def mount(socket) do
-    {:ok, assign(socket, :form, to_form(%{}))}
-  end
+  import Ecto.Changeset
+
+  alias CommonCore.Batteries.SystemBattery
+  alias ControlServer.Batteries
+  alias ControlServer.Batteries.Installer
+  alias ControlServerWeb.Batteries.AWSLoadBalancerControllerForm
+  alias ControlServerWeb.Batteries.BatteryCAForm
+  alias ControlServerWeb.Batteries.BatteryCoreForm
+  alias ControlServerWeb.Batteries.CertManagerForm
+  alias ControlServerWeb.Batteries.CloudnativePGForm
+  alias ControlServerWeb.Batteries.FerretDBForm
+  alias ControlServerWeb.Batteries.ForgejoForm
+  alias ControlServerWeb.Batteries.GrafanaForm
+  alias ControlServerWeb.Batteries.IstioCSRForm
+  alias ControlServerWeb.Batteries.IstioForm
+  alias ControlServerWeb.Batteries.IstioGatewayForm
+  alias ControlServerWeb.Batteries.KarpenterForm
+  alias ControlServerWeb.Batteries.KeycloakForm
+  alias ControlServerWeb.Batteries.KialiForm
+  alias ControlServerWeb.Batteries.KnativeForm
+  alias ControlServerWeb.Batteries.KubeMonitoringForm
+  alias ControlServerWeb.Batteries.LokiForm
+  alias ControlServerWeb.Batteries.MetalLBForm
+  alias ControlServerWeb.Batteries.NotebooksForm
+  alias ControlServerWeb.Batteries.PromtailForm
+  alias ControlServerWeb.Batteries.RedisForm
+  alias ControlServerWeb.Batteries.Smtp4devForm
+  alias ControlServerWeb.Batteries.SSOForm
+  alias ControlServerWeb.Batteries.StaleResourceCleanerForm
+  alias ControlServerWeb.Batteries.TextGenerationWebUIForm
+  alias ControlServerWeb.Batteries.TimelineForm
+  alias ControlServerWeb.Batteries.TraditionalServicesForm
+  alias ControlServerWeb.Batteries.TrivyOperatorForm
+  alias ControlServerWeb.Batteries.TrustManagerForm
+  alias ControlServerWeb.Batteries.VictoriaMetricsForm
+  alias ControlServerWeb.Batteries.VMAgentForm
+  alias ControlServerWeb.Batteries.VMClusterForm
+  alias ControlServerWeb.Batteries.VMOperatorForm
+
+  @possible_forms [
+    aws_load_balancer_controller: AWSLoadBalancerControllerForm,
+    battery_ca: BatteryCAForm,
+    battery_core: BatteryCoreForm,
+    cert_manager: CertManagerForm,
+    cloudnative_pg: CloudnativePGForm,
+    forgejo: ForgejoForm,
+    grafana: GrafanaForm,
+    ferretdb: FerretDBForm,
+    istio: IstioForm,
+    istio_csr: IstioCSRForm,
+    istio_gateway: IstioGatewayForm,
+    karpenter: KarpenterForm,
+    keycloak: KeycloakForm,
+    kiali: KialiForm,
+    knative: KnativeForm,
+    kube_monitoring: KubeMonitoringForm,
+    loki: LokiForm,
+    metallb: MetalLBForm,
+    notebooks: NotebooksForm,
+    promtail: PromtailForm,
+    redis: RedisForm,
+    smtp4dev: Smtp4devForm,
+    sso: SSOForm,
+    stale_resource_cleaner: StaleResourceCleanerForm,
+    text_generation_webui: TextGenerationWebUIForm,
+    timeline: TimelineForm,
+    traditional_services: TraditionalServicesForm,
+    trivy_operator: TrivyOperatorForm,
+    trust_manager: TrustManagerForm,
+    victoria_metrics: VictoriaMetricsForm,
+    vm_agent: VMAgentForm,
+    vm_cluster: VMClusterForm,
+    vm_operator: VMOperatorForm
+  ]
 
   def update(assigns, socket) do
+    config_module = SystemBattery.for_type(assigns.catalog_battery.type)
+    form_module = SystemBattery.for_type(assigns.catalog_battery.type, @possible_forms)
+
+    config = if assigns[:system_battery], do: assigns.system_battery.config, else: struct(config_module)
+    changeset = config_module.changeset(config, %{})
+
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:title, assigns.battery.name <> " Battery")}
+     |> assign(:config_module, config_module)
+     |> assign(:form_module, form_module)
+     |> assign(:form, to_form(changeset))
+     |> assign_new(:system_battery, fn -> %SystemBattery{config: config} end)}
+  end
+
+  def handle_event("validate", %{"battery_config" => params}, socket) do
+    changeset =
+      socket.assigns.system_battery.config
+      |> socket.assigns.config_module.changeset(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :form, to_form(changeset))}
+  end
+
+  def handle_event("new:save", %{"battery_config" => params}, socket) do
+    target = self()
+
+    send(target, {:async_installer, :start})
+
+    _ =
+      Task.async(fn ->
+        # Yes these are sleeps to make this slower.
+        #
+        # There's a lot going on here an showing the user
+        # that is somewhat important. Giving some time inbetween
+        # these steps show that there's stuff happening to them.
+        Process.sleep(800)
+        Installer.install!(socket.assigns.catalog_battery.type, config: params, update_target: target)
+        Process.sleep(800)
+        send(target, {:async_installer, :starting_kube})
+        KubeServices.SnapshotApply.Worker.start()
+        Process.sleep(800)
+        send(target, {:async_installer, {:apply_complete, "Started"}})
+      end)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("edit:save", %{"battery_config" => params}, socket) do
+    case socket.assigns.system_battery.config
+         |> socket.assigns.config_module.changeset(params)
+         |> apply_action(:update) do
+      {:ok, config} ->
+        system_battery = Map.put(socket.assigns.system_battery, :config, config)
+        Batteries.update_system_battery(socket.assigns.system_battery, system_battery)
+
+        {:noreply,
+         socket
+         |> put_flash(:global_success, "Battery has been updated")
+         |> push_navigate(to: ~p"/batteries/#{socket.assigns.catalog_battery.group}")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, :form, to_form(changeset))}
+    end
+  end
+
+  def handle_event("uninstall", _params, socket) do
+    case Batteries.delete_system_battery(socket.assigns.system_battery) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:global_success, "Battery has been uninstalled")
+         |> push_navigate(to: ~p"/batteries/#{socket.assigns.catalog_battery.group}")}
+
+      _ ->
+        {:noreply, put_flash(socket, :global_error, "Could not uninstall battery")}
+    end
   end
 
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.form id={@id} for={@form} phx-change="validate" phx-submit="save">
-        <.page_header title={@title} back_link={~p"/batteries/#{@battery.group}"}>
+      <.form
+        :let={f}
+        id={@id}
+        for={@form}
+        as={:battery_config}
+        phx-change="validate"
+        phx-submit={submit_event(@action)}
+        phx-target={@myself}
+      >
+        <.page_header
+          title={"#{@catalog_battery.name} Battery"}
+          back_link={~p"/batteries/#{@catalog_battery.group}"}
+        >
           <:menu :if={@action == :edit}>
             <.badge minimal label="ACTIVE" class="bg-green-500 text-white" />
           </:menu>
 
           <div class="flex items-center gap-8">
-            <.button :if={@action == :edit} variant="minimal" icon={:power}>
+            <.button
+              :if={@action == :edit && @catalog_battery.uninstallable}
+              variant="minimal"
+              icon={:power}
+              phx-click="uninstall"
+              phx-target={@myself}
+              data-confirm={"Are you sure you want to uninstall the #{@catalog_battery.name} battery?"}
+            >
               Uninstall
             </.button>
 
@@ -35,16 +197,19 @@ defmodule ControlServerWeb.BatteriesFormComponent do
         </.page_header>
 
         <.grid columns={%{sm: 1, lg: 2}}>
-          <.panel title="Description">
-            <%= @battery.description %>
-          </.panel>
+          <div>
+            <.panel title="Description">
+              <%= @catalog_battery.description %>
+            </.panel>
+          </div>
 
-          <.panel title="Configuration">
-            <p class="text-gray-light">No custom configuration is available for this battery.</p>
-          </.panel>
+          <.live_component module={@form_module} form={f} id="battery-subform" />
         </.grid>
       </.form>
     </div>
     """
   end
+
+  defp submit_event(:new), do: "new:save"
+  defp submit_event(:edit), do: "edit:save"
 end

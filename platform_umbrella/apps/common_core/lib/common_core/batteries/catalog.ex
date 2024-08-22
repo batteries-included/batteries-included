@@ -87,7 +87,8 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [:battery_core],
       name: "PostgreSQL",
       description:
-        "PostgreSQL is a free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility."
+        "PostgreSQL is a free and open-source relational database management system (RDBMS) that is known for its robustness, scalability, and extensibility.",
+      uninstallable: false
     },
     %CatalogBattery{
       group: :data,
@@ -101,7 +102,8 @@ defmodule CommonCore.Batteries.Catalog do
       group: :magic,
       type: :battery_core,
       name: "Battery Core",
-      description: "The core of the Batteries Included system. This battery is required for all other batteries."
+      description: "The core of the Batteries Included system. This battery is required for all other batteries.",
+      uninstallable: false
     },
     %CatalogBattery{
       group: :magic,
@@ -115,7 +117,8 @@ defmodule CommonCore.Batteries.Catalog do
       type: :stale_resource_cleaner,
       dependencies: [:battery_core],
       name: "Stale Resource Cleaner",
-      description: "A battery that removes old resources that are no longer needed."
+      description: "A battery that removes old resources that are no longer needed.",
+      uninstallable: false
     },
     %CatalogBattery{
       group: :magic,
@@ -249,7 +252,8 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [],
       name: "Istio",
       description:
-        "Istio is an open-source service mesh that provides a unified way to control how microservices share data with one another."
+        "Istio is an open-source service mesh that provides a unified way to control how microservices share data with one another.",
+      uninstallable: false
     },
     %CatalogBattery{
       group: :net_sec,
@@ -257,7 +261,8 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [:istio],
       name: "Istio Gateway",
       description:
-        "Istio Ingress Gateway is a load balancer that sits at the edge of an Istio service mesh and routes traffic to services within the mesh."
+        "Istio Ingress Gateway is a load balancer that sits at the edge of an Istio service mesh and routes traffic to services within the mesh.",
+      uninstallable: false
     },
     %CatalogBattery{
       group: :net_sec,
@@ -273,7 +278,8 @@ defmodule CommonCore.Batteries.Catalog do
       dependencies: [:istio_gateway, :battery_core],
       name: "MetalLB",
       description:
-        "MetalLB is a load balancer implementation for bare metal Kubernetes clusters, using standard routing protocols."
+        "MetalLB is a load balancer implementation for bare metal Kubernetes clusters, using standard routing protocols.",
+      uninstallable: false
     },
     # Security
     %CatalogBattery{

@@ -136,7 +136,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
       |> Catalog.get()
       |> CatalogBattery.to_fresh_args()
     end)
-    |> Installer.install_all(self())
+    |> Installer.install_all(update_target: self())
   end
 
   defp create_postgres(project, %{"postgres" => postgres_data}) do

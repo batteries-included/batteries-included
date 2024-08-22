@@ -14,8 +14,11 @@ defmodule ControlServerWeb.GroupBatteries.NewLiveTest do
   test "should install a new battery", ctx do
     assert {:ok, view, _} = live(ctx.conn, ~p"/batteries/magic/new/timeline")
 
-    assert view
-           |> element("#new-batteries-form")
-           |> render_submit() =~ "Installing Timeline"
+    view
+    |> element("#new-battery-form")
+    |> render_submit()
+
+    # Need to render view again since `handle_info` updates the assigns
+    assert render(view) =~ "Installing Timeline"
   end
 end

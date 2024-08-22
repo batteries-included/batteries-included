@@ -69,7 +69,7 @@ defmodule ControlServerWeb.Router do
 
     live "/:group", Live.GroupBatteriesIndex
     live "/:group/new/:battery_type", Live.GroupBatteriesNew
-    live "/:group/edit/:battery_type", Live.GroupBatteriesEdit
+    live "/:group/edit/:id", Live.GroupBatteriesEdit
   end
 
   scope "/projects", ControlServerWeb do
