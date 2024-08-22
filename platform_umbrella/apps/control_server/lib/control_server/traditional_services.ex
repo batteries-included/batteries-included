@@ -62,6 +62,28 @@ defmodule ControlServer.TraditionalServices do
     |> broadcast(:insert)
   end
 
+  def find_or_create_service(attrs) do
+    Multi.new()
+    |> Multi.run(:selected, fn repo, _ ->
+      {:ok, repo.one(from(svc in Service, where: svc.name == ^attrs.name))}
+    end)
+    |> Multi.run(:created, fn repo, %{selected: sel} ->
+      maybe_insert(sel, repo, attrs)
+    end)
+    |> Repo.transaction()
+  end
+
+  defp maybe_insert(nil = _selected, repo, attrs) do
+    %Service{}
+    |> Service.changeset(attrs)
+    |> repo.insert()
+    |> broadcast(:insert)
+  end
+
+  defp maybe_insert(%Service{} = _selected, _repo, _attrs) do
+    {:ok, nil}
+  end
+
   @doc """
   Updates a service.
 
