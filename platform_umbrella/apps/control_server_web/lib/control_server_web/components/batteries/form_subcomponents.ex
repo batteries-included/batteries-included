@@ -24,7 +24,7 @@ defmodule ControlServerWeb.BatteriesFormSubcomponents do
   def image(assigns) do
     ~H"""
     <div class="bg-gray-darkest font-mono font-bold text-sm text-gray-lighter rounded-lg whitespace-nowrap overflow-auto px-3 py-2">
-      <%= @form[:image_override].value %>
+      <%= @form[:image_override].value || @form[:image].value %>
     </div>
     """
   end

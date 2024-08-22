@@ -14,21 +14,38 @@ defmodule CommonCore.Defaults.Images do
     }
   }
 
-  def get_image(type, version \\ nil) do
-    %Image{base: base, versions: versions} = Map.get(@all, type)
-
-    # Make sure a valid version is being used, otherwise default to the lastest
-    "#{base}:#{Enum.find(versions, List.first(versions), &(&1 == version))}"
-  end
-
+  @doc """
+  Gets a list of all supported versions of an image.
+  This can be used for a select input.
+  """
   def get_versions(type) do
-    @all |> Map.get(type) |> Map.get(:versions)
+    @all
+    |> Map.get(type)
+    |> Map.get(:versions)
   end
 
+  @doc """
+  Gets a specific version of an image. If no version is
+  specified or the version is unsupported, it will default
+  to the latest supported version.
+  """
   def get_version(type, version \\ nil) do
     versions = get_versions(type)
 
+    # Make sure a valid version is being used, otherwise default to the lastest
     Enum.find(versions, List.first(versions), &(&1 == version))
+  end
+
+  @doc """
+  Gets the full image string for a battery type. If no version
+  is specified or the version is unsupported, it will default
+  to the latest supported version.
+  """
+  def get_image(type, version \\ nil) do
+    @all
+    |> Map.get(type)
+    |> Map.get(:base)
+    |> Kernel.<>(":#{get_version(type, version)}")
   end
 
   @spec cert_manager_image_version() :: String.t()
