@@ -9,7 +9,7 @@ draft: false
 Example:
 
 ```sh
-[2024-07-06T16:53:48-0500]: Missing script arguments
+[2024-08-22T13:08:14-0500]: Missing script arguments
 Usage: bix [-h] [-v] [-f] command [arg1...]
 
 Available options:
@@ -19,20 +19,37 @@ Available options:
 
 Available commands:
 
-
-## Install Related Commands
+**Install Related Commands**
 - start             Start a new installation
 - stop              Stop a running installation
+- bootstrap         Bootstrap a new installation
 
-## Development Commands
+**Phoenix Related Commands**
+- dev               Start a development environment with iex
+- phx-server        Start a phoenix server
+
+**Source Commands**
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
 
-## Go Commands
-- go-update-deps    Update go dependencies
+**Go Commands**
+- go-build-bi       Build the bi binary
 - go-test           Run go tests
 - go-test-int       Run go integration tests
+- go-update-deps    Update go dependencies
+- go-clean-build    Clean the temporary BI build directory
+
+**Elixir Commands**
+- ex-test-deep      Run all tests with coverage and reset the database
+- ex-test           Run all tests
+- ex-lint           Run all linters (dialexir, credo, format)
+- ex-credo          Run credo linter
+- ex-dialyzer       Run dialyzer linter
+
+**Docker Commands**
+- build-image       Build a docker image
+- push-images       Push all the container images to a registry
 ```
 
 Most of the scripts will `set -x` if `$TRACE` is set for additional debugging
