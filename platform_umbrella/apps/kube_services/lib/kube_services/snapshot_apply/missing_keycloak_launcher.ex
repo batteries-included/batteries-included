@@ -5,6 +5,7 @@ defmodule KubeServices.SnapshotApply.MissingKeycloakLauncher do
   use TypedStruct
 
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.KeycloakSummary
   alias KubeServices.SnapshotApply.Worker
 
   require Logger
@@ -13,7 +14,7 @@ defmodule KubeServices.SnapshotApply.MissingKeycloakLauncher do
 
   typedstruct module: State do
     field :delay, non_neg_integer(), default: 500
-    field :initial_delay, non_neg_integer(), default: 500
+    field :initial_delay, non_neg_integer(), default: 15_000
     field :max_delay, non_neg_integer(), default: 60_000
     field :timer_reference, reference() | nil, default: nil
   end
@@ -45,16 +46,32 @@ defmodule KubeServices.SnapshotApply.MissingKeycloakLauncher do
   end
 
   def handle_info(%StateSummary{} = message, state) do
-    if CommonCore.StateSummary.Batteries.batteries_installed?(message, :keycloak) && message.keycloak_state == nil do
-      {:noreply, schedule_start(state)}
-    else
-      {:noreply, reset_delay(state)}
+    keycloak_installed = CommonCore.StateSummary.Batteries.batteries_installed?(message, :keycloak)
+
+    cond do
+      # If the battery is installed but the state
+      # is nil, we need to wait for keycloak to come
+      # up. So keep scheduling a retry
+      keycloak_installed && message.keycloak_state == nil ->
+        Logger.info("Keycloak is installed but no snapshot yet. Scheduling next retry")
+        {:noreply, schedule_start(state)}
+
+      # If we're missing the batterycore realm, we need that.
+      keycloak_installed && !KeycloakSummary.realm_member?(message.keycloak_state, "batterycore") ->
+        Logger.info("Keycloak is installed but missing batterycore realm. Scheduling next retry")
+        {:noreply, schedule_start(state)}
+
+      keycloak_installed ->
+        {:noreply, reset_delay(state)}
+
+      !keycloak_installed ->
+        {:noreply, state}
     end
   end
 
   defp schedule_start(%State{timer_reference: nil, max_delay: max_delay, delay: delay} = state) do
     new_delay = min(max_delay, delay * 2)
-    Logger.warning("After missing keycloak snapshot scheduling the next retry in #{new_delay}")
+    Logger.debug("After missing keycloak snapshot or realm scheduling the next retry in #{new_delay}")
 
     %State{
       state
