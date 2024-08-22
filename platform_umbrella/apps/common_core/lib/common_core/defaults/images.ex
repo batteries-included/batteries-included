@@ -1,8 +1,35 @@
 defmodule CommonCore.Defaults.Images do
   @moduledoc false
+
+  alias CommonCore.Defaults.Image
+
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
   @cert_manager_image_tag "v1.15.1"
   @kiali_image_version "v1.87.0"
+
+  @all %{
+    aws_load_balancer_controller: %Image{
+      base: "public.ecr.aws/eks/aws-load-balancer-controller",
+      versions: ["v2.8.2", "v2.8.1"]
+    }
+  }
+
+  def get_image(type, version \\ nil) do
+    %Image{base: base, versions: versions} = Map.get(@all, type)
+
+    # Make sure a valid version is being used, otherwise default to the lastest
+    "#{base}:#{Enum.find(versions, List.first(versions), &(&1 == version))}"
+  end
+
+  def get_versions(type) do
+    @all |> Map.get(type) |> Map.get(:versions)
+  end
+
+  def get_version(type, version \\ nil) do
+    versions = get_versions(type)
+
+    Enum.find(versions, List.first(versions), &(&1 == version))
+  end
 
   @spec cert_manager_image_version() :: String.t()
   def cert_manager_image_version, do: @cert_manager_image_tag
@@ -47,9 +74,6 @@ defmodule CommonCore.Defaults.Images do
 
   @spec alertmanager_image() :: String.t()
   def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.27.0"
-
-  @spec aws_load_balancer_controller_image() :: String.t()
-  def aws_load_balancer_controller_image, do: "public.ecr.aws/eks/aws-load-balancer-controller:v2.8.1"
 
   @spec cert_manager_acmesolver_image() :: String.t()
   def cert_manager_acmesolver_image, do: "quay.io/jetstack/cert-manager-acmesolver:#{cert_manager_image_version()}"
