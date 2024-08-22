@@ -111,14 +111,10 @@ run_go_test() {
     bi_pushd "${go_path}"
     log "${BLUE}Running go tests${NOFORMAT} in ${go_path}"
     gofmt -s -l -e .
-    go vet -v ./...
+    go vet ${TRACE:+-v} ./...
     # If trace run tests with --race -v
     # Otherwise just run the tests
-    if [[ -n ''${TRACE:-""} ]]; then
-        go test --race -v ./...
-    else
-        go test ./...
-    fi
+    go test ${TRACE:+--race -v} ./...
     bi_popd
 }
 
@@ -492,6 +488,7 @@ do_ex_test_deep() {
     log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
     # Start the port forwarder
     try_portforward "${slug}" &
+
     export MIX_ENV=test
     run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
     run_mix compile --warnings-as-errors >/dev/null
@@ -503,16 +500,17 @@ do_ex_test_deep() {
 
 do_ex_test() {
     local slug=${1:-"dev"}
+    local out=/dev/null
     log "${GREEN}Running${NOFORMAT} elixir tests"
     # Start the port forwarder
     try_portforward "${slug}" &
 
     export MIX_ENV=test
     if [[ $TRACE -eq 1 ]]; then
-        run_mix test --trace --warnings-as-errors --all-warnings
-    else
-        run_mix test --warnings-as-errors --all-warnings >/dev/null
+        out=/dev/stdout
     fi
+
+    run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings >$out
     log "Elixir tests ${GREEN}Passed${NOFORMAT}"
 }
 
