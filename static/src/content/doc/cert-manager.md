@@ -2,7 +2,7 @@
 title: Cert manager
 description: Lorem markdownum quocumque erat pharetras
 tags: ['test', 'default doc']
-draft: false
+draft: true
 ---
 
 ## Curvos stagni
