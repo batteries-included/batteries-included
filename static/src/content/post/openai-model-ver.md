@@ -3,10 +3,10 @@ title: 'OpenAIs Model Versioning Is Only The Beginning'
 excerpt:
   In the ever-evolving world of artificial intelligence, OpenAI has recently
   shown the significance of periodic machine learning model retraining
-publishDate: 2024-08-18
+publishDate: 2024-10-18
 tags: ['openai', 'ml', 'machine-learning', 'model', 'platform']
 image: /images/posts/post-8.jpg
-draft: true
+draft: false
 ---
 
 In the ever-evolving world of artificial intelligence, OpenAI has recently shown
