@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"bi/pkg/specs"
 
@@ -53,7 +52,12 @@ func (env *InstallEnv) init(ctx context.Context) error {
 
 	switch provider {
 	case "kind":
-		gatewayEnabled := runtime.GOOS != "linux" && usage != "internal_dev" || os.Getenv("INTEGRATION") != ""
+		dockerDesktop, err := kind.IsDockerDesktop(ctx)
+		if err != nil {
+			return err
+		}
+
+		gatewayEnabled := dockerDesktop && usage != "internal_dev"
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)
