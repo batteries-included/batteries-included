@@ -53,7 +53,7 @@ func (env *InstallEnv) init(ctx context.Context) error {
 
 	switch provider {
 	case "kind":
-		gatewayEnabled := runtime.GOOS != "linux" && usage != "internal_dev" || os.Getenv("INTEGRATION") != ""
+		gatewayEnabled := runtime.GOOS != "linux" && usage != "internal_dev"
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)
