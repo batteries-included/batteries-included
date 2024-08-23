@@ -38,6 +38,8 @@ defmodule CommonCore.Installs.TraditionalServices do
 
   def services(%{usage: _} = _installation), do: []
 
+  defp install_size(%{usage: :internal_int_test} = _install), do: "small"
+
   # The install sizes and service sizes match up but they may? not always
   defp install_size(install), do: Atom.to_string(install.default_size)
 

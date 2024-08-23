@@ -32,13 +32,6 @@ defmodule CommonCore.StateSummary.AccessSpec do
     }
   end
 
-  defp valid_host?(host, usage) when usage in [:internal_int_test] do
-    host != nil and
-      String.length(host) > 0 and
-      !String.contains?(host, "..batrsinc.co") and
-      valid_uri?(host)
-  end
-
   defp valid_host?(host, _usage) do
     host != nil and
       String.length(host) > 0 and
