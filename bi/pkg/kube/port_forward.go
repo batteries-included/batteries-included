@@ -54,34 +54,22 @@ func (kubeClient *batteryKubeClient) portForward(
 
 	cfg := kubeClient.cfg
 
-	tlsConfig, err := restclient.TLSConfigFor(cfg)
-	if err != nil {
-		return nil, err
-	}
-
-	proxy := http.ProxyFromEnvironment
-	if cfg.Proxy != nil {
-		proxy = cfg.Proxy
-	}
-
 	upgradeTransport, err := restclient.TransportFor(cfg)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error getting transport for config: %w", err)
 	}
 
 	upgrader, err := httpstreamspdy.NewRoundTripperWithConfig(httpstreamspdy.RoundTripperConfig{
-		TLS:              tlsConfig,
-		Proxier:          proxy,
-		PingPeriod:       time.Second * 5,
 		UpgradeTransport: upgradeTransport,
+		PingPeriod:       time.Second * 5,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating spdy round tripper: %w", err)
 	}
 
 	transport, err := restclient.HTTPWrappersForConfig(cfg, upgrader)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating http wrappers for config: %w", err)
 	}
 
 	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, http.MethodPost, url)
