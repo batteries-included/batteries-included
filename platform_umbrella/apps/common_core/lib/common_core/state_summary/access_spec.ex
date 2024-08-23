@@ -3,6 +3,7 @@ defmodule CommonCore.StateSummary.AccessSpec do
   use TypedStruct
 
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Core
 
   @derive Jason.Encoder
   typedstruct do
@@ -14,8 +15,9 @@ defmodule CommonCore.StateSummary.AccessSpec do
 
   def new(%StateSummary{} = state_summary) do
     hostname = StateSummary.Hosts.control_host(state_summary)
+    usage = Core.config_field(state_summary, :usage)
 
-    if valid_host?(hostname) do
+    if valid_host?(hostname, usage) do
       ssl = StateSummary.SSL.ssl_enabled?(state_summary)
       {:ok, struct!(__MODULE__, hostname: hostname, ssl: ssl)}
     else
@@ -30,7 +32,14 @@ defmodule CommonCore.StateSummary.AccessSpec do
     }
   end
 
-  defp valid_host?(host) do
+  defp valid_host?(host, usage) when usage in [:internal_int_test] do
+    host != nil and
+      String.length(host) > 0 and
+      !String.contains?(host, "..batrsinc.co") and
+      valid_uri?(host)
+  end
+
+  defp valid_host?(host, _usage) do
     host != nil and
       String.length(host) > 0 and
       !String.contains?(host, "..batrsinc.co") and

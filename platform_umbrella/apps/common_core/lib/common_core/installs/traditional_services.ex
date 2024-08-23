@@ -8,7 +8,7 @@ defmodule CommonCore.Installs.TraditionalServices do
 
   def name, do: @name
 
-  def services(%{usage: :internal_prod} = installation) do
+  def services(%{usage: usage} = installation) when usage in [:internal_int_test, :internal_prod] do
     [
       Service.new!(%{
         name: @name,

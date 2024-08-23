@@ -26,7 +26,7 @@ defmodule CommonCore.Resources.Bootstrap.TraditionalServices do
     |> F.require_non_empty(data)
   end
 
-  defp home_base_data(usage, state) when usage in [:internal_prod] do
+  defp home_base_data(usage, state) when usage in [:internal_int_test, :internal_prod] do
     installs =
       Enum.map(state.home_base_init_data.installs, fn install -> {"#{install.slug}.install.json", to_json!(install)} end)
 
