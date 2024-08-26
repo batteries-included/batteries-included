@@ -11,16 +11,32 @@ defmodule CommonCore.Ecto.SchemaTest do
       assert todo.name == "my todo"
     end
 
-    test "images have a default value" do
+    test "messages have a default value" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{})
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.image == "mycontainer:latest"
+      assert todo.message == "default message"
     end
 
     test "default values are overwritten" do
-      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_override: "mycontainer:1.0"})
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{message_override: "my override message"})
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.image == "mycontainer:1.0"
+      assert todo.message == "my override message"
+    end
+
+    test "images have a default base and version" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{})
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image_base == "mycontainer"
+      assert todo.image_version == :latest
+    end
+
+    test "images can be overridden" do
+      changeset =
+        TodoSchema.changeset(%TodoSchema{}, %{image_base_override: "someotherimage", image_version_override: :"1"})
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image_base == "someotherimage"
+      assert todo.image_version == :"1"
     end
 
     test "passwords get a unique value each time" do

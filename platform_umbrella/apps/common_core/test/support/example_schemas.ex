@@ -25,9 +25,14 @@ defmodule CommonCore.ExampleSchemas do
 
     batt_schema "todos" do
       slug_field :name
-      defaultable_field :image, :string, default: "mycontainer:latest"
+      defaultable_field :message, :string, default: "default message"
       secret_field :password
       secret_field :short_password, length: 8
+
+      defaultable_image_field :image,
+        base: "mycontainer",
+        versions: ~w(1 2 3 latest)a,
+        default: :latest
 
       embeds_one :meta, EmbeddedMetaSchema
     end
