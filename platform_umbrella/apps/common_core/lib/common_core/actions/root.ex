@@ -25,7 +25,7 @@ defmodule CommonCore.Actions.RootActionGenerator do
     smtp4dev: [Smtp4dev],
     sso: [SSO],
     vm_agent: [VMAgent],
-    vm_cluster: [VMCluster],
+    victoria_metrics: [VMCluster],
     text_generation_webui: [TextGenerationWebUI]
   ]
 

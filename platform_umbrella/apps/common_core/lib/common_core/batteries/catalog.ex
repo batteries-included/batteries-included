@@ -195,31 +195,16 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :monitoring,
-      type: :vm_operator,
-      dependencies: [:battery_core],
-      name: "VM Operator",
-      description: "The VM Operator is a Kubernetes operator that manages the lifecycle of VictoriaMetrics."
-    },
-    %CatalogBattery{
-      group: :monitoring,
       type: :vm_agent,
-      dependencies: [:vm_operator],
+      dependencies: [],
       name: "VM Agent",
       description:
         "The VM Agent is an agent that collects metrics from the Kubernetes cluster and sends them to VictoriaMetrics."
     },
     %CatalogBattery{
       group: :monitoring,
-      type: :vm_cluster,
-      dependencies: [:vm_operator],
-      name: "VM Cluster",
-      description:
-        "The VM Cluster is a cluster of VictoriaMetrics instances that store and serve metrics from the Kubernetes cluster."
-    },
-    %CatalogBattery{
-      group: :monitoring,
       type: :victoria_metrics,
-      dependencies: [:battery_core, :vm_operator, :vm_agent, :vm_cluster],
+      dependencies: [:battery_core, :vm_agent],
       name: "Victoria Metrics",
       description: "Victoria Metrics is a fast, open source, and scalable monitoring solution and time series database."
     },
