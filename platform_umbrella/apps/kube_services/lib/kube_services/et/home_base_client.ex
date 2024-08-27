@@ -41,21 +41,29 @@ defmodule KubeServices.ET.HomeBaseClient do
 
   def send_usage(client \\ @me, state_summary) do
     GenServer.call(client, {:send_usage, state_summary})
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
   end
 
   def send_hosts(client \\ @me, state_summary) do
     GenServer.call(client, {:send_hosts, state_summary})
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
   end
 
   @spec get_status(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: {:ok, InstallStatus.t()} | {:error, any()}
   def get_status(client \\ @me) do
     GenServer.call(client, :get_status)
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
   end
 
   @spec get_stable_versions(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) ::
           {:ok, StableVersionsReport.t()} | {:error, any()}
   def get_stable_versions(client \\ @me) do
     GenServer.call(client, :get_stable_versions)
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
   end
 
   def start_link(opts \\ []) do
