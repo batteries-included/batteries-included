@@ -32,8 +32,10 @@ defmodule CommonCore.ConnectionPool do
   def get(cluster_name), do: get(@me, cluster_name)
 
   def get! do
-    with {:ok, conn} <- get() do
-      conn
+    case get() do
+      {:ok, conn} -> conn
+      {:error, e} -> raise e
+      _ -> raise "Unknown error"
     end
   end
 
