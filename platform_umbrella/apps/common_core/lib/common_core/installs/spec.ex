@@ -53,11 +53,19 @@ defmodule CommonCore.InstallSpec do
         )
 
       {:error, e} ->
-        {:error, "Failed to create target summary for installation: #{inspect(installation)}: #{inspect(e)}"}
+        {:error, "Failed to create target summary for installation: #{installation.slug}: #{inspect(e)}"}
     end
   end
 
-  def new!(%Installation{} = installation, opts \\ []), do: with({:ok, spec} <- new(installation, opts), do: spec)
+  def new!(%Installation{} = installation, opts \\ []) do
+    case new(installation, opts) do
+      {:ok, spec} ->
+        spec
+
+      {:error, error} ->
+        raise(error)
+    end
+  end
 
   defp kube_cluster(%{kube_provider: kube_provider, kube_provider_config: config} = _installation) do
     %{provider: kube_provider, config: config}
