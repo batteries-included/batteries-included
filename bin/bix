@@ -13,7 +13,7 @@ PORTFORWARD_ENABLED=1
 
 # If you are changing this also change the
 # version in mix.exs for all the apps in platform_umbrella
-BASE_VERSION="0.14.0"
+BASE_VERSION="0.15.1"
 
 # Make sure everything is build with this binary in the path
 export PATH="${ROOT_DIR}/bin:${PATH}"
@@ -75,6 +75,7 @@ Available commands:
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
+- set-version       Change the version of the project in mix.exs and bin/bix
 
 **Go Commands**
 - go-build-bi       Build the bi binary
@@ -366,6 +367,26 @@ do_gen_static_specs() {
     run_mix clean
 }
 
+do_set_version() {
+    local new_version=${1}
+    local old_version="${BASE_VERSION}"
+
+    log "Changing version from ${old_version} to ${new_version}"
+    all_mix_files=($(find "${ROOT_DIR}/platform_umbrella" -name mix.exs))
+    # Change the version in the mix.exs files
+    for mix_file in "${all_mix_files[@]}"; do
+        sed -i.bak "s/${old_version}/${new_version}/g" "${mix_file}"
+        rm "${mix_file}.bak"
+    done
+
+    # Change the version in the bin/bix file
+    sed -i.bak "s/BASE_VERSION=\"${old_version}\"/BASE_VERSION=\"${new_version}\"/g" "${ROOT_DIR}/bin/bix"
+    rm "${ROOT_DIR}/bin/bix.bak"
+
+    run_mix clean
+    log "Version changed to ${GREEN}${new_version}${NOFORMAT}"
+}
+
 do_go_update_deps() {
     update_go_deps "${ROOT_DIR}/bi"
     update_go_deps "${ROOT_DIR}/pastebin-go"
@@ -609,6 +630,9 @@ stop)
     ;;
 gen-static-specs)
     do_gen_static_specs
+    ;;
+set-version)
+    do_set_version "${args[@]}"
     ;;
 bootstrap)
     do_bootstrap "${args[@]}"
