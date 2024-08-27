@@ -244,7 +244,7 @@ defmodule CommonCore.Ecto.Schema do
             type: type,
             virtual_opts: virtual_opts,
             stored_opts: stored_opts,
-            default: Keyword.get(opts, :default)
+            default: Macro.escape(Keyword.get(opts, :default))
           ] do
       # Store the mapping from virtual to override
       # name to default as an accumulated list of lists.

@@ -1,8 +1,25 @@
 defmodule CommonCore.Defaults.Images do
   @moduledoc false
+  alias CommonCore.Image
+
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
   @cert_manager_image_tag "v1.15.1"
   @kiali_image_version "v1.87.0"
+
+  @registry %{
+    istio_pilot: %Image{
+      image: "docker.io/istio/pilot",
+      versions: ~w(1.22.3-distroless),
+      default: "1.22.3-distroless"
+    }
+  }
+
+  def get_image(type) do
+    @registry
+    |> Enum.filter(fn {name, _} -> name == type end)
+    |> Enum.map(fn {_, image} -> image end)
+    |> List.first()
+  end
 
   @spec cert_manager_image_version() :: String.t()
   def cert_manager_image_version, do: @cert_manager_image_tag
