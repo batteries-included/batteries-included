@@ -30,7 +30,7 @@ defmodule KubeServices.PodLogs.Worker do
 
     # Optional argument. Use the default connection pool if not specified.
     connection_func =
-      Keyword.get(other_args, :connection_func, &CommonCore.ConnectionPool.get/0)
+      Keyword.get(other_args, :connection_func, &CommonCore.ConnectionPool.get!/0)
 
     Process.send_after(self(), :start_connect, 50)
 

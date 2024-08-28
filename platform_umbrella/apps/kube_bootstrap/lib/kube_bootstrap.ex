@@ -9,7 +9,7 @@ defmodule KubeBootstrap do
 
   @spec bootstrap_from_summary(StateSummary.t()) :: :ok | {:error, :retries_exhausted | list()}
   def bootstrap_from_summary(summary) do
-    conn = CommonCore.ConnectionPool.get(KubeBootstrap.ConnectionPool, :default)
+    {:ok, conn} = CommonCore.ConnectionPool.get(KubeBootstrap.ConnectionPool, :default)
 
     {resources, with_control_server} =
       summary
