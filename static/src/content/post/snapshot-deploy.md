@@ -7,7 +7,7 @@ excerpt:
 publishDate: 2024-08-27
 tags: ['kubernetes', 'devops', 'deployment', 'scalability']
 image: /images/posts/post-18.jpg
-draft: false
+draft: true
 ---
 
 As far as Kubernetes deployments go, the reconciliation loop (or observation
