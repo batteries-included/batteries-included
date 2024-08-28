@@ -4,7 +4,7 @@ defmodule HomeBaseWeb.MixProject do
   def project do
     [
       app: :home_base_web,
-      version: "0.15.1",
+      version: "0.15.2",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -52,6 +52,9 @@ defmodule HomeBaseWeb.MixProject do
       {:telemetry_poller, "~> 1.1"},
       {:heyya, "~> 1.0", only: [:dev, :test]},
       {:phoenix_live_reload, "~> 1.3", only: :dev},
+
+      # Log to json
+      {:logger_json, "~> 6.0"},
       # Token/Signing
       {:jose, "~> 1.11"}
     ]

@@ -32,7 +32,8 @@ config :common_ui, CommonUIWeb.Endpoint,
 
 config :control_server, ControlServer.Repo,
   migration_primary_key: [type: :uuid],
-  migration_timestamps: [type: :utc_datetime_usec]
+  migration_timestamps: [type: :utc_datetime_usec],
+  start_apps_before_migration: [:logger_json]
 
 # Configure Mix tasks and generators
 config :control_server,
@@ -77,7 +78,8 @@ config :flop_phoenix,
 
 config :home_base, HomeBase.Repo,
   migration_primary_key: [type: :uuid],
-  migration_timestamps: [type: :utc_datetime_usec]
+  migration_timestamps: [type: :utc_datetime_usec],
+  start_apps_before_migration: [:logger_json]
 
 config :home_base,
   ecto_repos: [HomeBase.Repo]
@@ -111,7 +113,7 @@ config :kube_services, start_services: true
 config :logger,
   level: :debug,
   handle_otp_reports: true,
-  handle_sasl_reports: false,
+  handle_sasl_reports: true,
   compile_time_purge_matching: [
     [library: :k8s]
   ]

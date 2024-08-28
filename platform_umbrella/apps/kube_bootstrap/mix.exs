@@ -4,7 +4,7 @@ defmodule KubeBootstrap.MixProject do
   def project do
     [
       app: :kube_bootstrap,
-      version: "0.15.1",
+      version: "0.15.2",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -26,6 +26,8 @@ defmodule KubeBootstrap.MixProject do
   defp deps do
     [
       {:common_core, in_umbrella: true},
+      # Log to json
+      {:logger_json, "~> 6.0"},
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
       {:k8s, "~> 2.6"},

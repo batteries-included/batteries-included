@@ -4,7 +4,7 @@ defmodule ControlServerWeb.MixProject do
   def project do
     [
       app: :control_server_web,
-      version: "0.15.1",
+      version: "0.15.2",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -65,6 +65,9 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix_live_view, "~> 0.20"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
+
+      # Log to json
+      {:logger_json, "~> 6.0"},
 
       # Development
       {:phoenix_live_reload, "~> 1.3", only: :dev},
