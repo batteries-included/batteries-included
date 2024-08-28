@@ -3,6 +3,8 @@
 locals_without_parens = [
   defaultable_field: 3,
   defaultable_field: 2,
+  defaultable_image_field: 3,
+  defaultable_image_field: 2,
   slug_field: 2,
   slug_field: 1,
   secret_field: 2,

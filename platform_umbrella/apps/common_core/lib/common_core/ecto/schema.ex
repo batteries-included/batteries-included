@@ -38,7 +38,7 @@ defmodule CommonCore.Ecto.Schema do
     @required_fields [:name]
     batt_embedded_schema do
       slug_field :name
-      defaultable_field :image, :string, default: "myservice:v1.0.0"
+      defaultable_field :overridable_thing, :string, default: "this is overrideable and not stored in DB"
       secret_field :token
     end
   end
@@ -55,14 +55,31 @@ defmodule CommonCore.Ecto.Schema do
   #### Defaultable Fields
 
   ```elixir
-  defaultable_field :image, :string, default: "myimage:latest"
+  defaultable_field :name, :string, default: "jason"
   ```
 
   This creates two fields on the schema:
-    - `image` - a virtual field that defines the default. Read this field.
-    - `image_override` - an `_override` field that is stored in the DB. Write this field.
+    - `name` - a virtual field that defines the default. Read this field.
+    - `name_override` - an `_override` field that is stored in the DB. Write this field.
 
-  Since image_override doesn't get the default value written to it, the default value can
+  Since name_override doesn't get the default value written to it, the default value can
+  be changed by updating to a new version of the schema.
+
+  #### Defaultable Image Fields
+
+  ```elixir
+  defaultable_image_field :image,
+    default_name: "public.ecr.aws/doohickey",
+    tags: ~w(v1.2.3 v1.2.4)a,
+    default_tag: :"v1.2.4"
+  ```
+
+  This creates the following fields on the schema:
+    - `image` - a virtual field that defines the image with both name and tag. Read this field.
+    - `image_name_override` - an `_override` image name field that is stored in the DB. Write this field.
+    - `image_tag_override` - an `_override` image tag field that is stored in the DB. Write this field.
+
+  Since the override fields doesn't get the default value written to it, the default value can
   be changed by updating to a new version of the schema. This is useful for us when we have
   default versions of software that we want to offer. However customers will want to
   be able to pin to a specific version until a bug is fixed or they are ready to upgrade.
@@ -146,6 +163,8 @@ defmodule CommonCore.Ecto.Schema do
         only: [
           defaultable_field: 3,
           defaultable_field: 2,
+          defaultable_image_field: 2,
+          defaultable_image_field: 1,
           slug_field: 2,
           slug_field: 1,
           secret_field: 2,
@@ -164,6 +183,7 @@ defmodule CommonCore.Ecto.Schema do
       @before_compile {unquote(__MODULE__), :__before_compile__}
 
       Module.register_attribute(__MODULE__, :__defaultable_fields, accumulate: true)
+      Module.register_attribute(__MODULE__, :__defaultable_image_fields, accumulate: true)
       Module.register_attribute(__MODULE__, :__generated_secrets, accumulate: true)
       Module.register_attribute(__MODULE__, :__slug_fields, accumulate: true)
 
@@ -202,6 +222,8 @@ defmodule CommonCore.Ecto.Schema do
   schema. These will be validated on changeset
   - __schema__(:defaultable_fields) - returns the defaultable fields for the
   schema. These will have computed values set on them
+  - __schema__(:defaultable_image_fields) - returns the defaultable image fields for the
+  schema. These will have computed values set on them
   - __schema__(:polymorphic_type) - returns the polymorphic type for the
   schema. This is used to add a type field to the schema if for polymorphic types
   - __schema__(:generated_secrets) - returns the generated secrets for
@@ -214,6 +236,10 @@ defmodule CommonCore.Ecto.Schema do
       def __schema__(:required_fields), do: unquote(Module.get_attribute(env.module, :required_fields, []))
       def __schema__(:slug_fields), do: unquote(Module.get_attribute(env.module, :__slug_fields, []))
       def __schema__(:defaultable_fields), do: unquote(Module.get_attribute(env.module, :__defaultable_fields, []))
+
+      def __schema__(:defaultable_image_fields),
+        do: unquote(Module.get_attribute(env.module, :__defaultable_image_fields, []))
+
       def __schema__(:polymorphic_type), do: unquote(Module.get_attribute(env.module, :__polymorphic_type, nil))
       def __schema__(:generated_secrets), do: unquote(Module.get_attribute(env.module, :__generated_secrets, []))
     end
@@ -236,7 +262,7 @@ defmodule CommonCore.Ecto.Schema do
     end
 
     batt_embedded_schema do
-      defaultable_field :image, :string, default: "v0.0.1"
+      defaultable_field :version, :string, default: "v0.0.1"
       defaultable_field :image_type, Ecto.Enum, values: [:a, :b, :c], default: :a
     end
 
@@ -265,6 +291,81 @@ defmodule CommonCore.Ecto.Schema do
       field(virtual_name, type, virtual_opts)
       field(stored_name, type, stored_opts)
     end
+  end
+
+  @doc """
+  Defines an image field with default name and tag that isn't stored in the DB.
+
+  Creates 3 fields:
+    - virtual field that defines the full image. Read this field.
+    - `_override` fields for the name and tag that is stored in the DB. Write these fields.
+
+  ##### Examples
+
+    batt_polymorphic_schema, type: :duracell do
+      defaultable_image_field :name,
+        default_name: "base",
+        default_tag: "default version"
+    end
+
+    batt_embedded_schema do
+      defaultable_image_field :my_image,
+        default_name: "public.ecr.aws/my-image",
+        default_tag: :"v1.2.3"
+    end
+
+  """
+  defmacro defaultable_image_field(field, opts \\ []) do
+    parsed_opts = parse_defaultable_image_opts(field, opts)
+
+    quote bind_quoted: [
+            field: field,
+            name_ov: parsed_opts.name_ov,
+            tag_ov: parsed_opts.tag_ov,
+            name_default: parsed_opts.name_default,
+            tag_default: parsed_opts.tag_default
+          ] do
+      # Store the mapping from virtual to override
+      # name to default as an accumulated list of lists.
+      #
+      # Elixir doesn't like module attibutes being tuples so we store them as lists
+      @__defaultable_image_fields [field, name_default, tag_default]
+
+      # virtual field to store full image name
+      field(field, :string, virtual: true)
+      # override for name
+      field(name_ov, :string)
+      # override for tag
+      field(tag_ov, :string)
+    end
+  end
+
+  defp parse_defaultable_image_opts(field, opts) do
+    base = %{
+      name_ov: override_name("#{field}_name_override"),
+      tag_ov: override_name("#{field}_tag_override")
+    }
+
+    parsed =
+      case Keyword.get(opts, :image_id, nil) do
+        # else parse from passed opts
+        nil ->
+          %{
+            name_default: Keyword.fetch!(opts, :default_name),
+            tag_default: Keyword.fetch!(opts, :default_tag)
+          }
+
+        # if using image registry, look up values from image from registry
+        id ->
+          image = CommonCore.Defaults.Images.get_image!(id)
+
+          %{
+            name_default: image.name,
+            tag_default: image.default_tag
+          }
+      end
+
+    Map.merge(base, parsed)
   end
 
   defmacro secret_field(name, opts \\ []) do
@@ -363,6 +464,7 @@ defmodule CommonCore.Ecto.Schema do
     |> add_embeds(struct)
     |> add_polymorphic_fields(struct)
     |> add_defaultable_fields(struct)
+    |> add_defaultable_image_fields(struct)
     |> add_generated_secret_values(struct)
     |> add_slug_field_validations(struct)
     |> add_foreign_key_constraints(struct)
@@ -406,6 +508,24 @@ defmodule CommonCore.Ecto.Schema do
       end
     end)
   end
+
+  defp add_defaultable_image_fields(changeset, struct) do
+    :defaultable_image_fields
+    |> struct.__schema__()
+    |> Enum.reduce(changeset, fn [virt_field, name_default, tag_default], chg ->
+      stored_name = Ecto.Changeset.get_field(chg, override_name("#{virt_field}_name_override"), nil)
+      stored_tag = Ecto.Changeset.get_field(chg, override_name("#{virt_field}_tag_override"), nil)
+      desired_image = determine_image_string(stored_name, stored_tag, name_default, tag_default)
+
+      Ecto.Changeset.put_change(chg, virt_field, desired_image)
+    end)
+  end
+
+  defp determine_image_string(name_override, tag_override, name_default, tag_default)
+  defp determine_image_string(nil, nil, name_default, tag_default), do: "#{name_default}:#{tag_default}"
+  defp determine_image_string(name_ov, nil, _name_default, tag_default), do: "#{name_ov}:#{tag_default}"
+  defp determine_image_string(nil, tag_ov, name_default, _tag_default), do: "#{name_default}:#{tag_ov}"
+  defp determine_image_string(name_ov, tag_ov, _name_default, _tag_default), do: "#{name_ov}:#{tag_ov}"
 
   defp add_generated_secret_values(changeset, struct) do
     :generated_secrets
@@ -458,11 +578,12 @@ defmodule CommonCore.Ecto.Schema do
   def schema_dump(module, data) do
     virtual_fields = module.__schema__(:virtual_fields)
     default_virt_fields = :defaultable_fields |> module.__schema__() |> Enum.map(fn [vf, _, _] -> vf end)
+    default_virt_image_fields = :defaultable_image_fields |> module.__schema__() |> Enum.map(fn [vf, _, _] -> vf end)
 
     {:ok,
      data
      |> sanitize_opts()
-     |> Map.drop(virtual_fields ++ default_virt_fields)}
+     |> Map.drop(virtual_fields ++ default_virt_fields ++ default_virt_image_fields)}
   end
 
   @spec schema_load(module(), map() | struct() | keyword()) ::

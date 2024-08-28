@@ -1,8 +1,45 @@
 defmodule CommonCore.Defaults.Images do
   @moduledoc false
+
+  alias CommonCore.Defaults.Image
+
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
   @cert_manager_image_tag "v1.15.1"
   @kiali_image_version "v1.87.0"
+
+  @registry %{
+    istio_pilot:
+      Image.new!(%{
+        name: "docker.io/istio/pilot",
+        tags: ~w(1.22.3-distroless),
+        default_tag: "1.22.3-distroless"
+      }),
+    schema_test:
+      Image.new!(%{
+        name: "ecto/schema/test",
+        tags: ~w(1.2.3 1.2.4 latest),
+        default_tag: "1.2.3"
+      })
+  }
+
+  @spec get_image(atom()) :: Image.t() | nil
+  def get_image(name) do
+    @registry
+    |> Enum.filter(fn {k, _v} -> k == name end)
+    |> Enum.map(fn {_k, v} -> v end)
+    |> List.first()
+  end
+
+  @spec get_image!(atom()) :: Image.t()
+  def get_image!(name) do
+    case get_image(name) do
+      nil ->
+        raise "Image #{name} not found"
+
+      image ->
+        image
+    end
+  end
 
   @spec cert_manager_image_version() :: String.t()
   def cert_manager_image_version, do: @cert_manager_image_tag
