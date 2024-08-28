@@ -33,7 +33,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     def new(opts) do
       %__MODULE__{
         apply_kube_func: Keyword.get(opts, :apply_kube_func, &ApplyResource.apply/2),
-        kube_connection: Keyword.get_lazy(opts, :kube_connection, &CommonCore.ConnectionPool.get/0),
+        kube_connection: Keyword.get_lazy(opts, :kube_connection, &CommonCore.ConnectionPool.get!/0),
         stream_concurrency: Keyword.get(opts, :stream_concurrency, 5)
       }
     end

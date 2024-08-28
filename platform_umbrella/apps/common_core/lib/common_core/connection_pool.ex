@@ -44,7 +44,7 @@ defmodule CommonCore.ConnectionPool do
 
     case connection do
       {_pid, connection} ->
-        connection
+        {:ok, connection}
 
       _ ->
         register_new(pool_name, cluster_name)
@@ -61,7 +61,7 @@ defmodule CommonCore.ConnectionPool do
     with {:ok, connection} <- Task.await(conn_task),
          {:ok, _} <- Registry.register(registry, cluster_name, connection) do
       Logger.debug("Registered new Connection pool #{inspect(connection)}")
-      connection
+      {:ok, connection}
     else
       {:error, {:already_registered, _pid}} -> get_no_register(pool_name, cluster_name)
     end
