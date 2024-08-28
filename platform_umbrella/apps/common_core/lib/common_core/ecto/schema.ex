@@ -295,14 +295,12 @@ defmodule CommonCore.Ecto.Schema do
     batt_polymorphic_schema, type: :duracell do
       defaultable_image_field :name,
         default_name: "base",
-        tags: [:version_1, :version_2],
         default_tag: "default version"
     end
 
     batt_embedded_schema do
       defaultable_image_field :my_image,
         default_name: "public.ecr.aws/my-image",
-        tags: ~w(v1.2.3 v1.2.4)a,
         default_tag: :"v1.2.3"
     end
 
@@ -315,8 +313,7 @@ defmodule CommonCore.Ecto.Schema do
             name_ov: parsed_opts.name_ov,
             tag_ov: parsed_opts.tag_ov,
             name_default: parsed_opts.name_default,
-            tag_default: parsed_opts.tag_default,
-            values: parsed_opts.values
+            tag_default: parsed_opts.tag_default
           ] do
       # Store the mapping from virtual to override
       # name to default as an accumulated list of lists.
@@ -329,7 +326,7 @@ defmodule CommonCore.Ecto.Schema do
       # override for name
       field(name_ov, :string)
       # override for tag
-      field(tag_ov, Ecto.Enum, values: values)
+      field(tag_ov, :string)
     end
   end
 
@@ -345,8 +342,7 @@ defmodule CommonCore.Ecto.Schema do
         nil ->
           %{
             name_default: Keyword.fetch!(opts, :default_name),
-            tag_default: Keyword.fetch!(opts, :default_tag),
-            values: Keyword.fetch!(opts, :tags)
+            tag_default: Keyword.fetch!(opts, :default_tag)
           }
 
         # if using image registry, look up values from image from registry
@@ -355,8 +351,7 @@ defmodule CommonCore.Ecto.Schema do
 
           %{
             name_default: image.name,
-            tag_default: image.default_tag,
-            values: Enum.map(image.tags, &String.to_atom/1)
+            tag_default: image.default_tag
           }
       end
 

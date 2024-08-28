@@ -33,12 +33,12 @@ defmodule CommonCore.Ecto.SchemaTest do
 
     test "images can be overridden" do
       changeset =
-        TodoSchema.changeset(%TodoSchema{}, %{image_name_override: "someotherimage", image_tag_override: :"1"})
+        TodoSchema.changeset(%TodoSchema{}, %{image_name_override: "someotherimage", image_tag_override: "1"})
 
       todo = Ecto.Changeset.apply_changes(changeset)
       assert todo.image == "someotherimage:1"
       assert todo.image_name_override == "someotherimage"
-      assert todo.image_tag_override == :"1"
+      assert todo.image_tag_override == "1"
     end
 
     test "image names can be overridden" do
@@ -51,20 +51,12 @@ defmodule CommonCore.Ecto.SchemaTest do
     end
 
     test "image tags can be overridden" do
-      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_tag_override: :"1"})
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_tag_override: "1"})
 
       todo = Ecto.Changeset.apply_changes(changeset)
       assert todo.image == "mycontainer:1"
       assert todo.image_name_override == nil
-      assert todo.image_tag_override == :"1"
-    end
-
-    test "invalid image tags are invalid" do
-      changeset =
-        TodoSchema.changeset(%TodoSchema{}, %{image_tag_override: :"not an allowed tag"})
-
-      assert changeset.valid? == false
-      assert {:error, _} = Ecto.Changeset.apply_action(changeset, :insert)
+      assert todo.image_tag_override == "1"
     end
 
     test "images from registry have a default" do
@@ -79,13 +71,13 @@ defmodule CommonCore.Ecto.SchemaTest do
       changeset =
         TodoSchema.changeset(%TodoSchema{}, %{
           image_from_registry_name_override: "someotherimage",
-          image_from_registry_tag_override: :latest
+          image_from_registry_tag_override: "latest"
         })
 
       todo = Ecto.Changeset.apply_changes(changeset)
       assert todo.image_from_registry == "someotherimage:latest"
       assert todo.image_from_registry_name_override == "someotherimage"
-      assert todo.image_from_registry_tag_override == :latest
+      assert todo.image_from_registry_tag_override == "latest"
     end
 
     test "passwords get a unique value each time" do

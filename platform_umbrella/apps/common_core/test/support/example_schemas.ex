@@ -31,8 +31,7 @@ defmodule CommonCore.ExampleSchemas do
 
       defaultable_image_field :image,
         default_name: "mycontainer",
-        tags: ~w(1 2 3 latest)a,
-        default_tag: :latest
+        default_tag: "latest"
 
       defaultable_image_field :image_from_registry, image_id: :schema_test
 

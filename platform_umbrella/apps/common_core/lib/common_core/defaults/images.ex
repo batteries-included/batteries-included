@@ -8,16 +8,18 @@ defmodule CommonCore.Defaults.Images do
   @kiali_image_version "v1.87.0"
 
   @registry %{
-    istio_pilot: %Image{
-      name: "docker.io/istio/pilot",
-      tags: ~w(1.22.3-distroless),
-      default_tag: "1.22.3-distroless"
-    },
-    schema_test: %Image{
-      name: "ecto/schema/test",
-      tags: ~w(1.2.3 1.2.4 latest),
-      default_tag: "1.2.3"
-    }
+    istio_pilot:
+      Image.new!(%{
+        name: "docker.io/istio/pilot",
+        tags: ~w(1.22.3-distroless),
+        default_tag: "1.22.3-distroless"
+      }),
+    schema_test:
+      Image.new!(%{
+        name: "ecto/schema/test",
+        tags: ~w(1.2.3 1.2.4 latest),
+        default_tag: "1.2.3"
+      })
   }
 
   @spec get_image(atom()) :: Image.t() | nil
