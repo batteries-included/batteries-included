@@ -4,7 +4,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.URLs
 
-  alias CommonCore.Defaults.Images
+  alias CommonCore.Batteries.KialiConfig
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.URLs
@@ -27,7 +27,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
         "image_name" => "quay.io/kiali/kiali",
         "image_pull_policy" => "Always",
         "image_pull_secrets" => [],
-        "image_version" => Images.kiali_image_version(),
+        "image_version" => KialiConfig.image_version(battery.config),
         "ingress" => %{
           "additional_labels" => %{},
           "class_name" => "nginx",
@@ -55,7 +55,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
         "service_annotations" => %{},
         "service_type" => "",
         "tolerations" => [],
-        "version_label" => Images.kiali_image_version(),
+        "version_label" => KialiConfig.image_version(battery.config),
         "view_only_mode" => false
       },
       "external_services" => %{

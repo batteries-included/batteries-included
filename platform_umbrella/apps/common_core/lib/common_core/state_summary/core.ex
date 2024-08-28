@@ -35,17 +35,17 @@ defmodule CommonCore.StateSummary.Core do
 
   def controlserver_image(%StateSummary{} = summary) do
     if upgrade_time?(summary) do
-      stable_contol_image(summary)
+      stable_control_image(summary)
     else
       Defaults.Images.control_server_image()
     end
   end
 
-  defp stable_contol_image(%StateSummary{stable_versions_report: %StableVersionsReport{} = report} = _summary) do
+  defp stable_control_image(%StateSummary{stable_versions_report: %StableVersionsReport{} = report} = _summary) do
     report.control_server
   end
 
-  defp stable_contol_image(_summary) do
+  defp stable_control_image(_summary) do
     Defaults.Images.control_server_image()
   end
 

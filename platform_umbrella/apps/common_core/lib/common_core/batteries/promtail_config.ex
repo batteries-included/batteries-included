@@ -3,9 +3,7 @@ defmodule CommonCore.Batteries.PromtailConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :promtail do
-    defaultable_field :image, :string, default: Defaults.Images.promtail_image()
+    defaultable_image_field :image, image_id: :promtail
   end
 end

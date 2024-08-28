@@ -3,10 +3,8 @@ defmodule CommonCore.Batteries.AwsLoadBalancerControllerConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :aws_load_balancer_controller do
-    defaultable_field :image, :string, default: Defaults.Images.aws_load_balancer_controller_image()
+    defaultable_image_field :image, image_id: :aws_load_balancer_controller
     field :service_role_arn, :string
     field :subnets, {:array, :string}
     field :eip_allocations, {:array, :string}
