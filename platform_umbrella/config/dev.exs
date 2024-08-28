@@ -97,7 +97,10 @@ config :logger, :console,
   level: :debug,
   metadata: [:mfa, :request_id],
   handle_otp_reports: true,
-  handle_sasl_reports: false
+  handle_sasl_reports: true,
+  compile_time_purge_matching: [
+    [library: :k8s]
+  ]
 
 # Initialize plugs at runtime for faster development compilation
 # Set a higher stacktrace during development. Avoid configuring such
