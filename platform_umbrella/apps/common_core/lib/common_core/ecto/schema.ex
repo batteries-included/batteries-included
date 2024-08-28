@@ -68,17 +68,16 @@ defmodule CommonCore.Ecto.Schema do
   #### Defaultable Image Fields
 
   ```elixir
-  defaultable_field :image,
-    base: "public.ecr.aws/doohickey",
-    versions: ~w(v1.2.3 v1.2.4)a,
-    default: :"v1.2.4"
+  defaultable_image_field :image,
+    default_name: "public.ecr.aws/doohickey",
+    tags: ~w(v1.2.3 v1.2.4)a,
+    default_tag: :"v1.2.4"
   ```
 
   This creates the following fields on the schema:
-    - `image_base` - a virtual field that defines the default base image. Read this field.
-    - `image_base_override` - an `_override` base image field that is stored in the DB. Write this field.
-    - `image_version` - a virtual version field that defines the default. Read this field.
-    - `image_version_override` - an `_override` version field that is stored in the DB. Write this field.
+    - `image` - a virtual field that defines the image with both name and tag. Read this field.
+    - `image_name_override` - an `_override` image name field that is stored in the DB. Write this field.
+    - `image_tag_override` - an `_override` image tag field that is stored in the DB. Write this field.
 
   Since the override fields doesn't get the default value written to it, the default value can
   be changed by updating to a new version of the schema. This is useful for us when we have
@@ -295,43 +294,40 @@ defmodule CommonCore.Ecto.Schema do
 
     batt_polymorphic_schema, type: :duracell do
       defaultable_image_field :name,
-        base: "base",
-        versions: [:version_1, :version_2],
-        default: "default version"
+        default_name: "base",
+        tags: [:version_1, :version_2],
+        default_tag: "default version"
     end
 
     batt_embedded_schema do
       defaultable_image_field :my_image,
-        base: "public.ecr.aws/my-image",
-        versions: ~w(v1.2.3, v1.2.4)a,
-        default: :"v1.2.3"
+        default_name: "public.ecr.aws/my-image",
+        tags: ~w(v1.2.3 v1.2.4)a,
+        default_tag: :"v1.2.3"
     end
 
   """
-  defmacro defaultable_image_field(name, opts \\ []) do
-    base_name = "#{name}_base"
-    version_name = "#{name}_version"
-
+  defmacro defaultable_image_field(field, opts \\ []) do
     quote bind_quoted: [
-            base_virtual_name: override_name(base_name),
-            base_name: override_name("#{base_name}_override"),
-            version_virtual_name: override_name(version_name),
-            version_name: override_name("#{version_name}_override"),
-            base: Keyword.fetch!(opts, :base),
-            values: Keyword.fetch!(opts, :versions),
-            default: Keyword.fetch!(opts, :default)
+            field: field,
+            name_ov: override_name("#{field}_name_override"),
+            tag_ov: override_name("#{field}_tag_override"),
+            name_default: Keyword.fetch!(opts, :default_name),
+            tag_default: Keyword.fetch!(opts, :default_tag),
+            values: Keyword.fetch!(opts, :tags)
           ] do
       # Store the mapping from virtual to override
       # name to default as an accumulated list of lists.
       #
       # Elixir doesn't like module attibutes being tuples so we store them as lists
-      @__defaultable_image_fields [base_virtual_name, base_name, base]
-      @__defaultable_image_fields [version_virtual_name, version_name, default]
+      @__defaultable_image_fields [field, name_default, tag_default]
 
-      field(base_virtual_name, :string, virtual: true)
-      field(base_name, :string)
-      field(version_name, Ecto.Enum, values: values)
-      field(version_virtual_name, Ecto.Enum, values: values, virtual: true)
+      # virtual field to store full image name
+      field(field, :string, virtual: true)
+      # override for name
+      field(name_ov, :string)
+      # override for tag
+      field(tag_ov, Ecto.Enum, values: values)
     end
   end
 
@@ -459,30 +455,40 @@ defmodule CommonCore.Ecto.Schema do
   defp add_defaultable_fields(changeset, struct) do
     :defaultable_fields
     |> struct.__schema__()
-    |> Enum.reduce(changeset, &determine_defaultable_fields/2)
+    |> Enum.reduce(changeset, fn [virtual_name, stored_name, default], chg ->
+      stored_value = Ecto.Changeset.get_field(chg, stored_name, nil)
+      virtual_value = Ecto.Changeset.get_field(chg, virtual_name, nil)
+
+      cond do
+        stored_value != nil and virtual_value != stored_value ->
+          Ecto.Changeset.put_change(chg, virtual_name, stored_value)
+
+        virtual_value == nil and default != nil ->
+          Ecto.Changeset.put_change(chg, virtual_name, default)
+
+        true ->
+          chg
+      end
+    end)
   end
 
   defp add_defaultable_image_fields(changeset, struct) do
     :defaultable_image_fields
     |> struct.__schema__()
-    |> Enum.reduce(changeset, &determine_defaultable_fields/2)
+    |> Enum.reduce(changeset, fn [virt_field, name_default, tag_default], chg ->
+      stored_name = Ecto.Changeset.get_field(chg, override_name("#{virt_field}_name_override"), nil)
+      stored_tag = Ecto.Changeset.get_field(chg, override_name("#{virt_field}_tag_override"), nil)
+      desired_image = determine_image_string(stored_name, stored_tag, name_default, tag_default)
+
+      Ecto.Changeset.put_change(chg, virt_field, desired_image)
+    end)
   end
 
-  defp determine_defaultable_fields([virtual_name, stored_name, default], chg) do
-    stored_value = Ecto.Changeset.get_field(chg, stored_name, nil)
-    virtual_value = Ecto.Changeset.get_field(chg, virtual_name, nil)
-
-    cond do
-      stored_value != nil and virtual_value != stored_value ->
-        Ecto.Changeset.put_change(chg, virtual_name, stored_value)
-
-      virtual_value == nil and default != nil ->
-        Ecto.Changeset.put_change(chg, virtual_name, default)
-
-      true ->
-        chg
-    end
-  end
+  defp determine_image_string(name_override, tag_override, name_default, tag_default)
+  defp determine_image_string(nil, nil, name_default, tag_default), do: "#{name_default}:#{tag_default}"
+  defp determine_image_string(name_ov, nil, _name_default, tag_default), do: "#{name_ov}:#{tag_default}"
+  defp determine_image_string(nil, tag_ov, name_default, _tag_default), do: "#{name_default}:#{tag_ov}"
+  defp determine_image_string(name_ov, tag_ov, _name_default, _tag_default), do: "#{name_ov}:#{tag_ov}"
 
   defp add_generated_secret_values(changeset, struct) do
     :generated_secrets

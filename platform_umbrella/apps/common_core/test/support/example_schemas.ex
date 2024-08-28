@@ -30,9 +30,9 @@ defmodule CommonCore.ExampleSchemas do
       secret_field :short_password, length: 8
 
       defaultable_image_field :image,
-        base: "mycontainer",
-        versions: ~w(1 2 3 latest)a,
-        default: :latest
+        default_name: "mycontainer",
+        tags: ~w(1 2 3 latest)a,
+        default_tag: :latest
 
       embeds_one :meta, EmbeddedMetaSchema
     end

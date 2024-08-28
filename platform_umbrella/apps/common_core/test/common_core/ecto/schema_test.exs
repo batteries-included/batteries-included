@@ -23,20 +23,48 @@ defmodule CommonCore.Ecto.SchemaTest do
       assert todo.message == "my override message"
     end
 
-    test "images have a default base and version" do
+    test "images have a default" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{})
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.image_base == "mycontainer"
-      assert todo.image_version == :latest
+      assert todo.image == "mycontainer:latest"
+      assert todo.image_name_override == nil
+      assert todo.image_tag_override == nil
     end
 
-    test "images can be overridden" do
+    test "images names can be overridden" do
       changeset =
-        TodoSchema.changeset(%TodoSchema{}, %{image_base_override: "someotherimage", image_version_override: :"1"})
+        TodoSchema.changeset(%TodoSchema{}, %{image_name_override: "someotherimage", image_tag_override: :"1"})
 
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.image_base == "someotherimage"
-      assert todo.image_version == :"1"
+      assert todo.image == "someotherimage:1"
+      assert todo.image_name_override == "someotherimage"
+      assert todo.image_tag_override == :"1"
+    end
+
+    test "image names can be overridden" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_name_override: "someotherimage"})
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image == "someotherimage:latest"
+      assert todo.image_name_override == "someotherimage"
+      assert todo.image_tag_override == nil
+    end
+
+    test "image tags can be overridden" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_tag_override: :"1"})
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image == "mycontainer:1"
+      assert todo.image_name_override == nil
+      assert todo.image_tag_override == :"1"
+    end
+
+    test "invalid image tags are invalid" do
+      changeset =
+        TodoSchema.changeset(%TodoSchema{}, %{image_tag_override: :"not an allowed tag"})
+
+      assert changeset.valid? == false
+      assert {:error, _} = Ecto.Changeset.apply_action(changeset, :insert)
     end
 
     test "passwords get a unique value each time" do
