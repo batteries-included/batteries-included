@@ -4,7 +4,7 @@ defmodule Verify.TestCase do
   use ExUnit.CaseTemplate
 
   using options do
-    install_spec = Keyword.get(options, :install_spec, :local)
+    install_spec = Keyword.get(options, :install_spec, :int_test)
 
     quote do
       use Wallaby.DSL
