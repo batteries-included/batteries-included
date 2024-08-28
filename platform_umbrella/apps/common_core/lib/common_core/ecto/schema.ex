@@ -284,11 +284,11 @@ defmodule CommonCore.Ecto.Schema do
   end
 
   @doc """
-  Defines an image field with default base and version that isn't stored in the DB.
+  Defines an image field with default name and tag that isn't stored in the DB.
 
-  Creates 4 fields:
-    - virtual fields that define the default base and version for the image. Read this field.
-    - `_override` fields for the base and version that is stored in the DB. Write this field.
+  Creates 3 fields:
+    - virtual field that defines the full image. Read this field.
+    - `_override` fields for the name and tag that is stored in the DB. Write these fields.
 
   ##### Examples
 
@@ -308,13 +308,15 @@ defmodule CommonCore.Ecto.Schema do
 
   """
   defmacro defaultable_image_field(field, opts \\ []) do
+    parsed_opts = parse_defaultable_image_opts(field, opts)
+
     quote bind_quoted: [
             field: field,
-            name_ov: override_name("#{field}_name_override"),
-            tag_ov: override_name("#{field}_tag_override"),
-            name_default: Keyword.fetch!(opts, :default_name),
-            tag_default: Keyword.fetch!(opts, :default_tag),
-            values: Keyword.fetch!(opts, :tags)
+            name_ov: parsed_opts.name_ov,
+            tag_ov: parsed_opts.tag_ov,
+            name_default: parsed_opts.name_default,
+            tag_default: parsed_opts.tag_default,
+            values: parsed_opts.values
           ] do
       # Store the mapping from virtual to override
       # name to default as an accumulated list of lists.
@@ -329,6 +331,36 @@ defmodule CommonCore.Ecto.Schema do
       # override for tag
       field(tag_ov, Ecto.Enum, values: values)
     end
+  end
+
+  defp parse_defaultable_image_opts(field, opts) do
+    base = %{
+      name_ov: override_name("#{field}_name_override"),
+      tag_ov: override_name("#{field}_tag_override")
+    }
+
+    parsed =
+      case Keyword.get(opts, :image_id, nil) do
+        # else parse from passed opts
+        nil ->
+          %{
+            name_default: Keyword.fetch!(opts, :default_name),
+            tag_default: Keyword.fetch!(opts, :default_tag),
+            values: Keyword.fetch!(opts, :tags)
+          }
+
+        # if using image registry, look up values from image from registry
+        id ->
+          image = CommonCore.Defaults.Images.get_image!(id)
+
+          %{
+            name_default: image.name,
+            tag_default: image.default_tag,
+            values: Enum.map(image.tags, &String.to_atom/1)
+          }
+      end
+
+    Map.merge(base, parsed)
   end
 
   defmacro secret_field(name, opts \\ []) do

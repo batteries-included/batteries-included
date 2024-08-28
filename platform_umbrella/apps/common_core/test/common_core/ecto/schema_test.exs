@@ -31,7 +31,7 @@ defmodule CommonCore.Ecto.SchemaTest do
       assert todo.image_tag_override == nil
     end
 
-    test "images names can be overridden" do
+    test "images can be overridden" do
       changeset =
         TodoSchema.changeset(%TodoSchema{}, %{image_name_override: "someotherimage", image_tag_override: :"1"})
 
@@ -65,6 +65,27 @@ defmodule CommonCore.Ecto.SchemaTest do
 
       assert changeset.valid? == false
       assert {:error, _} = Ecto.Changeset.apply_action(changeset, :insert)
+    end
+
+    test "images from registry have a default" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{})
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image_from_registry == "ecto/schema/test:1.2.3"
+      assert todo.image_from_registry_name_override == nil
+      assert todo.image_from_registry_tag_override == nil
+    end
+
+    test "images from registry can be overridden" do
+      changeset =
+        TodoSchema.changeset(%TodoSchema{}, %{
+          image_from_registry_name_override: "someotherimage",
+          image_from_registry_tag_override: :latest
+        })
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image_from_registry == "someotherimage:latest"
+      assert todo.image_from_registry_name_override == "someotherimage"
+      assert todo.image_from_registry_tag_override == :latest
     end
 
     test "passwords get a unique value each time" do
