@@ -176,7 +176,17 @@ defmodule CommonCore.Ecto.Schema do
       # New and new! rely on the changeset method
       # Those three don't need to know the storage type
       def new(opts \\ []), do: unquote(__MODULE__).schema_new(__MODULE__, opts)
-      def new!(opts \\ []), do: with({:ok, value} <- new(opts), do: value)
+
+      def new!(opts \\ []) do
+        case new(opts) do
+          {:ok, value} ->
+            value
+
+          {:error, error} ->
+            raise "#{inspect(error)}"
+        end
+      end
+
       def changeset(base_struct, args), do: unquote(__MODULE__).schema_changeset(base_struct, args)
 
       defoverridable new: 0, new: 1, changeset: 2, new!: 1
