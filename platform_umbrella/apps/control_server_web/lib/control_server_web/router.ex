@@ -220,7 +220,6 @@ defmodule ControlServerWeb.Router do
   scope "/api", ControlServerWeb do
     pipe_through :api
 
-    get "/system_state", SystemStateController, :index
     resources "/postgres/clusters", ClusterController, except: [:new, :edit]
     resources "/redis/clusters", RedisInstanceController, except: [:new, :edit]
     resources "/knative/services", KnativeServiceController, except: [:new, :edit]
