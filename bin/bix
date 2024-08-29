@@ -180,6 +180,10 @@ do_start() {
 do_bootstrap() {
     local spec_path=${1:-"bootstrap/dev.spec.json"}
     local summary_path slug
+    local out=/dev/null
+    if [[ $TRACE -eq 1 ]]; then
+        out=/dev/stdout
+    fi
     spec_path=$(realpath "${spec_path}")
 
     do_start "${spec_path}" >/dev/null
@@ -197,7 +201,8 @@ do_bootstrap() {
     bootstrap_path=$(dirname "${spec_path}")
 
     log "${GREEN}Running Kube Bootstrap${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
-    run_mix "do" deps.get, compile, kube.bootstrap "${summary_path}" >/dev/null
+
+    run_mix "do" deps.get, compile, kube.bootstrap "${summary_path}" >"$out"
     # Start the port forwarder
     try_portforward "${slug}" &
 
@@ -206,10 +211,10 @@ do_bootstrap() {
 
     # Postgres should be up create the database and run the migrations
     log "${GREEN}Running migrations${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
-    run_mix setup >/dev/null
+    run_mix setup >"$out"
     # Add the rows that should be there for what's installed
     run_mix "do" seed.control "${summary_path}", \
-        seed.home "${bootstrap_path}" >/dev/null
+        seed.home "${bootstrap_path}" >"$out"
 
     log "${GREEN}Bootstrap Exited Successfully${NOFORMAT}"
     exit 0
@@ -522,14 +527,15 @@ do_ex_test_deep() {
 do_ex_test() {
     local slug=${1:-"dev"}
     local out=/dev/null
+    if [[ $TRACE -eq 1 ]]; then
+        out=/dev/stdout
+    fi
+
     log "${GREEN}Running${NOFORMAT} elixir tests"
     # Start the port forwarder
     try_portforward "${slug}" &
 
     export MIX_ENV=test
-    if [[ $TRACE -eq 1 ]]; then
-        out=/dev/stdout
-    fi
 
     run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings >$out
     log "Elixir tests ${GREEN}Passed${NOFORMAT}"
