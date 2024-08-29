@@ -29,7 +29,9 @@ ARG APP_GROUP="$APP_USER"
 # Runtime dir
 ARG APP_DIR=/app
 
-ARG LANG=C.UTF-8
+ARG LANG=en_US.UTF-8
+
+ARG LANGUAGE=en_US:en
 
 ##########################################################################
 # Fetch OS build dependencies
@@ -68,9 +70,13 @@ RUN --mount=type=cache,target=/var/cache/apt \
 FROM os-deps AS deps
 
 ARG LANG
+ARG LANGUAGE
 ARG MIX_ENV
 
-ENV MIX_ENV=${MIX_ENV}
+ENV MIX_ENV=${MIX_ENV} \
+  LANGUAGE=${LANGUAGE} \
+  LANG=$LANG \
+  LC_ALL=$LANG
 
 WORKDIR /source
 
@@ -101,7 +107,12 @@ RUN mix "do" local.hex --force, local.rebar --force && \
 FROM deps AS control-deps
 
 ARG LANG
+ARG LANGUAGE
 ARG MIX_ENV
+
+ENV LANGUAGE=$LANGUAGE \
+  LANG=$LANG \
+  LC_ALL=$LANG
 
 COPY platform_umbrella/apps/control_server_web/assets/package.json /source/platform_umbrella//apps/control_server_web/assets/package.json
 COPY platform_umbrella/apps/control_server_web/assets/package-lock.json /source/platform_umbrella//apps/control_server_web/assets/package-lock.json
@@ -116,9 +127,11 @@ RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 FROM control-deps AS control-assets
 
 ARG LANG
+ARG LANGUAGE
 ARG MIX_ENV
 
 ENV MIX_ENV=${MIX_ENV} \
+  LANGUAGE=$LANGUAGE \
   LANG=$LANG \
   LC_ALL=$LANG
 
@@ -138,9 +151,6 @@ RUN mix deps.get && \
 
 FROM deps AS home-base-deps
 
-ARG LANG
-ARG MIX_ENV
-
 COPY platform_umbrella/apps/home_base_web/assets/package.json /source/platform_umbrella//apps/home_base_web/assets/package.json
 COPY platform_umbrella/apps/home_base_web/assets/package-lock.json /source/platform_umbrella//apps/home_base_web/assets/package-lock.json
 
@@ -154,9 +164,11 @@ RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 FROM home-base-deps AS home-base-assets
 
 ARG LANG
+ARG LANGUAGE
 ARG MIX_ENV
 
 ENV MIX_ENV=${MIX_ENV} \
+  LANGUAGE=$LANGUAGE \
   LANG=$LANG \
   LC_ALL=$LANG
 
@@ -176,14 +188,16 @@ RUN cd platform_umbrella && \
 FROM deps AS release
 
 ARG LANG
+ARG LANGUAGE
 ARG MIX_ENV
 ARG RELEASE
 
-# Before compiling add the bix binary to the path.
-# It is used in the build process for version info.
 ENV MIX_ENV=${MIX_ENV} \
+  LANGUAGE=$LANGUAGE \
   LANG=$LANG \
-  LC_ALL=$LANG \
+  LC_ALL=$LANG\
+  # Before compiling add the bix binary to the path.
+  # It is used in the build process for version info.
   PATH="$PATH:/source/bin"
 
 WORKDIR /source
@@ -202,6 +216,7 @@ RUN  mix "do" phx.digest, compile, release "${RELEASE}"
 FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS final
 
 ARG LANG
+ARG LANGUAGE
 ARG APP_NAME
 ARG APP_USER
 ARG APP_GROUP
@@ -213,6 +228,7 @@ ARG RELEASE
 # Set environment vars used by the app
 ENV LANG=$LANG \
   LC_ALL=$LANG \
+  LANGUAGE=$LANGUAGE \
   HOME=$APP_DIR \
   RELEASE_TMP="/run/$APP_NAME" \
   MIX_ENV=${MIX_ENV} \
@@ -224,6 +240,9 @@ WORKDIR /app
 RUN apt update && \
   apt install -y libssl3 tini ca-certificates locales && \
   apt clean
+
+# Set the locale
+RUN sed -i '/${LANG}}/s/^# //g' /etc/locale.gen && locale-gen
 
 # Create user and group to run under with specific uid
 RUN groupadd --gid 10001 --system "$APP_GROUP" && \
