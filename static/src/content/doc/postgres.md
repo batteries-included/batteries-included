@@ -1,55 +1,83 @@
 ---
 title: PostgreSQL
-description: Lorem markdownum rogat aspicit urit incognita ut Ancaeo litus
-tags: ['test', 'default doc']
+description:
+  Learn how to start and manage a PostgreSQL database with Batteries Included.
+tags: ['database', 'postgres', 'datastore']
 draft: false
 ---
 
-## Nec numen pullo vos leves exclamant ictu
+Batteries Included ships with PostgreSQL support out-of-the-box. This guide will
+walk you through creating and managing a PostgreSQL cluster.
 
-Lorem markdownum rogat aspicit urit incognita ut Ancaeo litus, tollens hunc
-potentia deme dolens. Hoc **erat**, est Icare timide illa supplex, canes herbae
-constitit tamen vicini. Ipse [conantur](http://volat-demas.com/illa-impia.html)
-accusasse lavere ne et matrem, postibus avertit cui egerere tibi prohibent auro
-[profana](http://quam.com/), modo.
+## Creating a PostgreSQL Cluster
 
-## Certa primus
+Creating a PostgreSQL cluster is straightforward:
 
-Quicquid rupisque Bactrius, pondere, _magnique_, novercae prehendit. Domus
-Thesea, omnes ut turba obstitit modo. Quod quem _rigescere_ poteram declivibus
-antistita iste conscendere videtur puro quod honos, ipse ora corpore aures.
+1. Navigate to the `Datastores` section.
+2. Click on `New PostgreSQL` to begin creation.
+3. Configure your cluster settings (users, namespaces, size, database name,
+   etc.).
+4. Click `Save Postgres Cluster` to finalize creation.
 
-- Quisquam plura pariter
-- Nec dissiluit
-- Ergo fata nisi ipsaque tecto tamen multicavo
-- Moriente digitis iuncta et laude nunc tangam
+<video src="/videos/postgres/creating-database.webm" controls></video>
 
-## Fluitantia et Nocte pendent cautes Taenarius nullus
+## Users and Namespaces
 
-In _caedis_. Terra amico, [per](http://exemplocaptus.io/non.html) sonos ignarus
-fixit insistit **nec concita** si terras vobis illos credentes. Eadem victus
-vidit fiducia caritura modo, sanguine finem. Per committi mediis iniectis
-levati, forma vix Cinyran avumque ne thalamos quem menti. Longos tosta virus
-partu oscula quoniam _deus_ hinc satyri fores Herculeis.
+When you create a PostgreSQL cluster, Batteries Included automatically generates
+random passwords for each user. These credentials are stored in a Secret within
+the cluster's namespace.
 
-    rfidSuperscalarPush = seoInternal(5 + batch, modifier_copy(system),
-            tigerVersion) * reality.webCtr(carrier_wpa, clob_modem);
-    var signature_smb = firmware * exbibyte.phreakingParityOptical(-1, 1, 1);
-    vectorCaptcha(gibibyte_supercomputer_text.freeware(petabyte(3), 2),
-            rtf_fi_unc + 2 / impact);
-    surfaceFileIscsi(clockWhiteUpnp);
-    hdtvTabletTiff.pmu(digital_offline, keyDriveServer(handle.up(dtdDrmDimm), 42
-            + on, viral_wave), volume);
+## Adding or Modifying Users
 
-## Nec fiuntque Herse Dixerat Pallade
+You can add or modify users either during cluster creation or afterwards:
 
-Et facta auspicio axem quoniam, vomere nec expetit oblite elisa, et hos? Est est
-habere.
+1. Navigate to the `Datastores` section.
+2. Select `Edit Cluster` to the right of your PostgreSQL cluster.
+3. In the `Users` section, you can add new users or modify existing ones.
+4. For each user, you can specify which namespaces should have access to their
+   credentials.
 
-Quantum proque arma in, deum oris res quos in. [Phoebus](http://urbesque.io/)
-tangere! [Praemia dumque](http://nequiquam.net/corpora.html).
+## Namespaces
 
-Pennis ego sub magnumque taeda spectabat oris simulacraque est inmitibus et et
-proxima velox signa solvit! Iacebas matrem femina nec nec incidit di seroque, et
-sol, nec. Fugam possimne est inpune incautum parentis tamen patet, Siculaeque.
-Brevis in proque ecce sperare draconis parens; orbem labor post.
+To make user credentials available in different namespaces:
+
+1. When creating or editing a user, you'll see a `Namespaces` section.
+2. Select the namespaces where you want the user's credentials to be available.
+3. When your changes are applied, copies of the credential secret will be
+   created in these namespaces.
+
+This allows you to control which namespaces have access to specific database
+users, enhancing security and flexibility in your cluster setup. For instance,
+if you want to access your PostgreSQL database from a Jupyter Notebook battery,
+you can add your user to the `battery-ai` namespace, and then reference it in
+that battery's environment variables.
+
+## User Roles and Permissions
+
+The PostgreSQL battery offers various roles that define what actions a user can
+perform. When creating or editing a user, you can assign any of the following
+roles:
+
+- `Superuser`: Grants full administrative privileges.
+- `Createdb`: Allows the user to create new databases.
+- `Createrole`: Permits the user to create new roles.
+- `Inherit`: Enables inheritance of privileges from roles the user is a member
+  of.
+- `Login`: Allows the user to log in to the database.
+- `Replication`: Designates the user as a replication user.
+- `Bypassrls`: Determines whether the user bypasses row-level security (RLS)
+  policies.
+
+Select the appropriate roles based on the level of access and capabilities you
+want to grant each user.
+
+## Connecting to Your PostgreSQL Cluster Locally
+
+For local development, you can use the `bi` CLI tool to get a connection string:
+
+```bash
+export DATABASE_URL=$(bi postgres access-info mycluster myusername --localhost)
+```
+
+This command retrieves the connection information for your specific cluster and
+user, which you can then use with tools like pgAdmin.
