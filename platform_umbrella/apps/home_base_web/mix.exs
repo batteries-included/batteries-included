@@ -4,7 +4,7 @@ defmodule HomeBaseWeb.MixProject do
   def project do
     [
       app: :home_base_web,
-      version: "0.14.0",
+      version: "0.15.2",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -47,11 +47,15 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix_ecto, "~> 4.6"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8"},
-      {:phoenix_live_view, "~> 0.20"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
       {:heyya, "~> 1.0", only: [:dev, :test]},
-      {:phoenix_live_reload, "~> 1.3", only: :dev},
+      {:phoenix_live_reload, "~> 1.5", only: :dev},
+      {:phoenix_live_view, "~> 0.20", override: true},
+      {:flop_phoenix, "~> 0.23"},
+
+      # Log to json
+      {:logger_json, "~> 6.0"},
       # Token/Signing
       {:jose, "~> 1.11"}
     ]

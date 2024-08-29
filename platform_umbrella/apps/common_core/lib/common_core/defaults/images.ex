@@ -7,45 +7,38 @@ defmodule CommonCore.Defaults.Images do
   @cert_manager_image_tag "v1.15.1"
   @kiali_image_version "v1.87.0"
 
-  @all %{
-    aws_load_balancer_controller: %Image{
-      base: "public.ecr.aws/eks/aws-load-balancer-controller",
-      versions: ["v2.8.2", "v2.8.1"]
-    }
+  @registry %{
+    istio_pilot:
+      Image.new!(%{
+        name: "docker.io/istio/pilot",
+        tags: ~w(1.22.3-distroless),
+        default_tag: "1.22.3-distroless"
+      }),
+    schema_test:
+      Image.new!(%{
+        name: "ecto/schema/test",
+        tags: ~w(1.2.3 1.2.4 latest),
+        default_tag: "1.2.3"
+      })
   }
 
-  @doc """
-  Gets a list of all supported versions of an image.
-  This can be used for a select input.
-  """
-  def get_versions(type) do
-    @all
-    |> Map.get(type)
-    |> Map.get(:versions)
+  @spec get_image(atom()) :: Image.t() | nil
+  def get_image(name) do
+    @registry
+    |> Enum.filter(fn {k, _v} -> k == name end)
+    |> Enum.map(fn {_k, v} -> v end)
+    |> List.first()
   end
 
-  @doc """
-  Gets a specific version of an image. If no version is
-  specified or the version is unsupported, it will default
-  to the latest supported version.
-  """
-  def get_version(type, version \\ nil) do
-    versions = get_versions(type)
+  @spec get_image!(atom()) :: Image.t()
+  def get_image!(name) do
+    case get_image(name) do
+      nil ->
+        raise "Image #{name} not found"
 
-    # Make sure a valid version is being used, otherwise default to the lastest
-    Enum.find(versions, List.first(versions), &(&1 == version))
-  end
-
-  @doc """
-  Gets the full image string for a battery type. If no version
-  is specified or the version is unsupported, it will default
-  to the latest supported version.
-  """
-  def get_image(type, version \\ nil) do
-    @all
-    |> Map.get(type)
-    |> Map.get(:base)
-    |> Kernel.<>(":#{get_version(type, version)}")
+      image ->
+        image
+    end
   end
 
   @spec cert_manager_image_version() :: String.t()

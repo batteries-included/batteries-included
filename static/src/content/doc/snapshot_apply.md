@@ -4,49 +4,63 @@ tags: ['overview', 'code', 'control-server', 'kubernetes', 'keycloak']
 draft: false
 ---
 
-We need a repeatable process that can take current database state and the
-current system state, use those to create a plan of action, then apply that plan
-to the current cluster.
+We need a repeatable process that can take current database and system states,
+use those to create a plan of action, then apply that plan to the current
+cluster.
 
-The snapshot apply process in the `control-server` binary is that system.
+The snapshot apply process in the `control-server` binary is that system. It
+consists of five steps:
 
-- Take a point in time snapshot of everything. (Prepare)
-- Feed that snapshot into functional code that generate desired system states.
-  (Generate)
-- Apply any changes need to go from the current state to the desired state on
-  all systems. (Apply)
-- Record the status for all desired state pieces (Report)
-- Broadcast the result of the overall attempt (Broadcast)
+1. [**Prepare**](#prepare): Take a point-in-time snapshot of everything.
+2. [**Generate**](#generate): Feed that snapshot into functional code that
+   generate the desired system states.
+3. [**Apply**](#apply): Apply any changes needed to go from the current state to
+   the desired state on all systems.
+4. [**Record**](#record): Record the status for all desired state pieces.
+5. [**Broadcast**](#broadcast): Broadcast the result of the overall attempt.
 
 ## Prepare
 
-- We need a summary of everything in the database and everything in the current
-  system state. For that we use the system state summarizer.
-- Then we need to create the target snapshots for the different systems.
-  (KubeSnapshot and KeyCloakSnapshot)
+The preparation phase involves creating a comprehensive snapshot of the current
+system:
 
-## Generation
+- Use the system state summarizer to compile a detailed summary of all database
+  contents and the current system state.
+- Generate target snapshots for different systems (KubeSnapshot and
+  KeyCloakSnapshot).
 
-- For each target snapshot use the summarized system state with functional
-  modules to generate the target system specifications.
-- Store each kube or keycloak target resource in the database (ResourcePath for
-  kube)
+## Generate
+
+In the generation phase, we transform the snapshot into actionable plans:
+
+- For each target snapshot, use the summarized system state with functional
+  modules to generate target system specifications.
+- Store each Kubernetes or Keycloak target resource in the database
+  (ResourcePath for Kubernetes).
 
 ## Apply
 
-- Remove any target system configuration or resource that already match with
-  what's there. For kubernetes this is done via sha hmac `KubeExt.Hashing`
-- Update any matching resources are successfully applied
-- Push each of the kube resource targets to kubernetes via
-  `KubeExt.ApplyResource`
-- Push each of the keycloak resource targets to keycloak.
-- Trigger any post apply operations needed for keycloak
+The application phase is where changes are implemented:
 
-## Report
+- Compare target system configurations with existing resources, removing any
+  that already match. For Kubernetes, this involves using `sha hmac` via
+  `KubeExt.Hashing`.
+- Update any matching resources that are successfully applied.
+- Push each of the Kubernetes resource targets to kubernetes using
+  `KubeExt.ApplyResource`.
+- Push each of the Keycloak resource targets to Keycloak
+- Trigger any necessary post-apply operations for Keycloak.
 
-- Record the per resource target results
-- Compute an overall result
+## Record
+
+Accurate record-keeping improves system integrity, providing historical context
+and features like rollbacks:
+
+- Record the results for each individual resource target.
+- Compute an overall result of the operation.
 
 ## Broadcast
 
-- Send the latest result via Phoenix pub sub and `EventCenter`
+Finally, we ensure all relevant parties are informed:
+
+- Transmit the latest result via Phoenix pub sub and `EventCenter`.

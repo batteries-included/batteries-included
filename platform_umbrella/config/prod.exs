@@ -40,5 +40,12 @@ config :kube_services, :clusters, default: :service_account
 config :kube_services, cluster_type: :prod
 
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  level: :debug
+  level: :debug,
+  handle_otp_reports: true,
+  handle_sasl_reports: true,
+  metadata: [:conn, :crash_reason, :request_id],
+  compile_time_purge_matching: [
+    [library: :k8s]
+  ]
+
+config :logger, :default_handler, formatter: {LoggerJSON.Formatters.Basic, []}

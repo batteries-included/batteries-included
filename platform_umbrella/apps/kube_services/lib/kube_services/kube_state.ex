@@ -35,7 +35,7 @@ defmodule KubeServices.KubeState do
     Supervisor.child_spec(
       {KubeServices.KubeState.ResourceWatcher,
        [
-         connection_func: &ConnectionPool.get/0,
+         connection_func: &ConnectionPool.get!/0,
          client: K8s.Client,
          resource_type: type,
          table_name: default_state_table()

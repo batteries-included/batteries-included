@@ -6,9 +6,12 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	httpstreamspdy "k8s.io/apimachinery/pkg/util/httpstream/spdy"
+	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/transport/spdy"
 )
@@ -40,8 +43,6 @@ func (kubeClient *batteryKubeClient) portForward(
 	stopChannel <-chan struct{},
 	readyChannel chan struct{}) (*portforward.PortForwarder, error) {
 
-	cfg := kubeClient.cfg
-
 	url := kubeClient.client.CoreV1().
 		RESTClient().
 		Post().
@@ -51,9 +52,24 @@ func (kubeClient *batteryKubeClient) portForward(
 		SubResource("portforward").
 		URL()
 
-	transport, upgrader, err := spdy.RoundTripperFor(cfg)
+	cfg := kubeClient.cfg
+
+	upgradeTransport, err := restclient.TransportFor(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error getting transport for config: %w", err)
+	}
+
+	upgrader, err := httpstreamspdy.NewRoundTripperWithConfig(httpstreamspdy.RoundTripperConfig{
+		UpgradeTransport: upgradeTransport,
+		PingPeriod:       time.Second * 5,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("error creating spdy round tripper: %w", err)
+	}
+
+	transport, err := restclient.HTTPWrappersForConfig(cfg, upgrader)
+	if err != nil {
+		return nil, fmt.Errorf("error creating http wrappers for config: %w", err)
 	}
 
 	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, http.MethodPost, url)

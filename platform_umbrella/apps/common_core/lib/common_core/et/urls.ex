@@ -6,7 +6,7 @@ defmodule CommonCore.ET.URLs do
   @prod_home "https://home.prod.batteriesincl.com/api/v1"
   @bi_home "http://home-base.battery-traditional.svc.cluster.local:4000/api/v1"
 
-  def home_base_url(%BatteryCoreConfig{usage: usage} = _config) when usage in [:internal_prod, :internal_test],
+  def home_base_url(%BatteryCoreConfig{usage: usage} = _config) when usage in [:internal_prod, :internal_int_test],
     do: @bi_home
 
   def home_base_url(%BatteryCoreConfig{server_in_cluster: true} = _config), do: @prod_home

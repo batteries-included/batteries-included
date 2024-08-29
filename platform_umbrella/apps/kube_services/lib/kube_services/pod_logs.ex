@@ -32,7 +32,7 @@ defmodule KubeServices.PodLogs do
   `get` the last 100 lines from the tail of the stdout logs.
   """
   def get_logs(opts \\ [tailLines: 100]) do
-    conn = CommonCore.ConnectionPool.get()
+    conn = CommonCore.ConnectionPool.get!()
 
     with {:ok, log_str} <- K8s.Client.run(conn, get_operation(opts)) do
       {:ok,

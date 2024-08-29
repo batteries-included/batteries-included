@@ -34,8 +34,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.TrustManagerConfig
   alias CommonCore.Batteries.VictoriaMetricsConfig
   alias CommonCore.Batteries.VMAgentConfig
-  alias CommonCore.Batteries.VMClusterConfig
-  alias CommonCore.Batteries.VMOperatorConfig
   alias CommonCore.Ecto.PolymorphicType
 
   @derive {
@@ -80,9 +78,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     trivy_operator: TrivyOperatorConfig,
     trust_manager: TrustManagerConfig,
     victoria_metrics: VictoriaMetricsConfig,
-    vm_operator: VMOperatorConfig,
-    vm_agent: VMAgentConfig,
-    vm_cluster: VMClusterConfig
+    vm_agent: VMAgentConfig
   ]
 
   @possible_groups ~w(data devtools magic ai monitoring net_sec)a

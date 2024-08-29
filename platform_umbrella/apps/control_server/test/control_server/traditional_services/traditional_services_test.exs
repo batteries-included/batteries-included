@@ -54,6 +54,28 @@ defmodule ControlServer.TraditionalServicesTest do
       assert {:error, %Ecto.Changeset{}} = TraditionalServices.create_service(@invalid_attrs)
     end
 
+    test "find_or_create_service/1 with valid data creates a service if not exists" do
+      valid_attrs = %{name: "some-name", containers: [], init_containers: [], env_values: []}
+
+      assert {:ok, %{created: service}} = TraditionalServices.find_or_create_service(valid_attrs)
+      assert service.name == "some-name"
+      assert service.containers == []
+      assert service.init_containers == []
+      assert service.env_values == []
+    end
+
+    test "find_or_create_service/1 with valid data returns existing service if exists" do
+      valid_attrs = %{name: "some-name", containers: [], init_containers: [], env_values: []}
+
+      assert {:ok, %{created: created}} = TraditionalServices.find_or_create_service(valid_attrs)
+      assert {:ok, %{selected: selected}} = TraditionalServices.find_or_create_service(valid_attrs)
+      assert created.name == selected.name
+      assert created.containers == selected.containers
+      assert created.init_containers == selected.init_containers
+      assert created.env_values == selected.env_values
+      assert 1 = length(TraditionalServices.list_traditional_services())
+    end
+
     test "update_service/2 with valid data updates the service" do
       service = service_fixture()
       update_attrs = %{name: "some-updated-name", containers: [], init_containers: [], env_values: []}

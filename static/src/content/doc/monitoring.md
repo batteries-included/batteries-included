@@ -1,55 +1,71 @@
 ---
 title: Monitoring
-description: Lorem markdownum quaecumque sidera summam
-tags: ['test', 'default doc']
-draft: true
+description:
+  Learn how to set up and use monitoring tools like Grafana and VictoriaMetrics
+  in Batteries Included.
+tags: ['monitoring', 'grafana', 'victoriametrics']
+draft: false
 ---
 
-## Negabit ferrum ad caput factum silentia rector
+Batteries Included offers robust monitoring capabilities, with built-in Grafana
+and VictoriaMetrics support. Let's go over setting up these tools and accessing
+monitoring dashboards for your clusters.
 
-Lorem markdownum sanguine, rotae ad est sternuntur eadem iungi arcanis; laceras
-multi matris. Serpentis corpora parum, funesto, breviore concubitus quoque de me
-undique creditus _arboris_ postquam.
+## Setting Up Monitoring
 
-> Medicas properent turba _feras illos_ prima habet glandibus, meaque natus
-> patriae omnia procubuit terga ducitur. Parat moram te mediis ex pars, sit
-> alternae postquam ingreditur. Petit quiescet pocula thymo **languore vocant
-> voces** insequitur rudis reddi. Ultima _pedum_ longa datis. Fratres ipsa visa
-> ipsoque excipit; sumpsisse quarum porrigit, sequentis, est clamat inter sibi
-> spectare aequora, nec.
+[Grafana](https://grafana.com/docs/grafana/latest/introduction/) is an
+open-source, web-based analytics and monitoring platform. It provides powerful
+visualization tools, allowing you to create charts, graphs, and alerts for your
+infrastructure and applications.
 
-## Pulsat locum sinuaverat volucris totis pallenti manesque
+[VictoriaMetrics](https://docs.victoriametrics.com/) is a fast, scalable time
+series database and monitoring solution. It efficiently collects, stores, and
+processes metrics from your Kubernetes clusters and applications.
 
-Ratos auctore pelagi, male se quod portasque, ambiguo coortis in dicente
-_adesse_; lux nec aera, tum. Deae Iuno enim, ab meae voverat, ponto. Inde quia
-novis medullas circumfluus nubila: **in** Achaica o auferat igni haud cutis,
-nunc? Hoc videbor redeunt, harena, cursibus vidi dextra cuspide repulsae es quam
-et celat. Trepidum hauserit nulla.
+To set up monitoring for your environment:
 
-> Ipse vel; pulchraque tersere summo, non te magnum, suos cadet generi lacrimis
-> oblitus corpusque **victori purpura**. Illa nulla efficiens si mixta algae
-> instat ex et levis, temptat lympha? Nec natos quicquid cupidine vocibus tamen
-> Deionidenque unda in adit. Vix [meae arcana](http://membra.net/virgineumque)
-> ut ferax face: [illo](http://orgiamargine.com/) alvum, qui tale nescitve
-> funesta mori perfida; _aratos_.
+1. Navigate to the `Monitoring` tab in the control server.
+2. Click on `Install Batteries` or `Manage Batteries`. You'll see a list of
+   available monitoring batteries, including:
 
-## Prolemque auctor properata est
+   - Grafana
+   - Victoria Metrics
+   - Kube Monitoring
+   - Loki
+   - Promtail
 
-Rumpe sedesque videoque guttis. Feras dare petit at nactus, non si verba,
-membra, serpens, et dimovit bicorni vigilans. Producit secrevit obibat versat,
-terras admisitque, vidi
-[iubet nec inpositos](http://www.pignora.org/causa-utroque). Auro subito
-plaudat, tacitos submisit, At guttura quibus.
+3. To install any of these components, simply click the `Install` button next to
+   the desired battery.
+4. For a well-rounded monitoring setup, we recommend installing both Grafana and
+   VictoriaMetrics batteries. Installing the `Victoria Metrics` battery will
+   also install the `VM Operator`, `VM Agent`, and `VM Cluster` batteries.
 
-    delUddiWord.scroll -= stationMegapixelPlatform(dockOptic(
-            cropLock.bootWddmFirewall(dvdIrc, -2), intellectual_uri +
-            cell_parity_duplex), executable(4 + 22));
-    var tutorial = repeaterDotThreading - cad;
-    carrierTftDvd.serp_web_hypermedia(38, sectorSwappableText - ttlBinary +
-            stack_pram_firewall, 4);
-    var state = aspCamera + 5 + itunes;
-    mail.petaflops_mirrored_snippet += down(editorControlFilename);
+<video src="/videos/monitoring/installing-monitoring.webm" controls></video>
 
-Saevarum Styx, innectite, _vos rauca_ lugentis; di et sed noctis mediis cervice.
-Excute quod dolentem: Dolona vana subigebant Ulixem; sui rubenti, notissima
-Pirithoum iam modo!
+## Accessing the Dashboards
+
+Once you've installed Grafana and the necessary VictoriaMetrics components:
+
+1. Return to the `Monitoring` tab in the control server.
+2. Click on the either the `Grafana` or `VM Select` entry. This will open the
+   Grafana or VictoriaMetrics dashboard in a new tab.
+
+## Cluster-Specific Grafana Dashboards
+
+Batteries Included automatically creates Grafana dashboards for your clusters.
+To access these:
+
+1. Navigate to the `Kubernetes` tab in the control server. This shows all active
+   pods with their status.
+2. Click on a pod you wish to monitor (e.g. a Jupyter Notebook pod.)
+3. Look for the `Grafana Dashboard` button. Clicking this will open a
+   pre-configured Grafana dashboard specific to that cluster.
+
+Database cluster dashboards can also be accessed in their own page:
+
+1. Go to the `Datastores` section.
+2. Select the database cluster you want to monitor.
+3. Click the `Grafana Dashboard` button to view metrics for that specific
+   instance.
+
+<video src="/videos/monitoring/database-grafana.webm" controls></video>

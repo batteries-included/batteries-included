@@ -74,7 +74,7 @@ defmodule ControlServer.Seed do
           Logger.debug("Created new ip address pool", pool: created_pool)
 
         res ->
-          Logger.debug("Ip address creation skipped", pool: pool, result: res)
+          Logger.debug("IP address creation skipped", pool: pool, result: res)
       end
     end)
 
@@ -87,6 +87,6 @@ defmodule ControlServer.Seed do
     summary
     |> Map.get("traditional_services")
     |> Enum.map(&to_fresh_args/1)
-    |> Enum.each(fn svc -> {:ok, _} = TraditionalServices.create_service(svc) end)
+    |> Enum.each(fn svc -> {:ok, _} = TraditionalServices.find_or_create_service(svc) end)
   end
 end

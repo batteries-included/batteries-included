@@ -11,16 +11,73 @@ defmodule CommonCore.Ecto.SchemaTest do
       assert todo.name == "my todo"
     end
 
-    test "images have a default value" do
+    test "messages have a default value" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{})
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.image == "mycontainer:latest"
+      assert todo.message == "default message"
     end
 
     test "default values are overwritten" do
-      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_override: "mycontainer:1.0"})
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{message_override: "my override message"})
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.image == "mycontainer:1.0"
+      assert todo.message == "my override message"
+    end
+
+    test "images have a default" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{})
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image == "mycontainer:latest"
+      assert todo.image_name_override == nil
+      assert todo.image_tag_override == nil
+    end
+
+    test "images can be overridden" do
+      changeset =
+        TodoSchema.changeset(%TodoSchema{}, %{image_name_override: "someotherimage", image_tag_override: "1"})
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image == "someotherimage:1"
+      assert todo.image_name_override == "someotherimage"
+      assert todo.image_tag_override == "1"
+    end
+
+    test "image names can be overridden" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_name_override: "someotherimage"})
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image == "someotherimage:latest"
+      assert todo.image_name_override == "someotherimage"
+      assert todo.image_tag_override == nil
+    end
+
+    test "image tags can be overridden" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{image_tag_override: "1"})
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image == "mycontainer:1"
+      assert todo.image_name_override == nil
+      assert todo.image_tag_override == "1"
+    end
+
+    test "images from registry have a default" do
+      changeset = TodoSchema.changeset(%TodoSchema{}, %{})
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image_from_registry == "ecto/schema/test:1.2.3"
+      assert todo.image_from_registry_name_override == nil
+      assert todo.image_from_registry_tag_override == nil
+    end
+
+    test "images from registry can be overridden" do
+      changeset =
+        TodoSchema.changeset(%TodoSchema{}, %{
+          image_from_registry_name_override: "someotherimage",
+          image_from_registry_tag_override: "latest"
+        })
+
+      todo = Ecto.Changeset.apply_changes(changeset)
+      assert todo.image_from_registry == "someotherimage:latest"
+      assert todo.image_from_registry_name_override == "someotherimage"
+      assert todo.image_from_registry_tag_override == "latest"
     end
 
     test "passwords get a unique value each time" do

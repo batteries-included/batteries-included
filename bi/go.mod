@@ -5,25 +5,25 @@ go 1.22.5
 require (
 	github.com/adrg/xdg v0.5.0
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aws/aws-sdk-go-v2/config v1.27.28
-	github.com/aws/aws-sdk-go-v2/service/sts v1.30.4
+	github.com/aws/aws-sdk-go-v2/config v1.27.31
+	github.com/aws/aws-sdk-go-v2/service/sts v1.30.5
 	github.com/aws/smithy-go v1.20.4
 	github.com/dghubble/ipnets v1.0.0
-	github.com/docker/docker v27.1.2+incompatible
+	github.com/docker/docker v27.2.0+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/lmittmann/tint v1.0.5
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.22.0
 	github.com/noisysockets/noisysockets v0.27.4
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.49.1
-	github.com/pulumi/pulumi-cloudinit/sdk v1.4.4
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.50.1
+	github.com/pulumi/pulumi-cloudinit/sdk v1.4.5
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.4
-	github.com/pulumi/pulumi/sdk/v3 v3.129.0
-	github.com/samber/slog-multi v1.2.0
+	github.com/pulumi/pulumi/sdk/v3 v3.130.0
+	github.com/samber/slog-multi v1.2.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
-	github.com/vbauerster/mpb/v8 v8.8.2
+	github.com/vbauerster/mpb/v8 v8.8.3
 	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
 	golang.org/x/sync v0.8.0
 	golang.org/x/term v0.23.0
@@ -50,7 +50,7 @@ require (
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/avast/retry-go/v4 v4.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.30.4 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.28 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.30 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.12 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.16 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.16 // indirect

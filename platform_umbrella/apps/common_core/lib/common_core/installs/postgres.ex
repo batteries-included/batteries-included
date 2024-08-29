@@ -48,7 +48,7 @@ defmodule CommonCore.Installs.Postgres do
          default_size: default_size
        }) do
     case usage do
-      :internal_prod ->
+      usage when usage in [:internal_int_test, :internal_prod] ->
         name = TraditionalServices.name()
 
         %{
