@@ -7,9 +7,9 @@ tags: ['monitoring', 'grafana', 'victoriametrics']
 draft: false
 ---
 
-Batteries Included offers robust monitoring capabilities, offering built-in
-Grafana and VictoriaMetrics support. Let's go over setting up these tools and
-accessing monitoring dashboards for your clusters.
+Batteries Included offers robust monitoring capabilities, with built-in Grafana
+and VictoriaMetrics support. Let's go over setting up these tools and accessing
+monitoring dashboards for your clusters.
 
 ## Setting Up Monitoring
 
