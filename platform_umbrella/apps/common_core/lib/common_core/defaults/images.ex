@@ -4,17 +4,279 @@ defmodule CommonCore.Defaults.Images do
   alias CommonCore.Defaults.Image
 
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
-  @cert_manager_image_tag "v1.15.1"
-  @kiali_image_version "v1.87.0"
+
+  @cert_manager_allowed_tags ~w(v1.15.1)
+  @cert_manager_default_tag "v1.15.1"
+
+  @knative_allowed_tags ~w(v1.15.1)
+  @knative_default_tag "v1.15.1"
 
   @registry %{
+    addon_resizer:
+      Image.new!(%{
+        name: "registry.k8s.io/autoscaling/addon-resizer",
+        tags: ~w(1.8.22),
+        default_tag: "1.8.22"
+      }),
+    aws_load_balancer_controller:
+      Image.new!(%{
+        name: "public.ecr.aws/eks/aws-load-balancer-controller",
+        tags: ~w(v2.8.1),
+        default_tag: "v2.8.1"
+      }),
+    cert_manager_acmesolver:
+      Image.new!(%{
+        name: "quay.io/jetstack/cert-manager-acmesolver",
+        tags: @cert_manager_allowed_tags,
+        default_tag: @cert_manager_default_tag
+      }),
+    cert_manager_cainjector:
+      Image.new!(%{
+        name: "quay.io/jetstack/cert-manager-cainjector",
+        tags: @cert_manager_allowed_tags,
+        default_tag: @cert_manager_default_tag
+      }),
+    cert_manager_controller:
+      Image.new!(%{
+        name: "quay.io/jetstack/cert-manager-controller",
+        tags: @cert_manager_allowed_tags,
+        default_tag: @cert_manager_default_tag
+      }),
+    cert_manager_ctl:
+      Image.new!(%{
+        name: "quay.io/jetstack/cert-manager-ctl",
+        tags: @cert_manager_allowed_tags,
+        default_tag: @cert_manager_default_tag
+      }),
+    cert_manager_webhook:
+      Image.new!(%{
+        name: "quay.io/jetstack/cert-manager-webhook",
+        tags: @cert_manager_allowed_tags,
+        default_tag: @cert_manager_default_tag
+      }),
+    cloudnative_pg:
+      Image.new!(%{
+        name: "ghcr.io/cloudnative-pg/cloudnative-pg",
+        tags: ~w(1.23.2),
+        default_tag: "1.23.2"
+      }),
+    ferretdb:
+      Image.new!(%{
+        name: "ghcr.io/ferretdb/ferretdb",
+        tags: ~w(1.23.0),
+        default_tag: "1.23.0"
+      }),
+    forgejo:
+      Image.new!(%{
+        name: "codeberg.org/forgejo/forgejo",
+        tags: ~w(1.21.11-2),
+        default_tag: "1.21.11-2"
+      }),
+    grafana:
+      Image.new!(%{
+        name: "grafana/grafana",
+        tags: ~w(10.4.5),
+        default_tag: "10.4.5"
+      }),
     istio_pilot:
       Image.new!(%{
         name: "docker.io/istio/pilot",
         tags: ~w(1.22.3-distroless),
         default_tag: "1.22.3-distroless"
       }),
-    schema_test:
+    istio_proxy:
+      Image.new!(%{
+        name: "docker.io/istio/proxyv2",
+        tags: ~w(1.22.3-distroless),
+        default_tag: "1.22.3-distroless"
+      }),
+    karpenter:
+      Image.new!(%{
+        name: "public.ecr.aws/karpenter/controller",
+        tags: ~w(0.37.0),
+        default_tag: "0.37.0"
+      }),
+    keycloak:
+      Image.new!(%{
+        name: "quay.io/keycloak/keycloak",
+        tags: ~w(25.0.2),
+        default_tag: "25.0.2"
+      }),
+    kiali:
+      Image.new!(%{
+        name: "quay.io/kiali/kiali",
+        tags: ~w(v1.87.0),
+        default_tag: "v1.87.0"
+      }),
+    kiwigrid_sidecar:
+      Image.new!(%{
+        name: "quay.io/kiwigrid/k8s-sidecar",
+        tags: ~w(1.27.4),
+        default_tag: "1.27.4"
+      }),
+    kube_state_metrics:
+      Image.new!(%{
+        name: "registry.k8s.io/kube-state-metrics/kube-state-metrics",
+        tags: ~w(v2.12.0),
+        default_tag: "v2.12.0"
+      }),
+    loki:
+      Image.new!(%{
+        name: "grafana/loki",
+        tags: ~w(2.9.8),
+        default_tag: "2.9.8"
+      }),
+    metallb_controller:
+      Image.new!(%{
+        name: "quay.io/metallb/controller",
+        tags: ~w(v0.14.8),
+        default_tag: "v0.14.8"
+      }),
+    metallb_speaker:
+      Image.new!(%{
+        name: "quay.io/metallb/speaker",
+        tags: ~w(v0.14.8),
+        default_tag: "v0.14.8"
+      }),
+    frrouting_frr:
+      Image.new!(%{
+        name: "quay.io/frrouting/frr",
+        tags: ~w(9.1.0),
+        default_tag: "9.1.0"
+      }),
+    metrics_server:
+      Image.new!(%{
+        name: "registry.k8s.io/metrics-server/metrics-server",
+        tags: ~w(v0.7.1),
+        default_tag: "v0.7.1"
+      }),
+    node_exporter:
+      Image.new!(%{
+        name: "quay.io/prometheus/node-exporter",
+        tags: ~w(v1.8.1),
+        default_tag: "v1.8.1"
+      }),
+    oauth2_proxy:
+      Image.new!(%{
+        name: "quay.io/oauth2-proxy/oauth2-proxy",
+        tags: ~w(v7.6.0),
+        default_tag: "v7.6.0"
+      }),
+    promtail:
+      Image.new!(%{
+        name: "grafana/promtail",
+        tags: ~w(2.9.8),
+        default_tag: "2.9.8"
+      }),
+    redis:
+      Image.new!(%{
+        name: "quay.io/opstree/redis",
+        tags: ~w(v7.2.3),
+        default_tag: "v7.2.3"
+      }),
+    redis_exporter:
+      Image.new!(%{
+        name: "quay.io/opstree/redis-exporter",
+        tags: ~w(v1.45.0),
+        default_tag: "v1.45.0"
+      }),
+    redis_operator:
+      Image.new!(%{
+        name: "ghcr.io/ot-container-kit/redis-operator/redis-operator",
+        tags: ~w(v0.18.0),
+        default_tag: "v0.18.0"
+      }),
+    smtp4dev:
+      Image.new!(%{
+        name: "rnwood/smtp4dev",
+        tags: ~w(3.1.4),
+        default_tag: "3.1.4"
+      }),
+    text_generation_webui:
+      Image.new!(%{
+        name: "atinoda/text-generation-webui",
+        tags: ~w(default-cpu-2024.06.23),
+        default_tag: "default-cpu-2024.06.23"
+      }),
+    trivy_operator:
+      Image.new!(%{
+        name: "ghcr.io/aquasecurity/trivy-operator",
+        tags: ~w(0.22.0),
+        default_tag: "0.22.0"
+      }),
+    aqua_node_collector:
+      Image.new!(%{
+        name: "ghcr.io/aquasecurity/node-collector",
+        tags: ~w(0.3.1),
+        default_tag: "0.3.1"
+      }),
+    aqua_trivy_checks:
+      Image.new!(%{
+        name: "ghcr.io/aquasecurity/trivy-checks",
+        tags: ~w(0.13.0),
+        default_tag: "0.13.0"
+      }),
+    trust_manager:
+      Image.new!(%{
+        name: "quay.io/jetstack/trust-manager",
+        tags: ~w(v0.11.0),
+        default_tag: "v0.11.0"
+      }),
+    trust_manager_init:
+      Image.new!(%{
+        name: "quay.io/jetstack/cert-manager-package-debian",
+        tags: ~w(20210119.0),
+        default_tag: "20210119.0"
+      }),
+    vm_operator:
+      Image.new!(%{
+        name: "victoriametrics/operator",
+        tags: ~w(v0.44.0),
+        default_tag: "v0.44.0"
+      }),
+    knative_serving_activator:
+      Image.new!(%{
+        name: "gcr.io/knative-releases/knative.dev/serving/cmd/activator",
+        tags: @knative_allowed_tags,
+        default_tag: @knative_default_tag
+      }),
+    knative_serving_autoscaler:
+      Image.new!(%{
+        name: "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler",
+        tags: @knative_allowed_tags,
+        default_tag: @knative_default_tag
+      }),
+    knative_serving_controller:
+      Image.new!(%{
+        name: "gcr.io/knative-releases/knative.dev/serving/cmd/controller",
+        tags: @knative_allowed_tags,
+        default_tag: @knative_default_tag
+      }),
+    knative_serving_queue:
+      Image.new!(%{
+        name: "gcr.io/knative-releases/knative.dev/serving/cmd/queue",
+        tags: @knative_allowed_tags,
+        default_tag: @knative_default_tag
+      }),
+    knative_serving_webhook:
+      Image.new!(%{
+        name: "gcr.io/knative-releases/knative.dev/serving/cmd/webhook",
+        tags: @knative_allowed_tags,
+        default_tag: @knative_default_tag
+      }),
+    knative_istio_controller:
+      Image.new!(%{
+        name: "gcr.io/knative-releases/knative.dev/net-istio/cmd/controller",
+        tags: @knative_allowed_tags,
+        default_tag: @knative_default_tag
+      }),
+    knative_istio_webhook:
+      Image.new!(%{
+        name: "gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook",
+        tags: @knative_allowed_tags,
+        default_tag: @knative_default_tag
+      }),
+    __schema_test:
       Image.new!(%{
         name: "ecto/schema/test",
         tags: ~w(1.2.3 1.2.4 latest),
@@ -41,17 +303,11 @@ defmodule CommonCore.Defaults.Images do
     end
   end
 
-  @spec cert_manager_image_version() :: String.t()
-  def cert_manager_image_version, do: @cert_manager_image_tag
-
   @spec vm_cluster_tag() :: String.t()
   def vm_cluster_tag, do: "v1.102.0-cluster"
 
   @spec vm_tag() :: String.t()
   def vm_tag, do: "v1.93.9"
-
-  @spec kiali_image_version() :: String.t()
-  def kiali_image_version, do: @kiali_image_version
 
   @spec batteries_included_version() :: String.t()
   def batteries_included_version do
@@ -73,148 +329,15 @@ defmodule CommonCore.Defaults.Images do
     "public.ecr.aws/batteries-included/control-server:#{ver}"
   end
 
-  @spec control_server_image() :: String.t()
+  @spec bootstrap_image() :: String.t()
   def bootstrap_image do
     ver = batteries_included_version()
     "public.ecr.aws/batteries-included/kube-bootstrap:#{ver}"
   end
-
-  @spec addon_resizer_image() :: String.t()
-  def addon_resizer_image, do: "registry.k8s.io/autoscaling/addon-resizer:1.8.22"
-
-  @spec alertmanager_image() :: String.t()
-  def alertmanager_image, do: "quay.io/prometheus/alertmanager:v0.27.0"
-
-  @spec aws_load_balancer_controller_image() :: String.t()
-  def aws_load_balancer_controller_image, do: "public.ecr.aws/eks/aws-load-balancer-controller:v2.8.1"
-
-  @spec cert_manager_acmesolver_image() :: String.t()
-  def cert_manager_acmesolver_image, do: "quay.io/jetstack/cert-manager-acmesolver:#{cert_manager_image_version()}"
-
-  @spec cert_manager_cainjector_image() :: String.t()
-  def cert_manager_cainjector_image, do: "quay.io/jetstack/cert-manager-cainjector:#{cert_manager_image_version()}"
-
-  @spec cert_manager_controller_image() :: String.t()
-  def cert_manager_controller_image, do: "quay.io/jetstack/cert-manager-controller:#{cert_manager_image_version()}"
-
-  @spec cert_manager_ctl_image() :: String.t()
-  def cert_manager_ctl_image, do: "quay.io/jetstack/cert-manager-ctl:#{cert_manager_image_version()}"
-
-  @spec cert_manager_webhook_image() :: String.t()
-  def cert_manager_webhook_image, do: "quay.io/jetstack/cert-manager-webhook:#{cert_manager_image_version()}"
-
-  @spec cloudnative_pg_image() :: String.t()
-  def cloudnative_pg_image, do: "ghcr.io/cloudnative-pg/cloudnative-pg:1.23.2"
-
-  @spec ferretdb_image() :: String.t()
-  def ferretdb_image, do: "ghcr.io/ferretdb/ferretdb:1.23.0"
-
-  @spec forgejo_image() :: String.t()
-  def forgejo_image, do: "codeberg.org/forgejo/forgejo:1.21.11-2"
-
-  @spec grafana_image() :: String.t()
-  def grafana_image, do: "grafana/grafana:10.4.5"
 
   @spec home_base_image() :: String.t()
   def home_base_image do
     ver = batteries_included_version()
     "public.ecr.aws/batteries-included/home-base:#{ver}"
   end
-
-  @spec istio_pilot_image() :: String.t()
-  def istio_pilot_image, do: "docker.io/istio/pilot:1.22.3-distroless"
-
-  @spec istio_proxy_image() :: String.t()
-  def istio_proxy_image, do: "docker.io/istio/proxyv2:1.22.3-distroless"
-
-  @spec karpenter_image() :: String.t()
-  def karpenter_image, do: "public.ecr.aws/karpenter/controller:0.37.0"
-
-  @spec keycloak_image() :: String.t()
-  def keycloak_image, do: "quay.io/keycloak/keycloak:25.0.2"
-
-  @spec kiali_image() :: String.t()
-  def kiali_image, do: "quay.io/kiali/kiali:#{kiali_image_version()}"
-
-  @spec kiwigrid_sidecar_image() :: String.t()
-  def kiwigrid_sidecar_image, do: "quay.io/kiwigrid/k8s-sidecar:1.27.4"
-
-  @spec kube_state_metrics_image() :: String.t()
-  def kube_state_metrics_image, do: "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.12.0"
-
-  @spec loki_image() :: String.t()
-  def loki_image, do: "grafana/loki:2.9.8"
-
-  @spec metallb_controller_image() :: String.t()
-  def metallb_controller_image, do: "quay.io/metallb/controller:v0.14.8"
-
-  @spec metallb_speaker_image() :: String.t()
-  def metallb_speaker_image, do: "quay.io/metallb/speaker:v0.14.8"
-
-  @spec frrouting_frr_image() :: String.t()
-  def frrouting_frr_image, do: "quay.io/frrouting/frr:9.1.0"
-
-  @spec metrics_server_image() :: String.t()
-  def metrics_server_image, do: "registry.k8s.io/metrics-server/metrics-server:v0.7.1"
-
-  @spec node_exporter_image() :: String.t()
-  def node_exporter_image, do: "quay.io/prometheus/node-exporter:v1.8.1"
-
-  @spec oauth2_proxy_image() :: String.t()
-  def oauth2_proxy_image, do: "quay.io/oauth2-proxy/oauth2-proxy:v7.6.0"
-
-  @spec promtail_image() :: String.t()
-  def promtail_image, do: "grafana/promtail:2.9.8"
-
-  @spec redis_operator_image() :: String.t()
-  def redis_operator_image, do: "ghcr.io/ot-container-kit/redis-operator/redis-operator:v0.18.0"
-
-  @spec redis_exporter_image() :: String.t()
-  def redis_exporter_image, do: "quay.io/opstree/redis-exporter:v1.45.0"
-
-  @spec redis_image() :: String.t()
-  def redis_image, do: "quay.io/opstree/redis:v7.2.3"
-
-  @spec smtp4dev_image() :: String.t()
-  def smtp4dev_image, do: "rnwood/smtp4dev:3.1.4"
-
-  @spec text_generation_webui_image() :: String.t()
-  def text_generation_webui_image, do: "atinoda/text-generation-webui:default-cpu-2024.06.23"
-
-  @spec trivy_operator_image() :: String.t()
-  def trivy_operator_image, do: "ghcr.io/aquasecurity/trivy-operator:0.22.0"
-
-  @spec aqua_node_collector() :: String.t()
-  def aqua_node_collector, do: "ghcr.io/aquasecurity/node-collector:0.3.1"
-
-  @spec aqua_trivy_checks() :: String.t()
-  def aqua_trivy_checks, do: "ghcr.io/aquasecurity/trivy-checks:0.13.0"
-
-  @spec trust_manager_image() :: String.t()
-  def trust_manager_image, do: "quay.io/jetstack/trust-manager:v0.11.0"
-  def trust_manager_init_image, do: "quay.io/jetstack/cert-manager-package-debian:20210119.0"
-
-  @spec vm_operator_image() :: String.t()
-  def vm_operator_image, do: "victoriametrics/operator:v0.44.0"
-
-  @spec knative_serving_queue_image() :: String.t()
-  def knative_serving_queue_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/queue:v1.15.1"
-
-  @spec knative_serving_activator_image() :: String.t()
-  def knative_serving_activator_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/activator:v1.15.1"
-
-  @spec knative_serving_autoscaler_image() :: String.t()
-  def knative_serving_autoscaler_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler:v1.15.1"
-
-  @spec knative_serving_controller_image() :: String.t()
-  def knative_serving_controller_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/controller:v1.15.1"
-
-  @spec knative_serving_webhook_image() :: String.t()
-  def knative_serving_webhook_image, do: "gcr.io/knative-releases/knative.dev/serving/cmd/webhook:v1.15.1"
-
-  @spec knative_istio_controller_image() :: String.t()
-  def knative_istio_controller_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/controller:v1.15.1"
-
-  @spec knative_istio_webhook_image() :: String.t()
-  def knative_istio_webhook_image, do: "gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook:v1.15.1"
 end

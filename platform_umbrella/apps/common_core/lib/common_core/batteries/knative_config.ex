@@ -8,13 +8,13 @@ defmodule CommonCore.Batteries.KnativeConfig do
   batt_polymorphic_schema type: :knative do
     field :namespace, :string, default: Defaults.Namespaces.knative()
 
-    defaultable_field :queue_image, :string, default: Defaults.Images.knative_serving_queue_image()
-    defaultable_field :activator_image, :string, default: Defaults.Images.knative_serving_activator_image()
-    defaultable_field :autoscaler_image, :string, default: Defaults.Images.knative_serving_autoscaler_image()
-    defaultable_field :controller_image, :string, default: Defaults.Images.knative_serving_controller_image()
-    defaultable_field :webhook_image, :string, default: Defaults.Images.knative_serving_webhook_image()
+    defaultable_image_field :queue_image, image_id: :knative_serving_queue
+    defaultable_image_field :activator_image, image_id: :knative_serving_activator
+    defaultable_image_field :autoscaler_image, image_id: :knative_serving_autoscaler
+    defaultable_image_field :controller_image, image_id: :knative_serving_controller
+    defaultable_image_field :webhook_image, image_id: :knative_serving_webhook
 
-    defaultable_field :istio_controller_image, :string, default: Defaults.Images.knative_istio_controller_image()
-    defaultable_field :istio_webhook_image, :string, default: Defaults.Images.knative_istio_webhook_image()
+    defaultable_image_field :istio_controller_image, image_id: :knative_istio_controller
+    defaultable_image_field :istio_webhook_image, image_id: :knative_istio_webhook
   end
 end

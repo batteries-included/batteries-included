@@ -3,9 +3,7 @@ defmodule CommonCore.Batteries.FerretDBConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :ferretdb do
-    defaultable_field :ferretdb_image, :string, default: Defaults.Images.ferretdb_image()
+    defaultable_image_field :ferretdb_image, image_id: :ferretdb
   end
 end

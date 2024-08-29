@@ -3,14 +3,20 @@ defmodule CommonCore.Batteries.KialiConfig do
 
   use CommonCore, {:embedded_schema, no_encode: [:login_signing_key]}
 
-  alias CommonCore.Defaults
+  alias CommonCore.Batteries.KialiConfig
 
   @required_fields ~w()a
 
   batt_polymorphic_schema type: :kiali do
-    defaultable_field :image, :string, default: Defaults.Images.kiali_image()
-    defaultable_field :version, :string, default: Defaults.Images.kiali_image_version()
+    defaultable_image_field :image, image_id: :kiali
 
     secret_field :login_signing_key, length: 32
+  end
+
+  @spec image_version(t()) :: String.t()
+  def image_version(%KialiConfig{image: image} = _config) do
+    image
+    |> String.split(":")
+    |> List.last()
   end
 end

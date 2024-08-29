@@ -7,7 +7,8 @@ defmodule CommonCore.Batteries.VictoriaMetricsConfig do
 
   batt_polymorphic_schema type: :victoria_metrics do
     defaultable_field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
-    defaultable_field :vm_operator_image, :string, default: Defaults.Images.vm_operator_image()
+    defaultable_image_field :operator_image, image_id: :vm_operator
+
     secret_field :cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1
 
     field :replication_factor, :integer, default: 1

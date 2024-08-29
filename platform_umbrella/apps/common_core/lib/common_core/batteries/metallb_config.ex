@@ -3,12 +3,10 @@ defmodule CommonCore.Batteries.MetalLBConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :metallb do
-    defaultable_field :speaker_image, :string, default: Defaults.Images.metallb_speaker_image()
-    defaultable_field :controller_image, :string, default: Defaults.Images.metallb_controller_image()
-    defaultable_field :frrouting_image, :string, default: Defaults.Images.frrouting_frr_image()
+    defaultable_image_field :speaker_image, image_id: :metallb_speaker
+    defaultable_image_field :controller_image, image_id: :metallb_controller
+    defaultable_image_field :frrouting_image, image_id: :frrouting_frr
 
     field :enable_pod_monitor, :boolean, default: false
   end

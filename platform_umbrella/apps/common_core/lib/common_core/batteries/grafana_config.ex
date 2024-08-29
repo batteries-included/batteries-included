@@ -3,13 +3,11 @@ defmodule CommonCore.Batteries.GrafanaConfig do
 
   use CommonCore, {:embedded_schema, no_encode: [:admin_password]}
 
-  alias CommonCore.Defaults
-
   @required_fields ~w()a
 
   batt_polymorphic_schema type: :grafana do
-    defaultable_field :image, :string, default: Defaults.Images.grafana_image()
-    defaultable_field :sidecar_image, :string, default: Defaults.Images.kiwigrid_sidecar_image()
+    defaultable_image_field :image, image_id: :grafana
+    defaultable_image_field :sidecar_image, image_id: :kiwigrid_sidecar
 
     secret_field :admin_password
   end

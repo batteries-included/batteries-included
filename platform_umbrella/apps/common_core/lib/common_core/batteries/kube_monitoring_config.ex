@@ -3,12 +3,10 @@ defmodule CommonCore.Batteries.KubeMonitoringConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :kube_monitoring do
-    defaultable_field :kube_state_metrics_image, :string, default: Defaults.Images.kube_state_metrics_image()
-    defaultable_field :node_exporter_image, :string, default: Defaults.Images.node_exporter_image()
-    defaultable_field :metrics_server_image, :string, default: Defaults.Images.metrics_server_image()
-    defaultable_field :addon_resizer_image, :string, default: Defaults.Images.addon_resizer_image()
+    defaultable_image_field :kube_state_metrics_image, image_id: :kube_state_metrics
+    defaultable_image_field :node_exporter_image, image_id: :node_exporter
+    defaultable_image_field :metrics_server_image, image_id: :metrics_server
+    defaultable_image_field :addon_resizer_image, image_id: :addon_resizer
   end
 end

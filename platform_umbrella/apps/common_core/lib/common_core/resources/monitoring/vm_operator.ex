@@ -281,7 +281,7 @@ defmodule CommonCore.Resources.VMOperator do
                 %{"name" => "VM_PSPAUTOCREATEENABLED", "value" => "false"},
                 %{"name" => "VM_ENABLEDPROMETHEUSCONVERTEROWNERREFERENCES", "value" => "true"}
               ],
-              "image" => battery.config.vm_operator_image,
+              "image" => battery.config.operator_image,
               "imagePullPolicy" => "IfNotPresent",
               "name" => "operator",
               "ports" => [

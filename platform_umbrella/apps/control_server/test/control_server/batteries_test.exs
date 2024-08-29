@@ -36,9 +36,11 @@ defmodule ControlServer.BatteriesTest do
       assert {:ok, %SystemBattery{} = system_battery} =
                Batteries.create_system_battery(valid_attrs)
 
+      pilot_image = Defaults.Images.get_image!(:istio_pilot)
+
       assert system_battery.config == %IstioConfig{
                namespace: Defaults.Namespaces.istio(),
-               pilot_image: Defaults.Images.istio_pilot_image()
+               pilot_image: "#{pilot_image.name}:#{pilot_image.default_tag}"
              }
 
       assert system_battery.group == :net_sec

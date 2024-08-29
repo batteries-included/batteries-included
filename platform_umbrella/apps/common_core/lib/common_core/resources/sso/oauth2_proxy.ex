@@ -10,6 +10,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
+  alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.KeycloakSummary
 
   @serve_port 80
@@ -29,6 +30,13 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   resource(:deployment, battery, state) do
     name = name(battery)
     namespace = core_namespace(state)
+
+    image =
+      if Batteries.sso_installed?(state) do
+        Batteries.by_type(state).sso.config.oauth2_proxy_image
+      else
+        ""
+      end
 
     template =
       %{
@@ -68,7 +76,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
                 "--standard-logging=true"
               ],
               "env" => build_env(battery, state),
-              "image" => CommonCore.Defaults.Images.oauth2_proxy_image(),
+              "image" => image,
               "imagePullPolicy" => "IfNotPresent",
               "livenessProbe" => %{
                 "httpGet" => %{"path" => "/ping", "port" => "http", "scheme" => "HTTP"},
