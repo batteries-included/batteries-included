@@ -58,7 +58,7 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 	}
 
 	slog.Info("Displaying access information")
-	if err := env.Spec.PrintAccessInfo(ctx, kubeClient); err != nil {
+	if err := env.Spec.PrintAccessInfo(ctx, kubeClient, env.Slug); err != nil {
 		return fmt.Errorf("failed get and display access info: %w", err)
 	}
 
