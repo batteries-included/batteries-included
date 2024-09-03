@@ -44,20 +44,17 @@ func (env *InstallEnv) init(ctx context.Context) error {
 	}
 
 	provider := env.Spec.KubeCluster.Provider
-	usage, err := env.Spec.GetBatteryConfigField("battery_core", "usage")
-
-	if err != nil {
-		return fmt.Errorf("error getting usage: %w", err)
-	}
 
 	switch provider {
 	case "kind":
-		dockerDesktop, err := kind.IsDockerDesktop(ctx)
+		needsLocalGateway, err := env.Spec.NeedsLocalGateway()
 		if err != nil {
-			return err
+			return fmt.Errorf("error checking if local gateway is needed: %w", err)
 		}
+		dockerDesktop, _ := kind.IsDockerDesktop(ctx)
+		podman, _ := kind.IsPodmanAvailable()
 
-		gatewayEnabled := dockerDesktop && usage != "internal_dev"
+		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman)
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)

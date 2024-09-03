@@ -40,20 +40,32 @@ func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.Ku
 		return fmt.Errorf("failed to print access info: %w", err)
 	}
 
-	if spec.KubeCluster.Provider == "kind" {
-		dockerDesktop, err := kind.IsDockerDesktop(ctx)
-		if err != nil {
-			return err
-		}
+	needsLocalGateway, err := spec.NeedsLocalGateway()
+	if err != nil {
+		return fmt.Errorf("failed to determine if local gateway is needed: %w", err)
+	}
 
-		if dockerDesktop {
-			fmt.Printf(
-				`Because you are using Docker Desktop, to access services running inside the
+	if !needsLocalGateway {
+		return nil
+	}
+
+	dockerDesktop, err := kind.IsDockerDesktop(ctx)
+	if err != nil {
+		return err
+	}
+
+	podman, err := kind.IsPodmanAvailable()
+	if err != nil {
+		return err
+	}
+
+	if dockerDesktop || podman {
+		fmt.Printf(
+			`Because you are using Docker Desktop, to access services running inside the
 cluster, you will need to use a Wireguard VPN. To obtain the VPN configuration, 
 run the following command:
 bi vpn config -o wg0.conf %s
 `, slug)
-		}
 	}
 
 	return nil
