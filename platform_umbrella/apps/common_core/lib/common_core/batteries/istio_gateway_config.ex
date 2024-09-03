@@ -3,9 +3,7 @@ defmodule CommonCore.Batteries.IstioGatewayConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :istio_gateway do
-    defaultable_field :proxy_image, :string, default: Defaults.Images.istio_proxy_image()
+    defaultable_image_field :proxy_image, image_id: :istio_proxy
   end
 end

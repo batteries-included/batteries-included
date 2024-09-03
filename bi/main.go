@@ -8,6 +8,7 @@ import (
 	_ "bi/cmd/aws"
 	_ "bi/cmd/debug"
 	_ "bi/cmd/postgres"
+	_ "bi/cmd/vpn"
 )
 
 func main() {

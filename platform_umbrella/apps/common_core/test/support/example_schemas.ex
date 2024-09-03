@@ -33,7 +33,7 @@ defmodule CommonCore.ExampleSchemas do
         default_name: "mycontainer",
         default_tag: "latest"
 
-      defaultable_image_field :image_from_registry, image_id: :schema_test
+      defaultable_image_field :image_from_registry, image_id: :__schema_test
 
       embeds_one :meta, EmbeddedMetaSchema
     end

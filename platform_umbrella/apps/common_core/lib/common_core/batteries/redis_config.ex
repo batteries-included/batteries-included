@@ -3,11 +3,9 @@ defmodule CommonCore.Batteries.RedisConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :redis do
-    defaultable_field :operator_image, :string, default: Defaults.Images.redis_operator_image()
-    defaultable_field :redis_image, :string, default: Defaults.Images.redis_image()
-    defaultable_field :exporter_image, :string, default: Defaults.Images.redis_exporter_image()
+    defaultable_image_field :operator_image, image_id: :redis_operator
+    defaultable_image_field :redis_image, image_id: :redis
+    defaultable_image_field :exporter_image, image_id: :redis_exporter
   end
 end

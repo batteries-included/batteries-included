@@ -1,4 +1,4 @@
-package debug
+package vpn
 
 import (
 	"bi/pkg/installs"
@@ -11,8 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var wireGuardConfigCmd = &cobra.Command{
-	Use:   "wireguard-config [install-slug|install-spec-url|install-spec-file]",
+var vpnConfigCmd = &cobra.Command{
+	Use:   "config [install-slug|install-spec-url|install-spec-file]",
 	Short: "Get the wireguard config for a batteries included environment",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -67,7 +67,7 @@ var wireGuardConfigCmd = &cobra.Command{
 }
 
 func init() {
-	wireGuardConfigCmd.Flags().StringP("output", "o", "-", "Path to write the wireguard config to")
+	vpnConfigCmd.Flags().StringP("output", "o", "-", "Path to write the wireguard config to")
 
-	debugCmd.AddCommand(wireGuardConfigCmd)
+	vpnCmd.AddCommand(vpnConfigCmd)
 }

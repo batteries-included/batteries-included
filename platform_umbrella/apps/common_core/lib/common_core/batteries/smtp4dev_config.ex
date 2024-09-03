@@ -8,7 +8,7 @@ defmodule CommonCore.Batteries.Smtp4devConfig do
   @required_fields ~w()a
 
   batt_polymorphic_schema type: :smtp4dev do
-    defaultable_field :image, :string, default: Defaults.Images.smtp4dev_image()
+    defaultable_image_field :image, image_id: :smtp4dev
 
     secret_field :cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1
   end

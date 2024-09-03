@@ -3,10 +3,8 @@ defmodule CommonCore.Batteries.TrustManagerConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :trust_manager do
-    defaultable_field :image, :string, default: Defaults.Images.trust_manager_image()
-    defaultable_field :init_image, :string, default: Defaults.Images.trust_manager_init_image()
+    defaultable_image_field :image, image_id: :trust_manager
+    defaultable_image_field :init_image, image_id: :trust_manager_init
   end
 end

@@ -3,10 +3,8 @@ defmodule CommonCore.Batteries.KarpenterConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :karpenter do
-    defaultable_field :image, :string, default: Defaults.Images.karpenter_image()
+    defaultable_image_field :image, image_id: :karpenter
     field :queue_name, :string
     field :service_role_arn, :string
     field :node_role_name, :string

@@ -3,14 +3,12 @@ defmodule CommonCore.Batteries.CertManagerConfig do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.Defaults
-
   batt_polymorphic_schema type: :cert_manager do
-    defaultable_field :acmesolver_image, :string, default: Defaults.Images.cert_manager_acmesolver_image()
-    defaultable_field :cainjector_image, :string, default: Defaults.Images.cert_manager_cainjector_image()
-    defaultable_field :controller_image, :string, default: Defaults.Images.cert_manager_controller_image()
-    defaultable_field :ctl_image, :string, default: Defaults.Images.cert_manager_ctl_image()
-    defaultable_field :webhook_image, :string, default: Defaults.Images.cert_manager_webhook_image()
+    defaultable_image_field :acmesolver_image, image_id: :cert_manager_acmesolver
+    defaultable_image_field :cainjector_image, image_id: :cert_manager_cainjector
+    defaultable_image_field :controller_image, image_id: :cert_manager_controller
+    defaultable_image_field :ctl_image, image_id: :cert_manager_ctl
+    defaultable_image_field :webhook_image, image_id: :cert_manager_webhook
 
     field :email, :string
   end
