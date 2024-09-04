@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Batteries.TextGenerationWebUIForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.panel title="Description" class="col-span-2">
+      <.panel title="Description" class="lg:col-span-2">
         <%= @battery.description %>
       </.panel>
 
