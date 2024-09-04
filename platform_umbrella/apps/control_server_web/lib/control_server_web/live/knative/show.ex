@@ -283,7 +283,11 @@ defmodule ControlServerWeb.Live.KnativeShow do
           timeline_installed={@timeline_installed}
         />
       <% :edit_versions -> %>
-        <.edit_versions_page service={@service} edit_versions={@edit_versions} />
+        <.edit_versions_page
+          service={@service}
+          edit_versions={@edit_versions}
+          timeline_installed={@timeline_installed}
+        />
     <% end %>
     """
   end
