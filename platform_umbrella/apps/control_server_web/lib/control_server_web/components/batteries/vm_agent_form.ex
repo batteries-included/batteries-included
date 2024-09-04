@@ -3,12 +3,14 @@ defmodule ControlServerWeb.Batteries.VMAgentForm do
 
   use ControlServerWeb, :live_component
 
-  import ControlServerWeb.BatteriesFormSubcomponents
-
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.empty_config form={@form} />
+      <.panel title="Configuration">
+        <.simple_form variant="nested">
+          <.input field={@form[:cookie_secret]} type="password" label="Cookie Secret" />
+        </.simple_form>
+      </.panel>
     </div>
     """
   end

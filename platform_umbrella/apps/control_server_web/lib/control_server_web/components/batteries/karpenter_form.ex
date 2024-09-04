@@ -8,7 +8,20 @@ defmodule ControlServerWeb.Batteries.KarpenterForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.empty_config form={@form} />
+      <.panel title="Configuration">
+        <.simple_form variant="nested">
+          <.input field={@form[:queue_name]} label="Queue Name" />
+          <.input field={@form[:service_role_arn]} label="Service Role ARN" />
+          <.input field={@form[:node_role_name]} label="Node Role Name" />
+        </.simple_form>
+      </.panel>
+
+      <.panel title="Image">
+        <.simple_form variant="nested">
+          <.image><%= @form[:image].value %></.image>
+          <.image_version field={@form[:image_tag_override]} image_id={:karpenter} label="Version" />
+        </.simple_form>
+      </.panel>
     </div>
     """
   end

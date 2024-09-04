@@ -8,7 +8,23 @@ defmodule ControlServerWeb.Batteries.IstioForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.empty_config form={@form} />
+      <.panel title="Configuration">
+        <.simple_form variant="nested">
+          <.input field={@form[:namespace]} label="Namespace" />
+        </.simple_form>
+      </.panel>
+
+      <.panel title="Image">
+        <.simple_form variant="nested">
+          <.image><%= @form[:pilot_image].value %></.image>
+
+          <.image_version
+            field={@form[:pilot_image_tag_override]}
+            image_id={:istio_pilot}
+            label="Version"
+          />
+        </.simple_form>
+      </.panel>
     </div>
     """
   end

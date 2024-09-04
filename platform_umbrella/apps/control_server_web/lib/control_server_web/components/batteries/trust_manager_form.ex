@@ -9,6 +9,27 @@ defmodule ControlServerWeb.Batteries.TrustManagerForm do
     ~H"""
     <div class="contents">
       <.empty_config form={@form} />
+
+      <.panel title="Image">
+        <.simple_form variant="nested">
+          <.image>
+            <%= @form[:image].value %><br />
+            <%= @form[:init_image].value %>
+          </.image>
+
+          <.image_version
+            field={@form[:image_tag_override]}
+            image_id={:trust_manager}
+            label="Version"
+          />
+
+          <.image_version
+            field={@form[:init_image_tag_override]}
+            image_id={:trust_manager_init}
+            label="Init Version"
+          />
+        </.simple_form>
+      </.panel>
     </div>
     """
   end
