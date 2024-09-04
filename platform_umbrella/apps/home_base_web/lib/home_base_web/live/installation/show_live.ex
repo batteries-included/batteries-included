@@ -101,27 +101,23 @@ defmodule HomeBaseWeb.InstallationShowLive do
     </div>
 
     <.grid columns={%{md: 1, lg: 2}}>
-      <div>
-        <.panel :if={!@installed?} title="Installation Instructions">
-          <p class="leading-6 mb-4">
-            We havn't heard from your installation yet! To download and install the Batteries Included control server in <%= @provider %>, run the script below.
-          </p>
-          <!-- TODO: update script src to actual installation script -->
-          <.script src="https://install.example.com/8ej3l" class="mb-8" />
-          <.markdown content={explanation(@installation)} />
-        </.panel>
-      </div>
+      <.panel :if={!@installed?} title="Installation Instructions">
+        <p class="leading-6 mb-4">
+          We havn't heard from your installation yet! To download and install the Batteries Included control server in <%= @provider %>, run the script below.
+        </p>
+        <!-- TODO: update script src to actual installation script -->
+        <.script src="https://install.example.com/8ej3l" class="mb-8" />
+        <.markdown content={explanation(@installation)} />
+      </.panel>
 
-      <div>
-        <.panel title="Details">
-          <.data_list>
-            <:item title="Usage"><%= @installation.usage %></:item>
-            <:item title="Provider"><%= @installation.kube_provider %></:item>
-            <:item title="Default Size"><%= @installation.default_size %></:item>
-            <:item title="Created"><%= @installation.inserted_at %></:item>
-          </.data_list>
-        </.panel>
-      </div>
+      <.panel title="Details">
+        <.data_list>
+          <:item title="Usage"><%= @installation.usage %></:item>
+          <:item title="Provider"><%= @installation.kube_provider %></:item>
+          <:item title="Default Size"><%= @installation.default_size %></:item>
+          <:item title="Created"><%= @installation.inserted_at %></:item>
+        </.data_list>
+      </.panel>
 
       <div :if={@installed?} class="flex flex-col gap-4">
         <!-- TODO: Link to installation's control server -->

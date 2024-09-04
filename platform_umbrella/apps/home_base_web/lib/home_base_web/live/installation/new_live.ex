@@ -53,7 +53,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
         </.button>
       </div>
 
-      <div class="grid lg:grid-cols-[2fr,1fr] content-start flex-1 gap-4">
+      <div class="grid lg:grid-cols-[2fr,1fr] content-start items-start flex-1 gap-4">
         <.flex column>
           <.input_panel title="Name your installation">
             <.input field={@form[:slug]} placeholder="Choose a name" />
@@ -95,11 +95,9 @@ defmodule HomeBaseWeb.InstallationNewLive do
           </.input_panel>
         </.flex>
 
-        <div>
-          <.panel>
-            <.markdown content={explanation(@form)} />
-          </.panel>
-        </div>
+        <.panel>
+          <.markdown content={explanation(@form)} />
+        </.panel>
       </div>
     </.form>
     """

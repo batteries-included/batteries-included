@@ -11,11 +11,9 @@ defmodule ControlServerWeb.BatteriesFormSubcomponents do
     ~H"""
     <.input type="hidden" field={@form[:type]} />
 
-    <div>
-      <.panel title="Configuration">
-        <p>This battery doesn't support custom configuration yet.</p>
-      </.panel>
-    </div>
+    <.panel title="Configuration">
+      <p>This battery doesn't support custom configuration yet.</p>
+    </.panel>
     """
   end
 

@@ -25,49 +25,43 @@ defmodule HomeBaseWeb.DashboardLive do
     </div>
 
     <.grid columns={[sm: 1, md: 2, lg: 3]}>
-      <div :if={@total_installations <= 0 || @current_user.roles == []}>
-        <.panel title="Get Started">
-          <.light_text>
-            Welcome to Batteries Included! Here are a few steps to help you get started:
-          </.light_text>
+      <.panel :if={@total_installations <= 0 || @current_user.roles == []} title="Get Started">
+        <.light_text>
+          Welcome to Batteries Included! Here are a few steps to help you get started:
+        </.light_text>
 
-          <.todo_list class="mt-6">
-            <.todo_list_item completed={@total_installations > 0} navigate={~p"/installations/new"}>
-              Start a new installation
-            </.todo_list_item>
+        <.todo_list class="mt-6">
+          <.todo_list_item completed={@total_installations > 0} navigate={~p"/installations/new"}>
+            Start a new installation
+          </.todo_list_item>
 
-            <.todo_list_item
-              :if={!@current_role}
-              completed={@current_user.roles != []}
-              navigate={~p"/teams/new"}
-            >
-              Create a team
-            </.todo_list_item>
-          </.todo_list>
-        </.panel>
-      </div>
+          <.todo_list_item
+            :if={!@current_role}
+            completed={@current_user.roles != []}
+            navigate={~p"/teams/new"}
+          >
+            Create a team
+          </.todo_list_item>
+        </.todo_list>
+      </.panel>
 
-      <div>
-        <.panel title="Graph 1">
-          <.chart
-            id="graph2-chart"
-            data={%{datasets: [%{label: "Placeholder", data: [10, 5, 1, 2]}]}}
-            options={%{plugins: %{legend: %{display: false}}}}
-            class="size-60 max-w-full m-auto"
-          />
-        </.panel>
-      </div>
+      <.panel title="Graph 1">
+        <.chart
+          id="graph2-chart"
+          data={%{datasets: [%{label: "Placeholder", data: [10, 5, 1, 2]}]}}
+          options={%{plugins: %{legend: %{display: false}}}}
+          class="size-60 max-w-full m-auto"
+        />
+      </.panel>
 
-      <div>
-        <.panel title="Graph 2">
-          <.chart
-            id="graph1-chart"
-            data={%{datasets: [%{label: "Placeholder", data: [1, 2, 3]}]}}
-            options={%{plugins: %{legend: %{display: false}}}}
-            class="size-60 max-w-full m-auto"
-          />
-        </.panel>
-      </div>
+      <.panel title="Graph 2">
+        <.chart
+          id="graph1-chart"
+          data={%{datasets: [%{label: "Placeholder", data: [1, 2, 3]}]}}
+          options={%{plugins: %{legend: %{display: false}}}}
+          class="size-60 max-w-full m-auto"
+        />
+      </.panel>
     </.grid>
     """
   end

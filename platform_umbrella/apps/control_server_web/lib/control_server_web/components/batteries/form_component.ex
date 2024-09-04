@@ -205,7 +205,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
           </div>
         </.page_header>
 
-        <.grid columns={%{sm: 1, lg: 2}} class="items-start">
+        <.grid columns={%{sm: 1, lg: 2}}>
           <.panel title="Description">
             <%= @catalog_battery.description %>
           </.panel>

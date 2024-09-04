@@ -175,7 +175,7 @@ defmodule CommonUI.Components.Container do
 
   def grid(assigns) do
     ~H"""
-    <div class={[column_class(@columns), gap_class(@gaps), "grid", @class]} {@rest}>
+    <div class={[column_class(@columns), gap_class(@gaps), "grid items-start", @class]} {@rest}>
       <%= render_slot(@inner_block) %>
     </div>
     """

@@ -111,7 +111,7 @@ defmodule ControlServerWeb.Live.Home do
       </.button>
     </div>
 
-    <.grid columns={%{md: 1, lg: 12}}>
+    <.grid columns={%{md: 1, lg: 12}} class="items-stretch">
       <.flex column class="lg:col-span-6 xl:col-span-5">
         <.h3>Pods by Category</.h3>
         <.chart id="pod-chart" data={pod_data(@pods)} />

@@ -398,89 +398,85 @@ defmodule HomeBaseWeb.SettingsLive do
           </.panel>
         </.form>
 
-        <div>
-          <.panel title="Members">
-            <div
-              :for={role <- @roles}
-              class="flex gap-3 bg-gray-lightest dark:bg-gray-darkest dark:border dark:border-gray-darker-tint mb-3 px-3 py-1 rounded-md"
-            >
-              <div class="flex items-center gap-2 flex-1">
-                <%= role.invited_email || role.user.email %>
+        <.panel title="Members">
+          <div
+            :for={role <- @roles}
+            class="flex gap-3 bg-gray-lightest dark:bg-gray-darkest dark:border dark:border-gray-darker-tint mb-3 px-3 py-1 rounded-md"
+          >
+            <div class="flex items-center gap-2 flex-1">
+              <%= role.invited_email || role.user.email %>
 
-                <.badge :if={role.invited_email} label="pending" minimal />
-                <.badge :if={role.id == @current_role.id} label="you" minimal />
-              </div>
-
-              <div :if={role.id != @current_role.id} class="flex items-center gap-4">
-                <.form
-                  :let={f}
-                  for={role |> TeamRole.changeset() |> to_form()}
-                  id={"update-role-form-#{role.id}"}
-                  phx-change="update_role"
-                >
-                  <.input field={f[:id]} type="hidden" />
-                  <.input field={f[:is_admin]} type="checkbox" label="Admin" />
-                </.form>
-
-                <.button
-                  variant="minimal"
-                  icon={:x_mark}
-                  phx-click="delete_role"
-                  phx-value-id={role.id}
-                  data-confirm={"Are you sure you want to remove #{role.invited_email || role.user.email} from the team?"}
-                />
-              </div>
+              <.badge :if={role.invited_email} label="pending" minimal />
+              <.badge :if={role.id == @current_role.id} label="you" minimal />
             </div>
 
-            <.form
-              for={@role_form}
-              id="new-role-form"
-              phx-change="validate_role"
-              phx-submit="save_role"
-              class="flex flex-col gap-3 mt-8"
-            >
-              <div class="flex items-center justify-between gap-6">
-                <div class="flex-1">
-                  <.input
-                    field={@role_form[:invited_email]}
-                    placeholder="Enter an email address"
-                    autocomplete="off"
-                  />
-                </div>
+            <div :if={role.id != @current_role.id} class="flex items-center gap-4">
+              <.form
+                :let={f}
+                for={role |> TeamRole.changeset() |> to_form()}
+                id={"update-role-form-#{role.id}"}
+                phx-change="update_role"
+              >
+                <.input field={f[:id]} type="hidden" />
+                <.input field={f[:is_admin]} type="checkbox" label="Admin" />
+              </.form>
 
-                <.input field={@role_form[:is_admin]} type="checkbox" label="Admin" />
+              <.button
+                variant="minimal"
+                icon={:x_mark}
+                phx-click="delete_role"
+                phx-value-id={role.id}
+                data-confirm={"Are you sure you want to remove #{role.invited_email || role.user.email} from the team?"}
+              />
+            </div>
+          </div>
+
+          <.form
+            for={@role_form}
+            id="new-role-form"
+            phx-change="validate_role"
+            phx-submit="save_role"
+            class="flex flex-col gap-3 mt-8"
+          >
+            <div class="flex items-center justify-between gap-6">
+              <div class="flex-1">
+                <.input
+                  field={@role_form[:invited_email]}
+                  placeholder="Enter an email address"
+                  autocomplete="off"
+                />
               </div>
 
-              <.button type="submit" variant="dark">Invite new member</.button>
-            </.form>
-          </.panel>
-        </div>
+              <.input field={@role_form[:is_admin]} type="checkbox" label="Admin" />
+            </div>
 
-        <div>
-          <.panel title="Danger Zone">
-            <p class="mb-6">
-              Want to delete your team? All members will be removed.<br />
-              <b>THIS CANNOT BE UNDONE!</b>
-            </p>
+            <.button type="submit" variant="dark">Invite new member</.button>
+          </.form>
+        </.panel>
 
-            <.button
-              variant="danger"
-              phx-click="delete_team"
-              data-confirm={"Are you sure you want to delete the #{@current_role.team.name} team?"}
-              class="mr-4"
-            >
-              Delete Team
-            </.button>
+        <.panel title="Danger Zone">
+          <p class="mb-6">
+            Want to delete your team? All members will be removed.<br />
+            <b>THIS CANNOT BE UNDONE!</b>
+          </p>
 
-            <.button
-              variant="secondary"
-              phx-click="leave_team"
-              data-confirm={"Are you sure you want to leave the #{@current_role.team.name} team?"}
-            >
-              Leave Team
-            </.button>
-          </.panel>
-        </div>
+          <.button
+            variant="danger"
+            phx-click="delete_team"
+            data-confirm={"Are you sure you want to delete the #{@current_role.team.name} team?"}
+            class="mr-4"
+          >
+            Delete Team
+          </.button>
+
+          <.button
+            variant="secondary"
+            phx-click="leave_team"
+            data-confirm={"Are you sure you want to leave the #{@current_role.team.name} team?"}
+          >
+            Leave Team
+          </.button>
+        </.panel>
       </.grid>
 
       <div :if={!@current_role.is_admin}>
