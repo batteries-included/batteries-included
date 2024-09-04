@@ -177,6 +177,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
         phx-change="validate"
         phx-submit={submit_event(@action)}
         phx-target={@myself}
+        novalidate
       >
         <.page_header
           title={"#{@catalog_battery.name} Battery"}
@@ -204,12 +205,10 @@ defmodule ControlServerWeb.BatteriesFormComponent do
           </div>
         </.page_header>
 
-        <.grid columns={%{sm: 1, lg: 2}}>
-          <div>
-            <.panel title="Description">
-              <%= @catalog_battery.description %>
-            </.panel>
-          </div>
+        <.grid columns={%{sm: 1, lg: 2}} class="items-start">
+          <.panel title="Description">
+            <%= @catalog_battery.description %>
+          </.panel>
 
           <.live_component module={@form_module} form={f} id="battery-subform" />
         </.grid>

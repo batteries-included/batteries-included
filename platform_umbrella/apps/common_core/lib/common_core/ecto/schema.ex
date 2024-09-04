@@ -671,18 +671,4 @@ defmodule CommonCore.Ecto.Schema do
       defoverridable Ecto.Type
     end
   end
-
-  @doc """
-  This adds an image_override value to a battery config
-  by combining the image name with the selected version.
-  """
-  def put_image_from_version(changeset, type) do
-    if version = Ecto.Changeset.get_change(changeset, :image_version) do
-      image = CommonCore.Defaults.Images.get_image(type, version)
-
-      Ecto.Changeset.put_change(changeset, :image_override, image)
-    else
-      changeset
-    end
-  end
 end
