@@ -78,7 +78,7 @@ defmodule CommonCore.Installs.Generator do
   defp do_build(:int_prod, team_id) do
     Installation.new!("int_prod",
       default_size: :medium,
-      kube_provider: :kind,
+      kube_provider: :aws,
       usage: :internal_prod,
       team_id: team_id,
       id: BatteryUUID.autogenerate()
