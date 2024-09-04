@@ -8,6 +8,10 @@ defmodule ControlServerWeb.Batteries.KarpenterForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
+      <.panel title="Description" class="lg:col-span-2">
+        <%= @battery.description %>
+      </.panel>
+
       <.panel title="Configuration">
         <.simple_form variant="nested">
           <.input field={@form[:queue_name]} label="Queue Name" />

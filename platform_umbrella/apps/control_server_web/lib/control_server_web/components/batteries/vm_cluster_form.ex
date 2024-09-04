@@ -3,12 +3,12 @@ defmodule ControlServerWeb.Batteries.VMClusterForm do
 
   use ControlServerWeb, :live_component
 
-  import ControlServerWeb.BatteriesFormSubcomponents
-
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.empty_config form={@form} />
+      <.panel title="Description" class="lg:col-span-2">
+        <%= @battery.description %>
+      </.panel>
     </div>
     """
   end

@@ -95,11 +95,9 @@ defmodule HomeBaseWeb.InstallationNewLive do
           </.input_panel>
         </.flex>
 
-        <div>
-          <.panel>
-            <.markdown content={explanation(@form)} />
-          </.panel>
-        </div>
+        <.panel>
+          <.markdown content={explanation(@form)} />
+        </.panel>
       </div>
     </.form>
     """

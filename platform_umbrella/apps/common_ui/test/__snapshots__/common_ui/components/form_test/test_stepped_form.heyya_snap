@@ -3,8 +3,7 @@
   
   
   <div class="grid lg:grid-cols-[2fr,1fr] content-start flex-1 gap-4 ">
-    <div>
-      <div class="bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker flex flex-col">
+    <div class="bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker flex flex-col">
   <div class="gap-4 lg:gap-6 flex items-center justify-between flex-wrap w-full px-6 pt-5">
   
     <h3 class="text-xl font-medium text-gray-darker dark:text-white font-semibold">
@@ -17,9 +16,9 @@
 
   <div class="relative flex-1 px-6 py-5 ">
     
-        <div class="grid grid-cols-1 gap-x-4 gap-y-6 ">
+      <div class="grid grid-cols-1 gap-x-4 gap-y-6 ">
   
-          <div class="">
+        <div class="">
   
     <div id="-flash-info" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold border group px-3.5 py-2.5 bottom-5 right-5 bg-sky-50 text-sky-500 border-sky-100 dark:bg-sky-500 dark:text-white dark:border-none mb-3 last:mb-0">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -39,21 +38,19 @@
   
 </div>
 
-          
+        
   <div>Some inputs would go here</div>
 
   
-        
+      
 </div>
 
 
-      
+    
   </div>
 </div>
-    </div>
 
-    <div>
-      <div class="bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker flex flex-col">
+    <div class="bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker flex flex-col">
   <div class="gap-4 lg:gap-6 flex items-center justify-between flex-wrap w-full px-6 pt-5">
   
     <h3 class="text-xl font-medium text-gray-darker dark:text-white font-semibold">
@@ -66,15 +63,14 @@
 
   <div class="relative flex-1 px-6 py-5 ">
     
-        <section class="prose dark:prose-invert">
+      <section class="prose dark:prose-invert">
   <p>
   Some description
 </p>
 </section>
-      
+    
   </div>
 </div>
-    </div>
   </div>
 
   <div class="flex items-center justify-end gap-4">

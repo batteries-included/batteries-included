@@ -8,7 +8,9 @@ defmodule ControlServerWeb.Batteries.TrustManagerForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.empty_config form={@form} />
+      <.panel title="Description" class="lg:col-span-2">
+        <%= @battery.description %>
+      </.panel>
 
       <.panel title="Image">
         <.simple_form variant="nested">

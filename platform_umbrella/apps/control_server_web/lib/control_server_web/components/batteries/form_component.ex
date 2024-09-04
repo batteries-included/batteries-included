@@ -135,6 +135,11 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     end
   end
 
+  # Handles form submissions that don't have any inputs.
+  def handle_event("new:save", _params, socket) do
+    handle_event("new:save", %{"battery_config" => %{}}, socket)
+  end
+
   def handle_event("edit:save", %{"battery_config" => params}, socket) do
     case socket.assigns.system_battery.config
          |> socket.assigns.config_module.changeset(params)
@@ -151,6 +156,11 @@ defmodule ControlServerWeb.BatteriesFormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
     end
+  end
+
+  # Handles form submissions that don't have any inputs.
+  def handle_event("edit:save", _params, socket) do
+    handle_event("edit:save", %{"battery_config" => %{}}, socket)
   end
 
   def handle_event("uninstall", _params, socket) do
@@ -205,12 +215,13 @@ defmodule ControlServerWeb.BatteriesFormComponent do
           </div>
         </.page_header>
 
-        <.grid columns={%{sm: 1, lg: 2}} class="items-start">
-          <.panel title="Description">
-            <%= @catalog_battery.description %>
-          </.panel>
-
-          <.live_component module={@form_module} form={f} id="battery-subform" />
+        <.grid columns={%{sm: 1, lg: 2}}>
+          <.live_component
+            module={@form_module}
+            battery={@catalog_battery}
+            form={f}
+            id="battery-subform"
+          />
         </.grid>
       </.form>
     </div>

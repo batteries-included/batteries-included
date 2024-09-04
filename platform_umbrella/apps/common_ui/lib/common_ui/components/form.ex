@@ -37,21 +37,17 @@ defmodule CommonUI.Components.Form do
     ~H"""
     <.form id={@id} class={["flex flex-col h-full", @class]} novalidate {@rest}>
       <div class={["grid lg:grid-cols-[2fr,1fr] content-start flex-1 gap-4", @class]}>
-        <div>
-          <.panel title={@title}>
-            <.simple_form variant="nested">
-              <.flash_group id={"#{@id}-flash"} flash={@flash} />
+        <.panel title={@title}>
+          <.simple_form variant="nested">
+            <.flash_group id={"#{@id}-flash"} flash={@flash} />
 
-              <%= render_slot(@inner_block) %>
-            </.simple_form>
-          </.panel>
-        </div>
+            <%= render_slot(@inner_block) %>
+          </.simple_form>
+        </.panel>
 
-        <div>
-          <.panel :if={@description} title="Description">
-            <.markdown content={@description} />
-          </.panel>
-        </div>
+        <.panel :if={@description} title="Description">
+          <.markdown content={@description} />
+        </.panel>
       </div>
 
       <div class="flex items-center justify-end gap-4">

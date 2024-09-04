@@ -80,18 +80,16 @@ defmodule HomeBaseWeb.TeamsNewLive do
       </div>
 
       <.grid columns={%{sm: 1, lg: 2}}>
-        <div>
-          <.panel inner_class="flex flex-col gap-4">
-            <.input field={@form[:name]} label="Team Name" autocomplete="organization" />
+        <.panel inner_class="flex flex-col gap-4">
+          <.input field={@form[:name]} label="Team Name" autocomplete="organization" />
 
-            <.input
-              field={@form[:op_email]}
-              label="Email Address"
-              autocomplete="email"
-              note="Optional. This is where we will send most operational emails."
-            />
-          </.panel>
-        </div>
+          <.input
+            field={@form[:op_email]}
+            label="Email Address"
+            autocomplete="email"
+            note="Optional. This is where we will send most operational emails."
+          />
+        </.panel>
 
         <.panel title="Invite Members">
           <div class="flex flex-col gap-3">

@@ -6,6 +6,10 @@ defmodule ControlServerWeb.Batteries.TraditionalServicesForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
+      <.panel title="Description">
+        <%= @battery.description %>
+      </.panel>
+
       <.panel title="Configuration">
         <.simple_form variant="nested">
           <.input field={@form[:namespace]} label="Namespace" />
