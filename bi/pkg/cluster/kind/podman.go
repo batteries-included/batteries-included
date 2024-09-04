@@ -6,9 +6,8 @@ import (
 )
 
 func IsPodmanAvailable() (bool, error) {
-	cmd := exec.Command("command", "-v", "podman")
+	cmd := exec.Command("podman", "info")
 	err := cmd.Run()
-
 	if err != nil {
 		return false, err
 	}
