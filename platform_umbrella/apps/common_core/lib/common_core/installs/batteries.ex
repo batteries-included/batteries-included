@@ -8,6 +8,7 @@ defmodule CommonCore.Installs.Batteries do
   alias CommonCore.Installation
 
   @standard_battery_types ~w(battery_core cloudnative_pg istio istio_gateway stale_resource_cleaner)
+  @aws_battery_types ~w(karpenter battery_ca aws_load_balancer_controller)
 
   def default_batteries(%Installation{} = install) do
     # TODO: This is utter shit. I should have done better
@@ -93,8 +94,8 @@ defmodule CommonCore.Installs.Batteries do
 
   defp aws_batteries(install) do
     case install.usage do
-      :internal_dev ->
-        ~w(karpenter battery_ca aws_load_balancer_controller) ++ @standard_battery_types
+      :internal_prod ->
+        ~w(traditional_services)a ++ @aws_battery_types ++ @standard_battery_types
 
       :kitchen_sink ->
         # AWS doesn't work with some batteries
@@ -103,7 +104,7 @@ defmodule CommonCore.Installs.Batteries do
         |> Enum.map(fn cb -> cb.type end)
 
       _ ->
-        ~w(karpenter battery_ca aws_load_balancer_controller) ++ @standard_battery_types
+        @aws_battery_types ++ @standard_battery_types
     end
   end
 
