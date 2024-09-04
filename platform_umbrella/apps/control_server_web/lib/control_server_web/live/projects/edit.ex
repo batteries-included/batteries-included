@@ -49,7 +49,7 @@ defmodule ControlServerWeb.Live.ProjectsEdit do
       </.button>
     </.page_header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-4 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-4">
       <.panel>
         <.simple_form for={@form} id="edit-project-form" phx-change="validate" phx-submit="save">
           <.flex column>

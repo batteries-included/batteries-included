@@ -2,7 +2,7 @@
   
   
   
-  <div class="grid lg:grid-cols-[2fr,1fr] content-start items-start flex-1 gap-4 ">
+  <div class="grid lg:grid-cols-[2fr,1fr] content-start flex-1 gap-4 ">
     <div class="bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker flex flex-col">
   <div class="gap-4 lg:gap-6 flex items-center justify-between flex-wrap w-full px-6 pt-5">
   

@@ -10,32 +10,8 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.panel title="Upgrade Schedule">
-        <.simple_form variant="nested">
-          <.input
-            type="multiselect"
-            field={@form[:virtual_upgrade_days_of_week]}
-            options={Time.days_of_week_options()}
-          />
-
-          <div class="flex gap-2">
-            <.input
-              field={@form[:upgrade_start_hour]}
-              type="select"
-              placeholder="Start Time"
-              options={Time.time_options()}
-            />
-
-            <span>to</span>
-
-            <.input
-              field={@form[:upgrade_end_hour]}
-              type="select"
-              placeholder="End Time"
-              options={Time.time_options()}
-            />
-          </div>
-        </.simple_form>
+      <.panel title="Description" class="lg:col-span-2">
+        <%= @battery.description %>
       </.panel>
 
       <.panel title="Configuration">
@@ -69,19 +45,45 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
         </.simple_form>
       </.panel>
 
-      <.panel title="Secret Key">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div class="flex-1 font-mono font-bold text-sm">
-            <%= TextHelpers.obfuscate(@form[:secret_key].value) %>
-          </div>
+      <.panel title="Upgrade Schedule">
+        <.simple_form variant="nested">
+          <.input
+            type="multiselect"
+            field={@form[:virtual_upgrade_days_of_week]}
+            options={Time.days_of_week_options()}
+          />
 
-          <%!-- <.button>Regenerate</.button> --%>
-        </div>
+          <div class="flex gap-2">
+            <.input
+              field={@form[:upgrade_start_hour]}
+              type="select"
+              placeholder="Start Time"
+              options={Time.time_options()}
+            />
+
+            <span>to</span>
+
+            <.input
+              field={@form[:upgrade_end_hour]}
+              type="select"
+              placeholder="End Time"
+              options={Time.time_options()}
+            />
+          </div>
+        </.simple_form>
       </.panel>
 
       <.panel title="Advanced" variant="gray">
         <.simple_form variant="nested">
           <.input field={@form[:server_in_cluster]} type="switch" label="Server In Cluster" />
+
+          <div class="flex justify-between items-center">
+            <div class="flex-1 text-sm">Secret Key</div>
+
+            <div class="font-mono font-bold text-sm">
+              <%= TextHelpers.obfuscate(@form[:secret_key].value, char_limit: 4) %>
+            </div>
+          </div>
         </.simple_form>
       </.panel>
     </div>

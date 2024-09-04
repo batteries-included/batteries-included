@@ -1,4 +1,4 @@
-<div class="grid-cols-1 gap-4 lg:gap-6 grid items-start">
+<div class="grid-cols-1 gap-4 lg:gap-6 grid">
   
   <div>test</div>
   <div>test</div>
