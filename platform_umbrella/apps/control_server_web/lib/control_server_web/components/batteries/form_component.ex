@@ -106,25 +106,33 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   def handle_event("new:save", %{"battery_config" => params}, socket) do
     target = self()
 
-    send(target, {:async_installer, :start})
+    case socket.assigns.system_battery.config
+         |> socket.assigns.config_module.changeset(params)
+         |> apply_action(:insert) do
+      {:ok, config} ->
+        send(target, {:async_installer, :start})
 
-    _ =
-      Task.async(fn ->
-        # Yes these are sleeps to make this slower.
-        #
-        # There's a lot going on here an showing the user
-        # that is somewhat important. Giving some time inbetween
-        # these steps show that there's stuff happening to them.
-        Process.sleep(800)
-        Installer.install!(socket.assigns.catalog_battery.type, config: params, update_target: target)
-        Process.sleep(800)
-        send(target, {:async_installer, :starting_kube})
-        KubeServices.SnapshotApply.Worker.start()
-        Process.sleep(800)
-        send(target, {:async_installer, {:apply_complete, "Started"}})
-      end)
+        _ =
+          Task.async(fn ->
+            # Yes these are sleeps to make this slower.
+            #
+            # There's a lot going on here an showing the user
+            # that is somewhat important. Giving some time inbetween
+            # these steps show that there's stuff happening to them.
+            Process.sleep(800)
+            Installer.install!(socket.assigns.catalog_battery.type, config: config, update_target: target)
+            Process.sleep(800)
+            send(target, {:async_installer, :starting_kube})
+            KubeServices.SnapshotApply.Worker.start()
+            Process.sleep(800)
+            send(target, {:async_installer, {:apply_complete, "Started"}})
+          end)
 
-    {:noreply, socket}
+        {:noreply, socket}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :form, to_form(changeset))}
+    end
   end
 
   def handle_event("edit:save", %{"battery_config" => params}, socket) do
@@ -169,6 +177,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
         phx-change="validate"
         phx-submit={submit_event(@action)}
         phx-target={@myself}
+        novalidate
       >
         <.page_header
           title={"#{@catalog_battery.name} Battery"}
@@ -196,12 +205,10 @@ defmodule ControlServerWeb.BatteriesFormComponent do
           </div>
         </.page_header>
 
-        <.grid columns={%{sm: 1, lg: 2}}>
-          <div>
-            <.panel title="Description">
-              <%= @catalog_battery.description %>
-            </.panel>
-          </div>
+        <.grid columns={%{sm: 1, lg: 2}} class="items-start">
+          <.panel title="Description">
+            <%= @catalog_battery.description %>
+          </.panel>
 
           <.live_component module={@form_module} form={f} id="battery-subform" />
         </.grid>

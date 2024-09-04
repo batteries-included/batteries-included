@@ -8,7 +8,18 @@ defmodule ControlServerWeb.Batteries.KialiForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.empty_config form={@form} />
+      <.panel title="Configuration">
+        <.simple_form variant="nested">
+          <.input field={@form[:login_signing_key]} type="password" label="Login Signing Key" />
+        </.simple_form>
+      </.panel>
+
+      <.panel title="Image">
+        <.simple_form variant="nested">
+          <.image><%= @form[:image].value %></.image>
+          <.image_version field={@form[:image_tag_override]} image_id={:kiali} label="Version" />
+        </.simple_form>
+      </.panel>
     </div>
     """
   end

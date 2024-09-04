@@ -9,6 +9,41 @@ defmodule ControlServerWeb.Batteries.KubeMonitoringForm do
     ~H"""
     <div class="contents">
       <.empty_config form={@form} />
+
+      <.panel title="Images">
+        <.simple_form variant="nested">
+          <.image>
+            <%= @form[:kube_state_metrics_image].value %><br />
+            <%= @form[:node_exporter_image].value %><br />
+            <%= @form[:metrics_server_image].value %><br />
+            <%= @form[:addon_resizer_image].value %>
+          </.image>
+
+          <.image_version
+            field={@form[:kube_state_metrics_tag_override]}
+            image_id={:kube_state_metrics}
+            label="Kube State Metrics Version"
+          />
+
+          <.image_version
+            field={@form[:node_exporter_tag_override]}
+            image_id={:node_exporter}
+            label="Node Exporter Version"
+          />
+
+          <.image_version
+            field={@form[:metrics_server_image_tag_override]}
+            image_id={:metrics_server}
+            label="Metrics Server Version"
+          />
+
+          <.image_version
+            field={@form[:addon_resizer_image_tag_override]}
+            image_id={:addon_resizer}
+            label="Addon Resizer Version"
+          />
+        </.simple_form>
+      </.panel>
     </div>
     """
   end

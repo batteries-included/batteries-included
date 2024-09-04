@@ -8,7 +8,32 @@ defmodule ControlServerWeb.Batteries.GrafanaForm do
   def render(assigns) do
     ~H"""
     <div class="contents">
-      <.empty_config form={@form} />
+      <.panel title="Configuration">
+        <.simple_form variant="nested">
+          <.input field={@form[:admin_password]} type="password" label="Admin Password" />
+        </.simple_form>
+      </.panel>
+
+      <.panel title="Images">
+        <.simple_form variant="nested">
+          <.image>
+            <%= @form[:image].value %><br />
+            <%= @form[:sidecar_image].value %>
+          </.image>
+
+          <.image_version
+            field={@form[:image_tag_override]}
+            image_id={:grafana}
+            label="Grafana Version"
+          />
+
+          <.image_version
+            field={@form[:sidecar_image_tag_override]}
+            image_id={:kiwigrid_sidecar}
+            label="Sidecar Version"
+          />
+        </.simple_form>
+      </.panel>
     </div>
     """
   end

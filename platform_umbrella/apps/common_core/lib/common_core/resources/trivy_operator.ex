@@ -228,7 +228,7 @@ defmodule CommonCore.Resources.TrivyOperator do
 
     data =
       %{}
-      |> Map.put("node.collector.imageRef", battery.config.node_colletor_image)
+      |> Map.put("node.collector.imageRef", battery.config.node_collector_image)
       |> Map.put("policies.bundle.oci.ref", battery.config.trivy_checks_image)
       |> Map.put("compliance.failEntriesLimit", "10")
       |> Map.put("configAuditReports.scanner", "Trivy")
