@@ -102,7 +102,7 @@ defmodule ControlServerWeb.Live.Home do
       </div>
 
       <.button
-        :if={@latest_snapshot}
+        :if={@latest_snapshot && @latest_snapshot.kube_snapshot}
         variant="minimal"
         link={~p"/deploy"}
         icon={snapshot_icon(@latest_snapshot.kube_snapshot.status)}
