@@ -10,7 +10,6 @@
 import Config
 
 alias CommonUI.Components.Table
-alias ControlServerWeb.Common
 
 config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
 
