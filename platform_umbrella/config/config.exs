@@ -59,6 +59,7 @@ config :ex_audit,
   ecto_repos: [ControlServer.Repo],
   version_schema: CommonCore.Audit.EditVersion,
   tracked_schemas: [
+    CommonCore.Projects.Project,
     CommonCore.TraditionalServices.Service,
     CommonCore.Batteries.SystemBattery,
     CommonCore.FerretDB.FerretService,
