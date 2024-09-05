@@ -4,6 +4,7 @@ defmodule ControlServer.Audit do
   use ControlServer, :context
 
   alias CommonCore.Audit.EditVersion
+  alias ControlServer.RelatedObjects
 
   def list_edit_versions do
     EditVersion
@@ -13,6 +14,17 @@ defmodule ControlServer.Audit do
 
   def list_edit_versions(params) do
     Repo.Flop.validate_and_run(EditVersion, params, for: EditVersion)
+  end
+
+  def list_project_edit_versions(project_id, params) do
+    # Get all Ecto structs that have a project_id field
+    # and order them by the recorded_at field in descending order
+    entity_ids = Enum.concat([project_id], RelatedObjects.related_ids(project_id))
+
+    EditVersion
+    |> order_by(desc: :recorded_at)
+    |> where([ev], ev.entity_id in ^entity_ids)
+    |> Repo.Flop.validate_and_run(params, for: EditVersion)
   end
 
   def history(%{id: id, __struct__: struct} = _entity, opts \\ []) do

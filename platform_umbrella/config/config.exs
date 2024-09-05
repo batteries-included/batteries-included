@@ -10,6 +10,7 @@
 import Config
 
 alias CommonUI.Components.Table
+alias ControlServerWeb.Common
 
 config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
 
@@ -59,6 +60,7 @@ config :ex_audit,
   ecto_repos: [ControlServer.Repo],
   version_schema: CommonCore.Audit.EditVersion,
   tracked_schemas: [
+    CommonCore.Projects.Project,
     CommonCore.TraditionalServices.Service,
     CommonCore.Batteries.SystemBattery,
     CommonCore.FerretDB.FerretService,
