@@ -17,8 +17,6 @@ defmodule ControlServer.Audit do
   end
 
   def list_project_edit_versions(project_id, params) do
-    # Get all Ecto structs that have a project_id field
-    # and order them by the recorded_at field in descending order
     entity_ids = RelatedObjects.related_ids(project_id)
 
     EditVersion
