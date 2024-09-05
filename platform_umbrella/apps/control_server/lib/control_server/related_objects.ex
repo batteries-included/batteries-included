@@ -10,6 +10,10 @@ defmodule ControlServer.RelatedObjects do
   alias CommonCore.Redis.RedisInstance
   alias CommonCore.TraditionalServices.Service, as: TraditionalService
 
+  @doc """
+  Given a project_id, return a list of all related object ids
+  this is useful for getting all edit verions for a project
+  """
   def related_ids(project_id) do
     ferret_service_ids = related_ids(project_id, FerretService)
     knative_service_ids = related_ids(project_id, KnativeService)

@@ -19,7 +19,7 @@ defmodule ControlServer.Audit do
   def list_project_edit_versions(project_id, params) do
     # Get all Ecto structs that have a project_id field
     # and order them by the recorded_at field in descending order
-    entity_ids = Enum.concat([project_id], RelatedObjects.related_ids(project_id))
+    entity_ids = RelatedObjects.related_ids(project_id)
 
     EditVersion
     |> order_by(desc: :recorded_at)
