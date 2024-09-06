@@ -32,7 +32,6 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.Smtp4devForm
   alias ControlServerWeb.Batteries.SSOForm
   alias ControlServerWeb.Batteries.StaleResourceCleanerForm
-  alias ControlServerWeb.Batteries.TextGenerationWebUIForm
   alias ControlServerWeb.Batteries.TimelineForm
   alias ControlServerWeb.Batteries.TraditionalServicesForm
   alias ControlServerWeb.Batteries.TrivyOperatorForm
@@ -67,7 +66,6 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     smtp4dev: Smtp4devForm,
     sso: SSOForm,
     stale_resource_cleaner: StaleResourceCleanerForm,
-    text_generation_webui: TextGenerationWebUIForm,
     timeline: TimelineForm,
     traditional_services: TraditionalServicesForm,
     trivy_operator: TrivyOperatorForm,

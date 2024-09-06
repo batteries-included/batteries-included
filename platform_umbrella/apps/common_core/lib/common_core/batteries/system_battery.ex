@@ -27,7 +27,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.Smtp4devConfig
   alias CommonCore.Batteries.SSOConfig
   alias CommonCore.Batteries.StaleResourceCleanerConfig
-  alias CommonCore.Batteries.TextGenerationWebUIConfig
   alias CommonCore.Batteries.TimelineConfig
   alias CommonCore.Batteries.TraditionalServicesConfig
   alias CommonCore.Batteries.TrivyOperatorConfig
@@ -73,7 +72,6 @@ defmodule CommonCore.Batteries.SystemBattery do
     stale_resource_cleaner: StaleResourceCleanerConfig,
     smtp4dev: Smtp4devConfig,
     sso: SSOConfig,
-    text_generation_webui: TextGenerationWebUIConfig,
     timeline: TimelineConfig,
     trivy_operator: TrivyOperatorConfig,
     trust_manager: TrustManagerConfig,
