@@ -5,12 +5,12 @@ import (
 	"os/exec"
 )
 
-func IsPodmanAvailable() (bool, error) {
+func IsPodmanAvailable() bool {
 	cmd := exec.Command("podman", "info")
 	err := cmd.Run()
 	if err != nil {
-		return false, err
+		return false
 	}
 	slog.Debug("Podman is available")
-	return true, nil
+	return true
 }

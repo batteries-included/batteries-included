@@ -2,10 +2,12 @@ package kind
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
 	"net"
+	"os/exec"
 
 	"github.com/dghubble/ipnets"
 
@@ -16,7 +18,15 @@ import (
 
 // Given a kind network, return the MetalLB IPs
 func GetMetalLBIPs(ctx context.Context) (string, error) {
-	networks, err := getKindNetwork(ctx)
+	var networks []*net.IPNet
+	var err error
+	if IsDockerAvailable() {
+		networks, err = getKindDockerNetwork(ctx)
+	} else if IsPodmanAvailable() {
+		networks, err = getKindPodmanNetwork(ctx)
+	} else {
+		err = errors.New("neither docker nor podman are available")
+	}
 	if err != nil {
 		return "", err
 	}
@@ -51,7 +61,7 @@ func split(ipNet *net.IPNet) (*net.IPNet, error) {
 	return subnets[1], nil
 }
 
-func getKindNetwork(ctx context.Context) ([]*net.IPNet, error) {
+func getKindDockerNetwork(ctx context.Context) ([]*net.IPNet, error) {
 	dockerClient, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		return nil, err
@@ -78,6 +88,41 @@ func getKindNetwork(ctx context.Context) ([]*net.IPNet, error) {
 			}
 			ipNets = append(ipNets, ipNet)
 		}
+	}
+
+	return ipNets, nil
+}
+
+func getKindPodmanNetwork(ctx context.Context) ([]*net.IPNet, error) {
+	cmd := exec.CommandContext(ctx, "podman", "network", "inspect", "kind")
+	output, err := cmd.Output()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get kind network subnet: %w", err)
+	}
+
+	var networks []struct {
+		Name    string `json:"name"`
+		Subnets []struct {
+			Subnet  string `json:"subnet"`
+			Gateway string `json:"gateway"`
+		} `json:"subnets"`
+	}
+
+	if err := json.Unmarshal(output, &networks); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal kind network info: %w", err)
+	}
+
+	if len(networks) == 0 {
+		return nil, errors.New("kind network not found")
+	}
+
+	var ipNets []*net.IPNet
+	for _, subnet := range networks[0].Subnets {
+		_, ipNet, err := net.ParseCIDR(subnet.Subnet)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing subnet: %w", err)
+		}
+		ipNets = append(ipNets, ipNet)
 	}
 
 	return ipNets, nil

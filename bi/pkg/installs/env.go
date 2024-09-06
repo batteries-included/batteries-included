@@ -51,8 +51,8 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("error checking if local gateway is needed: %w", err)
 		}
-		dockerDesktop, _ := kind.IsDockerDesktop(ctx)
-		podman, _ := kind.IsPodmanAvailable()
+		dockerDesktop := kind.IsDockerDesktop(ctx)
+		podman := kind.IsPodmanAvailable()
 
 		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman)
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)

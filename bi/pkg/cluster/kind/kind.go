@@ -1,6 +1,7 @@
 package kind
 
 import (
+	"bi/pkg/cluster/kind/localgateway"
 	"bi/pkg/cluster/util"
 	"bi/pkg/wireguard"
 	"context"
@@ -10,31 +11,29 @@ import (
 	"net"
 	"net/netip"
 
-	dockerclient "github.com/docker/docker/client"
 	slogmulti "github.com/samber/slog-multi"
 	"sigs.k8s.io/kind/pkg/cluster"
 )
 
 const (
-	KindImage         = "kindest/node:v1.30.0"
-	NoisySocketsImage = "ghcr.io/noisysockets/nsh:v0.8.5"
+	KindImage = "kindest/node:v1.30.0"
 )
 
 type KindClusterProvider struct {
-	logger         *slog.Logger
-	nodeProvider   cluster.ProviderOption
-	name           string
-	dockerClient   *dockerclient.Client
-	gatewayEnabled bool
-	wgGateway      *wireguard.Gateway
-	wgClient       *wireguard.Client
+	logger       *slog.Logger
+	nodeProvider cluster.ProviderOption
+	name         string
+	gwEnabled    bool
+	gw           localgateway.Gateway
+	wgGateway    *wireguard.Gateway
+	wgClient     *wireguard.Client
 }
 
 func NewClusterProvider(logger *slog.Logger, name string, gatewayEnabled bool) *KindClusterProvider {
 	return &KindClusterProvider{
-		logger:         logger,
-		name:           name,
-		gatewayEnabled: gatewayEnabled,
+		logger:    logger,
+		name:      name,
+		gwEnabled: gatewayEnabled,
 	}
 }
 
@@ -48,12 +47,7 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 		return fmt.Errorf("neither docker nor podman are available")
 	}
 
-	if c.gatewayEnabled {
-		c.dockerClient, err = dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
-		if err != nil {
-			return fmt.Errorf("failed to create docker client: %w", err)
-		}
-
+	if c.gwEnabled {
 		// Use the same CIDR block as AWS.
 		_, gatewayCIDRBlock, err := net.ParseCIDR("100.64.250.0/24")
 		if err != nil {
@@ -68,6 +62,24 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 		c.wgClient, err = c.wgGateway.NewClient("installer")
 		if err != nil {
 			return fmt.Errorf("failed to create wireguard client for installer: %w", err)
+		}
+
+		if IsDockerAvailable() {
+			slog.Debug("Using Docker as the gateway provider")
+
+			c.gw, err = localgateway.NewDockerGateway(c.name, c.wgGateway)
+			if err != nil {
+				return fmt.Errorf("failed to create docker gateway: %w", err)
+			}
+		} else if IsPodmanAvailable() {
+			slog.Debug("Using Podman as the gateway provider")
+
+			c.gw, err = localgateway.NewPodmanGateway(c.name, c.wgGateway)
+			if err != nil {
+				return fmt.Errorf("failed to create podman gateway: %w", err)
+			}
+		} else {
+			return fmt.Errorf("neither docker nor podman are available")
 		}
 	}
 
@@ -115,8 +127,8 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 	}
 
 	// Create the wireguard gateway container.
-	if c.gatewayEnabled {
-		if err := c.createWireGuardGateway(ctx); err != nil {
+	if c.gwEnabled {
+		if err := c.gw.Create(ctx); err != nil {
 			return fmt.Errorf("failed to create wireguard gateway: %w", err)
 		}
 	}
@@ -146,8 +158,8 @@ func (c *KindClusterProvider) Destroy(ctx context.Context, _ *util.ProgressRepor
 	}
 
 	// Remove the wireguard gateway container (if it exists).
-	if c.gatewayEnabled {
-		if err := c.destroyWireGuardGateway(ctx); err != nil {
+	if c.gwEnabled {
+		if err := c.gw.Destroy(ctx); err != nil {
 			return fmt.Errorf("failed to remove wireguard gateway: %w", err)
 		}
 	}
@@ -164,7 +176,7 @@ func (c *KindClusterProvider) KubeConfig(ctx context.Context, w io.Writer) error
 	kindProvider := cluster.NewProvider(c.nodeProvider,
 		cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
 
-	kubeConfigBytes, err := kindProvider.KubeConfig(c.name, c.gatewayEnabled)
+	kubeConfigBytes, err := kindProvider.KubeConfig(c.name, c.gwEnabled)
 	if err != nil {
 		return fmt.Errorf("failed to get kubeconfig: %w", err)
 	}
@@ -177,16 +189,11 @@ func (c *KindClusterProvider) KubeConfig(ctx context.Context, w io.Writer) error
 }
 
 func (c *KindClusterProvider) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
-	if !c.gatewayEnabled {
+	if !c.gwEnabled {
 		return false, nil
 	}
 
-	containerID, err := c.getWireGuardGatewayContainer(ctx)
-	if err != nil {
-		return true, fmt.Errorf("failed to get wireguard gateway container: %w", err)
-	}
-
-	gwEndpoint, err := c.getWireGuardGatewayEndpoint(ctx, containerID)
+	gwEndpoint, err := c.gw.Endpoint(ctx)
 	if err != nil {
 		return true, fmt.Errorf("failed to get wireguard gateway address: %w", err)
 	}
@@ -195,7 +202,7 @@ func (c *KindClusterProvider) WireGuardConfig(ctx context.Context, w io.Writer) 
 	c.wgGateway.Nameservers = []netip.Addr{c.wgGateway.Address} // The gateway is hosting a DNS server.
 
 	// Get the CIDR of the `kind` network.
-	c.wgGateway.VPCSubnets, err = getKindNetwork(ctx)
+	c.wgGateway.VPCSubnets, err = c.gw.GetNetworks(ctx)
 	if err != nil {
 		return true, err
 	}

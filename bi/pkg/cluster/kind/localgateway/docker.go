@@ -1,7 +1,8 @@
-package kind
+package localgateway
 
 import (
 	"archive/tar"
+	"bi/pkg/wireguard"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -23,30 +24,45 @@ import (
 	"github.com/docker/go-connections/nat"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/term"
+
+	dockerclient "github.com/docker/docker/client"
 )
 
-const (
-	// UID/GIDs used by distroless.
-	nonRootUID = 65532
-	nonRootGID = 65532
-)
+type DockerGateway struct {
+	name         string
+	dockerClient *dockerclient.Client
+	wgGateway    *wireguard.Gateway
+}
 
-func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error {
-	containerName := c.name + "-gateway"
+func NewDockerGateway(name string, wgGateway *wireguard.Gateway) (*DockerGateway, error) {
+	dockerClient, err := dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create docker client: %w", err)
+	}
+
+	return &DockerGateway{
+		name:         name + "-gateway",
+		dockerClient: dockerClient,
+		wgGateway:    wgGateway,
+	}, nil
+}
+
+func (gw *DockerGateway) Create(ctx context.Context) error {
+	containerName := gw.name
 
 	slog.Debug("Creating wireguard gateway", slog.String("name", containerName))
 
 	// Remove the gateway container if it already exists (as we will be updating
 	// keys).
-	_ = c.destroyWireGuardGateway(ctx)
+	_ = gw.Destroy(ctx)
 
 	// Check if the NoisySockets image is already available.
-	_, _, err := c.dockerClient.ImageInspectWithRaw(ctx, NoisySocketsImage)
+	_, _, err := gw.dockerClient.ImageInspectWithRaw(ctx, noisySocketsImage)
 	if err != nil {
 		slog.Debug("NoisySockets image not found, pulling it")
 
 		// Pull the NoisySockets image.
-		pullProgressReader, err := c.dockerClient.ImagePull(ctx, NoisySocketsImage, image.PullOptions{})
+		pullProgressReader, err := gw.dockerClient.ImagePull(ctx, noisySocketsImage, image.PullOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to pull noisy sockets image: %w", err)
 		}
@@ -59,7 +75,7 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 
 	// Create the wireguard gateway container.
 	config := &container.Config{
-		Image: NoisySocketsImage,
+		Image: noisySocketsImage,
 		Cmd:   []string{"up", "--enable-dns", "--enable-router", "--log-level=debug"},
 		Env:   []string{"NSH_NO_TELEMETRY=1"},
 		ExposedPorts: map[nat.Port]struct{}{
@@ -86,32 +102,32 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 		},
 	}
 
-	resp, err := c.dockerClient.ContainerCreate(ctx, config, hostConfig, networkingConfig, nil, containerName)
+	resp, err := gw.dockerClient.ContainerCreate(ctx, config, hostConfig, networkingConfig, nil, containerName)
 	if err != nil {
 		return fmt.Errorf("failed to create wireguard gateway container: %w", err)
 	}
 
 	// Copy the wireguard configuration to the container.
-	configArchive, err := c.createWireGuardConfigArchive()
+	configArchive, err := gw.createWireGuardConfigArchive()
 	if err != nil {
 		return fmt.Errorf("failed to create wireguard config archive: %w", err)
 	}
 
-	if err := c.dockerClient.CopyToContainer(ctx, resp.ID, "/home/nonroot/",
+	if err := gw.dockerClient.CopyToContainer(ctx, resp.ID, "/home/nonroot/",
 		configArchive, container.CopyToContainerOptions{}); err != nil {
 		return fmt.Errorf("failed to copy wireguard config to container: %w", err)
 	}
 
 	// Start the container.
-	if err := c.dockerClient.ContainerStart(ctx, resp.ID, container.StartOptions{}); err != nil {
+	if err := gw.dockerClient.ContainerStart(ctx, resp.ID, container.StartOptions{}); err != nil {
 		return fmt.Errorf("failed to start wireguard gateway container: %w", err)
 	}
 
 	return nil
 }
 
-func (c *KindClusterProvider) destroyWireGuardGateway(ctx context.Context) error {
-	containerID, err := c.getWireGuardGatewayContainer(ctx)
+func (gw *DockerGateway) Destroy(ctx context.Context) error {
+	containerID, err := gw.getWireGuardGatewayContainer(ctx)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil
@@ -120,31 +136,20 @@ func (c *KindClusterProvider) destroyWireGuardGateway(ctx context.Context) error
 		return fmt.Errorf("failed to get wireguard gateway container: %w", err)
 	}
 
-	if err := c.dockerClient.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true}); err != nil {
+	if err := gw.dockerClient.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true}); err != nil {
 		return fmt.Errorf("failed to remove wireguard gateway container: %w", err)
 	}
 
 	return nil
 }
 
-func (c *KindClusterProvider) getWireGuardGatewayContainer(ctx context.Context) (string, error) {
-	containers, err := c.dockerClient.ContainerList(ctx, container.ListOptions{
-		Filters: filters.NewArgs(filters.Arg("name", c.name+"-gateway")),
-		All:     true,
-	})
+func (gw *DockerGateway) Endpoint(ctx context.Context) (string, error) {
+	containerID, err := gw.getWireGuardGatewayContainer(ctx)
 	if err != nil {
-		return "", fmt.Errorf("failed to list containers: %w", err)
+		return "", fmt.Errorf("failed to get wireguard gateway container: %w", err)
 	}
 
-	if len(containers) == 0 {
-		return "", os.ErrNotExist
-	}
-
-	return containers[0].ID, nil
-}
-
-func (c *KindClusterProvider) getWireGuardGatewayEndpoint(ctx context.Context, containerID string) (string, error) {
-	info, err := c.dockerClient.ContainerInspect(ctx, containerID)
+	info, err := gw.dockerClient.ContainerInspect(ctx, containerID)
 	if err != nil {
 		return "", fmt.Errorf("failed to inspect wireguard gateway container: %w", err)
 	}
@@ -159,7 +164,7 @@ func (c *KindClusterProvider) getWireGuardGatewayEndpoint(ctx context.Context, c
 		return "", fmt.Errorf("failed to get wireguard gateway container port")
 	}
 
-	daemonHostURL, err := url.Parse(c.dockerClient.DaemonHost())
+	daemonHostURL, err := url.Parse(gw.dockerClient.DaemonHost())
 	if err != nil {
 		return "", fmt.Errorf("failed to parse daemon host URL: %w", err)
 	}
@@ -214,7 +219,49 @@ func (c *KindClusterProvider) getWireGuardGatewayEndpoint(ctx context.Context, c
 	return net.JoinHostPort(host, port[0].HostPort), nil
 }
 
-func (c *KindClusterProvider) createWireGuardConfigArchive() (io.Reader, error) {
+func (gw *DockerGateway) GetNetworks(ctx context.Context) ([]*net.IPNet, error) {
+	networks, err := gw.dockerClient.NetworkList(ctx, network.ListOptions{
+		Filters: filters.NewArgs(filters.Arg("name", "kind")),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(networks) == 0 {
+		return nil, errors.New("no kind networks found")
+	}
+
+	var ipNets []*net.IPNet
+	for _, network := range networks {
+		for _, config := range network.IPAM.Config {
+			_, ipNet, err := net.ParseCIDR(config.Subnet)
+			if err != nil {
+				return nil, fmt.Errorf("error parsing subnet: %w", err)
+			}
+			ipNets = append(ipNets, ipNet)
+		}
+	}
+
+	return ipNets, nil
+}
+
+func (gw *DockerGateway) getWireGuardGatewayContainer(ctx context.Context) (string, error) {
+	containers, err := gw.dockerClient.ContainerList(ctx, container.ListOptions{
+		Filters: filters.NewArgs(filters.Arg("name", gw.name)),
+		All:     true,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to list containers: %w", err)
+	}
+
+	if len(containers) == 0 {
+		return "", os.ErrNotExist
+	}
+
+	return containers[0].ID, nil
+}
+
+func (gw *DockerGateway) createWireGuardConfigArchive() (io.Reader, error) {
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
 
@@ -240,7 +287,7 @@ func (c *KindClusterProvider) createWireGuardConfigArchive() (io.Reader, error) 
 	}
 
 	var wgConfig bytes.Buffer
-	if err := c.wgGateway.WriteNoisySocketsConfig(&wgConfig); err != nil {
+	if err := gw.wgGateway.WriteNoisySocketsConfig(&wgConfig); err != nil {
 		return nil, fmt.Errorf("failed to write wireguard client config: %w", err)
 	}
 
