@@ -91,6 +91,10 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     {:reply, StateSummary.Namespaces.traditional_namespace(summary), state}
   end
 
+  def handle_call(:ssl_enabled?, _from, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, StateSummary.SSL.ssl_enabled?(summary), state}
+  end
+
   # Is the battery installed?
   #
   # @param target [pid] the pid of the genserver to query
@@ -125,5 +129,9 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   def traditional_namespace(target \\ @me) do
     GenServer.call(target, :traditional_namespace)
+  end
+
+  def ssl_enabled?(target \\ @me) do
+    GenServer.call(target, :ssl_enabled?)
   end
 end
