@@ -177,13 +177,6 @@ defmodule CommonCore.Batteries.Catalog do
       name: "Notebooks",
       description: "Jupyter Notebooks for AI, ML, and Data Science."
     },
-    %CatalogBattery{
-      group: :ai,
-      type: :text_generation_webui,
-      dependencies: [:istio_gateway],
-      name: "Text Generation WebUI",
-      description: "A web interface for generating text using LLM's."
-    },
     # Monitoring
     %CatalogBattery{
       group: :monitoring,

@@ -6,7 +6,6 @@ defmodule ControlServerWeb.Live.AIHome do
   import ControlServerWeb.EmptyHome
   import ControlServerWeb.NotebooksTable
   import KubeServices.SystemState.SummaryBatteries
-  import KubeServices.SystemState.SummaryHosts
   import KubeServices.SystemState.SummaryRecent
 
   alias CommonCore.Batteries.Catalog
@@ -53,14 +52,6 @@ defmodule ControlServerWeb.Live.AIHome do
       </:menu>
 
       <.notebooks_table rows={@notebooks} abridged />
-    </.panel>
-    """
-  end
-
-  defp battery_link_panel(%{battery: %{type: :text_generation_webui}} = assigns) do
-    ~H"""
-    <.panel>
-      <.a href={"//#{text_generation_webui_host()}/"} variant="external">Text Generation WebUI</.a>
     </.panel>
     """
   end

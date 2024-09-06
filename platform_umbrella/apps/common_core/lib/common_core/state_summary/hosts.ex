@@ -54,14 +54,6 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ingress_ips() |> hosts("smtp4dev")
   end
 
-  def text_generation_webui_host(%StateSummary{} = summary) do
-    summary |> ip() |> host("textgen-webui")
-  end
-
-  def text_generation_webui_hosts(%StateSummary{} = summary) do
-    summary |> ingress_ips() |> hosts("textgen-webui")
-  end
-
   def keycloak_host(%StateSummary{} = summary) do
     summary |> ip() |> host("keycloak")
   end
@@ -143,7 +135,6 @@ defmodule CommonCore.StateSummary.Hosts do
   def for_battery(summary, :vm_agent), do: vmagent_host(summary)
   def for_battery(summary, :vm_cluster), do: vmselect_host(summary)
   def for_battery(summary, :victoria_metrics), do: vmselect_host(summary)
-  def for_battery(summary, :text_generation_webui), do: text_generation_webui_host(summary)
   def for_battery(_summary, _battery_type), do: nil
 
   # NOTE: This isn't exclusive - some batteries don't have host mappings, some may have multiple in the future.
@@ -161,7 +152,6 @@ defmodule CommonCore.StateSummary.Hosts do
   def hosts_for_battery(summary, :vm_agent), do: vmagent_hosts(summary)
   def hosts_for_battery(summary, :vm_cluster), do: vmselect_hosts(summary)
   def hosts_for_battery(summary, :victoria_metrics), do: vmselect_hosts(summary)
-  def hosts_for_battery(summary, :text_generation_webui), do: text_generation_webui_hosts(summary)
   def hosts_for_battery(_summary, _battery_type), do: nil
 
   defp ip(summary) do

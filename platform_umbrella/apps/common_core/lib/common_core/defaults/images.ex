@@ -192,12 +192,6 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(3.1.4),
         default_tag: "3.1.4"
       }),
-    text_generation_webui:
-      Image.new!(%{
-        name: "atinoda/text-generation-webui",
-        tags: ~w(default-cpu-2024.06.23),
-        default_tag: "default-cpu-2024.06.23"
-      }),
     trivy_operator:
       Image.new!(%{
         name: "ghcr.io/aquasecurity/trivy-operator",
