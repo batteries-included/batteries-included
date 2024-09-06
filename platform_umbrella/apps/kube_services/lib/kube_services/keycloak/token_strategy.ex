@@ -81,7 +81,9 @@ defmodule KubeServices.Keycloak.TokenStrategy do
 
   def redirect_uri(params) do
     return_to = Keyword.get(params, :return_to, nil)
-    control_server_url = get_control_server_url(params)
+    battery_core_url = maybe_get_battery_core_url(params)
+
+    control_server_url = get_control_server_url(return_to, battery_core_url)
 
     uri = control_server_url |> URI.parse() |> URI.append_path("/sso/callback")
 
@@ -94,17 +96,22 @@ defmodule KubeServices.Keycloak.TokenStrategy do
     end
   end
 
-  defp get_control_server_url(params) do
-    return_to = Keyword.get(params, :return_to, nil)
+  defp get_control_server_url(return_to, battery_core_url)
 
-    if return_to && !String.starts_with?(return_to, "/") do
-      return_uri = URI.parse(return_to)
-      "#{return_uri.scheme}://#{return_uri.authority}"
-    else
-      Keyword.get_lazy(params, :battery_core_url, fn ->
-        Summarizer.cached() |> URLs.uri_for_battery(:battery_core) |> URI.to_string()
-      end)
-    end
+  # if return_to isn't set or is relative, use battery_core_url
+  defp get_control_server_url(nil, battery_core_url), do: battery_core_url
+  defp get_control_server_url("/" <> _return_to, battery_core_url), do: battery_core_url
+
+  # or parse return_to
+  defp get_control_server_url(return_to, _battery_core_url) do
+    return_uri = URI.parse(return_to)
+    "#{return_uri.scheme}://#{return_uri.authority}"
+  end
+
+  defp maybe_get_battery_core_url(params) do
+    Keyword.get_lazy(params, :battery_core_url, fn ->
+      Summarizer.cached() |> URLs.uri_for_battery(:battery_core) |> URI.to_string()
+    end)
   end
 
   defp maybe_get_refresh_token(client, params) do
