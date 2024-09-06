@@ -435,12 +435,14 @@ do_build_image() {
     case "${image_name}" in
     control-server)
         docker buildx build . -f docker/platform.dockerfile \
+            --sbom=true --provenance=true \
             -t "control-server:${version}" \
             --build-arg RELEASE=control_server \
             "${cache_args[@]}"
         ;;
     home-base)
         docker buildx build . -f docker/platform.dockerfile \
+            --sbom=true --provenance=true \
             -t "home-base:${version}" \
             --build-arg RELEASE=home_base \
             "${cache_args[@]}"
@@ -448,6 +450,7 @@ do_build_image() {
 
     kube-bootstrap)
         docker buildx build . -f docker/platform.dockerfile \
+            --sbom=true --provenance=true \
             -t "kube-bootstrap:${version}" \
             --build-arg RELEASE=kube_bootstrap \
             "${cache_args[@]}"
@@ -455,6 +458,7 @@ do_build_image() {
 
     pastebin)
         docker buildx build . -f docker/pastebin.dockerfile \
+            --sbom=true --provenance=true \
             -t "pastebin:${version}" \
             "${cache_args[@]}"
         ;;

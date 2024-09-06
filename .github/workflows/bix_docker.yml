@@ -48,8 +48,7 @@ jobs:
         run: asdf reshim
       - name: Configure builder
         run: >-
-          docker buildx create --name container --driver docker-container
-          --driver-opt default-load=true
+          docker buildx create --name container --driver docker-container --use
       - name: Expose GitHub Runtime
         uses: crazy-max/ghaction-github-runtime@v3
       - name: Build control-server image
