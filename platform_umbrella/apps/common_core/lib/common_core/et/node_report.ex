@@ -39,8 +39,7 @@ defmodule CommonCore.ET.NodeReport do
         host_ip = pod |> FieldAccessors.status() |> Map.get("hostIP")
 
         node = find_node(nodes, host_ip)
-
-        FieldAccessors.name(node)
+        if node == nil, do: "unknown", else: FieldAccessors.name(node)
       end)
 
     node_count = length(nodes)
