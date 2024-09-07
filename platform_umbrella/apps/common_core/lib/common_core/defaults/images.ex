@@ -156,6 +156,12 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(v1.8.1),
         default_tag: "v1.8.1"
       }),
+    nvidia_device_plugin:
+      Image.new!(%{
+        name: "nvcr.io/nvidia/k8s-device-plugin",
+        tags: ~w(v0.16.2),
+        default_tag: "v0.16.2"
+      }),
     oauth2_proxy:
       Image.new!(%{
         name: "quay.io/oauth2-proxy/oauth2-proxy",

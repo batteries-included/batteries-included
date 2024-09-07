@@ -177,6 +177,13 @@ defmodule CommonCore.Batteries.Catalog do
       name: "Notebooks",
       description: "Jupyter Notebooks for AI, ML, and Data Science."
     },
+    %CatalogBattery{
+      group: :ai,
+      type: :nvidia_device_plugin,
+      dependencies: [:battery_core],
+      name: "Nvidia Device Plugin",
+      description: "The Nvidia Device Plugin for Kubernetes. This exposes the nvidia device details to kubernetes."
+    },
     # Monitoring
     %CatalogBattery{
       group: :monitoring,

@@ -27,6 +27,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.LokiForm
   alias ControlServerWeb.Batteries.MetalLBForm
   alias ControlServerWeb.Batteries.NotebooksForm
+  alias ControlServerWeb.Batteries.NvidiaDevicePluginForm
   alias ControlServerWeb.Batteries.PromtailForm
   alias ControlServerWeb.Batteries.RedisForm
   alias ControlServerWeb.Batteries.Smtp4devForm
@@ -61,6 +62,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     loki: LokiForm,
     metallb: MetalLBForm,
     notebooks: NotebooksForm,
+    nvidia_device_plugin: NvidiaDevicePluginForm,
     promtail: PromtailForm,
     redis: RedisForm,
     smtp4dev: Smtp4devForm,
