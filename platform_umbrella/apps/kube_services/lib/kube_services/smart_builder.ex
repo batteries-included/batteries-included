@@ -2,6 +2,7 @@ defmodule KubeServices.SmartBuilder do
   @moduledoc false
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Notebooks.JupyterLabNotebook
+  alias CommonCore.Ollama.ModelInstance
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGUser
@@ -47,6 +48,10 @@ defmodule KubeServices.SmartBuilder do
 
   def new_juptyer_params do
     %{virtual_size: Atom.to_string(SummaryBatteries.default_size())}
+  end
+
+  def new_model_instance_params do
+    %ModelInstance{virtual_size: Atom.to_string(SummaryBatteries.default_size())}
   end
 
   def new_traditional_service do

@@ -33,9 +33,14 @@ defmodule CommonCore.ConnectionPool do
 
   def get! do
     case get() do
-      {:ok, conn} -> conn
-      {:error, e} -> raise e
-      _ -> raise "Unknown error"
+      {:ok, conn} ->
+        conn
+
+      {:error, e} ->
+        raise e
+
+      _ ->
+        raise "Unknown error"
     end
   end
 
@@ -71,7 +76,11 @@ defmodule CommonCore.ConnectionPool do
     registry = registry_name(pool_name)
 
     with {_pid, connection} <- registry |> Registry.lookup(cluster_name) |> List.first(nil) do
-      connection
+      if connection == nil do
+        {:error, "unable to find connection from registry"}
+      else
+        {:ok, connection}
+      end
     end
   end
 

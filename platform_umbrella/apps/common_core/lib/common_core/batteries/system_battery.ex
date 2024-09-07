@@ -23,6 +23,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.MetalLBConfig
   alias CommonCore.Batteries.NotebooksConfig
   alias CommonCore.Batteries.NvidiaDevicePluginConfig
+  alias CommonCore.Batteries.OllamaConfig
   alias CommonCore.Batteries.PromtailConfig
   alias CommonCore.Batteries.RedisConfig
   alias CommonCore.Batteries.Smtp4devConfig
@@ -69,6 +70,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     metallb: MetalLBConfig,
     notebooks: NotebooksConfig,
     nvidia_device_plugin: NvidiaDevicePluginConfig,
+    ollama: OllamaConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
     stale_resource_cleaner: StaleResourceCleanerConfig,

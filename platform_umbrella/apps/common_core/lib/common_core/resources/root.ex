@@ -43,6 +43,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.NodeExporter
   alias CommonCore.Resources.Notebooks
   alias CommonCore.Resources.NvidiaDevicePlugin
+  alias CommonCore.Resources.Ollama
   alias CommonCore.Resources.Promtail
   alias CommonCore.Resources.Redis
   alias CommonCore.Resources.RedisOperator
@@ -78,6 +79,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     metallb: [MetalLB, MetalLBMonitoring, MetalLBPools],
     notebooks: [Notebooks],
     nvidia_device_plugin: [NvidiaDevicePlugin],
+    ollama: [Ollama],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],
     smtp4dev: [Smtp4Dev],

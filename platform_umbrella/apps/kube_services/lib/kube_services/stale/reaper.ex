@@ -17,9 +17,9 @@ defmodule KubeServices.Stale.Reaper do
   ]
 
   typedstruct module: State do
-    field(:waiting_count, integer(), default: 0)
-    field(:delay, integer(), default: 900_000)
-    field(:running, boolean(), default: true)
+    field :waiting_count, integer(), default: 0
+    field :delay, integer(), default: 900_000
+    field :running, boolean(), default: true
   end
 
   def start_link(opts \\ []) do
@@ -35,7 +35,11 @@ defmodule KubeServices.Stale.Reaper do
   def init(opts) do
     # queue the initial worker to run pretty soon after startup
     schedule_worker(1000)
-    {:ok, struct(State, opts)}
+
+    state = struct!(State, opts)
+
+    Logger.debug("Starting KubServices.Stale.Reaper")
+    {:ok, state}
   end
 
   @impl GenServer

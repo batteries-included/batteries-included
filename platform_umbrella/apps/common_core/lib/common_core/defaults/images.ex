@@ -162,6 +162,12 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(v0.16.2),
         default_tag: "v0.16.2"
       }),
+    ollama:
+      Image.new!(%{
+        name: "ollama/ollama",
+        tags: ~w(0.3.9),
+        default_tag: "0.3.9"
+      }),
     oauth2_proxy:
       Image.new!(%{
         name: "quay.io/oauth2-proxy/oauth2-proxy",

@@ -119,6 +119,10 @@ defmodule KubeServices.SystemState.SummaryRecent do
     GenServer.call(target, {:notebooks, limit})
   end
 
+  def model_instances(target \\ @me, limit \\ 7) do
+    GenServer.call(target, {:model_instances, limit})
+  end
+
   @spec ferret_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
           list(CommonCore.FerretDB.FerretService.t())
   def ferret_services(target \\ @me, limit \\ 7) do

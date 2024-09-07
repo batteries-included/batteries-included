@@ -184,6 +184,13 @@ defmodule CommonCore.Batteries.Catalog do
       name: "Nvidia Device Plugin",
       description: "The Nvidia Device Plugin for Kubernetes. This exposes the nvidia device details to kubernetes."
     },
+    %CatalogBattery{
+      group: :ai,
+      type: :ollama,
+      dependencies: [:battery_core],
+      name: "Ollama",
+      description: "Ollama is a tool for running LLM models in a Kubernetes cluster."
+    },
     # Monitoring
     %CatalogBattery{
       group: :monitoring,

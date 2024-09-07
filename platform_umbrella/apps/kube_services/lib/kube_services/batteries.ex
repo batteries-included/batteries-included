@@ -13,7 +13,8 @@ defmodule KubeServices.Batteries do
       KubeServices.Batteries.InstalledWatcher
     ]
 
-    Supervisor.init(children, strategy: :one_for_one)
+    res = Supervisor.init(children, strategy: :one_for_one)
+    res
   end
 
   def via(%{id: id} = _battery) do
