@@ -34,6 +34,7 @@ defmodule CommonCore.StateSummary do
     embeds_many :traditional_services, CommonCore.TraditionalServices.Service
     embeds_many :ip_address_pools, CommonCore.MetalLB.IPAddressPool
     embeds_many :projects, CommonCore.Projects.Project
+    embeds_many :model_instances, CommonCore.Ollama.ModelInstance
 
     # Fields not from the database
     embeds_one :keycloak_state, CommonCore.StateSummary.KeycloakSummary

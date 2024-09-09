@@ -282,6 +282,23 @@ defmodule ControlServer.Repo.Migrations.Unify do
       timestamps(type: :utc_datetime_usec)
     end
 
+    create table(:model_instances, primary_key: false) do
+      add :name, :string
+      add :id, :binary_id, primary_key: true
+      add :model, :string
+      add :num_instances, :integer
+
+      add :cpu_requested, :integer
+      add :cpu_limits, :bigint
+      add :memory_requested, :bigint
+      add :memory_limits, :bigint
+
+      add :gpu_count, :integer
+      add :project_id, references(:projects, on_delete: :nilify_all)
+
+      timestamps()
+    end
+
     # We generate the id from the hash.
     # They should be equally unique
     create unique_index(:documents, [:hash])

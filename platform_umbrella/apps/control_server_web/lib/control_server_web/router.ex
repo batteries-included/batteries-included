@@ -198,6 +198,15 @@ defmodule ControlServerWeb.Router do
     live "/realm/:name", Live.KeycloakRealm
   end
 
+  scope "/model_instances", ControlServerWeb do
+    pipe_through [:browser, :auth]
+
+    live "/", Live.OllamaModelInstancesIndex
+    live "/new", Live.OllamaModelInstanceNew
+    live "/:id/edit", Live.OllamaModelInstanceEdit
+    live "/:id/show", Live.OllamaModelInstanceShow
+  end
+
   scope "/history", ControlServerWeb do
     pipe_through [:browser, :auth]
 

@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Live.AIHome do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.EmptyHome
+  import ControlServerWeb.ModelInstancesTable
   import ControlServerWeb.NotebooksTable
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryRecent
@@ -16,6 +17,7 @@ defmodule ControlServerWeb.Live.AIHome do
      socket
      |> assign_batteries()
      |> assign_notebooks()
+     |> assign_model_instances()
      |> assign_catalog_group()
      |> assign_current_page()
      |> assign_page_title()}
@@ -27,6 +29,10 @@ defmodule ControlServerWeb.Live.AIHome do
 
   defp assign_notebooks(socket) do
     assign(socket, notebooks: notebooks())
+  end
+
+  defp assign_model_instances(socket) do
+    assign(socket, model_instances: model_instances())
   end
 
   defp assign_catalog_group(socket) do
@@ -56,6 +62,21 @@ defmodule ControlServerWeb.Live.AIHome do
     """
   end
 
+  defp model_instances_panel(assigns) do
+    ~H"""
+    <.panel title="Ollama Models">
+      <:menu>
+        <.flex>
+          <.button icon={:plus} link={~p"/model_instances/new"}>New Model</.button>
+          <.button variant="minimal" link={~p"/model_instances"}>View All</.button>
+        </.flex>
+      </:menu>
+
+      <.model_instances_table rows={@model_instances} abridged />
+    </.panel>
+    """
+  end
+
   defp battery_link_panel(assigns), do: ~H||
 
   defp install_path, do: ~p"/batteries/ai"
@@ -73,6 +94,8 @@ defmodule ControlServerWeb.Live.AIHome do
         <%= case battery.type do %>
           <% :notebooks -> %>
             <.notebooks_panel notebooks={@notebooks} />
+          <% :ollama -> %>
+            <.model_instances_panel model_instances={@model_instances} />
           <% _ -> %>
         <% end %>
       <% end %>

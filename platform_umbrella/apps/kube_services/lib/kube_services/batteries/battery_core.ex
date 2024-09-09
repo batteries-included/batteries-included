@@ -26,7 +26,6 @@ defmodule KubeServices.Batteries.BatteryCore do
       {KubeServices.ET.StableVersionsWorker, [home_client_pid: HomeBaseClient]},
       KubeServices.SystemState,
       KubeServices.SnapshotApply,
-      KubeServices.Stale.Reaper,
       KubeServices.ResourceDeleter
     ]
 
