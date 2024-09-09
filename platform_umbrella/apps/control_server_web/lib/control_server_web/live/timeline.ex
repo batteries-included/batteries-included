@@ -74,6 +74,22 @@ defmodule ControlServerWeb.Live.Timeline do
     """
   end
 
+  defp payload_display(%{payload: %NamedDatabase{schema_type: :model_instance}} = assigns) do
+    ~H"""
+    <.payload_container>
+      <div class="text-black font-bold">
+        Ollama Model <%= Naming.humanize(@payload.action) %>
+      </div>
+
+      <.data_list>
+        <:item title="Show Model">
+          <.link navigate={~p(/model_instances)}><%= @payload.name %></.link>
+        </:item>
+      </.data_list>
+    </.payload_container>
+    """
+  end
+
   defp payload_display(%{payload: %NamedDatabase{schema_type: :traditional_service}} = assigns) do
     ~H"""
     <.payload_container>
@@ -113,7 +129,7 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <div class="text-black font-bold">
-        Serverless <%= Naming.humanize(@payload.action) %>
+        KNative Serverless <%= Naming.humanize(@payload.action) %>
       </div>
 
       <.data_list>

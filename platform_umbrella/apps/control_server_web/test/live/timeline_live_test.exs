@@ -13,7 +13,11 @@ defmodule ControlServerWeb.Live.TimelineLiveTest do
   end
 
   defp timeline_events(_) do
-    %{timeline_events: Enum.map(0..25, fn _ -> insert(:timeline_event) end)}
+    random = Enum.map(0..5, fn _ -> insert(:timeline_event) end)
+    kube = insert(:timeline_event, type: :kube)
+    postgres = insert(:timeline_event, type: :named_database, schema_type: :postgres_cluster)
+    knative = insert(:timeline_event, type: :named_database, schema_type: :knative_service)
+    %{timeline_events: random ++ [kube, postgres, knative]}
   end
 
   describe "full timeline" do
@@ -34,7 +38,7 @@ defmodule ControlServerWeb.Live.TimelineLiveTest do
     test "contains knative", %{conn: conn} do
       conn
       |> start("/history/timeline")
-      |> assert_html("Postgres Cluster")
+      |> assert_html("KNative Serverless")
     end
   end
 end
