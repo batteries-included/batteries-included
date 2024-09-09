@@ -104,8 +104,8 @@ github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5Qvfr
 github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
 github.com/djherbis/times v1.6.0 h1:w2ctJ92J8fBvWPxugmXIv7Nz7Q3iDMKNx9v5ocVH20c=
 github.com/djherbis/times v1.6.0/go.mod h1:gOHeRAz2h+VJNZ5Gmc/o7iD9k4wW7NMVqieYCY99oc0=
-github.com/docker/docker v27.2.0+incompatible h1:Rk9nIVdfH3+Vz4cyI/uhbINhEZ/oLmc+CBXmH6fbNk4=
-github.com/docker/docker v27.2.0+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
+github.com/docker/docker v27.2.1+incompatible h1:fQdiLfW7VLscyoeYEBz7/J8soYFDZV1u6VW6gJEjNMI=
+github.com/docker/docker v27.2.1+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
 github.com/docker/go-connections v0.5.0 h1:USnMq7hx7gwdVZq1L49hLXaFtUdTADjXGp+uj1Br63c=
 github.com/docker/go-connections v0.5.0/go.mod h1:ov60Kzw0kKElRwhNs9UlUHAE/F9Fe6GLaXnqyDdmEXc=
 github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
@@ -324,12 +324,12 @@ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
 github.com/pulumi/esc v0.9.1 h1:HH5eEv8sgyxSpY5a8yePyqFXzA8cvBvapfH8457+mIs=
 github.com/pulumi/esc v0.9.1/go.mod h1:oEJ6bOsjYlQUpjf70GiX+CXn3VBmpwFDxUTlmtUN84c=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.50.1 h1:tqXiIp9Yd28H7Tgde21krtjzK/X1eiaPQSA7zVoqTgs=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.50.1/go.mod h1:MbVrtrXoEWKHMqzgorSE/m/rXuvRlsv4IWKR/vT360E=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.51.0 h1:4/ATQQYHzhmyRgCss3bS/M7PBHb9RAuwpJGll9g3EpQ=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.51.0/go.mod h1:5X/YZhpgvA84qHn6XNT/rUJCwin4rTpDPqLzcjGr7bc=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.5 h1:51goqPIFUl7jr4l2xSTik8ErlSC3Q/fV/PsjAt4beKQ=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.5/go.mod h1:W2rBMB7ndXQHm6i8/eO2bnI7eqnUcJo8jnc6/ZyX68E=
-github.com/pulumi/pulumi-tls/sdk/v5 v5.0.4 h1:1XE7RNp2B5+9jKfvUbHWZD/mkxcpNvi5vagnmASaZnk=
-github.com/pulumi/pulumi-tls/sdk/v5 v5.0.4/go.mod h1:6f5sQywnRuIvVTeSffP+4psnUVouZ9lwHZqR3EuOZ78=
+github.com/pulumi/pulumi-tls/sdk/v5 v5.0.5 h1:oTH28fg/0lxWhyEywoMU73CTpY1DivRfs1Ti62VXDtI=
+github.com/pulumi/pulumi-tls/sdk/v5 v5.0.5/go.mod h1:WOSu97hhTHfh9545L2Ho+HPA7BMprwwWOScwJ0AAYOA=
 github.com/pulumi/pulumi/sdk/v3 v3.131.0 h1:w6+XFt4ajz7ZEoCBFo+oMmrQ4DYYBKtzuj/zBe/uyoo=
 github.com/pulumi/pulumi/sdk/v3 v3.131.0/go.mod h1:J5kQEX8v87aeUhk6NdQXnjCo1DbiOnOiL3Sf2DuDda8=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
