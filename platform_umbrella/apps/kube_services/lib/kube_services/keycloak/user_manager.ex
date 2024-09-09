@@ -64,6 +64,10 @@ defmodule KubeServices.Keycloak.UserManager do
     Enum.find(roles, fn role -> role.name == "realm-admin" end)
   end
 
+  defp find_admin_role(roles) do
+    Enum.find(roles, fn role -> role.name == "admin" end)
+  end
+
   @spec add_realm_admin_role(String.t(), String.t()) :: [map()]
   defp add_realm_admin_role(role_id, client_id) do
     [
@@ -76,6 +80,38 @@ defmodule KubeServices.Keycloak.UserManager do
         "containerId" => client_id
       }
     ]
+  end
+
+  defp add_admin_role(role_id) do
+    [
+      %{
+        "id" => role_id,
+        "name" => "admin",
+        "description" => "Admin",
+        "composite" => true,
+        "clientRole" => false
+      }
+    ]
+  end
+
+  def handle_call({:make_realm_admin, realm, user_id}, _from, state) when realm == "master" do
+    # When the realm is master we have a special process
+    #
+    # Add the realm role "admin" role to the user
+    with {:ok, roles} <- AdminClient.roles(realm),
+         %{} = role <- find_admin_role(roles),
+         payload = add_admin_role(role.id),
+         {:ok, _success} <- AdminClient.add_roles(realm, user_id, payload) do
+      {:reply, :ok, state}
+    else
+      {:error, res} ->
+        Logger.warning("Unable to make user realm admin: #{inspect(res)}")
+        {:reply, {:error, res}, state}
+
+      res ->
+        Logger.warning("Unable to make user realm admin unkown error: #{inspect(res)}")
+        {:reply, {:error, res}, state}
+    end
   end
 
   def handle_call({:make_realm_admin, realm, user_id}, _from, state) do

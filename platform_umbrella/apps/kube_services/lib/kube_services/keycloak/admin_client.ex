@@ -215,6 +215,12 @@ defmodule KubeServices.Keycloak.AdminClient do
     GenServer.call(target, {:add_client_roles, realm_name, user_id, client_id, roles_payload})
   end
 
+  @spec add_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary(), list()) ::
+          {:ok, any()} | {:error, any()}
+  def add_roles(target \\ @me, realm_name, user_id, roles_payload) do
+    GenServer.call(target, {:add_roles, realm_name, user_id, roles_payload})
+  end
+
   #
   # Genserver Implementation
   #
@@ -317,6 +323,12 @@ defmodule KubeServices.Keycloak.AdminClient do
     |> to_result(&GroupRepresentation.new!/1)
   end
 
+  defp run({:roles, realm_name}, client) do
+    client
+    |> get("/admin/realms/#{realm_name}/roles")
+    |> to_result(&RoleRepresentation.new!/1)
+  end
+
   defp run({:client_roles, realm_name, client_id}, client) do
     client
     |> get("/admin/realms/#{realm_name}/clients/#{client_id}/roles")
@@ -326,6 +338,12 @@ defmodule KubeServices.Keycloak.AdminClient do
   defp run({:add_client_roles, realm_name, user_id, client_id, role}, client) do
     client
     |> post("/admin/realms/#{realm_name}/users/#{user_id}/role-mappings/clients/#{client_id}", role)
+    |> to_result(nil)
+  end
+
+  defp run({:add_roles, realm_name, user_id, role}, client) do
+    client
+    |> post("/admin/realms/#{realm_name}/users/#{user_id}/role-mappings/realm", role)
     |> to_result(nil)
   end
 
