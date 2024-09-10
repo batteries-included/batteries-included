@@ -3,6 +3,8 @@ defmodule ControlServerWeb.Router do
 
   import Phoenix.LiveDashboard.Router
 
+  require CommonCore.Env
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -236,7 +238,7 @@ defmodule ControlServerWeb.Router do
     resources "/notebooks/jupyter_lab_notebooks", JupyterLabNotebookController, except: [:new, :edit]
   end
 
-  if Enum.member?([:dev, :test], Mix.env()) do
+  if CommonCore.Env.dev_env?() do
     # Enables LiveDashboard only for development
     scope "/dev" do
       pipe_through :browser
