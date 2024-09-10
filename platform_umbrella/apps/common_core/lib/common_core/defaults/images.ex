@@ -8,8 +8,8 @@ defmodule CommonCore.Defaults.Images do
   @cert_manager_allowed_tags ~w(v1.15.1)
   @cert_manager_default_tag "v1.15.1"
 
-  @knative_allowed_tags ~w(v1.15.1 v1.15.2)
-  @knative_default_tag "v1.15.2"
+  @knative_allowed_tags ~w(v1.15.1 v1.15.2 v1.15.3)
+  @knative_default_tag "v1.15.3"
 
   @knative_istio_allowed_tags ~w(v1.15.1)
   @knative_istio_default_tag "v1.15.1"
@@ -24,8 +24,8 @@ defmodule CommonCore.Defaults.Images do
     aws_load_balancer_controller:
       Image.new!(%{
         name: "public.ecr.aws/eks/aws-load-balancer-controller",
-        tags: ~w(v2.8.1),
-        default_tag: "v2.8.1"
+        tags: ~w(v2.8.1 v2.8.2),
+        default_tag: "v2.8.2"
       }),
     cert_manager_acmesolver:
       Image.new!(%{
@@ -60,14 +60,14 @@ defmodule CommonCore.Defaults.Images do
     cloudnative_pg:
       Image.new!(%{
         name: "ghcr.io/cloudnative-pg/cloudnative-pg",
-        tags: ~w(1.23.2),
-        default_tag: "1.23.2"
+        tags: ~w(1.23.2 1.24.0),
+        default_tag: "1.24.0"
       }),
     ferretdb:
       Image.new!(%{
         name: "ghcr.io/ferretdb/ferretdb",
-        tags: ~w(1.23.0),
-        default_tag: "1.23.0"
+        tags: ~w(1.23.0 1.24.0),
+        default_tag: "1.24.0"
       }),
     forgejo:
       Image.new!(%{
@@ -78,20 +78,20 @@ defmodule CommonCore.Defaults.Images do
     grafana:
       Image.new!(%{
         name: "grafana/grafana",
-        tags: ~w(10.4.5),
-        default_tag: "10.4.5"
+        tags: ~w(10.4.5 11.2.0),
+        default_tag: "11.2.0"
       }),
     istio_pilot:
       Image.new!(%{
         name: "docker.io/istio/pilot",
-        tags: ~w(1.22.3-distroless),
-        default_tag: "1.22.3-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless),
+        default_tag: "1.23.1-distroless"
       }),
     istio_proxy:
       Image.new!(%{
         name: "docker.io/istio/proxyv2",
-        tags: ~w(1.22.3-distroless),
-        default_tag: "1.22.3-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless),
+        default_tag: "1.23.1-distroless"
       }),
     karpenter:
       Image.new!(%{
@@ -126,8 +126,8 @@ defmodule CommonCore.Defaults.Images do
     loki:
       Image.new!(%{
         name: "grafana/loki",
-        tags: ~w(2.9.8),
-        default_tag: "2.9.8"
+        tags: ~w(2.9.8 2.9.10),
+        default_tag: "2.9.10"
       }),
     metallb_controller:
       Image.new!(%{
@@ -150,14 +150,14 @@ defmodule CommonCore.Defaults.Images do
     metrics_server:
       Image.new!(%{
         name: "registry.k8s.io/metrics-server/metrics-server",
-        tags: ~w(v0.7.1),
-        default_tag: "v0.7.1"
+        tags: ~w(v0.7.1 v0.7.2),
+        default_tag: "v0.7.2"
       }),
     node_exporter:
       Image.new!(%{
         name: "quay.io/prometheus/node-exporter",
-        tags: ~w(v1.8.1),
-        default_tag: "v1.8.1"
+        tags: ~w(v1.8.1 v1.8.2),
+        default_tag: "v1.8.2"
       }),
     nvidia_device_plugin:
       Image.new!(%{
@@ -168,8 +168,8 @@ defmodule CommonCore.Defaults.Images do
     ollama:
       Image.new!(%{
         name: "ollama/ollama",
-        tags: ~w(0.3.9),
-        default_tag: "0.3.9"
+        tags: ~w(0.3.9 0.3.10),
+        default_tag: "0.3.10"
       }),
     oauth2_proxy:
       Image.new!(%{
@@ -204,8 +204,8 @@ defmodule CommonCore.Defaults.Images do
     smtp4dev:
       Image.new!(%{
         name: "rnwood/smtp4dev",
-        tags: ~w(3.1.4),
-        default_tag: "3.1.4"
+        tags: ~w(3.1.4 3.5.1),
+        default_tag: "3.5.1"
       }),
     trivy_operator:
       Image.new!(%{
@@ -228,7 +228,7 @@ defmodule CommonCore.Defaults.Images do
     trust_manager:
       Image.new!(%{
         name: "quay.io/jetstack/trust-manager",
-        tags: ~w(v0.11.0),
+        tags: ~w(v0.11.0 v0.12.0),
         default_tag: "v0.11.0"
       }),
     trust_manager_init:
@@ -240,8 +240,8 @@ defmodule CommonCore.Defaults.Images do
     vm_operator:
       Image.new!(%{
         name: "victoriametrics/operator",
-        tags: ~w(v0.44.0),
-        default_tag: "v0.44.0"
+        tags: ~w(v0.44.0 v0.47.3),
+        default_tag: "v0.47.3"
       }),
     knative_serving_activator:
       Image.new!(%{
