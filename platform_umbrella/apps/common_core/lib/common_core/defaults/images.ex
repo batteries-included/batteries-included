@@ -8,8 +8,11 @@ defmodule CommonCore.Defaults.Images do
   @cert_manager_allowed_tags ~w(v1.15.1)
   @cert_manager_default_tag "v1.15.1"
 
-  @knative_allowed_tags ~w(v1.15.1)
-  @knative_default_tag "v1.15.1"
+  @knative_allowed_tags ~w(v1.15.1 v1.15.2)
+  @knative_default_tag "v1.15.2"
+
+  @knative_istio_allowed_tags ~w(v1.15.1)
+  @knative_istio_default_tag "v1.15.1"
 
   @registry %{
     addon_resizer:
@@ -273,14 +276,14 @@ defmodule CommonCore.Defaults.Images do
     knative_istio_controller:
       Image.new!(%{
         name: "gcr.io/knative-releases/knative.dev/net-istio/cmd/controller",
-        tags: @knative_allowed_tags,
-        default_tag: @knative_default_tag
+        tags: @knative_istio_allowed_tags,
+        default_tag: @knative_istio_default_tag
       }),
     knative_istio_webhook:
       Image.new!(%{
         name: "gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook",
-        tags: @knative_allowed_tags,
-        default_tag: @knative_default_tag
+        tags: @knative_istio_allowed_tags,
+        default_tag: @knative_istio_default_tag
       }),
     __schema_test:
       Image.new!(%{
