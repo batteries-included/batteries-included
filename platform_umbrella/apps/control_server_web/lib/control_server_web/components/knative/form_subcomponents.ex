@@ -2,7 +2,7 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import KubeServices.SystemState.SummaryHosts
+  import KubeServices.SystemState.SummaryURLs
 
   alias Ecto.Changeset
   alias Phoenix.HTML.Form
@@ -26,7 +26,5 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
     """
   end
 
-  defp potential_url(%Form{} = form) do
-    "http://#{knative_host(Changeset.apply_changes(form.source))}"
-  end
+  defp potential_url(%Form{} = form), do: knative_service_url(Changeset.apply_changes(form.source))
 end

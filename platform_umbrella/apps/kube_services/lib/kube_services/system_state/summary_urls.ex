@@ -91,6 +91,15 @@ defmodule KubeServices.SystemState.SummaryURLs do
     {:reply, url, state}
   end
 
+  def handle_call({:knative_service_url, %{} = service}, _from, %{summary: summary} = state) do
+    url =
+      summary
+      |> URLs.knative_url(service)
+      |> URI.to_string()
+
+    {:reply, url, state}
+  end
+
   def handle_call([method | args], _from, %{summary: summary} = state) do
     {:reply, apply(URLs, method, [summary | args]), state}
   end
@@ -123,5 +132,9 @@ defmodule KubeServices.SystemState.SummaryURLs do
 
   def pod_dashboard_url(target \\ @me, pod_resource) do
     GenServer.call(target, {:pod_dashboard_url, pod_resource})
+  end
+
+  def knative_service_url(target \\ @me, service) do
+    GenServer.call(target, {:knative_service_url, service})
   end
 end

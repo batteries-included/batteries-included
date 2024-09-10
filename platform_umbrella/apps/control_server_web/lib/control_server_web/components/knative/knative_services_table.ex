@@ -2,7 +2,7 @@ defmodule ControlServerWeb.KnativeServicesTable do
   @moduledoc false
   use ControlServerWeb, :html
 
-  import KubeServices.SystemState.SummaryHosts
+  import KubeServices.SystemState.SummaryURLs
 
   alias CommonCore.Knative.Service
 
@@ -58,5 +58,5 @@ defmodule ControlServerWeb.KnativeServicesTable do
 
   defp show_url(%Service{} = service), do: ~p"/knative/services/#{service.id}/show"
   defp edit_url(%Service{} = service), do: ~p"/knative/services/#{service.id}/edit"
-  defp service_url(%Service{} = service), do: "http://#{knative_host(service)}"
+  defp service_url(%Service{} = service), do: knative_service_url(service)
 end
