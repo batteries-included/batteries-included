@@ -39,6 +39,7 @@ ARG LANGUAGE=en_US:en
 FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS os-deps
 
 ARG LANG
+ARG LANGUAGE
 
 RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt \
@@ -61,22 +62,26 @@ RUN --mount=type=cache,target=/var/cache/apt \
   pkg-config \
   software-properties-common \
   unzip \
-  wget \
-  && locale-gen $LANG
+  wget && \
+  apt clean
+
+# Set the locale
+RUN sed -i '/${LANG}/s/^# //g' /etc/locale.gen && locale-gen ${LANG} && \
+  localedef -i en_US -f UTF-8 ${LANG} && \
+  update-locale LANG=${LANG} LC_ALL=${LANG}
+
+ENV LANGUAGE=${LANGUAGE} \
+  LANG=$LANG \
+  LC_ALL=$LANG
 
 ##########################################################################
 # Fetch app library dependencies
 
 FROM os-deps AS deps
 
-ARG LANG
-ARG LANGUAGE
 ARG MIX_ENV
 
-ENV MIX_ENV=${MIX_ENV} \
-  LANGUAGE=${LANGUAGE} \
-  LANG=$LANG \
-  LC_ALL=$LANG
+ENV MIX_ENV=${MIX_ENV}
 
 WORKDIR /source
 
@@ -106,14 +111,6 @@ RUN mix "do" local.hex --force, local.rebar --force && \
 ## for the control server docker
 FROM deps AS control-deps
 
-ARG LANG
-ARG LANGUAGE
-ARG MIX_ENV
-
-ENV LANGUAGE=$LANGUAGE \
-  LANG=$LANG \
-  LC_ALL=$LANG
-
 COPY platform_umbrella/apps/control_server_web/assets/package.json /source/platform_umbrella//apps/control_server_web/assets/package.json
 COPY platform_umbrella/apps/control_server_web/assets/package-lock.json /source/platform_umbrella//apps/control_server_web/assets/package-lock.json
 
@@ -126,14 +123,9 @@ RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 
 FROM control-deps AS control-assets
 
-ARG LANG
-ARG LANGUAGE
 ARG MIX_ENV
 
-ENV MIX_ENV=${MIX_ENV} \
-  LANGUAGE=$LANGUAGE \
-  LANG=$LANG \
-  LC_ALL=$LANG
+ENV MIX_ENV=${MIX_ENV}
 
 WORKDIR /source
 
@@ -163,14 +155,9 @@ RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
 
 FROM home-base-deps AS home-base-assets
 
-ARG LANG
-ARG LANGUAGE
 ARG MIX_ENV
 
-ENV MIX_ENV=${MIX_ENV} \
-  LANGUAGE=$LANGUAGE \
-  LANG=$LANG \
-  LC_ALL=$LANG
+ENV MIX_ENV=${MIX_ENV}
 
 WORKDIR /source
 
@@ -187,15 +174,10 @@ RUN cd platform_umbrella && \
 
 FROM deps AS release
 
-ARG LANG
-ARG LANGUAGE
 ARG MIX_ENV
 ARG RELEASE
 
 ENV MIX_ENV=${MIX_ENV} \
-  LANGUAGE=$LANGUAGE \
-  LANG=$LANG \
-  LC_ALL=$LANG\
   # Before compiling add the bix binary to the path.
   # It is used in the build process for version info.
   PATH="$PATH:/source/bin"
@@ -226,10 +208,7 @@ ARG MIX_ENV
 ARG RELEASE
 
 # Set environment vars used by the app
-ENV LANG=$LANG \
-  LC_ALL=$LANG \
-  LANGUAGE=$LANGUAGE \
-  HOME=$APP_DIR \
+ENV HOME=$APP_DIR \
   RELEASE_TMP="/run/$APP_NAME" \
   MIX_ENV=${MIX_ENV} \
   RELEASE=${RELEASE} \
@@ -242,7 +221,14 @@ RUN apt update && \
   apt clean
 
 # Set the locale
-RUN sed -i '/${LANG}}/s/^# //g' /etc/locale.gen && locale-gen
+RUN sed -i '/${LANG}/s/^# //g' /etc/locale.gen && locale-gen ${LANG} && \
+  localedef -i en_US -f UTF-8 ${LANG} && \
+  update-locale LANG=${LANG} LC_ALL=${LANG}
+
+ENV LANGUAGE=${LANGUAGE} \
+  LANG=$LANG \
+  LC_ALL=$LANG
+
 
 # Create user and group to run under with specific uid
 RUN groupadd --gid 10001 --system "$APP_GROUP" && \
