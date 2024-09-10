@@ -12,7 +12,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.PodsTable
-  import KubeServices.SystemState.SummaryHosts
+  import KubeServices.SystemState.SummaryURLs
 
   alias CommonCore.Resources.OwnerReference
   alias ControlServer.Knative
@@ -119,7 +119,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
   defp env_vars_url(service), do: ~p"/knative/services/#{service}/env_vars"
 
   defp edit_versions_url(service), do: ~p"/knative/services/#{service}/edit_versions"
-  defp service_url(service), do: "http://#{knative_host(service)}"
+  defp service_url(service), do: knative_service_url(service)
 
   defp traffic(service) do
     get_in(service, ~w(status traffic)) || []
