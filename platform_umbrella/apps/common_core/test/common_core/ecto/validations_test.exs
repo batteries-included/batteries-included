@@ -16,11 +16,12 @@ defmodule CommonCore.Ecto.ValidationsTest do
       field :foo, :string
       field :name, :string
       field :age, :integer
+      field :bar, {:array, :string}
     end
 
     def changeset(foo, params) do
       foo
-      |> cast(params, [:foo, :name, :age])
+      |> cast(params, [:foo, :name, :age, :bar])
       |> validate_length(:name, min: 2)
     end
   end
@@ -96,6 +97,34 @@ defmodule CommonCore.Ecto.ValidationsTest do
                %{"foo" => %{name: "J"}},
                %{"foo" => &FooStruct.changeset(%FooStruct{}, &1)}
              )
+    end
+  end
+
+  describe "add_item_to_list/3" do
+    test "should add empty item to list" do
+      changeset = FooStruct.changeset(%FooStruct{}, %{bar: []})
+
+      assert Validations.add_item_to_list(changeset, :bar).changes == %{bar: [""]}
+    end
+
+    test "should add item to list" do
+      changeset = FooStruct.changeset(%FooStruct{}, %{bar: []})
+
+      assert Validations.add_item_to_list(changeset, :bar, "test").changes == %{bar: ["test"]}
+    end
+  end
+
+  describe "remove_item_from_list/3" do
+    test "should remove item from list" do
+      changeset = FooStruct.changeset(%FooStruct{}, %{bar: ["test1", "test2"]})
+
+      assert Validations.remove_item_from_list(changeset, :bar, 0).changes == %{bar: ["test2"]}
+    end
+
+    test "should remove last item from list" do
+      changeset = FooStruct.changeset(%FooStruct{}, %{bar: ["test"]})
+
+      assert Validations.remove_item_from_list(changeset, :bar, "0").changes == %{bar: []}
     end
   end
 end

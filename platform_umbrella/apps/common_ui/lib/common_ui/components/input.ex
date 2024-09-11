@@ -411,7 +411,7 @@ defmodule CommonUI.Components.Input do
 
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <div class="flex items-center justify-between mb-2">
+      <div :if={@label || @label_note} class="flex items-center justify-between mb-2">
         <.label id={@id} label={@label} help={@help} class="mb-0" />
 
         <div :if={@label_note} class="font-medium text-sm text-gray-light dark:text-gray-dark">
@@ -426,10 +426,7 @@ defmodule CommonUI.Components.Input do
           value={normalize_value(@type, @value)}
           placeholder={@placeholder}
           phx-debounce={@debounce}
-          class={[
-            input_class(@errors),
-            @class
-          ]}
+          class={[input_class(@errors), @class]}
           {@rest}
         />
 

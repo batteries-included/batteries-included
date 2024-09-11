@@ -450,7 +450,7 @@ defmodule CommonCore.Ecto.Schema do
   # Casts the given map to a changeset for the given base struct.
   #
   # Handles casting embedded schemas separately from regular fields.
-  def schema_changeset(base, opts) do
+  def schema_changeset(base, params, opts \\ []) do
     struct = base.__struct__
 
     embeds = struct.__schema__(:embeds)
@@ -458,9 +458,10 @@ defmodule CommonCore.Ecto.Schema do
     virtual_fields = struct.__schema__(:virtual_fields)
 
     to_cast = Enum.concat(fields, virtual_fields) -- embeds
+    cast_opts = Keyword.get(opts, :cast_opts, [])
 
     base
-    |> Ecto.Changeset.cast(sanitize_opts(opts), to_cast)
+    |> Ecto.Changeset.cast(sanitize_opts(params), to_cast, cast_opts)
     |> add_embeds(struct)
     |> add_polymorphic_fields(struct)
     |> add_defaultable_fields(struct)

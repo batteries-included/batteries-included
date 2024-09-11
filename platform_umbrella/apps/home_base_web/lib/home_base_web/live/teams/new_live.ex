@@ -92,46 +92,25 @@ defmodule HomeBaseWeb.TeamsNewLive do
         </.panel>
 
         <.panel title="Invite Members">
-          <div class="flex flex-col gap-3">
-            <.inputs_for :let={f} field={@form[:roles]}>
-              <input type="hidden" name="team[sort_roles][]" value={f.index} />
-
-              <div class="flex items-center justify-between gap-6">
-                <div class="flex-1">
-                  <.input
-                    field={f[:invited_email]}
-                    placeholder="Enter an email address"
-                    autocomplete="off"
-                  />
-                </div>
-
-                <.input field={f[:is_admin]} type="checkbox" label="Admin" />
-
-                <.button
-                  variant="minimal"
-                  icon={:x_mark}
-                  name="team[drop_roles][]"
-                  value={f.index}
-                  phx-click={JS.dispatch("change")}
+          <.input_list
+            :let={field}
+            field={@form[:roles]}
+            sort_param="sort_roles"
+            drop_param="drop_roles"
+            add_label="Invite another member"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex-1">
+                <.input
+                  field={field[:invited_email]}
+                  placeholder="Enter an email address"
+                  autocomplete="off"
                 />
               </div>
-            </.inputs_for>
-          </div>
 
-          <input type="hidden" name="team[drop_roles][]" />
-
-          <.button
-            variant="minimal"
-            icon={:plus}
-            class="mt-4"
-            name="team[sort_roles][]"
-            value="new"
-            phx-click={JS.dispatch("change")}
-          >
-            Invite another member
-          </.button>
-
-          <%= if assigns[:inner_block], do: render_slot(@inner_block) %>
+              <.input field={field[:is_admin]} type="checkbox" label="Admin" />
+            </div>
+          </.input_list>
         </.panel>
       </.grid>
     </.form>

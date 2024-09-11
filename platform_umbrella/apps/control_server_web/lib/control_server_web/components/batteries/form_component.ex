@@ -196,7 +196,11 @@ defmodule ControlServerWeb.BatteriesFormComponent do
           back_link={~p"/batteries/#{@catalog_battery.group}"}
         >
           <:menu :if={@action == :edit}>
-            <.badge minimal label="ACTIVE" class="bg-green-500 text-white" />
+            <.badge
+              minimal
+              label="ACTIVE"
+              class="bg-green-500 dark:bg-green-500 text-white dark:text-white"
+            />
           </:menu>
 
           <div class="flex items-center gap-8">

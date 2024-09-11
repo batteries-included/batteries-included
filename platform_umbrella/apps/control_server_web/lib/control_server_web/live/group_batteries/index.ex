@@ -37,7 +37,11 @@ defmodule ControlServerWeb.Live.GroupBatteriesIndex do
         <:menu>
           <%= if system_battery = Map.get(@system_batteries, battery.type) do %>
             <div class="flex items-center justify-between flex-1">
-              <.badge minimal label="ACTIVE" class="bg-green-500 text-white" />
+              <.badge
+                minimal
+                label="ACTIVE"
+                class="bg-green-500 dark:bg-green-500 text-white dark:text-white"
+              />
 
               <.button
                 link={~p"/batteries/#{system_battery.group}/edit/#{system_battery.id}"}

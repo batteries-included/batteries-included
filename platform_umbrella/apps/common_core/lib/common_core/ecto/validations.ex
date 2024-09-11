@@ -238,4 +238,33 @@ defmodule CommonCore.Ecto.Validations do
     |> Enum.filter(fn {_, {status, _}} -> status != :ok end)
     |> Enum.empty?()
   end
+
+  @doc """
+  Adds a new item to an array field in a changeset. If no item
+  is specified, an empty string is added. This should be used
+  in conjunction with `CommonUI.Components.InputList`.
+  """
+  def add_item_to_list(changeset, name, item \\ "") do
+    items = get_field(changeset, name) || []
+
+    put_change(changeset, name, items ++ [item])
+  end
+
+  @doc """
+  Removes an item at a specified index from an array field in
+  a changeset. This should be used in conjunction with
+  `CommonUI.Components.InputList`.
+  """
+  def remove_item_from_list(changeset, name, index) when is_binary(index) do
+    remove_item_from_list(changeset, name, String.to_integer(index))
+  end
+
+  def remove_item_from_list(changeset, name, index) do
+    items =
+      changeset
+      |> get_field(name)
+      |> List.delete_at(index)
+
+    put_change(changeset, name, items)
+  end
 end
