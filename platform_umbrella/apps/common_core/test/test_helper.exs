@@ -1,5 +1,5 @@
-Application.ensure_all_started(:mox)
-Mox.defmock(CommonCore.Keycloak.TeslaMock, for: Tesla.Adapter)
-Mox.defmock(CommonCore.JWK.LoaderMock, for: CommonCore.JWK.Loader)
+{:ok, _} = Application.ensure_all_started(:mox)
+{:ok, _} = Application.ensure_all_started(:ex_machina)
+
 ExUnit.configure(formatters: [JUnitFormatter, ExUnit.CLIFormatter])
 ExUnit.start()
