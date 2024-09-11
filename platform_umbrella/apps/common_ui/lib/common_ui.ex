@@ -38,6 +38,7 @@ defmodule CommonUI do
       import CommonUI.Components.Form
       import CommonUI.Components.Icon
       import CommonUI.Components.Input
+      import CommonUI.Components.InputList
       import CommonUI.Components.Link
       import CommonUI.Components.Loader
       import CommonUI.Components.Logo
