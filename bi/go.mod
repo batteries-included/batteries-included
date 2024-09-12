@@ -15,10 +15,10 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.22.0
 	github.com/noisysockets/noisysockets v0.27.4
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.51.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.51.1
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.6
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.5
-	github.com/pulumi/pulumi/sdk/v3 v3.131.0
+	github.com/pulumi/pulumi/sdk/v3 v3.132.0
 	github.com/samber/slog-multi v1.2.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
@@ -28,10 +28,10 @@ require (
 	golang.org/x/sync v0.8.0
 	golang.org/x/term v0.24.0
 	gopkg.in/ini.v1 v1.67.0
-	k8s.io/api v0.31.0
-	k8s.io/apiextensions-apiserver v0.31.0
-	k8s.io/apimachinery v0.31.0
-	k8s.io/client-go v0.31.0
+	k8s.io/api v0.31.1
+	k8s.io/apiextensions-apiserver v0.31.1
+	k8s.io/apimachinery v0.31.1
+	k8s.io/client-go v0.31.1
 	sigs.k8s.io/kind v0.24.0
 )
 
