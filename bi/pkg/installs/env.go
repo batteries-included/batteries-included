@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"bi/pkg/specs"
 
@@ -54,7 +55,7 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		dockerDesktop := kind.IsDockerDesktop(ctx)
 		podman := kind.IsPodmanAvailable()
 
-		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman)
+		gatewayEnabled := needsLocalGateway && (dockerDesktop || (runtime.GOOS != "linux" && podman))
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)

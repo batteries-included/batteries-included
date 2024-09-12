@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"runtime"
 )
 
 func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.KubeClient, slug string) error {
@@ -49,7 +50,10 @@ func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.Ku
 		return nil
 	}
 
-	if kind.IsDockerDesktop(ctx) || kind.IsPodmanAvailable() {
+	dockerDesktop := kind.IsDockerDesktop(ctx)
+	podman := kind.IsPodmanAvailable()
+
+	if dockerDesktop || (runtime.GOOS != "linux" && podman) {
 		fmt.Printf(
 			`Because you are using Docker Desktop or Podman on OSX, to access services 
 running inside the cluster, you will need to use a Wireguard VPN. To obtain the 
