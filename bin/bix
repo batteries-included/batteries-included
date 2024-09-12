@@ -78,6 +78,7 @@ Available commands:
 - set-version       Change the version of the project in mix.exs and bin/bix
 
 **Go Commands**
+- bi                Run the bi binary
 - go-build-bi       Build the bi binary
 - go-test           Run go tests
 - go-test-int       Run go integration tests
@@ -595,6 +596,13 @@ do_ensure_bi() {
     fi
 }
 
+do_bi() {
+    local args=("$@")
+    local bin_path
+    log "Running bi with args: ${args[*]}"
+    run_bi "${args[@]}"
+}
+
 parse_params() {
     while :; do
         case "${1-}" in
@@ -652,6 +660,9 @@ dev)
     ;;
 phx-server)
     do_phx_server
+    ;;
+bi)
+    do_bi "${args[@]}"
     ;;
 go-update-deps)
     do_go_update_deps
