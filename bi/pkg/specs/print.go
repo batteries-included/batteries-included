@@ -54,10 +54,7 @@ func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.Ku
 		return err
 	}
 
-	podman, err := kind.IsPodmanAvailable()
-	if err != nil {
-		return err
-	}
+	podman, _ := kind.IsPodmanAvailable()
 
 	if dockerDesktop || podman {
 		fmt.Printf(
