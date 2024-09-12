@@ -109,7 +109,8 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
 
   defp scrub_client(client, _fields) when is_nil(client), do: nil
 
-  defp scrub_client(client, fields) do
-    Map.take(client, fields)
-  end
+  defp scrub_client(client, fields), do: client |> Map.take(fields) |> Map.new(fn f -> normalize_field(f) end)
+
+  defp normalize_field({key, val}) when is_list(val), do: {key, Enum.sort(val)}
+  defp normalize_field({_key, _val} = field), do: field
 end
