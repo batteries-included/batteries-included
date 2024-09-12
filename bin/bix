@@ -359,7 +359,7 @@ do_check_fmt() {
 }
 
 do_gen_static_specs() {
-    rm -rf "${ROOT_DIR}/bootstrap"
+    rm -rf "${ROOT_DIR}/bootstrap/*.{spec,install}.json"
     # VERSION_OVERRIDE generates different bytecode for
     # the current version. We don't want that to be left
     # around for developers. It makes tests fail.
