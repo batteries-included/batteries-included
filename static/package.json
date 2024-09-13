@@ -40,7 +40,7 @@
     "unpic": "^3.18.0"
   },
   "devDependencies": {
-    "@astrojs/mdx": "^3.1.5",
+    "@astrojs/mdx": "^3.1.6",
     "@astrojs/partytown": "^2.1.2",
     "@fontsource-variable/inter": "^5.1.0",
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
