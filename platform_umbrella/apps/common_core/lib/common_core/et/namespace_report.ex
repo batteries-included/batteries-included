@@ -21,4 +21,12 @@ defmodule CommonCore.ET.NamespaceReport do
   def new(opts) do
     Schema.schema_new(__MODULE__, opts)
   end
+
+  def total_battery_pods(%__MODULE__{pod_counts: pod_counts}) do
+    Enum.reduce(pod_counts, 0, fn {namespace, count}, acc ->
+      if String.starts_with?(namespace, "battery-"), do: acc + count, else: acc
+    end)
+  end
+
+  def total_battery_pods(_), do: 0
 end

@@ -105,4 +105,19 @@ defmodule HomeBaseWeb.Router do
       get "/status", InstallationStatusContoller, :show
     end
   end
+
+  scope "/admin/", HomeBaseWeb do
+    pipe_through [:browser, :app_layout, :require_authenticated_user]
+
+    # TODO: Change this to ensure_admin_team_user
+    live_session :admin, layout: @app_layout, on_mount: [@ensure_authenticated_user] do
+      live "/teams", Live.Admin.TeamsIndex, :index
+      live "/teams/:id", Live.Admin.TeamsShow, :show
+
+      live "/installations", Live.Admin.InstallationsIndex, :index
+      live "/installations/:id", Live.Admin.InstallationsShow, :show
+      live "/users", Live.Admin.UsersIndex, :index
+      live "/users/:id", Live.Admin.UsersShow, :show
+    end
+  end
 end

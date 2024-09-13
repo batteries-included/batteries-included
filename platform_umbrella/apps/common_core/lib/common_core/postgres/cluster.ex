@@ -9,7 +9,7 @@ defmodule CommonCore.Postgres.Cluster do
 
   @derive {
     Flop.Schema,
-    filterable: [:name], sortable: [:id, :name, :type, :num_instances, :users, :storage_size]
+    filterable: [:name, :num_instances], sortable: [:id, :name, :type, :num_instances, :users, :storage_size]
   }
 
   @presets [

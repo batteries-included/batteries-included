@@ -4,6 +4,11 @@ defmodule HomeBase.ET.StoredUsageReport do
 
   @required_fields ~w(report installation_id)a
 
+  @derive {
+    Flop.Schema,
+    filterable: [:id], sortable: [:id, :inserted_at]
+  }
+
   batt_schema "stored_usage_reports" do
     # Every usage report belongs to a single installation
     # That installation reported how many pods were used

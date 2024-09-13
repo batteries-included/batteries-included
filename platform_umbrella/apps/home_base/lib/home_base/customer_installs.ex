@@ -36,7 +36,9 @@ defmodule HomeBase.CustomerInstalls do
   end
 
   @doc """
-  Gets a single installation.
+  Gets a single installation. This is not scoped to a
+  user or team, you should use those functions instead unless it's
+  in the admin context.
 
   Raises `Ecto.NoResultsError` if the Installation does not exist.
 
@@ -49,7 +51,11 @@ defmodule HomeBase.CustomerInstalls do
       ** (Ecto.NoResultsError)
 
   """
-  def get_installation!(id), do: Repo.get!(Installation, id)
+  def get_installation!(id) do
+    Installation
+    |> preload([:team, :user])
+    |> Repo.get!(id)
+  end
 
   def get_installation!(id, %User{} = user) do
     Repo.one!(from(i in Installation, where: i.id == ^id, where: i.user_id == ^user.id))
