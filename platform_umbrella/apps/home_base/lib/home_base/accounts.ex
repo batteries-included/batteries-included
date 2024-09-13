@@ -55,7 +55,15 @@ defmodule HomeBase.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id) do
+    User
+    |> preload([:roles, :teams, :installations])
+    |> Repo.get!(id)
+  end
+
+  def list_users do
+    Repo.all(User)
+  end
 
   ## User registration
 

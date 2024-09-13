@@ -11,7 +11,9 @@ defmodule HomeBase.Teams do
 
   @spec get_team!(binary()) :: Ecto.Schema.t()
   def get_team!(id) do
-    Repo.get!(Team, id)
+    Team
+    |> preload([:roles, :users, :installations])
+    |> Repo.get!(id)
   end
 
   @spec get_team(binary()) :: Ecto.Schema.t() | nil

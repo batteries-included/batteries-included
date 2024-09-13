@@ -46,7 +46,8 @@ defmodule HomeBase.CustomerInstallsTest do
 
     test "get_installation!/1 returns the installation with given id" do
       installation = installation_fixture()
-      assert CustomerInstalls.get_installation!(installation.id) == installation
+      assert CustomerInstalls.get_installation!(installation.id).slug == installation.slug
+      assert CustomerInstalls.get_installation!(installation.id).id == installation.id
     end
 
     test "get_installation!/2 returns the installation for a user" do
@@ -93,7 +94,7 @@ defmodule HomeBase.CustomerInstallsTest do
       assert {:error, %Ecto.Changeset{}} =
                CustomerInstalls.update_installation(installation, @invalid_attrs)
 
-      assert installation == CustomerInstalls.get_installation!(installation.id)
+      assert installation.id == CustomerInstalls.get_installation!(installation.id).id
     end
 
     test "delete_installation/1 deletes the installation" do

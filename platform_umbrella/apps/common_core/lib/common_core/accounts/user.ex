@@ -13,7 +13,7 @@ defmodule CommonCore.Accounts.User do
     field :confirmed_at, :naive_datetime
 
     has_many :roles, TeamRole
-    has_many :teams, through: [:roles, :user]
+    has_many :teams, through: [:roles, :team]
     has_many :installations, Installation
 
     timestamps()

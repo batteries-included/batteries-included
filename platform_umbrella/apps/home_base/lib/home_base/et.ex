@@ -22,6 +22,18 @@ defmodule HomeBase.ET do
     Repo.all(StoredUsageReport)
   end
 
+  def list_recent_usage_reports(installation, params \\ []) do
+    limit = Keyword.get(params, :limit, 50)
+
+    query =
+      from s in StoredUsageReport,
+        where: s.installation_id == ^installation.id,
+        order_by: [desc: s.inserted_at],
+        limit: ^limit
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single stored_usage_report.
 
@@ -131,6 +143,16 @@ defmodule HomeBase.ET do
 
   """
   def get_stored_host_report!(id), do: Repo.get!(StoredHostReport, id)
+
+  def get_most_recent_host_report(installation) do
+    query =
+      from s in StoredHostReport,
+        where: s.installation_id == ^installation.id,
+        order_by: [desc: s.inserted_at],
+        limit: 1
+
+    Repo.one(query)
+  end
 
   @doc """
   Creates a stored_host_report.

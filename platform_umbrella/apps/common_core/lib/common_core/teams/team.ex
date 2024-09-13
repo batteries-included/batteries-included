@@ -13,7 +13,7 @@ defmodule CommonCore.Teams.Team do
     field :op_email, :string
 
     has_many :roles, TeamRole, on_replace: :delete
-    has_many :users, through: [:roles, :team]
+    has_many :users, through: [:roles, :user]
     has_many :installations, Installation
 
     timestamps()
