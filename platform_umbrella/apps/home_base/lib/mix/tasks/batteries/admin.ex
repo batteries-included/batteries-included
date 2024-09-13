@@ -6,8 +6,6 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
   alias HomeBase.Accounts.AdminTeams
   alias HomeBase.Teams
 
-  require Logger
-
   def run(args) do
     case args do
       [email] ->
@@ -27,9 +25,9 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
     errors = Enum.filter(results, fn {status, result} -> unless(status == :ok, do: result) end)
 
     if errors == [] do
-      Logger.info("#{email} has been added as an admin to #{Enum.count(results)} team(s)")
+      Mix.shell().info("Success! #{email} has been added as an admin to #{Enum.count(results)} team(s)")
     else
-      error("Something went wrong: #{inspect(errors)}")
+      errors |> inspect() |> error()
     end
   end
 
@@ -40,7 +38,7 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
   end
 
   defp error(message) do
-    Logger.error(message)
+    Mix.shell().error("Error: #{message}")
 
     exit({:shutdown, 1})
   end
