@@ -1,7 +1,7 @@
 defmodule CommonCore.Installs.Options do
   @moduledoc false
 
-  alias CommonCore.Teams.TeamRole
+  alias CommonCore.Accounts.AdminTeams
 
   @sizes [:tiny, :small, :medium, :large, :xlarge, :huge]
   @providers [Kind: :kind, AWS: :aws, Provided: :provided]
@@ -14,17 +14,16 @@ defmodule CommonCore.Installs.Options do
     Production: :production
   ]
 
-  def usages do
-    @usages
-  end
+  def usages, do: @usages
 
-  # TODO: Add batteries included team ID that is allowed to create internal installations
-  def usage_options(%TeamRole{id: "INTERNAL_TEAM_ID"}), do: @usages
-
-  def usage_options(_role) do
-    Enum.reject(@usages, fn {key, _} ->
-      key |> Atom.to_string() |> String.starts_with?("Internal")
-    end)
+  def usage_options(role) do
+    if AdminTeams.batteries_included_admin?(role) do
+      @usages
+    else
+      Enum.reject(@usages, fn {key, _} ->
+        key |> Atom.to_string() |> String.starts_with?("Internal")
+      end)
+    end
   end
 
   def sizes do
