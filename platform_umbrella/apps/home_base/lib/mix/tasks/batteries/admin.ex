@@ -1,5 +1,9 @@
 defmodule Mix.Tasks.HomeBase.Batteries.Admin do
-  @moduledoc false
+  @shortdoc "Add a user to the internal Batteries Included teams"
+  @moduledoc """
+  Adds a user by their email to all the internal Batteries Included teams as an admin.
+  """
+
   use Mix.Task
 
   alias HomeBase.Accounts
