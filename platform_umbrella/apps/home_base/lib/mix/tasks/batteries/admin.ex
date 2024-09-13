@@ -12,26 +12,25 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
     case args do
       [email] ->
         Mix.Task.run_in_apps("app.start", [:home_base])
-
-        user = get_user(email)
-        team_ids = AdminTeams.admin_team_ids()
-
-        results = Enum.map(team_ids, &add_user_to_team(user.email, &1))
-        errors = Enum.filter(results, fn {status, result} -> unless(status == :ok, do: result) end)
-
-        if errors == [] do
-          Logger.info("#{email} has been added as an admin to #{Enum.count(results)} team(s)")
-        else
-          error("Something went wrong: #{inspect(errors)}")
-        end
+        add_user_to_teams(email)
 
       _ ->
         error("Please pass a user email as the first argument")
     end
   end
 
-  defp get_user(email) do
-    Accounts.get_user_by_email(email) || error("Could not find a user for #{email}")
+  defp add_user_to_teams(email) do
+    user = Accounts.get_user_by_email(email) || error("Could not find a user for #{email}")
+    team_ids = AdminTeams.admin_team_ids()
+
+    results = Enum.map(team_ids, &add_user_to_team(user.email, &1))
+    errors = Enum.filter(results, fn {status, result} -> unless(status == :ok, do: result) end)
+
+    if errors == [] do
+      Logger.info("#{email} has been added as an admin to #{Enum.count(results)} team(s)")
+    else
+      error("Something went wrong: #{inspect(errors)}")
+    end
   end
 
   defp add_user_to_team(email, team_id) do
