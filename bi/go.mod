@@ -17,7 +17,7 @@ require (
 	github.com/noisysockets/noisysockets v0.27.4
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.51.1
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.6
-	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.5
+	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.6
 	github.com/pulumi/pulumi/sdk/v3 v3.132.0
 	github.com/samber/slog-multi v1.2.1
 	github.com/spf13/cobra v1.8.1
