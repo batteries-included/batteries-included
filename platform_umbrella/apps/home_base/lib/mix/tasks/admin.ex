@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.HomeBase.Batteries.Admin do
+defmodule Mix.Tasks.HomeBase.Admin do
   @shortdoc "Add a user to the internal Batteries Included teams"
   @moduledoc """
   Adds a user by their email to all the internal Batteries Included teams as an admin.
@@ -10,6 +10,8 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
   alias HomeBase.Accounts.AdminTeams
   alias HomeBase.Teams
 
+  @shutdown {:shutdown, 1}
+
   def run(args) do
     case args do
       [email] ->
@@ -17,13 +19,21 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
         add_user_to_teams(email)
 
       _ ->
-        error("Please pass a user email as the first argument")
+        Mix.shell().error("Error: Please pass a user email as the first argument")
+
+        exit(@shutdown)
     end
   end
 
   defp add_user_to_teams(email) do
-    user = Accounts.get_user_by_email(email) || error("Could not find a user for #{email}")
+    user = Accounts.get_user_by_email(email)
     team_ids = AdminTeams.admin_team_ids()
+
+    unless user do
+      Mix.shell().error("Error: Could not find a user for #{email}")
+
+      exit(@shutdown)
+    end
 
     results = Enum.map(team_ids, &add_user_to_team(user.email, &1))
     errors = Enum.filter(results, fn {status, result} -> unless(status == :ok, do: result) end)
@@ -31,7 +41,9 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
     if errors == [] do
       Mix.shell().info("Success! #{email} has been added as an admin to #{Enum.count(results)} team(s)")
     else
-      errors |> inspect() |> error()
+      Mix.shell().error("Error: #{inspect(errors)}")
+
+      exit(@shutdown)
     end
   end
 
@@ -39,11 +51,5 @@ defmodule Mix.Tasks.HomeBase.Batteries.Admin do
     team_id
     |> Teams.get_team!()
     |> Teams.create_team_role(%{invited_email: email, is_admin: true})
-  end
-
-  defp error(message) do
-    Mix.shell().error("Error: #{message}")
-
-    exit({:shutdown, 1})
   end
 end
