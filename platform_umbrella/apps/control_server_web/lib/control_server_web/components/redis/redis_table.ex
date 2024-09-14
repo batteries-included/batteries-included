@@ -39,6 +39,16 @@ defmodule ControlServerWeb.RedisTable do
           <.tooltip target_id={"edit_redis_" <> redis.id}>
             Edit Cluster
           </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={show_url(redis)}
+            icon={:eye}
+            id={"redis_show_link_" <> redis.id}
+          />
+          <.tooltip target_id={"redis_show_link_" <> redis.id}>
+            Show Redis Cluster
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

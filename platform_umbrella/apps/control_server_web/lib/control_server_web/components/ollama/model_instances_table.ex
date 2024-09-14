@@ -38,6 +38,16 @@ defmodule ControlServerWeb.ModelInstancesTable do
           <.tooltip target_id={"edit_model_instances" <> model_instance.id}>
             Edit Ollama Model
           </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={show_url(model_instance)}
+            icon={:eye}
+            id={"model_instance_show_link_" <> model_instance.id}
+          />
+          <.tooltip target_id={"model_instance_show_link_" <> model_instance.id}>
+            Show Ollama Model
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

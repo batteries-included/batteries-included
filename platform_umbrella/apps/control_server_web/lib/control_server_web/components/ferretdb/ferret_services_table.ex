@@ -33,6 +33,16 @@ defmodule ControlServerWeb.FerretServicesTable do
           <.tooltip target_id={"edit_service_" <> service.id}>
             Edit FerretDB Service
           </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={show_url(service)}
+            icon={:eye}
+            id={"service_show_link_" <> service.id}
+          />
+          <.tooltip target_id={"service_show_link_" <> service.id}>
+            Show FerretDB Service
+          </.tooltip>
         </.flex>
       </:action>
     </.table>
