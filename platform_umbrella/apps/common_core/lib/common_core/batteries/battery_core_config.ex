@@ -24,8 +24,6 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     # The decalared usage of the cluster
     field :usage, Ecto.Enum, values: Keyword.values(Options.usages()), default: :development
 
-    field :server_in_cluster, :boolean, default: false
-
     # This is the install id that the control server is reporting to
     # It shouldn't be nil. However we can't make it required before
     # InstallSpec from Install is fixed.

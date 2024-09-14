@@ -28,8 +28,7 @@ defmodule CommonCore.Resources.BatteryTest do
   defp control_battery do
     %SystemBattery{
       config: %BatteryCoreConfig{
-        secret_key: Defaults.random_key_string(),
-        server_in_cluster: true
+        secret_key: Defaults.random_key_string()
       },
       type: :battery_core
     }
