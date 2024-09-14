@@ -1,11 +1,11 @@
-defmodule HomeBase.AdminTeamTest do
+defmodule CommonCore.AdminTeamTest do
   use ExUnit.Case, async: false
 
   import Mox
 
+  alias CommonCore.Accounts.AdminTeams
+  alias CommonCore.Accounts.EnvFetcherMock
   alias CommonCore.Ecto.BatteryUUID
-  alias HomeBase.Accounts.AdminTeams
-  alias HomeBase.Accounts.AdminTeams.EnvFetcherMock
 
   describe "admin_team_ids/0" do
     test "returns the expected development admin team ids" do
@@ -17,11 +17,11 @@ defmodule HomeBase.AdminTeamTest do
     setup :verify_on_exit!
 
     setup do
-      old_env = Application.get_env(:home_base, HomeBase.Accounts.AdminTeams, [])
+      old_env = Application.get_env(:common_core, AdminTeams, [])
       new_env = Keyword.put(old_env, :env_fetcher, EnvFetcherMock)
 
-      Application.put_env(:home_base, HomeBase.Accounts.AdminTeams, new_env)
-      on_exit(fn -> Application.put_env(:home_base, HomeBase.Accounts.AdminTeams, old_env) end)
+      Application.put_env(:common_core, AdminTeams, new_env)
+      on_exit(fn -> Application.put_env(:common_core, AdminTeams, old_env) end)
     end
 
     test "includes the environment team ids" do

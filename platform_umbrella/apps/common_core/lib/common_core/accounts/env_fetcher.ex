@@ -1,13 +1,13 @@
-defmodule HomeBase.Accounts.AdminTeams.EnvFetcher do
+defmodule CommonCore.Accounts.EnvFetcher do
   @moduledoc false
-  alias HomeBase.Accounts.AdminTeams.DefaultEnvFetcher
+  alias CommonCore.Accounts.DefaultEnvFetcher
 
   @callback get_env() :: String.t()
   @callback key() :: String.t()
 
   def impl do
-    :home_base
-    |> Application.get_env(HomeBase.Accounts.AdminTeams, [])
+    :common_core
+    |> Application.get_env(CommonCore.Accounts.AdminTeams, [])
     |> Keyword.get(:env_fetcher, DefaultEnvFetcher)
   end
 

@@ -6,8 +6,8 @@ defmodule Mix.Tasks.HomeBase.Admin do
 
   use Mix.Task
 
+  alias CommonCore.Accounts.AdminTeams
   alias HomeBase.Accounts
-  alias HomeBase.Accounts.AdminTeams
   alias HomeBase.Teams
 
   @shutdown {:shutdown, 1}

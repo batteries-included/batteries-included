@@ -1,6 +1,6 @@
-defmodule HomeBase.Accounts.AdminTeams.DefaultEnvFetcher do
+defmodule CommonCore.Accounts.DefaultEnvFetcher do
   @moduledoc false
-  @behaviour HomeBase.Accounts.AdminTeams.EnvFetcher
+  @behaviour CommonCore.Accounts.EnvFetcher
 
   @key "BATTERY_TEAM_IDS"
   @spec get_env() :: String.t()
