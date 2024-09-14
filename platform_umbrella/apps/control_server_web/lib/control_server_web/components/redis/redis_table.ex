@@ -45,6 +45,7 @@ defmodule ControlServerWeb.RedisTable do
             link={show_url(redis)}
             icon={:eye}
             id={"redis_show_link_" <> redis.id}
+            class="sm:hidden"
           />
           <.tooltip target_id={"redis_show_link_" <> redis.id}>
             Show Redis Cluster

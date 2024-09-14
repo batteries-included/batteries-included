@@ -56,6 +56,7 @@ defmodule ControlServerWeb.KnativeServicesTable do
             link={show_url(service)}
             icon={:eye}
             id={"knative_service_show_link_" <> service.id}
+            class="sm:hidden"
           />
         </.flex>
       </:action>

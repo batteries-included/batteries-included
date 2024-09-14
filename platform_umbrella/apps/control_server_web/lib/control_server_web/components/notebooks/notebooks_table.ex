@@ -59,6 +59,7 @@ defmodule ControlServerWeb.NotebooksTable do
             link={show_url(notebook)}
             icon={:eye}
             id={"notebook_show_link_" <> notebook.id}
+            class="sm:hidden"
           />
           <.tooltip target_id={"notebook_show_link_" <> notebook.id}>
             Show Notebook
