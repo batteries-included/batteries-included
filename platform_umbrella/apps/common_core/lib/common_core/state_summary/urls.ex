@@ -9,12 +9,12 @@ defmodule CommonCore.StateSummary.URLs do
 
   @spec uri_for_battery(StateSummary.t(), atom()) :: URI.t()
   def uri_for_battery(state, :battery_core) do
-    if Core.config_field(state, :server_in_cluster) do
+    if Core.config_field(state, :usage) == :internal_dev do
+      URI.parse("http://control.127-0-0-1.batrsinc.co:4000/")
+    else
       state
       |> Hosts.for_battery(:battery_core)
       |> build_uri(SSL.ssl_enabled?(state))
-    else
-      URI.parse("http://control.127-0-0-1.batrsinc.co:4000/")
     end
   end
 
@@ -26,12 +26,12 @@ defmodule CommonCore.StateSummary.URLs do
 
   @spec uris_for_battery(StateSummary.t(), atom()) :: list(URI.t())
   def uris_for_battery(state, :battery_core) do
-    if Core.config_field(state, :server_in_cluster) do
+    if Core.config_field(state, :usage) == :internal_dev do
+      [URI.parse("http://control.127-0-0-1.batrsinc.co:4000/")]
+    else
       state
       |> Hosts.hosts_for_battery(:battery_core)
       |> Enum.map(&build_uri(&1, SSL.ssl_enabled?(state)))
-    else
-      [URI.parse("http://control.127-0-0-1.batrsinc.co:4000/")]
     end
   end
 

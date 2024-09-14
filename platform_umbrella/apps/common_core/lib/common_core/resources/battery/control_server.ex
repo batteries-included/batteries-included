@@ -27,7 +27,7 @@ defmodule CommonCore.Resources.ControlServer do
     |> B.name("control-server")
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 
   resource(:service_account, battery, state) do
@@ -35,7 +35,7 @@ defmodule CommonCore.Resources.ControlServer do
     |> B.build_resource()
     |> B.namespace(core_namespace(state))
     |> B.name(@app_name)
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 
   resource(:cluster_role_binding, battery, state) do
@@ -44,7 +44,7 @@ defmodule CommonCore.Resources.ControlServer do
     |> B.name("batteries-included:control-server-cluster-admin")
     |> Map.put("roleRef", B.build_cluster_role_ref("cluster-admin"))
     |> Map.put("subjects", [B.build_service_account(@app_name, core_namespace(state))])
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 
   resource(:service, battery, state) do
@@ -65,7 +65,7 @@ defmodule CommonCore.Resources.ControlServer do
     |> B.name(@app_name)
     |> B.namespace(core_namespace(state))
     |> B.spec(spec)
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 
   resource(:deployment, battery, state) do
@@ -136,7 +136,7 @@ defmodule CommonCore.Resources.ControlServer do
     |> B.name(name)
     |> B.namespace(core_namespace(state))
     |> B.spec(spec)
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 
   defp control_container(battery, state, options) do

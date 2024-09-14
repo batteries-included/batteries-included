@@ -9,8 +9,9 @@ defmodule CommonCore.ET.URLs do
   def home_base_url(%BatteryCoreConfig{usage: usage} = _config) when usage in [:internal_prod, :internal_int_test],
     do: @bi_home
 
-  def home_base_url(%BatteryCoreConfig{server_in_cluster: true} = _config), do: @prod_home
-  def home_base_url(%BatteryCoreConfig{} = _config), do: @local_home
+  def home_base_url(%BatteryCoreConfig{usage: usage} = _config) when usage in [:internal_dev], do: @local_home
+
+  def home_base_url(%BatteryCoreConfig{} = _config), do: @prod_home
 
   def stable_versions_path(%BatteryCoreConfig{} = _config) do
     "/stable_versions"

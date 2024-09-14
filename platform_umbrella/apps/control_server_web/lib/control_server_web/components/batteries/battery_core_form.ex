@@ -75,8 +75,6 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
 
       <.panel title="Advanced" variant="gray">
         <.simple_form variant="nested">
-          <.input field={@form[:server_in_cluster]} type="switch" label="Server In Cluster" />
-
           <div class="flex justify-between items-center">
             <div class="flex-1 text-sm">Secret Key</div>
 

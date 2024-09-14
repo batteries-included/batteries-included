@@ -30,7 +30,7 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
     |> B.build_resource()
     |> B.name("bootstrap")
     |> B.namespace(namespace)
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 
   resource(:bootstrap_clusterrolebinding, battery) do
@@ -41,7 +41,7 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
     |> B.name("batteries-included:bootstrap")
     |> B.role_ref(B.build_cluster_role_ref("cluster-admin"))
     |> B.subject(B.build_service_account("bootstrap", namespace))
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 
   resource(:bootstrap_job, battery) do
@@ -88,6 +88,6 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
     |> B.name("bootstrap")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> F.require(battery.config.server_in_cluster)
+    |> F.require(battery.config.usage != :internal_dev)
   end
 end
