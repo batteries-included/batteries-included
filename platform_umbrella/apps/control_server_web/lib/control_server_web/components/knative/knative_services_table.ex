@@ -50,6 +50,14 @@ defmodule ControlServerWeb.KnativeServicesTable do
           <.tooltip target_id={"open_service_" <> service.id}>
             Open Knative Service
           </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={show_url(service)}
+            icon={:eye}
+            id={"knative_service_show_link_" <> service.id}
+            class="sm:hidden"
+          />
         </.flex>
       </:action>
     </.table>

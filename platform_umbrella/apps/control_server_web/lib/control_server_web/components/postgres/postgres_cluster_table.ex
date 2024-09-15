@@ -44,6 +44,11 @@ defmodule ControlServerWeb.PostgresClusterTable do
           <.tooltip target_id={"edit_postgres_" <> pg.id}>
             Edit Cluster
           </.tooltip>
+
+          <.button variant="minimal" link={show_url(pg)} icon={:eye} id={"pg_show_link_" <> pg.id} />
+          <.tooltip target_id={"pg_show_link_" <> pg.id}>
+            Show PG Cluster
+          </.tooltip>
         </.flex>
       </:action>
     </.table>

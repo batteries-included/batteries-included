@@ -32,6 +32,17 @@ defmodule ControlServerWeb.ProjectsTable do
         <.tooltip target_id={"edit_project_" <> project.id}>
           Edit Project
         </.tooltip>
+
+        <.button
+          variant="minimal"
+          link={show_url(project)}
+          icon={:eye}
+          id={"project_show_link_" <> project.id}
+          class="sm:hidden"
+        />
+        <.tooltip target_id={"project_show_link_" <> project.id}>
+          Show Project
+        </.tooltip>
       </:action>
     </.table>
     """

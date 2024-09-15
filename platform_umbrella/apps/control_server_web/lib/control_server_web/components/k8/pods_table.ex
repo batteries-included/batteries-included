@@ -48,6 +48,16 @@ defmodule ControlServerWeb.PodsTable do
           <.tooltip target_id={"logs_for_" <> to_html_id(pod)}>
             Logs
           </.tooltip>
+
+          <.button
+            variant="minimal"
+            link={resource_path(pod)}
+            icon={:eye}
+            id={"pod_show_link_" <> to_html_id(pod)}
+          />
+          <.tooltip target_id={"pod_show_link_" <> to_html_id(pod)}>
+            Show Pod
+          </.tooltip>
         </.flex>
       </:action>
     </.table>
