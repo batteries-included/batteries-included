@@ -15,13 +15,14 @@ import (
 )
 
 func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.KubeClient) error {
-	inCluster, err := spec.GetBatteryConfigField("battery_core", "server_in_cluster")
+	usage, err := spec.GetBatteryConfigField("battery_core", "usage")
 	if err != nil {
 		return fmt.Errorf("failed to determine if control server is running in cluster: %w", err)
 	}
 
 	// no need to wait for anything else if the control server isn't running in cluster
-	if !inCluster.(bool) {
+	if usage.(string) == "internal_dev" {
+		slog.Debug("control server not running in cluster, skipping wait")
 		return nil
 	}
 

@@ -53,7 +53,6 @@ func TestGetBatteryConfigField(t *testing.T) {
 		err        error
 	}{
 		{typ: "battery_core", field: "core_namespace", expected: "battery-core", err: nil},
-		{typ: "battery_core", field: "server_in_cluster", expected: false, err: nil},
 		{typ: "battery_core", field: "doesnt_exist", expected: nil, err: fmt.Errorf("no field doesnt_exist in config")},
 	}
 
