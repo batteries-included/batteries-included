@@ -10,17 +10,17 @@ defmodule Mix.Tasks.HomeBase.Admin do
   alias HomeBase.Accounts
   alias HomeBase.Teams
 
+  @start_apps [:postgrex, :ecto, :ecto_sql, :home_base]
   @shutdown {:shutdown, 1}
 
   def run(args) do
     case args do
       [email] ->
-        Mix.Task.run_in_apps("app.start", [:home_base])
+        {:ok, _} = Application.ensure_all_started(@start_apps)
         add_user_to_teams(email)
 
       _ ->
         Mix.shell().error("Error: Please pass a user email as the first argument")
-
         exit(@shutdown)
     end
   end
