@@ -7,6 +7,7 @@ defmodule CommonCore.ET.NamespaceReport do
   alias CommonCore.Ecto.Schema
   alias CommonCore.Resources.FieldAccessors
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Namespaces
 
   batt_embedded_schema do
     field :pod_counts, :map
@@ -14,8 +15,9 @@ defmodule CommonCore.ET.NamespaceReport do
 
   def new(%StateSummary{} = state_summary) do
     pod_counts = count_pods_by(state_summary, &FieldAccessors.namespace/1)
+    battery_namespaces = Namespaces.all_namespaces(state_summary)
 
-    Schema.schema_new(__MODULE__, pod_counts: pod_counts)
+    Schema.schema_new(__MODULE__, pod_counts: Map.take(pod_counts, battery_namespaces))
   end
 
   def new(opts) do
@@ -23,8 +25,8 @@ defmodule CommonCore.ET.NamespaceReport do
   end
 
   def total_battery_pods(%__MODULE__{pod_counts: pod_counts}) do
-    Enum.reduce(pod_counts, 0, fn {namespace, count}, acc ->
-      if String.starts_with?(namespace, "battery-"), do: acc + count, else: acc
+    Enum.reduce(pod_counts, 0, fn {_namespace, count}, acc ->
+      acc + count
     end)
   end
 

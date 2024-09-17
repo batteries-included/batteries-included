@@ -13,6 +13,21 @@ defmodule CommonCore.StateSummary.Namespaces do
   @spec istio_namespace(CommonCore.StateSummary.t()) :: binary() | nil
   def istio_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :istio)
 
+  def all_namespaces(%StateSummary{} = summary) do
+    Enum.reject(
+      [
+        ai_namespace(summary),
+        data_namespace(summary),
+        knative_namespace(summary),
+        traditional_namespace(summary),
+        core_namespace(summary),
+        base_namespace(summary),
+        istio_namespace(summary)
+      ],
+      &is_nil/1
+    )
+  end
+
   #
   # User Namespaces
   # These namespaces exist to put stuff that users will
