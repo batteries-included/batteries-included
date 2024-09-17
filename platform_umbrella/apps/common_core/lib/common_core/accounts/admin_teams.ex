@@ -43,15 +43,20 @@ defmodule CommonCore.Accounts.AdminTeams do
   def batteries_included_admin?(_role), do: false
 
   def admin_team_ids do
-    admin_team_ids(CommonCore.Env.dev_env?())
+    do_admin_team_ids()
   end
 
-  defp admin_team_ids(true = _is_dev) do
-    environment_team_ids() ++ [bootstrap_team().id]
-  end
-
-  defp admin_team_ids(_is_dev) do
-    environment_team_ids()
+  if CommonCore.Env.dev_env?() do
+    # For development and test, we include the bootstrap team
+    # that way developers don't have to start mix with the environment variables set.
+    defp do_admin_team_ids do
+      environment_team_ids() ++ [bootstrap_team().id]
+    end
+  else
+    # for prod we only include the environment team ids
+    defp do_admin_team_ids do
+      environment_team_ids()
+    end
   end
 
   defp environment_team_ids do
