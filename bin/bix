@@ -570,10 +570,7 @@ do_ex_dialyzer() {
 }
 
 do_go_build_bi() {
-    build_bi_final "linux" "amd64"
-    build_bi_final "linux" "arm64"
-    build_bi_final "windows" "amd64"
-    build_bi_final "darwin" "arm64"
+    goreleaser release --clean --snapshot ${TRACE:+--verbose}
 }
 
 do_bi_location() {

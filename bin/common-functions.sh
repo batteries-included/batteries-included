@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TRACE=${TRACE-0}
+TRACE=${TRACE-""}
 BI_BUILD_DIR="${BI_BUILD_DIR:-$HOME/.local/share/bi}"
 KEEP_BUILDS="${KEEP_BUILDS:-10}"
 
@@ -144,42 +144,4 @@ bi_pushd() {
 
 bi_popd() {
     popd >/dev/null || die "Error changing directory"
-}
-
-# This function will cross compile the bi binary
-# for the given os and arch and with flags
-# to statically link the binary
-build_bi_final() {
-    local os=${1:-$(go env GOOS)}
-    local arch=${2:-$(go env GOARCH)}
-
-    local version
-    version="${BASE_VERSION}-$(version_tag)"
-
-    local dist_dir="${ROOT_DIR}/dist"
-    mkdir -p "${dist_dir}"
-
-    local bin_path="${dist_dir}/bi-${version}-${os}-${arch}"
-    # If this is windows add .exe to the bin_path
-    if [[ "${os}" == "windows" ]]; then
-        bin_path="${bin_path}.exe"
-    fi
-
-    if [[ ! -f "${bin_path}" ]]; then
-        bi_pushd "${ROOT_DIR}/bi"
-        log "Building bi ${ORANGE}${version}${NOFORMAT} ${GREEN}${os}${NOFORMAT} ${PURPLE}${arch}${NOFORMAT} to ${BLUE}${bin_path}${NOFORMAT}"
-        # GOOS tells the go compiler to compile for the given OS
-        # GOARCH tells the go compiler to compile for the given architecture
-        # CGO_ENABLED=0 tells the go compiler to not use c, resulting in a static all go binary
-        # -trimpath tells the go compiler to remove the path from the binary. This is useful for reproducible builds
-        # -tags "netgo osusergo static_build" tells the go compiler to use the go versions of the net and os libraries
-        # -ldflags="-w -s -X 'bi/pkg.Version=${version}'" tells the go compiler to remove the debug information and symbol table
-        # while adding the current version to the binary
-        GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 \
-            go build -trimpath \
-            -tags "netgo osusergo static_build" \
-            -ldflags="-w -s -X 'bi/pkg.Version=${version}'" \
-            -o "${bin_path}" bi
-        bi_popd
-    fi
 }
