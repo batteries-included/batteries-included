@@ -7,7 +7,6 @@ defmodule CommonCore.ET.RedisReport do
 
   batt_embedded_schema do
     field :instance_counts, :map
-    field :sentinel_instance_counts, :map
   end
 
   def new(%StateSummary{redis_instances: clusters} = _state_summary) do
