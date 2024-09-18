@@ -103,6 +103,7 @@ defmodule HomeBaseWeb.Router do
       resources "/usage_reports", StoredUsageReportController, only: [:create]
       resources "/host_reports", StoredHostReportController, only: [:create]
       get "/status", InstallationStatusContoller, :show
+      get "/spec", InstallSpecController, :show
     end
   end
 

@@ -13,7 +13,10 @@ defmodule HomeBaseWeb.InstallationStatusContoller do
     installation = CustomerInstalls.get_installation!(install_id)
     # One hour when everyone comes back in 9 minutes seems good
     # Adjust when needed
-    exp = DateTime.utc_now() |> DateTime.add(1, :hour) |> DateTime.to_unix()
+    exp =
+      DateTime.utc_now()
+      |> DateTime.add(1, :hour)
+      |> DateTime.to_unix()
 
     # Everything is ok
     status = :ok
