@@ -2,6 +2,7 @@ defmodule CommonCore.ET.UsageReportTest do
   use ExUnit.Case
 
   alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.ET.KnativeReport
   alias CommonCore.ET.NamespaceReport
   alias CommonCore.ET.NodeReport
   alias CommonCore.ET.PostgresReport
@@ -39,6 +40,7 @@ defmodule CommonCore.ET.UsageReportTest do
       namespace_report: %NamespaceReport{},
       postgres_report: %PostgresReport{},
       redis_report: %RedisReport{},
+      knative_report: %KnativeReport{},
       num_projects: 2,
       batteries: ["istio", "loki"]
     }

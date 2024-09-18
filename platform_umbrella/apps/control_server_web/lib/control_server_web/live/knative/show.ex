@@ -179,7 +179,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp traffic_display(assigns) do
     ~H"""
-    <.panel title="Traffic Split">
+    <.panel title="Traffic Split" class="lg:col-span-2">
       <.grid columns={[sm: 1, lg: 2]} class="items-center">
         <.table rows={@traffic} id="traffic-table">
           <:col :let={split} label="Revision"><%= Map.get(split, "revisionName", "") %></:col>

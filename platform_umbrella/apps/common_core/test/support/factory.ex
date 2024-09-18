@@ -87,6 +87,7 @@ defmodule CommonCore.Factory do
     namespace_report = Map.get_lazy(attrs, :namespace_report, fn -> namespace_report_factory() end)
     postgres_report = Map.get_lazy(attrs, :postgres_report, fn -> postgres_report_factory() end)
     redis_report = Map.get_lazy(attrs, :redis_report, fn -> redis_report_factory() end)
+    knative_report = Map.get_lazy(attrs, :knative_report, fn -> knative_report_factory() end)
 
     %CommonCore.ET.UsageReport{
       batteries: batteries,
@@ -94,7 +95,8 @@ defmodule CommonCore.Factory do
       node_report: node_report,
       namespace_report: namespace_report,
       postgres_report: postgres_report,
-      redis_report: redis_report
+      redis_report: redis_report,
+      knative_report: knative_report
     }
   end
 
@@ -131,15 +133,19 @@ defmodule CommonCore.Factory do
   end
 
   def postgres_report_factory do
-    %CommonCore.ET.PostgresReport{
-      instance_counts: %{"internal.controlserver" => 1}
-    }
+    %CommonCore.ET.PostgresReport{instance_counts: %{"internal.controlserver" => 1}}
   end
 
   def redis_report_factory do
-    %CommonCore.ET.RedisReport{
-      instance_counts: %{"standard.test" => 1},
-      sentinel_instance_counts: %{"standard.test" => 0}
+    %CommonCore.ET.RedisReport{instance_counts: %{"standard.test" => 1}}
+  end
+
+  def knative_report_factory do
+    %CommonCore.ET.KnativeReport{
+      pod_counts: %{
+        "service-one" => 1,
+        "another" => 0
+      }
     }
   end
 

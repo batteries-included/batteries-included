@@ -3,19 +3,21 @@ defmodule CommonCore.ET.UsageReport do
   use CommonCore, :embedded_schema
 
   alias CommonCore.Ecto.Schema
+  alias CommonCore.ET.KnativeReport
   alias CommonCore.ET.NamespaceReport
   alias CommonCore.ET.NodeReport
   alias CommonCore.ET.PostgresReport
   alias CommonCore.ET.RedisReport
   alias CommonCore.StateSummary
 
-  @required_fields ~w(node_report namespace_report postgres_report redis_report num_projects batteries)a
+  @required_fields ~w(node_report namespace_report postgres_report redis_report num_projects batteries knative_report)a
 
   batt_embedded_schema do
     embeds_one :node_report, NodeReport
     embeds_one :namespace_report, NamespaceReport
     embeds_one :postgres_report, PostgresReport
     embeds_one :redis_report, RedisReport
+    embeds_one :knative_report, KnativeReport
 
     field :batteries, {:array, :string}
     field :num_projects, :integer
@@ -25,7 +27,8 @@ defmodule CommonCore.ET.UsageReport do
     with {:ok, node_report} <- NodeReport.new(state_summary),
          {:ok, namespace_report} <- NamespaceReport.new(state_summary),
          {:ok, postgres_report} <- PostgresReport.new(state_summary),
-         {:ok, redis_report} <- RedisReport.new(state_summary) do
+         {:ok, redis_report} <- RedisReport.new(state_summary),
+         {:ok, knative_report} <- KnativeReport.new(state_summary) do
       battery_names = batteries(state_summary)
 
       Schema.schema_new(__MODULE__,
@@ -34,6 +37,7 @@ defmodule CommonCore.ET.UsageReport do
         postgres_report: postgres_report,
         redis_report: redis_report,
         num_projects: length(state_summary.projects || []),
+        knative_report: knative_report,
         batteries: battery_names
       )
     end
