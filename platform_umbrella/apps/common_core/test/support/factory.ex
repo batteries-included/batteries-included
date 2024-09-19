@@ -89,6 +89,11 @@ defmodule CommonCore.Factory do
     redis_report = Map.get_lazy(attrs, :redis_report, fn -> redis_report_factory() end)
     knative_report = Map.get_lazy(attrs, :knative_report, fn -> knative_report_factory() end)
 
+    traditional_services_report =
+      Map.get_lazy(attrs, :traditional_services_report, fn -> traditional_services_report_factory() end)
+
+    ollama_report = Map.get_lazy(attrs, :ollama_report, fn -> ollama_report_factory() end)
+
     %CommonCore.ET.UsageReport{
       batteries: batteries,
       num_projects: 0,
@@ -96,7 +101,9 @@ defmodule CommonCore.Factory do
       namespace_report: namespace_report,
       postgres_report: postgres_report,
       redis_report: redis_report,
-      knative_report: knative_report
+      knative_report: knative_report,
+      traditional_services_report: traditional_services_report,
+      ollama_report: ollama_report
     }
   end
 
@@ -146,6 +153,22 @@ defmodule CommonCore.Factory do
         "service-one" => 1,
         "another" => 0
       }
+    }
+  end
+
+  def traditional_services_report_factory do
+    %CommonCore.ET.TraditionalServicesReport{
+      instance_counts: %{
+        "service-one" => 1,
+        "another" => 0
+      }
+    }
+  end
+
+  def ollama_report_factory do
+    %CommonCore.ET.OllamaReport{
+      instance_counts: %{"model-instance-one" => 1},
+      model_counts: %{"llama3.1" => 1}
     }
   end
 
