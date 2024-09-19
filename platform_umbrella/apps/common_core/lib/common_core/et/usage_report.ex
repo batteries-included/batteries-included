@@ -12,7 +12,7 @@ defmodule CommonCore.ET.UsageReport do
   alias CommonCore.ET.TraditionalServicesReport
   alias CommonCore.StateSummary
 
-  @required_fields ~w(node_report namespace_report postgres_report redis_report num_projects batteries knative_report traditional_services_report)a
+  @required_fields ~w(node_report namespace_report postgres_report redis_report num_projects batteries knative_report traditional_services_report ollama_report)a
 
   batt_embedded_schema do
     embeds_one :node_report, NodeReport
