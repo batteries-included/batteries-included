@@ -3,14 +3,14 @@ title: 'The Promise and Challenge of Fair Source Licensing'
 excerpt:
   Fair Source is a solid, sustainable approach to licensing for companies that
   use it proactively
-publishDate: 2024-09-18
+publishDate: 2024-09-19
 tags: ['open source', 'license', 'oss', 'company']
 image: /images/posts/post-19.jpg
 draft: false
 ---
 
 Sentry announced a new software model called Fair Source in a blog post earlier
-this month. The debate following this announcement has sparked heated
+last month. The debate following this announcement has sparked heated
 conversation. As a founder, open-source user, contributor, and community
 advocate, I've thought a lot about the points of view in this conversation.
 We're trying to take a step forward with finding a sustainable model for
