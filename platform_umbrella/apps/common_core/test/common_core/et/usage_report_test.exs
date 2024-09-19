@@ -5,8 +5,10 @@ defmodule CommonCore.ET.UsageReportTest do
   alias CommonCore.ET.KnativeReport
   alias CommonCore.ET.NamespaceReport
   alias CommonCore.ET.NodeReport
+  alias CommonCore.ET.OllamaReport
   alias CommonCore.ET.PostgresReport
   alias CommonCore.ET.RedisReport
+  alias CommonCore.ET.TraditionalServicesReport
   alias CommonCore.ET.UsageReport
   alias CommonCore.Projects.Project
   alias CommonCore.StateSummary
@@ -41,6 +43,8 @@ defmodule CommonCore.ET.UsageReportTest do
       postgres_report: %PostgresReport{},
       redis_report: %RedisReport{},
       knative_report: %KnativeReport{},
+      traditional_services_report: %TraditionalServicesReport{},
+      ollama_report: %OllamaReport{},
       num_projects: 2,
       batteries: ["istio", "loki"]
     }
