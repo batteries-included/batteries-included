@@ -15,11 +15,11 @@ conversation. As a founder, open-source user, contributor, and community
 advocate, I've thought a lot about the points of view in this conversation.
 We're trying to take a step forward with finding a sustainable model for
 software development that gives to the community as much as possible,
-sustainibly.
+sustainably.
 
 ## What We Are Looking For in a Licensing Agreement
 
-Open source is a fundamental part of modern development. Businesses regularly
+Open-source is a fundamental part of modern development. Businesses regularly
 rely on open-source libraries and components to help them build flexible and
 sustainable solutions. A license that allows the developers making the software
 to continue creating solutions without competing priorities miring the process.
@@ -47,7 +47,7 @@ software for free, who will have to pay, and in what amount.
 
 ### Open Core Split Priorities
 
-One way that open source projects try to raise enough money to pay the bills is
+One way that open-source projects try to raise enough money to pay the bills is
 by adopting an open core model. In this pattern, the core product is given away
 for free, but some parts businesses need are kept closed-source. This results in
 a split of priorities for open-source developers and companies, as the
@@ -62,7 +62,7 @@ developers will create a tool that makes the open-source project easy to use or
 integrate with others. From then on, the open-source community and the company
 sponsoring the project will have different priorities.
 
-The community wants open source to be easy to use and full-featured. They want
+The community wants open-source to be easy to use and full-featured. They want
 everything to be free and easy to access. While they usually don't contribute
 the majority of the code, they still expect to have free and easy-to-change
 access forever.
@@ -99,7 +99,7 @@ place who chose not to play by the same rules but can leverage your source."_
 
 The world is starting to understand that, eventually, successful open-source
 projects need to pay more developers than the free price tag allows. This forces
-costs to be raised unexpectedly for open source users and is seen as a rug pull
+costs to be raised unexpectedly for open-source users and is seen as a rug pull
 or trick.
 
 ## What Is Fair Source?
@@ -119,13 +119,13 @@ This project included three licensing structures that exist under "Fair Source":
 However,
 [developer response was mixed](https://news.ycombinator.com/item?id=37092928)
 precisely because the terms of this licensing weren't well-articulated. Many
-perceived this as an attempt to have their cake and eat it too–to claim an
+perceived this as an attempt to have their cake and eat it too – to claim an
 open-source product while closing their source code for some time.
 
 ## The Challenges of Fair Source So Far
 
 Depending on your perspective, Fair Source is a massive move in the right
-direction or a restriction on the potential of open source to remain open.
+direction or a restriction on the potential of open-source to remain open.
 
 According to some, it limited the scope of OSS and harmed the development
 community. Developers couldn't take existing code, build services or
@@ -133,9 +133,8 @@ innovations, and sell that software without adhering to more restricted
 licenses.
 
 Conversely, many developers heralded the move with a more well-defined approach
-to how source code could be used, modified, and deployed while protecting the
-projects of smaller creators or businesses who, under more permissive copyleft
-frameworks, could see their software forked to oblivion by larger companies.
+to how source code could be used, modified, and deployed while still creating a
+revenue stream to reward the developers.
 
 So… is Fair Source the right approach?
 
@@ -144,8 +143,8 @@ licensing for companies that use it proactively and transparently rather than
 retroactively.
 
 Let's be clear: open-source software is vital to tech success and innovation. We
-see it as a necessity to keep people plugged in. Developers want to build
-things, and the research bears that out the
+see it as a necessity to keep people plugged in. Developers want to build things
+for the world at large, and the research bears that out; the
 [Github State of the Octoverse](https://github.blog/news-insights/research/the-state-of-open-source-and-ai/)
 report showed that 2023 recorded the most significant number of first-time
 open-source contributors ever.
