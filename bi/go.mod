@@ -7,19 +7,19 @@ require (
 	github.com/apparentlymart/go-cidr v1.1.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.35
 	github.com/aws/aws-sdk-go-v2/service/sts v1.30.8
-	github.com/aws/smithy-go v1.20.4
+	github.com/aws/smithy-go v1.21.0
 	github.com/dghubble/ipnets v1.0.0
-	github.com/docker/docker v27.2.1+incompatible
+	github.com/docker/docker v27.3.0+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/lmittmann/tint v1.0.5
 	github.com/neilotoole/slogt v1.1.0
-	github.com/noisysockets/network v0.22.0
-	github.com/noisysockets/noisysockets v0.27.4
+	github.com/noisysockets/network v0.23.0
+	github.com/noisysockets/noisysockets v0.28.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.52.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.6
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.6
 	github.com/pulumi/pulumi/sdk/v3 v3.133.0
-	github.com/samber/slog-multi v1.2.1
+	github.com/samber/slog-multi v1.2.2
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
@@ -135,7 +135,7 @@ require (
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
-	github.com/noisysockets/netstack v0.8.0 // indirect
+	github.com/noisysockets/netstack v0.9.0 // indirect
 	github.com/noisysockets/netutil v0.9.0 // indirect
 	github.com/noisysockets/pinger v0.4.3 // indirect
 	github.com/noisysockets/resolver v0.14.2 // indirect
