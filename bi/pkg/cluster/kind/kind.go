@@ -17,7 +17,7 @@ import (
 
 const (
 	KindImage         = "kindest/node:v1.30.0"
-	NoisySocketsImage = "ghcr.io/noisysockets/nsh:v0.8.5"
+	NoisySocketsImage = "ghcr.io/noisysockets/nsh:v0.9.3"
 )
 
 type KindClusterProvider struct {

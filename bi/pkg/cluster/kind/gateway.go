@@ -60,8 +60,11 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 	// Create the wireguard gateway container.
 	config := &container.Config{
 		Image: NoisySocketsImage,
-		Cmd:   []string{"up", "--enable-dns", "--enable-router", "--log-level=debug"},
-		Env:   []string{"NSH_NO_TELEMETRY=1"},
+		Cmd: []string{"up", "--log-level=debug", "--enable-dns", "--enable-router",
+			// Use Google's DNS servers as the upstream for public DNS queries,
+			// to avoid the possibility of a DNS loop when using podman-machine.
+			"--dns-public-upstream=8.8.8.8", "--dns-public-upstream=8.8.4.4"},
+		Env: []string{"DO_NOT_TRACK=1"},
 		ExposedPorts: map[nat.Port]struct{}{
 			"51820/udp": {},
 		},
