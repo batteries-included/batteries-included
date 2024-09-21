@@ -24,6 +24,10 @@ setup_trace() {
 }
 
 setup_root() {
+    local current_dir
+    current_dir=$(pwd)
+    # This way we know where the user was when they called the script
+    export CURRENT_DIR=${current_dir}
     bi_pushd "$ROOT_DIR"
 }
 

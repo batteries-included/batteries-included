@@ -9,6 +9,8 @@ defmodule CommonCore.JWK.Loader do
 
   require Logger
 
+  @env_name "HOME_JWK"
+
   @callback get(key_name :: atom()) :: map() | nil
   @spec get(atom()) :: map() | nil
   def get(_)
@@ -21,14 +23,17 @@ defmodule CommonCore.JWK.Loader do
   def get(:test_pub), do: from_resource(:test_pub)
   def get(:test), do: from_resource(:test)
 
-  def get(:home_a) do
-    path = get_config_path(:home_a, "apps/common_core/priv/keys/home_a.pem")
-    from_path(path)
-  end
+  def get(:environment) do
+    # Get the environment key
 
-  def get(:home_b) do
-    path = get_config_path(:home_b, "apps/common_core/priv/keys/home_b.pem")
-    from_path(path)
+    string_value =
+      System.get_env(@env_name)
+
+    if string_value && !string_value != "" do
+      string_value
+      |> JOSE.JWK.from_binary()
+      |> to_map()
+    end
   end
 
   def get(key_name) do
@@ -36,30 +41,18 @@ defmodule CommonCore.JWK.Loader do
     nil
   end
 
-  defp get_config_path(key_name, default) do
-    :common_core
-    |> Application.get_env(__MODULE__, [])
-    |> Keyword.get(:paths, [])
-    |> Keyword.get(key_name, default)
-  end
-
   defp from_resource(key_name) do
     key_name
     |> get_resource()
     |> JOSE.JWK.from_pem()
-    |> JOSE.JWK.to_map()
-    |> elem(1)
+    |> to_map()
   end
 
-  defp from_path(path) do
-    if File.exists?(path) do
-      path
-      |> JOSE.JWK.from_pem_file()
-      |> JOSE.JWK.to_map()
-      |> elem(1)
-    else
-      Logger.error("Key file not found: #{inspect(path)}")
-      nil
-    end
+  defp to_map(nil), do: nil
+
+  defp to_map(jwk) do
+    jwk
+    |> JOSE.JWK.to_map()
+    |> elem(1)
   end
 end

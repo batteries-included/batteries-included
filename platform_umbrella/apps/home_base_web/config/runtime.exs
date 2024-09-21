@@ -34,11 +34,7 @@ secret_key_base =
     """
 
 config :common_core, CommonCore.JWK,
-  paths: [
-    home_a: "/etc/keys/home_a.pem",
-    home_b: "/etc/keys/home_b.pem"
-  ],
-  sign_key: :home_a,
+  sign_key: :environment,
   verify_keys: [:home_a_pub, :home_b_pub]
 
 config :home_base, HomeBase.Repo,
