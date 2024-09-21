@@ -1,6 +1,6 @@
 awscli 2.17.44
-elixir 1.17.2-otp-27
-erlang 27.0.1
+elixir 1.17.3-otp-27
+erlang 27.1
 golang 1.23.1
 goreleaser 2.3.2
 kind 0.24.0
