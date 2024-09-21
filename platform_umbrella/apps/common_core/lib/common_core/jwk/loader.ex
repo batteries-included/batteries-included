@@ -48,6 +48,8 @@ defmodule CommonCore.JWK.Loader do
     |> to_map()
   end
 
+  defp to_map(res) when is_list(res), do: res |> List.first() |> to_map()
+
   defp to_map(nil), do: nil
 
   defp to_map(jwk) do
