@@ -64,6 +64,7 @@ asdf plugin add erlang
 asdf plugin add elixir
 asdf plugin add nodejs
 asdf plugin add golang
+asdf plugin add goreleaser
 asdf plugin add kubectl
 asdf plugin add shfmt
 asdf plugin add awscli
