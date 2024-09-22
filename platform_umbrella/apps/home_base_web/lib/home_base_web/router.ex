@@ -108,7 +108,7 @@ defmodule HomeBaseWeb.Router do
   end
 
   scope "/admin/", HomeBaseWeb do
-    pipe_through [:browser, :app_layout, :require_authenticated_user]
+    pipe_through [:browser, :app_layout, :require_authenticated_user, :require_admin_user]
 
     # TODO: Change this to ensure_admin_team_user
     live_session :admin, layout: @app_layout, on_mount: [@ensure_authenticated_user] do

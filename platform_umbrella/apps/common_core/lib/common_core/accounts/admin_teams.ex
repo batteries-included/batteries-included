@@ -17,6 +17,7 @@ defmodule CommonCore.Accounts.AdminTeams do
   created nefaiously.
   """
   alias CommonCore.Accounts.EnvFetcher
+  alias CommonCore.Accounts.User
   alias CommonCore.Ecto.BatteryUUID
   alias CommonCore.Teams.Team
   alias CommonCore.Teams.TeamRole
@@ -35,6 +36,10 @@ defmodule CommonCore.Accounts.AdminTeams do
                 |> Team.new!()
 
   def bootstrap_team, do: @file_content
+
+  def batteries_included_admin?(%User{roles: roles}) when is_list(roles) do
+    Enum.any?(roles, &batteries_included_admin?/1)
+  end
 
   def batteries_included_admin?(%TeamRole{team_id: team_id}) when not is_nil(team_id) do
     Enum.member?(admin_team_ids(), team_id)
