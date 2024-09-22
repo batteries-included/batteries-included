@@ -5,6 +5,7 @@ defmodule HomeBaseWeb.UserAuth do
   import Phoenix.Controller
   import Plug.Conn
 
+  alias CommonCore.Accounts.AdminTeams
   alias HomeBase.Accounts
 
   # Make the remember me cookie valid for 60 days.
@@ -231,6 +232,19 @@ defmodule HomeBaseWeb.UserAuth do
       |> put_flash(:error, "You must log in to access this page")
       |> maybe_store_return_to()
       |> redirect(to: ~p"/login")
+      |> halt()
+    end
+  end
+
+  def require_admin_user(conn, _opts) do
+    current_user = conn.assigns[:current_user]
+
+    if current_user && AdminTeams.batteries_included_admin?(current_user) do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be an admin to access this page")
+      |> redirect(to: ~p"/")
       |> halt()
     end
   end
