@@ -18,7 +18,7 @@
     "@types/phoenix_live_view": "~0.18",
     "autoprefixer": "~10.4",
     "chart.js": "~4.4",
-    "esbuild": "~0.23",
+    "esbuild": "~0.24",
     "lodash": "~4.17",
     "postcss": "~8.4",
     "postcss-import": "~16.1",
