@@ -21,9 +21,9 @@ defmodule CommonCore.TraditionalServices.Volume do
     field :config, PolymorphicType, mappings: @config_types
   end
 
-  def changeset(struct, params \\ %{}) do
+  def changeset(struct, params \\ %{}, opts \\ []) do
     struct
-    |> CommonCore.Ecto.Schema.schema_changeset(params)
+    |> CommonCore.Ecto.Schema.schema_changeset(params, opts)
     |> validate_length(:name, min: 3, max: 256)
   end
 

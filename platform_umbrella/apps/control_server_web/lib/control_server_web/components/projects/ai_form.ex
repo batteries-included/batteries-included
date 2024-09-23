@@ -26,7 +26,7 @@ defmodule ControlServerWeb.Projects.AIForm do
       PGCluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
         Map.get(form_data, "postgres", %{name: resource_name}),
-        PGCluster.compact_storage_range_ticks()
+        range_ticks: PGCluster.compact_storage_range_ticks()
       )
 
     form =
@@ -56,7 +56,7 @@ defmodule ControlServerWeb.Projects.AIForm do
 
     postgres_changeset =
       %PGCluster{}
-      |> PGCluster.changeset(params["postgres"], PGCluster.compact_storage_range_ticks())
+      |> PGCluster.changeset(params["postgres"], range_ticks: PGCluster.compact_storage_range_ticks())
       |> Map.put(:action, :validate)
 
     form =
@@ -107,7 +107,7 @@ defmodule ControlServerWeb.Projects.AIForm do
 
     if Validations.subforms_valid?(params, %{
          "jupyter" => &JupyterLabNotebook.changeset(%JupyterLabNotebook{}, &1),
-         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, PGCluster.compact_storage_range_ticks())
+         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, range_ticks: PGCluster.compact_storage_range_ticks())
        }) do
       # Don't create the resources yet, send data to parent liveview
       send(self(), {:next, {__MODULE__, params}})

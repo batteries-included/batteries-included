@@ -21,9 +21,9 @@ defmodule CommonCore.Batteries.VictoriaMetricsConfig do
     field :vmstorage_volume_size, :string, default: "5Gi"
   end
 
-  def changeset(base_struct, args) do
+  def changeset(base_struct, args, opts \\ []) do
     base_struct
-    |> CommonCore.Ecto.Schema.schema_changeset(args)
+    |> CommonCore.Ecto.Schema.schema_changeset(args, opts)
     |> validate_number(:replication_factor, greater_than: 0, less_than: 99)
     |> validate_number(:vmstorage_replicas, greater_than: 0, less_than: 99)
     |> validate_number(:vminsert_replicas, greater_than: 0, less_than: 99)

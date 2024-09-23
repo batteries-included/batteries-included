@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
       PGCluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
         Map.get(form_data, "postgres", %{name: resource_name}),
-        PGCluster.compact_storage_range_ticks()
+        range_ticks: PGCluster.compact_storage_range_ticks()
       )
 
     redis_changeset =
@@ -56,7 +56,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   def handle_event("validate", params, socket) do
     postgres_changeset =
       %PGCluster{}
-      |> PGCluster.changeset(params["postgres"], PGCluster.compact_storage_range_ticks())
+      |> PGCluster.changeset(params["postgres"], range_ticks: PGCluster.compact_storage_range_ticks())
       |> Map.put(:action, :validate)
 
     redis_changeset =
@@ -126,7 +126,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
       ])
 
     if Validations.subforms_valid?(params, %{
-         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, PGCluster.compact_storage_range_ticks()),
+         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, range_ticks: PGCluster.compact_storage_range_ticks()),
          "redis" => &RedisCluster.changeset(%RedisCluster{}, &1),
          "ferret" => &FerretService.changeset(%FerretService{}, &1)
        }) do

@@ -24,7 +24,7 @@ defmodule ControlServerWeb.RedisInstanceControllerTest do
 
   describe "create redis_instance" do
     test "renders redis_instance when data is valid", %{conn: conn} do
-      attrs = params_for(:redis_cluster, name: "some-name")
+      attrs = params_for(:redis_cluster, name: "some-name", type: :standard)
       conn = post(conn, ~p"/api/redis/clusters", redis_instance: attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -55,7 +55,7 @@ defmodule ControlServerWeb.RedisInstanceControllerTest do
       conn: conn,
       redis_instance: %RedisInstance{id: id} = redis_instance
     } do
-      update_attrs = params_for(:redis_cluster, name: "some-updated-name")
+      update_attrs = params_for(:redis_cluster, name: redis_instance.name, type: redis_instance.type)
       conn = put(conn, ~p"/api/redis/clusters/#{redis_instance}", redis_instance: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
@@ -66,7 +66,6 @@ defmodule ControlServerWeb.RedisInstanceControllerTest do
                "cpu_requested" => _,
                "memory_limits" => _,
                "memory_requested" => _,
-               "name" => "some-updated-name",
                "num_instances" => _,
                "type" => _
              } = json_response(conn, 200)["data"]

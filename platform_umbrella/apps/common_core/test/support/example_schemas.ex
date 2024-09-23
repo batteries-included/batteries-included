@@ -12,9 +12,9 @@ defmodule CommonCore.ExampleSchemas do
       secret_field :password
     end
 
-    def changeset(struct, attrs) do
+    def changeset(struct, attrs, opts \\ []) do
       struct
-      |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+      |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
       |> validate_exclusion(:name, ["admin"])
     end
   end
@@ -22,6 +22,8 @@ defmodule CommonCore.ExampleSchemas do
   defmodule TodoSchema do
     @moduledoc false
     use CommonCore, :schema
+
+    @read_only_fields ~w(name)a
 
     batt_schema "todos" do
       slug_field :name

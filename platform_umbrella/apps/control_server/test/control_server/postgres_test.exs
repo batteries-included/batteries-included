@@ -14,7 +14,6 @@ defmodule ControlServer.PostgresTest do
       database: %{name: "maindata", owner: "userone"}
     }
     @update_attrs %{
-      name: "some-updated-name",
       num_instances: 3,
       storage_size: 524_288_000,
       users: [
@@ -69,7 +68,6 @@ defmodule ControlServer.PostgresTest do
     test "update_cluster/2 with valid data updates the cluster" do
       cluster = cluster_fixture()
       assert {:ok, %Cluster{} = cluster} = Postgres.update_cluster(cluster, @update_attrs)
-      assert cluster.name == "some-updated-name"
       assert cluster.num_instances == 3
       assert cluster.storage_size == 524_288_000
     end

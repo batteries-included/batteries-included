@@ -19,9 +19,9 @@ defmodule CommonCore.Teams.Team do
     timestamps()
   end
 
-  def changeset(team, attrs \\ %{}) do
+  def changeset(team, attrs \\ %{}, opts \\ []) do
     team
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> cast_assoc(:roles, with: &TeamRole.changeset/2, sort_param: :sort_roles, drop_param: :drop_roles)
     |> validate_length(:name, max: 255)
     |> validate_email_address(:op_email)

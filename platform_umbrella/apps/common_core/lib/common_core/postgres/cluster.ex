@@ -64,6 +64,7 @@ defmodule CommonCore.Postgres.Cluster do
   ]
 
   @required_fields ~w(name num_instances type)a
+  @read_only_fields ~w(name type)a
 
   batt_schema "pg_clusters" do
     slug_field :name
@@ -92,12 +93,14 @@ defmodule CommonCore.Postgres.Cluster do
   end
 
   @doc false
-  def changeset(cluster, attrs, range_ticks \\ nil) do
+  def changeset(cluster, attrs, opts \\ []) do
+    range_ticks = Keyword.get_lazy(opts, :range_ticks, &storage_range_ticks/0)
+
     cluster
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_set_virtual_size(@presets)
     |> validate_password_versions_exits()
-    |> put_range_value_from_storage_size(range_ticks || storage_range_ticks())
+    |> put_range_value_from_storage_size(range_ticks)
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_inclusion(:memory_requested, memory_options())

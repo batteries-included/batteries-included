@@ -11,9 +11,9 @@ defmodule CommonCore.Defaults.Image do
   end
 
   @doc false
-  def changeset(image, attrs) do
+  def changeset(image, attrs, opts \\ []) do
     image
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> default_tag_in_tags()
   end
 

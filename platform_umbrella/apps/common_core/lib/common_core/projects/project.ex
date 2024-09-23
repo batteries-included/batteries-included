@@ -26,9 +26,9 @@ defmodule CommonCore.Projects.Project do
     timestamps()
   end
 
-  def changeset(project, attrs) do
+  def changeset(project, attrs, opts \\ []) do
     project
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> validate_length(:description, max: 1000)
     |> no_assoc_constraint(:postgres_clusters, name: :pg_clusters_project_id_fkey)
     |> no_assoc_constraint(:redis_instances, name: :redis_instances_project_id_fkey)

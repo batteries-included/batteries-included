@@ -64,6 +64,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   ]
 
   @required_fields ~w(name image)a
+  @read_only_fields ~w(name)a
 
   batt_schema "jupyter_lab_notebooks" do
     slug_field :name
@@ -86,9 +87,9 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   end
 
   @doc false
-  def changeset(jupyter_lab_notebook, attrs) do
+  def changeset(jupyter_lab_notebook, attrs, opts \\ []) do
     jupyter_lab_notebook
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_set_virtual_size(@presets)
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
