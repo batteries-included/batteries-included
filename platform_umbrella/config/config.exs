@@ -14,10 +14,6 @@ alias CommonUI.Components.Table
 config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
 
 config :common_core, CommonCore.JWK,
-  paths: [
-    home_a: "apps/common_core/priv/keys/home_a.pem",
-    home_b: "apps/common_core/priv/keys/home_b.pem"
-  ],
   sign_key: :test,
   verify_keys: [:test_pub, :home_a_pub, :home_b_pub]
 

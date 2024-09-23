@@ -75,6 +75,7 @@ Available commands:
 - fmt               Format all code in the project
 - check-fmt         Check if all code in the project is formatted
 - gen-static-specs  Generate static installation specs
+- print-jwk-json    Print the JWK key given a path as JSON for use in a secret
 - set-version       Change the version of the project in mix.exs and bin/bix
 
 **Go Commands**
@@ -373,6 +374,31 @@ do_gen_static_specs() {
     run_mix clean
 }
 
+do_print_jwk_json() {
+    local path=${1}
+    local absolute_path
+
+    # bix jumps to the root of the project on startup
+    #
+    # If the file doesn't exist then assume that
+    # the user passed in a relative path and try to find it
+    # relative to where the user was when they called bix.
+    #
+    if [ ! -f "${path}" ]; then
+        path="${CURRENT_DIR}/${path}"
+    fi
+
+    # If we still can't find the file then fail out
+    if [ ! -f "${path}" ]; then
+        die "File not found: ${path}"
+    fi
+
+    absolute_path=$(readlink -f "${path}")
+
+    log "${GREEN}Printing JWK key${NOFORMAT} from ${absolute_path}"
+    run_mix jwk.pem.json "${absolute_path}"
+}
+
 do_set_version() {
     local new_version=${1}
     local old_version="${BASE_VERSION}"
@@ -645,6 +671,9 @@ stop)
     ;;
 gen-static-specs)
     do_gen_static_specs
+    ;;
+print-jwk-json)
+    do_print_jwk_json "${args[@]}"
     ;;
 set-version)
     do_set_version "${args[@]}"

@@ -34,8 +34,7 @@ secret_key_base =
     """
 
 config :common_core, CommonCore.JWK,
-  paths: [],
-  sign_key: :home_a,
+  sign_key: nil,
   verify_keys: [:home_a_pub, :home_b_pub]
 
 config :common_core, :clusters, default: :service_account

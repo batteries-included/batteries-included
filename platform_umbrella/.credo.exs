@@ -150,7 +150,15 @@
           {Credo.Check.Warning.UnusedStringOperation, []},
           {Credo.Check.Warning.UnusedTupleOperation, []},
           {Credo.Check.Refactor.NegatedIsNil, []},
-          {Credo.Check.Refactor.IoPuts, []},
+          {Credo.Check.Refactor.IoPuts,
+           [
+             files: %{
+               excluded: [
+                 # We can print to console in mix tasks
+                 "apps/common_core/lib/mix/tasks/jwk_pem_json.ex"
+               ]
+             }
+           ]},
           {Credo.Check.Refactor.DoubleBooleanNegation, []},
           {Credo.Check.Refactor.AppendSingleItem, []},
           {Credo.Check.Readability.WithCustomTaggedTuple, []},

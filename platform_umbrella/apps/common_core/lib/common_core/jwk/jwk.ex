@@ -30,14 +30,14 @@ defmodule CommonCore.JWK do
 
   @spec sign_key() :: atom()
   def sign_key do
-    __MODULE__
+    :common_core
     |> Application.get_env(CommonCore.JWK, [])
     |> Keyword.get(:sign_key, :test)
   end
 
   @spec verify_keys() :: list(atom)
   def verify_keys do
-    __MODULE__
+    :common_core
     |> Application.get_env(CommonCore.JWK, [])
     |> Keyword.get(:verify_keys, [:test_pub, :home_a_pub, :home_b_pub])
   end
