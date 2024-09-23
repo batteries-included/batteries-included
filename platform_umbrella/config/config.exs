@@ -123,7 +123,7 @@ config :oauth2,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :swoosh, :api_client, Swoosh.ApiClient.Finch
+config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: CommonCore.Finch
 
 config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]}
 

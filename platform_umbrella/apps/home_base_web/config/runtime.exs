@@ -37,6 +37,11 @@ config :common_core, CommonCore.JWK,
   sign_key: :environment,
   verify_keys: [:home_a_pub, :home_b_pub]
 
+config :home_base, HomeBase.Mailer,
+  adapter: Swoosh.Adapters.Postmark,
+  # Fall back to the black hole postmark server if no key is provided
+  api_key: System.get_env("POSTMARK_KEY") || "d382f183-4b4b-417f-82db-3f9635a05c8b"
+
 config :home_base, HomeBase.Repo,
   database: postgres_database,
   hostname: postgres_host,
