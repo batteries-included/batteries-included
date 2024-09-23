@@ -57,19 +57,21 @@ defmodule ControlServerWeb.ClusterControllerTest do
     setup [:create_cluster]
 
     test "renders cluster when data is valid", %{conn: conn, cluster: %Cluster{id: id} = cluster} do
-      update_attrs = params_for(:postgres_cluster, name: "some-updated-name")
+      update_attrs = params_for(:postgres_cluster, name: cluster.name)
       conn = put(conn, ~p"/api/postgres/clusters/#{cluster}", cluster: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/postgres/clusters/#{id}")
       resp = json_response(conn, 200)["data"]
 
+      name = cluster.name
+
       assert %{
                "id" => ^id,
                "cpu_limits" => _,
                "cpu_requested" => _,
                "memory_limits" => _,
-               "name" => "some-updated-name",
+               "name" => ^name,
                "num_instances" => _,
                "storage_size" => _,
                "type" => _
@@ -77,7 +79,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, cluster: %Cluster{id: id} = cluster} do
-      update_attrs = params_for(:postgres_cluster, name: "another-updated-name")
+      update_attrs = params_for(:postgres_cluster, name: cluster.name, type: cluster.type)
       conn = put(conn, ~p"/api/postgres/clusters/#{cluster}", cluster: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 

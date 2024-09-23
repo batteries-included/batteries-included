@@ -20,9 +20,9 @@ defmodule CommonCore.Port do
     field :protocol, Ecto.Enum, values: Keyword.values(@protocols), default: :http2
   end
 
-  def changeset(struct, params \\ %{}) do
+  def changeset(struct, params \\ %{}, opts \\ []) do
     struct
-    |> Schema.schema_changeset(params)
+    |> Schema.schema_changeset(params, opts)
     |> downcase_fields([:name])
   end
 

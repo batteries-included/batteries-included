@@ -14,9 +14,9 @@ defmodule CommonCore.Postgres.PGUser do
     field :position, :integer, virtual: true
   end
 
-  def changeset(struct, params \\ %{}) do
+  def changeset(struct, params \\ %{}, opts \\ []) do
     struct
-    |> CommonCore.Ecto.Schema.schema_changeset(params)
+    |> CommonCore.Ecto.Schema.schema_changeset(params, opts)
     |> validate_pg_rolelist(:roles)
   end
 end

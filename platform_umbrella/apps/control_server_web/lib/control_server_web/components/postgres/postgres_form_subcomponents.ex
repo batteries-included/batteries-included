@@ -188,6 +188,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
   attr :phx_target, :any
   attr :class, :any, default: nil
+  attr :action, :atom, default: nil
   attr :with_divider, :boolean, default: true
   attr :form, Phoenix.HTML.Form, required: true
   attr :ticks, :list, required: true
@@ -196,7 +197,12 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     ~H"""
     <div class={["contents", @class]}>
       <.grid columns={[sm: 1, xl: 2]}>
-        <.input field={@form[:name]} label="Name" autofocus />
+        <.input
+          field={@form[:name]}
+          label="Name"
+          autofocus={@action == :new}
+          disabled={@action != :new}
+        />
 
         <.input
           field={@form[:virtual_size]}

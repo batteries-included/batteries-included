@@ -46,7 +46,8 @@ defmodule ControlServerWeb.JupyterLabNotebookControllerTest do
       conn: conn,
       jupyter_lab_notebook: %JupyterLabNotebook{id: id} = jupyter_lab_notebook
     } do
-      update_attrs = params_for(:jupyter_lab_notebook, name: "some-updated-name", image: "some-updated-image:latest")
+      update_attrs =
+        params_for(:jupyter_lab_notebook, image: "some-updated-image:latest", name: jupyter_lab_notebook.name)
 
       conn =
         put(conn, ~p"/api/notebooks/jupyter_lab_notebooks/#{jupyter_lab_notebook}", jupyter_lab_notebook: update_attrs)
@@ -57,8 +58,7 @@ defmodule ControlServerWeb.JupyterLabNotebookControllerTest do
 
       assert %{
                "id" => ^id,
-               "image" => "some-updated-image:latest",
-               "name" => "some-updated-name"
+               "image" => "some-updated-image:latest"
              } = json_response(conn, 200)["data"]
     end
 

@@ -66,7 +66,7 @@ defmodule ControlServer.SnapshotApply.Actions do
   """
   def update_keycloak_action(%KeycloakAction{} = keycloak_action, attrs) do
     keycloak_action
-    |> KeycloakAction.changeset(attrs)
+    |> KeycloakAction.changeset(attrs, action: :update)
     |> Repo.update()
   end
 

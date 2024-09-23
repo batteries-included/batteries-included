@@ -20,9 +20,9 @@ defmodule CommonCore.Containers.Container do
     embeds_many(:mounts, CommonCore.Containers.Mount, on_replace: :delete)
   end
 
-  def changeset(struct, params \\ %{}) do
+  def changeset(struct, params \\ %{}, opts \\ []) do
     struct
-    |> CommonCore.Ecto.Schema.schema_changeset(params)
+    |> CommonCore.Ecto.Schema.schema_changeset(params, opts)
     |> downcase_fields([:name])
     |> put_command_from_path()
   end

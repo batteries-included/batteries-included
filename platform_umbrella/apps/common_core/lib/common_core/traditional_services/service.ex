@@ -86,9 +86,9 @@ defmodule CommonCore.TraditionalServices.Service do
   end
 
   @doc false
-  def changeset(service, attrs) do
+  def changeset(service, attrs, opts) do
     service
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_set_virtual_size(@service_size_preset)
     |> unique_constraint(:name)
   end

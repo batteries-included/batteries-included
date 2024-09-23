@@ -12,7 +12,12 @@ defmodule ControlServerWeb.Batteries.VMAgentForm do
 
       <.panel title="Configuration">
         <.simple_form variant="nested">
-          <.input field={@form[:cookie_secret]} type="password" label="Cookie Secret" />
+          <.input
+            field={@form[:cookie_secret]}
+            type="password"
+            label="Cookie Secret"
+            disabled={@action != :new}
+          />
         </.simple_form>
       </.panel>
     </div>

@@ -30,9 +30,9 @@ defmodule CommonCore.Knative.Service do
   end
 
   @doc false
-  def changeset(struct, attrs) do
+  def changeset(struct, attrs, opts \\ []) do
     struct
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> unique_constraint(:name)
     |> validate_realm()
   end

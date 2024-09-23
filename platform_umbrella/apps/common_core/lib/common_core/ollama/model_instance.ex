@@ -64,9 +64,9 @@ defmodule CommonCore.Ollama.ModelInstance do
     timestamps()
   end
 
-  def changeset(model_instance, attrs) do
+  def changeset(model_instance, attrs, opts \\ []) do
     model_instance
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_set_virtual_size(@presets)
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)

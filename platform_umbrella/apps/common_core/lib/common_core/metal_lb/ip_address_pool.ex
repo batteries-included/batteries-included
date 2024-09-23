@@ -9,6 +9,7 @@ defmodule CommonCore.MetalLB.IPAddressPool do
   }
 
   @required_fields [:name, :subnet]
+  @read_only_fields ~w(name)a
 
   batt_schema "ip_address_pools" do
     slug_field :name
@@ -18,9 +19,9 @@ defmodule CommonCore.MetalLB.IPAddressPool do
   end
 
   @doc false
-  def changeset(ip_address_pool, attrs \\ %{}) do
+  def changeset(ip_address_pool, attrs \\ %{}, opts \\ []) do
     ip_address_pool
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> unique_constraint(:name)
   end
 

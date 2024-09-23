@@ -19,7 +19,6 @@ defmodule ControlServerWeb.PostgresLiveTest do
   }
   @update_attrs %{
     cluster: %{
-      name: "postgres-live-test",
       virtual_size: "medium",
       num_instances: 3
     }
@@ -190,7 +189,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> submit_form("#cluster-form", @update_attrs)
 
       updated_cluster = Repo.get(Cluster, cluster.id)
-      assert updated_cluster.name == @update_attrs.cluster.name
+      assert updated_cluster.num_instances == @update_attrs.cluster.num_instances
     end
 
     test "changing the virtual size field to custom exposes storage fields and defaults to the existing storage size", %{
@@ -226,7 +225,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> start(~p"/postgres/#{cluster.id}/edit")
       |> click("#edit_user_#{valid_user_params["username"]}")
       |> submit_form("#user-form", %{"pg_user" => updated_user_params})
-      |> submit_form("#cluster-form", @valid_attrs)
+      |> submit_form("#cluster-form", Map.update(@valid_attrs, :cluster, %{}, fn attrs -> Map.delete(attrs, :name) end))
 
       updated_cluster = Repo.get(Cluster, cluster.id)
 

@@ -29,7 +29,7 @@ defmodule CommonCore.Batteries.CatalogBattery do
       |> Map.put(:id, BatteryUUID.autogenerate())
 
     %SystemBattery{}
-    |> SystemBattery.changeset(args)
-    |> Ecto.Changeset.apply_action!(:create)
+    |> SystemBattery.changeset(args, action: :insert)
+    |> Ecto.Changeset.apply_action!(:insert)
   end
 end
