@@ -54,7 +54,9 @@ defmodule CommonCore.Postgres.ClusterTest do
 
     test "should put a storage size into the changeset with ticks" do
       assert %Cluster{}
-             |> Cluster.changeset(%{storage_size: Memory.to_bytes(50, :GB)}, Cluster.compact_storage_range_ticks())
+             |> Cluster.changeset(%{storage_size: Memory.to_bytes(50, :GB)},
+               range_ticks: Cluster.compact_storage_range_ticks()
+             )
              |> Changeset.get_change(:virtual_storage_size_range_value) == Memory.to_bytes(0.3, :TB)
     end
 

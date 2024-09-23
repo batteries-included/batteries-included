@@ -5,7 +5,9 @@ defmodule CommonCore.Batteries.TraditionalServicesConfig do
 
   alias CommonCore.Defaults
 
+  @read_only_fields ~w(namespace)a
+
   batt_polymorphic_schema type: :traditional_services do
-    defaultable_field :namespace, :string, default: Defaults.Namespaces.traditional()
+    field :namespace, :string, default: Defaults.Namespaces.traditional()
   end
 end

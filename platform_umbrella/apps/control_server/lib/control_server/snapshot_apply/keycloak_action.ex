@@ -34,9 +34,9 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
     timestamps()
   end
 
-  def changeset(keycloak_action, attrs) do
+  def changeset(keycloak_action, attrs, opts \\ []) do
     keycloak_action
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> validate_realm_present_if_needed()
     |> validate_ping_only_for_realm()
   end

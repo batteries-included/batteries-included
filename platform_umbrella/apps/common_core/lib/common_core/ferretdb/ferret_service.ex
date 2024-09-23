@@ -12,6 +12,7 @@ defmodule CommonCore.FerretDB.FerretService do
   }
 
   @required_fields ~w(instances postgres_cluster_id)a
+  @read_only_fields ~w(name)a
 
   @presets [
     %{
@@ -71,9 +72,9 @@ defmodule CommonCore.FerretDB.FerretService do
   def preset_options_for_select, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
 
   @doc false
-  def changeset(ferret_service, attrs) do
+  def changeset(ferret_service, attrs, opts \\ []) do
     ferret_service
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_set_virtual_size(@presets)
     |> foreign_key_constraint(:project_id)
   end

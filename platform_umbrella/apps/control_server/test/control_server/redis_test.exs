@@ -51,13 +51,11 @@ defmodule ControlServer.RedisTest do
       redis_instance = redis_instance_fixture()
 
       update_attrs = %{
-        name: "some-updated-name",
         num_instances: 43
       }
 
       assert {:ok, %RedisInstance{} = redis_instance} = Redis.update_redis_instance(redis_instance, update_attrs)
 
-      assert redis_instance.name == "some-updated-name"
       assert redis_instance.num_instances == 43
     end
 

@@ -37,9 +37,9 @@ defmodule CommonCore.Installation do
   end
 
   @doc false
-  def changeset(installation, attrs \\ %{}) do
+  def changeset(installation, attrs \\ %{}, opts \\ []) do
     installation
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_add_control_jwk()
     |> foreign_key_constraint(:slug)
   end

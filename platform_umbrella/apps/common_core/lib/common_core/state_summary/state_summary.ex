@@ -51,16 +51,21 @@ defmodule CommonCore.StateSummary do
     home_base_init_data = Keyword.get(opts, :home_base_init_data, %HomeBaseInitData{})
     batteries = CommonCore.Installs.Batteries.default_batteries(installation)
 
+    cluster_args = CommonCore.Installs.Postgres.cluster_arg_list(batteries, installation)
+
     %__MODULE__{}
-    |> changeset(%{
-      batteries: Enum.map(batteries, fn b -> %{Map.from_struct(b) | config: Map.from_struct(b.config)} end),
-      postgres_clusters: CommonCore.Installs.Postgres.cluster_arg_list(batteries, installation),
-      traditional_services: CommonCore.Installs.TraditionalServices.services(installation),
-      home_base_init_data: Map.from_struct(home_base_init_data),
-      # For now we don't have projects to add to the target summary
-      # once we work out inter-cluster project sharing we can add this
-      projects: []
-    })
+    |> changeset(
+      %{
+        batteries: Enum.map(batteries, fn b -> %{Map.from_struct(b) | config: Map.from_struct(b.config)} end),
+        postgres_clusters: cluster_args,
+        traditional_services: CommonCore.Installs.TraditionalServices.services(installation),
+        home_base_init_data: Map.from_struct(home_base_init_data),
+        # For now we don't have projects to add to the target summary
+        # once we work out inter-cluster project sharing we can add this
+        projects: []
+      },
+      action: :insert
+    )
     |> apply_action(:insert)
   end
 end

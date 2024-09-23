@@ -36,6 +36,7 @@ defmodule CommonCore.Redis.RedisInstance do
   ]
 
   @required_fields ~w(type name)a
+  @read_only_fields ~w(name type)a
 
   batt_schema "redis_instances" do
     slug_field :name
@@ -91,9 +92,9 @@ defmodule CommonCore.Redis.RedisInstance do
     do: Enum.map([:standalone, :replication, :cluster], &{String.capitalize(to_string(&1)), &1})
 
   @doc false
-  def changeset(redis_instance, attrs) do
+  def changeset(redis_instance, attrs, opts \\ []) do
     redis_instance
-    |> CommonCore.Ecto.Schema.schema_changeset(attrs)
+    |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_set_virtual_size(@presets)
     |> unique_constraint([:type, :name])
     |> foreign_key_constraint(:project_id)

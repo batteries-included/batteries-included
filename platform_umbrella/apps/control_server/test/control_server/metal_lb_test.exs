@@ -43,12 +43,11 @@ defmodule ControlServer.MetalLBTest do
 
     test "update_ip_address_pool/2 with valid data updates the ip_address_pool" do
       ip_address_pool = ip_address_pool_fixture()
-      update_attrs = %{name: "some-updated-name", subnet: "some updated subnet"}
+      update_attrs = %{subnet: "some updated subnet"}
 
       assert {:ok, %IPAddressPool{} = ip_address_pool} =
                MetalLB.update_ip_address_pool(ip_address_pool, update_attrs)
 
-      assert ip_address_pool.name == "some-updated-name"
       assert ip_address_pool.subnet == "some updated subnet"
     end
 

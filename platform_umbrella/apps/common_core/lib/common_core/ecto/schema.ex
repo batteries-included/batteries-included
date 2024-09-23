@@ -52,6 +52,12 @@ defmodule CommonCore.Ecto.Schema do
   attribute, the fields will be validated by `validate_required/2`
   inside `CommonCore.Ecto.Schema.schema_changeset/2`.
 
+
+  ### `@read_only_fields`
+
+  A list of fields that are read only for the schema. On any schema with this
+  attribute, the fields will be validated by `CommonCore.Ecto.Schema.validate_read_only/2`
+
   #### Defaultable Fields
 
   ```elixir
@@ -153,6 +159,8 @@ defmodule CommonCore.Ecto.Schema do
   """
   import CommonCore.Ecto.Validations
 
+  alias Ecto.Changeset
+
   require TypedEctoSchema
 
   defmacro __using__(_ots \\ []) do
@@ -207,9 +215,9 @@ defmodule CommonCore.Ecto.Schema do
         end
       end
 
-      def changeset(base_struct, args), do: unquote(__MODULE__).schema_changeset(base_struct, args)
+      def changeset(base_struct, args, opts \\ []), do: unquote(__MODULE__).schema_changeset(base_struct, args, opts)
 
-      defoverridable new: 0, new: 1, changeset: 2, new!: 1
+      defoverridable new: 0, new: 1, changeset: 3, changeset: 2, new!: 1
     end
   end
 
@@ -242,6 +250,7 @@ defmodule CommonCore.Ecto.Schema do
 
       def __schema__(:polymorphic_type), do: unquote(Module.get_attribute(env.module, :__polymorphic_type, nil))
       def __schema__(:generated_secrets), do: unquote(Module.get_attribute(env.module, :__generated_secrets, []))
+      def __schema__(:read_only_fields), do: unquote(Module.get_attribute(env.module, :read_only_fields, []))
     end
   end
 
@@ -439,13 +448,13 @@ defmodule CommonCore.Ecto.Schema do
   def schema_new(module, opts) do
     module
     |> struct()
-    |> module.changeset(opts)
-    |> Ecto.Changeset.apply_action(:update)
+    |> module.changeset(opts, action: :new)
+    |> Ecto.Changeset.apply_action(:insert)
   end
 
   @spec schema_changeset(
           struct(),
-          list() | map()
+          list() | Keyword.t()
         ) :: struct()
   # Casts the given map to a changeset for the given base struct.
   #
@@ -460,8 +469,18 @@ defmodule CommonCore.Ecto.Schema do
     to_cast = Enum.concat(fields, virtual_fields) -- embeds
     cast_opts = Keyword.get(opts, :cast_opts, [])
 
-    base
-    |> Ecto.Changeset.cast(sanitize_opts(params), to_cast, cast_opts)
+    changeset = Ecto.Changeset.cast(base, sanitize_opts(params), to_cast, cast_opts)
+
+    action = Keyword.get(opts, :action, nil)
+
+    changeset =
+      if action do
+        %Changeset{changeset | action: action}
+      else
+        changeset
+      end
+
+    changeset
     |> add_embeds(struct)
     |> add_polymorphic_fields(struct)
     |> add_defaultable_fields(struct)
@@ -470,6 +489,7 @@ defmodule CommonCore.Ecto.Schema do
     |> add_slug_field_validations(struct)
     |> add_foreign_key_constraints(struct)
     |> add_required_fields(struct)
+    |> add_read_only_fields(struct)
   end
 
   defp add_embeds(changeset, struct) do
@@ -566,12 +586,16 @@ defmodule CommonCore.Ecto.Schema do
     Ecto.Changeset.validate_required(changeset, struct.__schema__(:required_fields) || [])
   end
 
+  defp add_read_only_fields(changeset, struct) do
+    CommonCore.Ecto.Validations.validate_read_only(changeset, struct.__schema__(:read_only_fields) || [])
+  end
+
   @spec schema_cast(module(), map() | struct() | keyword()) ::
           {:ok, Ecto.Schema.t() | Ecto.Changeset.data()} | :error
   def schema_cast(module, data) do
     module
     |> struct()
-    |> module.changeset(sanitize_opts(data))
+    |> module.changeset(sanitize_opts(data), action: :cast)
     |> apply_changeset_if_valid()
   end
 
@@ -592,7 +616,7 @@ defmodule CommonCore.Ecto.Schema do
   def schema_load(module, data) do
     module
     |> struct()
-    |> module.changeset(data)
+    |> module.changeset(data, action: :load)
     |> apply_changeset_if_valid()
   end
 

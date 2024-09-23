@@ -161,7 +161,7 @@ defmodule ControlServer.Postgres do
 
   defp maybe_insert(nil = _selected, repo, attrs) do
     %Cluster{}
-    |> Cluster.changeset(attrs)
+    |> Cluster.changeset(attrs, action: :insert)
     |> repo.insert()
     |> broadcast(:insert)
   end

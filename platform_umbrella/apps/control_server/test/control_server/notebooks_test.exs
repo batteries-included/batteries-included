@@ -6,7 +6,7 @@ defmodule ControlServer.NotebooksTest do
 
   describe "jupyter_lab_notebooks" do
     @valid_attrs %{image: "some-image", name: "some-name", storage_size: 524_288_000}
-    @update_attrs %{image: "some-updated-image", name: "some-updated-name", storage_size: 209_715_200}
+    @update_attrs %{image: "some-updated-image", storage_size: 209_715_200}
     @invalid_attrs %{image: nil, name: nil, storage_size: nil}
 
     def jupyter_lab_notebook_fixture(attrs \\ %{}) do
@@ -56,7 +56,6 @@ defmodule ControlServer.NotebooksTest do
                Notebooks.update_jupyter_lab_notebook(jupyter_lab_notebook, @update_attrs)
 
       assert jupyter_lab_notebook.image == "some-updated-image"
-      assert jupyter_lab_notebook.name == "some-updated-name"
       assert jupyter_lab_notebook.storage_size == 209_715_200
     end
 

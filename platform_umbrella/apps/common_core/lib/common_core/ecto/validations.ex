@@ -47,6 +47,51 @@ defmodule CommonCore.Ecto.Validations do
     end)
   end
 
+  def validate_read_only(changeset, fields) when is_list(fields) do
+    Enum.reduce(fields, changeset, fn f, change ->
+      validate_read_only(change, f)
+    end)
+  end
+
+  @doc """
+  Validates that the given field is read-only and cannot be changed.
+
+  This not check on insert, cast, or new actions.
+  This also allows a single write from nil to something else.
+
+  Returns the updated changeset.
+  """
+  def validate_read_only(changeset, field) when is_atom(field) do
+    old_value = Map.get(changeset.data, field)
+    change_value = get_change(changeset, field)
+
+    cond do
+      # Our schema uses changesets to load and create new records
+      # So use the action as a method to tell if we are creating a new record
+      # or changing an existing one.
+      Enum.member?(~w(load new insert cast)a, changeset.action) ->
+        changeset
+
+      changeset.data |> Map.get(:__meta__, %{}) |> Map.get(:state, :built) == :built ->
+        # Currently Ecto doesn't copy the changeset action on relation changesets
+        # So we have a bunch of places that action is nil, but we are actually creating
+        # new records. This is a hack to work around that.
+        changeset
+
+      old_value == change_value ->
+        changeset
+
+      old_value == nil ->
+        changeset
+
+      change_value == nil ->
+        changeset
+
+      true ->
+        add_error(changeset, field, "is read-only and cannot be changed")
+    end
+  end
+
   @default_length 64
 
   @doc """

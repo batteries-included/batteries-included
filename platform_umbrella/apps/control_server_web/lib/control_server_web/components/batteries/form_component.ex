@@ -226,6 +226,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
             module={@form_module}
             battery={@catalog_battery}
             form={f}
+            action={@action}
             id="battery-subform"
           />
         </.grid>

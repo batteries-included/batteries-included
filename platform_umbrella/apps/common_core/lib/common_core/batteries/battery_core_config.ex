@@ -9,6 +9,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
   alias CommonCore.Util.Time
 
   @required_fields ~w(cluster_type)a
+  @read_only_fields ~w(install_id core_namespace base_namespace data_namespace ai_namespace usage)a
 
   batt_polymorphic_schema type: :battery_core do
     field :core_namespace, :string, default: Defaults.Namespaces.core()
@@ -46,9 +47,9 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     field :upgrade_end_hour, :integer, default: 23
   end
 
-  def changeset(%__MODULE__{} = config, attrs) do
+  def changeset(%__MODULE__{} = config, attrs, opts \\ []) do
     config
-    |> Schema.schema_changeset(attrs)
+    |> Schema.schema_changeset(attrs, opts)
     |> put_upgrade_days_of_week_from_virtual()
   end
 
