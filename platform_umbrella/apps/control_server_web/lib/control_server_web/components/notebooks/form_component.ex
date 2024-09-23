@@ -170,7 +170,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
         <.grid columns={[sm: 1, lg: 2]}>
           <.panel class="col-span-2">
             <.grid columns={[sm: 1, lg: 2]} class="items-center">
-              <.input field={@form[:name]} label="Name" />
+              <.input field={@form[:name]} label="Name" disabled={@action != :new} />
 
               <.input
                 field={@form[:virtual_size]}

@@ -279,4 +279,18 @@ defmodule CommonUI.Components.InputTest do
     <.input type="hidden" name="foo" value="bar" />
     """
   end
+
+  component_snapshot_test "disabled password component" do
+    assigns = %{}
+
+    ~H"""
+    <.input
+      type="password"
+      name="foo"
+      label="Foobar"
+      value="somereallylongpasswordthatwedontwanttoshowforsecurity"
+      disabled
+    />
+    """
+  end
 end

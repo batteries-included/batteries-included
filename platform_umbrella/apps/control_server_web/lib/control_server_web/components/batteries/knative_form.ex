@@ -14,7 +14,7 @@ defmodule ControlServerWeb.Batteries.KnativeForm do
 
       <.panel title="Configuration">
         <.simple_form variant="nested">
-          <.input field={@form[:namespace]} label="Namespace" />
+          <.input field={@form[:namespace]} label="Namespace" disabled={@action != :new} />
         </.simple_form>
       </.panel>
 

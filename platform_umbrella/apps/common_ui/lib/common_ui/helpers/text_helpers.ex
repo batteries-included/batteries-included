@@ -28,7 +28,13 @@ defmodule CommonUI.TextHelpers do
   @doc """
   This is a method to obfuscate a string by replacing a chunk in the middle with asterisks.
   """
-  def obfuscate(text, opts \\ []) do
+  def obfuscate(text, opts \\ [])
+
+  def obfuscate(nil, _opts) do
+    ""
+  end
+
+  def obfuscate(text, opts) do
     keep = Keyword.get(opts, :keep, 4)
     char = Keyword.get(opts, :char, "*")
     char_limit = Keyword.get(opts, :char_limit, 30)

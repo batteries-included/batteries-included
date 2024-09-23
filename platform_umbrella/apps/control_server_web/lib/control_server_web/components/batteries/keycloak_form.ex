@@ -21,8 +21,15 @@ defmodule ControlServerWeb.Batteries.KeycloakForm do
 
       <.panel title="Configuration">
         <.simple_form variant="nested">
-          <.input field={@form[:admin_username]} label="Admin Username" />
-          <.input field={@form[:admin_password]} type="password" label="Admin Password" />
+          <.input field={@form[:admin_username]} label="Admin Username" disabled={@action != :new} />
+
+          <.input
+            disabled={@action != :new}
+            field={@form[:admin_password]}
+            type="password"
+            label="Admin Password"
+          />
+
           <.input field={@form[:log_level]} label="Log Level" />
           <.input field={@form[:replicas]} type="number" label="Replicas" />
         </.simple_form>

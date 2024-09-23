@@ -9,6 +9,7 @@ defmodule CommonUI.Components.Input do
   import Phoenix.HTML.Form
 
   alias CommonUI.IDHelpers
+  alias CommonUI.TextHelpers
   alias Phoenix.HTML.FormField
 
   attr :name, :any
@@ -403,6 +404,22 @@ defmodule CommonUI.Components.Input do
       class={[input_class(@errors), @class]}
       {@rest}
     />
+    """
+  end
+
+  def input(%{type: "password", rest: %{disabled: true}} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
+    ~H"""
+    <label phx-feedback-for={@name}>
+      <div :if={@label} class="flex items-center justify-between mb-2">
+        <.label id={@id} label={@label} help={@help} class="mb-0" />
+      </div>
+
+      <div class="font-mono font-bold text-sm">
+        <%= TextHelpers.obfuscate(@value, keep: 1, char_limit: 12) %>
+      </div>
+    </label>
     """
   end
 

@@ -244,6 +244,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             <PostgresFormSubcomponents.size_form
               form={@form}
               phx_target={@myself}
+              action={@action}
               ticks={Cluster.storage_range_ticks()}
             />
 
