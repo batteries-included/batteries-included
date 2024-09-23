@@ -107,28 +107,24 @@ defmodule CommonUI.Components.InputList do
     <div>
       <div :if={@label} class={label_class()}><%= @label %></div>
 
-      <%= if @field.value == [] do %>
-        <input type="hidden" name={"#{@field.name}[]"} />
-      <% else %>
-        <%= for {value, index} <- Enum.with_index(@field.value) do %>
-          <div class={wrapper_class()}>
-            <div class="flex-1">
-              <%= render_slot(
-                @inner_block,
-                Map.merge(@field, %{name: @field.name <> "[]", value: value})
-              ) %>
-            </div>
-
-            <.button
-              variant="minimal"
-              icon={:x_mark}
-              phx-value-index={index}
-              phx-click={@remove_click}
-              phx-target={@phx_target}
-            />
+      <.list :let={{value, index}} field={@field}>
+        <div class={wrapper_class()}>
+          <div class="flex-1">
+            <%= render_slot(
+              @inner_block,
+              Map.merge(@field, %{name: @field.name <> "[]", value: value})
+            ) %>
           </div>
-        <% end %>
-      <% end %>
+
+          <.button
+            variant="minimal"
+            icon={:x_mark}
+            phx-value-index={index}
+            phx-click={@remove_click}
+            phx-target={@phx_target}
+          />
+        </div>
+      </.list>
 
       <.button
         variant="minimal"
@@ -140,6 +136,25 @@ defmodule CommonUI.Components.InputList do
         <%= @add_label %>
       </.button>
     </div>
+    """
+  end
+
+  defp list(%{field: %{value: nil}} = assigns) do
+    ~H"""
+    """
+  end
+
+  defp list(%{field: %{value: []}} = assigns) do
+    ~H"""
+    <input type="hidden" name={"#{@field.name}[]"} />
+    """
+  end
+
+  defp list(assigns) do
+    ~H"""
+    <%= for {value, index} <- Enum.with_index(@field.value) do %>
+      <%= render_slot(@inner_block, {value, index}) %>
+    <% end %>
     """
   end
 
