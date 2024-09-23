@@ -1,6 +1,7 @@
 package specs
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -8,6 +9,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	jose "github.com/go-jose/go-jose/v4"
 )
 
 func GetSpecFromURL(specURL string) (*InstallSpec, error) {
@@ -58,6 +61,7 @@ func readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
 
 func readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
 	// Download the file
+
 	res, err := http.Get(parsedURL.String())
 	if err != nil {
 		return nil, fmt.Errorf("error downloading spec: %w", err)
@@ -68,10 +72,42 @@ func readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
 		return nil, fmt.Errorf("error reading spec: %w", err)
 	}
 
-	installSpec, err := UnmarshalJSON(specBytes)
+	payload, err := parseSpecResponse(specBytes)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing spec: %w", err)
+	}
+
+	installSpec, err := UnmarshalJSON(payload)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling spec: %w", err)
 	}
 
 	return &installSpec, nil
+}
+
+func parseSpecResponse(specBytes []byte) ([]byte, error) {
+	type biJWT struct {
+		JWS json.RawMessage `json:"jwt"`
+	}
+	jwt := &biJWT{}
+
+	// we need the `jwt` key of the response. parse the whole thing first
+	err := json.Unmarshal(specBytes, jwt)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal into temporary structure: %w", err)
+	}
+
+	// remarshal back into a string for go-jose
+	bs, err := jwt.JWS.MarshalJSON()
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal JWS back into string: %w", err)
+	}
+
+	jws, err := jose.ParseSigned(string(bs), []jose.SignatureAlgorithm{jose.EdDSA})
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse signed payload: %w", err)
+	}
+
+	// TODO(jdt): actually verify
+	return jws.UnsafePayloadWithoutVerification(), nil
 }
