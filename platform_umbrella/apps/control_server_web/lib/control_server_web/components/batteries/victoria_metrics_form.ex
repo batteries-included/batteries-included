@@ -26,7 +26,12 @@ defmodule ControlServerWeb.Batteries.VictoriaMetricsForm do
 
       <.panel title="Configuration">
         <.simple_form variant="nested">
-          <.input field={@form[:cookie_secret]} type="password" label="Cookie Secret" />
+          <.input
+            field={@form[:cookie_secret]}
+            type="password"
+            label="Cookie Secret"
+            disabled={@action != :new}
+          />
           <.input field={@form[:replication_factor]} type="number" label="Replication Factor" />
           <.input field={@form[:vminsert_replicas]} type="number" label="Insert Replicas" />
           <.input field={@form[:vmselect_replicas]} type="number" label="Select Replicas" />

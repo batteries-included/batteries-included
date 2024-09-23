@@ -16,13 +16,14 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
 
       <.panel title="Configuration">
         <.simple_form variant="nested">
-          <.input field={@form[:cluster_name]} label="Cluster Name" />
+          <.input field={@form[:cluster_name]} label="Cluster Name" disabled={@action != :new} />
 
           <.input
             field={@form[:cluster_type]}
             type="select"
             label="Cluster Type"
             options={Options.provider_options()}
+            disabled={@action != :new}
           />
 
           <.input
@@ -32,16 +33,22 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
             options={Options.size_options()}
           />
 
-          <.input field={@form[:usage]} type="select" label="Usage" options={Options.usages()} />
+          <.input
+            field={@form[:usage]}
+            type="select"
+            label="Usage"
+            options={Options.usages()}
+            disabled={@action != :new}
+          />
         </.simple_form>
       </.panel>
 
       <.panel title="Namespaces">
         <.simple_form variant="nested">
-          <.input field={@form[:core_namespace]} label="Core Namespace" />
-          <.input field={@form[:base_namespace]} label="Base Namespace" />
-          <.input field={@form[:data_namespace]} label="Data Namespace" />
-          <.input field={@form[:ai_namespace]} label="AI Namespace" />
+          <.input field={@form[:core_namespace]} label="Core Namespace" disabled={@action != :new} />
+          <.input field={@form[:base_namespace]} label="Base Namespace" disabled={@action != :new} />
+          <.input field={@form[:data_namespace]} label="Data Namespace" disabled={@action != :new} />
+          <.input field={@form[:ai_namespace]} label="AI Namespace" disabled={@action != :new} />
         </.simple_form>
       </.panel>
 
@@ -79,7 +86,7 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
             <div class="flex-1 text-sm">Secret Key</div>
 
             <div class="font-mono font-bold text-sm">
-              <%= TextHelpers.obfuscate(@form[:secret_key].value, char_limit: 4) %>
+              <%= TextHelpers.obfuscate(@form[:secret_key].value, keep: 2, char_limit: 6) %>
             </div>
           </div>
         </.simple_form>

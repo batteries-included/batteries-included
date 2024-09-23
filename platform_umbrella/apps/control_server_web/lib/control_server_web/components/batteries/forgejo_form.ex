@@ -14,8 +14,13 @@ defmodule ControlServerWeb.Batteries.ForgejoForm do
 
       <.panel title="Configuration">
         <.simple_form variant="nested">
-          <.input field={@form[:admin_username]} label="Admin Username" />
-          <.input field={@form[:admin_password]} type="password" label="Admin Password" />
+          <.input field={@form[:admin_username]} label="Admin Username" disabled={@action != :new} />
+          <.input
+            field={@form[:admin_password]}
+            type="password"
+            label="Admin Password"
+            disabled={@action != :new}
+          />
         </.simple_form>
       </.panel>
 

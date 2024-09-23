@@ -225,7 +225,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> start(~p"/postgres/#{cluster.id}/edit")
       |> click("#edit_user_#{valid_user_params["username"]}")
       |> submit_form("#user-form", %{"pg_user" => updated_user_params})
-      |> submit_form("#cluster-form", @valid_attrs)
+      |> submit_form("#cluster-form", Map.update(@valid_attrs, :cluster, %{}, fn attrs -> Map.delete(attrs, :name) end))
 
       updated_cluster = Repo.get(Cluster, cluster.id)
 

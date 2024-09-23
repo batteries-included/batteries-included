@@ -5,6 +5,8 @@ defmodule CommonCore.Batteries.VictoriaMetricsConfig do
 
   alias CommonCore.Defaults
 
+  @read_only_fields ~w(cookie_secret)a
+
   batt_polymorphic_schema type: :victoria_metrics do
     defaultable_field :cluster_image_tag, :string, default: Defaults.Images.vm_cluster_tag()
     defaultable_image_field :operator_image, image_id: :vm_operator
