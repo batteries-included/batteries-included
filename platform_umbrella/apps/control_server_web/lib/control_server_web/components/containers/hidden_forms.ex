@@ -27,8 +27,17 @@ defmodule ControlServerWeb.Containers.HiddenForms do
     <.inputs_for :let={f_nested} field={@field}>
       <.input type="hidden" field={f_nested[:name]} />
       <.input type="hidden" field={f_nested[:image]} />
-      <.input type="hidden" field={f_nested[:command]} multiple={true} />
-      <.input type="hidden" field={f_nested[:args]} multiple={true} />
+      <.input type="hidden" field={f_nested[:path]} />
+
+      <%= if f_nested[:args].value do %>
+        <.input
+          :for={cmd <- f_nested[:args].value}
+          type="hidden"
+          name={f_nested[:args].name <> "[]"}
+          value={cmd}
+        />
+      <% end %>
+
       <.inputs_for :let={env_nested} field={f_nested[:env_values]}>
         <.single_env_value_hidden form={env_nested} />
       </.inputs_for>

@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Containers.ContainerModal do
   use ControlServerWeb, :live_component
 
   alias CommonCore.Containers.Container
+  alias CommonCore.Ecto.Validations
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent
@@ -87,6 +88,16 @@ defmodule ControlServerWeb.Containers.ContainerModal do
     {:noreply, assign_changeset(socket, changeset)}
   end
 
+  def handle_event("add_arg", _params, socket) do
+    changeset = Validations.add_item_to_list(socket.assigns.form.source, :args)
+    {:noreply, assign_changeset(socket, changeset)}
+  end
+
+  def handle_event("remove_arg", %{"index" => index}, socket) do
+    changeset = Validations.remove_item_from_list(socket.assigns.form.source, :args, index)
+    {:noreply, assign_changeset(socket, changeset)}
+  end
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
@@ -104,12 +115,19 @@ defmodule ControlServerWeb.Containers.ContainerModal do
           <.flex column>
             <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
             <.input label="Image" field={@form[:image]} placeholder="Image" />
-            <.input
-              label="Command (optional)"
-              name="container[command][]"
-              value={(@form.data.command || []) |> List.first(nil)}
-              placeholder="/bin/true"
-            />
+            <.input label="Path (optional)" field={@form[:path]} placeholder="/bin/true" />
+
+            <.input_list
+              :let={field}
+              field={@form[:args]}
+              label="Arguments"
+              add_label="Add argument"
+              add_click="add_arg"
+              remove_click="remove_arg"
+              phx_target={@myself}
+            >
+              <.input field={field} />
+            </.input_list>
           </.flex>
 
           <:actions cancel="Cancel">

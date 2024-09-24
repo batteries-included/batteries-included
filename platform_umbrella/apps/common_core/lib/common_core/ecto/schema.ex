@@ -468,6 +468,7 @@ defmodule CommonCore.Ecto.Schema do
 
     to_cast = Enum.concat(fields, virtual_fields) -- embeds
     cast_opts = Keyword.get(opts, :cast_opts, [])
+    cast_embed_opts = Keyword.get(opts, :cast_embed_opts, [])
 
     changeset = Ecto.Changeset.cast(base, sanitize_opts(params), to_cast, cast_opts)
 
@@ -481,7 +482,7 @@ defmodule CommonCore.Ecto.Schema do
       end
 
     changeset
-    |> add_embeds(struct)
+    |> add_embeds(struct, cast_embed_opts)
     |> add_polymorphic_fields(struct)
     |> add_defaultable_fields(struct)
     |> add_defaultable_image_fields(struct)
@@ -492,10 +493,12 @@ defmodule CommonCore.Ecto.Schema do
     |> add_read_only_fields(struct)
   end
 
-  defp add_embeds(changeset, struct) do
+  defp add_embeds(changeset, struct, opts) do
     embeds = struct.__schema__(:embeds)
 
-    Enum.reduce(embeds, changeset, fn embed_field, chg -> Ecto.Changeset.cast_embed(chg, embed_field) end)
+    Enum.reduce(embeds, changeset, fn embed_field, chg ->
+      Ecto.Changeset.cast_embed(chg, embed_field, opts)
+    end)
   end
 
   defp add_polymorphic_fields(changeset, struct) do

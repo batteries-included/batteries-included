@@ -16,7 +16,7 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
           Add Container
         </.button>
       </:menu>
-      <.table id="containers-table" rows={Enum.with_index(@containers ++ @init_containers)}>
+      <.table id={"containers-table-#{@id}"} rows={Enum.with_index(@containers ++ @init_containers)}>
         <:col :let={{c, _idx}} label="Name"><%= c.name %></:col>
         <:col :let={{c, _idx}} label="Image"><%= c.image %></:col>
 
