@@ -7,11 +7,20 @@ defmodule HomeBaseWeb.InstallSpecController do
 
   def show(conn, %{"installation_id" => install_id}) do
     installation = CustomerInstalls.get_installation!(install_id)
-    {:ok, report} = CommonCore.InstallSpec.new(installation)
 
-    conn
-    |> put_status(:ok)
-    |> put_view(json: HomeBaseWeb.JwtJSON)
-    |> render(:show, jwt: CommonCore.JWK.sign(report))
+    if CommonCore.JWK.has_private_key?(installation.control_jwk) do
+      {:ok, report} = CommonCore.InstallSpec.new(installation)
+
+      conn
+      |> put_status(:ok)
+      |> put_view(json: HomeBaseWeb.JwtJSON)
+      |> render(:show, jwt: CommonCore.JWK.sign(report))
+    else
+      conn
+      |> put_status(:bad_request)
+      |> put_view(json: HomeBaseWeb.ErrorJSON)
+      |> render(:error, %{error: "Private key not found"})
+      |> halt()
+    end
   end
 end

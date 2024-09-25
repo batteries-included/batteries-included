@@ -19,7 +19,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
      |> assign(:page_title, installation.slug)
      |> assign(:installation, installation)
      |> assign(:provider, provider)
-     |> assign(:installed?, false)
+     |> assign(:installed?, !CommonCore.JWK.has_private_key?(installation.control_jwk))
      |> assign(:form, to_form(changeset))}
   end
 

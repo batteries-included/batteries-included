@@ -7,25 +7,46 @@ defmodule CommonCore.JWK do
 
   require Logger
 
+  # We picked a curve that all the experts seem to say is the latest
+  # and least likely to have issues.
   @default_curve {:okp, :Ed25519}
 
   @doc """
   Generate a new JWK in a form usable for embedding into ecto rows in a map field
   """
   def generate_key do
-    @default_curve
-    |> JOSE.JWK.generate_key()
-    |> JOSE.JWK.to_map()
-    |> elem(1)
+    {%{kty: :jose_jwk_kty_okp_ed25519}, result} =
+      @default_curve
+      |> JOSE.JWK.generate_key()
+      |> JOSE.JWK.to_map()
+
+    result
   end
 
   @doc """
   Given a JWK, derive the public key and return it as a map
   """
   def public_key(jwk) do
-    jwk
-    |> JOSE.JWK.to_public_map()
-    |> elem(1)
+    # All of our keys are the same so assert that here.
+    {%{kty: :jose_jwk_kty_okp_ed25519}, result} = JOSE.JWK.to_public_map(jwk)
+
+    result
+  end
+
+  @spec has_private_key?(nil | map()) :: boolean
+  def has_private_key?(nil), do: false
+
+  def has_private_key?(jwk) do
+    # This asserts the key curve and format
+    #
+    # That's because assumptions are made below. If this changes
+    # then inspect the code carefully.
+    {%{kty: :jose_jwk_kty_okp_ed25519}, result} = JOSE.JWK.to_map(jwk)
+
+    # For this key we have two parts.
+    # Assue that x is known so if d is here then
+    # we have enough bits to get the private key
+    Map.has_key?(result, "d")
   end
 
   @spec sign_key() :: atom()
@@ -45,7 +66,9 @@ defmodule CommonCore.JWK do
   def sign(payload) do
     jwk_name = sign_key()
     jwk = Cache.get(jwk_name)
-    jwk |> JOSE.JWT.sign(payload) |> elem(1)
+
+    {%{kty: :jose_jwk_kty_okp_ed25519}, result} = JOSE.JWK.to_map(jwk)
+    result |> JOSE.JWT.sign(payload) |> elem(1)
   end
 
   def verify!(nil), do: raise(BadKeyError.exception())
