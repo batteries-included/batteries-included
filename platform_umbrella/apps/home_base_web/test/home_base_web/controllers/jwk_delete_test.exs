@@ -54,4 +54,25 @@ defmodule HomeBaseWeb.JwkDeleteTest do
              "Private key should not exist after report is created"
     end
   end
+
+  describe "Install spec  won't render without a private key" do
+    test "renders errors when key is gone", %{conn: conn, installation: install} do
+      # This assumes that the private key has been removed on usage report.
+      report = params_for(:usage_report)
+      conn = post(conn, ~p"/api/v1/installations/#{install.id}/usage_reports", jwt: sign(install.control_jwk, report))
+      assert %{"id" => _} = json_response(conn, 201)["data"]
+
+      conn = get(conn, ~p"/api/v1/installations/#{install.id}/spec")
+      assert json_response(conn, 400)["errors"] != %{}
+    end
+
+    # This shows that there was some change from the test above
+    test "Will render a spec before", %{conn: conn, installation: install} do
+      conn = get(conn, ~p"/api/v1/installations/#{install.id}/spec")
+
+      result = json_response(conn, 200)
+
+      assert Map.has_key?(result, "jwt") == true
+    end
+  end
 end

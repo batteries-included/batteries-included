@@ -54,9 +54,7 @@ config :home_base, HomeBase.Repo,
   username: postgres_username
 
 config :home_base_web, HomeBaseWeb.Endpoint,
-  http: [
-    port: String.to_integer(port)
-  ],
+  http: [port: String.to_integer(port)],
   check_origin: false,
   secret_key_base: secret_key_base,
   server: true
