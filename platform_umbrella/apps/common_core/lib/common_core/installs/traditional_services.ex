@@ -5,6 +5,7 @@ defmodule CommonCore.Installs.TraditionalServices do
   alias CommonCore.TraditionalServices.Service
 
   @name "home-base"
+  @jwk_secret "home-base-jwk"
 
   def name, do: @name
 
@@ -25,10 +26,17 @@ defmodule CommonCore.Installs.TraditionalServices do
         containers: [%{name: @name, image: Images.home_base_image()}],
         ports: [%{name: "http", number: 4000, protocol: :http2}],
         volumes: [
+          # This is populated during generation from home-base-init-data
           %{
             name: "home-base-seed-data",
             type: :config_map,
             config: %{type: :config_map, name: "home-base-seed-data", optional: true}
+          },
+          # This will need to be manually created
+          %{
+            name: @jwk_secret,
+            type: :secret,
+            config: %{type: :secret, name: @jwk_secret, optional: false}
           }
         ],
         env_values: env()
@@ -51,6 +59,12 @@ defmodule CommonCore.Installs.TraditionalServices do
         name: "SECRET_KEY_BASE",
         value: Defaults.random_key_string(),
         source_type: "value"
+      },
+      %{
+        name: "HOME_JWK",
+        source_type: "secret",
+        source_name: @jwk_secret,
+        source_key: "jwk"
       },
       %{
         name: "POSTGRES_DB",
