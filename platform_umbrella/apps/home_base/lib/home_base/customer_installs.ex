@@ -89,6 +89,7 @@ defmodule HomeBase.CustomerInstalls do
     |> Repo.insert()
   end
 
+  @spec update_installation(CommonCore.Installation.t(), any()) :: {:ok, CommonCore.Installation.t()} | {:error, any()}
   @doc """
   Updates a installation.
 
@@ -105,6 +106,12 @@ defmodule HomeBase.CustomerInstalls do
     installation
     |> Installation.changeset(attrs)
     |> Repo.update()
+  end
+
+  @spec remove_control_jwk(CommonCore.Installation.t()) ::
+          {:ok, CommonCore.Installation.t()} | {:error, any()}
+  def remove_control_jwk(%Installation{control_jwk: jwk} = installation) do
+    update_installation(installation, %{control_jwk: CommonCore.JWK.public_key(jwk)})
   end
 
   @doc """
