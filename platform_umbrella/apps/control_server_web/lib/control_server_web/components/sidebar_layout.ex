@@ -9,7 +9,7 @@ defmodule ControlServerWeb.SidebarLayout do
   alias Phoenix.LiveView.JS
 
   attr :current_page, :atom,
-    required: true,
+    default: nil,
     doc: "The current page. This will be used to highlight the current page in the menu."
 
   attr :main_menu_items, :list,
