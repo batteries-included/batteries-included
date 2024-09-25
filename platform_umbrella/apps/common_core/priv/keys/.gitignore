@@ -1,2 +1,7 @@
-home_a.pem
-home_b.pem
+*
+!home_a.pub.pem
+!home_b.pub.pem
+!test.pub.pem
+
+# this should be the only private key in here!
+!test.pem
