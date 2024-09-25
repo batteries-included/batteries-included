@@ -7,6 +7,8 @@ defmodule HomeBaseWeb.InstallationShowLive do
   alias HomeBaseWeb.InstallationNewLive
   alias HomeBaseWeb.UserAuth
 
+  on_mount {HomeBaseWeb.RequestURL, :default}
+
   def mount(%{"id" => id}, _session, socket) do
     owner = UserAuth.current_team_or_user(socket)
     installation = CustomerInstalls.get_installation!(id, owner)
@@ -72,7 +74,10 @@ defmodule HomeBaseWeb.InstallationShowLive do
           To download and install the Batteries Included control server in <%= @provider %>, run the script below.
         </p>
         <!-- TODO: update script src to actual installation script -->
-        <.script src="https://install.example.com/8ej3l" class="mt-4 mb-8" />
+        <.script
+          src={"#{@request_scheme}://#{@request_authority}/installations/#{@installation.id}/script"}
+          class="mt-4 mb-8"
+        />
         <.markdown content={explanation(@installation)} />
       </.panel>
 
@@ -106,7 +111,10 @@ defmodule HomeBaseWeb.InstallationShowLive do
           We havn't heard from your installation yet! To download and install the Batteries Included control server in <%= @provider %>, run the script below.
         </p>
         <!-- TODO: update script src to actual installation script -->
-        <.script src="https://install.example.com/8ej3l" class="mb-8" />
+        <.script
+          src={"#{@request_scheme}://#{@request_authority}/installations/#{@installation.id}/script"}
+          class="mb-8"
+        />
         <.markdown content={explanation(@installation)} />
       </.panel>
 

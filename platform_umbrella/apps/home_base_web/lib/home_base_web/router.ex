@@ -1,6 +1,7 @@
 defmodule HomeBaseWeb.Router do
   use HomeBaseWeb, :router
 
+  import HomeBaseWeb.RequestURL
   import HomeBaseWeb.UserAuth
 
   @redirect_authenticated_user {HomeBaseWeb.UserAuth, :redirect_authenticated_user}
@@ -27,6 +28,10 @@ defmodule HomeBaseWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  pipeline :add_request_info do
+    plug :assign_request_info
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
@@ -74,7 +79,7 @@ defmodule HomeBaseWeb.Router do
   end
 
   scope "/", HomeBaseWeb do
-    pipe_through [:browser, :app_layout, :require_authenticated_user]
+    pipe_through [:browser, :app_layout, :require_authenticated_user, :add_request_info]
 
     live_session :app, layout: @app_layout, on_mount: [@ensure_authenticated_user] do
       live "/", DashboardLive
