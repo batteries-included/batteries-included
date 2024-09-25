@@ -84,14 +84,14 @@ defmodule CommonCore.Defaults.Images do
     istio_pilot:
       Image.new!(%{
         name: "docker.io/istio/pilot",
-        tags: ~w(1.22.3-distroless 1.23.1-distroless),
-        default_tag: "1.23.1-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless),
+        default_tag: "1.23.2-distroless"
       }),
     istio_proxy:
       Image.new!(%{
         name: "docker.io/istio/proxyv2",
-        tags: ~w(1.22.3-distroless 1.23.1-distroless),
-        default_tag: "1.23.1-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless),
+        default_tag: "1.23.2-distroless"
       }),
     karpenter:
       Image.new!(%{
