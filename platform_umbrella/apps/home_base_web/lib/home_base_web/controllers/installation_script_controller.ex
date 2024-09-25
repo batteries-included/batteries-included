@@ -11,12 +11,26 @@ defmodule HomeBaseWeb.InstallScriptController do
   def show(conn, %{"installation_id" => install_id}) do
     script =
       render_install_script(
-        url(conn, ~p'/api/v1/installations/#{install_id}/spec'),
+        get_url(conn, install_id),
         CommonCore.Defaults.Versions.bi_stable_version()
       )
 
     conn
     |> put_status(:ok)
     |> text(script)
+  end
+
+  defp get_url(conn, id) do
+    uri =
+      conn
+      |> request_url()
+      |> URI.new!()
+      |> Map.put(:path, "/")
+
+    conn
+    |> get_req_header("x-forwarded-proto")
+    |> List.first(uri.scheme)
+    |> then(&Map.put(uri, :scheme, &1))
+    |> url(~p'/api/v1/installations/#{id}/spec')
   end
 end

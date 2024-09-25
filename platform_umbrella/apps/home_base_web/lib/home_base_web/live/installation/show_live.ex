@@ -75,7 +75,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
         </p>
         <!-- TODO: update script src to actual installation script -->
         <.script
-          src={"#{@request_scheme}://#{@request_authority}/installations/#{@installation.id}/script"}
+          src={"#{@request_scheme}://#{@request_authority}/api/v1/installations/#{@installation.id}/script"}
           class="mt-4 mb-8"
         />
         <.markdown content={explanation(@installation)} />
@@ -108,11 +108,11 @@ defmodule HomeBaseWeb.InstallationShowLive do
     <.grid columns={%{md: 1, lg: 2}}>
       <.panel :if={!@installed?} title="Installation Instructions">
         <p class="leading-6 mb-4">
-          We havn't heard from your installation yet! To download and install the Batteries Included control server in <%= @provider %>, run the script below.
+          We haven't heard from your installation yet! To download and install the Batteries Included control server in <%= @provider %>, run the script below.
         </p>
         <!-- TODO: update script src to actual installation script -->
         <.script
-          src={"#{@request_scheme}://#{@request_authority}/installations/#{@installation.id}/script"}
+          src={"#{@request_scheme}://#{@request_authority}/api/v1/installations/#{@installation.id}/script"}
           class="mb-8"
         />
         <.markdown content={explanation(@installation)} />
