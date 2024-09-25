@@ -12,7 +12,7 @@ defmodule HomeBaseWeb.InstallScriptController do
     script =
       render_install_script(
         url(conn, ~p'/api/v1/installations/#{install_id}/spec'),
-        CommonCore.Version.version()
+        CommonCore.Defaults.Versions.bi_stable_version()
       )
 
     conn
