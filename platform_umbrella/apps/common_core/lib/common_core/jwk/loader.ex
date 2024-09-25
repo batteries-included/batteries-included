@@ -33,6 +33,8 @@ defmodule CommonCore.JWK.Loader do
       string_value
       |> JOSE.JWK.from_binary()
       |> to_map()
+    else
+      Logger.error("Signing key should be in $#{@env_name} but wasn't found")
     end
   end
 
