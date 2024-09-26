@@ -256,6 +256,7 @@ defmodule ControlServerWeb.Projects.WebForm do
             form={to_form(@form[:postgres].value, as: :postgres)}
             phx_target={@myself}
             ticks={PGCluster.compact_storage_range_ticks()}
+            action={:new}
           />
         </.flex>
 
@@ -264,6 +265,7 @@ defmodule ControlServerWeb.Projects.WebForm do
         <RedisFormSubcomponents.size_form
           class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
           form={to_form(@form[:redis].value, as: :redis)}
+          action={:new}
         />
 
         <:actions>

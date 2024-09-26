@@ -5,6 +5,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Containers.EnvValue
+  alias CommonCore.Defaults.Namespaces
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Redis.RedisInstance, as: RedisCluster
   alias CommonCore.StateSummary.PostgresState
@@ -25,6 +26,8 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   alias KubeServices.SystemState.SummaryStorage
 
   require Logger
+
+  @root_pg_user "root"
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
@@ -139,28 +142,26 @@ defmodule ControlServerWeb.Live.ProjectsNew do
     |> Installer.install_all(update_target: self())
   end
 
-  defp create_postgres(project, %{"postgres" => postgres_data}) do
+  defp create_postgres(project, %{"postgres" => postgres_data} = data) do
+    users = generate_postgres_users(data)
+
     postgres_data
     |> Map.merge(%{
       "project_id" => project.id,
-      "database" => %{"name" => "app", "owner" => "app"},
-      "users" => [
-        %{
-          "username" => "app",
-          "roles" => ["login", "createdb", "createrole"],
-          "credential_namespaces" => ["battery-data"]
-        }
-      ]
+      "users" => users,
+      "database" => %{"name" => "app", "owner" => @root_pg_user}
     })
     |> Map.put_new("storage_class", get_default_storage_class())
     |> Postgres.create_cluster()
   end
 
-  defp create_postgres(project, %{"postgres_ids" => postgres_ids}) do
+  defp create_postgres(project, %{"postgres_ids" => postgres_ids} = data) do
     results =
       Enum.map(postgres_ids, fn id ->
         cluster = Postgres.get_cluster!(id)
-        Postgres.update_cluster(cluster, %{project_id: project.id})
+        users = cluster.users ++ generate_postgres_users(data)
+
+        Postgres.update_cluster(cluster, %{project_id: project.id, users: users})
       end)
 
     if Enum.all?(results, fn {status, _} -> status == :ok end) do
@@ -192,7 +193,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   defp create_jupyter(project, %{"jupyter" => jupyter_data}, pg) do
     jupyter_data
     |> Map.put("project_id", project.id)
-    |> Map.put("env_values", database_env_values(pg))
+    |> Map.put("env_values", database_env_values(pg, "jupyter"))
     |> Map.put_new("storage_class", get_default_storage_class())
     |> Notebooks.create_jupyter_lab_notebook()
   end
@@ -202,7 +203,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   defp create_knative(project, %{"knative" => knative_data}, pg, redis) do
     knative_data
     |> Map.put("project_id", project.id)
-    |> Map.put("env_values", database_env_values(pg) ++ redis_env_values(redis))
+    |> Map.put("env_values", database_env_values(pg, "knative") ++ redis_env_values(redis))
     |> Knative.create_service()
   end
 
@@ -211,16 +212,18 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   defp create_traditional(project, %{"traditional" => traditional_data}, pg, redis) do
     traditional_data
     |> Map.put("project_id", project.id)
-    |> Map.put("env_values", database_env_values(pg) ++ redis_env_values(redis))
+    |> Map.put("env_values", database_env_values(pg, "traditional") ++ redis_env_values(redis))
     |> TraditionalServices.create_service()
   end
 
   defp create_traditional(_project, _traditional_data, _pg, _redis), do: {:ok, nil}
 
-  defp database_env_values(clusters) when is_list(clusters) do
+  defp database_env_values(clusters, username) when is_list(clusters) do
     clusters
     |> Enum.with_index()
-    |> Enum.map(fn {{:ok, %PGCluster{users: [user | _]} = pg}, index} ->
+    |> Enum.map(fn {{:ok, %PGCluster{users: users} = pg}, index} ->
+      user = get_postgres_user(users, username)
+
       %EnvValue{
         name: if(Enum.count(clusters) > 1, do: "DATABASE_URL_#{index + 1}", else: "DATABASE_URL"),
         source_type: :secret,
@@ -230,7 +233,9 @@ defmodule ControlServerWeb.Live.ProjectsNew do
     end)
   end
 
-  defp database_env_values(%PGCluster{users: [user | _]} = pg) do
+  defp database_env_values(%PGCluster{users: users} = pg, username) do
+    user = get_postgres_user(users, username)
+
     [
       %EnvValue{
         name: "DATABASE_URL",
@@ -241,7 +246,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
     ]
   end
 
-  defp database_env_values(_), do: []
+  defp database_env_values(_pg, _username), do: []
 
   defp redis_env_values(%RedisCluster{} = _redis) do
     [
@@ -257,6 +262,49 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   end
 
   defp redis_env_values(_), do: []
+
+  defp generate_postgres_users(data) do
+    data
+    |> Enum.map(fn {key, _} ->
+      case key do
+        "postgres" ->
+          %{
+            "username" => @root_pg_user,
+            "roles" => ["login", "superuser"],
+            "credential_namespaces" => [Namespaces.core()]
+          }
+
+        "jupyter" ->
+          %{
+            "username" => "jupyter",
+            "roles" => ["login"],
+            "credential_namespaces" => [Namespaces.ai()]
+          }
+
+        "knative" ->
+          %{
+            "username" => "knative",
+            "roles" => ["login"],
+            "credential_namespaces" => [Namespaces.knative()]
+          }
+
+        "traditional" ->
+          %{
+            "username" => "traditional",
+            "roles" => ["login"],
+            "credential_namespaces" => [Namespaces.traditional()]
+          }
+
+        _ ->
+          nil
+      end
+    end)
+    |> Enum.reject(&is_nil/1)
+  end
+
+  defp get_postgres_user(users, username) do
+    Enum.find(users, &(Map.get(&1, :username) == username))
+  end
 
   defp get_default_storage_class do
     case SummaryStorage.default_storage_class() do
