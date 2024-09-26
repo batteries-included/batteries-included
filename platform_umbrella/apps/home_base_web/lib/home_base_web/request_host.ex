@@ -1,29 +1,22 @@
 defmodule HomeBaseWeb.RequestURL do
   @moduledoc false
 
+  import CommonUI.UrlHelpers
   import Plug.Conn
 
   def assign_request_info(conn, _) do
-    url =
-      conn
-      |> request_url()
-      |> URI.new!()
-
-    scheme =
-      conn
-      |> get_req_header("x-forwarded-proto")
-      |> List.first(url.scheme)
+    uri = get_uri_from_conn(conn)
 
     authority =
-      if url.port == 80 or url.port == 443 do
-        url.host
+      if uri.port == 80 or uri.port == 443 do
+        uri.host
       else
-        "#{url.host}:#{url.port}"
+        "#{uri.host}:#{uri.port}"
       end
 
     conn
     |> put_session(:request_authority, authority)
-    |> put_session(:request_scheme, scheme)
+    |> put_session(:request_scheme, uri.scheme)
   end
 
   def on_mount(:default, _params, %{"request_authority" => authority, "request_scheme" => scheme}, socket) do
