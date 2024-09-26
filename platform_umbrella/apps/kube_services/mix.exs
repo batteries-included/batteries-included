@@ -4,7 +4,7 @@ defmodule KubeServices.MixProject do
   def project do
     [
       app: :kube_services,
-      version: "0.21.0",
+      version: "0.22.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
