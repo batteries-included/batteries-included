@@ -75,6 +75,24 @@ defmodule KubeServices.Keycloak.UserClient do
     end
   end
 
+  def handle_call(
+        {:userinfo, token},
+        _from,
+        %State{realm: realm, client_id: client_id, client_secret: client_secret} = state
+      ) do
+    client =
+      [realm: realm, client_id: client_id, client_secret: client_secret, token: token]
+      |> TokenStrategy.new()
+      |> OAuth2.Client.put_header("content-type", "application/json")
+
+    path = "/realms/#{realm}/protocol/openid-connect/userinfo"
+
+    case OAuth2.Client.get(client, path) do
+      {:ok, result} -> {:reply, {:ok, result.body}, state}
+      {:error, reason} -> {:reply, {:error, reason}, state}
+    end
+  end
+
   def authorize_url(target \\ @me, opts \\ []) do
     GenServer.call(target, {:authorize_url, opts})
   end
