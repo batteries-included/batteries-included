@@ -8,6 +8,7 @@ VERSION_TAG="<%= version %>"
 BI="bi"
 EXT=".tar.gz"
 VERSION_LOC="${HOME}/.local/share/bi/${BI}-${VERSION_TAG}"
+INSTALL_DIR="${HOME}/.local/bin"
 
 TMP_DIR="$(mktemp -d)"
 
@@ -69,7 +70,6 @@ install_release() {
 }
 
 install_bi() {
-    INSTALL_DIR="${HOME}/.local/bin"
     OUTPUT_LOC="${TMP_DIR}/${BI}${EXT}"
 
     DOWNLOAD_URL=$(get_bi_release_url)
@@ -101,5 +101,4 @@ else
 fi
 
 # start install
-
-"${BI}" start -v debug "${INSTALL_SPEC_URL}"
+"${INSTALL_DIR}/${BI}" start -v debug "${INSTALL_SPEC_URL}"
