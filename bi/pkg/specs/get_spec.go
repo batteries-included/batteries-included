@@ -28,7 +28,7 @@ func GetSpecFromURL(specURL string) (*InstallSpec, error) {
 		// Read the file
 		return readLocalFile(parsedURL)
 		// Only download on http for urls that string contrain 127.0.0.1
-	} else if parsedURL.Scheme == "http" && strings.Contains(parsedURL.Host, "127.0.0.1") {
+	} else if parsedURL.Scheme == "http" && (strings.Contains(parsedURL.Host, "127.0.0.1") || strings.Contains(parsedURL.Host, "127-0-0-1.batrsinc.co")) {
 		// Download the file
 		return readRemoteFile(parsedURL)
 	} else if parsedURL.Scheme == "https" {
@@ -61,7 +61,7 @@ func readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
 
 func readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
 	// Download the file
-
+	slog.Debug("Downloading remote file", slog.String("url", parsedURL.String()))
 	res, err := http.Get(parsedURL.String())
 	if err != nil {
 		return nil, fmt.Errorf("error downloading spec: %w", err)
