@@ -23,7 +23,7 @@ defmodule KubeServices.ET.StableVersionsWorker do
   def init(args) do
     state = struct!(%State{}, args)
 
-    unless state.home_base_client_pid == nil do
+    if state.home_base_client_pid != nil do
       start_short_timer()
     end
 
