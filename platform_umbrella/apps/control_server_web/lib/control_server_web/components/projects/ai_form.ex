@@ -195,6 +195,7 @@ defmodule ControlServerWeb.Projects.AIForm do
             phx_target={@myself}
             with_divider={false}
             ticks={PGCluster.compact_storage_range_ticks()}
+            action={:new}
           />
         </div>
 

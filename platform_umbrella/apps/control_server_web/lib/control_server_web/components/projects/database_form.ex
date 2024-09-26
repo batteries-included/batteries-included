@@ -158,6 +158,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
           form={to_form(@form[:postgres].value, as: :postgres)}
           phx_target={@myself}
           ticks={PGCluster.compact_storage_range_ticks()}
+          action={:new}
         />
 
         <.input field={@form[:need_redis]} type="switch" label="I need a Redis instance" />
@@ -165,6 +166,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         <RedisFormSubcomponents.size_form
           class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
           form={to_form(@form[:redis].value, as: :redis)}
+          action={:new}
         />
 
         <.input
@@ -180,6 +182,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
                !normalize_value("checkbox", @form[:need_ferret].value)) && "hidden"
           }
           form={to_form(@form[:ferret].value, as: :ferret)}
+          action={:new}
         />
 
         <:actions>
