@@ -33,7 +33,7 @@ defmodule ControlServerWeb.ChannelCase do
   setup tags do
     :ok = Sandbox.checkout(ControlServer.Repo)
 
-    unless tags[:async] do
+    if !tags[:async] do
       Sandbox.mode(ControlServer.Repo, {:shared, self()})
     end
 

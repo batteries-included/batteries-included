@@ -29,14 +29,14 @@ defmodule Mix.Tasks.HomeBase.Admin do
     user = Accounts.get_user_by_email(email)
     team_ids = AdminTeams.admin_team_ids()
 
-    unless user do
+    if !user do
       Mix.shell().error("Error: Could not find a user for #{email}")
 
       exit(@shutdown)
     end
 
     results = Enum.map(team_ids, &add_user_to_team(user.email, &1))
-    errors = Enum.filter(results, fn {status, result} -> unless(status == :ok, do: result) end)
+    errors = Enum.filter(results, fn {status, result} -> if(status != :ok, do: result) end)
 
     if errors == [] do
       Mix.shell().info("Success! #{email} has been added as an admin to #{Enum.count(results)} team(s)")

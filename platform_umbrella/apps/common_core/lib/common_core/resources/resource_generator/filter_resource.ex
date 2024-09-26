@@ -29,7 +29,7 @@ defmodule CommonCore.Resources.FilterResource do
     do: disallow_battery(resource, state, [battery_type])
 
   def disallow_battery(resource, state, battery_types) when is_list(battery_types) do
-    unless Batteries.batteries_installed?(state, battery_types) do
+    if !Batteries.batteries_installed?(state, battery_types) do
       resource
     end
   end

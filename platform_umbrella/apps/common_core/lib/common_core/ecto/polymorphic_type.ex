@@ -72,7 +72,7 @@ defmodule CommonCore.Ecto.PolymorphicType do
   defp type_from(_mappings, _type), do: :error
 
   defp validate(opts) do
-    unless Keyword.has_key?(opts, :mappings) do
+    if !Keyword.has_key?(opts, :mappings) do
       {:error, ["missing type mappings (:mappings)"]}
     end
   end
