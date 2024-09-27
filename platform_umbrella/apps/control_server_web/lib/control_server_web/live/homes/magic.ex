@@ -78,6 +78,14 @@ defmodule ControlServerWeb.Live.MagicHome do
     assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
+  defp home_base_url(config) do
+    config
+    |> CommonCore.ET.URLs.home_base_url()
+    |> URI.new!()
+    |> Map.put(:path, "/")
+    |> URI.to_string()
+  end
+
   defp battery_link_panel(%{battery: %{type: :timeline}} = assigns) do
     ~H"""
     <.a variant="bordered" navigate={~p"/history/timeline"}>Timeline</.a>
@@ -92,9 +100,11 @@ defmodule ControlServerWeb.Live.MagicHome do
     """
   end
 
-  defp battery_link_panel(%{battery: %{type: :battery_core}} = assigns) do
+  defp battery_link_panel(%{battery: %{type: :battery_core, config: config}} = assigns) do
+    assigns = assign(assigns, :home_base_url, home_base_url(config))
+
     ~H"""
-    <.a variant="bordered" href="http://home.127-0-0-1.batrsinc.co:4900/">
+    <.a variant="bordered" href={@home_base_url}>
       Batteries Included Home
     </.a>
     <.a variant="bordered" navigate={~p"/state_summary"}>Latest State Summary</.a>
