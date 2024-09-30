@@ -2,7 +2,7 @@ defmodule CommonCore.ET.URLs do
   @moduledoc false
   alias CommonCore.Batteries.BatteryCoreConfig
 
-  @local_home "http://home.traditional-service.127-0-0-1.batrsinc.co:4100/api/v1"
+  @local_home "http://home.127-0-0-1.batrsinc.co:4100/api/v1"
   @prod_home "https://home.prod.batteriesincl.com/api/v1"
   @bi_home "http://home-base.battery-traditional.svc.cluster.local:4000/api/v1"
 
