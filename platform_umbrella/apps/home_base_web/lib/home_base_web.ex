@@ -51,16 +51,20 @@ defmodule HomeBaseWeb do
   end
 
   def email(opts \\ []) do
-    default_opts = [
-      endpoint: HomeBaseWeb.Endpoint,
-      from: {"Batteries Included", "system@batteriesincl.com"},
-      street_address: "Batteries Included, 8 The Green, Ste. B, Dover, DE 19901",
-      home_url: Application.fetch_env!(:home_base_web, :home_url)
-    ]
+    opts =
+      Keyword.merge(
+        [
+          endpoint: HomeBaseWeb.Endpoint,
+          from: {"Batteries Included", "system@batteriesincl.com"},
+          street_address: "Batteries Included, 8 The Green, Ste. B, Dover, DE 19901",
+          home_url: Application.fetch_env!(:home_base_web, :home_url)
+        ],
+        opts
+      )
 
     quote do
       use Phoenix.Component
-      use CommonUI.EmailHelpers, Keyword.merge(unquote(default_opts), unquote(opts))
+      use CommonUI.EmailHelpers, unquote(opts)
 
       unquote(html_helpers())
     end
