@@ -27,24 +27,40 @@ defmodule ControlServerWeb.Live.Timeline do
 
   defp payload_container(assigns) do
     ~H"""
-    <.flex column class="rounded-sm bg-gray-lighter/15 px-6 py-4">
+    <.flex column class="rounded-sm bg-gray-light/15 px-6 py-4">
       <%= render_slot(@inner_block) %>
     </.flex>
+    """
+  end
+
+  defp payload_event(assigns) do
+    ~H"""
+    <div class="font-bold text-black dark:text-white">
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  defp payload_event_description(assigns) do
+    ~H"""
+    <div class="text-sm text-gray-darker dark:text-gray-light">
+      <%= render_slot(@inner_block) %>
+    </div>
     """
   end
 
   defp payload_display(%{payload: %Keycloak{}} = assigns) do
     ~H"""
     <.payload_container>
-      <div :if={@payload.action == :create_user} class="text-black font-bold">
+      <.payload_event :if={@payload.action == :create_user}>
         Keycloak User Created
-      </div>
-      <div :if={@payload.action == :reset_user_password} class="text-black font-bold">
+      </.payload_event>
+      <.payload_event :if={@payload.action == :reset_user_password}>
         Keycloak User Password Reset
-      </div>
-      <div class="text-sm text-gray-darker">
+      </.payload_event>
+      <.payload_event_description>
         The user in realm <%= @payload.realm %> with ID <%= @payload.entity_id %> was created/updated.
-      </div>
+      </.payload_event_description>
     </.payload_container>
     """
   end
@@ -52,12 +68,12 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %Kube{action: :delete}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         Removed Kubernetes Resource
-      </div>
-      <div class="text-sm text-gray-darker">
+      </.payload_event>
+      <.payload_event_description>
         The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was removed from <%= @payload.namespace %>.
-      </div>
+      </.payload_event_description>
     </.payload_container>
     """
   end
@@ -65,13 +81,13 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %Kube{action: :add}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         Added Kubernetes Resource
-      </div>
-      <div class="text-sm text-gray-darker">
+      </.payload_event>
+      <.payload_event_description>
         The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was
         added to <%= @payload.namespace %>.
-      </div>
+      </.payload_event_description>
     </.payload_container>
     """
   end
@@ -79,14 +95,14 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %Kube{action: :update}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         Updated Kubernetes Resource
-      </div>
-      <div class="text-sm text-gray-darker">
+      </.payload_event>
+      <.payload_event_description>
         The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was
         updated in <%= @payload.namespace %>. The new status
         is <%= Naming.humanize(@payload.computed_status) %>.
-      </div>
+      </.payload_event_description>
     </.payload_container>
     """
   end
@@ -94,9 +110,9 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %NamedDatabase{schema_type: :model_instance}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         Ollama Model <%= Naming.humanize(@payload.action) %>
-      </div>
+      </.payload_event>
 
       <.data_list>
         <:item title="Show Model">
@@ -110,9 +126,9 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %NamedDatabase{schema_type: :traditional_service}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         Traditional Service <%= Naming.humanize(@payload.action) %>
-      </div>
+      </.payload_event>
 
       <.data_list>
         <:item title="Show Traditional Service">
@@ -126,9 +142,9 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %NamedDatabase{schema_type: :postgres_cluster}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         Postgres Cluster <%= Naming.humanize(@payload.action) %>
-      </div>
+      </.payload_event>
 
       <.data_list>
         <:item title="Show Cluster">
@@ -145,9 +161,9 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %NamedDatabase{schema_type: :knative_service}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         KNative Serverless <%= Naming.humanize(@payload.action) %>
-      </div>
+      </.payload_event>
 
       <.data_list>
         <:item title="Show Service">
@@ -168,9 +184,9 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %NamedDatabase{schema_type: :ferret_service}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         FerretDB/MongoDB <%= Naming.humanize(@payload.action) %>
-      </div>
+      </.payload_event>
 
       <.data_list>
         <:item title="Show Service">
@@ -187,9 +203,9 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_display(%{payload: %BatteryInstall{}} = assigns) do
     ~H"""
     <.payload_container>
-      <div class="text-black font-bold">
+      <.payload_event>
         New Battery Installed <%= Naming.humanize(@payload.battery_type) %>
-      </div>
+      </.payload_event>
     </.payload_container>
     """
   end
@@ -223,7 +239,7 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.page_header title="Timeline" back_link={~p"/magic"} />
 
-    <.flex column class="rounded-xl border border-gray-lighter dark:border-gray-darkest p-6">
+    <.flex column class="rounded-xl border border-gray-lighter dark:border-gray-darker p-6">
       <.event_item :for={event <- @events} event={event} />
     </.flex>
     """
