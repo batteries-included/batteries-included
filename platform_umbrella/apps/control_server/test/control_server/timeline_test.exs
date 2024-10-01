@@ -21,7 +21,7 @@ defmodule ControlServer.TimelineTest do
       assert _ = TimelineEvent.changeset(event, %{})
     end
 
-    test "Can create a batery_install event" do
+    test "Can create a battery_install event" do
       event = Timeline.battery_install_event(:cloudnative_pg)
       assert {:ok, _} = Timeline.create_timeline_event(event)
     end

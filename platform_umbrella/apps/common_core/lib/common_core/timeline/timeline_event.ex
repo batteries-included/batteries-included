@@ -5,11 +5,13 @@ defmodule CommonCore.Timeline.TimelineEvent do
 
   alias CommonCore.Ecto.PolymorphicType
   alias CommonCore.Timeline.BatteryInstall
+  alias CommonCore.Timeline.Keycloak
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase
 
   @possible_types [
     battery_install: BatteryInstall,
+    keycloak: Keycloak,
     kube: Kube,
     named_database: NamedDatabase
   ]
