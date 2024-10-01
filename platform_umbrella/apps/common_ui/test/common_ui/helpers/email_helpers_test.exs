@@ -5,7 +5,7 @@ defmodule CommonUI.EmailHelpersTest do
     endpoint: CommonUIWeb.Endpoint,
     from: {"Test", "test@test.com"},
     street_address: "123 Easy St, New York, NY 10001",
-    logo_path: "logo.png"
+    home_url: "http://127.0.0.1:4321"
 
   import Phoenix.Component
 
@@ -31,8 +31,8 @@ defmodule CommonUI.EmailHelpersTest do
     assert email.text_body =~ "123 Easy St"
     assert email.html_body |> Floki.find("title") |> Floki.text() == "This is a subject"
     assert email.html_body |> Floki.find("p") |> Floki.text() == "Hey Jane"
-    assert ["http://127.0.0.1:4001"] = Floki.attribute(email.html_body, ".logo a", "href")
-    assert ["http://127.0.0.1:4001/logo.png"] = Floki.attribute(email.html_body, ".logo a img", "src")
+    assert ["http://127.0.0.1:4321"] = Floki.attribute(email.html_body, ".logo a", "href")
+    assert ["http://127.0.0.1:4321/images/emails/logo.png"] = Floki.attribute(email.html_body, ".logo a img", "src")
     assert ["font-family: Helvetica" <> _] = Floki.attribute(email.html_body, "p", "style")
   end
 end

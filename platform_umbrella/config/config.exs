@@ -94,7 +94,8 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 
 config :home_base_web,
   ecto_repos: [HomeBase.Repo],
-  generators: [context_app: :home_base, binary_id: true]
+  generators: [context_app: :home_base, binary_id: true],
+  home_url: "http://127.0.0.1:4321"
 
 config :kube_services, KubeServices.SnapshotApply.TimedLauncher,
   delay: 900_000,

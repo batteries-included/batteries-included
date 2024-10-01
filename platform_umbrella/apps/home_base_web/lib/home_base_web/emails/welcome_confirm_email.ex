@@ -20,7 +20,7 @@ defmodule HomeBaseWeb.WelcomeConfirmEmail do
     to this email. We'd love to hear from you! If you want to read more
     about our vision and roadmap, visit our blog at:
 
-    https://www.batteriesincl.com/posts
+    #{assigns.home_url}/posts
 
     All the best,
     The Batteries Included Team
@@ -39,7 +39,7 @@ defmodule HomeBaseWeb.WelcomeConfirmEmail do
       <br />
       <p>
         If you have any questions or feedback, please don't hesitate to reply to this email. We'd love to hear from you! If you want to read more about our vision and roadmap, visit <a
-          href="https://www.batteriesincl.com/posts"
+          href={"#{@home_url}/posts"}
           target="_blank"
         >our blog</a>.
       </p>

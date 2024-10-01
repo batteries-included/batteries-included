@@ -50,15 +50,21 @@ defmodule HomeBaseWeb do
     end
   end
 
-  def email do
+  def email(opts \\ []) do
+    opts =
+      Keyword.merge(
+        [
+          endpoint: HomeBaseWeb.Endpoint,
+          from: {"Batteries Included", "system@batteriesincl.com"},
+          street_address: "Batteries Included, 8 The Green, Ste. B, Dover, DE 19901",
+          home_url: Application.fetch_env!(:home_base_web, :home_url)
+        ],
+        opts
+      )
+
     quote do
       use Phoenix.Component
-
-      use CommonUI.EmailHelpers,
-        endpoint: HomeBaseWeb.Endpoint,
-        from: {"Batteries Included", "system@batteriesincl.com"},
-        street_address: "Batteries Included, 123 Easy St, New York, NY 10001",
-        logo_path: "/images/logo.png"
+      use CommonUI.EmailHelpers, unquote(opts)
 
       unquote(html_helpers())
     end
@@ -125,5 +131,9 @@ defmodule HomeBaseWeb do
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
+  end
+
+  defmacro __using__({which, opts}) when is_atom(which) do
+    apply(__MODULE__, which, [opts])
   end
 end
