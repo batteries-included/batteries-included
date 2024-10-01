@@ -150,6 +150,11 @@ defmodule KubeServices.Keycloak.UserManager do
       # user. And we don't want to have a full user UI
       # for a while.
       |> Keyword.put_new(:enabled, true)
+      # Add a batt ID if one isn't specified
+      |> Keyword.update(:id, nil, fn
+        nil -> CommonCore.Ecto.BatteryUUID.autogenerate()
+        x -> x
+      end)
       # UserRepresentation is a schema
       # struct which needs %{} for changesets
       |> Map.new()
@@ -159,7 +164,7 @@ defmodule KubeServices.Keycloak.UserManager do
     case AdminClient.create_user(act, realm, user_rep) do
       {:ok, user} = res ->
         Logger.info("User created successfully: #{inspect(user)}")
-        :ok = EventCenter.Keycloak.broadcast(%Payload{action: :create_user, resource: user})
+        :ok = EventCenter.Keycloak.broadcast(%Payload{action: :create_user, resource: %{id: user_rep.id, realm: realm}})
         {:reply, res, state}
 
       res ->

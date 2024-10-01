@@ -10,6 +10,7 @@ defmodule KubeServices.Timeline do
     children = [
       KubeServices.Timeline.Database,
       KubeServices.Timeline.Battery,
+      KubeServices.Timeline.Keycloak,
       KubeServices.Timeline.Kube
     ]
 

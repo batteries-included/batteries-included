@@ -4,6 +4,7 @@ defmodule ControlServer.Timeline do
   use ControlServer, :context
 
   alias CommonCore.Timeline.BatteryInstall
+  alias CommonCore.Timeline.Keycloak
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase
   alias CommonCore.Timeline.TimelineEvent
@@ -94,6 +95,17 @@ defmodule ControlServer.Timeline do
         action: action,
         schema_type: type,
         entity_id: entity_id
+      }
+    }
+  end
+
+  def keycloak_event(action, entity_id, realm) do
+    %TimelineEvent{
+      type: :keycloak,
+      payload: %Keycloak{
+        action: action,
+        entity_id: entity_id,
+        realm: realm
       }
     }
   end

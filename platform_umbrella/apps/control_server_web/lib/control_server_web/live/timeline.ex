@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.Timeline do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias CommonCore.Timeline.BatteryInstall
+  alias CommonCore.Timeline.Keycloak
   alias CommonCore.Timeline.Kube
   alias CommonCore.Timeline.NamedDatabase
   alias ControlServer.Timeline
@@ -29,6 +30,22 @@ defmodule ControlServerWeb.Live.Timeline do
     <.flex column class="rounded-sm bg-gray-lighter/15 px-6 py-4">
       <%= render_slot(@inner_block) %>
     </.flex>
+    """
+  end
+
+  defp payload_display(%{payload: %Keycloak{}} = assigns) do
+    ~H"""
+    <.payload_container>
+      <div :if={@payload.action == :create_user} class="text-black font-bold">
+        Keycloak User Created
+      </div>
+      <div :if={@payload.action == :reset_user_password} class="text-black font-bold">
+        Keycloak User Password Reset
+      </div>
+      <div class="text-sm text-gray-darker">
+        The user in realm <%= @payload.realm %> with ID <%= @payload.entity_id %> was created/updated.
+      </div>
+    </.payload_container>
     """
   end
 
