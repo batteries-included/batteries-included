@@ -1,5 +1,5 @@
 <div class="group/hover-tooltip relative underline">
-  <div class="invisible group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-md p-2 bg-white/90 text-gray-darkest dark:bg-gray-darkest/90 dark:text-gray-lighter" role="tooltip" aria-hidden="true">
+  <div class="invisible group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-md p-2 bg-white/90 text-gray-darkest" role="tooltip" aria-hidden="true">
     Test
   </div>
   
