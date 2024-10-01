@@ -43,10 +43,10 @@ defmodule CommonUI.EmailHelpers do
     * `:street_address` - The street address that gets rendered
       into the email footer. This helps to prevent the email from
       being marked as spam.
-    
-    * `:logo_path` - The logo image path to use in the email
-      template. This is relative to the endpoint's static URL.
-      No logo will be shown if this is not defined.
+
+    * `:home_url` - The URL used when constructing links to
+      the marketing site and image paths hosted there (such as
+      the logo). This is required.
 
   ## Functions
 
@@ -68,7 +68,7 @@ defmodule CommonUI.EmailHelpers do
     endpoint = Keyword.fetch!(opts, :endpoint)
     from = Keyword.get(opts, :from)
     street_address = Keyword.get(opts, :street_address)
-    logo_path = Keyword.get(opts, :logo_path)
+    home_url = Keyword.fetch!(opts, :home_url)
 
     quote do
       import CommonUI.EmailHelpers
@@ -82,11 +82,8 @@ defmodule CommonUI.EmailHelpers do
           |> Swoosh.Email.to(Map.get(assigns, :to))
           |> Swoosh.Email.from(Map.get(assigns, :from, unquote(from)))
           |> Swoosh.Email.assign(:street_address, unquote(street_address))
-          |> Swoosh.Email.assign(:home_url, unquote(endpoint).url())
-          |> Swoosh.Email.assign(
-            :logo_url,
-            unquote(endpoint).static_url() |> URI.merge(unquote(logo_path)) |> to_string()
-          )
+          |> Swoosh.Email.assign(:static_url, unquote(endpoint).static_url())
+          |> Swoosh.Email.assign(:home_url, unquote(home_url))
 
         email = if Keyword.has_key?(functions, :subject), do: assign_subject(email, __MODULE__), else: email
         email = if Keyword.has_key?(functions, :text), do: render_text(email, __MODULE__), else: email

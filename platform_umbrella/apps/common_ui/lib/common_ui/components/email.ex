@@ -51,23 +51,12 @@ defmodule CommonUI.Components.Email do
 
   ## Layouts
 
-  attr :preheader, :string, default: nil
-  attr :address, :string, default: nil
-  attr :inner_content, :any, required: true
-
   def email_text_layout(assigns) do
     ~s"""
-    #{if assigns.preheader, do: "#{assigns.preheader}\n\n---\n\n"}#{assigns.inner_content}
-    #{if assigns.street_address, do: "---\n\n#{assigns.street_address}\n\n"}
+    #{if assigns[:preheader], do: "#{assigns.preheader}\n\n---\n\n"}#{assigns.inner_content}
+    #{if assigns[:street_address], do: "---\n\n#{assigns.street_address}\n\n"}
     """
   end
-
-  attr :subject, :string, default: nil
-  attr :preheader, :string, default: nil
-  attr :address, :string, default: nil
-  attr :url, :string, default: nil
-  attr :logo, :string, default: nil
-  attr :inner_content, :any, required: true
 
   def email_html_layout(assigns) do
     ~H"""
@@ -78,7 +67,7 @@ defmodule CommonUI.Components.Email do
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="x-apple-disable-message-reformatting" />
 
-        <title :if={@subject}><%= @subject %></title>
+        <title :if={assigns[:subject]}><%= @subject %></title>
 
         <style media="all" type="text/css">
           /* GLOBAL RESETS */
@@ -348,16 +337,19 @@ defmodule CommonUI.Components.Email do
           <tr>
             <td class="container">
               <div class="content">
-                <span :if={@preheader} class="preheader">
+                <span :if={assigns[:preheader]} class="preheader">
                   <%= @preheader %>
                 </span>
 
-                <div :if={@home_url && @logo_url} class="header">
+                <div class="header">
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td class="logo">
                         <a href={@home_url}>
-                          <img width="100" src={@logo_url} />
+                          <img
+                            width="100"
+                            src={URI.merge(@home_url, "/images/emails/logo.png") |> to_string()}
+                          />
                         </a>
                       </td>
                     </tr>
@@ -366,7 +358,7 @@ defmodule CommonUI.Components.Email do
 
                 <%= @inner_content %>
 
-                <div :if={@street_address} class="footer">
+                <div :if={assigns[:street_address]} class="footer">
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td class="content-block">

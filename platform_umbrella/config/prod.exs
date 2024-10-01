@@ -36,6 +36,8 @@ import Config
 
 config :common_ui, CommonUIWeb.Endpoint, server: false
 
+config :home_base_web, home_url: "https://www.batteriesincl.com"
+
 config :kube_services, :clusters, default: :service_account
 config :kube_services, cluster_type: :prod
 
