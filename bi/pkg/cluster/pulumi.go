@@ -49,9 +49,9 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 
 	// add plugins that need to be installed here
 	plugins := map[string]string{
-		"aws":       "v6.22.2",
-		"cloudinit": "v1.4.1",
-		"tls":       "v5.0.0",
+		"aws":       "v6.54.2",
+		"cloudinit": "v1.4.7",
+		"tls":       "v5.0.7",
 	}
 	if err := p.installPlugins(ctx, ws, plugins); err != nil {
 		return fmt.Errorf("failed to install necessary pulumi plugins: %w", err)
@@ -81,7 +81,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"cluster:maxSize":        {Value: "4"},
 		"cluster:minSize":        {Value: "2"},
 		"cluster:name":           {Value: p.slug},
-		"cluster:version":        {Value: "1.30"},
+		"cluster:version":        {Value: "1.31"},
 		"cluster:volumeSize":     {Value: "20"},
 		"cluster:volumeType":     {Value: "gp3"},
 		"gateway:cidrBlock":      {Value: "100.64.250.0/24"},
