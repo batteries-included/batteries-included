@@ -100,6 +100,15 @@ defmodule KubeServices.SystemState.SummaryURLs do
     {:reply, url, state}
   end
 
+  def handle_call(:home_base_url, _from, %{summary: summary} = state) do
+    url =
+      summary
+      |> URLs.home_base_url()
+      |> URI.to_string()
+
+    {:reply, url, state}
+  end
+
   def handle_call([method | args], _from, %{summary: summary} = state) do
     {:reply, apply(URLs, method, [summary | args]), state}
   end
@@ -136,5 +145,9 @@ defmodule KubeServices.SystemState.SummaryURLs do
 
   def knative_service_url(target \\ @me, service) do
     GenServer.call(target, {:knative_service_url, service})
+  end
+
+  def home_base_url(target \\ @me) do
+    GenServer.call(target, :home_base_url)
   end
 end
