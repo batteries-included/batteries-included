@@ -123,6 +123,6 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
   end
 
   def snapshot(target \\ @me) do
-    GenServer.call(target, :snapshot, 60_000)
+    GenServer.call(target, :snapshot, 30_000)
   end
 end

@@ -22,7 +22,8 @@ defmodule KubeServices.SystemState.Summarizer do
   end
 
   @spec new(atom | pid | {atom, any} | {:via, atom, any}) :: StateSummary.t()
-  def new(target \\ @me), do: GenServer.call(target, :new)
+  def new(target \\ @me), do: GenServer.call(target, :new, to_timeout(second: 90))
+
   @spec cached(atom | pid | {atom, any} | {:via, atom, any}) :: StateSummary.t()
   def cached(target \\ @me), do: GenServer.call(target, :cached)
   @spec cached_field(atom | pid | {atom, any} | {:via, atom, any}, atom) :: any
