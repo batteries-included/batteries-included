@@ -4,6 +4,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
 
   alias CommonCore.Installation
   alias HomeBase.CustomerInstalls
+  alias HomeBase.ET
   alias HomeBaseWeb.InstallationNewLive
   alias HomeBaseWeb.UserAuth
 
@@ -22,8 +23,45 @@ defmodule HomeBaseWeb.InstallationShowLive do
      |> assign(:installation, installation)
      |> assign(:provider, provider)
      |> assign(:installed?, !CommonCore.JWK.has_private_key?(installation.control_jwk))
+     |> assign_host_report(installation)
+     |> assign_usage_report(installation)
+     |> assign_ssl_enabled(installation)
      |> assign(:form, to_form(changeset))}
   end
+
+  def assign_host_report(socket, install) do
+    report =
+      case ET.get_most_recent_host_report(install) do
+        nil ->
+          nil
+
+        report ->
+          report.report
+      end
+
+    assign(socket, :host_report, report)
+  end
+
+  def assign_usage_report(socket, install) do
+    report =
+      case install |> ET.list_recent_usage_reports(limit: 1) |> List.first() do
+        nil ->
+          nil
+
+        report ->
+          report.report
+      end
+
+    assign(socket, :usage_report, report)
+  end
+
+  def assign_ssl_enabled(socket, %{kube_provider: :kind}), do: assign(socket, :ssl_enabled?, false)
+
+  def assign_ssl_enabled(socket, %{batteries: batteries}) do
+    assign(socket, :ssl_enabled?, Enum.any?(batteries, fn bat -> bat == "cert_manager" end))
+  end
+
+  def assign_ssl_enabled(socket, _install), do: assign(socket, :ssl_enabled?, false)
 
   def handle_event("validate", %{"installation" => params}, socket) do
     changeset =
@@ -64,6 +102,10 @@ defmodule HomeBaseWeb.InstallationShowLive do
     |> Atom.to_string()
   end
 
+  defp control_server_url(%{host_report: nil}), do: ""
+  defp control_server_url(%{host_report: %{control_server_host: host}, ssl_enabled?: false}), do: "http://#{host}"
+  defp control_server_url(%{host_report: %{control_server_host: host}, ssl_enabled?: true}), do: "https://#{host}"
+
   def render(%{live_action: :success} = assigns) do
     ~H"""
     <div class="flex flex-col items-center justify-center min-h-full">
@@ -89,6 +131,8 @@ defmodule HomeBaseWeb.InstallationShowLive do
   end
 
   def render(assigns) do
+    assigns = assign(assigns, control_server_url: control_server_url(assigns))
+
     ~H"""
     <div class="flex items-center justify-between mb-2">
       <.h2><%= @installation.slug %></.h2>
@@ -110,7 +154,6 @@ defmodule HomeBaseWeb.InstallationShowLive do
         <p class="leading-6 mb-4">
           We haven't heard from your installation yet! To download and install the Batteries Included control server in <%= @provider %>, run the script below.
         </p>
-        <!-- TODO: update script src to actual installation script -->
         <.script
           src={"#{@request_scheme}://#{@request_authority}/api/v1/installations/#{@installation.id}/script"}
           class="mb-8"
@@ -128,8 +171,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
       </.panel>
 
       <div :if={@installed?} class="flex flex-col gap-4">
-        <!-- TODO: Link to installation's control server -->
-        <.a variant="bordered" href={~p"/"}>Control Server</.a>
+        <.a variant="bordered" href={@control_server_url}>Control Server</.a>
       </div>
     </.grid>
     """
