@@ -118,8 +118,8 @@ config :logger,
 
 config :oauth2,
   debug: false,
-  adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]},
-  middleware: [Tesla.Middleware.Telemetry]
+  adapter: {Tesla.Adapter.Finch, [timeout: 10_500, name: CommonCore.Finch]},
+  middleware: [Tesla.Middleware.Telemetry, {Tesla.Middleware.Timeout, timeout: 10_000}]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason

@@ -17,6 +17,7 @@ defmodule KubeServices.Keycloak.WellknownClient do
     def to_client(%{base_url: base_url}) do
       Tesla.client([
         {Tesla.Middleware.BaseUrl, base_url},
+        {Tesla.Middleware.Timeout, timeout: 2_000},
         Tesla.Middleware.Compression,
         Tesla.Middleware.JSON,
         Tesla.Middleware.Telemetry
@@ -38,17 +39,24 @@ defmodule KubeServices.Keycloak.WellknownClient do
       end)
       |> Keyword.split(@state_opts)
 
-    Logger.debug("Starting WellknownClient")
     GenServer.start_link(__MODULE__, state_opts, gen_opts)
   end
 
   def init(opts) do
-    {:ok, struct!(State, opts)}
+    state = struct!(State, opts)
+    Logger.info("Starting KubeServices.Keycloak.WellknownClient with base_url = #{state.base_url}")
+    {:ok, state}
   end
+
+  def base_url(target \\ @me), do: GenServer.call(target, :base_url)
 
   @spec get(atom | pid | {atom, any} | {:via, atom, any}, String.t()) :: {:ok, OIDCConfiguration.t()} | {:error, any()}
   def get(target \\ @me, realm) do
     GenServer.call(target, {:get, realm})
+  end
+
+  def handle_call(:base_url, _from, state) do
+    {:reply, state.base_url, state}
   end
 
   def handle_call({:get, realm}, _from, state) do
