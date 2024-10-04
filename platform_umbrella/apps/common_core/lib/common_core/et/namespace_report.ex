@@ -24,11 +24,9 @@ defmodule CommonCore.ET.NamespaceReport do
     Schema.schema_new(__MODULE__, opts)
   end
 
-  def total_battery_pods(%__MODULE__{pod_counts: pod_counts}) do
-    Enum.reduce(pod_counts, 0, fn {_namespace, count}, acc ->
-      acc + count
-    end)
+  def pod_count(%__MODULE__{pod_counts: pod_counts}) do
+    pod_counts |> Map.values() |> Enum.sum()
   end
 
-  def total_battery_pods(_), do: 0
+  def pod_count(_), do: 0
 end
