@@ -81,6 +81,7 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(10.4.5 11.2.0),
         default_tag: "11.2.0"
       }),
+    # Be sure to check: https://kiali.io/docs/installation/installation-guide/prerequisites/#version-compatibility
     istio_pilot:
       Image.new!(%{
         name: "docker.io/istio/pilot",
@@ -105,11 +106,12 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(25.0.2),
         default_tag: "25.0.2"
       }),
+    # Be sure to check: https://kiali.io/docs/installation/installation-guide/prerequisites/#version-compatibility
     kiali:
       Image.new!(%{
         name: "quay.io/kiali/kiali",
-        tags: ~w(v1.87.0),
-        default_tag: "v1.87.0"
+        tags: ~w(v1.87.0 v1.89.7),
+        default_tag: "v1.89.7"
       }),
     kiwigrid_sidecar:
       Image.new!(%{

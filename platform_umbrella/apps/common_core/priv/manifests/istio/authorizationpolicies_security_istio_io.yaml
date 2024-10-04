@@ -18,10 +18,27 @@ spec:
     kind: AuthorizationPolicy
     listKind: AuthorizationPolicyList
     plural: authorizationpolicies
+    shortNames:
+      - ap
     singular: authorizationpolicy
   scope: Namespaced
   versions:
-    - name: v1
+    - additionalPrinterColumns:
+        - description: The operation to take.
+          jsonPath: .spec.action
+          name: Action
+          type: string
+        - description:
+            'CreationTimestamp is a timestamp representing the server time when
+            this object was created. It is not guaranteed to be set in
+            happens-before order across separate operations. Clients may not set
+            this value. It is represented in RFC3339 form and is in UTC.
+            Populated by the system. Read-only. Null for lists. More info:
+            https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata'
+          jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1
       schema:
         openAPIV3Schema:
           properties:
@@ -39,7 +56,10 @@ spec:
                     - provider
               properties:
                 action:
-                  description: Optional.
+                  description: |-
+                    Optional.
+
+                    Valid Options: ALLOW, DENY, AUDIT, CUSTOM
                   enum:
                     - ALLOW
                     - DENY
@@ -198,23 +218,100 @@ spec:
                   properties:
                     matchLabels:
                       additionalProperties:
+                        maxLength: 63
                         type: string
+                        x-kubernetes-validations:
+                          - message: wildcard not allowed in label value match
+                            rule: "!self.contains('*')"
                       description:
                         One or more labels that indicate a specific set of
                         pods/VMs on which a policy should be applied.
+                      maxProperties: 4096
                       type: object
+                      x-kubernetes-validations:
+                        - message: wildcard not allowed in label key match
+                          rule: self.all(key, !key.contains('*'))
+                        - message: key must not be empty
+                          rule: self.all(key, key.size() != 0)
                   type: object
                 targetRef:
                   properties:
                     group:
+                      description: group is the group of the target resource.
+                      maxLength: 253
+                      pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
                       type: string
                     kind:
+                      description: kind is kind of the target resource.
+                      maxLength: 63
+                      minLength: 1
+                      pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
                       type: string
                     name:
+                      description: name is the name of the target resource.
+                      maxLength: 253
+                      minLength: 1
                       type: string
                     namespace:
+                      description: namespace is the namespace of the referent.
                       type: string
+                      x-kubernetes-validations:
+                        - message:
+                            cross namespace referencing is not currently
+                            supported
+                          rule: self.size() == 0
+                  required:
+                    - kind
+                    - name
                   type: object
+                  x-kubernetes-validations:
+                    - message:
+                        Support kinds are core/Service and
+                        gateway.networking.k8s.io/Gateway
+                      rule:
+                        "[self.group, self.kind] in [['core','Service'],
+                        ['','Service'], ['gateway.networking.k8s.io','Gateway']]"
+                targetRefs:
+                  description: Optional.
+                  items:
+                    properties:
+                      group:
+                        description: group is the group of the target resource.
+                        maxLength: 253
+                        pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                        type: string
+                      kind:
+                        description: kind is kind of the target resource.
+                        maxLength: 63
+                        minLength: 1
+                        pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
+                        type: string
+                      name:
+                        description: name is the name of the target resource.
+                        maxLength: 253
+                        minLength: 1
+                        type: string
+                      namespace:
+                        description: namespace is the namespace of the referent.
+                        type: string
+                        x-kubernetes-validations:
+                          - message:
+                              cross namespace referencing is not currently
+                              supported
+                            rule: self.size() == 0
+                    required:
+                      - kind
+                      - name
+                    type: object
+                    x-kubernetes-validations:
+                      - message:
+                          Support kinds are core/Service and
+                          gateway.networking.k8s.io/Gateway
+                        rule:
+                          "[self.group, self.kind] in [['core','Service'],
+                          ['','Service'],
+                          ['gateway.networking.k8s.io','Gateway']]"
+                  type: array
               type: object
             status:
               type: object
@@ -224,7 +321,22 @@ spec:
       storage: false
       subresources:
         status: {}
-    - name: v1beta1
+    - additionalPrinterColumns:
+        - description: The operation to take.
+          jsonPath: .spec.action
+          name: Action
+          type: string
+        - description:
+            'CreationTimestamp is a timestamp representing the server time when
+            this object was created. It is not guaranteed to be set in
+            happens-before order across separate operations. Clients may not set
+            this value. It is represented in RFC3339 form and is in UTC.
+            Populated by the system. Read-only. Null for lists. More info:
+            https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata'
+          jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1beta1
       schema:
         openAPIV3Schema:
           properties:
@@ -242,7 +354,10 @@ spec:
                     - provider
               properties:
                 action:
-                  description: Optional.
+                  description: |-
+                    Optional.
+
+                    Valid Options: ALLOW, DENY, AUDIT, CUSTOM
                   enum:
                     - ALLOW
                     - DENY
@@ -401,23 +516,100 @@ spec:
                   properties:
                     matchLabels:
                       additionalProperties:
+                        maxLength: 63
                         type: string
+                        x-kubernetes-validations:
+                          - message: wildcard not allowed in label value match
+                            rule: "!self.contains('*')"
                       description:
                         One or more labels that indicate a specific set of
                         pods/VMs on which a policy should be applied.
+                      maxProperties: 4096
                       type: object
+                      x-kubernetes-validations:
+                        - message: wildcard not allowed in label key match
+                          rule: self.all(key, !key.contains('*'))
+                        - message: key must not be empty
+                          rule: self.all(key, key.size() != 0)
                   type: object
                 targetRef:
                   properties:
                     group:
+                      description: group is the group of the target resource.
+                      maxLength: 253
+                      pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
                       type: string
                     kind:
+                      description: kind is kind of the target resource.
+                      maxLength: 63
+                      minLength: 1
+                      pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
                       type: string
                     name:
+                      description: name is the name of the target resource.
+                      maxLength: 253
+                      minLength: 1
                       type: string
                     namespace:
+                      description: namespace is the namespace of the referent.
                       type: string
+                      x-kubernetes-validations:
+                        - message:
+                            cross namespace referencing is not currently
+                            supported
+                          rule: self.size() == 0
+                  required:
+                    - kind
+                    - name
                   type: object
+                  x-kubernetes-validations:
+                    - message:
+                        Support kinds are core/Service and
+                        gateway.networking.k8s.io/Gateway
+                      rule:
+                        "[self.group, self.kind] in [['core','Service'],
+                        ['','Service'], ['gateway.networking.k8s.io','Gateway']]"
+                targetRefs:
+                  description: Optional.
+                  items:
+                    properties:
+                      group:
+                        description: group is the group of the target resource.
+                        maxLength: 253
+                        pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                        type: string
+                      kind:
+                        description: kind is kind of the target resource.
+                        maxLength: 63
+                        minLength: 1
+                        pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
+                        type: string
+                      name:
+                        description: name is the name of the target resource.
+                        maxLength: 253
+                        minLength: 1
+                        type: string
+                      namespace:
+                        description: namespace is the namespace of the referent.
+                        type: string
+                        x-kubernetes-validations:
+                          - message:
+                              cross namespace referencing is not currently
+                              supported
+                            rule: self.size() == 0
+                    required:
+                      - kind
+                      - name
+                    type: object
+                    x-kubernetes-validations:
+                      - message:
+                          Support kinds are core/Service and
+                          gateway.networking.k8s.io/Gateway
+                        rule:
+                          "[self.group, self.kind] in [['core','Service'],
+                          ['','Service'],
+                          ['gateway.networking.k8s.io','Gateway']]"
+                  type: array
               type: object
             status:
               type: object

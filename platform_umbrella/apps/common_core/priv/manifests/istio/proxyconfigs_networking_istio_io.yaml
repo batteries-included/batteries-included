@@ -32,10 +32,13 @@ spec:
               properties:
                 concurrency:
                   description: The number of worker threads to run.
+                  format: int32
+                  minimum: 0
                   nullable: true
                   type: integer
                 environmentVariables:
                   additionalProperties:
+                    maxLength: 2048
                     type: string
                   description: Additional environment variables for the proxy.
                   type: object
@@ -51,11 +54,21 @@ spec:
                   properties:
                     matchLabels:
                       additionalProperties:
+                        maxLength: 63
                         type: string
+                        x-kubernetes-validations:
+                          - message: wildcard not allowed in label value match
+                            rule: "!self.contains('*')"
                       description:
                         One or more labels that indicate a specific set of
                         pods/VMs on which a policy should be applied.
+                      maxProperties: 4096
                       type: object
+                      x-kubernetes-validations:
+                        - message: wildcard not allowed in label key match
+                          rule: self.all(key, !key.contains('*'))
+                        - message: key must not be empty
+                          rule: self.all(key, key.size() != 0)
                   type: object
               type: object
             status:
