@@ -2,6 +2,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  alias CommonCore.ET.NamespaceReport
   alias CommonCore.Installation
   alias HomeBase.CustomerInstalls
   alias HomeBase.ET
@@ -168,7 +169,9 @@ defmodule HomeBaseWeb.InstallationShowLive do
           <:item title="Default Size"><%= @installation.default_size %></:item>
           <:item title="Created"><%= @installation.inserted_at %></:item>
           <:item :if={@usage_report} title="Nodes"><%= node_count(@usage_report) %></:item>
-          <:item :if={@usage_report} title="Pods"><%= pod_count(@usage_report) %></:item>
+          <:item :if={@usage_report} title="Pods">
+            <%= NamespaceReport.pod_count(@usage_report.namespace_report) %>
+          </:item>
           <:item :if={@usage_report} title="Batteries"><%= battery_count(@usage_report) %></:item>
         </.data_list>
       </.panel>
@@ -181,8 +184,6 @@ defmodule HomeBaseWeb.InstallationShowLive do
   end
 
   defp node_count(usage_report), do: usage_report.node_report.pod_counts |> Map.keys() |> Enum.count()
-
-  defp pod_count(usage_report), do: usage_report.namespace_report.pod_counts |> Map.values() |> Enum.sum()
 
   defp battery_count(usage_report), do: Enum.count(usage_report.batteries)
 

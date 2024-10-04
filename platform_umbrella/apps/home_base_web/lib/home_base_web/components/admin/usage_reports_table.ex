@@ -14,7 +14,7 @@ defmodule HomeBaseWeb.Admin.UsageReportsTable do
         <%= (report.report.node_report.pod_counts || %{}) |> map_size() %>
       </:col>
       <:col :let={report} label="Pods">
-        <%= NamespaceReport.total_battery_pods(report.report.namespace_report) %>
+        <%= NamespaceReport.pod_count(report.report.namespace_report) %>
       </:col>
       <:col :let={report} label="Postgres Clusters">
         <%= map_size(report.report.postgres_report.instance_counts) %>
