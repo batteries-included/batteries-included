@@ -240,8 +240,8 @@ defmodule CommonCore.Defaults.Images do
     vm_operator:
       Image.new!(%{
         name: "victoriametrics/operator",
-        tags: ~w(v0.44.0 v0.47.3),
-        default_tag: "v0.47.3"
+        tags: ~w(v0.44.0),
+        default_tag: "v0.44.0"
       }),
     knative_serving_activator:
       Image.new!(%{
