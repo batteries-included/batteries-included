@@ -1,0 +1,29 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Terms of Service',
+};
+---
+
+<Layout metadata={metadata} hideElipses>
+  <div class="py-12 lg:py-16 xl:py-20">
+    <div class="u-container">
+      <h1 class="text-3xl lg:text-4xl xl:text-5xl font-bold">
+        Terms of Service
+      </h1>
+      <p class="mt-8 lg:text-lg">
+        Welcome to our Terms of Service. Below, you will find detailed
+        information about the use of our site.
+      </p>
+      <ul class="mt-4">
+        <li>
+          <a class="text-primary" href="/cover">Cover</a>
+        </li>
+        <li>
+          <a class="text-primary" href="/bonterms">Bonterms</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</Layout>
