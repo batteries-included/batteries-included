@@ -58,6 +58,6 @@ jobs:
             ${{ runner.os }}-go-build-
 
       - name: Release
-        run: goreleaser release --clean --verbose
+        run: goreleaser release --clean --verbose -p 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
