@@ -108,6 +108,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
       - name: Cache ASDF
