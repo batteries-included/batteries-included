@@ -43,7 +43,7 @@
     "@astrojs/mdx": "^3.1.7",
     "@astrojs/partytown": "^2.1.2",
     "@fontsource-variable/inter": "^5.1.0",
-    "@fontsource-variable/jetbrains-mono": "^5.1.0",
+    "@fontsource-variable/jetbrains-mono": "^5.1.1",
     "@hbsnow/rehype-sectionize": "^1.0.7",
     "@iconify-json/flat-color-icons": "^1.2.0",
     "@iconify-json/tabler": "^1.2.4",
