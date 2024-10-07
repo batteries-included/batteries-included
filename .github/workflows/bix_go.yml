@@ -110,6 +110,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - run: |
+          sudo df -ah
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
       - name: Cache ASDF
@@ -146,6 +148,7 @@ jobs:
             '.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-go-build-
-
+      - run: |
+          sudo df -ah
       - name: Build bi
         run: bin/bix go-build-bi
