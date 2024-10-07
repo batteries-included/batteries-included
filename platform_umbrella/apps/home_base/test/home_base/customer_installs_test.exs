@@ -29,11 +29,30 @@ defmodule HomeBase.CustomerInstallsTest do
       assert CustomerInstalls.list_installations(team) == [installation]
     end
 
+    test "list_recent_installations/2 returns all recent installations for a user" do
+      user = insert(:user)
+      team = insert(:team)
+
+      insert(:team_role, user_id: user.id, team_id: team.id)
+
+      user_installation = installation_fixture(user_id: user.id)
+      team_installation = installation_fixture(team_id: team.id)
+
+      assert [installation1, installation2] = CustomerInstalls.list_recent_installations(user)
+      assert installation1.id == team_installation.id
+      assert installation2.id == user_installation.id
+    end
+
     test "count_installations/1 returns the count for a user" do
       user = insert(:user)
-      installation_fixture(user_id: user.id)
+      team = insert(:team)
 
-      assert CustomerInstalls.count_installations(user) == 1
+      insert(:team_role, user_id: user.id, team_id: team.id)
+
+      installation_fixture(user_id: user.id)
+      installation_fixture(team_id: team.id)
+
+      assert CustomerInstalls.count_installations(user) == 2
     end
 
     test "count_installations/1 returns the count for a team" do
@@ -42,6 +61,15 @@ defmodule HomeBase.CustomerInstallsTest do
       installation_fixture(team_id: team.id)
 
       assert CustomerInstalls.count_installations(team) == 2
+    end
+
+    test "count_teams/1 returns the count for a user" do
+      user = insert(:user)
+      team = insert(:team)
+
+      insert(:team_role, user_id: user.id, team_id: team.id)
+
+      assert CustomerInstalls.count_teams(user) == 1
     end
 
     test "get_installation!/1 returns the installation with given id" do

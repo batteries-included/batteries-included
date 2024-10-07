@@ -2,6 +2,7 @@ defmodule HomeBaseWeb.InstallationLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  alias CommonCore.Teams.Team
   alias HomeBase.CustomerInstalls
   alias HomeBaseWeb.UserAuth
 
@@ -12,9 +13,12 @@ defmodule HomeBaseWeb.InstallationLive do
     {:ok,
      socket
      |> assign(:page, :installations)
-     |> assign(:page_title, "Installations")
+     |> assign(:page_title, "Installations#{title_addon(owner)}")
      |> assign(:installations, installations)}
   end
+
+  defp title_addon(%Team{} = team), do: " for #{team.name}"
+  defp title_addon(_), do: nil
 
   def render(assigns) do
     ~H"""
@@ -34,7 +38,7 @@ defmodule HomeBaseWeb.InstallationLive do
 
     <div :if={@installations != []}>
       <div class="flex items-center justify-between mb-2">
-        <.h2>Installations</.h2>
+        <.h2><%= @page_title %></.h2>
 
         <.button variant="dark" icon={:plus} link={~p"/installations/new"}>
           New Installation
@@ -49,6 +53,7 @@ defmodule HomeBaseWeb.InstallationLive do
         >
           <:col :let={installation} label="ID"><%= installation.id %></:col>
           <:col :let={installation} label="Slug"><%= installation.slug %></:col>
+          <:col :let={installation} label="Provider"><%= installation.kube_provider %></:col>
 
           <:action :let={installation}>
             <.button
