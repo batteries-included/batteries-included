@@ -9,4 +9,14 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 source "${ROOT_DIR}/bin/common-functions.sh"
 
+setup_colors
+setup_trace
+
+log "Cleaning /tmp/go-build* directories"
 rm -rf /tmp/go-build*
+
+# If there's a GOTEMPDIR, clean it
+if [[ -n "${GOTMPDIR:-}" ]]; then
+    log "Cleaning ${GOTMPDIR:?}/go-build* directories"
+    rm -rf "${GOTMPDIR:?}"/go-build*
+fi
