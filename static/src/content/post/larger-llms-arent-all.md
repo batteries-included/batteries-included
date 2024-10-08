@@ -3,10 +3,10 @@ title: 'Are LLMs always the answer?'
 excerpt:
   LLMs dominate AI, but are they always the answer? Learn how targeted models
   and refined datasets can offer more nimble and effective solutions.
-publishDate: 2024-07-07
+publishDate: 2024-10-07
 tags: ['AI', 'LLM', 'NLP']
 image: /images/posts/post-5.jpg
-draft: true
+draft: false
 ---
 
 [Large Language Models (LLMs)](https://aws.amazon.com/what-is/large-language-model/)

@@ -4,10 +4,10 @@ excerpt:
   While Kubernetes' reconciliation loop is ubiquitous, our experience shows that
   the snapshot and apply pattern offers superior debuggability, introspection,
   and user experience, especially at scale.
-publishDate: 2024-08-27
+publishDate: 2024-10-27
 tags: ['kubernetes', 'devops', 'deployment', 'scalability']
 image: /images/posts/post-18.jpg
-draft: true
+draft: false
 ---
 
 As far as Kubernetes deployments go, the reconciliation loop (or observation

@@ -3,11 +3,11 @@ title: 'How Self-Hosted Solutions Address SaaS Security Concerns'
 excerpt:
   Explore how self-hosted solutions offer increased security and control
   compared to traditional SaaS services.
-publishDate: 2024-08-18
+publishDate: 2024-10-18
 tags:
   ['Cybersecurity', 'Self-Hosting', 'SaaS', 'Data Protection', 'Cloud Security']
 image: /images/posts/post-17.jpg
-draft: true
+draft: false
 ---
 
 As unfortunate as it is, we find ourselves in an era where data breaches make

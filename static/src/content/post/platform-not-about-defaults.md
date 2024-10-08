@@ -4,10 +4,10 @@ excerpt:
   Enigneers often make the mistake of thinking that giving the correct defaults
   or starting code templates for software defined infrastructure is all that's
   needed to ensure consinsitency and reliablity in the future
-publishDate: 2024-06-13
+publishDate: 2024-10-13
 tags: ['terraform', 'platform', 'platform engineering', 'SDLC']
 image: /images/posts/post-10.jpg
-draft: true
+draft: false
 ---
 
 Enigneers often make the mistake of thinking that giving the correct defaults or

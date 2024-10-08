@@ -3,10 +3,10 @@ title: 'DevOps and SRE: Lessons from the Frontlines'
 excerpt:
   DevOps aims to bridge the gap between software development and operations, but
   its implementation can face serious challenges.
-publishDate: 2024-06-08
+publishDate: 2024-10-08
 tags: ['devops', 'sre', 'pe', 'usability']
 image: /images/posts/post-3.jpg
-draft: true
+draft: false
 ---
 
 In the ever-changing landscape of software development and operations, DevOps

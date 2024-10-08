@@ -3,10 +3,10 @@ title: 'When GitOps Fails to Scale'
 excerpt:
   While GitOps has revolutionized infrastructure management, years of experience
   reveal significant tradeoffs when scaling at large.
-publishDate: 2024-12-01
+publishDate: 2024-09-01
 tags: []
 image: /images/posts/post-4.jpg
-draft: true
+draft: false
 ---
 
 [_GitOps_](https://about.gitlab.com/topics/gitops/) is a modern approach to

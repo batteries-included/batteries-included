@@ -1,6 +1,7 @@
 ---
 title: 'Ubuntu Dev prepare'
 tags: ['code', 'tools', 'internal']
+draft: false
 ---
 
 ## Install Ubuntu
