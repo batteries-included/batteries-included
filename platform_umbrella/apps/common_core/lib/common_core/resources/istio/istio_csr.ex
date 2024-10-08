@@ -91,7 +91,7 @@ defmodule CommonCore.Resources.IstioCsr do
           "--issuer-kind=ClusterIssuer",
           "--issuer-group=cert-manager.io",
           "--preserve-certificate-requests=false",
-          "--root-ca-file=/var/run/secrets/battery-ca/ca.pem",
+          "--root-ca-file=/var/run/secrets/battery-ca/ca.crt",
           "--serving-certificate-dns-names=cert-manager-istio-csr.#{namespace}.svc",
           "--serving-certificate-duration=1h",
           "--trust-domain=cluster.local",
