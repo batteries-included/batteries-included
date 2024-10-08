@@ -34,7 +34,7 @@ defmodule CommonCore.Resources.ProxyUtils do
   def fully_qualified_service_name(%SystemBattery{} = battery, %StateSummary{} = state) do
     svc = service_name(battery)
     namespace = core_namespace(state)
-    "#{svc}.#{namespace}.svc.cluster.local"
+    "#{svc}.#{namespace}.svc.cluster.local."
   end
 
   def fully_qualified_service_name(_, _), do: nil
