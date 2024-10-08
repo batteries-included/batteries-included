@@ -4,17 +4,17 @@
 
 # Welcome!
 
-Welcome to [Batteries Included](https://www.batteriesincl.com/) -- the all-inclusive
-software infrastructure platform!
+Welcome to [Batteries Included](https://www.batteriesincl.com/) -- the
+all-inclusive software infrastructure platform!
 
-In this repo, you'll find everything you need to contribute to development.
-From code and scripts to documentation and information, this is the hub of all
-things _Batteries Included_.
+In this repo, you'll find everything you need to contribute to development. From
+code and scripts to documentation and information, this is the hub of all things
+_Batteries Included_.
 
 To get started, make sure your operating system is set up and ready to go. We
 recommend using a Linux machine, but our code should work on any system with a
-docker daemon and a Unix-like shell. Follow the steps in the [setup](#setup) section
-to get started.
+docker daemon and a Unix-like shell. Follow the steps in the [setup](#setup)
+section to get started.
 
 Let's build something amazing together!
 
@@ -22,7 +22,8 @@ Let's build something amazing together!
 
 ### Linux Dependencies
 
-Depending on your Linux distribution, you'll need to install the following dependencies:
+Depending on your Linux distribution, you'll need to install the following
+dependencies:
 
 For Ubuntu/apt-based systems:
 
@@ -40,7 +41,8 @@ sudo dnf install -y docker gcc gcc-c++ make curl git \
     inotify-tools direnv jq chromium chromedriver
 ```
 
-After installing the dependencies, ensure Docker is enabled and your user has the right privileges:
+After installing the dependencies, ensure Docker is enabled and your user has
+the right privileges:
 
 ```bash
 sudo systemctl enable docker
@@ -60,8 +62,9 @@ brew install cmake flock direnv
 
 ### `asdf` Installation
 
-[asdf](https://asdf-vm.com/) is a version manager for multiple languages. We use it to manage the tools
-that are useful in the project. You will need to install `asdf` and a few plugins:
+[asdf](https://asdf-vm.com/) is a version manager for multiple languages. We use
+it to manage the tools that are useful in the project. You will need to install
+`asdf` and a few plugins:
 
 ```bash
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
@@ -93,8 +96,8 @@ asdf install
 ## Code Organization
 
 This monorepo contains multiple parts that come together to build the _Batteries
-Included_ platform. `bix` is our development tool that helps manage the different
-parts of the project.
+Included_ platform. `bix` is our development tool that helps manage the
+different parts of the project.
 
 TLDR: `bix bootstrap && bix dev`
 
