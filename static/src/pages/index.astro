@@ -13,7 +13,7 @@ export const prerender = true;
 
 const metadata = {
   title:
-    'Batteries Included the fastest easiest to use open source infrastrucutre as a service platform',
+    'Batteries Included: The ultimate platform for modern service development',
   ignoreTitleTemplate: true,
 };
 ---
@@ -21,11 +21,11 @@ const metadata = {
 <Layout metadata={metadata}>
   <!-- Hero Widget ******************* -->
   <Hero>
-    <Fragment slot="subtitle">Modern Infrastructure</Fragment>
-    <Fragment slot="title">for Ambitious Product Teams</Fragment>
+    <Fragment slot="subtitle">The ultimate platform</Fragment>
+    <Fragment slot="title">for modern service development.</Fragment>
     <Fragment slot="content">
-      Finally, a platform that can bring any product idea to life in seconds.
-      Batteries Included.
+      Experience unparalleled flexibility and control. Build, deploy, and scale
+      your projects with ease using our open-source, all-in-one solution.
     </Fragment>
     <div class="mt-12 mx-auto max-w-screen-md">
       <div class="flex justify-center">
@@ -33,7 +33,7 @@ const metadata = {
           url="https://www.youtube.com/embed/RVmMvNO2LUQ?si=8BakJI9Vot-whvKD"
           client:load>
           <button class="btn-fourth !w-full">
-            <p class="flex-shrink-0">Watch the Demo</p>
+            <p class="flex-shrink-0">Watch the demo</p>
             <Image
               width={32}
               height={32}
@@ -71,45 +71,63 @@ const metadata = {
 
   <Features
     id="features"
-    tagline="Unleash the Power"
-    title="with Our All-Inclusive Platform "
-    subtitle="Our Fully Automated DevOps Platform Comes With Batteries Included, Giving You"
+    tagline="Unmatched Capabilities"
+    title="Your all-inclusive, source-available deployment solution"
+    subtitle="Experience a secure and flexible platform that puts you in control."
     items={[
       {
-        title: 'AI Included ',
+        title: 'Open-Source Transparency',
         description:
-          'Easily integrate AI into any aspect of your product without the infrastructure headaches. Batteries handles the complex stuff so you can focus on building great ML features.',
-        icon: 'ai',
+          'Built on open-source, with all of our code publicly available. Audit, modify, and trust the code that powers your infrastructure.',
+        icon: 'document',
       },
       {
-        title: 'Efficiency Included ',
+        title: 'Advanced Web Services',
         description:
-          'Shorten product cycles and get back to working on your core product. Don’t spend another sprint trying to fix compatibility issues with third party platforms.',
-        icon: 'efficiency',
+          'Deploy from Docker to Knative with SSL, easier than ever. Get superior service on your own hardware thanks to our hands-off workflow.',
+        icon: 'checkoutline',
       },
       {
-        title: 'Cost-Savings Included ',
+        title: 'Automation Built-In',
         description:
-          'Batteries offer a cost-effective, scalable solution with top-tier autoscaling to reduce waste, ensuring quick and efficient scaling at lower costs.',
-        icon: 'cost',
-      },
-      {
-        title: 'Security Included ',
-        description:
-          'Our infrastructure automates end-to-end security, deploying fixes and updates without any manual effort on your part.',
-        icon: 'secure',
-      },
-      {
-        title: 'Automation Included ',
-        description:
-          'Accelerate product cycles, focus on your core product, and avoid wasting sprints on third-party compatibility issues.',
+          'Accelerate development cycles with intelligent automation. Focus on your core product while our platform handles repetitive tasks and integrations.',
         icon: 'automation',
       },
       {
-        title: 'Reliability  Included ',
+        title: 'Unparalleled Security',
         description:
-          'Adjusting databases to prevent crashes and implementing monitoring with automated solutions for quick issue resolution.',
+          'Our infrastructure automates end-to-end security, deploying fixes and updates without any manual effort on your part. Run on your own hardware for ultimate data privacy.',
+        icon: 'secure',
+      },
+      {
+        title: 'Reliability Guaranteed',
+        description:
+          'Ensure high availability and performance with proactive monitoring and self-healing systems. Minimize downtime and maximize user satisfaction.',
         icon: 'reliability',
+      },
+      {
+        title: 'State-of-the-Art AI',
+        description:
+          'Utilize our fully open-source RAG stack for all your AI needs, including LLama 3.1 and vector databases, all on your own hardware.',
+        icon: 'ai',
+      },
+      {
+        title: 'Effortless SSO Integration',
+        description:
+          "Experience the world's easiest SSO onboarding process -- in minutes you could have a fully functional OAuth UI application using PostgreSQL and SSL.",
+        icon: 'magic',
+      },
+      {
+        title: 'Cost-Effective Scaling',
+        description:
+          'Leverage top-tier autoscaling to reduce waste and ensure efficient, cost-effective scaling for your applications.',
+        icon: 'cost',
+      },
+      {
+        title: 'Efficiency Optimized',
+        description:
+          'Streamline your workflow and eliminate bottlenecks. Our platform ensures you spend less time on infrastructure and more on innovation.',
+        icon: 'efficiency',
       },
     ]}>
     <Fragment slot="bg">
@@ -120,13 +138,13 @@ const metadata = {
   <!-- Content Widget **************** -->
 
   <Content2
-    title="We Have Batteries For"
+    title="Elevate your infrastructure"
     classes={{ headline: 'mt-20 lg:mt-24 xl:mt-28' }}
     items={[
       {
-        title: 'Databases',
+        title: 'Integrated Databases',
         description:
-          'Fully automated PostgreSQL that works with your existing stack. Because you need to store SQL data. Spin it up, back it up, scale it, change it, edit it – automatically. All without touching any config or CLI. Plus it works with your existing stack, with integrations for Redis, FerretDB, and Blob Storage',
+          'Fully automated PostgreSQL with seamless integrations for Redis, FerretDB, and Blob Storage. Spin up, back up, scale, and manage your databases without touching configs or the CLI.',
         link: '/solutions/database',
         image: {
           src: '~/assets/images/home/databases.png',
@@ -134,39 +152,39 @@ const metadata = {
         },
       },
       {
-        title: 'Web Services',
+        title: 'Cutting-Edge Web Services',
         description:
-          'All the tools you need to build and operate virtually any kind of application or service in seconds - without compromising on security or stability. Push out new versions without headaches, and dynamically scale up and down with usage. We’ve built our platform on industry-standard open source code, so you get all the benefits with none of the headaches. Runs on any cloud, or your own machine',
+          'Deploy any application or service in seconds with uncompromised security and stability. Enjoy seamless version control, dynamic scaling, and compatibility with any cloud host or your own hardware.',
         link: '/solutions/web-deploy',
         image: {
           src: '~/assets/images/home/web-services.png',
-          alt: 'web services image',
+          alt: 'Cutting-edge web services',
         },
       },
       {
-        title: 'Security',
+        title: 'Industry-Leading Security',
         description:
-          'A single command center to manage every mission critical security config quickly and easily without breaking stuff. With our platform, you get SSO everywhere you need it, mesh networking, security scanning, automated SSL, and the flexibility to run on any machine. Dynamic configurations mean all of your permissions are constantly updating synchronously, so nothing breaks, and everything stays secure',
+          'Manage critical security configurations effortlessly with our unified command center. Benefit from ubiquitous SSO, mesh networking, automated SSL, and flexible deployment options, all with dynamically updating permissions.',
         link: '/solutions/security',
         image: {
           src: '~/assets/images/home/security.png',
-          alt: 'security image',
+          alt: 'Industry-leading security features',
         },
       },
       {
         title: 'Machine Learning',
         description:
-          'Batteries Included provides an integrated development environment to help your team get machine learning projects off the ground faster, and with better results. Prepare data, host models, and manage pipelines with ease. Our environment makes it easy to integrate machine learning projects into your team’s day-to-day, with space for notebooks, code, data, and more',
+          'Accelerate your ML projects with our comprehensive development environment. Prepare data, host models, and manage pipelines seamlessly, integrating machine learning into your daily workflows.',
         link: '/solutions/ml',
       },
       {
-        title: 'Operational Tools',
+        title: 'Advanced Operational Tools',
         description:
-          'The Batteries Included platform is purpose-built to make life easier for Ops teams, with tools that make it easy to monitor and fix your software',
+          'Empower your team with purpose-built tools for effortless monitoring and maintenance. Stay ahead of issues and optimize your software performance continuously.',
         link: '/solutions/sre_tools',
         image: {
           src: '~/assets/images/home/operational-tools.png',
-          alt: 'operational tools image',
+          alt: 'Advanced operational tools',
         },
       },
     ]}>
@@ -177,8 +195,8 @@ const metadata = {
   </Content2>
 
   <InfoWidget
-    title="Why Open Source?"
-    description="We built Batteries Included on a fully-open sourced stack to get you fully-portable, best-in-class technology without the pain. Our solutions are industry standard out of the box, ensuring you can work the way you want, and build the way you want, without being limited by your infrastructure."
+    title="The Power of Open Source"
+    description="Batteries Included is built on a fully open-sourced stack, offering unmatched portability and the best-in-class technology without compromises. Our solutions adhere to industry standards out of the box, ensuring you can work and build the way you want, without being limited by your infrastructure."
   />
   <!-- Posts Widget ****************** -->
   <RecentPosts />
