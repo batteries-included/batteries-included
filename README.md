@@ -13,7 +13,7 @@ things _Batteries Included_.
 
 To get started, make sure your operating system is set up and ready to go. We
 recommend using a Linux machine, but our code should work on any system with a
-docker daemon and a Unix-like shell. Follow the steps in the [setup](#setup) section 
+docker daemon and a Unix-like shell. Follow the steps in the [setup](#setup) section
 to get started.
 
 Let's build something amazing together!
@@ -164,11 +164,11 @@ bix dev
 Now there are three web servers accessible:
 
 - [http://control.127-0-0-1.batrsinc.co:4000](http://control.127-0-0-1.batrsinc.co:4000)
-for the control server,
+  for the control server,
 - [http://home.127-0-0-1.batrsinc.co:4100](http://home.127-0-0-1.batrsinc.co:4100)
-for the home base server, and
+  for the home base server, and
 - [http://common.127-0-0-1.batrsinc.co:4200](http://common.127-0-0-1.batrsinc.co:4200)
-for the common UI server.
+  for the common UI server.
 
 ### VSCode
 
