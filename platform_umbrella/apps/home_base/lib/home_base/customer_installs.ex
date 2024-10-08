@@ -5,6 +5,7 @@ defmodule HomeBase.CustomerInstalls do
   alias CommonCore.Accounts.User
   alias CommonCore.Installation
   alias CommonCore.Teams.Team
+  alias CommonCore.Teams.TeamRole
 
   @doc """
   Returns the list of installations.
@@ -19,20 +20,32 @@ defmodule HomeBase.CustomerInstalls do
     Repo.all(Installation)
   end
 
-  def list_installations(%User{} = user) do
-    Repo.all(from i in Installation, where: i.user_id == ^user.id)
+  def list_installations(owner) do
+    from(i in Installation)
+    |> where_owner(owner)
+    |> Repo.all()
   end
 
-  def list_installations(%Team{} = team) do
-    Repo.all(from i in Installation, where: i.team_id == ^team.id)
+  def list_recent_installations(%User{} = user, limit \\ 8) do
+    from(i in Installation, order_by: [desc: i.inserted_at], preload: [:team], limit: ^limit)
+    |> where_user_has_access(user)
+    |> Repo.all()
   end
 
   def count_installations(%User{} = user) do
-    Repo.aggregate(from(i in Installation, where: i.user_id == ^user.id), :count)
+    from(i in Installation)
+    |> where_user_has_access(user)
+    |> Repo.aggregate(:count)
   end
 
-  def count_installations(%Team{} = team) do
-    Repo.aggregate(from(i in Installation, where: i.team_id == ^team.id), :count)
+  def count_installations(owner) do
+    from(i in Installation)
+    |> where_owner(owner)
+    |> Repo.aggregate(:count)
+  end
+
+  def count_teams(%User{} = user) do
+    Repo.aggregate(from(tr in TeamRole, where: tr.user_id == ^user.id), :count)
   end
 
   @doc """
@@ -57,12 +70,10 @@ defmodule HomeBase.CustomerInstalls do
     |> Repo.get!(id)
   end
 
-  def get_installation!(id, %User{} = user) do
-    Repo.one!(from(i in Installation, where: i.id == ^id, where: i.user_id == ^user.id))
-  end
-
-  def get_installation!(id, %Team{} = team) do
-    Repo.one!(from(i in Installation, where: i.id == ^id, where: i.team_id == ^team.id))
+  def get_installation!(id, owner) do
+    from(i in Installation, where: i.id == ^id)
+    |> where_owner(owner)
+    |> Repo.one!()
   end
 
   @spec get_installation(binary()) :: Ecto.Schema.t() | nil
@@ -141,5 +152,22 @@ defmodule HomeBase.CustomerInstalls do
   """
   def change_installation(%Installation{} = installation, attrs \\ %{}) do
     Installation.changeset(installation, attrs)
+  end
+
+  defp where_owner(query, owner) do
+    case owner do
+      %User{} = user -> where(query, [i], i.user_id == ^user.id)
+      %Team{} = team -> where(query, [i], i.team_id == ^team.id)
+      _ -> query
+    end
+  end
+
+  # Installations where user either owns it or belongs to a team that owns it
+  defp where_user_has_access(query, %User{} = user) do
+    from(i in query,
+      left_join: tr in TeamRole,
+      on: i.team_id == tr.team_id,
+      where: i.user_id == ^user.id or tr.user_id == ^user.id
+    )
   end
 end
