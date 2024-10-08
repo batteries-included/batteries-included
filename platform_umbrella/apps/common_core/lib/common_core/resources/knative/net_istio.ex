@@ -35,7 +35,7 @@ defmodule CommonCore.Resources.KnativeNetIstio do
           %{
             name: "knative-ingress-gateway",
             namespace: battery.config.namespace,
-            service: "istio-ingressgateway.#{istio_namespace(state)}.svc.cluster.local"
+            service: "istio-ingressgateway.#{istio_namespace(state)}.svc.cluster.local."
           }
         ])
     }

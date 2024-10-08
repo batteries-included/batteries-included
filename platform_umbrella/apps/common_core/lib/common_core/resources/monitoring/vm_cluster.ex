@@ -99,11 +99,12 @@ defmodule CommonCore.Resources.VMCluster do
       "apiVersion" => 1,
       "datasources" => [
         %{
+          "access" => "proxy",
           "name" => @select_k8s_name,
           "type" => "prometheus",
           "orgId" => 1,
           "isDefault" => true,
-          "url" => "http://vmselect-main-cluster.#{namespace}.svc.cluster.local:#{@vm_select_port}/select/0/prometheus/"
+          "url" => "http://vmselect-main-cluster.#{namespace}.svc.cluster.local.:#{@vm_select_port}/select/0/prometheus/"
         }
       ]
     }

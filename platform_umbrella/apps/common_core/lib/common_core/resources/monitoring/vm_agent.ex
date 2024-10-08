@@ -25,7 +25,7 @@ defmodule CommonCore.Resources.VMAgent do
       |> Map.put("image", %{"tag" => battery.config.image_tag})
       |> Map.put("remoteWrite", [
         %{
-          "url" => "http://vminsert-main-cluster.#{namespace}.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
+          "url" => "http://vminsert-main-cluster.#{namespace}.svc.cluster.local.:8480/insert/0/prometheus/api/v1/write"
         }
       ])
       |> Map.put("scrapeInterval", "10s")
