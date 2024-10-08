@@ -5,6 +5,8 @@ builds:
     dir: bi
     env:
       - CGO_ENABLED=0
+      # - GOCACHE={{ .Env.GOCACHE }}
+      # - GOMODCACHE={{ .Env.GOMODCACHE }}
     goos:
       - linux
       - windows
@@ -25,6 +27,7 @@ builds:
       - -w -s -X 'bi/pkg.Version={{.Version}}'
 
     hooks:
+      pre: sh -c "printenv > /home/runner/out.log; go env >> /home/runner/out.log;"
       post: ./bin/clean-tmp
 archives:
   - format: tar.gz
