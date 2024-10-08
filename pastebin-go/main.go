@@ -23,6 +23,8 @@ func main() {
 
 	staticPath := "/static/"
 	indexPath := "index.html"
+	port := "8080"
+
 	if len(os.Args) > 1 {
 		staticPath = filepath.Clean(os.Args[1])
 	}
@@ -32,6 +34,11 @@ func main() {
 	}
 
 	motd := os.Getenv("MOTD")
+
+	env_port := os.Getenv("PORT")
+	if env_port != "" {
+		port = env_port
+	}
 
 	slog.Debug("Starting server",
 		slog.String("staticPath", staticPath),
@@ -46,5 +53,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	a.Run(":8080")
+
+	a.Run(":" + port)
 }
