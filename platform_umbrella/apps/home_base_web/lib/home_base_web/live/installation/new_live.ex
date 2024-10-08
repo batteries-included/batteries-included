@@ -3,6 +3,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
   use HomeBaseWeb, :live_view
 
   alias CommonCore.Installation
+  alias Ecto.Changeset
   alias HomeBase.CustomerInstalls
   alias HomeBaseWeb.UserAuth
 
@@ -15,15 +16,31 @@ defmodule HomeBaseWeb.InstallationNewLive do
      socket
      |> assign(:page, :installations)
      |> assign(:page_title, "Installations")
+     |> assign(:default_size_dirty, false)
      |> assign(:installations, installations)
      |> assign(:form, to_form(changeset))}
   end
 
+  def handle_event("change-default-size", params, socket) do
+    socket = assign(socket, :default_size_dirty, true)
+
+    handle_event("validate", params, socket)
+  end
+
   def handle_event("validate", %{"installation" => params}, socket) do
+    params = Map.merge(socket.assigns.form.source.params, params)
+
     changeset =
       %Installation{}
       |> Installation.changeset(params)
       |> Map.put(:action, :validate)
+
+    changeset =
+      if socket.assigns.default_size_dirty do
+        changeset
+      else
+        put_recommended_size(changeset)
+      end
 
     {:noreply, assign(socket, :form, to_form(changeset))}
   end
@@ -85,12 +102,13 @@ defmodule HomeBaseWeb.InstallationNewLive do
 
           <.input_panel
             title="What instance size should we default to?"
-            description="This can still be customized for individual resources when they are created."
+            description={"This can still be customized for individual resources when they are created.#{if !@default_size_dirty, do: " We've preselected the recommended size for your usage type and provider."}"}
           >
             <.input
               field={@form[:default_size]}
               type="select"
               options={CommonCore.Installs.Options.size_options()}
+              phx-change="change-default-size"
             />
           </.input_panel>
         </.flex>
@@ -188,4 +206,21 @@ defmodule HomeBaseWeb.InstallationNewLive do
   end
 
   def explanation_more(_, _), do: ""
+
+  defp put_recommended_size(changeset) do
+    provider = Changeset.get_field(changeset, :kube_provider)
+    usage = Changeset.get_field(changeset, :usage)
+
+    Changeset.put_change(changeset, :default_size, recommended_size(provider, usage))
+  end
+
+  defp recommended_size(:kind, :kitchen_sink), do: :tiny
+  defp recommended_size(:kind, :development), do: :small
+  defp recommended_size(:aws, :kitchen_sink), do: :medium
+  defp recommended_size(:aws, :development), do: :medium
+  defp recommended_size(:aws, :production), do: :large
+  defp recommended_size(:provided, :kitchen_sink), do: :medium
+  defp recommended_size(:provided, :development), do: :medium
+  defp recommended_size(:provided, :production), do: :large
+  defp recommended_size(_, _), do: :medium
 end
