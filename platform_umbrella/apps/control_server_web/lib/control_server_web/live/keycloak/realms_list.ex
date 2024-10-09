@@ -9,20 +9,17 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
 
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do
-    {:ok, socket |> assign_realms() |> assign_keycloak_url() |> assign_current_page()}
+      socket
+      |> assign(:current_page, :net_sec)
+      |> assign(:keycloak_url, SummaryURLs.url_for_battery(:keycloak))
+      |> assign_realms()
   end
 
-  defp assign_realms(socket) do
-    {:ok, realms} = AdminClient.realms()
-    assign(socket, :realms, realms)
-  end
-
-  defp assign_keycloak_url(socket) do
-    assign(socket, :keycloak_url, SummaryURLs.url_for_battery(:keycloak))
-  end
-
-  defp assign_current_page(socket) do
-    assign(socket, :current_page, :net_sec)
+  def assign_realms(socket) do
+    case AdminClient.realms() do
+      {:ok, realms} -> {:ok, assign(socket, :realms, realms)}
+      _ -> {:ok, assign(socket, :realms, [])}
+    end
   end
 
   @impl Phoenix.LiveView
