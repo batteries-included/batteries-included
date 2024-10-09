@@ -22,6 +22,7 @@ defmodule ControlServerWeb.SSOController do
         return_to
         |> URI.parse()
         |> Map.get(:path)
+        |> Kernel.||("/")
 
       session_id = ControlServerWeb.Plug.SessionID.get_session_id(conn)
 
