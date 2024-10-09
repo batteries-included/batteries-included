@@ -20,7 +20,6 @@ defmodule CommonCore.Resources.VMAgent do
 
     spec =
       %{}
-      |> Map.put("externalLabels", %{"cluster" => "cluster-name"})
       |> Map.put("extraArgs", %{"promscrape.streamParse" => "true"})
       |> Map.put("image", %{"tag" => battery.config.image_tag})
       |> Map.put("remoteWrite", [
