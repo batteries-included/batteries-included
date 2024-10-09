@@ -18,4 +18,18 @@ defmodule CommonUI.Components.ScriptTest do
     <.script id="foobar" src="https://install.example.com/8ej3l" template="wget @src" />
     """
   end
+
+  component_snapshot_test "script with custom link" do
+    assigns = %{}
+
+    ~H"""
+    <.script
+      id="foobar"
+      src="https://install.example.com/8ej3l"
+      link_url="https://batteriesincl.com"
+      link_url_text="Open link"
+      template="wget @src"
+    />
+    """
+  end
 end

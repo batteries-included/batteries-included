@@ -162,10 +162,13 @@ defmodule KubeServices.Keycloak.UserManager do
       |> UserRepresentation.new!()
 
     case AdminClient.create_user(act, realm, user_rep) do
-      {:ok, user} = res ->
-        Logger.info("User created successfully: #{inspect(user)}")
+      # TODO: `user_url` is invalid and results in a 401
+      {:ok, user_url} ->
+        Logger.info("User created successfully: #{inspect(user_url)}")
         :ok = EventCenter.Keycloak.broadcast(%Payload{action: :create_user, resource: %{id: user_rep.id, realm: realm}})
-        {:reply, res, state}
+
+        # Send the user ID back to the liveview so it can be used to generate a temp password
+        {:reply, {:ok, extract_user_id_from_url(user_url)}, state}
 
       res ->
         Logger.warning("Unable to create user: #{inspect(res)}")
@@ -203,4 +206,12 @@ defmodule KubeServices.Keycloak.UserManager do
   defp keyword_from_any(attributes) when is_struct(attributes), do: attributes |> Map.from_struct() |> Keyword.new()
 
   defp keyword_from_any(attributes), do: Keyword.new(attributes)
+
+  defp extract_user_id_from_url(url) do
+    url
+    |> URI.parse()
+    |> Map.get(:path)
+    |> String.split("/")
+    |> List.last()
+  end
 end

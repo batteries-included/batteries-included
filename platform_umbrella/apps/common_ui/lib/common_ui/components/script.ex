@@ -10,6 +10,8 @@ defmodule CommonUI.Components.Script do
   attr :id, :string
   attr :class, :any, default: nil
   attr :src, :string, required: true
+  attr :link_url, :string, default: nil
+  attr :link_url_text, :string, default: "Open script source"
   attr :template, :string, default: "/bin/bash -c \"$(curl -fsSL @src)\""
   attr :rest, :global
 
@@ -26,8 +28,8 @@ defmodule CommonUI.Components.Script do
       {@rest}
     >
       <div class="relative flex-1 h-full">
-        <div id={@id} class="flex items-center absolute inset-0 whitespace-nowrap overflow-auto px-5">
-          <%= String.replace(@template, "@src", @src) %>
+        <div class="flex items-center absolute inset-0 whitespace-nowrap overflow-auto px-5">
+          <span id={@id}><%= String.replace(@template, "@src", @src) %></span>
         </div>
       </div>
 
@@ -38,11 +40,11 @@ defmodule CommonUI.Components.Script do
 
       <.tooltip target_id={"#{@id}-clipboard"}>Copy to clipboard</.tooltip>
 
-      <.link id={"#{@id}-open"} class={link_class()} href={@src} target="_blank">
+      <.link id={"#{@id}-open"} class={link_class()} href={@link_url || @src} target="_blank">
         <.icon name={:arrow_top_right_on_square} class="size-6" solid />
       </.link>
 
-      <.tooltip target_id={"#{@id}-open"}>Open script source</.tooltip>
+      <.tooltip target_id={"#{@id}-open"}><%= @link_url_text %></.tooltip>
     </div>
     """
   end
