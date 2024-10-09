@@ -209,6 +209,7 @@ defmodule KubeServices.Keycloak.UserManager do
 
   defp extract_user_id_from_url(url) do
     url
+    |> to_string()
     |> URI.parse()
     |> Map.get(:path)
     |> String.split("/")
