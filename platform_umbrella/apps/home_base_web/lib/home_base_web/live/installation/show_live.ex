@@ -26,7 +26,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
      |> assign(:installed?, !CommonCore.JWK.has_private_key?(installation.control_jwk))
      |> assign_host_report(installation)
      |> assign_usage_report(installation)
-     |> assign_ssl_enabled(installation)
+     |> assign_ssl_enabled()
      |> assign(:form, to_form(changeset))}
   end
 
@@ -56,13 +56,14 @@ defmodule HomeBaseWeb.InstallationShowLive do
     assign(socket, :usage_report, report)
   end
 
-  def assign_ssl_enabled(socket, %{kube_provider: :kind}), do: assign(socket, :ssl_enabled?, false)
+  def assign_ssl_enabled(%{assigns: %{installation: %{kube_provider: :kind}}} = socket),
+    do: assign(socket, :ssl_enabled?, false)
 
-  def assign_ssl_enabled(socket, %{batteries: batteries}) do
+  def assign_ssl_enabled(%{assigns: %{usage_report: nil}} = socket), do: assign(socket, :ssl_enabled?, false)
+
+  def assign_ssl_enabled(%{assigns: %{usage_report: %{batteries: batteries}}} = socket) do
     assign(socket, :ssl_enabled?, Enum.any?(batteries, fn bat -> bat == "cert_manager" end))
   end
-
-  def assign_ssl_enabled(socket, _install), do: assign(socket, :ssl_enabled?, false)
 
   def handle_event("validate", %{"installation" => params}, socket) do
     changeset =
