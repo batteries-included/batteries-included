@@ -25,7 +25,20 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
      |> assign_users(name)
      |> assign_realm_admin_console_url()
      |> assign_new_user(nil)
-     |> assign_temp_password(nil)}
+     |> assign_temp_password(nil)
+     |> assign(:user_created, false)
+     |> assign(:current_user, nil)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info({:user_created, user_id}, socket) do
+    socket =
+      socket
+      |> assign(:user_created, true)
+      |> assign_current_user(socket.assigns.realm_name, user_id)
+
+    # Immediately set a temporary password for the new user
+    handle_event("reset_password", %{"user-id" => user_id}, socket)
   end
 
   @impl Phoenix.LiveView
@@ -62,6 +75,14 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     assign(socket, :users, users)
   end
 
+  defp assign_current_user(socket, name, id) do
+    {:ok, user} = AdminClient.user(name, id)
+
+    socket
+    |> assign_new_user(nil)
+    |> assign(:current_user, user)
+  end
+
   defp assign_keycloak_url(socket) do
     assign(socket, :keycloak_url, SummaryURLs.url_for_battery(:keycloak))
   end
@@ -79,7 +100,8 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   end
 
   defp assign_realm_admin_console_url(%{assigns: %{realm: realm}} = socket) do
-    assign(socket, :realm_admin_console_url, SummaryURLs.keycloak_console_url_for_realm(realm.realm))
+    console_url = SummaryURLs.keycloak_console_url_for_realm(realm.realm)
+    assign(socket, :realm_admin_console_url, console_url)
   end
 
   @impl Phoenix.LiveView
@@ -87,9 +109,18 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     {:noreply, assign_new_user(socket, %{enabled: true})}
   end
 
+  def handle_event("edit-user", %{"user-id" => user_id}, socket) do
+    {:noreply, assign_current_user(socket, socket.assigns.realm_name, user_id)}
+  end
+
   @impl Phoenix.LiveView
   def handle_event("close_modal", _, socket) do
-    {:noreply, socket |> assign_new_user(nil) |> assign_temp_password(nil)}
+    {:noreply,
+     socket
+     |> assign_new_user(nil)
+     |> assign_temp_password(nil)
+     |> assign(:user_created, false)
+     |> assign(:current_user, nil)}
   end
 
   @impl Phoenix.LiveView
@@ -100,12 +131,11 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
       {:ok, temp_password} ->
         {:noreply, assign_temp_password(socket, temp_password)}
 
-      {:error, _reason} ->
-        # Ignore for now
-        #
-        # TODO(elliott): when we figure out flash/temporary messaging
-        # use that here for error reporting.
-        {:noreply, socket}
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> assign(:current_user, nil)
+         |> put_flash(:global_error, reason)}
     end
   end
 
@@ -114,14 +144,16 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
 
     case UserManager.make_realm_admin(realm_name, user_id) do
       :ok ->
-        {:noreply, socket}
+        {:noreply,
+         socket
+         |> assign(:current_user, nil)
+         |> put_flash(:global_success, "User is now a realm admin")}
 
-      {:error, _reason} ->
-        # Ignore for now
-        #
-        # TODO(elliott): when we figure out flash/temporary messaging
-        # use that here for error reporting.
-        {:noreply, socket}
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> assign(:current_user, nil)
+         |> put_flash(:global_error, reason)}
     end
   end
 
@@ -134,11 +166,55 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     """
   end
 
+  defp edit_user_modal(assigns) do
+    ~H"""
+    <.modal show id="edit-user-modal" on_cancel={JS.push("close_modal")}>
+      <:title>Editing <%= @user.username %></:title>
+
+      <div class="flex items-center gap-4">
+        <.button
+          variant="secondary"
+          icon={:key}
+          phx-click="reset_password"
+          data-confirm={"Are you sure you want to reset the password for #{@user.username}?"}
+          phx-value-user-id={@user.id}
+        >
+          Reset Password
+        </.button>
+
+        <.button
+          variant="secondary"
+          icon={:trophy}
+          phx-click="make_realm_admin"
+          data-confirm={"Are you sure you want to make #{@user.username} an admin?"}
+          phx-value-user-id={@user.id}
+        >
+          Make Realm Admin
+        </.button>
+      </div>
+    </.modal>
+    """
+  end
+
   defp temp_password_modal(assigns) do
     ~H"""
     <.modal show id="temp-password-modal" on_cancel={JS.push("close_modal")}>
-      <:title>Temporary Password Set</:title>
-      A new password has been set for this user. The temporary password is: <pre><%= @temp_password %></pre>
+      <:title><%= if @user_created, do: "New User", else: "Reset Password" %></:title>
+
+      <p class="mb-4">
+        <%= if @user_created do %>
+          User has been created! Use the temporary password below to log into Keycloak. You will be prompted to change your password on the first login.
+        <% else %>
+          User account has been reset to the temporary password below. You will be prompted to change your password next time you login.
+        <% end %>
+      </p>
+
+      <.script
+        template="@src"
+        src={@temp_password}
+        link_url={@realm_admin_console_url}
+        link_url_text="Log into Keycloak"
+      />
     </.modal>
     """
   end
@@ -161,6 +237,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
         <:item label="ID"><%= @realm.id %></:item>
       </.badge>
     </.page_header>
+
     <.grid columns={[sm: 1, lg: 2]}>
       <.panel variant="gray" title="Details">
         <.data_list>
@@ -181,20 +258,31 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
           </:item>
         </.data_list>
       </.panel>
+
       <.links_panel realm={@realm} realm_admin_console_url={@realm_admin_console_url} />
+
       <.panel class="col-span-2" title="Clients">
         <.keycloak_clients_table clients={@clients} />
       </.panel>
+
       <.panel class="col-span-2" title="Users">
         <:menu>
-          <.button variant="secondary" phx-click="new-user">New User</.button>
+          <.button icon={:plus} phx-click="new-user">New User</.button>
         </:menu>
+
         <.keycloak_users_table users={@users} />
       </.panel>
     </.grid>
 
     <.new_user_modal :if={@new_user != nil} new_user={@new_user} realm_name={@realm.realm} />
-    <.temp_password_modal :if={@temp_password != nil} temp_password={@temp_password} />
+    <.edit_user_modal :if={@current_user != nil && @temp_password == nil} user={@current_user} />
+    <.temp_password_modal
+      :if={@temp_password != nil}
+      temp_password={@temp_password}
+      realm_admin_console_url={@realm_admin_console_url}
+      user_created={@user_created}
+      user={@current_user}
+    />
     """
   end
 end

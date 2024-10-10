@@ -24,17 +24,21 @@
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
           <div class="flex items-center justify-end gap-3 lg:gap-4 px-2 whitespace-nowrap text-sm font-semibold">
             
-    <a href="#" class="font-medium text-primary hover:text-primary-dark hover:underline" phx-click="reset_password" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
+    <button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" id="edit_user_00-00-00-00-00-00-00-00-00-00-01" type="button" phx-click="edit-user" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
+  <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"/>
+</svg>
+
   
-      Reset Password
-    
-</a>
+
   
-    <a href="#" class="font-medium text-primary hover:text-primary-dark hover:underline" phx-click="make_realm_admin" data-confirm="Are you sure?" phx-value-user-id="00-00-00-00-00-00-00-00-00-00-01">
-  
-      Make Realm Admin
-    
-</a>
+</button>
+
+    <div class="hidden" id="tooltip-edit_user_00-00-00-00-00-00-00-00-00-00-01" phx-hook="Tooltip" data-target="edit_user_00-00-00-00-00-00-00-00-00-00-01" data-tippy-options="{}">
+  <div>
+    Edit User
+  </div>
+</div>
   
           </div>
         </td>

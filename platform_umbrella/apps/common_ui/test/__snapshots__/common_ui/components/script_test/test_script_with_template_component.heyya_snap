@@ -1,7 +1,7 @@
 <div class="relative flex items-center rounded-lg overflow-hidden h-14 bg-gray-darkest-tint text-white text-lg tracking-tighter font-mono font-bold ">
   <div class="relative flex-1 h-full">
-    <div id="foobar" class="flex items-center absolute inset-0 whitespace-nowrap overflow-auto px-5">
-      wget https://install.example.com/8ej3l
+    <div class="flex items-center absolute inset-0 whitespace-nowrap overflow-auto px-5">
+      <span id="foobar">wget https://install.example.com/8ej3l</span>
     </div>
   </div>
 

@@ -12,7 +12,6 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
     {:ok,
      socket
      |> assign_api_error(nil)
-     |> assign_new_url(nil)
      |> assign_form(changeset_from_user(user))}
   end
 
@@ -36,22 +35,37 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp assign_new_url(socket, url) do
-    assign(socket, :new_url, url)
-  end
-
   defp assign_api_error(socket, error) do
-    assign(socket, :api_error, error)
+    case error do
+      %{body: body} ->
+        error_message = Map.get(body, "errorMessage", "Something went wrong")
+        assign(socket, :api_error, error_message)
+
+      _ ->
+        assign(socket, :api_error, nil)
+    end
   end
 
-  # This function UserManager to keycloak and sets the results into assigns.
-  defp send_create(realm, user_params, socket) do
+  defp send_create(realm, user_params, make_admin, socket) do
     case UserManager.create(realm, user_params) do
-      {:ok, url} ->
-        {:noreply, assign_new_url(socket, url)}
+      {:ok, user_id} ->
+        send(self(), {:user_created, user_id})
+        maybe_make_admin(socket, realm, user_id, make_admin)
 
       {:error, err} ->
-        {:noreply, assign_api_error(socket, inspect(err))}
+        {:noreply, assign_api_error(socket, err)}
+    end
+  end
+
+  defp maybe_make_admin(socket, _, _, false), do: {:noreply, socket}
+
+  defp maybe_make_admin(socket, realm_name, user_id, true) do
+    case UserManager.make_realm_admin(realm_name, user_id) do
+      :ok ->
+        {:noreply, socket}
+
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :global_error, reason)}
     end
   end
 
@@ -76,10 +90,11 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
 
   def handle_event("save", %{"user_representation" => user_params} = _params, socket) do
     changeset = validation_changeset(socket.assigns.user, user_params)
+    make_admin = Map.get(user_params, "make_admin") == "true"
 
     case Ecto.Changeset.apply_action(changeset, :update) do
       {:ok, user} ->
-        send_create(socket.assigns.realm, user, socket)
+        send_create(socket.assigns.realm, user, make_admin, socket)
 
       {:error, err_change} ->
         {:noreply, assign_form(socket, err_change)}
@@ -96,23 +111,20 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
           <%= @api_error %>
         </.alert>
 
-        <div :if={@new_url != nil} class="text-xxl font-semibold">
-          New User Created with<.a href={@new_url}>Keycloak admin console here</.a>.
-        </div>
-
-        <.form
-          :if={@new_url == nil}
-          for={@form}
-          phx-change="validate"
-          phx-submit="save"
-          phx-target={@myself}
-        >
-          <.input field={@form[:email]} label="Email" placeholder="douglas.engelbart@gmail.com" />
+        <.simple_form for={@form} phx-change="validate" phx-submit="save" phx-target={@myself}>
+          <.input field={@form[:email]} label="Email" />
           <.input field={@form[:username]} label="Username" />
-          <.input field={@form[:enabled]} label="Enabled" type="checkbox" />
+          <.input field={@form[:enabled]} type="switch" label="Enabled" />
+          <.input field={@form[:make_admin]} type="switch" label="Realm Admin" />
 
-          <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
-        </.form>
+          <.alert>You'll receive a temporary password in the next step.</.alert>
+
+          <:actions>
+            <.button variant="primary" type="submit" phx-disable-with="Creating...">
+              Create User
+            </.button>
+          </:actions>
+        </.simple_form>
       </.flex>
     </div>
     """
