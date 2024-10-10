@@ -208,8 +208,12 @@ export const headerData = [
     link: '/pricing',
   },
   {
+    label: 'Login',
+    link: 'https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/login',
+  },
+  {
     label: 'Sign Up',
-    link: '/sign-up',
+    link: 'https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup',
   },
 ];
 
@@ -239,7 +243,21 @@ export const footerData = {
     {
       ariaLabel: 'Github',
       icon: 'tabler:brand-github',
-      href: 'https://github.com/batteries-included',
+      href: 'https://github.com/batteries-included/batteries-included',
+    },
+    {
+      // Yes, I'm trying to ignore everying that Elon Musk 
+      // does. Maybe if I refer to it only by the original 
+      // name he will go away and the place I ate bacon 
+      // at will not be tainted? No I know. :-|
+      ariaLabel: 'Twitter',
+      icon: 'tabler:brand-twitter',
+      href: 'https://x.com/batteriesincl',
+    },
+    {
+      ariaLabel: 'LinkedIn',
+      icon: 'tabler:brand-linkedin',
+      href: 'https://www.linkedin.com/company/batteries-included-corp',
     },
     { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
   ],
