@@ -37,10 +37,11 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 	return "", errors.New("no kind networks found")
 }
 
-// Given a Network suck as 172.18.0.0/16
+// Given a Network such as 172.18.0.0/16
 // Return the bottom half of the network, such as 172.18.128.0/17
 func split(ipNet *net.IPNet) (*net.IPNet, error) {
-	subnets, err := ipnets.SubnetShift(ipNet, 1)
+	shift := calculate_shift(ipNet)
+	subnets, err := ipnets.SubnetShift(ipNet, shift)
 	if err != nil {
 		return nil, fmt.Errorf("unable to shift subnet: %w", err)
 	}
@@ -49,6 +50,16 @@ func split(ipNet *net.IPNet) (*net.IPNet, error) {
 	}
 
 	return subnets[1], nil
+}
+
+func calculate_shift(ipNet *net.IPNet) int {
+	ones, _ := ipNet.Mask.Size()
+
+	if ones >= 24 {
+		return 1
+	}
+
+	return 24 - ones
 }
 
 func getKindNetwork(ctx context.Context) ([]*net.IPNet, error) {
