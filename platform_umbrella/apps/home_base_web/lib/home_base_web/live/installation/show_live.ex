@@ -184,7 +184,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
 
       <div class="text-center m-auto flex-1 flex flex-col justify-center p-12">
         <h3 class="text-2xl font-semibold mb-6">Want to expand even more?</h3>
-        
+
         <.button variant="secondary" icon={:plus} link={~p"/installations/new"} class="self-center">
           Add another installation
         </.button>
