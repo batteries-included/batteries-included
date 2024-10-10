@@ -34,7 +34,7 @@ defmodule HomeBaseWeb.DashboardLive do
           Welcome to Batteries Included! Ready to get started with a new installation? You can run it on your local machine or on a Kubernetes cluster.
         </p>
 
-        <.button variant="primary" link={~p"/installations/new"}>Get started</.button>
+        <.button variant="primary" link={~p"/installations/new"}>Create an installation</.button>
       </.panel>
 
       <.panel :if={@current_user.roles == []} title="Working with others?">
@@ -47,7 +47,7 @@ defmodule HomeBaseWeb.DashboardLive do
         </.button>
       </.panel>
 
-      <.panel :if={@total_installations > 0} title="Your Recent Installations">
+      <.panel :if={@total_installations > 0} title="Recent Installations">
         <.table
           id="recent-installations"
           rows={@recent_installations}
@@ -71,6 +71,14 @@ defmodule HomeBaseWeb.DashboardLive do
             </.tooltip>
           </:action>
         </.table>
+      </.panel>
+
+      <.panel :if={@total_installations > 0} title="Keep Going">
+        <p class="mb-6">
+          Are you ready to expand your infrastructure even more? Get started with another installation and keep this thing going.
+        </p>
+
+        <.button variant="secondary" link={~p"/installations/new"}>Create a new installation</.button>
       </.panel>
     </.grid>
     """
