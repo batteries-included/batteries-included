@@ -8,6 +8,8 @@ defmodule HomeBaseWeb.SettingsLive do
   alias HomeBase.Repo
   alias HomeBase.Teams
 
+  on_mount {HomeBaseWeb.RequestURL, :default}
+
   def mount(%{"token" => token}, _session, socket) do
     socket =
       case Accounts.update_user_email(socket.assigns.current_user, token) do
@@ -79,7 +81,7 @@ defmodule HomeBaseWeb.SettingsLive do
 
     with {:ok, token} <- Accounts.get_user_confirmation_token(user),
          {:ok, _} <-
-           %{to: user.email, url: url(~p"/confirm/#{token}")}
+           %{to: user.email, url: socket.assigns.request_url <> ~p"/confirm/#{token}"}
            |> HomeBaseWeb.ConfirmEmail.render()
            |> HomeBase.Mailer.deliver() do
       {:noreply, assign(socket, :confirmation_resent, true)}
@@ -104,7 +106,7 @@ defmodule HomeBaseWeb.SettingsLive do
     with {:ok, applied_user} <- Accounts.apply_user_email(user, password, user_params),
          {:ok, token} <- Accounts.get_user_update_email_token(applied_user, user.email),
          {:ok, _} <-
-           %{to: applied_user.email, url: url(~p"/settings/#{token}")}
+           %{to: applied_user.email, url: socket.assigns.request_url <> ~p"/settings/#{token}"}
            |> HomeBaseWeb.ConfirmEmail.render()
            |> HomeBase.Mailer.deliver() do
       {:noreply,
@@ -176,7 +178,7 @@ defmodule HomeBaseWeb.SettingsLive do
     team = socket.assigns.current_role.team
 
     with {:ok, role} <- Teams.create_team_role(team, params),
-         {:ok, _} <- notify_user_of_role(role, team) do
+         {:ok, _} <- notify_user_of_role(role, team, socket.assigns.request_url) do
       role_changeset = TeamRole.changeset(%TeamRole{})
 
       {:noreply,
@@ -267,14 +269,14 @@ defmodule HomeBaseWeb.SettingsLive do
     end
   end
 
-  defp notify_user_of_role(%TeamRole{user: %{email: email}}, team) do
-    %{to: email, team: team, url: url(~p"/installations")}
+  defp notify_user_of_role(%TeamRole{user: %{email: email}}, team, req_url) do
+    %{to: email, team: team, url: req_url <> ~p"/installations"}
     |> HomeBaseWeb.TeamRoleEmail.render()
     |> HomeBase.Mailer.deliver()
   end
 
-  defp notify_user_of_role(%TeamRole{invited_email: email}, team) do
-    %{to: email, team: team, url: url(~p"/signup?#{[email: email]}")}
+  defp notify_user_of_role(%TeamRole{invited_email: email}, team, req_url) do
+    %{to: email, team: team, url: req_url <> ~p"/signup?#{[email: email]}"}
     |> HomeBaseWeb.TeamInvitedEmail.render()
     |> HomeBase.Mailer.deliver()
   end

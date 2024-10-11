@@ -24,14 +24,11 @@ defmodule HomeBaseWeb.Router do
     plug :put_secure_browser_headers
     plug :put_root_layout, html: @root_layout
     plug :put_layout, false
+    plug :assign_request_info
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-  end
-
-  pipeline :add_request_info do
-    plug :assign_request_info
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
@@ -79,7 +76,7 @@ defmodule HomeBaseWeb.Router do
   end
 
   scope "/", HomeBaseWeb do
-    pipe_through [:browser, :app_layout, :require_authenticated_user, :add_request_info]
+    pipe_through [:browser, :app_layout, :require_authenticated_user]
 
     live_session :app, layout: @app_layout, on_mount: [@ensure_authenticated_user] do
       live "/", DashboardLive

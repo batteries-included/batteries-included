@@ -6,14 +6,14 @@ defmodule HomeBaseWeb.WelcomeConfirmEmailTest do
   @url "/confirm"
 
   component_snapshot_test "welcome confirm text email" do
-    WelcomeConfirmEmail.text(%{home_url: nil, url: @url})
+    WelcomeConfirmEmail.text(%{marketing_url: nil, url: @url})
   end
 
   component_snapshot_test "welcome confirm html email" do
-    assigns = %{home_url: nil, url: @url}
+    assigns = %{marketing_url: nil, url: @url}
 
     ~H"""
-    <WelcomeConfirmEmail.html home_url={@home_url} url={@url} />
+    <WelcomeConfirmEmail.html marketing_url={@marketing_url} url={@url} />
     """
   end
 end
