@@ -65,6 +65,7 @@ defmodule CommonCore.TraditionalServices.Service do
     field :kube_internal, :boolean, default: false
     field :kube_deployment_type, Ecto.Enum, values: [:statefulset, :deployment], default: :deployment
     field :num_instances, :integer, default: 1
+    field :additional_hosts, {:array, :string}, default: []
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true

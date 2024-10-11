@@ -221,6 +221,29 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     {:noreply, assign_changeset(socket, new_changeset)}
   end
 
+  def handle_event("add-host", _params, socket) do
+    hosts = Changeset.get_field(socket.assigns.form.source, :additional_hosts) || []
+
+    form =
+      socket.assigns.form.source
+      |> Changeset.put_change(:additional_hosts, hosts ++ [""])
+      |> to_form()
+
+    {:noreply, assign(socket, :form, form)}
+  end
+
+  def handle_event("remove-host", %{"index" => idx_string}, socket) do
+    {idx, _} = Integer.parse(idx_string)
+    hosts = Changeset.get_field(socket.assigns.form.source, :additional_hosts) || []
+
+    form =
+      socket.assigns.form.source
+      |> Changeset.put_change(:additional_hosts, List.delete_at(hosts, idx))
+      |> to_form()
+
+    {:noreply, assign(socket, :form, form)}
+  end
+
   def handle_event("save", %{"service" => service_params}, socket) do
     save_service(socket, socket.assigns.action, service_params)
   end
@@ -376,6 +399,16 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
                 type="select"
                 options={["Stateful Set": "statefulset", Deployment: "deployment"]}
               />
+              <.input_list
+                :let={f}
+                label="Additional Hosts"
+                field={@form[:additional_hosts]}
+                add_click="add-host"
+                remove_click="remove-host"
+                phx_target={@myself}
+              >
+                <.input field={f} />
+              </.input_list>
             </.flex>
           </.panel>
 

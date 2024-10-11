@@ -99,6 +99,9 @@ defmodule CommonCore.StateSummary.Hosts do
     |> Enum.map(fn base -> "#{service.name}.#{namespace}.#{base}" end)
   end
 
+  def traditional_host(%StateSummary{} = _summary, %{additional_hosts: add_hosts}) when length(add_hosts) > 0,
+    do: List.first(add_hosts)
+
   def traditional_host(%StateSummary{} = summary, service) do
     namespace = traditional_namespace(summary)
     "#{service.name}.#{namespace}.#{webapp_base_host(summary)}"
@@ -107,9 +110,12 @@ defmodule CommonCore.StateSummary.Hosts do
   def traditional_hosts(%StateSummary{} = summary, service) do
     namespace = traditional_namespace(summary)
 
-    summary
-    |> webapp_base_hosts()
-    |> Enum.map(fn base -> "#{service.name}.#{namespace}.#{base}" end)
+    hosts =
+      summary
+      |> webapp_base_hosts()
+      |> Enum.map(fn base -> "#{service.name}.#{namespace}.#{base}" end)
+
+    hosts ++ Map.get(service, :additional_hosts, [])
   end
 
   def notebooks_host(%StateSummary{} = summary) do
