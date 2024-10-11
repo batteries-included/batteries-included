@@ -246,9 +246,9 @@ export const footerData = {
       href: 'https://github.com/batteries-included/batteries-included',
     },
     {
-      // Yes, I'm trying to ignore everying that Elon Musk 
-      // does. Maybe if I refer to it only by the original 
-      // name he will go away and the place I ate bacon 
+      // Yes, I'm trying to ignore everying that Elon Musk
+      // does. Maybe if I refer to it only by the original
+      // name he will go away and the place I ate bacon
       // at will not be tainted? No I know. :-|
       ariaLabel: 'Twitter',
       icon: 'tabler:brand-twitter',
