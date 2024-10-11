@@ -5,7 +5,7 @@ defmodule CommonUI.EmailHelpersTest do
     endpoint: CommonUIWeb.Endpoint,
     from: {"Test", "test@test.com"},
     street_address: "123 Easy St, New York, NY 10001",
-    home_url: "http://127.0.0.1:4321"
+    marketing_url: "http://127.0.0.1:4321"
 
   import Phoenix.Component
 

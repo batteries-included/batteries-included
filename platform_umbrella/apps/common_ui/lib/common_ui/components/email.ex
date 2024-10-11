@@ -345,10 +345,10 @@ defmodule CommonUI.Components.Email do
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td class="logo">
-                        <a href={@home_url}>
+                        <a href={@marketing_url}>
                           <img
                             width="100"
-                            src={URI.merge(@home_url, "/images/emails/logo.png") |> to_string()}
+                            src={URI.merge(@marketing_url, "/images/emails/logo.png") |> to_string()}
                           />
                         </a>
                       </td>

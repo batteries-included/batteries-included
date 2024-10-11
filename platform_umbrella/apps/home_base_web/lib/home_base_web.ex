@@ -57,7 +57,7 @@ defmodule HomeBaseWeb do
           endpoint: HomeBaseWeb.Endpoint,
           from: {"Batteries Included", "system@batteriesincl.com"},
           street_address: "Batteries Included, 8 The Green, Ste. B, Dover, DE 19901",
-          home_url: Application.fetch_env!(:home_base_web, :home_url)
+          marketing_url: Application.fetch_env!(:home_base_web, :marketing_url)
         ],
         opts
       )

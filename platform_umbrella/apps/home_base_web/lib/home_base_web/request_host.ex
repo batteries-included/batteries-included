@@ -23,6 +23,9 @@ defmodule HomeBaseWeb.RequestURL do
     {:cont,
      socket
      |> Phoenix.Component.assign_new(:request_authority, fn -> authority end)
-     |> Phoenix.Component.assign_new(:request_scheme, fn _ -> scheme end)}
+     |> Phoenix.Component.assign_new(:request_scheme, fn _ -> scheme end)
+     |> Phoenix.Component.assign_new(:request_url, fn assigns ->
+       assigns.request_scheme <> "://" <> assigns.request_authority
+     end)}
   end
 end

@@ -5,6 +5,8 @@ defmodule HomeBaseWeb.SignupLive do
   alias CommonCore.Accounts.User
   alias HomeBase.Accounts
 
+  on_mount {HomeBaseWeb.RequestURL, :default}
+
   def mount(params, _session, socket) do
     changeset =
       Accounts.change_user_registration(%User{
@@ -22,7 +24,7 @@ defmodule HomeBaseWeb.SignupLive do
     with {:ok, user} <- Accounts.register_user(user_params),
          {:ok, token} <- Accounts.get_user_confirmation_token(user),
          {:ok, _} <-
-           %{to: user.email, url: url(~p"/confirm/#{token}")}
+           %{to: user.email, url: socket.assigns.request_url <> ~p"/confirm/#{token}"}
            |> HomeBaseWeb.WelcomeConfirmEmail.render()
            |> HomeBase.Mailer.deliver() do
       changeset = Accounts.change_user_registration(user)
