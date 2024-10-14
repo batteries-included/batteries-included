@@ -3,7 +3,7 @@ title: 'The Vision of Batteries Included'
 excerpt: At Batteries Included, we believe in a simple philosophy
 publishDate: 2023-12-14
 tags: ['open source', 'platform', 'kubernetes']
-image: /public/images/posts/post-11.jpg
+image: ./covers/post-11.jpg
 draft: false
 ---
 

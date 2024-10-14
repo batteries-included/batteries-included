@@ -5,7 +5,7 @@ excerpt:
   its implementation can face serious challenges.
 publishDate: 2024-06-08
 tags: ['devops', 'sre', 'pe', 'usability']
-image: /public/images/posts/post-3.jpg
+image: ./covers/post-3.jpg
 draft: true
 ---
 

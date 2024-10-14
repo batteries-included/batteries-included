@@ -3,7 +3,7 @@ title: 'Why Open-Source Systems for a Software Platform'
 excerpt: "From the outset, let's establish a strong thesis"
 publishDate: 2023-12-13
 tags: ['open source', 'platform', 'kubernetes']
-image: /public/images/posts/post-7.jpg
+image: ./covers/post-7.jpg
 draft: false
 ---
 

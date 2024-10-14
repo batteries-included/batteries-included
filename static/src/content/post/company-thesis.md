@@ -6,7 +6,7 @@ excerpt:
   hands-off
 publishDate: 2021-06-21
 tags: ['company', 'cloud', 'FAANG']
-image: /public/images/posts/post-2.jpg
+image: ./covers/post-2.jpg
 draft: false
 ---
 

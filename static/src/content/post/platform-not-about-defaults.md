@@ -6,7 +6,7 @@ excerpt:
   consistency, experience has shown that this approach is insufficient
 publishDate: 2024-10-09
 tags: ['terraform', 'platform', 'platform engineering', 'SDLC']
-image: /public/images/posts/post-10.jpg
+image: ./covers/post-10.jpg
 draft: false
 ---
 

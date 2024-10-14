@@ -5,7 +5,7 @@ excerpt:
   reveal significant tradeoffs when scaling at large.
 publishDate: 2024-12-01
 tags: []
-image: /public/images/posts/post-4.jpg
+image: ./covers/post-4.jpg
 draft: true
 ---
 

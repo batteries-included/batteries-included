@@ -5,7 +5,7 @@ excerpt:
   use it proactively
 publishDate: 2024-09-19
 tags: ['open source', 'license', 'oss', 'company']
-image: /public/images/posts/post-19.jpg
+image: ./covers/post-19.jpg
 draft: false
 ---
 

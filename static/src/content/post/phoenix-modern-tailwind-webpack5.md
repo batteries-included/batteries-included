@@ -4,7 +4,7 @@ excerpt:
   Phoenix is a fantastic framework that we use and love at Batteries Included
 publishDate: 2021-06-24
 tags: ['phoenix', 'js', 'javascript', 'elixir', 'tailwind', 'css']
-image: /public/images/posts/post-9.jpg
+image: ./covers/post-9.jpg
 draft: false
 ---
 
