@@ -257,7 +257,7 @@ format_prettier_code() {
 
     # we have to do this
     FILES=()
-    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md'); do
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md' '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'); do
         FILES+=("${file}")
     done
 
@@ -271,7 +271,7 @@ check_format_prettier_code() {
     bi_pushd "${ROOT_DIR}/static"
     npm ci >/dev/null
     FILES=()
-    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md'); do
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md' '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'); do
         FILES+=("${file}")
     done
     npx prettier --check "${FILES[@]}" >/dev/null
