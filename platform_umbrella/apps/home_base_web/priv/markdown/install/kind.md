@@ -1,6 +1,9 @@
 ## For Kind
 
-Kind is an open source project that allows you to run Kubernetes clusters on your local machine. Using it as a Kubernetes provider allows installing locally without needing a cloud provider. This is not recommended for production use, but is great for development and testing.
+Kind is an open source project that allows you to run Kubernetes clusters on
+your local machine. Using it as a Kubernetes provider allows installing locally
+without needing a cloud provider. This is not recommended for production use,
+but is great for development and testing.
 
 When installing on Kind Batteries Included will:
 
