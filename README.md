@@ -6,7 +6,8 @@
 
 Welcome to [Batteries Included](https://www.batteriesincl.com/) -- the ultimate
 platform for modern service development. An all-inclusive software
-infrastructure platform built on open source. While we use Kubernetes the experience is totally different thanks to our UI and automation.
+infrastructure platform built on open source. While we use Kubernetes the
+experience is totally different thanks to our UI and automation.
 
 In this repo, you'll find everything you need to contribute to development. From
 code and scripts to documentation and information, this is the hub of all things
@@ -18,11 +19,10 @@ Let's build something amazing together!
 
 ### Easiest Method
 
-The easiest method is to use our hosted UI to configure an
-installation. Then use the no dependencies install script to download our `bi`
-tool which will start Kubernetes (locally via Kind or on a cloud provider via
-Pulumi), all open source container based dependencies, and Batteries Included
-Control Server.
+The easiest method is to use our hosted UI to configure an installation. Then
+use the no dependencies install script to download our `bi` tool which will
+start Kubernetes (locally via Kind or on a cloud provider via Pulumi), all open
+source container based dependencies, and Batteries Included Control Server.
 
 - Go to [www.batteriesincl.com/](https://www.batteriesincl.com) and click on
   Login or Sign Up.
