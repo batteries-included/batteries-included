@@ -2,6 +2,13 @@ defmodule HomeBaseWeb.InstallationNewLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  use CommonCore.IncludeResource,
+    aws_description: "priv/markdown/install/aws.md",
+    kitchen_sink_description: "priv/markdown/install/kitchen_sink.md",
+    kind_description: "priv/markdown/install/kind.md",
+    kind_kitchen_sink_description: "priv/markdown/install/kind_kitchen_sink.md",
+    provided_description: "priv/markdown/install/provided.md"
+
   alias CommonCore.Installation
   alias Ecto.Changeset
   alias HomeBase.CustomerInstalls
@@ -78,7 +85,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
 
           <.input_panel
             title="What is this for?"
-            description="Aliqua velit deserunt fugiat esse aute cillum exercitation duis pariatur mollit et ad officia Lorem."
+            description="How this installation will be used will determine the defaults we suggest (Cloud provider or default sizes)."
           >
             <.input
               field={@form[:usage]}
@@ -90,7 +97,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
 
           <.input_panel
             title="What provider will you use?"
-            description="Aliqua velit deserunt fugiat esse aute cillum exercitation duis pariatur mollit et ad officia Lorem."
+            description="What Kubernetes provider will you use for this installation?"
           >
             <.input
               field={@form[:kube_provider]}
@@ -147,7 +154,12 @@ defmodule HomeBaseWeb.InstallationNewLive do
     ~s"""
     # What will this do, exactly?
 
-    Once the installation is created, we'll generate a script for you to run in your local or cloud environment.
+    Once you have made your choices on usage and where this will
+    be hosted, Batteries Included will:
+
+    - Generate a customized install script with bash and curl as the only dependencies.
+    - Start the configured Kubernetes cluster and dependencies
+    - Start the control server for and configure web routing
 
     #{explanation_more(form[:usage].value, form[:kube_provider].value)}
     """
@@ -161,49 +173,18 @@ defmodule HomeBaseWeb.InstallationNewLive do
     explanation_more(usage, String.to_existing_atom(provider))
   end
 
-  def explanation_more(:development, :kind) do
-    "TODO: Description about kind installations in development"
-  end
-
-  def explanation_more(:kitchen_sink, :kind) do
-    "TODO: Description about kind installations in kitchen sink"
-  end
+  def explanation_more(:kitchen_sink, :kind), do: get_resource(:kind_kitchen_sink_description)
 
   def explanation_more(:internal_dev, :kind) do
-    "TODO: Description about kind installations in internal dev"
+    "Internal. Who are you and what network snooper are you running?"
   end
 
-  def explanation_more(:development, :aws) do
-    "TODO: Description about aws installations in development"
-  end
+  def explanation_more(_, :kind), do: get_resource(:kind_description)
 
-  def explanation_more(:production, :aws) do
-    "TODO: Description about aws installations in production"
-  end
+  def explanation_more(:kitchen_sink, _), do: get_resource(:kitchen_sink_description)
+  def explanation_more(_, :aws), do: get_resource(:aws_description)
 
-  def explanation_more(:kitchen_sink, :aws) do
-    "TODO: Description about aws installations in kitchen sink"
-  end
-
-  def explanation_more(:internal_dev, :aws) do
-    "TODO: Description about aws installations in internal dev"
-  end
-
-  def explanation_more(:development, :provided) do
-    "TODO: Description about provided installations in development"
-  end
-
-  def explanation_more(:production, :provided) do
-    "TODO: Description about provided installations in production"
-  end
-
-  def explanation_more(:kitchen_sink, :provided) do
-    "TODO: Description about provided installations in kitchen sink"
-  end
-
-  def explanation_more(:internal_dev, :provided) do
-    "TODO: Description about provided installations in internal dev"
-  end
+  def explanation_more(_, :provided), do: get_resource(:provided_description)
 
   def explanation_more(_, _), do: ""
 
