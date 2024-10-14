@@ -18,7 +18,11 @@ section to get started.
 
 Let's build something amazing together!
 
-## Setup
+## Try Batteries Inclued Out
+
+### 
+
+## Developer Setup
 
 ### Linux Dependencies
 
@@ -28,9 +32,12 @@ dependencies:
 For Ubuntu/apt-based systems:
 
 ```bash
-sudo apt-get install -y docker.io docker-buildx build-essential curl \
-    git cmake libssl-dev pkg-config autoconf m4 libncurses5-dev \
-    inotify-tools direnv jq chromium-browser chromium-chromedriver
+sudo apt-get install -y docker.io build-essential curl git cmake \
+    libssl-dev pkg-config autoconf \
+    m4 libncurses5-dev inotify-tools direnv jq 
+
+# Building and Testing deps not needed for most uses
+sudo apt-get install -y chromium-browser chromium-chromedriver
 ```
 
 For Fedora/dnf-based systems:
@@ -38,7 +45,10 @@ For Fedora/dnf-based systems:
 ```bash
 sudo dnf install -y docker gcc gcc-c++ make curl git \
     cmake openssl-devel pkgconfig autoconf m4 ncurses-devel \
-    inotify-tools direnv jq chromium chromedriver
+    inotify-tools direnv jq
+
+# Building/Testing deps
+sudo dnf install -y chromium chromedriver
 ```
 
 After installing the dependencies, ensure Docker is enabled and your user has
