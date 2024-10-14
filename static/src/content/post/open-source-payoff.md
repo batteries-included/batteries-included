@@ -6,7 +6,7 @@ excerpt:
   costs start to add up.
 publishDate: 2024-07-24
 tags: ['open source', 'OSS', 'hidden costs']
-image: /images/posts/post-14.jpg
+image: /public/images/posts/post-14.jpg
 draft: false
 ---
 

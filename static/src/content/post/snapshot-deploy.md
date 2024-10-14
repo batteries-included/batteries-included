@@ -6,7 +6,7 @@ excerpt:
   and user experience, especially at scale.
 publishDate: 2024-08-27
 tags: ['kubernetes', 'devops', 'deployment', 'scalability']
-image: /images/posts/post-18.jpg
+image: /public/images/posts/post-18.jpg
 draft: true
 ---
 

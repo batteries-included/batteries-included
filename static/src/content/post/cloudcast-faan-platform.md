@@ -5,7 +5,7 @@ excerpt:
   CEO and founder of Batteries Included'
 publishDate: 2023-11-29
 tags: ['FAANG', 'cloud', 'platform', 'IDP']
-image: /images/posts/post-1.jpg
+image: /public/images/posts/post-1.jpg
 draft: false
 ---
 

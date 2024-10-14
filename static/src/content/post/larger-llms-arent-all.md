@@ -5,7 +5,7 @@ excerpt:
   and refined datasets can offer more nimble and effective solutions.
 publishDate: 2024-07-07
 tags: ['AI', 'LLM', 'NLP']
-image: /images/posts/post-5.jpg
+image: /public/images/posts/post-5.jpg
 draft: true
 ---
 
