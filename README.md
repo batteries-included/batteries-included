@@ -4,21 +4,53 @@
 
 # Welcome!
 
-Welcome to [Batteries Included](https://www.batteriesincl.com/) -- the
-all-inclusive software infrastructure platform!
+Welcome to [Batteries Included](https://www.batteriesincl.com/) -- the ultimate
+platform for modern service development. An all-inclusive software
+infrastructure platform built on open source. While we use Kubernetes the
+experience is totally different thanks to our UI and automation.
 
 In this repo, you'll find everything you need to contribute to development. From
 code and scripts to documentation and information, this is the hub of all things
 _Batteries Included_.
 
-To get started, make sure your operating system is set up and ready to go. We
-recommend using a Linux machine, but our code should work on any system with a
-docker daemon and a Unix-like shell. Follow the steps in the [setup](#setup)
-section to get started.
-
 Let's build something amazing together!
 
-## Setup
+## Try Batteries Inclued Out
+
+### Easiest Method
+
+The easiest method is to use our hosted UI to configure an installation. Then
+use the no dependencies install script to download our `bi` tool which will
+start Kubernetes (locally via Kind or on a cloud provider via Pulumi), all open
+source container based dependencies, and Batteries Included Control Server.
+
+- Go to [www.batteriesincl.com/](https://www.batteriesincl.com) and click on
+  Login or Sign Up.
+- Create an account
+- Create an installation choosing the Kubernetes provider (AWS, Kind, or an
+  already provided cluster) and the intended use.
+- Run the custom install script that will (if needed) download the latest `bi`
+  version and start the install from jwk signed by home base.
+
+### Manual Method
+
+If you want to try all this out for a short time without signing up, that's
+possible. However the installation will stop working after a few hours of not
+being able to report status.
+
+- download `bi` from the
+  [latest github release](https://github.com/batteries-included/batteries-included/releases)
+- Ensure your machine has Docker or compatible software running and configured
+  (Linux is best supported)
+- From `master` run `bi start bootstrap/local.spec.json`
+
+## Developer Setup
+
+To get started developing or changing the code, make sure your operating system
+is set up and ready to go. We recommend using a Linux machine, but our code
+should work on any system with a docker daemon (or compatible) and a Unix-like
+shell. We'll need a few dependencies, ASDF, and then to start a kubernetes
+cluster configured for development.
 
 ### Linux Dependencies
 
@@ -28,9 +60,12 @@ dependencies:
 For Ubuntu/apt-based systems:
 
 ```bash
-sudo apt-get install -y docker.io docker-buildx build-essential curl \
-    git cmake libssl-dev pkg-config autoconf m4 libncurses5-dev \
-    inotify-tools direnv jq chromium-browser chromium-chromedriver
+sudo apt-get install -y docker.io build-essential curl git cmake \
+    libssl-dev pkg-config autoconf \
+    m4 libncurses5-dev inotify-tools direnv jq
+
+# Building and Testing deps not needed for most uses
+sudo apt-get install -y chromium-browser chromium-chromedriver
 ```
 
 For Fedora/dnf-based systems:
@@ -38,7 +73,10 @@ For Fedora/dnf-based systems:
 ```bash
 sudo dnf install -y docker gcc gcc-c++ make curl git \
     cmake openssl-devel pkgconfig autoconf m4 ncurses-devel \
-    inotify-tools direnv jq chromium chromedriver
+    inotify-tools direnv jq
+
+# Building/Testing deps
+sudo dnf install -y chromium chromedriver
 ```
 
 After installing the dependencies, ensure Docker is enabled and your user has
