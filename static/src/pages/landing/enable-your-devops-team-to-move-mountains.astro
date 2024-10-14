@@ -3,7 +3,6 @@ import Image from '~/components/common/Image.astro';
 import Headline from '~/components/posts/Headline.astro';
 import Layout from '~/layouts/PageLayout.astro';
 import ButtonLink from '~/components/widgets/ButtonLink.astro';
-import NetlifyFormContainer from '~/components/ui/NetlifyForm.astro';
 
 const metadata = {
   title: 'Enable your DevOps team to move mountains ',
@@ -27,7 +26,7 @@ const metadata = {
           <div class="-mt-4 md:-mt-10">
             <ButtonLink
               label="Get Started"
-              link="/sign-up"
+              link="https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup"
               variant="tertiary"
             />
           </div>
@@ -185,16 +184,11 @@ const metadata = {
               </p>
             </div>
             <div class="mt-8">
-              <NetlifyFormContainer
-                inputs={[
-                  {
-                    type: 'email',
-                    name: 'email',
-                    label: 'Email',
-                  },
-                ]}
-                button="Sign Up Now"
-              />
+              <a
+                class="text-primary underline underline-offset-8"
+                href="https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup"
+                >Signup Now</a
+              >
             </div>
           </div>
         </div>
