@@ -45,11 +45,23 @@ defmodule KubeServices.ET.Usage do
   def handle_info(:report, state) do
     Logger.info("Reporting usage to #{state.home_client}")
 
-    :ok = send_usage(state)
-
-    # Finally re-schedule the next report
     _ = schedule_report(state)
-    {:noreply, state}
+
+    # Send the usage report
+    # Logging errors and unknown errors but
+    # not stopping the process
+    case send_usage(state) do
+      :ok ->
+        {:noreply, state}
+
+      {:error, {:unknown_error, unknown_error}} ->
+        Logger.error("Unknown error sending usage report: #{inspect(unknown_error)}")
+        {:noreply, state}
+
+      {:error, err} ->
+        Logger.error("Error sending usage report: #{inspect(err)}")
+        {:noreply, state}
+    end
   end
 
   defp send_usage(%State{home_client: home_client} = _state) do
@@ -60,11 +72,9 @@ defmodule KubeServices.ET.Usage do
         :ok
 
       {:error, err} ->
-        Logger.error("Failed to send usage: #{inspect(err)}")
         {:error, err}
 
       unknown_error ->
-        Logger.error("Failed to send usage: #{inspect(unknown_error)}")
         {:error, {:unknown_error, unknown_error}}
     end
   end
