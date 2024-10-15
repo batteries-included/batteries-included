@@ -61,7 +61,7 @@ defmodule HomeBaseWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :global_success) =~ "Account created successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :global_warning) =~ "Check your email"
     end
 
     test "login following password update", %{conn: conn, user: user} do

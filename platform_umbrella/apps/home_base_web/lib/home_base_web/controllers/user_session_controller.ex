@@ -5,7 +5,7 @@ defmodule HomeBaseWeb.UserSessionController do
   alias HomeBaseWeb.UserAuth
 
   def create(conn, %{"action" => "registered"} = params) do
-    create(conn, params, {:global_success, "Account created successfully!"})
+    create(conn, params, {:global_warning, "Check your email to verify your account"})
   end
 
   def create(conn, %{"action" => "password_updated"} = params) do

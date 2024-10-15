@@ -15,7 +15,7 @@ defmodule CommonUI.Components.Button do
   attr :icon_position, :atom, default: :left, values: [:left, :right]
 
   attr :rest, :global,
-    include: ~w(form name value id name),
+    include: ~w(form name value id name disabled),
     default: %{
       # Most buttons are either links or use `phx-click`,
       # so change default to "button" rather than "submit".
@@ -102,7 +102,9 @@ defmodule CommonUI.Components.Button do
       button_class(),
       rounded_button_class(),
       "text-gray-darker dark:text-gray-lighter hover:text-primary dark:hover:text-gray-lighter disabled:text-gray",
-      "border border-gray-lighter hover:border-primary-light dark:border-gray-darker-tint dark:hover:border-gray-light disabled:hover:border-gray-lighter",
+      "disabled:hover:text-gray disabled:dark:hover:text-gray",
+      "border border-gray-lighter hover:border-primary-light dark:border-gray-darker-tint dark:hover:border-gray-light",
+      "disabled:hover:border-gray-lighter disabled:dark:hover:border-gray-darker-tint",
       "bg-white dark:bg-gray-darkest"
     ]
   end
