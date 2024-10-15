@@ -15,7 +15,7 @@ defmodule CommonUI.Components.Button do
   attr :icon_position, :atom, default: :left, values: [:left, :right]
 
   attr :rest, :global,
-    include: ~w(form name value id name),
+    include: ~w(form name value id name disabled),
     default: %{
       # Most buttons are either links or use `phx-click`,
       # so change default to "button" rather than "submit".
