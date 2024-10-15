@@ -125,10 +125,14 @@ defmodule ControlServerWeb.Projects.AIForm do
         class={@class}
         variant="stepped"
         title="Artificial Intelligence"
-        description="A place for information about the AI stage of project creation"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
+        description={~s"
+        Jupyter is a web application that lets you create and share documents that include live code, equations, AI models, and other resources.
+
+        Choose the instance size for your project's Jupyter notebook, and add an optional Postgres database. The database URL will automatically be added to the instance's environment variables.
+        "}
       >
         <.grid columns={[sm: 1, xl: 2]}>
           <.input field={@form[:jupyter].value[:name]} label="Name of the Jupyter notebook" />
