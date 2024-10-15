@@ -167,10 +167,14 @@ defmodule ControlServerWeb.Projects.WebForm do
         class={@class}
         variant="stepped"
         title="Web"
-        description="A place for information about the web stage of project creation"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
+        description={~s"
+        Choose between a Knative (serverless) or Traditional Service web project, and attach an optional database and cache.
+
+        The database URL will automatically be added to the instance's environment variables.
+        "}
       >
         <.input type="hidden" name="service_type" value={@service_type} />
 

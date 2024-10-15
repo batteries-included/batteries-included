@@ -146,10 +146,14 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         class={@class}
         variant="stepped"
         title="Database Only"
-        description="A place for information about the database stage of project creation"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
+        description={~s"
+        Database-only projects are just what they sound like—they don't require any other resources outside of a database and caching layer.
+
+        If a FerretDB instance is created, it will automatically be attached to the Postgres cluster.
+        "}
       >
         <.input field={@form[:need_postgres]} type="switch" label="I need a Postgres instance" />
 

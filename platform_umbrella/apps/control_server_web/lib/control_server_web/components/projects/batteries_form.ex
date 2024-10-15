@@ -99,10 +99,14 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
         class={@class}
         variant="stepped"
         title="Turn On Additional Batteries"
-        description="A place for information about the batteries stage of project creation"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
+        description={~s"
+        All of the required batteries for this project are already toggled and will be installed in the next step.
+
+        If you want to enable any additional batteries while we're here, you can select as many as you would like.
+        "}
       >
         <.input
           field={@form[:search]}
