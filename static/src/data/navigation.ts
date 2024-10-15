@@ -209,11 +209,11 @@ export const headerData = [
   },
   {
     label: 'Login',
-    link: 'https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/login',
+    link: 'https://home.batteriesincl.com/login',
   },
   {
     label: 'Sign Up',
-    link: 'https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup',
+    link: 'https://home.batteriesincl.com/signup',
   },
 ];
 

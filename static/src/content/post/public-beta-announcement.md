@@ -9,7 +9,7 @@ image: ./public-beta-announcement/install_screenshot.png
 
 # The automated DevOps platform built to help teams reduce site reliability overheadd
 
-**[Now in public beta](https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup):
+**[Now in public beta](https://home.batteriesincl.com/signup):
 Batteries Included automated DevOps platform to leverage the power of open
 source platforms**
 
@@ -85,7 +85,7 @@ free to use for our early adopters. The source code will always be available,
 but currently all usage is free to celebrate.
 
 Get started here →
-[https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup](https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup)
+[https://home.batteriesincl.com/signup](https://home.batteriesincl.com/signup)
 
 Get the source code here →
 [github.com/batteries-included/batteries-included](https://github.com/batteries-included/batteries-included)
