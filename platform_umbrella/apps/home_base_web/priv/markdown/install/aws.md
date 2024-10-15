@@ -10,3 +10,11 @@ and deploy batteries needed to automatically run your cluster. We will:
 - Deploy the Istio battery for mTLS and service mesh
 - Deploy the Istio Ingress Gateway battery for web traffic routing
 - Deploy the Cert Manager battery for SSL certificates
+
+### Needed
+
+For AWS installs the `bi` binary will needed
+
+- an AWS account with admin permissions
+- you have logged in via `aws sso login` or similar
+- You have set your aws profile environment variables correctly `export AWS_PROFILE=<YOUR_PROFILE_NAME>`

@@ -96,7 +96,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
           </.input_panel>
 
           <.input_panel
-            title="What provider will you use?"
+            title="What provider will you use? If you're just testing for the first time, we recommend Kind (only Docker is needed locally)."
             description="What Kubernetes provider will you use for this installation?"
           >
             <.input
