@@ -227,7 +227,14 @@ export const footerData = {
       title: 'Support',
       links: [
         { text: 'Docs', href: '/docs' },
-        { text: 'Github', href: 'https://github.com/batteries-included' },
+        {
+          text: 'Github',
+          href: 'https://github.com/batteries-included/batteries-included',
+        },
+        {
+          text: 'Slack',
+          href: 'https://join.slack.com/t/batteries-included/shared_invite/zt-2qw1pm9pz-egaqvjbMuzKNvCpG1QXXHg',
+        },
       ],
     },
     {
