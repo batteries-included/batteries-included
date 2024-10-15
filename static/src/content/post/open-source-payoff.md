@@ -135,7 +135,6 @@ tasks. Additionally, we offer training to help businesses develop the necessary
 in-house expertise to manage and optimize OSS implementations.
 
 As you navigate the complexities of OSS, remember that you don’t have to do it
-alone.
-[Sign up for our public beta](https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup)
+alone. [Sign up for our public beta](https://home.batteriesincl.com/signup)
 today and take the first step towards a more efficient, innovative, and
 cost-effective future.

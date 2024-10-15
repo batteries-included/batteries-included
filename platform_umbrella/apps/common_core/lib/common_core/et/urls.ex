@@ -3,7 +3,7 @@ defmodule CommonCore.ET.URLs do
   alias CommonCore.Batteries.BatteryCoreConfig
 
   @local_home "http://home.127-0-0-1.batrsinc.co:4100/api/v1"
-  @prod_home "https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/api/v1"
+  @prod_home "https://home.batteriesincl.com/api/v1"
   @bi_home "http://home-base.battery-traditional.svc.cluster.local.:4000/api/v1"
 
   def home_base_url(%BatteryCoreConfig{usage: usage} = _config) when usage in [:internal_prod, :internal_int_test],
