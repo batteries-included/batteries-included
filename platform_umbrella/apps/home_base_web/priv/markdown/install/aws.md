@@ -17,4 +17,5 @@ For AWS installs the `bi` binary will needed
 
 - an AWS account with admin permissions
 - you have logged in via `aws sso login` or similar
-- You have set your aws profile environment variables correctly `export AWS_PROFILE=<YOUR_PROFILE_NAME>`
+- You have set your aws profile environment variables correctly
+  `export AWS_PROFILE=<YOUR_PROFILE_NAME>`
