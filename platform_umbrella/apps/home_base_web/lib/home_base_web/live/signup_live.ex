@@ -80,7 +80,7 @@ defmodule HomeBaseWeb.SignupLive do
 
       <.input field={@form[:terms]} type="checkbox">
         I agree to the
-        <.a href="https://batteriesincl.com" target="_blank">terms & conditions</.a>
+        <.a href="https://www.batteriesincl.com/terms-service" target="_blank">terms & conditions</.a>
       </.input>
 
       <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
