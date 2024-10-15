@@ -3,7 +3,10 @@ defmodule HomeBaseWeb.DashboardLive do
   use HomeBaseWeb, :live_view
 
   alias CommonCore.Installation
+  alias HomeBase.Accounts
   alias HomeBase.CustomerInstalls
+
+  on_mount {HomeBaseWeb.RequestURL, :default}
 
   def mount(_params, _session, socket) do
     total_teams = CustomerInstalls.count_teams(socket.assigns.current_user)
@@ -16,7 +19,22 @@ defmodule HomeBaseWeb.DashboardLive do
      |> assign(:page_title, "Dashboard")
      |> assign(:total_teams, total_teams)
      |> assign(:total_installations, total_installations)
-     |> assign(:recent_installations, recent_installations)}
+     |> assign(:recent_installations, recent_installations)
+     |> assign(:confirmation_resent, false)}
+  end
+
+  def handle_event("resend_confirm", _params, socket) do
+    user = socket.assigns.current_user
+
+    with {:ok, token} <- Accounts.get_user_confirmation_token(user),
+         {:ok, _} <-
+           %{to: user.email, url: socket.assigns.request_url <> ~p"/confirm/#{token}"}
+           |> HomeBaseWeb.ConfirmEmail.render()
+           |> HomeBase.Mailer.deliver() do
+      {:noreply, assign(socket, :confirmation_resent, true)}
+    else
+      _ -> {:noreply, put_flash(socket, :global_error, "Could not resend confirmation email")}
+    end
   end
 
   def render(assigns) do
@@ -44,6 +62,16 @@ defmodule HomeBaseWeb.DashboardLive do
 
         <.button variant="secondary" link={~p"/teams/new"}>
           Create a team
+        </.button>
+      </.panel>
+
+      <.panel :if={!@current_user.confirmed_at} title="Confirm Your Account">
+        <p class="mb-6">
+          Your account still needs to be been confirmed. Please check your email for a confirmation link.
+        </p>
+
+        <.button disabled={@confirmation_resent} variant="secondary" phx-click="resend_confirm">
+          <%= if @confirmation_resent, do: "Sent!", else: "Resend Confirmation Link" %>
         </.button>
       </.panel>
 
