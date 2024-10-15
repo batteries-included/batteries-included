@@ -9,9 +9,9 @@ image: ./public-beta-announcement/install_screenshot.png
 
 # The automated DevOps platform built to help teams reduce site reliability overheadd
 
-**[Now in public beta](https://home.batteriesincl.com/signup):
-Batteries Included automated DevOps platform to leverage the power of open
-source platforms**
+**[Now in public beta](https://home.batteriesincl.com/signup): Batteries
+Included automated DevOps platform to leverage the power of open source
+platforms**
 
 For the modern web and full stack developer, it can feel like an impossible feat
 to spin up and manage your DevOps infrastructure. Where to begin, which
