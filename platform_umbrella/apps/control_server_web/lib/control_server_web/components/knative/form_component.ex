@@ -250,6 +250,12 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   end
 
   defp save_service(socket, :edit, service_params) do
+    service_params =
+      service_params
+      |> Map.put_new("containers", %{})
+      |> Map.put_new("init_containers", %{})
+      |> Map.put_new("env_values", %{})
+
     case Knative.update_service(socket.assigns.service, service_params) do
       {:ok, updated_service} ->
         {:noreply,
