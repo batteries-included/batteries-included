@@ -3,7 +3,10 @@
   <img src="./.github/header-light.png#gh-light-mode-only" />
 </p>
 
-Welcome to [Batteries Included](https://www.batteriesincl.com/)—the ultimate platform for modern service development! Built on Kubernetes and open-source, our software platform gives you an incredible, all-inclusive infrastructure experience thanks to an intuitive UI and advanced automation.
+Welcome to [Batteries Included](https://www.batteriesincl.com/)—the ultimate
+platform for modern service development! Built on Kubernetes and open-source,
+our software platform gives you an incredible, all-inclusive infrastructure
+experience thanks to an intuitive UI and advanced automation.
 
 In this repo, you'll find everything you need to contribute to development. From
 code and scripts to documentation and information, this is the hub of all things
@@ -20,8 +23,8 @@ use the no-dependencies installation script to download our `bi` tool which will
 start Kubernetes (locally via Kind or on a cloud provider via Pulumi), all open
 source container based dependencies, and the Batteries Included Control Server.
 
-- Go to [batteriesincl.com](https://www.batteriesincl.com) and
-  log in or sign up for a new account.
+- Go to [batteriesincl.com](https://www.batteriesincl.com) and log in or sign up
+  for a new account.
 - Create an installation choosing the Kubernetes provider (AWS, Kind, or an
   already provided cluster) and the intended use.
 - Run the custom install script that will (if needed) download the latest `bi`
@@ -145,7 +148,10 @@ There are other docs pages in `static/src/content/docs`.
 
 ## Platform Umbrella
 
-This is the main directory. It uses the [Phoenix framework](https://phoenixframework.org/), and there are several different Elixir applications in `platform_umbrella/apps` while the global configuration is in `platform_umbrella/config`.
+This is the main directory. It uses the
+[Phoenix framework](https://phoenixframework.org/), and there are several
+different Elixir applications in `platform_umbrella/apps` while the global
+configuration is in `platform_umbrella/config`.
 
 ### Common UI
 
