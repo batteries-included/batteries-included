@@ -127,6 +127,8 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
   end
 
   defp save_notebook(socket, :edit, params) do
+    params = Map.put_new(params, "env_values", %{})
+
     case Notebooks.update_jupyter_lab_notebook(socket.assigns.notebook, params) do
       {:ok, notebook} ->
         {:noreply,
