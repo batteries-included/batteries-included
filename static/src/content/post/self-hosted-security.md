@@ -6,7 +6,7 @@ excerpt:
 publishDate: 2024-08-18
 tags:
   ['Cybersecurity', 'Self-Hosting', 'SaaS', 'Data Protection', 'Cloud Security']
-image: /images/posts/post-17.jpg
+image: ./covers/post-17.jpg
 draft: true
 ---
 

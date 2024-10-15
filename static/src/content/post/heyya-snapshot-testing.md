@@ -5,7 +5,7 @@ excerpt:
   Phoenix components
 publishDate: 2022-12-08
 tags: ['phoenix', 'elixir', 'testing']
-image: /images/posts/post-4.jpg
+image: ./covers/post-4.jpg
 draft: false
 ---
 

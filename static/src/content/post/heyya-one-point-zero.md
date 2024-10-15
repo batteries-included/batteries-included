@@ -5,7 +5,7 @@ excerpt:
   views in addition to the existing component snapshot testing.
 publishDate: 2024-07-30
 tags: ['phoenix', 'elixir', 'testing']
-image: /images/posts/post-15.jpg
+image: ./covers/post-15.jpg
 draft: false
 ---
 

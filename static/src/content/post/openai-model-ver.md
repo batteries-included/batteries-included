@@ -5,7 +5,7 @@ excerpt:
   shown the significance of periodic machine learning model retraining
 publishDate: 2024-08-18
 tags: ['openai', 'ml', 'machine-learning', 'model', 'platform']
-image: /images/posts/post-8.jpg
+image: ./covers/post-8.jpg
 draft: true
 ---
 

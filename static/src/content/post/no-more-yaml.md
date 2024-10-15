@@ -5,7 +5,7 @@ excerpt:
   offering the allure of streamlined, efficient workflows
 publishDate: 2024-09-24
 tags: ['kubernetes', 'helm', 'infrastructure-as-code', 'yaml']
-image: /images/posts/post-6.jpg
+image: ./covers/post-6.jpg
 draft: true
 ---
 

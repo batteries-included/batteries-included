@@ -6,7 +6,7 @@ excerpt:
   costs start to add up.
 publishDate: 2024-07-24
 tags: ['open source', 'OSS', 'hidden costs']
-image: /images/posts/post-14.jpg
+image: ./covers/post-14.jpg
 draft: false
 ---
 
@@ -136,6 +136,6 @@ in-house expertise to manage and optimize OSS implementations.
 
 As you navigate the complexities of OSS, remember that you don’t have to do it
 alone.
-[Sign up for our public bets](https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup)
+[Sign up for our public beta](https://home-base.battery-traditional.webapp.13-59-225-158.batrsinc.co/signup)
 today and take the first step towards a more efficient, innovative, and
 cost-effective future.

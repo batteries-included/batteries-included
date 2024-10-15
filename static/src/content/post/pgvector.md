@@ -9,7 +9,7 @@ excerpt:
   Notebooks integration for a hands-on development experience.
 publishDate: 2024-08-10
 tags: ['AI', 'Postgres', 'PGVector', 'Jupyter Notebooks']
-image: /images/posts/post-16.png
+image: ./covers/post-16.png
 draft: true
 ---
 

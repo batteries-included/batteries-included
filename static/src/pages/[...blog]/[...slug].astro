@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import slugify from 'slugify';
 import SocialShare from '~/components/common/SocialShare.astro';
 import ToPostsLink from '~/components/posts/ToPostsLink.astro';
+import Image from '~/components/common/Image.astro';
 
 export const prerender = true;
 
@@ -101,7 +102,7 @@ const metadata = merge(
           </div>
           <div class="md:w-1/2">
             <div class="aspect-video overflow-hidden rounded-3xl">
-              <img
+              <Image
                 class="w-full h-full object-cover object-center"
                 src={post.image}
                 alt={`${post.title} image`}
