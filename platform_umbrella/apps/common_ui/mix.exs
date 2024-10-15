@@ -4,7 +4,7 @@ defmodule CommonUI.MixProject do
   def project do
     [
       app: :common_ui,
-      version: "0.25.0",
+      version: "0.26.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
