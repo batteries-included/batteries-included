@@ -418,35 +418,46 @@ defmodule CommonCore.Resources.IstioIngress do
   defp build_server_for_traditional_service(_hosts, ports, _ssl_enabled?) when is_nil(ports) or ports == [], do: []
 
   defp build_server_for_traditional_service(hosts, ports, ssl_enabled?) do
-    Enum.map(ports, &build_server_for_traditional_service_port(hosts, &1, ssl_enabled?))
+    Enum.flat_map(ports, &build_server_for_traditional_service_port(hosts, &1, ssl_enabled?))
   end
 
   defp build_server_for_traditional_service_port(hosts, %{protocol: protocol} = port, true = _ssl_enabled?)
        when protocol in [:http, :http2] do
-    %{
-      port: %{number: 443, name: port.name, protocol: "HTTPS"},
-      tls: %{mode: "SIMPLE", credentialName: "traditional-services-ingress-cert"},
-      hosts: hosts
-    }
+    [
+      %{
+        port: %{number: 443, name: "#{port.name}-https", protocol: "HTTPS"},
+        tls: %{mode: "SIMPLE", credentialName: "traditional-services-ingress-cert"},
+        hosts: hosts
+      },
+      %{
+        port: %{number: 80, name: "#{port.name}-http", protocol: normalize_protocol(port.protocol)},
+        tls: %{httpsRedirect: true},
+        hosts: hosts
+      }
+    ]
   end
 
   defp build_server_for_traditional_service_port(hosts, %{protocol: :tcp} = port, true = _ssl_enabled?) do
-    %{port: %{number: port.number, name: port.name, protocol: "TCP"}, hosts: hosts}
+    [%{port: %{number: port.number, name: port.name, protocol: "TCP"}, hosts: hosts}]
   end
 
   defp build_server_for_traditional_service_port(hosts, %{protocol: protocol} = port, false = _ssl_enabled?)
        when protocol in [:http, :http2] do
-    %{
-      port: %{number: 80, name: port.name, protocol: normalize_protocol(port.protocol)},
-      hosts: hosts
-    }
+    [
+      %{
+        port: %{number: 80, name: port.name, protocol: normalize_protocol(port.protocol)},
+        hosts: hosts
+      }
+    ]
   end
 
   defp build_server_for_traditional_service_port(hosts, port, false = _ssl_enabled?) do
-    %{
-      port: %{number: port.number, name: port.name, protocol: normalize_protocol(port.protocol)},
-      hosts: hosts
-    }
+    [
+      %{
+        port: %{number: port.number, name: port.name, protocol: normalize_protocol(port.protocol)},
+        hosts: hosts
+      }
+    ]
   end
 
   defp normalize_protocol(proto), do: String.upcase(Atom.to_string(proto))
