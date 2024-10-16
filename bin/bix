@@ -163,7 +163,7 @@ do_stop() {
         slug=${input}
     fi
     log "${YELLOW}Stopping${NOFORMAT} $slug"
-    run_bi stop "$slug"
+    run_bi stop ${TRACE:+-v=debug} "$slug"
 }
 
 ## Start a new installation
@@ -176,7 +176,7 @@ do_start() {
 
     spec_path=$(realpath "${spec_path}")
     log "${GREEN}Starting${NOFORMAT} ${CYAN}${spec_path}${NOFORMAT}"
-    run_bi start "${spec_path}"
+    run_bi start ${TRACE:+-v=debug} "${spec_path}"
 }
 
 do_bootstrap() {
