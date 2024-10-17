@@ -1,0 +1,14 @@
+<label class="w-full ">
+  <div class="">
+    <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter mb-2">
+      <div>Label</div>
+
+      
+    </div>
+
+    
+  
+  </div>
+
+  
+</label>
