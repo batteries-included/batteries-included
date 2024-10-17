@@ -394,23 +394,32 @@ defmodule CommonCore.Resources.IstioIngress do
   end
 
   defp build_battery_servers(:forgejo = type, hosts, ssl_enabled?),
-    do: [forgejo_ssh_server(hosts), web_server(sanitize(type), hosts, ssl_enabled?)]
+    do: [forgejo_ssh_server(hosts)] ++ web_servers(sanitize(type), hosts, ssl_enabled?)
 
-  defp build_battery_servers(type, hosts, ssl_enabled?), do: [web_server(sanitize(type), hosts, ssl_enabled?)]
+  defp build_battery_servers(type, hosts, ssl_enabled?), do: web_servers(sanitize(type), hosts, ssl_enabled?)
 
-  defp web_server(type, hosts, true = _ssl_enabled?) do
-    %{
-      port: %{number: 443, name: "https-#{type}", protocol: "HTTPS"},
-      tls: %{mode: "SIMPLE", credentialName: "#{type}-ingress-cert"},
-      hosts: hosts
-    }
+  defp web_servers(type, hosts, true = _ssl_enabled?) do
+    [
+      %{
+        port: %{number: 443, name: "https-#{type}", protocol: "HTTPS"},
+        tls: %{mode: "SIMPLE", credentialName: "#{type}-ingress-cert"},
+        hosts: hosts
+      },
+      %{
+        port: %{number: 80, name: "http2-#{sanitize(type)}", protocol: "HTTP"},
+        tls: %{httpsRedirect: true},
+        hosts: hosts
+      }
+    ]
   end
 
-  defp web_server(type, hosts, false = _ssl_enabled?) do
-    %{
-      port: %{number: 80, name: "http2-#{sanitize(type)}", protocol: "HTTP"},
-      hosts: hosts
-    }
+  defp web_servers(type, hosts, false = _ssl_enabled?) do
+    [
+      %{
+        port: %{number: 80, name: "http2-#{sanitize(type)}", protocol: "HTTP"},
+        hosts: hosts
+      }
+    ]
   end
 
   defp forgejo_ssh_server(hosts), do: %{port: %{number: 22, name: "ssh-forgejo", protocol: "TCP"}, hosts: hosts}
