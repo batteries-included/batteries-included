@@ -21,7 +21,6 @@ defmodule CommonUI.Components.Fieldset do
 
   def fieldset(assigns) do
     assigns = provide_id(assigns)
-    dbg(assigns.flash)
 
     ~H"""
     <div class={["w-full", @class]}>

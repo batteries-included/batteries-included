@@ -7,7 +7,7 @@ defmodule CommonUI.Components.FieldsetTest do
     assigns = %{}
 
     ~H"""
-    <.fieldset title="Foo">Bar</.fieldset>
+    <.fieldset id="foo" title="Foo">Bar</.fieldset>
     """
   end
 
@@ -15,7 +15,7 @@ defmodule CommonUI.Components.FieldsetTest do
     assigns = %{}
 
     ~H"""
-    <.fieldset responsive>
+    <.fieldset id="foo" responsive>
       Foobar
       <:actions>Actions</:actions>
     </.fieldset>

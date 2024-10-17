@@ -7,7 +7,7 @@ defmodule CommonUI.Components.FieldTest do
     assigns = %{}
 
     ~H"""
-    <.field>
+    <.field id="foo">
       <:label>Label</:label>
     </.field>
     """
@@ -17,7 +17,7 @@ defmodule CommonUI.Components.FieldTest do
     assigns = %{}
 
     ~H"""
-    <.field variant="beside">
+    <.field id="foo" variant="beside">
       <:label>Label</:label>
     </.field>
     """
@@ -27,7 +27,7 @@ defmodule CommonUI.Components.FieldTest do
     assigns = %{}
 
     ~H"""
-    <.field>
+    <.field id="foo">
       <:label help="This is some help text">Label</:label>
       <:note>This is a note</:note>
     </.field>
