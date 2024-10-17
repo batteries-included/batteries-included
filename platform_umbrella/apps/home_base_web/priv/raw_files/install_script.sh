@@ -101,4 +101,4 @@ else
 fi
 
 # start install
-"${INSTALL_DIR}/${BI}" start -v debug "${INSTALL_SPEC_URL}"
+"${INSTALL_DIR}/${BI}" start -v=info "${INSTALL_SPEC_URL}"
