@@ -496,31 +496,18 @@ do_build_image() {
 }
 
 do_push_images() {
-    TAG_LATEST=${TAG_LATEST:-1}
-
-    while :; do
-        case "${1-}" in
-        --skip-latest) TAG_LATEST=0 ;;
-        -?*) die "Unknown option: $1" ;;
-        *) break ;;
-        esac
-        shift
-    done
-    args=("$@")
-
-    local registry=${args[0]:-"localhost:5000"}
-
-    export TAG_LATEST=${TAG_LATEST}
-
-    tag_push "control-server" "${registry}"
-    tag_push "home-base" "${registry}"
-    tag_push "kube-bootstrap" "${registry}"
-    tag_push "pastebin" "${registry}"
+    tag_push "control-server" "$@"
+    tag_push "home-base" "$@"
+    tag_push "kube-bootstrap" "$@"
+    tag_push "pastebin" "$@"
 }
 
 tag_push() {
     local image_name=${1}
-    local registry=${2}
+    shift
+    local registry=${1:-"localhost:5000"}
+    shift
+    local additional_tags=("$@")
 
     local version
     version="${BASE_VERSION}-$(version_tag)"
@@ -532,12 +519,12 @@ tag_push() {
 
     docker tag "${image_name}:${version}" "${registry}/${image_name}:${version}"
     docker push "${registry}/${image_name}:${version}"
-    # don't tag any override versions as latest
-    if [[ ${TAG_LATEST:-""} -eq 1 && -z ${VERSION_OVERRIDE:-""} ]]; then
-        log "${GREEN}Tagging${NOFORMAT} ${image_name}:${version} as latest"
-        docker tag "${image_name}:${version}" "${registry}/${image_name}:latest"
-        docker push "${registry}/${image_name}:latest"
-    fi
+
+    for tag in "${additional_tags[@]}"; do
+        log "${GREEN}Tagging${NOFORMAT} ${image_name}:${version} as ${tag}"
+        docker tag "${image_name}:${version}" "${registry}/${image_name}:${tag}"
+        docker push "${registry}/${image_name}:${tag}"
+    done
 }
 
 do_ex_test_deep() {

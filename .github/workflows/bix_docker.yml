@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - '*'
   pull_request:
     branches:
       - master
@@ -49,8 +51,11 @@ jobs:
       - name: Configure builder
         run: >-
           docker buildx create --name container --driver docker-container --use
+
+      # Exposes ACTIONS_* variables so that they can be used for docker caching
       - name: Expose GitHub Runtime
         uses: crazy-max/ghaction-github-runtime@v3
+
       - name: Build control-server image
         run: bin/bix build-image control-server
       - name: Build home-base image
@@ -59,6 +64,7 @@ jobs:
         run: bin/bix build-image kube-bootstrap
       - name: Build pastebin image
         run: bin/bix build-image pastebin
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         if:
@@ -75,10 +81,19 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
-      - name: Push image to ECR
+      - name: Push latest to ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         if:
           ${{ (github.ref == 'refs/heads/master' && github.event_name ==
           'push')}}
-        run: bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS"
+        run: bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS" latest
+
+      - name: Push tag to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        if:
+          ${{ (startsWith(github.ref, 'refs/tags/') && github.event_name ==
+          'push')}}
+        run:
+          bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS" ${{ github.ref_name }}
