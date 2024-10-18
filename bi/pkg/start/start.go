@@ -50,6 +50,13 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 		return fmt.Errorf("failed to wait for bootstrap: %w", err)
 	}
 
+	time.Sleep(10 * time.Second)
+
+	slog.Info("Double checking bootstrap completion")
+	if err := env.Spec.WaitForBootstrap(ctx, kubeClient); err != nil {
+		return fmt.Errorf("failed to wait for bootstrap: %w", err)
+	}
+
 	// Explicitly shutdown the progress reporter here to ensure it's not
 	// running when we print the access information. That sometimes causes
 	// in the progress bar being printed over the access information.
