@@ -34,6 +34,8 @@ defmodule CommonUI do
       import CommonUI.Components.DatetimeDisplay
       import CommonUI.Components.Dropdown
       import CommonUI.Components.Email
+      import CommonUI.Components.Field
+      import CommonUI.Components.Fieldset
       import CommonUI.Components.FlashGroup
       import CommonUI.Components.Form
       import CommonUI.Components.Icon
