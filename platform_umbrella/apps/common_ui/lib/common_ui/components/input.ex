@@ -2,6 +2,7 @@ defmodule CommonUI.Components.Input do
   @moduledoc false
   use CommonUI, :component
 
+  import CommonUI.Components.Alert
   import CommonUI.Components.Dropdown
   import CommonUI.Components.Icon
   import CommonUI.Components.Tooltip
@@ -12,6 +13,7 @@ defmodule CommonUI.Components.Input do
   alias CommonUI.TextHelpers
   alias Phoenix.HTML.FormField
 
+  attr :id, :string, default: nil
   attr :name, :any
   attr :value, :any
   attr :checked, :boolean
@@ -64,12 +66,11 @@ defmodule CommonUI.Components.Input do
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> assign_new(:checked, fn %{value: value} -> normalize_value("checkbox", value) end)
+    |> IDHelpers.provide_id()
     |> input()
   end
 
   def input(%{type: "multiselect"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <div phx-feedback-for={if !@force_feedback, do: @name}>
       <.dropdown id={"#{@id}-dropdown"} class="!mt-1 max-h-64 !overflow-auto">
@@ -117,14 +118,12 @@ defmodule CommonUI.Components.Input do
       </.dropdown>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </div>
     """
   end
 
   def input(%{type: "select"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <.label id={@id} label={@label} help={@help} />
@@ -154,7 +153,7 @@ defmodule CommonUI.Components.Input do
       </select>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </label>
     """
   end
@@ -181,7 +180,7 @@ defmodule CommonUI.Components.Input do
       </span>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} class="w-full mt-2" />
+      <.error id={@id} errors={@errors} class="w-full mt-2" />
     </label>
     """
   end
@@ -202,12 +201,19 @@ defmodule CommonUI.Components.Input do
           value={option.value}
           checked={to_string(@value) == to_string(option.value)}
           class={[
-            "peer size-5 text-primary rounded-full bg-white dark:bg-gray-darkest-tint",
+            "peer size-5 text-primary rounded-full",
             "cursor-pointer disabled:cursor-not-allowed disabled:opacity-75",
             "checked:border-primary checked:hover:border-primary",
             @errors == [] &&
-              "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary",
-            @errors != [] && "phx-feedback:bg-red-50 phx-feedback:border-red-200"
+              [
+                "bg-white dark:bg-gray-darkest-tint",
+                "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary"
+              ],
+            @errors != [] &&
+              [
+                "bg-red-50 phx-no-feedback:bg-white phx-no-feedback:dark:bg-gray-darkest-tint",
+                "border-red-200 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint"
+              ]
           ]}
           {@rest}
         />
@@ -218,14 +224,12 @@ defmodule CommonUI.Components.Input do
       </label>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} class="w-full mt-2" />
+      <.error id={@id} errors={@errors} class="w-full mt-2" />
     </div>
     """
   end
 
   def input(%{type: "range"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <div id={@id} class={@class} phx-hook="Range">
       <div class="relative pb-6">
@@ -314,14 +318,12 @@ defmodule CommonUI.Components.Input do
         </div>
       </div>
 
-      <.error errors={@errors} class="w-full mt-2" />
+      <.error id={@id} errors={@errors} class="w-full mt-2" />
     </div>
     """
   end
 
   def input(%{type: "switch"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -364,14 +366,12 @@ defmodule CommonUI.Components.Input do
       </div>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} class="w-full mt-0" />
+      <.error id={@id} errors={@errors} class="w-full mt-0" />
     </label>
     """
   end
 
   def input(%{type: "textarea"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <.label id={@id} label={@label} help={@help} />
@@ -390,7 +390,7 @@ defmodule CommonUI.Components.Input do
       ><%= normalize_value("textarea", @value) %></textarea>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </label>
     """
   end
@@ -408,8 +408,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "password", rest: %{disabled: true}} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={@name}>
       <div :if={@label} class="flex items-center justify-between mb-2">
@@ -424,8 +422,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <div :if={@label || @label_note} class="flex items-center justify-between mb-2">
@@ -455,15 +451,15 @@ defmodule CommonUI.Components.Input do
       </div>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </label>
     """
   end
 
   defp input_class([_ | _] = _errors) do
     [
-      "phx-feedback:bg-red-50 phx-feedback:border-red-200",
-      "phx-feedback:dark:bg-red-950 phx-feedback:dark:border-red-900",
+      "bg-red-50 dark:bg-red-950 phx-no-feedback:bg-gray-lightest phx-no-feedback:dark:bg-gray-darkest-tint",
+      "border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint",
       input_class(nil)
     ]
   end
@@ -483,13 +479,15 @@ defmodule CommonUI.Components.Input do
 
   defp checkbox_class([_ | _] = _errors) do
     [
-      "phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900",
+      "bg-red-50 dark:bg-red-950 phx-no-feedback:bg-white phx-no-feedback:dark:bg-gray-darkest-tint",
+      "border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint",
       checkbox_class()
     ]
   end
 
   defp checkbox_class(_) do
     [
+      "bg-white dark:bg-gray-darkest-tint",
       "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary",
       checkbox_class()
     ]
@@ -497,8 +495,7 @@ defmodule CommonUI.Components.Input do
 
   defp checkbox_class do
     [
-      "size-5 text-primary rounded bg-white dark:bg-gray-darkest-tint",
-      "cursor-pointer disabled:cursor-not-allowed disabled:opacity-65",
+      "size-5 text-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-65",
       "checked:border-primary checked:hover:border-primary"
     ]
   end
@@ -543,21 +540,21 @@ defmodule CommonUI.Components.Input do
 
   defp label_class, do: "flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter"
 
+  attr :id, :string, default: nil
   attr :errors, :list, default: []
   attr :class, :any, default: "mt-2"
 
   defp error(assigns) do
     ~H"""
-    <div
+    <.alert
       :for={error <- @errors}
-      class={[
-        "flex items-center gap-2 text-xs text-red-500 font-semibold phx-no-feedback:hidden",
-        @class
-      ]}
+      id={@id}
+      variant="error"
+      type="minimal"
+      class={["phx-no-feedback:hidden", @class]}
     >
-      <.icon name={:exclamation_circle} mini class="size-4 fill-red-500" />
-      <span><%= error %></span>
-    </div>
+      <%= error %>
+    </.alert>
     """
   end
 end

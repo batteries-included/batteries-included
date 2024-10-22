@@ -10,7 +10,7 @@
   </div>
 
   <div class="relative">
-    <input type="text" name="foo" value="bar" phx-debounce="blur" class="px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50" id="foo">
+    <input type="text" name="foo" value="bar" phx-debounce="blur" class="px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50">
 
     <svg xmlns="http://www.w3.org/2000/svg" class="absolute top-0 bottom-0 right-3 w-5 h-full pointer-events-none text-gray" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>

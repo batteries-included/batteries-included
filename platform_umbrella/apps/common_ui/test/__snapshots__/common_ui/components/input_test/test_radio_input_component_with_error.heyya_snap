@@ -1,12 +1,12 @@
 <div phx-feedback-for="foobar" class="flex flex-wrap items-center gap-x-6 ">
   <label class="inline-flex flex-wrap items-center gap-2 cursor-pointer ">
-    <input type="radio" name="foobar" value="foo" checked class="peer size-5 text-primary rounded-full bg-white dark:bg-gray-darkest-tint cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 checked:border-primary checked:hover:border-primary phx-feedback:bg-red-50 phx-feedback:border-red-200">
+    <input type="radio" name="foobar" value="foo" checked class="peer size-5 text-primary rounded-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 checked:border-primary checked:hover:border-primary bg-red-50 phx-no-feedback:bg-white phx-no-feedback:dark:bg-gray-darkest-tint border-red-200 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint">
 
     <span class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
       Foo
     </span>
   </label><label class="inline-flex flex-wrap items-center gap-2 cursor-pointer ">
-    <input type="radio" name="foobar" value="bar" class="peer size-5 text-primary rounded-full bg-white dark:bg-gray-darkest-tint cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 checked:border-primary checked:hover:border-primary phx-feedback:bg-red-50 phx-feedback:border-red-200">
+    <input type="radio" name="foobar" value="bar" class="peer size-5 text-primary rounded-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 checked:border-primary checked:hover:border-primary bg-red-50 phx-no-feedback:bg-white phx-no-feedback:dark:bg-gray-darkest-tint border-red-200 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint">
 
     <span class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
       Bar
@@ -14,10 +14,19 @@
   </label>
 
   
-  <div class="flex items-center gap-2 text-xs text-red-500 font-semibold phx-no-feedback:hidden w-full mt-2">
-  <svg xmlns="http://www.w3.org/2000/svg" class="size-4 fill-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-  <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/>
+  <div id="foo" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white  phx-no-feedback:hidden w-full mt-2">
+  <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/>
 </svg>
-  <span>Oh no</span>
+
+  
+    <div class="flex-1">
+      
+  Oh no
+
+    </div>
+
+    
+  
 </div>
 </div>
