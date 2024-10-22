@@ -2,6 +2,7 @@ defmodule CommonUI.Components.Input do
   @moduledoc false
   use CommonUI, :component
 
+  import CommonUI.Components.Alert
   import CommonUI.Components.Dropdown
   import CommonUI.Components.Icon
   import CommonUI.Components.Tooltip
@@ -556,16 +557,14 @@ defmodule CommonUI.Components.Input do
 
   defp error(assigns) do
     ~H"""
-    <div
+    <.alert
       :for={error <- @errors}
-      class={[
-        "flex items-center gap-2 text-xs text-red-500 font-semibold phx-no-feedback:hidden",
-        @class
-      ]}
+      variant="error"
+      type="minimal"
+      class={["phx-no-feedback:hidden", @class]}
     >
-      <.icon name={:exclamation_circle} mini class="size-4 fill-red-500" />
-      <span><%= error %></span>
-    </div>
+      <%= error %>
+    </.alert>
     """
   end
 end
