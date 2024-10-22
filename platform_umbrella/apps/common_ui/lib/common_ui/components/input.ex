@@ -202,12 +202,19 @@ defmodule CommonUI.Components.Input do
           value={option.value}
           checked={to_string(@value) == to_string(option.value)}
           class={[
-            "peer size-5 text-primary rounded-full bg-white dark:bg-gray-darkest-tint",
+            "peer size-5 text-primary rounded-full",
             "cursor-pointer disabled:cursor-not-allowed disabled:opacity-75",
             "checked:border-primary checked:hover:border-primary",
             @errors == [] &&
-              "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary",
-            @errors != [] && "phx-feedback:bg-red-50 phx-feedback:border-red-200"
+              [
+                "bg-white dark:bg-gray-darkest-tint",
+                "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary"
+              ],
+            @errors != [] &&
+              [
+                "bg-red-50 phx-no-feedback:bg-white phx-no-feedback:dark:bg-gray-darkest-tint",
+                "border-red-200 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint"
+              ]
           ]}
           {@rest}
         />
@@ -462,8 +469,8 @@ defmodule CommonUI.Components.Input do
 
   defp input_class([_ | _] = _errors) do
     [
-      "phx-feedback:bg-red-50 phx-feedback:border-red-200",
-      "phx-feedback:dark:bg-red-950 phx-feedback:dark:border-red-900",
+      "bg-red-50 dark:bg-red-950 phx-no-feedback:bg-gray-lightest phx-no-feedback:dark:bg-gray-darkest-tint",
+      "border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint",
       input_class(nil)
     ]
   end
@@ -483,13 +490,15 @@ defmodule CommonUI.Components.Input do
 
   defp checkbox_class([_ | _] = _errors) do
     [
-      "phx-feedback:bg-red-50 phx-feedback:dark:bg-red-950 phx-feedback:border-red-200 phx-feedback:dark:border-red-900",
+      "bg-red-50 dark:bg-red-950 phx-no-feedback:bg-white phx-no-feedback:dark:bg-gray-darkest-tint",
+      "border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint",
       checkbox_class()
     ]
   end
 
   defp checkbox_class(_) do
     [
+      "bg-white dark:bg-gray-darkest-tint",
       "border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary",
       checkbox_class()
     ]
@@ -497,8 +506,7 @@ defmodule CommonUI.Components.Input do
 
   defp checkbox_class do
     [
-      "size-5 text-primary rounded bg-white dark:bg-gray-darkest-tint",
-      "cursor-pointer disabled:cursor-not-allowed disabled:opacity-65",
+      "size-5 text-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-65",
       "checked:border-primary checked:hover:border-primary"
     ]
   end
