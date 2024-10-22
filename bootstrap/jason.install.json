@@ -1,13 +1,13 @@
 {
-  "id": "batt_01922a068f7176fcb642a38b71ed55e0",
+  "id": "batt_0192b52f14ad79adab5614a85efa0bc2",
   "usage": "development",
-  "team_id": "batt_01922a068f227a55b6c96963eb6a80ca",
+  "team_id": "batt_0192b52f145d761b8546fd316265d70f",
   "default_size": "small",
   "control_jwk": {
     "crv": "Ed25519",
-    "d": "mxW2NVEuZ_BR3kBeEtBjQ34hFceTVpoQLhYp3VPbzsM",
+    "d": "5VfxhSfXQCeGbLrmfyJpIK0M6tWdgAVUYRs3xtGuuZQ",
     "kty": "OKP",
-    "x": "Mxx5Ht9UXDOHrgHBtjtH120UQiDiiepyIEuEHwdvUGs"
+    "x": "REz5mxjBSwLiM5TRZpVnCIKc5hV5YSjThpukRmHisac"
   },
   "inserted_at": null,
   "updated_at": null,

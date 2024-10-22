@@ -337,18 +337,18 @@ defmodule CommonCore.Defaults.Images do
   @spec control_server_image() :: String.t()
   def control_server_image do
     ver = batteries_included_version()
-    "public.ecr.aws/batteries-included/control-server:#{ver}"
+    "ghcr.io/batteries-included/control-server:#{ver}"
   end
 
   @spec bootstrap_image() :: String.t()
   def bootstrap_image do
     ver = batteries_included_version()
-    "public.ecr.aws/batteries-included/kube-bootstrap:#{ver}"
+    "ghcr.io/batteries-included/kube-bootstrap:#{ver}"
   end
 
   @spec home_base_image() :: String.t()
   def home_base_image do
     ver = batteries_included_version()
-    "public.ecr.aws/batteries-included/home-base:#{ver}"
+    "ghcr.io/batteries-included/home-base:#{ver}"
   end
 end

@@ -42,7 +42,7 @@ defmodule CommonCore.Factory do
 
     merge_attributes(
       %CommonCore.ET.StableVersionsReport{
-        control_server: Map.get(attrs, :control_server, "public.ecr.aws/batteries-included/control-server:v100.0.0")
+        control_server: Map.get(attrs, :control_server, "ghcr.io/batteries-included/control-server:v100.0.0")
       },
       attrs
     )

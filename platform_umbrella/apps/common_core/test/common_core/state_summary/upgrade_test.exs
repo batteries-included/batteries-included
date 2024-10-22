@@ -27,7 +27,7 @@ defmodule CommonCore.StateSummary.UpgradeTest do
     state_summary = build(:state_summary, captured_at: captured_at)
 
     assert Core.controlserver_image(state_summary) ==
-             "public.ecr.aws/batteries-included/control-server:v100.0.0"
+             "ghcr.io/batteries-included/control-server:v100.0.0"
   end
 
   test "gives the default image with a nil captured_at" do
