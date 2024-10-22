@@ -1,14 +1,4 @@
-<label phx-feedback-for="foo">
-  <div class="flex items-center justify-between mb-2">
-    <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter mb-0">
-  <span>Foobar</span>
-
-  
-</div>
-
-    
-  </div>
-
+<div phx-feedback-for="foo">
   <div class="relative">
     <input type="text" name="foo" value="bar" phx-debounce="blur" class="px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50" required>
 
@@ -18,5 +8,4 @@
   </div>
 
   
-  
-</label>
+</div>

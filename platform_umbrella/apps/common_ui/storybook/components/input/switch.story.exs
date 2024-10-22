@@ -3,6 +3,7 @@ defmodule Storybook.Components.Input.Switch do
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Components.Input.input/1
+  def imports, do: [{CommonUI.Components.Field, field: 1}]
 
   def variations do
     [
@@ -12,7 +13,6 @@ defmodule Storybook.Components.Input.Switch do
           type: "switch",
           name: "foo",
           value: "bar",
-          label: "Label",
           checked: false
         }
       },
@@ -22,22 +22,26 @@ defmodule Storybook.Components.Input.Switch do
           type: "switch",
           name: "foo",
           value: "bar",
-          label: "Label",
           checked: true,
           disabled: true
         }
       },
       %Variation{
-        id: :with_errors,
+        id: :with_error,
         attributes: %{
           type: "switch",
           name: "foo",
           value: "bar",
-          label: "Label",
           checked: false,
           errors: ["Oh no"],
           force_feedback: true
-        }
+        },
+        template: """
+        <.field variant="beside">
+          <:label>Label</:label>
+          <.psb-variation />
+        </.field>
+        """
       }
     ]
   end

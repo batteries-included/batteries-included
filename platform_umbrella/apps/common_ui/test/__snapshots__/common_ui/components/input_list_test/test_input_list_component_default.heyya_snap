@@ -2,13 +2,11 @@
   <div class="text-sm text-gray-darkest dark:text-gray-lighter mb-2">Foobar</div>
 
   
-    
-      <div class="flex items-center justify-between gap-4 lg:gap-6 mb-2 last:mb-0">
-        <div class="flex-1">
-          
-  <label phx-feedback-for="foo[]">
   
-
+    <div class="flex items-center justify-between gap-4 lg:gap-6 mb-2 last:mb-0">
+      <div class="flex-1">
+        
+  <div phx-feedback-for="foo[]">
   <div class="relative">
     <input type="text" name="foo[]" value="bar" phx-debounce="blur" class="px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50">
 
@@ -16,12 +14,11 @@
   </div>
 
   
-  
-</label>
+</div>
 
-        </div>
+      </div>
 
-        <button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" type="button" phx-value-index="0">
+      <button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" type="button" phx-value-index="0">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
 </svg>
@@ -30,9 +27,9 @@
 
   
 </button>
-      </div>
-    
+    </div>
   
+
 
   <button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark mt-3 text-gray-light" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">

@@ -11,18 +11,7 @@ defmodule Storybook.Components.Input.Text do
         id: :text,
         attributes: %{
           name: "foobar",
-          value: "",
-          label: "Label",
-          note: "This is a note"
-        }
-      },
-      %Variation{
-        id: :with_help,
-        attributes: %{
-          name: "foobar",
-          value: "",
-          label: "Label",
-          help: "This is some help text"
+          value: ""
         }
       },
       %Variation{
@@ -40,7 +29,6 @@ defmodule Storybook.Components.Input.Text do
           type: "textarea",
           name: "foobar",
           value: "",
-          label: "Label",
           rows: 3
         }
       },
@@ -49,7 +37,6 @@ defmodule Storybook.Components.Input.Text do
         attributes: %{
           name: "foobar",
           value: "Foobar",
-          label: "Label",
           disabled: true
         }
       },
@@ -58,7 +45,6 @@ defmodule Storybook.Components.Input.Text do
         attributes: %{
           name: "foobar",
           value: "",
-          label: "Label",
           errors: ["Something went wrong"],
           force_feedback: true
         }

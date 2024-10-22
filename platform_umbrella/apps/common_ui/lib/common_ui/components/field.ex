@@ -26,8 +26,14 @@ defmodule CommonUI.Components.Field do
     assigns = provide_id(assigns)
 
     ~H"""
-    <label class={["w-full", @class]} {@rest}>
-      <div class={[@variant == "beside" && "grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2"]}>
+    <div class={["w-full", @class]}>
+      <label
+        class={[
+          "select-none",
+          @variant == "beside" && "grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2 items-center"
+        ]}
+        {@rest}
+      >
         <div
           :for={label <- @label}
           class={[
@@ -36,7 +42,7 @@ defmodule CommonUI.Components.Field do
             label[:class]
           ]}
         >
-          <div><%= render_slot(label) %></div>
+          <%= render_slot(label) %>
 
           <div :if={label[:help]}>
             <.icon
@@ -53,12 +59,12 @@ defmodule CommonUI.Components.Field do
         </div>
 
         <%= render_slot(@inner_block) %>
-      </div>
+      </label>
 
       <div :for={note <- @note} class={["text-xs text-gray-light mt-2", note[:class]]}>
         <%= render_slot(note) %>
       </div>
-    </label>
+    </div>
     """
   end
 end

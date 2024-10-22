@@ -1,11 +1,5 @@
-<label phx-feedback-for="foo" class="inline-flex flex-wrap items-center justify-between gap-2 cursor-pointer select-none ">
-  <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter inline-flex">
-  <span>Foobar</span>
-
-  
-</div>
-
-  <div>
+<div phx-feedback-for="foo" class="contents">
+  <div class="justify-self-end cursor-pointer ">
     <input type="hidden" name="foo" value="false" disabled>
 
     <input type="checkbox" name="foo" value="true" checked class="peer sr-only" disabled>
@@ -14,5 +8,4 @@
   </div>
 
   
-  
-</label>
+</div>

@@ -2,13 +2,7 @@
   <div class="relative z-40">
   <div class="cursor-pointer" phx-click="[[&quot;show&quot;,{&quot;time&quot;:300,&quot;to&quot;:&quot;#foo-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-out&quot;,&quot;duration-300&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;]]}]]">
     
-      <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter mb-2">
-  <span>Foobar</span>
-
-  
-</div>
-
-      <div class="bg-red-50 dark:bg-red-950 phx-no-feedback:bg-gray-lightest phx-no-feedback:dark:bg-gray-darkest-tint border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50 flex flex-wrap items-center gap-x-1 gap-y-1.5 min-h-[38px] bg-caret bg-no-repeat bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer">
+      <div class="bg-red-50 dark:bg-red-950 phx-no-feedback:bg-gray-lightest phx-no-feedback:dark:bg-gray-darkest-tint border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50 hover:border-primary dark:hover:border-gray flex flex-wrap items-center gap-x-1 gap-y-1.5 min-h-[38px] bg-caret bg-no-repeat bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer">
         <div class="py-0.5 px-2.5 shadow-sm rounded-full text-xs font-semibold bg-gray-lighter dark:bg-gray-darker-tint text-gray-dark dark:text-gray-light">
           bar
         </div>
@@ -18,11 +12,11 @@
 
   <nav id="foo-dropdown" role="navigation" phx-click-away="[[&quot;hide&quot;,{&quot;time&quot;:150,&quot;to&quot;:&quot;#foo-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-150&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;]]}]]" class="absolute right-0 top-full mt-4 min-w-full max-w-60 border border-gray-lighter bg-white rounded-md shadow-xl overflow-hidden hidden dark:bg-gray-darkest dark:text-white dark:border-gray-darker !mt-1 max-h-64 !overflow-auto">
     
-    <label class="flex items-center gap-3 px-3 py-2 text-sm cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darker">
+    <label class="flex items-center gap-3 px-3 py-2 text-sm text-gray-darkest dark:text-gray-lighter cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darker">
       <input type="checkbox" name="foo[]" value="foo" class="size-5 text-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-65 checked:border-primary checked:hover:border-primary">
 
       Foo
-    </label><label class="flex items-center gap-3 px-3 py-2 text-sm cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darker">
+    </label><label class="flex items-center gap-3 px-3 py-2 text-sm text-gray-darkest dark:text-gray-lighter cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darker">
       <input type="checkbox" name="foo[]" value="bar" checked class="size-5 text-primary rounded cursor-pointer disabled:cursor-not-allowed disabled:opacity-65 checked:border-primary checked:hover:border-primary">
 
       Bar
@@ -31,8 +25,7 @@
   </nav>
 </div>
 
-  
-  <div id="foo" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white  phx-no-feedback:hidden mt-2">
+  <div id="foo-error-0" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white  phx-no-feedback:hidden mt-2">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
   <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/>
 </svg>

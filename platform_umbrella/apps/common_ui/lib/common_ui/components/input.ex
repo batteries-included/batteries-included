@@ -20,10 +20,6 @@ defmodule CommonUI.Components.Input do
   attr :field, FormField
   attr :errors, :list, default: []
   attr :force_feedback, :boolean, default: false
-  attr :label, :string, default: nil
-  attr :label_note, :string, default: nil
-  attr :note, :string, default: nil
-  attr :help, :string, default: nil
   attr :placeholder, :string, default: nil
   attr :type, :string, default: "text"
   attr :icon, :atom, default: nil
@@ -31,6 +27,12 @@ defmodule CommonUI.Components.Input do
   attr :debounce, :any, default: "blur"
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(autocomplete autofocus step maxlength disabled required)
+
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  attr :label, :string, default: nil
+  attr :label_note, :string, default: nil
+  attr :note, :string, default: nil
+  attr :help, :string, default: nil
 
   # Used for select field
   attr :options, :list, default: []
@@ -70,7 +72,8 @@ defmodule CommonUI.Components.Input do
     |> input()
   end
 
-  def input(%{type: "multiselect"} = assigns) do
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label, type: "multiselect"} = assigns) when not is_nil(label) do
     ~H"""
     <div phx-feedback-for={if !@force_feedback, do: @name}>
       <.dropdown id={"#{@id}-dropdown"} class="!mt-1 max-h-64 !overflow-auto">
@@ -123,7 +126,59 @@ defmodule CommonUI.Components.Input do
     """
   end
 
-  def input(%{type: "select"} = assigns) do
+  def input(%{type: "multiselect"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name}>
+      <.dropdown id={"#{@id}-dropdown"} class="!mt-1 max-h-64 !overflow-auto">
+        <:trigger>
+          <div class={[
+            input_class(@errors),
+            "hover:border-primary dark:hover:border-gray",
+            "flex flex-wrap items-center gap-x-1 gap-y-1.5 min-h-[38px]",
+            "bg-caret bg-no-repeat bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer",
+            @class
+          ]}>
+            <div
+              :for={value <- @value}
+              class={[
+                "py-0.5 px-2.5 shadow-sm rounded-full text-xs font-semibold",
+                "bg-gray-lighter dark:bg-gray-darker-tint text-gray-dark dark:text-gray-light"
+              ]}
+            >
+              <%= value %>
+            </div>
+          </div>
+        </:trigger>
+
+        <label
+          :for={option <- @options}
+          class={[
+            "flex items-center gap-3 px-3 py-2 text-sm text-gray-darkest dark:text-gray-lighter",
+            Map.get(option, :disabled) && "cursor-not-allowed opacity-50",
+            !Map.get(option, :disabled) &&
+              "cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darker"
+          ]}
+        >
+          <input
+            type="checkbox"
+            name={@name <> "[]"}
+            value={option.value}
+            checked={Enum.member?(@value, option.value)}
+            disabled={Map.get(option, :disabled, false)}
+            class={checkbox_class()}
+          />
+
+          <%= option.name %>
+        </label>
+      </.dropdown>
+
+      <.error id={@id} errors={@errors} />
+    </div>
+    """
+  end
+
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label, type: "select"} = assigns) when not is_nil(label) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <.label id={@id} label={@label} help={@help} />
@@ -158,7 +213,40 @@ defmodule CommonUI.Components.Input do
     """
   end
 
-  def input(%{type: "checkbox"} = assigns) do
+  def input(%{type: "select"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name}>
+      <select
+        name={@name}
+        multiple={@multiple}
+        required={!@multiple && !@placeholder_selectable}
+        class={[
+          input_class(@errors),
+          "invalid:text-gray-light dark:invalid:text-gray-dark cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
+          @multiple == false && "bg-caret bg-[length:9px] bg-[right_0.8rem_center]",
+          @class
+        ]}
+        {@rest}
+      >
+        <option
+          :if={@multiple == false}
+          value=""
+          disabled={!@placeholder_selectable}
+          selected={!@value || @value == ""}
+        >
+          <%= assigns[:placeholder] %>
+        </option>
+
+        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+      </select>
+
+      <.error id={@id} errors={@errors} />
+    </div>
+    """
+  end
+
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label, type: "checkbox"} = assigns) when not is_nil(label) do
     ~H"""
     <label
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -185,7 +273,38 @@ defmodule CommonUI.Components.Input do
     """
   end
 
-  def input(%{type: "radio"} = assigns) do
+  def input(%{type: "checkbox"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name} class="contents">
+      <label class={[
+        "flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter cursor-pointer select-none justify-self-end",
+        @class
+      ]}>
+        <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
+        <input
+          type="checkbox"
+          name={@name}
+          value="true"
+          checked={@checked}
+          class={[checkbox_class(@errors), "peer"]}
+          {@rest}
+        />
+
+        <span
+          :if={@inner_block != []}
+          class={["peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"]}
+        >
+          <%= render_slot(@inner_block) %>
+        </span>
+      </label>
+
+      <.error id={@id} errors={@errors} />
+    </div>
+    """
+  end
+
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label, type: "radio"} = assigns) when not is_nil(label) do
     ~H"""
     <div
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -225,6 +344,37 @@ defmodule CommonUI.Components.Input do
 
       <div :if={@note} class={note_class()}><%= @note %></div>
       <.error id={@id} errors={@errors} class="w-full mt-2" />
+    </div>
+    """
+  end
+
+  def input(%{type: "radio"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name} class="contents">
+      <div class={["flex flex-wrap items-center gap-x-6 gap-y-3 justify-self-end", @class]}>
+        <label
+          :for={option <- @option}
+          class={[
+            "flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter cursor-pointer select-none",
+            Map.get(option, :class)
+          ]}
+        >
+          <input
+            type="radio"
+            name={@name}
+            value={option.value}
+            checked={to_string(@value) == to_string(option.value)}
+            class={[checkbox_class(@errors), "peer rounded-full"]}
+            {@rest}
+          />
+
+          <span class="peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+            <%= render_slot(option) %>
+          </span>
+        </label>
+      </div>
+
+      <.error id={@id} errors={@errors} />
     </div>
     """
   end
@@ -318,12 +468,13 @@ defmodule CommonUI.Components.Input do
         </div>
       </div>
 
-      <.error id={@id} errors={@errors} class="w-full mt-2" />
+      <.error id={@id} errors={@errors} />
     </div>
     """
   end
 
-  def input(%{type: "switch"} = assigns) do
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label, type: "switch"} = assigns) when not is_nil(label) do
     ~H"""
     <label
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -371,7 +522,47 @@ defmodule CommonUI.Components.Input do
     """
   end
 
-  def input(%{type: "textarea"} = assigns) do
+  def input(%{type: "switch"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name} class="contents">
+      <div class={["justify-self-end cursor-pointer", @class]}>
+        <input
+          :if={boolean?(@value)}
+          type="hidden"
+          name={@name}
+          value="false"
+          disabled={@rest[:disabled]}
+        />
+
+        <input
+          type="checkbox"
+          name={@name}
+          value={if boolean?(@value), do: "true", else: @value}
+          checked={@checked}
+          class="peer sr-only"
+          {@rest}
+        />
+
+        <div class={[
+          "relative w-[44px] h-[24px] rounded-full bg-gray-lightest border border-gray-lighter hover:border-primary",
+          "dark:bg-gray-darkest-tint dark:border-gray-darker dark:hover:border-gray-dark",
+          "after:content-[''] after:absolute after:top-[3px] after:start-[3px] after:w-[16px] after:h-[16px]",
+          "after:rounded-full after:bg-gray after:transition-all",
+          "peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary",
+          "peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter",
+          "peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary/50",
+          "dark:peer-checked:peer-disabled:after:bg-primary/30 dark:peer-disabled:hover:border-gray-darker",
+          "dark:peer-disabled:after:bg-gray-darker-tint/50"
+        ]} />
+      </div>
+
+      <.error id={@id} errors={@errors} class="mt-0" />
+    </div>
+    """
+  end
+
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label, type: "textarea"} = assigns) when not is_nil(label) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <.label id={@id} label={@label} help={@help} />
@@ -395,6 +586,24 @@ defmodule CommonUI.Components.Input do
     """
   end
 
+  def input(%{type: "textarea"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name}>
+      <textarea
+        name={@name}
+        placeholder={@placeholder}
+        phx-debounce={@debounce}
+        class={[input_class(@errors), @class]}
+        rows={@rows}
+        cols={@cols}
+        {@rest}
+      ><%= normalize_value("textarea", @value) %></textarea>
+
+      <.error id={@id} errors={@errors} />
+    </div>
+    """
+  end
+
   def input(%{type: "hidden"} = assigns) do
     ~H"""
     <input
@@ -407,7 +616,8 @@ defmodule CommonUI.Components.Input do
     """
   end
 
-  def input(%{type: "password", rest: %{disabled: true}} = assigns) do
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label, type: "password", rest: %{disabled: true}} = assigns) when not is_nil(label) do
     ~H"""
     <label phx-feedback-for={@name}>
       <div :if={@label} class="flex items-center justify-between mb-2">
@@ -421,7 +631,16 @@ defmodule CommonUI.Components.Input do
     """
   end
 
-  def input(assigns) do
+  def input(%{type: "password", rest: %{disabled: true}} = assigns) do
+    ~H"""
+    <div class={["font-mono font-bold text-sm", @class]}>
+      <%= TextHelpers.obfuscate(@value, keep: 1, char_limit: 12) %>
+    </div>
+    """
+  end
+
+  # TODO: Deprecated, remove when everything is migrated to Field component
+  def input(%{label: label} = assigns) when not is_nil(label) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <div :if={@label || @label_note} class="flex items-center justify-between mb-2">
@@ -453,6 +672,32 @@ defmodule CommonUI.Components.Input do
       <div :if={@note} class={note_class()}><%= @note %></div>
       <.error id={@id} errors={@errors} />
     </label>
+    """
+  end
+
+  def input(assigns) do
+    ~H"""
+    <div phx-feedback-for={if !@force_feedback, do: @name}>
+      <div class="relative">
+        <input
+          type={@type}
+          name={@name}
+          value={normalize_value(@type, @value)}
+          placeholder={@placeholder}
+          phx-debounce={@debounce}
+          class={[input_class(@errors), @class]}
+          {@rest}
+        />
+
+        <.icon
+          :if={@icon}
+          name={@icon}
+          class="absolute top-0 bottom-0 right-3 w-5 h-full pointer-events-none text-gray"
+        />
+      </div>
+
+      <.error id={@id} errors={@errors} />
+    </div>
     """
   end
 
@@ -500,6 +745,7 @@ defmodule CommonUI.Components.Input do
     ]
   end
 
+  # TODO: Deprecated, remove when everything is migrated to Field component
   defp note_class, do: "text-xs text-gray-light mt-2"
 
   defp boolean?(value), do: value in [true, "true", false, "false", nil]
@@ -517,6 +763,7 @@ defmodule CommonUI.Components.Input do
   attr :class, :any, default: "mb-2"
   attr :rest, :global
 
+  # TODO: Deprecated, remove when everything is migrated to Field component
   defp label(assigns) do
     ~H"""
     <div :if={@label} class={[label_class(), @class]} {@rest}>
@@ -538,6 +785,7 @@ defmodule CommonUI.Components.Input do
     """
   end
 
+  # TODO: Deprecated, remove when everything is migrated to Field component
   defp label_class, do: "flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter"
 
   attr :id, :string, default: nil
@@ -547,8 +795,8 @@ defmodule CommonUI.Components.Input do
   defp error(assigns) do
     ~H"""
     <.alert
-      :for={error <- @errors}
-      id={@id}
+      :for={{error, index} <- Enum.with_index(@errors)}
+      id={"#{@id}-error-#{index}"}
       variant="error"
       type="minimal"
       class={["phx-no-feedback:hidden", @class]}

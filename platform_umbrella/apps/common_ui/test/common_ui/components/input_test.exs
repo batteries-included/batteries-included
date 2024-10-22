@@ -8,7 +8,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input id="foo" name="foo" value="bar" label="Foobar" icon={:magnifying_glass} />
+      <.input id="foo" name="foo" value="bar" icon={:magnifying_glass} />
       """
     end
 
@@ -16,7 +16,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input id="foo" name="foo" value="bar" label="Foobar" required icon={:magnifying_glass} />
+      <.input id="foo" name="foo" value="bar" icon={:magnifying_glass} required />
       """
     end
 
@@ -27,22 +27,6 @@ defmodule CommonUI.Components.InputTest do
       <.input id="foo" name="foo" value="bar" placeholder="Foobar" errors={["Oh no"]} />
       """
     end
-
-    component_snapshot_test "with help text" do
-      assigns = %{}
-
-      ~H"""
-      <.input
-        id="foo"
-        name="foo"
-        value="bar"
-        placeholder="Foobar"
-        label="Foobar"
-        help="Help text"
-        errors={["Oh no"]}
-      />
-      """
-    end
   end
 
   describe "textarea input component" do
@@ -50,7 +34,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="textarea" id="foo" name="foo" value="bar" label="Foobar" />
+      <.input type="textarea" id="foo" name="foo" value="bar" />
       """
     end
 
@@ -68,14 +52,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input
-        type="select"
-        id="foo"
-        name="foo"
-        value="bar"
-        label="Foobar"
-        options={[Foo: "foo", Bar: "bar"]}
-      />
+      <.input type="select" id="foo" name="foo" value="bar" options={[Foo: "foo", Bar: "bar"]} />
       """
     end
 
@@ -83,15 +60,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input
-        type="select"
-        id="foo"
-        name="foo"
-        value="bar"
-        label="Foobar"
-        options={[Foo: "foo", Bar: "bar"]}
-        multiple
-      />
+      <.input type="select" id="foo" name="foo" value="bar" options={[Foo: "foo", Bar: "bar"]} multiple />
       """
     end
 
@@ -105,7 +74,6 @@ defmodule CommonUI.Components.InputTest do
         name="foo"
         value="bar"
         placeholder="Foobar"
-        note="This is a note"
         options={[Foo: "foo", Bar: "bar"]}
         errors={["Oh no"]}
       />
@@ -123,7 +91,6 @@ defmodule CommonUI.Components.InputTest do
         id="foo"
         name="foo"
         value={["bar"]}
-        label="Foobar"
         options={[%{name: "Foo", value: "foo"}, %{name: "Bar", value: "bar"}]}
       />
       """
@@ -138,7 +105,6 @@ defmodule CommonUI.Components.InputTest do
         id="foo"
         name="foo"
         value={["bar"]}
-        label="Foobar"
         options={[%{name: "Foo", value: "foo"}, %{name: "Bar", value: "bar"}]}
         errors={["Oh no"]}
       />
@@ -151,7 +117,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="checkbox" id="foo" name="foo" label="Foobar" checked />
+      <.input type="checkbox" id="foo" name="foo" checked />
       """
     end
 
@@ -159,7 +125,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="checkbox" id="foo" name="foo" label="Foobar" checked errors={["Oh no"]} />
+      <.input type="checkbox" id="foo" name="foo" checked errors={["Oh no"]} />
       """
     end
 
@@ -167,7 +133,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="checkbox" id="foo" name="foo" label="Foobar" checked disabled />
+      <.input type="checkbox" id="foo" name="foo" checked disabled />
       """
     end
   end
@@ -177,7 +143,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="radio" id="foo" name="foobar" value="foo">
+      <.input type="radio" id="foo" name="foo" value="bar">
         <:option value="foo">Foo</:option>
         <:option value="bar">Bar</:option>
       </.input>
@@ -188,7 +154,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="radio" id="foo" name="foobar" value="foo" errors={["Oh no"]}>
+      <.input type="radio" id="foo" name="foo" value="bar" errors={["Oh no"]}>
         <:option value="foo">Foo</:option>
         <:option value="bar">Bar</:option>
       </.input>
@@ -201,7 +167,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" id="foo" name="foo" value="bar" label="Foobar" checked />
+      <.input type="switch" id="foo" name="foo" value="bar" checked />
       """
     end
 
@@ -209,7 +175,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" id="foo" name="foo" value="bar" label="Foobar" checked errors={["Oh no"]} />
+      <.input type="switch" id="foo" name="foo" value="bar" checked errors={["Oh no"]} />
       """
     end
 
@@ -217,7 +183,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" id="foo" name="foo" value="true" label="Foobar" checked />
+      <.input type="switch" id="foo" name="foo" value="true" checked />
       """
     end
 
@@ -225,7 +191,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="switch" id="foo" name="foo" value="true" label="Foobar" checked disabled />
+      <.input type="switch" id="foo" name="foo" value="true" checked disabled />
       """
     end
   end
@@ -235,7 +201,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="range" id="foo" name="foo" value={5} max={10} label="Foobar" />
+      <.input type="range" id="foo" name="foo" value={5} max={10} />
       """
     end
 
@@ -243,7 +209,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="range" id="foo" name="foo" value={5} min={2} max={10} label="Foobar" />
+      <.input type="range" id="foo" name="foo" value={5} min={2} max={10} />
       """
     end
 
@@ -251,7 +217,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="range" id="foo" name="foo" value={5} max={10} label="Foobar" show_value={false} />
+      <.input type="range" id="foo" name="foo" value={5} max={10} show_value={false} />
       """
     end
 
@@ -288,7 +254,6 @@ defmodule CommonUI.Components.InputTest do
       type="password"
       id="foo"
       name="foo"
-      label="Foobar"
       value="somereallylongpasswordthatwedontwanttoshowforsecurity"
       disabled
     />

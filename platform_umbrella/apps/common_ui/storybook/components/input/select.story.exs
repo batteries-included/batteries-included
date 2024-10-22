@@ -3,6 +3,7 @@ defmodule Storybook.Components.Input.Select do
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Components.Input.input/1
+  def imports, do: [{CommonUI.Components.Field, field: 1}]
   def container, do: {:div, class: "w-full"}
 
   def variations do
@@ -13,7 +14,6 @@ defmodule Storybook.Components.Input.Select do
           type: "select",
           name: "foobar",
           value: "",
-          label: "Label",
           placeholder: "Choose an option",
           options: [Foo: "foo", Bar: "bar"]
         }
@@ -24,11 +24,15 @@ defmodule Storybook.Components.Input.Select do
           type: "select",
           name: "foobar",
           value: "",
-          label: "Label",
-          note: "Hold down control or command to select multiple",
           options: [Foo: "foo", Bar: "bar"],
           multiple: true
-        }
+        },
+        template: """
+        <.field>
+          <.psb-variation />
+          <:note>Hold down control or command to select multiple</:note>
+        </.field>
+        """
       },
       %Variation{
         id: :disabled,
@@ -36,7 +40,6 @@ defmodule Storybook.Components.Input.Select do
           type: "select",
           name: "foobar",
           value: "",
-          label: "Label",
           placeholder: "Choose an option",
           options: [Foo: "foo", Bar: "bar"],
           disabled: true
@@ -48,7 +51,6 @@ defmodule Storybook.Components.Input.Select do
           type: "select",
           name: "foobar",
           value: "",
-          label: "Label",
           placeholder: "Choose an option",
           options: [Foo: "foo", Bar: "bar"],
           errors: ["Something went wrong"],
