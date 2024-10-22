@@ -1,7 +1,7 @@
 <label phx-feedback-for="foo">
   
 
-  <select name="foo" required class="phx-feedback:bg-red-50 phx-feedback:border-red-200 phx-feedback:dark:bg-red-950 phx-feedback:dark:border-red-900 px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50 invalid:text-gray-light dark:invalid:text-gray-dark cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 bg-caret bg-[length:9px] bg-[right_0.8rem_center]" id="foo">
+  <select name="foo" required class="bg-red-50 dark:bg-red-950 phx-no-feedback:bg-gray-lightest phx-no-feedback:dark:bg-gray-darkest-tint border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50 invalid:text-gray-light dark:invalid:text-gray-dark cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 bg-caret bg-[length:9px] bg-[right_0.8rem_center]" id="foo">
     <option value="" disabled>
       Foobar
     </option>
@@ -10,10 +10,19 @@
   </select>
 
   <div class="text-xs text-gray-light mt-2">This is a note</div>
-  <div class="flex items-center gap-2 text-xs text-red-500 font-semibold phx-no-feedback:hidden mt-2">
-  <svg xmlns="http://www.w3.org/2000/svg" class="size-4 fill-red-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-  <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/>
+  <div id="foo" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white  phx-no-feedback:hidden mt-2">
+  <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/>
 </svg>
-  <span>Oh no</span>
+
+  
+    <div class="flex-1">
+      
+  Oh no
+
+    </div>
+
+    
+  
 </div>
 </label>

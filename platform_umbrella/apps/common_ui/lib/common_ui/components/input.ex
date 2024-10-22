@@ -118,7 +118,7 @@ defmodule CommonUI.Components.Input do
       </.dropdown>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </div>
     """
   end
@@ -155,12 +155,14 @@ defmodule CommonUI.Components.Input do
       </select>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </label>
     """
   end
 
   def input(%{type: "checkbox"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+
     ~H"""
     <label
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -182,12 +184,14 @@ defmodule CommonUI.Components.Input do
       </span>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} class="w-full mt-2" />
+      <.error id={@id} errors={@errors} class="w-full mt-2" />
     </label>
     """
   end
 
   def input(%{type: "radio"} = assigns) do
+    assigns = IDHelpers.provide_id(assigns)
+    
     ~H"""
     <div
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -226,7 +230,7 @@ defmodule CommonUI.Components.Input do
       </label>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} class="w-full mt-2" />
+      <.error id={@id} errors={@errors} class="w-full mt-2" />
     </div>
     """
   end
@@ -322,7 +326,7 @@ defmodule CommonUI.Components.Input do
         </div>
       </div>
 
-      <.error errors={@errors} class="w-full mt-2" />
+      <.error id={@id} errors={@errors} class="w-full mt-2" />
     </div>
     """
   end
@@ -372,7 +376,7 @@ defmodule CommonUI.Components.Input do
       </div>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} class="w-full mt-0" />
+      <.error id={@id} errors={@errors} class="w-full mt-0" />
     </label>
     """
   end
@@ -398,7 +402,7 @@ defmodule CommonUI.Components.Input do
       ><%= normalize_value("textarea", @value) %></textarea>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </label>
     """
   end
@@ -463,7 +467,7 @@ defmodule CommonUI.Components.Input do
       </div>
 
       <div :if={@note} class={note_class()}><%= @note %></div>
-      <.error errors={@errors} />
+      <.error id={@id} errors={@errors} />
     </label>
     """
   end
@@ -552,6 +556,7 @@ defmodule CommonUI.Components.Input do
 
   defp label_class, do: "flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter"
 
+  attr :id, :string, default: nil
   attr :errors, :list, default: []
   attr :class, :any, default: "mt-2"
 
@@ -559,6 +564,7 @@ defmodule CommonUI.Components.Input do
     ~H"""
     <.alert
       :for={error <- @errors}
+      id={@id}
       variant="error"
       type="minimal"
       class={["phx-no-feedback:hidden", @class]}

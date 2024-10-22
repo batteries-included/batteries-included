@@ -159,7 +159,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="checkbox" name="foo" label="Foobar" checked errors={["Oh no"]} />
+      <.input type="checkbox" id="foo" name="foo" label="Foobar" checked errors={["Oh no"]} />
       """
     end
 
@@ -188,7 +188,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="radio" name="foobar" value="foo" errors={["Oh no"]}>
+      <.input type="radio" id="foo" name="foobar" value="foo" errors={["Oh no"]}>
         <:option value="foo">Foo</:option>
         <:option value="bar">Bar</:option>
       </.input>
