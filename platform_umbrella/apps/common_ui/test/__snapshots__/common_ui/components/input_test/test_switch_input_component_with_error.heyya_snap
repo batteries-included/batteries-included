@@ -8,7 +8,7 @@
   <div>
     
 
-    <input type="checkbox" name="foo" value="bar" checked class="peer sr-only" id="foo">
+    <input type="checkbox" name="foo" value="bar" checked class="peer sr-only">
 
     <div class="relative w-[44px] h-[24px] rounded-full bg-gray-lightest border border-gray-lighter hover:border-primary dark:bg-gray-darkest-tint dark:border-gray-darker dark:hover:border-gray-dark after:content-[&#39;&#39;] after:absolute after:top-[3px] after:start-[3px] after:w-[16px] after:h-[16px] after:rounded-full after:bg-gray after:transition-all peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary/50 dark:peer-checked:peer-disabled:after:bg-primary/30 dark:peer-disabled:hover:border-gray-darker dark:peer-disabled:after:bg-gray-darker-tint/50"></div>
   </div>

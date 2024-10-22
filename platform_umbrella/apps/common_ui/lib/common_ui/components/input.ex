@@ -13,6 +13,7 @@ defmodule CommonUI.Components.Input do
   alias CommonUI.TextHelpers
   alias Phoenix.HTML.FormField
 
+  attr :id, :string, default: nil
   attr :name, :any
   attr :value, :any
   attr :checked, :boolean
@@ -65,12 +66,11 @@ defmodule CommonUI.Components.Input do
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> assign_new(:checked, fn %{value: value} -> normalize_value("checkbox", value) end)
+    |> IDHelpers.provide_id()
     |> input()
   end
 
   def input(%{type: "multiselect"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <div phx-feedback-for={if !@force_feedback, do: @name}>
       <.dropdown id={"#{@id}-dropdown"} class="!mt-1 max-h-64 !overflow-auto">
@@ -124,8 +124,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "select"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <.label id={@id} label={@label} help={@help} />
@@ -161,8 +159,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "checkbox"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -190,8 +186,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "radio"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <div
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -236,8 +230,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "range"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <div id={@id} class={@class} phx-hook="Range">
       <div class="relative pb-6">
@@ -332,8 +324,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "switch"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label
       phx-feedback-for={if !@force_feedback, do: @name}
@@ -382,8 +372,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "textarea"} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <.label id={@id} label={@label} help={@help} />
@@ -420,8 +408,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(%{type: "password", rest: %{disabled: true}} = assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={@name}>
       <div :if={@label} class="flex items-center justify-between mb-2">
@@ -436,8 +422,6 @@ defmodule CommonUI.Components.Input do
   end
 
   def input(assigns) do
-    assigns = IDHelpers.provide_id(assigns)
-
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
       <div :if={@label || @label_note} class="flex items-center justify-between mb-2">

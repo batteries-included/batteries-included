@@ -151,7 +151,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="checkbox" name="foo" label="Foobar" checked />
+      <.input type="checkbox" id="foo" name="foo" label="Foobar" checked />
       """
     end
 
@@ -167,7 +167,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="checkbox" name="foo" label="Foobar" checked disabled />
+      <.input type="checkbox" id="foo" name="foo" label="Foobar" checked disabled />
       """
     end
   end
@@ -177,7 +177,7 @@ defmodule CommonUI.Components.InputTest do
       assigns = %{}
 
       ~H"""
-      <.input type="radio" name="foobar" value="foo">
+      <.input type="radio" id="foo" name="foobar" value="foo">
         <:option value="foo">Foo</:option>
         <:option value="bar">Bar</:option>
       </.input>
@@ -276,7 +276,7 @@ defmodule CommonUI.Components.InputTest do
     assigns = %{}
 
     ~H"""
-    <.input type="hidden" name="foo" value="bar" />
+    <.input type="hidden" id="foo" name="foo" value="bar" />
     """
   end
 
@@ -286,6 +286,7 @@ defmodule CommonUI.Components.InputTest do
     ~H"""
     <.input
       type="password"
+      id="foo"
       name="foo"
       label="Foobar"
       value="somereallylongpasswordthatwedontwanttoshowforsecurity"

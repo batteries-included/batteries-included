@@ -1,7 +1,7 @@
 <label phx-feedback-for="foo">
   
 
-  <select name="foo" required class="bg-red-50 dark:bg-red-950 phx-no-feedback:bg-gray-lightest phx-no-feedback:dark:bg-gray-darkest-tint border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50 invalid:text-gray-light dark:invalid:text-gray-dark cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 bg-caret bg-[length:9px] bg-[right_0.8rem_center]" id="foo">
+  <select name="foo" required class="bg-red-50 dark:bg-red-950 phx-no-feedback:bg-gray-lightest phx-no-feedback:dark:bg-gray-darkest-tint border-red-200 dark:border-red-900 phx-no-feedback:border-gray-lighter phx-no-feedback:dark:border-gray-darker-tint px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50 invalid:text-gray-light dark:invalid:text-gray-dark cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 bg-caret bg-[length:9px] bg-[right_0.8rem_center]">
     <option value="" disabled>
       Foobar
     </option>

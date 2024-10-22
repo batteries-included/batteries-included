@@ -6,7 +6,7 @@
   </div>
 
   <div class="relative">
-    <input id="foo-input" type="range" name="foo" value="5" min="2" max="10" list="foo-ticks" class="peer relative z-30 appearance-none bg-transparent cursor-pointer w-full slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint slider-thumb:disabled:border-primary-light disabled:cursor-not-allowed h-[32px] slider-thumb:size-[32px]" id="foo">
+    <input id="foo-input" type="range" name="foo" value="5" min="2" max="10" list="foo-ticks" class="peer relative z-30 appearance-none bg-transparent cursor-pointer w-full slider-thumb:appearance-none slider-thumb:box-border slider-thumb:rounded-full slider-thumb:border-2 slider-thumb:border-solid slider-thumb:border-primary slider-thumb:bg-white slider-thumb:dark:bg-gray-darkest-tint slider-thumb:disabled:border-primary-light disabled:cursor-not-allowed h-[32px] slider-thumb:size-[32px]">
 
     <div id="foo-progress-bg" phx-update="ignore" class="absolute h-[4px] z-10 bg-gray-lighter dark:bg-gray-darkest-tint w-full rounded pointer-events-none top-[14px]"></div>
 
