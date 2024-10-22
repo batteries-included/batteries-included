@@ -1,11 +1,5 @@
-<label phx-feedback-for="foo" class="inline-flex flex-wrap items-center justify-between gap-2 cursor-pointer select-none ">
-  <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter inline-flex">
-  <span>Foobar</span>
-
-  
-</div>
-
-  <div>
+<div phx-feedback-for="foo" class="contents">
+  <div class="justify-self-end cursor-pointer ">
     
 
     <input type="checkbox" name="foo" value="bar" checked class="peer sr-only">
@@ -13,8 +7,7 @@
     <div class="relative w-[44px] h-[24px] rounded-full bg-gray-lightest border border-gray-lighter hover:border-primary dark:bg-gray-darkest-tint dark:border-gray-darker dark:hover:border-gray-dark after:content-[&#39;&#39;] after:absolute after:top-[3px] after:start-[3px] after:w-[16px] after:h-[16px] after:rounded-full after:bg-gray after:transition-all peer-checked:after:translate-x-[20px] peer-checked:after:bg-primary peer-disabled:cursor-not-allowed peer-disabled:hover:border-gray-lighter peer-disabled:after:bg-gray-lighter peer-checked:peer-disabled:after:bg-primary/50 dark:peer-checked:peer-disabled:after:bg-primary/30 dark:peer-disabled:hover:border-gray-darker dark:peer-disabled:after:bg-gray-darker-tint/50"></div>
   </div>
 
-  
-  <div id="foo" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white  phx-no-feedback:hidden w-full mt-0">
+  <div id="foo-error-0" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white  phx-no-feedback:hidden mt-0">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
   <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/>
 </svg>
@@ -29,4 +22,4 @@
     
   
 </div>
-</label>
+</div>

@@ -12,12 +12,11 @@ defmodule Storybook.Components.Input.Multiselect do
         attributes: %{
           type: "multiselect",
           name: "foobar",
-          value: ["example-2", "example-3"],
-          label: "Label",
+          value: ["example-2", "example-4"],
           options: [
             %{name: "Example 1", value: "example-1"},
             %{name: "Example 2", value: "example-2"},
-            %{name: "Example 3", value: "example-3"},
+            %{name: "Example 3", value: "example-3", disabled: true},
             %{name: "Example 4", value: "example-4"}
           ]
         }
@@ -28,11 +27,10 @@ defmodule Storybook.Components.Input.Multiselect do
           type: "multiselect",
           name: "foobar",
           value: ["example-1"],
-          label: "Label",
           options: [
-            %{name: "Example 1", value: "example-1", disabled: true},
-            %{name: "Example 2", value: "example-2", disabled: true},
-            %{name: "Example 3", value: "example-3"},
+            %{name: "Example 1", value: "example-1"},
+            %{name: "Example 2", value: "example-2"},
+            %{name: "Example 3", value: "example-3", disabled: true},
             %{name: "Example 4", value: "example-4"}
           ],
           errors: ["Something went wrong"],

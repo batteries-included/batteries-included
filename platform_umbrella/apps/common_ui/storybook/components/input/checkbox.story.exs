@@ -3,6 +3,7 @@ defmodule Storybook.Components.Input.Checkbox do
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Components.Input.input/1
+  def imports, do: [{CommonUI.Components.Field, field: 1}]
 
   def variations do
     [
@@ -11,7 +12,6 @@ defmodule Storybook.Components.Input.Checkbox do
         attributes: %{
           type: "checkbox",
           name: "foobar",
-          label: "Label",
           checked: true
         }
       },
@@ -20,21 +20,36 @@ defmodule Storybook.Components.Input.Checkbox do
         attributes: %{
           type: "checkbox",
           name: "foobar",
-          label: "Label",
           checked: false,
           disabled: true
         }
+      },
+      %Variation{
+        id: :inline_label,
+        attributes: %{
+          type: "checkbox",
+          name: "foobar",
+          checked: false
+        },
+        slots: [
+          "Inline Label"
+        ]
       },
       %Variation{
         id: :with_error,
         attributes: %{
           type: "checkbox",
           name: "foobar",
-          label: "Label",
           checked: false,
           errors: ["Oh no"],
           force_feedback: true
-        }
+        },
+        template: """
+        <.field variant="beside">
+          <:label>Label</:label>
+          <.psb-variation />
+        </.field>
+        """
       }
     ]
   end
