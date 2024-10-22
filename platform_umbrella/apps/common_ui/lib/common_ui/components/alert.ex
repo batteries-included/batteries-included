@@ -88,7 +88,8 @@ defmodule CommonUI.Components.Alert do
   defp variant_class("info", type) do
     [
       "text-sky-500 dark:text-white",
-      type != "minimal" && "bg-sky-50 dark:bg-sky-500 border border-sky-100 dark:border-none",
+      type != "minimal" && "bg-sky-50 dark:bg-sky-500 border-sky-100",
+      variant_class(type),
       type_class(type)
     ]
   end
@@ -96,7 +97,8 @@ defmodule CommonUI.Components.Alert do
   defp variant_class("success", type) do
     [
       "text-green-500 dark:text-white",
-      type != "minimal" && "bg-green-50 dark:bg-green-500 border border-green-100 dark:border-none",
+      type != "minimal" && "bg-green-50 dark:bg-green-500 border-green-100",
+      variant_class(type),
       type_class(type)
     ]
   end
@@ -104,7 +106,8 @@ defmodule CommonUI.Components.Alert do
   defp variant_class("warning", type) do
     [
       "text-amber-500 dark:text-white",
-      type != "minimal" && "bg-amber-50 dark:bg-amber-400 border border-amber-100 dark:border-none",
+      type != "minimal" && "bg-amber-50 dark:bg-amber-400 border-amber-100",
+      variant_class(type),
       type_class(type)
     ]
   end
@@ -112,12 +115,14 @@ defmodule CommonUI.Components.Alert do
   defp variant_class("error", type) do
     [
       "text-red-500 dark:text-white",
-      type != "minimal" && "bg-red-50 dark:bg-red-500 border border-red-100 dark:border-none",
+      type != "minimal" && "bg-red-50 dark:bg-red-500 border-red-100",
+      variant_class(type),
       type_class(type)
     ]
   end
 
   defp variant_class("disconnected", type), do: variant_class("error", type)
+  defp variant_class(type), do: type != "minimal" && "border dark:border-none"
 
   defp type_class("inline"), do: "px-3.5 py-2.5"
   defp type_class("minimal"), do: ""
