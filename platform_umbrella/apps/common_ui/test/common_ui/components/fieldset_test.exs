@@ -7,7 +7,7 @@ defmodule CommonUI.Components.FieldsetTest do
     assigns = %{}
 
     ~H"""
-    <.fieldset id="foo" title="Foo">Bar</.fieldset>
+    <.fieldset id="foo">Bar</.fieldset>
     """
   end
 

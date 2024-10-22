@@ -1,7 +1,7 @@
-<label class="w-full ">
-  <div class="">
+<div class="w-full ">
+  <label class="select-none ">
     <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter mb-2">
-      <div>Label</div>
+      Label
 
       <div>
         <svg xmlns="http://www.w3.org/2000/svg" id="foo-help" class="size-5 opacity-30 hover:opacity-100" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -20,9 +20,9 @@
 
     
   
-  </div>
+  </label>
 
   <div class="text-xs text-gray-light mt-2 ">
     This is a note
   </div>
-</label>
+</div>

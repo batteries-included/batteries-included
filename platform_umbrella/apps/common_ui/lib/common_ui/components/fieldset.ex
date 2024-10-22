@@ -3,13 +3,11 @@ defmodule CommonUI.Components.Fieldset do
   use CommonUI, :component
 
   import CommonUI.Components.FlashGroup
-  import CommonUI.Components.Typography
   import CommonUI.IDHelpers
 
   attr :id, :string
   attr :responsive, :boolean, default: false
   attr :flash, :map, default: %{}
-  attr :title, :string, default: nil
   attr :class, :any, default: nil
   attr :inner_class, :any, default: nil
 
@@ -24,11 +22,9 @@ defmodule CommonUI.Components.Fieldset do
 
     ~H"""
     <div class={["w-full", @class]}>
-      <.h2 :if={@title}><%= @title %></.h2>
-
       <div class={[
         "gap-x-4 gap-y-6",
-        @responsive && "grid grid-cols-1 lg:grid-cols-2",
+        @responsive && "grid grid-cols-none lg:grid-cols-2",
         !@responsive && "flex flex-col",
         @inner_class
       ]}>

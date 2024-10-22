@@ -1,14 +1,14 @@
-<label class="w-full ">
-  <div class="">
+<div class="w-full ">
+  <label class="select-none ">
     <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter mb-2">
-      <div>Label</div>
+      Label
 
       
     </div>
 
     
   
-  </div>
+  </label>
 
   
-</label>
+</div>

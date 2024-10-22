@@ -10,7 +10,6 @@ defmodule Storybook.Components.Fieldset do
       %Variation{
         id: :default,
         attributes: %{
-          title: "Some Title",
           flash: %{"info" => "Flash info"}
         },
         slots: [
@@ -30,7 +29,6 @@ defmodule Storybook.Components.Fieldset do
         id: :responsive,
         attributes: %{
           responsive: true,
-          title: "Some Title",
           flash: %{"info" => "Flash info"}
         },
         slots: [
