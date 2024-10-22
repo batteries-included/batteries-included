@@ -9,7 +9,7 @@
 </h2>
     <div class="">
   
-    <div id="-flash-error" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white bg-red-50 dark:bg-red-500 border border-red-100 dark:border-none px-3.5 py-2.5 mb-3 last:mb-0">
+    <div id="-flash-error" role="alert" class="flex items-start gap-3 rounded-lg text-sm font-semibold group bottom-5 right-5 text-red-500 dark:text-white bg-red-50 dark:bg-red-500 border-red-100 border dark:border-none px-3.5 py-2.5 mb-3 last:mb-0">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
   <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/>
 </svg>
