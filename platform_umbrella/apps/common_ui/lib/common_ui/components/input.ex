@@ -191,7 +191,7 @@ defmodule CommonUI.Components.Input do
 
   def input(%{type: "radio"} = assigns) do
     assigns = IDHelpers.provide_id(assigns)
-    
+
     ~H"""
     <div
       phx-feedback-for={if !@force_feedback, do: @name}
