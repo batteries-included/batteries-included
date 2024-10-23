@@ -13,36 +13,33 @@ defmodule HomeBaseWeb.LoginLive do
 
   def render(assigns) do
     ~H"""
-    <.simple_form
-      for={@form}
-      id="login-form"
-      action={~p"/login"}
-      title="Log in to your account"
-      flash={@flash}
-      class="mb-4"
-    >
-      <.input
-        field={@form[:email]}
-        type="email"
-        placeholder="Email"
-        value={get(@flash, :email)}
-        autocomplete="username"
-        autofocus
-      />
+    <.form for={@form} id="login-form" action={~p"/login"} class="mb-4">
+      <.h2 class="mb-8">Log in to your account</.h2>
 
-      <.input
-        field={@form[:password]}
-        type="password"
-        placeholder="Password"
-        autocomplete="current-password"
-      />
+      <.fieldset flash={@flash}>
+        <.input
+          type="email"
+          field={@form[:email]}
+          placeholder="Email"
+          value={get(@flash, :email)}
+          autocomplete="username"
+          autofocus
+        />
 
-      <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
+        <.input
+          type="password"
+          field={@form[:password]}
+          placeholder="Password"
+          autocomplete="current-password"
+        />
 
-      <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
-        Log in
-      </.button>
-    </.simple_form>
+        <.input type="checkbox" field={@form[:remember_me]}>Keep me logged in</.input>
+
+        <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
+          Log in
+        </.button>
+      </.fieldset>
+    </.form>
 
     <div class="text-center">
       <p>

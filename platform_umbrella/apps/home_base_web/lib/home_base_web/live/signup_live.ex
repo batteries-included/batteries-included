@@ -60,45 +60,31 @@ defmodule HomeBaseWeb.SignupLive do
       phx-trigger-action={@trigger_submit}
       class="mb-4"
     >
+      <.h2 class="mb-8">Sign up for an account</.h2>
+
       <.fieldset flash={@flash}>
-        <.h2>Sign up for an account</.h2>
+        <.input type="email" field={@form[:email]} placeholder="Email" autocomplete="email" autofocus />
 
-        <.field>
-          <.input
-            type="email"
-            field={@form[:email]}
-            placeholder="Email"
-            autocomplete="email"
-            autofocus
-          />
-        </.field>
+        <.input
+          type="password"
+          field={@form[:password]}
+          placeholder="Password"
+          autocomplete="new-password"
+        />
 
-        <.field>
-          <.input
-            type="password"
-            field={@form[:password]}
-            placeholder="Password"
-            autocomplete="new-password"
-          />
-        </.field>
+        <.input
+          type="password"
+          field={@form[:password_confirmation]}
+          placeholder="Retype Password"
+          autocomplete="new-password"
+        />
 
-        <.field>
-          <.input
-            type="password"
-            field={@form[:password_confirmation]}
-            placeholder="Retype Password"
-            autocomplete="new-password"
-          />
-        </.field>
-
-        <.field>
-          <.input type="checkbox" field={@form[:terms]}>
-            I agree to the
-            <.a href="https://www.batteriesincl.com/terms-service" target="_blank">
-              terms & conditions
-            </.a>
-          </.input>
-        </.field>
+        <.input type="checkbox" field={@form[:terms]}>
+          I agree to the
+          <.a href="https://www.batteriesincl.com/terms-service" target="_blank">
+            terms & conditions
+          </.a>
+        </.input>
 
         <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
           Create account
