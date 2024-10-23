@@ -50,7 +50,7 @@ defmodule HomeBaseWeb.SignupLive do
 
   def render(assigns) do
     ~H"""
-    <.simple_form
+    <.form
       for={@form}
       id="signup-form"
       method="post"
@@ -58,35 +58,39 @@ defmodule HomeBaseWeb.SignupLive do
       phx-change="validate"
       phx-submit="save"
       phx-trigger-action={@trigger_submit}
-      title="Sign up for an account"
-      flash={@flash}
       class="mb-4"
     >
-      <.input field={@form[:email]} type="email" placeholder="Email" autocomplete="email" autofocus />
+      <.h2 class="mb-8">Sign up for an account</.h2>
 
-      <.input
-        field={@form[:password]}
-        type="password"
-        placeholder="Password"
-        autocomplete="new-password"
-      />
+      <.fieldset flash={@flash}>
+        <.input type="email" field={@form[:email]} placeholder="Email" autocomplete="email" autofocus />
 
-      <.input
-        field={@form[:password_confirmation]}
-        type="password"
-        placeholder="Retype Password"
-        autocomplete="new-password"
-      />
+        <.input
+          type="password"
+          field={@form[:password]}
+          placeholder="Password"
+          autocomplete="new-password"
+        />
 
-      <.input field={@form[:terms]} type="checkbox">
-        I agree to the
-        <.a href="https://www.batteriesincl.com/terms-service" target="_blank">terms & conditions</.a>
-      </.input>
+        <.input
+          type="password"
+          field={@form[:password_confirmation]}
+          placeholder="Retype Password"
+          autocomplete="new-password"
+        />
 
-      <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
-        Create account
-      </.button>
-    </.simple_form>
+        <.input type="checkbox" field={@form[:terms]}>
+          I agree to the
+          <.a href="https://www.batteriesincl.com/terms-service" target="_blank">
+            terms & conditions
+          </.a>
+        </.input>
+
+        <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
+          Create account
+        </.button>
+      </.fieldset>
+    </.form>
 
     <div class="text-center">
       Already have an account?
