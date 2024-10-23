@@ -1,10 +1,14 @@
 defmodule ControlServerWeb.HealthzController do
   use ControlServerWeb, :controller
 
+  require Logger
+
   action_fallback ControlServerWeb.FallbackController
 
   def index(conn, params) do
     status = check_healthz(conn, params)
+
+    Logger.debug("Healthz check: #{inspect(status)}", status: status)
 
     conn
     |> put_status(status[:status])
