@@ -57,6 +57,7 @@ defmodule ControlServerWeb.Router do
     live "/devtools", Live.DevtoolsHome, :index
     live "/ai", Live.AIHome, :index
     live "/data", Live.DataHome, :index
+    live "/help", Live.Help, :index
   end
 
   scope "/ip_address_pools", ControlServerWeb do

@@ -21,14 +21,21 @@ defmodule HomeBaseWeb.ErrorHTML do
         </div>
 
         <div class="self-start lg:self-center lg:justify-self-start text-center lg:text-left font-sans font-normal text-gray-darkest dark:text-gray-lightest">
-          <h1 class="text-8xl font-extrabold mb-8">Oops!</h1>
-          <p class="max-w-sm mb-8">
+          <h1 class="text-8xl font-extrabold mb-8 leading-none">Oops!</h1>
+
+          <p class="max-w-sm mb-8 leading-normal">
             Error 404. Or in human-talk, we couldn't find the page you were looking for.
           </p>
 
-          <.button variant="secondary" link={{:javascript, "history.back()"}} link_type="external">
-            Go Back
-          </.button>
+          <div class="flex gap-4">
+            <.button variant="primary" link={~p"/help"}>
+              Get Help
+            </.button>
+
+            <.button variant="secondary" link={{:javascript, "history.back()"}} link_type="external">
+              Go Back
+            </.button>
+          </div>
         </div>
       </body>
     </html>
@@ -99,7 +106,23 @@ defmodule HomeBaseWeb.ErrorHTML do
           p {
             max-width: 24rem; /* max-w-sm */
             line-height: 1.5; /* leading-normal */
-            margin: 0;
+            margin: 0; /* m-0 */
+          }
+
+          p:not(:last-child) {
+            margin-bottom: 1rem; /* mb-4 */
+          }
+
+          p a {
+            display: inline-block; /* inline-block */
+            font-weight: 500; /* font-medium */
+            color: #FC408B; /* text-primary */
+            text-decoration: none; /* no-underline */
+          }
+
+          p a:hover {
+            color: #DE2E74; /* hover:text-primary-dark */
+            text-decoration: underline; /* hover:underline */
           }
 
           @media (prefers-color-scheme: dark) {
@@ -143,8 +166,26 @@ defmodule HomeBaseWeb.ErrorHTML do
 
         <div class="wrapper">
           <h1>Oh no!</h1>
+
           <p>
             Error 500. Or in human-talk, something went wrong on our end. Try refreshing the page or coming back later.
+          </p>
+
+          <p>
+            Need some help? Check out our
+            <.a href="https://www.batteriesincl.com/docs" target="_blank">docs</.a>, file an issue on
+            <.a
+              href="https://github.com/batteries-included/batteries-included/issues/new"
+              target="_blank"
+            >
+              GitHub
+            </.a>, or come visit us in
+            <.a
+              href="https://join.slack.com/t/batteries-included/shared_invite/zt-2qw1pm9pz-egaqvjbMuzKNvCpG1QXXHg"
+              target="_blank"
+            >
+              Slack
+            </.a>.
           </p>
         </div>
       </body>

@@ -4,7 +4,7 @@ defmodule CommonUI.Components.Link do
 
   import CommonUI.Components.Icon
 
-  attr :variant, :string, values: ["underlined", "external", "bordered"]
+  attr :variant, :string, values: ["underlined", "external", "bordered", "bordered-lg"]
   attr :icon, :atom, default: nil
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(download hreflang replace referrerpolicy rel target type href navigate patch method)
@@ -40,10 +40,20 @@ defmodule CommonUI.Components.Link do
     """
   end
 
+  def a(%{variant: "bordered-lg"} = assigns) do
+    ~H"""
+    <.link class={[link_class(@variant), @class]} {@rest}>
+      <.icon name={@icon} class="size-10 text-primary my-auto" />
+      <span class="text-lg font-medium"><%= render_slot(@inner_block) %></span>
+    </.link>
+    """
+  end
+
   def a(assigns) do
     ~H"""
     <.link class={[link_class(assigns[:variant]), @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
+      <span><%= render_slot(@inner_block) %></span>
+      <.icon :if={@icon} name={@icon} class={icon_class(assigns[:variant])} />
     </.link>
     """
   end
@@ -58,5 +68,16 @@ defmodule CommonUI.Components.Link do
     ]
   end
 
-  defp link_class(_), do: "font-medium text-primary hover:text-primary-dark hover:underline"
+  defp link_class("bordered-lg") do
+    [
+      "flex flex-col items-center gap-3 px-6 py-4 border rounded-lg w-full max-w-40",
+      "border-gray-lighter dark:border-gray-darker hover:border-primary"
+    ]
+  end
+
+  defp link_class(_) do
+    "inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark hover:underline"
+  end
+
+  defp icon_class(_), do: "w-5 h-5 text-primary my-auto"
 end

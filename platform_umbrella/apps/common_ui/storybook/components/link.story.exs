@@ -35,6 +35,11 @@ defmodule Storybook.Components.Link do
         id: :external_bordered,
         attributes: %{variant: "bordered", href: "https://www.eff.org"},
         slots: ["I'm outta here"]
+      },
+      %Variation{
+        id: :bordered_large,
+        attributes: %{variant: "bordered-lg", icon: :face_smile},
+        slots: ["Be Happy"]
       }
     ]
   end
