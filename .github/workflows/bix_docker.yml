@@ -70,7 +70,7 @@ jobs:
       - name: Determine whether to push images / tags
         if:
           ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref,
-          'reg/tags/')) && github.event_name == 'push' }}
+          'refs/tags/')) && github.event_name == 'push' }}
         run: |
           echo "PUSH=true" >> "$GITHUB_ENV"
 
