@@ -27,8 +27,12 @@ defmodule KubeBootstrap.Kube do
       # We don't care that the task was successful, just the result
       # unless it couldn't be run at all
       |> Enum.map(fn
-        {:ok, result} -> result
-        {:error, reason} -> {:error, reason}
+        {:ok, result} ->
+          result
+
+        {:error, reason} ->
+          Logger.warning("Failed to create resource #{inspect(reason)}", reason: reason)
+          {:error, reason}
       end)
 
     if Enum.all?(results, &result_ok?/1) do
