@@ -6,9 +6,10 @@ import WidgetWrapper from '../ui/WidgetWrapper.astro';
 interface Props {
   title: string;
   description: string;
+  link?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, link = '/' } = Astro.props;
 ---
 
 <WidgetWrapper>
@@ -26,7 +27,7 @@ const { title, description } = Astro.props;
         />
       </div>
       <div class="hidden lg:block flex-shrink-0">
-        <ButtonLink label="Learn More" link="/" variant="secondary" />
+        <ButtonLink label="Learn More" link={link} variant="secondary" />
       </div>
     </div>
     <div class="mt-6">
@@ -35,7 +36,7 @@ const { title, description } = Astro.props;
           {description}
         </p>
         <div class="text-center mt-6 lg:hidden">
-          <ButtonLink label="Learn More" link="/" variant="secondary" />
+          <ButtonLink label="Learn More" link={link} variant="secondary" />
         </div>
       </div>
     </div>
