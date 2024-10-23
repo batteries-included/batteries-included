@@ -152,11 +152,19 @@ defmodule CommonCore.Resources.ControlServer do
     |> Map.put_new("image", image)
     |> Map.put_new("imagePullPolicy", "IfNotPresent")
     |> Map.put_new("resources", %{"requests" => %{"cpu" => "1000m", "memory" => "2000Mi"}})
+    |> Map.put_new("livenessProbe", %{
+      "httpGet" => %{
+        "path" => "/healthz",
+        "port" => @server_port,
+        "initialDelaySeconds" => 300,
+        "periodSeconds" => 30,
+        "failureThreshold" => 5
+      }
+    })
+    |> Map.put_new("readinessProbe", %{
+      "httpGet" => %{"path" => "/healthz", "port" => @server_port, "periodSeconds" => 30, "failureThreshold" => 10}
+    })
     |> Map.put_new("env", [
-      %{
-        "name" => "LC_CTYPE",
-        "value" => "en_US.UTF-8"
-      },
       %{
         "name" => "LANG",
         "value" => "en_US.UTF-8"
@@ -164,6 +172,10 @@ defmodule CommonCore.Resources.ControlServer do
       %{
         "name" => "LC_ALL",
         "value" => "en_US.UTF-8"
+      },
+      %{
+        "name" => "LANGUAGE",
+        "value" => "en_US:en"
       },
       %{
         "name" => "PORT",
