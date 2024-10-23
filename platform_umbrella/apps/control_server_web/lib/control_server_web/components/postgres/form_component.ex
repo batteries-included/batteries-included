@@ -2,10 +2,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.PostgresFormSubcomponents
+
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGUser
   alias ControlServer.Postgres
-  alias ControlServerWeb.PostgresFormSubcomponents
   alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryStorage
 
@@ -221,7 +222,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="contents">
       <.form
         id="cluster-form"
         for={@form}
@@ -241,67 +242,72 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
         <.flex column>
           <.panel>
-            <PostgresFormSubcomponents.size_form
+            <.size_form
               form={@form}
               phx_target={@myself}
               action={@action}
               ticks={Cluster.storage_range_ticks()}
             />
+          </.panel>
 
-            <.grid columns={[sm: 1, lg: 2]} class="items-center">
-              <.h5>Number of instances</.h5>
+          <.grid variant="col-2">
+            <.panel title="Database">
+              <.fieldset responsive>
+                <.inputs_for :let={database_form} field={@form[:database]}>
+                  <.field>
+                    <:label>Name</:label>
+                    <.input field={database_form[:name]} />
+                  </.field>
+
+                  <.field>
+                    <:label>Owner</:label>
+                    <.input
+                      type="select"
+                      field={database_form[:owner]}
+                      placeholder="Select Database Owner (on creation)"
+                      options={@possible_owners}
+                    />
+                  </.field>
+                </.inputs_for>
+              </.fieldset>
+            </.panel>
+
+            <.panel title="Instances">
               <.input
-                field={@form[:num_instances]}
                 type="range"
+                field={@form[:num_instances]}
                 min="1"
                 max={max(length(@possible_nodes || []), 3)}
                 step="1"
               />
-            </.grid>
-          </.panel>
-
-          <PostgresFormSubcomponents.users_table
-            users={Ecto.Changeset.get_field(@form[:users].form.source, :users)}
-            phx_target={@myself}
-          />
-
-          <.grid columns={%{sm: 1, lg: 2}}>
-            <.panel title="Database">
-              <.inputs_for :let={database_form} field={@form[:database]}>
-                <.grid columns={%{sm: 1, lg: 2}}>
-                  <div>
-                    <.input label="Name" field={database_form[:name]} />
-                  </div>
-                  <div>
-                    <.input
-                      label="Owner"
-                      field={database_form[:owner]}
-                      type="select"
-                      placeholder="Select Database Owner (on creation)"
-                      options={@possible_owners}
-                    />
-                  </div>
-                </.grid>
-              </.inputs_for>
             </.panel>
+          </.grid>
+
+          <.grid variant="col-2">
+            <.users_table
+              users={Ecto.Changeset.get_field(@form[:users].form.source, :users)}
+              phx_target={@myself}
+            />
 
             <.panel title="Advanced Settings" variant="gray">
-              <.flex column>
-                <.input
-                  field={@form[:project_id]}
-                  type="select"
-                  label="Project"
-                  placeholder="No Project"
-                  placeholder_selectable={true}
-                  options={Enum.map(@projects, &{&1.name, &1.id})}
-                />
-              </.flex>
+              <.fieldset>
+                <.field>
+                  <:label>Project</:label>
+                  <.input
+                    type="select"
+                    field={@form[:project_id]}
+                    placeholder="No Project"
+                    placeholder_selectable={true}
+                    options={Enum.map(@projects, &{&1.name, &1.id})}
+                  />
+                </.field>
+              </.fieldset>
             </.panel>
           </.grid>
         </.flex>
       </.form>
 
-      <PostgresFormSubcomponents.user_form_modal
+      <.user_form_modal
         phx_target={@myself}
         user_form={@pg_user_form}
         possible_namespaces={@possible_namespaces}

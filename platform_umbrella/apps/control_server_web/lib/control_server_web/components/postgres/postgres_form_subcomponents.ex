@@ -123,66 +123,62 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       )
 
     ~H"""
-    <.modal
-      :if={@user_form}
-      show
-      id="user-form-modal"
-      size="lg"
-      on_cancel={JS.push("close_modal", target: @phx_target)}
+    <.form
+      for={@user_form}
+      id="user-form"
+      phx-change="validate:user"
+      phx-submit="upsert:user"
+      phx-target={@phx_target}
     >
-      <:title><%= @action_text %></:title>
-
-      <.simple_form
-        for={@user_form}
-        id="user-form"
-        phx-change="validate:user"
-        phx-submit="upsert:user"
-        phx-target={@phx_target}
+      <.modal
+        :if={@user_form}
+        show
+        id="user-form-modal"
+        size="lg"
+        on_cancel={JS.push("close_modal", target: @phx_target)}
       >
-        <.input field={@user_form[:position]} type="hidden" />
-        <.input field={@user_form[:username]} label="User Name" autocomplete="off" />
+        <:title><%= @action_text %></:title>
 
-        <.input
-          field={@user_form[:credential_namespaces]}
-          type="multiselect"
-          label="Namespaces"
-          options={Enum.map(@possible_namespaces, &%{name: &1, value: &1})}
-        />
+        <.fieldset>
+          <.input field={@user_form[:position]} type="hidden" />
 
-        <.grid columns={%{sm: 1, xl: 2}} gaps="8">
-          <.role_option
-            :for={role <- @roles}
-            field={@user_form[:roles]}
-            value={role.value}
-            label={role.label}
-            help_text={role.help_text}
-            checked={Enum.member?(@user_form[:roles].value, role.value)}
-          />
-        </.grid>
+          <.field>
+            <:label>User Name</:label>
+            <.input field={@user_form[:username]} autocomplete="off" />
+          </.field>
 
-        <:actions>
+          <.field>
+            <:label>Namespaces</:label>
+            <.input
+              type="multiselect"
+              field={@user_form[:credential_namespaces]}
+              options={Enum.map(@possible_namespaces, &%{name: &1, value: &1})}
+            />
+          </.field>
+
+          <.fieldset responsive>
+            <.field
+              :for={role <- @roles}
+              variant="beside"
+              class="bg-gray-lightest dark:bg-gray-darkest-tint rounded-lg p-3 cursor-pointer"
+            >
+              <:label class="text-xl font-semibold"><%= role.label %></:label>
+              <:note><%= role.help_text %></:note>
+              <.input
+                type="switch"
+                name={@user_form[:roles].name <> "[]"}
+                value={role.value}
+                checked={Enum.member?(@user_form[:roles].value, role.value)}
+              />
+            </.field>
+          </.fieldset>
+        </.fieldset>
+
+        <:actions cancel="Cancel">
           <.button variant="primary" type="submit"><%= @action_text %></.button>
         </:actions>
-      </.simple_form>
-    </.modal>
-    """
-  end
-
-  attr :field, :map, required: true
-  attr :label, :string
-  attr :help_text, :string
-  attr :rest, :global, include: ~w(checked value)
-
-  def role_option(assigns) do
-    ~H"""
-    <div class="flex items-start justify-between gap-x-12">
-      <div>
-        <h3 class="text-xl font-semibold mb-2"><%= @label %></h3>
-        <p class="text-sm"><%= @help_text %></p>
-      </div>
-
-      <.input type="switch" name={@field.name <> "[]"} {@rest} />
-    </div>
+      </.modal>
+    </.form>
     """
   end
 
@@ -195,27 +191,25 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
 
   def size_form(assigns) do
     ~H"""
-    <div class={["contents", @class]}>
-      <.grid columns={[sm: 1, xl: 2]}>
-        <.input
-          field={@form[:name]}
-          label="Name"
-          autofocus={@action == :new}
-          disabled={@action != :new}
-        />
+    <.fieldset responsive class={@class}>
+      <.field>
+        <:label>Name</:label>
+        <.input field={@form[:name]} autofocus={@action == :new} disabled={@action != :new} />
+      </.field>
 
+      <.field>
+        <:label>Size</:label>
         <.input
-          field={@form[:virtual_size]}
           type="select"
-          label="Size"
+          field={@form[:virtual_size]}
           options={Cluster.preset_options_for_select()}
         />
-      </.grid>
+      </.field>
 
       <.data_list
         :if={@form[:virtual_size].value != "custom"}
         variant="horizontal-bolded"
-        class="mt-3 mb-5"
+        class="lg:col-span-2"
         data={[
           {"Storage size:", Memory.humanize(@form[:storage_size].value)},
           {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
@@ -223,29 +217,30 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         ]}
       />
 
-      <div :if={@form[:virtual_size].value == "custom"} class="mt-2 mb-5">
-        <.h3>Storage</.h3>
+      <%= if @form[:virtual_size].value == "custom" do %>
+        <.h3 class="lg:col-span-2">Storage</.h3>
 
-        <.grid>
-          <.input
-            field={@form[:storage_class]}
-            type="select"
-            label="Storage Class"
-            options={Enum.map(SummaryStorage.storage_classes(), &get_in(&1, ["metadata", "name"]))}
-          />
+        <.fieldset responsive>
+          <.field>
+            <:label>Storage Class</:label>
+            <.input
+              type="select"
+              field={@form[:storage_class]}
+              options={Enum.map(SummaryStorage.storage_classes(), &get_in(&1, ["metadata", "name"]))}
+            />
+          </.field>
 
-          <.input
-            field={@form[:storage_size]}
-            type="number"
-            label="Storage Size"
-            label_note={Memory.humanize(@form[:storage_size].value)}
-            note="You can't reduce this once it has been created."
-            debounce={false}
-          />
+          <.field>
+            <:label>Storage Size · <%= Memory.humanize(@form[:storage_size].value) %></:label>
+            <:note>You can't reduce this once it has been created.</:note>
+            <.input type="number" field={@form[:storage_size]} debounce={false} />
+          </.field>
+        </.fieldset>
 
+        <.field>
           <.input
-            field={@form[:virtual_storage_size_range_value]}
             type="range"
+            field={@form[:virtual_storage_size_range_value]}
             show_value={false}
             min={@ticks |> Memory.min_range_value()}
             max={@ticks |> Memory.max_range_value()}
@@ -253,54 +248,50 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
             tick_target={@phx_target}
             tick_click="change_storage_size_range"
             phx-change="change_storage_size_range"
-            class="px-5 self-center lg:col-span-2"
             lower_boundary={@form.data.storage_size |> Memory.bytes_to_range_value(@ticks)}
+            class="px-5 self-center"
           />
-        </.grid>
+        </.field>
 
-        <.h3>Running Limits</.h3>
+        <.h3 class="lg:col-span-2">Running Limits</.h3>
 
-        <.grid>
-          <div>
+        <.fieldset responsive>
+          <.field>
+            <:label>CPU Requested</:label>
             <.input
+              type="select"
               field={@form[:cpu_requested]}
-              type="select"
-              label="CPU Requested"
               options={Cluster.cpu_select_options()}
             />
-          </div>
-          <div>
-            <.input
-              field={@form[:cpu_limits]}
-              type="select"
-              label="CPU Limits"
-              options={Cluster.cpu_select_options()}
-            />
-          </div>
-          <div>
-            <.input
-              field={@form[:memory_requested]}
-              type="select"
-              label="Memory Requested"
-              options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
-            />
-          </div>
-          <div>
-            <.input
-              field={@form[:memory_limits]}
-              type="select"
-              label="Memory Limits"
-              options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
-            />
-          </div>
-        </.grid>
-      </div>
+          </.field>
 
-      <.flex
-        :if={@with_divider}
-        class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker"
-      />
-    </div>
+          <.field>
+            <:label>CPU Limits</:label>
+            <.input type="select" field={@form[:cpu_limits]} options={Cluster.cpu_select_options()} />
+          </.field>
+        </.fieldset>
+
+        <.fieldset responsive>
+          <.field>
+            <:label>Memory Requested</:label>
+            <.input
+              type="select"
+              field={@form[:memory_requested]}
+              options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
+            />
+          </.field>
+
+          <.field>
+            <:label>Memory Limits</:label>
+            <.input
+              type="select"
+              field={@form[:memory_limits]}
+              options={Cluster.memory_options() |> Memory.bytes_as_select_options()}
+            />
+          </.field>
+        </.fieldset>
+      <% end %>
+    </.fieldset>
     """
   end
 end
