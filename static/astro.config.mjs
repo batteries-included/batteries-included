@@ -12,6 +12,8 @@ import { ANALYTICS, SITE } from './src/utils/config.ts';
 import react from '@astrojs/react';
 import sectionize from '@hbsnow/rehype-sectionize';
 
+import compressor from 'astro-compressor';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const whenExternalScripts = (items = []) =>
   ANALYTICS.vendors.googleAnalytics.id &&
@@ -57,15 +59,8 @@ export default defineConfig({
       })
     ),
     tasks(),
-    import.meta.env.PROD &&
-      (await import('@playform/compress')).default({
-        CSS: true,
-        HTML: true,
-        Image: true,
-        JavaScript: true,
-        SVG: true,
-      }),
     react(),
+    compressor(),
   ],
   markdown: {
     remarkPlugins: [readingTimeRemarkPlugin],
