@@ -37,6 +37,12 @@ defmodule ControlServerWeb.Router do
   end
 
   scope "/", ControlServerWeb do
+    pipe_through :browser
+
+    get "/healthz", HealthzController, :index
+  end
+
+  scope "/", ControlServerWeb do
     pipe_through [:browser, :auth]
 
     live "/", Live.Home, :index
