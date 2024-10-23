@@ -74,6 +74,15 @@ jobs:
         run: |
           echo "PUSH=true" >> "$GITHUB_ENV"
 
+      # set ADDITIONAL_TAGS to either latest or the current tag
+      - if: ${{ fromJSON(env.PUSH) }}
+        run: |
+          echo "ADDITIONAL_TAGS=latest" >> "$GITHUB_ENV"
+
+      - if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        run: |
+          echo "ADDITIONAL_TAGS=${{ github.ref_name }}" >> "$GITHUB_ENV"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         if: ${{ fromJSON(env.PUSH) }}
@@ -86,21 +95,13 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
-      - name: Push latest to ECR
+      - name: Push to ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         if: ${{ fromJSON(env.PUSH) }}
-        run: bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS" latest
-
-      - name: Push tag to ECR
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        # only run on tag, not on push to master
-        if:
-          ${{ (startsWith(github.ref, 'refs/tags/') && github.event_name ==
-          'push')}}
         run:
-          bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS" ${{ github.ref_name }}
+          bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS" ${{
+          env.ADDITIONAL_TAGS }}
 
       # dual push to GHCR while we are migrating
       - name: Login to GHCR
@@ -113,13 +114,6 @@ jobs:
 
       - name: Push latest to GHCR
         if: ${{ fromJSON(env.PUSH) }}
-        run: bin/bix push-images "ghcr.io/batteries-included" latest
-
-      - name: Push tag to GHCR
-        # only run on tag, not on push to master
-        if:
-          ${{ (startsWith(github.ref, 'refs/tags/') && github.event_name ==
-          'push')}}
-        run: >
-          bin/bix push-images "ghcr.io/batteries-included" ${{ github.ref_name
-          }}
+        run:
+          bin/bix push-images "ghcr.io/batteries-included" ${{
+          env.ADDITIONAL_TAGS }}
