@@ -110,7 +110,25 @@ defmodule CommonCore.Resources.ControlServer do
             name: name,
             base: %{
               "command" => ["/app/bin/start", "control_server"],
-              "ports" => [%{"containerPort" => @server_port}]
+              "ports" => [%{"containerPort" => @server_port}],
+              "readinessProbe" => %{
+                "httpGet" => %{
+                  "path" => "/healthz",
+                  "port" => @server_port
+                },
+                "initialDelaySeconds" => 30,
+                "periodSeconds" => 30,
+                "failureThreshold" => 10
+              },
+              "livenessProbe" => %{
+                "httpGet" => %{
+                  "path" => "/healthz",
+                  "port" => @server_port
+                },
+                "initialDelaySeconds" => 300,
+                "periodSeconds" => 30,
+                "failureThreshold" => 5
+              }
             },
             pg_secret_name: secret_name,
             pg_host: host
@@ -152,18 +170,6 @@ defmodule CommonCore.Resources.ControlServer do
     |> Map.put_new("image", image)
     |> Map.put_new("imagePullPolicy", "IfNotPresent")
     |> Map.put_new("resources", %{"requests" => %{"cpu" => "1000m", "memory" => "2000Mi"}})
-    |> Map.put_new("livenessProbe", %{
-      "httpGet" => %{
-        "path" => "/healthz",
-        "port" => @server_port,
-        "initialDelaySeconds" => 300,
-        "periodSeconds" => 30,
-        "failureThreshold" => 5
-      }
-    })
-    |> Map.put_new("readinessProbe", %{
-      "httpGet" => %{"path" => "/healthz", "port" => @server_port, "periodSeconds" => 30, "failureThreshold" => 10}
-    })
     |> Map.put_new("env", [
       %{
         "name" => "LANG",
