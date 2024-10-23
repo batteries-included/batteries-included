@@ -112,7 +112,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push latest to GHCR
+      - name: Push to GHCR
         if: ${{ fromJSON(env.PUSH) }}
         run:
           bin/bix push-images "ghcr.io/batteries-included" ${{
