@@ -62,7 +62,6 @@ jobs:
             '.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-test-deep-
-          save-always: true
       - name: Run deep test
         run: bin/bix --no-forward ex-test-deep
       - name: Test Report
@@ -114,7 +113,6 @@ jobs:
             '.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-credo-
-          save-always: true
       - name: Credo Code Analysis
         run: bin/bix ex-credo
 
@@ -161,7 +159,6 @@ jobs:
             '.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-dialyzer-
-          save-always: true
 
       - name: Dialyzer Type Analysis
         run: bin/bix ex-dialyzer
