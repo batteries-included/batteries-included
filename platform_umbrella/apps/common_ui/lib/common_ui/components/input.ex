@@ -30,7 +30,6 @@ defmodule CommonUI.Components.Input do
 
   # TODO: Deprecated, remove when everything is migrated to Field component
   attr :label, :string, default: nil
-  attr :label_note, :string, default: nil
   attr :note, :string, default: nil
   attr :help, :string, default: nil
 
@@ -643,12 +642,8 @@ defmodule CommonUI.Components.Input do
   def input(%{label: label} = assigns) when not is_nil(label) do
     ~H"""
     <label phx-feedback-for={if !@force_feedback, do: @name}>
-      <div :if={@label || @label_note} class="flex items-center justify-between mb-2">
+      <div :if={@label} class="flex items-center justify-between mb-2">
         <.label id={@id} label={@label} help={@help} class="mb-0" />
-
-        <div :if={@label_note} class="font-medium text-sm text-gray-light dark:text-gray-dark">
-          <%= @label_note %>
-        </div>
       </div>
 
       <div class="relative">
