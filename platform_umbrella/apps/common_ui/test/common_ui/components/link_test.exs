@@ -42,4 +42,12 @@ defmodule CommonUI.Components.LinkTest do
     <.a variant="bordered" href="https://google.com">Test External Link</.a>
     """
   end
+
+  component_snapshot_test "Link bordered large" do
+    assigns = %{}
+
+    ~H"""
+    <.a variant="bordered-lg" icon={:face_smile} href="https://google.com">Test Link</.a>
+    """
+  end
 end
