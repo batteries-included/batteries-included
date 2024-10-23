@@ -50,7 +50,7 @@ defmodule HomeBaseWeb.SignupLive do
 
   def render(assigns) do
     ~H"""
-    <.simple_form
+    <.form
       for={@form}
       id="signup-form"
       method="post"
@@ -58,35 +58,53 @@ defmodule HomeBaseWeb.SignupLive do
       phx-change="validate"
       phx-submit="save"
       phx-trigger-action={@trigger_submit}
-      title="Sign up for an account"
-      flash={@flash}
       class="mb-4"
     >
-      <.input field={@form[:email]} type="email" placeholder="Email" autocomplete="email" autofocus />
+      <.fieldset flash={@flash}>
+        <.h2>Sign up for an account</.h2>
 
-      <.input
-        field={@form[:password]}
-        type="password"
-        placeholder="Password"
-        autocomplete="new-password"
-      />
+        <.field>
+          <.input
+            type="email"
+            field={@form[:email]}
+            placeholder="Email"
+            autocomplete="email"
+            autofocus
+          />
+        </.field>
 
-      <.input
-        field={@form[:password_confirmation]}
-        type="password"
-        placeholder="Retype Password"
-        autocomplete="new-password"
-      />
+        <.field>
+          <.input
+            type="password"
+            field={@form[:password]}
+            placeholder="Password"
+            autocomplete="new-password"
+          />
+        </.field>
 
-      <.input field={@form[:terms]} type="checkbox">
-        I agree to the
-        <.a href="https://www.batteriesincl.com/terms-service" target="_blank">terms & conditions</.a>
-      </.input>
+        <.field>
+          <.input
+            type="password"
+            field={@form[:password_confirmation]}
+            placeholder="Retype Password"
+            autocomplete="new-password"
+          />
+        </.field>
 
-      <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
-        Create account
-      </.button>
-    </.simple_form>
+        <.field>
+          <.input type="checkbox" field={@form[:terms]}>
+            I agree to the
+            <.a href="https://www.batteriesincl.com/terms-service" target="_blank">
+              terms & conditions
+            </.a>
+          </.input>
+        </.field>
+
+        <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
+          Create account
+        </.button>
+      </.fieldset>
+    </.form>
 
     <div class="text-center">
       Already have an account?
