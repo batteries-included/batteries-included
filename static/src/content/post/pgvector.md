@@ -7,10 +7,10 @@ excerpt:
   This guide walks you through setting up a vector database and implementing
   efficient similarity searches, using Batteries Included's seamless Jupyter
   Notebooks integration for a hands-on development experience.
-publishDate: 2024-08-10
+publishDate: 2024-10-23
 tags: ['AI', 'Postgres', 'PGVector', 'Jupyter Notebooks']
 image: ./covers/post-16.png
-draft: true
+draft: false
 ---
 
 In the realm of artificial intelligence, the ability to efficiently store and
