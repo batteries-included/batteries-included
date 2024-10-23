@@ -194,6 +194,14 @@ defmodule HomeBaseWeb.Layouts do
               </.dropdown_link>
 
               <.dropdown_link
+                icon={:question_mark_circle}
+                navigate={~p"/help"}
+                selected={@page == :help}
+              >
+                Get Help
+              </.dropdown_link>
+
+              <.dropdown_link
                 icon={:arrow_right_start_on_rectangle}
                 href={~p"/logout"}
                 method="delete"
@@ -225,6 +233,15 @@ defmodule HomeBaseWeb.Layouts do
         <%= @inner_content %>
       </div>
     </div>
+
+    <.link
+      :if={@page != :help}
+      navigate={~p"/help"}
+      class="fixed bottom-8 right-8 size-16 hover:opacity-80 invisible lg:visible"
+    >
+      <span class="absolute top-2 left-2 size-12 z-4 rounded-full bg-white shadow-xl" />
+      <.icon name={:question_mark_circle} class="absolute size-16 z-5 text-secondary" solid />
+    </.link>
     """
   end
 end

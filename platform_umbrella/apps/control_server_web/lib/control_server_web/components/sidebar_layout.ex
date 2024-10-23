@@ -17,7 +17,7 @@ defmodule ControlServerWeb.SidebarLayout do
     doc: "The items that will be displayed in the main menu in the sidebar."
 
   attr :bottom_menu_items, :list,
-    default: [],
+    default: [%{type: :help, name: "Get Help", path: "/help", icon: :question_mark_circle}],
     doc: "The items that will be displayed at the bottom of the sidebar menu."
 
   attr :home_path, :string,

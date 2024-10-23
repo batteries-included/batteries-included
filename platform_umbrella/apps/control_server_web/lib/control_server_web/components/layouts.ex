@@ -25,7 +25,6 @@ defmodule ControlServerWeb.Layouts do
 
     <ControlServerWeb.SidebarLayout.sidebar_layout
       main_menu_items={Catalog.groups_for_nav()}
-      bottom_menu_items={[]}
       current_page={if assigns[:current_page], do: @current_page, else: nil}
     >
       <%= @inner_content %>
