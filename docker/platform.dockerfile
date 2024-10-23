@@ -111,8 +111,8 @@ RUN mix "do" local.hex --force, local.rebar --force && \
 ## for the control server docker
 FROM deps AS control-deps
 
-COPY platform_umbrella/apps/control_server_web/assets/package.json /source/platform_umbrella//apps/control_server_web/assets/package.json
-COPY platform_umbrella/apps/control_server_web/assets/package-lock.json /source/platform_umbrella//apps/control_server_web/assets/package-lock.json
+COPY platform_umbrella/apps/control_server_web/assets/package.json /source/platform_umbrella/apps/control_server_web/assets/package.json
+COPY platform_umbrella/apps/control_server_web/assets/package-lock.json /source/platform_umbrella/apps/control_server_web/assets/package-lock.json
 
 WORKDIR /source/platform_umbrella/apps/control_server_web/assets
 
@@ -143,8 +143,8 @@ RUN mix deps.get && \
 
 FROM deps AS home-base-deps
 
-COPY platform_umbrella/apps/home_base_web/assets/package.json /source/platform_umbrella//apps/home_base_web/assets/package.json
-COPY platform_umbrella/apps/home_base_web/assets/package-lock.json /source/platform_umbrella//apps/home_base_web/assets/package-lock.json
+COPY platform_umbrella/apps/home_base_web/assets/package.json /source/platform_umbrella/apps/home_base_web/assets/package.json
+COPY platform_umbrella/apps/home_base_web/assets/package-lock.json /source/platform_umbrella/apps/home_base_web/assets/package-lock.json
 
 WORKDIR /source/platform_umbrella/apps/home_base_web/assets
 
@@ -191,7 +191,12 @@ COPY --from=control-assets /source/platform_umbrella/apps/control_server_web/pri
 
 WORKDIR /source/platform_umbrella 
 
-RUN  mix "do" phx.digest, compile, release "${RELEASE}"
+# Force a recompile everything
+# Even remove deps that are from this umbrella
+# They shouldn't be there but just in case
+RUN rm -rf _build deps/{common_core,common_ui,control_server,control_server_web,event_center,home_base,home_base_web,kube_bootstrap,kube_services,verify} 
+
+RUN  mix "do" clean, deps.get, phx.digest, compile --force, release "${RELEASE}"
 
 ##########################################################################
 # Create final image that is deployed
