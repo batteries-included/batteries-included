@@ -100,7 +100,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/settings")
 
       assert lv
-             |> element(~s|a:fl-contains("Resend confirmation email")|)
+             |> element("a", "Resend confirmation email")
              |> render_click() =~ "Email resent"
 
       assert Repo.get_by!(UserToken, user_id: user.id, context: "confirm")
@@ -112,7 +112,7 @@ defmodule HomeBaseWeb.SettingsLiveTest do
 
       {:ok, lv, _html} = live(conn, ~p"/settings")
 
-      refute has_element?(lv, ~s|a:fl-contains("Resend confirmation email")|)
+      refute has_element?(lv, "a", "Resend confirmation email")
       refute Repo.get_by(UserToken, user_id: user.id, context: "confirm")
       refute_email_sent()
     end
