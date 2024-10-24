@@ -198,15 +198,11 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   defp secret_data(state, cluster, user) do
     hostname = PostgresState.read_write_hostname(state, cluster)
 
-    password_version =
-      cluster.password_versions
-      |> Enum.sort_by(& &1.version, :desc)
-      |> Enum.find(cluster.password_versions, &(&1.username == user.username))
+    password = PostgresState.password_for_user(state, cluster, user)
 
-    if password_version == nil do
+    if password == "" do
       %{}
     else
-      password = password_version.password
       dsn = "postgresql://#{user.username}:#{password}@#{hostname}/#{cluster.database.name}"
       %{dsn: dsn, username: user.username, password: password, hostname: hostname}
     end
