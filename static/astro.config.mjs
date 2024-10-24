@@ -12,12 +12,10 @@ import { ANALYTICS, SITE } from './src/utils/config.ts';
 import react from '@astrojs/react';
 import sectionize from '@hbsnow/rehype-sectionize';
 
-import compressor from 'astro-compressor';
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const whenExternalScripts = (items = []) =>
   ANALYTICS.vendors.googleAnalytics.id &&
-  ANALYTICS.vendors.googleAnalytics.partytown
+    ANALYTICS.vendors.googleAnalytics.partytown
     ? Array.isArray(items)
       ? items.map((item) => item())
       : [items()]
@@ -29,38 +27,40 @@ export default defineConfig({
   base: SITE.base,
   trailingSlash: SITE.trailingSlash ? 'always' : 'never',
   output: 'static',
-  integrations: [
-    tailwind({
-      applyBaseStyles: false,
-    }),
-    sitemap(),
-    mdx(),
-    icon({
-      include: {
-        tabler: ['*'],
-        'flat-color-icons': [
-          'template',
-          'gallery',
-          'approval',
-          'document',
-          'advertising',
-          'currency-exchange',
-          'voice-presentation',
-          'business-contact',
-          'database',
-        ],
+  integrations: [tailwind({
+    applyBaseStyles: false,
+  }), sitemap(), mdx(), icon({
+    include: {
+      tabler: ['*'],
+      'flat-color-icons': [
+        'template',
+        'gallery',
+        'approval',
+        'document',
+        'advertising',
+        'currency-exchange',
+        'voice-presentation',
+        'business-contact',
+        'database',
+      ],
+    },
+  }), ...whenExternalScripts(() =>
+    partytown({
+      config: {
+        forward: ['dataLayer.push'],
       },
-    }),
-    ...whenExternalScripts(() =>
-      partytown({
-        config: {
-          forward: ['dataLayer.push'],
-        },
-      })
-    ),
-    tasks(),
-    react(),
-    compressor(),
+    })
+  ),
+  tasks(),
+  react(),
+  import.meta.env.PROD &&
+  (await import('@playform/compress')).default({
+    CSS: true,
+    HTML: true,
+    Image: true,
+    JavaScript: true,
+    SVG: true,
+  }),
   ],
   markdown: {
     remarkPlugins: [readingTimeRemarkPlugin],
