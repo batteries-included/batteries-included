@@ -10,6 +10,7 @@ defmodule CommonCore.Resources.ControlServer do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.StateSummary.Core
   alias CommonCore.StateSummary.PostgresState
 
   @server_port 4000
@@ -80,6 +81,7 @@ defmodule CommonCore.Resources.ControlServer do
     user = Enum.find(cluster.users, &(&1.username == Defaults.ControlDB.user_name()))
     secret_name = PostgresState.user_secret(state, cluster, user)
     host = PostgresState.read_write_hostname(state, cluster)
+
     summary_dir = "/var/run/secrets/summary"
 
     template = %{
@@ -108,28 +110,7 @@ defmodule CommonCore.Resources.ControlServer do
         "containers" => [
           control_container(battery, state,
             name: name,
-            base: %{
-              "command" => ["/app/bin/start", "control_server"],
-              "ports" => [%{"containerPort" => @server_port}],
-              "readinessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/healthz",
-                  "port" => @server_port
-                },
-                "initialDelaySeconds" => 30,
-                "periodSeconds" => 30,
-                "failureThreshold" => 10
-              },
-              "livenessProbe" => %{
-                "httpGet" => %{
-                  "path" => "/healthz",
-                  "port" => @server_port
-                },
-                "initialDelaySeconds" => 300,
-                "periodSeconds" => 30,
-                "failureThreshold" => 5
-              }
-            },
+            base: main_container_base_args(state),
             pg_secret_name: secret_name,
             pg_host: host
           )
@@ -157,10 +138,62 @@ defmodule CommonCore.Resources.ControlServer do
     |> F.require(battery.config.usage != :internal_dev)
   end
 
+  defp main_container_base_args(state) do
+    image_ver =
+      state
+      |> Core.controlserver_image()
+      |> String.split(":")
+      |> List.last()
+
+    base = %{
+      "command" => ["/app/bin/start", "control_server"],
+      "ports" => [%{"containerPort" => @server_port}]
+    }
+
+    # This is a HACK.
+    #
+    # In 0.29.0 we added the /healthz endpoint to the control server
+    # however the current stable version :0.28.0-6d94089 doesn't have it.
+    #
+    # This is a temporary fix until we can get the control server in stable
+    # to have a /healthz endpoint.
+    case CommonCore.Version.compare(image_ver, "0.28.0-6d94089") do
+      {:ok, :greater} ->
+        Map.merge(
+          base,
+          %{
+            "readinessProbe" => %{
+              "httpGet" => %{
+                "path" => "/healthz",
+                "port" => @server_port
+              },
+              # Try for 3 minutes to get ready
+              "periodSeconds" => 5,
+              "failureThreshold" => 60
+            },
+            "livenessProbe" => %{
+              "httpGet" => %{
+                "path" => "/healthz",
+                "port" => @server_port
+              },
+              # Wait until we have for sure been
+              # ready until testing liveness
+              "initialDelaySeconds" => 300,
+              "periodSeconds" => 30,
+              "failureThreshold" => 5
+            }
+          }
+        )
+
+      _ ->
+        base
+    end
+  end
+
   defp control_container(battery, state, options) do
     base = Keyword.get(options, :base, %{})
     name = Keyword.get(options, :name, "control-server")
-    image = Keyword.get(options, :image, CommonCore.StateSummary.Core.controlserver_image(state))
+    image = Keyword.get(options, :image, Core.controlserver_image(state))
     host = Keyword.get(options, :pg_host)
     secret_name = Keyword.get(options, :pg_secret_name)
     summary_path = Keyword.get(options, :summary_path, "")

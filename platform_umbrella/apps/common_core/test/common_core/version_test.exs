@@ -24,4 +24,18 @@ defmodule CommonCore.VersionTest do
       assert String.length(CommonCore.Version.hash()) >= 5
     end
   end
+
+  describe "CommonCore.Version.compare_version/2" do
+    test "compare_version/2 returns {:ok, :equal} when versions are equal" do
+      assert CommonCore.Version.compare("1.2.3", "1.2.3") == {:ok, :equal}
+    end
+
+    test "compare_version/2 returns {:ok, :lesser} when for version with hashes" do
+      assert CommonCore.Version.compare("1.2.3-deadbeef", "1.2.4-aaaa") == {:ok, :lesser}
+    end
+
+    test "compare_version/2 returns {:ok, :greater} when first version is greater in last place" do
+      assert CommonCore.Version.compare("1.2.4", "1.2.3") == {:ok, :greater}
+    end
+  end
 end
