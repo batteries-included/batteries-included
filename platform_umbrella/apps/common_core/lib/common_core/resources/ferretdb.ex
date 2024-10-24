@@ -6,7 +6,6 @@ defmodule CommonCore.Resources.FerretDB do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.FerretDB.FerretService
-  alias CommonCore.Postgres.Cluster
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary
@@ -105,6 +104,7 @@ defmodule CommonCore.Resources.FerretDB do
 
   defp container(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
     pg = get_cluster(ferret_service, state)
+    user = List.first(pg.users)
 
     %{}
     |> Map.put("name", "ferret")
@@ -115,7 +115,10 @@ defmodule CommonCore.Resources.FerretDB do
       %{"containerPort" => 8088, "name" => "debug"}
     ])
     |> Map.put("env", [
-      %{"name" => "FERRETDB_POSTGRESQL_URL", "value" => get_url(pg, state)},
+      %{
+        "name" => "FERRETDB_POSTGRESQL_URL",
+        "valueFrom" => B.secret_key_ref("cloudnative-pg.pg-#{pg.name}.#{user.username}", "dsn")
+      },
       %{"name" => "FERRETDB_TELEMETRY", "value" => "disable"},
       %{"name" => "DO_NOT_TRACK", "value" => "true"}
     ])
@@ -150,11 +153,6 @@ defmodule CommonCore.Resources.FerretDB do
 
   defp service_account_name(%FerretService{} = ferret_service) do
     "ferret-#{ferret_service.name}"
-  end
-
-  defp get_url(%Cluster{} = cluster, %StateSummary{} = state) do
-    namespace = StateSummary.PostgresState.cluster_namespace(state, cluster)
-    "postgresql://#{cluster.name}-rw.#{namespace}.svc.cluster.local.:5432/#{cluster.database.name}"
   end
 
   defp namespace(%FerretService{} = ferret_service, %StateSummary{} = state) do
