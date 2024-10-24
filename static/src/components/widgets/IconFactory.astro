@@ -62,6 +62,8 @@ import WebIcon from '~/components/icons/WebIcon.astro';
 import AddIcon from '~/components/icons/AddIcon.astro';
 import DownIcon from '~/components/icons/DownIcon.astro';
 import ChevronRightIcon from '~/components/icons/ChevronRightIcon.astro';
+import AutoscalingIcon from '~/components/icons/AutoscalingIcon.astro';
+import AIStackIcon from '~/components/icons/AIStackIcon.astro';
 
 type Icons =
   | 'none'
@@ -129,6 +131,8 @@ type Icons =
   | 'add'
   | 'down'
   | 'chevronright'
+  | 'autoscaling'
+  | 'aistack'
   | string;
 
 type Props = {
@@ -210,3 +214,5 @@ const { icon, classes } = Astro.props;
 {icon === 'add' && <AddIcon class={classes} />}
 {icon === 'down' && <DownIcon class={classes} />}
 {icon === 'chevronright' && <ChevronRightIcon class={classes} />}
+{icon === 'autoscaling' && <AutoscalingIcon class={classes} />}
+{icon === 'aistack' && <AIStackIcon class={classes} />}

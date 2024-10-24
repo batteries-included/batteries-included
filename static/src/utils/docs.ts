@@ -1,4 +1,5 @@
-import { CollectionEntry, getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import type { Doc } from '~/types';
 import { cleanSlug } from './permalinks';
 
@@ -12,7 +13,13 @@ const getNormalizedDoc = async (doc: CollectionEntry<'doc'>): Promise<Doc> => {
     category: rawCategory,
     draft = false,
     metadata = {},
-  } = data;
+  } = data as {
+    title: string;
+    tags?: string[];
+    category?: string;
+    draft?: boolean;
+    metadata?: Record<string, unknown>;
+  };
 
   const slug = cleanSlug(rawSlug); // cleanSlug(rawSlug.split('/').pop());
   const category = rawCategory ? cleanSlug(rawCategory) : undefined;

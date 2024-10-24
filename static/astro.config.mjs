@@ -57,6 +57,7 @@ export default defineConfig({
       })
     ),
     tasks(),
+    react(),
     import.meta.env.PROD &&
       (await import('@playform/compress')).default({
         CSS: true,
@@ -65,7 +66,6 @@ export default defineConfig({
         JavaScript: true,
         SVG: true,
       }),
-    react(),
   ],
   markdown: {
     remarkPlugins: [readingTimeRemarkPlugin],

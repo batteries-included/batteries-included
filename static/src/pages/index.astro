@@ -24,8 +24,7 @@ const metadata = {
     <Fragment slot="subtitle">The ultimate platform</Fragment>
     <Fragment slot="title">for modern service development.</Fragment>
     <Fragment slot="content">
-      Experience unparalleled flexibility and control. Build, deploy, and scale
-      your projects with ease using our source-available, all-in-one solution.
+      Launch your cloud infrastructure in seconds, no YAML required
     </Fragment>
     <div class="mt-12 mx-auto max-w-screen-md">
       <div class="flex justify-center">
@@ -42,6 +41,11 @@ const metadata = {
             />
           </button>
         </VideoModal>
+      </div>
+      <div class="mt-2 flex justify-center">
+        <a href="https://home.batteriesincl.com/login" class="btn-fifth">
+          <p class="flex-shrink-0">Get started</p>
+        </a>
       </div>
       <div class="mt-12">
         <VideoModal
@@ -71,63 +75,26 @@ const metadata = {
 
   <Features
     id="features"
-    tagline="Unmatched Capabilities"
-    title="Your all-inclusive, source-available deployment solution"
-    subtitle="Experience a secure and flexible platform that puts you in control."
+    title="One-click deployments with security, scale, and monitoring out of the box"
     items={[
       {
-        title: 'Open-Source Transparency',
+        title: 'Spin up a relational database system on any cloud or hardware',
         description:
-          'Built on open-source, with all of our code publicly available. Audit, modify, and trust the code that powers your infrastructure.',
-        icon: 'document',
+          'Production-ready PostgreSQL that works with your existing stack. No config required.',
+        icon: 'postgresql',
       },
       {
-        title: 'Advanced Web Services',
+        title:
+          'Deploy web services at the speed of your users with autoscaling',
         description:
-          'Deploy from Docker to Knative with SSL, easier than ever. Get superior service on your own hardware thanks to our hands-off workflow.',
-        icon: 'checkoutline',
+          'Build and rollout your serverless apps with dynamic scaling and security. Choose private cloud or on-prem.',
+        icon: 'kubernetes',
       },
       {
-        title: 'Automation Built-In',
+        title: 'Launch a self-hosted RAG stack for your next AI product',
         description:
           'Accelerate development cycles with intelligent automation. Focus on your core product while our platform handles repetitive tasks and integrations.',
-        icon: 'automation',
-      },
-      {
-        title: 'Unparalleled Security',
-        description:
-          'Our infrastructure automates end-to-end security, deploying fixes and updates without any manual effort on your part. Run on your own hardware for ultimate data privacy.',
-        icon: 'secure',
-      },
-      {
-        title: 'Reliability Guaranteed',
-        description:
-          'Ensure high availability and performance with proactive monitoring and self-healing systems. Minimize downtime and maximize user satisfaction.',
-        icon: 'reliability',
-      },
-      {
-        title: 'State-of-the-Art AI',
-        description:
-          'Utilize our fully open-source RAG stack for all your AI needs, including LLama 3.1 and vector databases, all on your own hardware.',
-        icon: 'ai',
-      },
-      {
-        title: 'Effortless SSO Integration',
-        description:
-          "Experience the world's easiest SSO onboarding process -- in minutes you could have a fully functional OAuth UI application using PostgreSQL and SSL.",
-        icon: 'magic',
-      },
-      {
-        title: 'Cost-Effective Scaling',
-        description:
-          'Leverage top-tier autoscaling to reduce waste and ensure efficient, cost-effective scaling for your applications.',
-        icon: 'cost',
-      },
-      {
-        title: 'Efficiency Optimized',
-        description:
-          'Streamline your workflow and eliminate bottlenecks. Our platform ensures you spend less time on infrastructure and more on innovation.',
-        icon: 'efficiency',
+        icon: 'aistack',
       },
     ]}>
     <Fragment slot="bg">
@@ -138,53 +105,37 @@ const metadata = {
   <!-- Content Widget **************** -->
 
   <Content2
-    title="Elevate your infrastructure"
-    classes={{ headline: 'mt-20 lg:mt-24 xl:mt-28' }}
+    title="Spend less time on infra ops and more time on your product"
+    classes={{ headline: 'mt-20 lg:mt-24 xl:mt-28 max-w-3xl' }}
     items={[
       {
-        title: 'Integrated Databases',
+        title: 'Advanced operational tools',
         description:
-          'Fully automated PostgreSQL with seamless integrations for Redis, FerretDB, and Blob Storage. Spin up, back up, scale, and manage your databases without touching configs or the CLI.',
-        link: '/solutions/database',
+          'Empower your team with purpose-built tools for effortless monitoring and maintenance. Ensure high availability and performance with proactive monitoring and self-healing systems. ',
+        link: '/solutions/sre_tools',
         image: {
-          src: '~/assets/images/home/databases.png',
-          alt: 'databases image',
+          src: '~/assets/images/solutions/operational-tools/demo.png',
+          alt: 'advanced operational tools',
         },
       },
       {
-        title: 'Cutting-Edge Web Services',
-        description:
-          'Deploy any application or service in seconds with uncompromised security and stability. Enjoy seamless version control, dynamic scaling, and compatibility with any cloud host or your own hardware.',
-        link: '/solutions/web-deploy',
-        image: {
-          src: '~/assets/images/home/web-services.png',
-          alt: 'Cutting-edge web services',
-        },
-      },
-      {
-        title: 'Industry-Leading Security',
+        title: 'Industry-leading security',
         description:
           'Manage critical security configurations effortlessly with our unified command center. Benefit from ubiquitous SSO, mesh networking, automated SSL, and flexible deployment options, all with dynamically updating permissions.',
         link: '/solutions/security',
         image: {
-          src: '~/assets/images/home/security.png',
-          alt: 'Industry-leading security features',
+          src: '~/assets/images/solutions/security/demo.png',
+          alt: 'industry leading security',
         },
       },
       {
-        title: 'Machine Learning',
+        title: 'Efficiency with cost-effective scaling',
         description:
-          'Accelerate your ML projects with our comprehensive development environment. Prepare data, host models, and manage pipelines seamlessly, integrating machine learning into your daily workflows.',
-        link: '/solutions/ml',
-      },
-      {
-        title: 'Advanced Operational Tools',
-        description:
-          'Empower your team with purpose-built tools for effortless monitoring and maintenance. Stay ahead of issues and optimize your software performance continuously.',
-        link: '/solutions/sre_tools',
+          'Leverage top-tier autoscaling to reduce waste and ensure efficient, cost-effective scaling for your applications - including pre-prod testing with blue/green canary deployments',
+        link: '/solutions/web-deploy',
         image: {
-          src: '~/assets/images/home/operational-tools.png',
-          alt: 'Advanced operational tools',
+          src: '~/assets/images/solutions/web-services/demo.png',
+          alt: 'cost effective scaling',
         },
       },
     ]}>
@@ -195,10 +146,13 @@ const metadata = {
   </Content2>
 
   <InfoWidget
-    title="The Power of Open Source"
+    title="Access best-in-class open source technologies, expertise not required"
     description="Batteries Included is built on a fully open-sourced stack, offering unmatched portability and the best-in-class technology without compromises. Our solutions adhere to industry standards out of the box, ensuring you can work and build the way you want, without being limited by your infrastructure."
+    link="/posts/open-source-payoff"
   />
+
   <!-- Posts Widget ****************** -->
   <RecentPosts />
+
   <StartBuild />
 </Layout>
