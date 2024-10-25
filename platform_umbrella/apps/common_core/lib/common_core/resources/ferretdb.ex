@@ -112,6 +112,9 @@ defmodule CommonCore.Resources.FerretDB do
       Enum.map(user.credential_namespaces, fn ns ->
         data =
           Secret.encode(%{
+            hostname: host,
+            password: password,
+            username: username,
             uri: "mongodb://#{username}:#{password}@#{host}/#{pg.database.name}?authMechanism=PLAIN"
           })
 
