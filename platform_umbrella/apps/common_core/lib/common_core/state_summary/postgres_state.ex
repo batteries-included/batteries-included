@@ -7,7 +7,7 @@ defmodule CommonCore.StateSummary.PostgresState do
   alias CommonCore.Postgres.PGUser
   alias CommonCore.StateSummary
 
-  @default_secret_name "cloudnative-pg.pg-unknown-cluster.unkown-user"
+  @default_secret_name "cloudnative-pg.pg-unknown-cluster.unknown-user"
 
   @spec read_write_hostname(StateSummary.t(), Cluster.t() | nil) :: String.t()
   def read_write_hostname(%StateSummary{} = _state_summary, nil) do
@@ -44,5 +44,25 @@ defmodule CommonCore.StateSummary.PostgresState do
 
   def user_secret(_state_summary, %Cluster{name: cluster_name} = _cluster, %PGUser{username: username} = _user) do
     Enum.join(["cloudnative-pg", "pg-" <> cluster_name, username], ".")
+  end
+
+  @spec password_for_user(
+          CommonCore.StateSummary.t() | any(),
+          CommonCore.Postgres.Cluster.t() | nil,
+          CommonCore.Postgres.PGUser.t() | nil
+        ) :: binary() | nil
+  def password_for_user(_state_summary, nil = _cluster, nil = _user), do: nil
+  def password_for_user(_state_summary, nil = _cluster, _user), do: nil
+  def password_for_user(_state_summary, _cluster, nil = _user), do: nil
+
+  def password_for_user(
+        _state_summary,
+        %Cluster{password_versions: versions} = _cluster,
+        %PGUser{username: username} = _user
+      ) do
+    versions
+    |> Enum.sort_by(& &1.version, :desc)
+    |> Enum.find(%{}, &(&1.username == username))
+    |> Map.get(:password)
   end
 end

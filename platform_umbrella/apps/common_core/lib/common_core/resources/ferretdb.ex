@@ -8,18 +8,23 @@ defmodule CommonCore.Resources.FerretDB do
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary
 
   multi_resource(:deployments, battery, %StateSummary{} = state) do
-    Enum.map(state.ferret_services, fn ferret_service -> deployment(ferret_service, battery, state) end)
+    Enum.map(state.ferret_services, &deployment(&1, battery, state))
   end
 
   multi_resource(:services, battery, %StateSummary{} = state) do
-    Enum.map(state.ferret_services, fn ferret_service -> service(ferret_service, battery, state) end)
+    Enum.map(state.ferret_services, &service(&1, battery, state))
   end
 
   multi_resource(:service_accounts, battery, %StateSummary{} = state) do
-    Enum.map(state.ferret_services, fn ferret_service -> service_account(ferret_service, battery, state) end)
+    Enum.map(state.ferret_services, &service_account(&1, battery, state))
+  end
+
+  multi_resource(:secrets, battery, %StateSummary{} = state) do
+    Enum.flat_map(state.ferret_services, &secrets(&1, battery, state))
   end
 
   resource(:monitoring_pod_monitor, _battery, state) do
@@ -97,6 +102,28 @@ defmodule CommonCore.Resources.FerretDB do
     |> B.add_owner(ferret_service)
   end
 
+  def secrets(ferret_service, _battery, state) do
+    pg = get_cluster(ferret_service, state)
+    host = "#{service_name(ferret_service)}.#{namespace(ferret_service, state)}.svc.cluster.local."
+
+    Enum.flat_map(pg.users, fn %{username: username} = user ->
+      password = CommonCore.StateSummary.PostgresState.password_for_user(state, pg, user)
+
+      Enum.map(user.credential_namespaces, fn ns ->
+        data =
+          Secret.encode(%{
+            uri: "mongodb://#{username}:#{password}@#{host}/#{pg.database.name}?authMechanism=PLAIN"
+          })
+
+        :secret
+        |> B.build_resource()
+        |> B.name("ferret.#{ferret_service.name}.#{username}")
+        |> B.namespace(ns)
+        |> B.data(data)
+      end)
+    end)
+  end
+
   @spec get_cluster(FerretService.t(), StateSummary.t()) :: CommonCore.Postgres.Cluster.t() | nil
   defp get_cluster(%FerretService{} = ferret_service, %StateSummary{} = state) do
     Enum.find(state.postgres_clusters, fn cluster -> cluster.id == ferret_service.postgres_cluster_id end)
@@ -104,7 +131,9 @@ defmodule CommonCore.Resources.FerretDB do
 
   defp container(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
     pg = get_cluster(ferret_service, state)
+    # TODO: allow end-user to specify which pg user
     user = List.first(pg.users)
+    user_secret = StateSummary.PostgresState.user_secret(state, pg, user)
 
     %{}
     |> Map.put("name", "ferret")
@@ -117,7 +146,7 @@ defmodule CommonCore.Resources.FerretDB do
     |> Map.put("env", [
       %{
         "name" => "FERRETDB_POSTGRESQL_URL",
-        "valueFrom" => B.secret_key_ref("cloudnative-pg.pg-#{pg.name}.#{user.username}", "dsn")
+        "valueFrom" => B.secret_key_ref(user_secret, "dsn")
       },
       %{"name" => "FERRETDB_TELEMETRY", "value" => "disable"},
       %{"name" => "DO_NOT_TRACK", "value" => "true"}

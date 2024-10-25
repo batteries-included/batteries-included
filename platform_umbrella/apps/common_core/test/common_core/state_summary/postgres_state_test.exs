@@ -47,13 +47,13 @@ defmodule CommonCore.StateSummary.PostgresStateTest do
   describe "user_secret/3" do
     test "returns default secret name if cluster is nil" do
       secret = PostgresState.user_secret(%{}, nil, %PGUser{username: "myuser"})
-      assert secret == "cloudnative-pg.pg-unknown-cluster.unkown-user"
+      assert secret == "cloudnative-pg.pg-unknown-cluster.unknown-user"
     end
 
     test "returns default secret name if user is nil" do
       cluster = %Cluster{name: "mycluster"}
       secret = PostgresState.user_secret(%{}, cluster, nil)
-      assert secret == "cloudnative-pg.pg-unknown-cluster.unkown-user"
+      assert secret == "cloudnative-pg.pg-unknown-cluster.unknown-user"
     end
 
     test "returns secret name joining cluster, username" do
