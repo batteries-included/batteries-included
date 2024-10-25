@@ -13,44 +13,44 @@ defmodule HomeBaseWeb.LoginLive do
 
   def render(assigns) do
     ~H"""
-    <.form for={@form} id="login-form" action={~p"/login"} class="mb-4">
-      <.h2 class="mb-8">Log in to your account</.h2>
+    <.panel variant="shadowed" title="Log in to your account" title_size="lg">
+      <.form for={@form} id="login-form" action={~p"/login"}>
+        <.fieldset flash={@flash}>
+          <.input
+            type="email"
+            field={@form[:email]}
+            placeholder="Email"
+            value={get(@flash, :email)}
+            autocomplete="username"
+            autofocus
+          />
 
-      <.fieldset flash={@flash}>
-        <.input
-          type="email"
-          field={@form[:email]}
-          placeholder="Email"
-          value={get(@flash, :email)}
-          autocomplete="username"
-          autofocus
-        />
+          <.input
+            type="password"
+            field={@form[:password]}
+            placeholder="Password"
+            autocomplete="current-password"
+          />
 
-        <.input
-          type="password"
-          field={@form[:password]}
-          placeholder="Password"
-          autocomplete="current-password"
-        />
+          <.input type="checkbox" field={@form[:remember_me]}>Keep me logged in</.input>
 
-        <.input type="checkbox" field={@form[:remember_me]}>Keep me logged in</.input>
+          <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
+            Log in
+          </.button>
+        </.fieldset>
+      </.form>
 
-        <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
-          Log in
-        </.button>
-      </.fieldset>
-    </.form>
+      <div class="text-center mt-4">
+        <p>
+          Don't have an account?
+          <.a navigate={~p"/signup"}>Sign up</.a>
+        </p>
 
-    <div class="text-center">
-      <p>
-        Don't have an account?
-        <.a navigate={~p"/signup"}>Sign up</.a>
-      </p>
-
-      <.a navigate={~p"/reset"}>
-        Forgot your password?
-      </.a>
-    </div>
+        <.a navigate={~p"/reset"}>
+          Forgot your password?
+        </.a>
+      </div>
+    </.panel>
     """
   end
 end
