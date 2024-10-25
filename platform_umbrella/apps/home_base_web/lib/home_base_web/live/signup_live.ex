@@ -2,6 +2,8 @@ defmodule HomeBaseWeb.SignupLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
+  import CommonCore.URLs
+
   alias CommonCore.Accounts.User
   alias HomeBase.Accounts
 
@@ -50,51 +52,66 @@ defmodule HomeBaseWeb.SignupLive do
 
   def render(assigns) do
     ~H"""
-    <.form
-      for={@form}
-      id="signup-form"
-      method="post"
-      action={~p"/login?action=registered"}
-      phx-change="validate"
-      phx-submit="save"
-      phx-trigger-action={@trigger_submit}
-      class="mb-4"
-    >
-      <.h2 class="mb-8">Sign up for an account</.h2>
+    <div class="flex flex-wrap w-full justify-center gap-12 lg:gap-28">
+      <.list variant="check" class="max-w-md self-center">
+        <:item>Get started with a single command-line script</:item>
+        <:item>Configure Kuburnetes installs with an easy UI</:item>
+        <:item>Self-host your infrastructure on any cluster</:item>
+        <:item>Manage your installations, teams, and billing</:item>
+        <:item>Completely free to use for public beta</:item>
+      </.list>
 
-      <.fieldset flash={@flash}>
-        <.input type="email" field={@form[:email]} placeholder="Email" autocomplete="email" autofocus />
+      <.panel variant="shadowed" title="Sign up for an account" title_size="lg">
+        <.form
+          for={@form}
+          id="signup-form"
+          method="post"
+          action={~p"/login?action=registered"}
+          phx-change="validate"
+          phx-submit="save"
+          phx-trigger-action={@trigger_submit}
+        >
+          <.fieldset flash={@flash}>
+            <.input
+              type="email"
+              field={@form[:email]}
+              placeholder="Email"
+              autocomplete="email"
+              autofocus
+            />
 
-        <.input
-          type="password"
-          field={@form[:password]}
-          placeholder="Password"
-          autocomplete="new-password"
-        />
+            <.input
+              type="password"
+              field={@form[:password]}
+              placeholder="Password"
+              autocomplete="new-password"
+            />
 
-        <.input
-          type="password"
-          field={@form[:password_confirmation]}
-          placeholder="Retype Password"
-          autocomplete="new-password"
-        />
+            <.input
+              type="password"
+              field={@form[:password_confirmation]}
+              placeholder="Retype Password"
+              autocomplete="new-password"
+            />
 
-        <.input type="checkbox" field={@form[:terms]}>
-          I agree to the
-          <.a href="https://www.batteriesincl.com/terms-service" target="_blank">
-            terms & conditions
-          </.a>
-        </.input>
+            <.input type="checkbox" field={@form[:terms]}>
+              I agree to the
+              <.a href={"#{marketing_url()}/terms-service"} target="_blank">
+                terms & conditions
+              </.a>
+            </.input>
 
-        <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
-          Create account
-        </.button>
-      </.fieldset>
-    </.form>
+            <.button type="submit" variant="primary" icon={:arrow_right} icon_position={:right}>
+              Create account
+            </.button>
+          </.fieldset>
+        </.form>
 
-    <div class="text-center">
-      Already have an account?
-      <.a navigate={~p"/login"}>Log in</.a>
+        <div class="text-center mt-4">
+          Already have an account?
+          <.a navigate={~p"/login"}>Log in</.a>
+        </div>
+      </.panel>
     </div>
     """
   end

@@ -12,7 +12,7 @@ defmodule Storybook.Components.Panel do
     [
       %Variation{
         id: :default,
-        attributes: %{title: "Title", class: "w-full"},
+        attributes: %{title: "Title"},
         slots: [
           ~s"""
           <:menu>
@@ -27,8 +27,24 @@ defmodule Storybook.Components.Panel do
         id: :gray,
         attributes: %{
           title: "Title",
-          variant: "gray",
-          class: "w-full"
+          variant: "gray"
+        },
+        slots: ["Content"]
+      },
+      %Variation{
+        id: :shadowed,
+        attributes: %{
+          title: "Title",
+          variant: "shadowed"
+        },
+        slots: ["Content"]
+      },
+      %Variation{
+        id: :larger_title,
+        attributes: %{
+          title: "Title",
+          title_size: "lg",
+          variant: "shadowed"
         },
         slots: ["Content"]
       }

@@ -2,6 +2,8 @@ defmodule HomeBaseWeb.Layouts do
   @moduledoc false
   use HomeBaseWeb, :html
 
+  import CommonCore.URLs
+
   alias CommonCore.Accounts.User
 
   attr :page_title, :string, default: nil
@@ -49,21 +51,12 @@ defmodule HomeBaseWeb.Layouts do
     />
 
     <div class="flex items-center justify-center min-h-screen background-gradient">
-      <div class="flex flex-col items-center gap-12 p-12 w-full">
-        <.logo class="w-36" />
+      <div class="flex flex-col items-center justify-center w-full p-12 gap-10 lg:gap-20">
+        <.link navigate={marketing_url()}>
+          <.logo class="h-24" />
+        </.link>
 
-        <div class="w-full max-w-md bg-white dark:bg-gray-darkest shadow-2xl shadow-gray/30 dark:shadow-black/40 rounded-lg p-6 lg:p-10">
-          <%= @inner_content %>
-        </div>
-
-        <.button
-          variant="minimal"
-          icon={:arrow_left}
-          link="https://www.batteriesincl.com"
-          link_type="external"
-        >
-          Back to home
-        </.button>
+        <%= @inner_content %>
       </div>
     </div>
     """

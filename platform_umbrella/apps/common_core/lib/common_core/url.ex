@@ -1,4 +1,4 @@
-defmodule CommonCore.URL do
+defmodule CommonCore.URLs do
   @moduledoc false
 
   @marketing_url Application.compile_env!(:common_core, :marketing_url)
