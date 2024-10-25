@@ -1,0 +1,21 @@
+<ul class="border-l-2 border-l-gray-lighter ">
+  <li class="flex items-center gap-2 py-2 before:content-[&#39;&#39;] before:inline-block before:w-5 before:h-0.5 before:bg-gray-lighter ">
+    <a href="/foo" data-phx-link="redirect" data-phx-link-state="push" class="inline-flex justify-start items-center gap-2 font-semibold hover:underline line-through">
+      <div class="flex items-center justify-center size-5 rounded-full bg-gray-darker text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd"/>
+</svg>
+      </div>
+
+      Foo
+    </a>
+  </li><li class="flex items-center gap-2 py-2 before:content-[&#39;&#39;] before:inline-block before:w-5 before:h-0.5 before:bg-gray-lighter ">
+    <a href="/bar" data-phx-link="redirect" data-phx-link-state="push" class="inline-flex justify-start items-center gap-2 font-semibold hover:underline">
+      <div class="flex items-center justify-center size-5 rounded-full border-2 border-gray-darker">
+        
+      </div>
+
+      Bar
+    </a>
+  </li>
+</ul>

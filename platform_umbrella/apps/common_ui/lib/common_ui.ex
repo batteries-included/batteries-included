@@ -42,6 +42,7 @@ defmodule CommonUI do
       import CommonUI.Components.Input
       import CommonUI.Components.InputList
       import CommonUI.Components.Link
+      import CommonUI.Components.List
       import CommonUI.Components.Loader
       import CommonUI.Components.Logo
       import CommonUI.Components.Markdown
@@ -51,7 +52,6 @@ defmodule CommonUI do
       import CommonUI.Components.Script
       import CommonUI.Components.TabBar
       import CommonUI.Components.Table
-      import CommonUI.Components.TodoList
       import CommonUI.Components.Tooltip
       import CommonUI.Components.Typography
       import CommonUI.Components.Video
