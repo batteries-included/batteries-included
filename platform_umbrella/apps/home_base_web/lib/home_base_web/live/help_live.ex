@@ -2,7 +2,7 @@ defmodule HomeBaseWeb.HelpLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
 
-  import CommonCore.URL
+  import CommonCore.URLs
 
   def mount(_params, _session, socket) do
     {:ok,

@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.Help do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import CommonCore.URL
+  import CommonCore.URLs
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
