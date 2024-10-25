@@ -200,7 +200,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
     password = PostgresState.password_for_user(state, cluster, user)
 
-    if password == "" do
+    if password == nil do
       %{}
     else
       dsn = "postgresql://#{user.username}:#{password}@#{hostname}/#{cluster.database.name}"

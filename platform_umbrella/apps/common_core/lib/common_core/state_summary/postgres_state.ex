@@ -50,10 +50,10 @@ defmodule CommonCore.StateSummary.PostgresState do
           CommonCore.StateSummary.t() | any(),
           CommonCore.Postgres.Cluster.t() | nil,
           CommonCore.Postgres.PGUser.t() | nil
-        ) :: binary()
-  def password_for_user(_state_summary, nil = _cluster, nil = _user), do: ""
-  def password_for_user(_state_summary, nil = _cluster, _user), do: ""
-  def password_for_user(_state_summary, _cluster, nil = _user), do: ""
+        ) :: binary() | nil
+  def password_for_user(_state_summary, nil = _cluster, nil = _user), do: nil
+  def password_for_user(_state_summary, nil = _cluster, _user), do: nil
+  def password_for_user(_state_summary, _cluster, nil = _user), do: nil
 
   def password_for_user(
         _state_summary,
@@ -62,7 +62,7 @@ defmodule CommonCore.StateSummary.PostgresState do
       ) do
     versions
     |> Enum.sort_by(& &1.version, :desc)
-    |> Enum.find(%{password: ""}, &(&1.username == username))
-    |> Map.get(:password, "")
+    |> Enum.find(%{}, &(&1.username == username))
+    |> Map.get(:password)
   end
 end
