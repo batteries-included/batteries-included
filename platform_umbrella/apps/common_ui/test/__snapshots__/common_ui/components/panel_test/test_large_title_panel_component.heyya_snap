@@ -1,0 +1,18 @@
+<div class="bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker flex flex-col">
+  <div class="gap-4 lg:gap-6 flex items-center justify-between flex-wrap w-full px-6 pt-5">
+  
+    <h2 class="text-xl sm:text-3xl font-semibold my-3 text-gray-darkest dark:text-gray-lighter ">
+  Foobar
+</h2>
+    
+
+    
+  
+</div>
+
+  <div class="relative flex-1 px-6 py-5 ">
+    
+  Hello
+
+  </div>
+</div>
