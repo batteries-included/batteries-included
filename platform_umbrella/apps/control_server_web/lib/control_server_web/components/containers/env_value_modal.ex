@@ -126,35 +126,43 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
 
   defp value_inputs(assigns) do
     ~H"""
-    <.input label="Value" field={@form[:value]} placeholder="your.service.creds" />
+    <.field>
+      <:label>Value</:label>
+      <.input field={@form[:value]} placeholder="your.service.creds" />
+    </.field>
     """
   end
 
   defp resource_inputs(assigns) do
     ~H"""
-    <.flex column>
-      <.input
-        label={@label}
-        field={@form[:source_name]}
-        type="select"
-        placeholder="Select Source"
-        options={Enum.map(@resources, &name/1)}
-      />
-      <.input
-        label="Key"
-        field={@form[:source_key]}
-        type="select"
-        placeholder="Select Key"
-        options={extract_keys(@resources, @form[:source_name].value || "")}
-      />
-    </.flex>
+    <.fieldset>
+      <.field>
+        <:label><%= @label %></:label>
+        <.input
+          type="select"
+          field={@form[:source_name]}
+          placeholder="Select Source"
+          options={Enum.map(@resources, &name/1)}
+        />
+      </.field>
+
+      <.field>
+        <:label>Key</:label>
+        <.input
+          type="select"
+          field={@form[:source_key]}
+          placeholder="Select Key"
+          options={extract_keys(@resources, @form[:source_name].value || "")}
+        />
+      </.field>
+    </.fieldset>
     """
   end
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="contents">
       <.form
         for={@form}
         id="env_value-form"
@@ -165,8 +173,12 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
         <.modal show size="lg" id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
           <:title>Environment Variable</:title>
 
-          <.flex column>
-            <.input label="Name" field={@form[:name]} autofocus placeholder="ENV_VARIABLE_NAME" />
+          <.fieldset>
+            <.field>
+              <:label>Name</:label>
+              <.input field={@form[:name]} placeholder="ENV_VARIABLE_NAME" autofocus />
+            </.field>
+
             <.tab_bar variant="secondary">
               <:tab phx-click="value" phx-target={@myself} selected={value_selected?(@changeset)}>
                 Explicit Value
@@ -178,21 +190,24 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
                 Secret
               </:tab>
             </.tab_bar>
+
             <.input type="hidden" field={@form[:source_type]} />
             <.value_inputs :if={value_selected?(@changeset)} form={@form} />
+
             <.resource_inputs
               :if={config_selected?(@changeset)}
               form={@form}
               resources={@configs}
               label="Config Map"
             />
+
             <.resource_inputs
               :if={secret_selected?(@changeset)}
               form={@form}
               resources={@secrets}
               label="Secret"
             />
-          </.flex>
+          </.fieldset>
 
           <:actions cancel="Cancel">
             <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>

@@ -79,7 +79,7 @@ defmodule ControlServerWeb.PortModal do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="contents">
       <.form
         for={@form}
         id="port-form"
@@ -90,16 +90,22 @@ defmodule ControlServerWeb.PortModal do
         <.modal show size="lg" id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
           <:title>Port</:title>
 
-          <.flex column>
-            <.input label="Name" field={@form[:name]} autofocus />
-            <.input label="Port" field={@form[:number]} />
-            <.input
-              field={@form[:protocol]}
-              type="select"
-              label="Protocol"
-              options={Port.protocols()}
-            />
-          </.flex>
+          <.fieldset>
+            <.field>
+              <:label>Name</:label>
+              <.input field={@form[:name]} autofocus />
+            </.field>
+
+            <.field>
+              <:label>Port</:label>
+              <.input field={@form[:number]} />
+            </.field>
+
+            <.field>
+              <:label>Protocol</:label>
+              <.input field={@form[:protocol]} type="select" options={Port.protocols()} />
+            </.field>
+          </.fieldset>
 
           <:actions cancel="Cancel">
             <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>

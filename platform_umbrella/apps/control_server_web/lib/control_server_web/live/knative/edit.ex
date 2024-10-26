@@ -23,15 +23,13 @@ defmodule ControlServerWeb.Live.KnativeEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div>
-      <.live_component
-        module={FormComponent}
-        service={@service}
-        id="service-form"
-        action={:edit}
-        title="Edit Knative Service"
-      />
-    </div>
+    <.live_component
+      module={FormComponent}
+      service={@service}
+      id="service-form"
+      action={:edit}
+      title="Edit Knative Service"
+    />
     """
   end
 end

@@ -240,8 +240,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
           </.button>
         </.page_header>
 
-        <.flex column>
-          <.panel>
+        <.grid variant="col-2">
+          <.panel class="col-span-2">
             <.size_form
               form={@form}
               phx_target={@myself}
@@ -250,61 +250,57 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             />
           </.panel>
 
-          <.grid variant="col-2">
-            <.panel title="Database">
-              <.fieldset responsive>
-                <.inputs_for :let={database_form} field={@form[:database]}>
-                  <.field>
-                    <:label>Name</:label>
-                    <.input field={database_form[:name]} />
-                  </.field>
-
-                  <.field>
-                    <:label>Owner</:label>
-                    <.input
-                      type="select"
-                      field={database_form[:owner]}
-                      placeholder="Select Database Owner (on creation)"
-                      options={@possible_owners}
-                    />
-                  </.field>
-                </.inputs_for>
-              </.fieldset>
-            </.panel>
-
-            <.panel title="Instances">
-              <.input
-                type="range"
-                field={@form[:num_instances]}
-                min="1"
-                max={max(length(@possible_nodes || []), 3)}
-                step="1"
-              />
-            </.panel>
-          </.grid>
-
-          <.grid variant="col-2">
-            <.users_table
-              users={Ecto.Changeset.get_field(@form[:users].form.source, :users)}
-              phx_target={@myself}
-            />
-
-            <.panel title="Advanced Settings" variant="gray">
-              <.fieldset>
+          <.panel title="Database">
+            <.fieldset responsive>
+              <.inputs_for :let={database_form} field={@form[:database]}>
                 <.field>
-                  <:label>Project</:label>
+                  <:label>Name</:label>
+                  <.input field={database_form[:name]} />
+                </.field>
+
+                <.field>
+                  <:label>Owner</:label>
                   <.input
                     type="select"
-                    field={@form[:project_id]}
-                    placeholder="No Project"
-                    placeholder_selectable={true}
-                    options={Enum.map(@projects, &{&1.name, &1.id})}
+                    field={database_form[:owner]}
+                    placeholder="Select Database Owner (on creation)"
+                    options={@possible_owners}
                   />
                 </.field>
-              </.fieldset>
-            </.panel>
-          </.grid>
-        </.flex>
+              </.inputs_for>
+            </.fieldset>
+          </.panel>
+
+          <.panel title="Instances">
+            <.input
+              type="range"
+              field={@form[:num_instances]}
+              min="1"
+              max={max(length(@possible_nodes || []), 3)}
+              step="1"
+            />
+          </.panel>
+
+          <.users_table
+            users={Ecto.Changeset.get_field(@form[:users].form.source, :users)}
+            phx_target={@myself}
+          />
+
+          <.panel title="Advanced Settings" variant="gray">
+            <.fieldset>
+              <.field>
+                <:label>Project</:label>
+                <.input
+                  type="select"
+                  field={@form[:project_id]}
+                  placeholder="No Project"
+                  placeholder_selectable={true}
+                  options={Enum.map(@projects, &{&1.name, &1.id})}
+                />
+              </.field>
+            </.fieldset>
+          </.panel>
+        </.grid>
       </.form>
 
       <.user_form_modal

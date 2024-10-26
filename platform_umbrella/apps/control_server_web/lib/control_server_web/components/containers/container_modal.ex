@@ -101,7 +101,7 @@ defmodule ControlServerWeb.Containers.ContainerModal do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="contents">
       <.form
         for={@form}
         id="container-form"
@@ -112,10 +112,21 @@ defmodule ControlServerWeb.Containers.ContainerModal do
         <.modal show size="lg" id={"#{@id}-modal"} on_cancel={JS.push("cancel", target: @myself)}>
           <:title>Container</:title>
 
-          <.flex column>
-            <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
-            <.input label="Image" field={@form[:image]} placeholder="Image" />
-            <.input label="Path (optional)" field={@form[:path]} placeholder="/bin/true" />
+          <.fieldset>
+            <.field>
+              <:label>Name</:label>
+              <.input field={@form[:name]} placeholder="Name" autofocus />
+            </.field>
+
+            <.field>
+              <:label>Image</:label>
+              <.input field={@form[:image]} placeholder="Image" />
+            </.field>
+
+            <.field>
+              <:label>Path (optional)</:label>
+              <.input field={@form[:path]} placeholder="/bin/true" />
+            </.field>
 
             <.input_list
               :let={field}
@@ -128,7 +139,7 @@ defmodule ControlServerWeb.Containers.ContainerModal do
             >
               <.input field={field} />
             </.input_list>
-          </.flex>
+          </.fieldset>
 
           <:actions cancel="Cancel">
             <.button variant="primary" type="submit" phx-disable-with="Saving...">Save</.button>
