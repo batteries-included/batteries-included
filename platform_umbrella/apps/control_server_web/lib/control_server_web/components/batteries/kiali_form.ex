@@ -13,16 +13,16 @@ defmodule ControlServerWeb.Batteries.KialiForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.input field={@form[:login_signing_key]} type="password" label="Login Signing Key" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
           <.image_version field={@form[:image_tag_override]} image_id={:kiali} label="Version" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

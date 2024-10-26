@@ -13,11 +13,11 @@ defmodule ControlServerWeb.Batteries.OllamaForm do
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
 
           <.image_version field={@form[:image_tag_override]} image_id={:ollama} label="Version" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

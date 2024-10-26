@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Batteries.CloudnativePGForm do
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
 
           <.image_version
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Batteries.CloudnativePGForm do
             image_id={:cloudnative_pg}
             label="Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

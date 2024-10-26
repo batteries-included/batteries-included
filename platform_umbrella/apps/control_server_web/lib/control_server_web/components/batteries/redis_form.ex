@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Batteries.RedisForm do
       </.panel>
 
       <.panel title="Images">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:operator_image].value %><br />
             <%= @form[:redis_image].value %><br />
@@ -37,7 +37,7 @@ defmodule ControlServerWeb.Batteries.RedisForm do
             image_id={:redis_exporter}
             label="Exporter Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

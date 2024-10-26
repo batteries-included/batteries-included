@@ -13,13 +13,16 @@ defmodule ControlServerWeb.Batteries.CertManagerForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:email]} label="Email" />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Email</:label>
+            <.input field={@form[:email]} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Images">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:acmesolver_image].value %><br />
             <%= @form[:cainjector_image].value %><br />
@@ -57,7 +60,7 @@ defmodule ControlServerWeb.Batteries.CertManagerForm do
             image_id={:cert_manager_webhook}
             label="Webhook Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

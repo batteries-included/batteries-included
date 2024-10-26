@@ -33,6 +33,7 @@ defmodule CommonUI.Components.Form do
   slot :inner_block, required: true
   slot :actions
 
+  # TODO: Deprecated, remove when everything is migrated to Fieldset component
   def simple_form(%{variant: "stepped"} = assigns) do
     ~H"""
     <.form id={@id} class={["flex flex-col h-full", @class]} novalidate {@rest}>

@@ -13,13 +13,16 @@ defmodule ControlServerWeb.Batteries.MetalLBForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:enable_pod_monitor]} type="switch" label="Enable Pod Monitor" />
-        </.simple_form>
+        <.fieldset>
+          <.field variant="beside">
+            <:label>Enable Pod Monitor</:label>
+            <.input type="switch" field={@form[:enable_pod_monitor]} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Images">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:speaker_image].value %><br />
             <%= @form[:controller_image].value %><br />
@@ -43,7 +46,7 @@ defmodule ControlServerWeb.Batteries.MetalLBForm do
             image_id={:frrouting_frr}
             label="Routing Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

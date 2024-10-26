@@ -11,9 +11,12 @@ defmodule ControlServerWeb.Batteries.TraditionalServicesForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:namespace]} label="Namespace" />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Namespace</:label>
+            <.input field={@form[:namespace]} />
+          </.field>
+        </.fieldset>
       </.panel>
     </div>
     """

@@ -11,9 +11,12 @@ defmodule ControlServerWeb.Batteries.StaleResourceCleanerForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:delay]} type="number" label="Delay" />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Delay</:label>
+            <.input type="number" field={@form[:delay]} />
+          </.field>
+        </.fieldset>
       </.panel>
     </div>
     """

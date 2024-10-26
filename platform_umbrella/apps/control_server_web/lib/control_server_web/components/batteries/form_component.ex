@@ -221,7 +221,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
           </div>
         </.page_header>
 
-        <.grid columns={%{sm: 1, lg: 2}}>
+        <.grid variant="col-2">
           <.live_component
             module={@form_module}
             battery={@catalog_battery}

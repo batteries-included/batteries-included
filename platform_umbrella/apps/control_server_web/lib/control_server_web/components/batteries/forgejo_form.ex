@@ -13,22 +13,24 @@ defmodule ControlServerWeb.Batteries.ForgejoForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:admin_username]} label="Admin Username" disabled={@action != :new} />
-          <.input
-            field={@form[:admin_password]}
-            type="password"
-            label="Admin Password"
-            disabled={@action != :new}
-          />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Admin Username</:label>
+            <.input field={@form[:admin_username]} disabled={@action != :new} />
+          </.field>
+
+          <.field>
+            <:label>Admin Password</:label>
+            <.input type="password" field={@form[:admin_password]} disabled={@action != :new} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
           <.image_version field={@form[:image_tag_override]} image_id={:forgejo} label="Version" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """
