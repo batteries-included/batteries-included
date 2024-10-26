@@ -13,15 +13,22 @@ defmodule ControlServerWeb.KnativeFormSubcomponents do
   def main_panel(assigns) do
     ~H"""
     <div class={["contents", @class]}>
-      <.flex column>
-        <.input label="Name" field={@form[:name]} autofocus placeholder="Name" />
-        <.input label="URL" name="url" value={potential_url(@form)} disabled />
+      <.fieldset>
+        <.field>
+          <:label>Name</:label>
+          <.input field={@form[:name]} placeholder="Name" autofocus />
+        </.field>
 
-        <.input field={@form[:kube_internal]} type="radio">
+        <.field>
+          <:label>URL</:label>
+          <.input name="url" value={potential_url(@form)} disabled />
+        </.field>
+
+        <.input type="radio" field={@form[:kube_internal]}>
           <:option value="true">Internal</:option>
           <:option value="false">External</:option>
         </.input>
-      </.flex>
+      </.fieldset>
     </div>
     """
   end

@@ -271,17 +271,23 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   defp advanced_setting_panel(assigns) do
     ~H"""
     <.panel title="Advanced Settings" variant="gray">
-      <.flex column>
-        <.input field={@form[:rollout_duration]} label="Roll Out Duration" />
-        <.input
-          field={@form[:project_id]}
-          type="select"
-          label="Project"
-          placeholder="No Project"
-          placeholder_selectable={true}
-          options={Enum.map(@projects, &{&1.name, &1.id})}
-        />
-      </.flex>
+      <.fieldset>
+        <.field>
+          <:label>Roll Out Duration</:label>
+          <.input field={@form[:rollout_duration]} />
+        </.field>
+
+        <.field>
+          <:label>Project</:label>
+          <.input
+            type="select"
+            field={@form[:project_id]}
+            placeholder="No Project"
+            placeholder_selectable={true}
+            options={Enum.map(@projects, &{&1.name, &1.id})}
+          />
+        </.field>
+      </.fieldset>
     </.panel>
     """
   end
@@ -289,7 +295,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="contents">
       <.form
         novalidate
         for={@form}
@@ -311,37 +317,36 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           </.button>
         </.page_header>
 
-        <.flex column>
-          <.grid columns={[sm: 1, lg: 2]}>
-            <.panel>
-              <.main_panel form={@form} />
-            </.panel>
+        <.grid variant="col-2">
+          <.panel>
+            <.main_panel form={@form} />
+          </.panel>
 
-            <.advanced_setting_panel
-              form={@form}
-              keycloak_enabled={@keycloak_enabled}
-              projects={@projects}
-            />
+          <.advanced_setting_panel
+            form={@form}
+            keycloak_enabled={@keycloak_enabled}
+            projects={@projects}
+          />
 
-            <.containers_panel
-              id="containers_panel-init_containers"
-              title="Init Containers"
-              target={@myself}
-              containers={@init_containers}
-            />
-            <.containers_panel
-              id="containers_panel-containers"
-              target={@myself}
-              containers={@containers}
-            />
+          <.containers_panel
+            id="containers_panel-init_containers"
+            title="Init Containers"
+            target={@myself}
+            containers={@init_containers}
+          />
 
-            <.env_var_panel env_values={@env_values} editable target={@myself} class="lg:col-span-2" />
-            <!-- Hidden inputs for embeds -->
-            <.containers_hidden_form field={@form[:containers]} />
-            <.containers_hidden_form field={@form[:init_containers]} />
-            <.env_values_hidden_form field={@form[:env_values]} />
-          </.grid>
-        </.flex>
+          <.containers_panel
+            id="containers_panel-containers"
+            target={@myself}
+            containers={@containers}
+          />
+
+          <.env_var_panel env_values={@env_values} editable target={@myself} class="lg:col-span-2" />
+          <!-- Hidden inputs for embeds -->
+          <.containers_hidden_form field={@form[:containers]} />
+          <.containers_hidden_form field={@form[:init_containers]} />
+          <.env_values_hidden_form field={@form[:env_values]} />
+        </.grid>
       </.form>
 
       <.live_component
