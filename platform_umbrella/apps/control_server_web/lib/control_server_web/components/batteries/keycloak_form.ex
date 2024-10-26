@@ -13,26 +13,34 @@ defmodule ControlServerWeb.Batteries.KeycloakForm do
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
           <.image_version field={@form[:image_tag_override]} image_id={:keycloak} label="Version" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:admin_username]} label="Admin Username" disabled={@action != :new} />
+        <.fieldset>
+          <.field>
+            <:label>Admin Username</:label>
+            <.input field={@form[:admin_username]} disabled={@action != :new} />
+          </.field>
 
-          <.input
-            disabled={@action != :new}
-            field={@form[:admin_password]}
-            type="password"
-            label="Admin Password"
-          />
+          <.field>
+            <:label>Admin Password</:label>
+            <.input type="password" field={@form[:admin_password]} disabled={@action != :new} />
+          </.field>
 
-          <.input field={@form[:log_level]} label="Log Level" />
-          <.input field={@form[:replicas]} type="number" label="Replicas" />
-        </.simple_form>
+          <.field>
+            <:label>Log Level</:label>
+            <.input field={@form[:log_level]} />
+          </.field>
+
+          <.field>
+            <:label>Replicas</:label>
+            <.input type="number" field={@form[:replicas]} />
+          </.field>
+        </.fieldset>
       </.panel>
     </div>
     """

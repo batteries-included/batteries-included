@@ -13,13 +13,16 @@ defmodule ControlServerWeb.Batteries.TrivyOperatorForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:version_tag]} label="Version Tag" />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Version Tag</:label>
+            <.input field={@form[:version_tag]} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:image].value %><br />
             <%= @form[:node_collector_image].value %><br />
@@ -43,7 +46,7 @@ defmodule ControlServerWeb.Batteries.TrivyOperatorForm do
             image_id={:aqua_trivy_checks}
             label="Checks Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

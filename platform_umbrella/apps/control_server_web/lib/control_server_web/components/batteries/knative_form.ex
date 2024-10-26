@@ -13,13 +13,16 @@ defmodule ControlServerWeb.Batteries.KnativeForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:namespace]} label="Namespace" disabled={@action != :new} />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Namespace</:label>
+            <.input field={@form[:namespace]} disabled={@action != :new} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Images">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:queue_image].value %><br />
             <%= @form[:activator_image].value %><br />
@@ -71,7 +74,7 @@ defmodule ControlServerWeb.Batteries.KnativeForm do
             image_id={:knative_istio_webhook}
             label="Istio Webhook Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

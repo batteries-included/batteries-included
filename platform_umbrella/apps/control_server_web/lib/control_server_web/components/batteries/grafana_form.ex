@@ -13,18 +13,16 @@ defmodule ControlServerWeb.Batteries.GrafanaForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input
-            field={@form[:admin_password]}
-            type="password"
-            label="Admin Password"
-            disabled={@action != :new}
-          />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Admin Password</:label>
+            <.input type="password" field={@form[:admin_password]} disabled={@action != :new} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Images">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:image].value %><br />
             <%= @form[:sidecar_image].value %>
@@ -41,7 +39,7 @@ defmodule ControlServerWeb.Batteries.GrafanaForm do
             image_id={:kiwigrid_sidecar}
             label="Sidecar Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

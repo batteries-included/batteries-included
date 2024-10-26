@@ -13,21 +13,19 @@ defmodule ControlServerWeb.Batteries.Smtp4devForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input
-            field={@form[:cookie_secret]}
-            type="password"
-            label="Cookie Secret"
-            disabled={@action != :new}
-          />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Cookie Secret</:label>
+            <.input type="password" field={@form[:cookie_secret]} disabled={@action != :new} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
           <.image_version field={@form[:image_tag_override]} image_id={:smtp4dev} label="Version" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

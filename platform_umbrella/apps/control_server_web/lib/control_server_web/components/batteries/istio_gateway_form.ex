@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Batteries.IstioGatewayForm do
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:proxy_image].value %></.image>
 
           <.image_version
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Batteries.IstioGatewayForm do
             image_id={:istio_proxy}
             label="Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

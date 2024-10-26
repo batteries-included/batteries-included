@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Batteries.FerretDBForm do
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:ferretdb_image].value %></.image>
 
           <.image_version
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Batteries.FerretDBForm do
             image_id={:ferretdb}
             label="Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

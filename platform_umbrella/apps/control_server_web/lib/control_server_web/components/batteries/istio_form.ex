@@ -13,13 +13,16 @@ defmodule ControlServerWeb.Batteries.IstioForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:namespace]} label="Namespace" />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Namespace</:label>
+            <.input field={@form[:namespace]} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:pilot_image].value %></.image>
 
           <.image_version
@@ -27,7 +30,7 @@ defmodule ControlServerWeb.Batteries.IstioForm do
             image_id={:istio_pilot}
             label="Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

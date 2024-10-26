@@ -15,45 +15,65 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:cluster_name]} label="Cluster Name" disabled={@action != :new} />
+        <.fieldset>
+          <.field>
+            <:label>Cluster Name</:label>
+            <.input field={@form[:cluster_name]} disabled={@action != :new} />
+          </.field>
 
-          <.input
-            field={@form[:cluster_type]}
-            type="select"
-            label="Cluster Type"
-            options={Options.provider_options()}
-            disabled={@action != :new}
-          />
+          <.field>
+            <:label>Cluster Type</:label>
+            <.input
+              type="select"
+              field={@form[:cluster_type]}
+              options={Options.provider_options()}
+              disabled={@action != :new}
+            />
+          </.field>
 
-          <.input
-            field={@form[:default_size]}
-            type="select"
-            label="Default Size"
-            options={Options.size_options()}
-          />
+          <.field>
+            <:label>Default Size</:label>
+            <.input type="select" field={@form[:default_size]} options={Options.size_options()} />
+          </.field>
 
-          <.input
-            field={@form[:usage]}
-            type="select"
-            label="Usage"
-            options={Options.usages()}
-            disabled={@action != :new}
-          />
-        </.simple_form>
+          <.field>
+            <:label>Usage</:label>
+            <.input
+              type="select"
+              field={@form[:usage]}
+              options={Options.usages()}
+              disabled={@action != :new}
+            />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Namespaces">
-        <.simple_form variant="nested">
-          <.input field={@form[:core_namespace]} label="Core Namespace" disabled={@action != :new} />
-          <.input field={@form[:base_namespace]} label="Base Namespace" disabled={@action != :new} />
-          <.input field={@form[:data_namespace]} label="Data Namespace" disabled={@action != :new} />
-          <.input field={@form[:ai_namespace]} label="AI Namespace" disabled={@action != :new} />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Core Namespace</:label>
+            <.input field={@form[:core_namespace]} disabled={@action != :new} />
+          </.field>
+
+          <.field>
+            <:label>Base Namespace</:label>
+            <.input field={@form[:base_namespace]} disabled={@action != :new} />
+          </.field>
+
+          <.field>
+            <:label>Data Namespace</:label>
+            <.input field={@form[:data_namespace]} disabled={@action != :new} />
+          </.field>
+
+          <.field>
+            <:label>AI Namespace</:label>
+            <.input field={@form[:ai_namespace]} disabled={@action != :new} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Upgrade Schedule">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.input
             type="multiselect"
             field={@form[:virtual_upgrade_days_of_week]}
@@ -62,8 +82,8 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
 
           <div class="flex gap-2">
             <.input
-              field={@form[:upgrade_start_hour]}
               type="select"
+              field={@form[:upgrade_start_hour]}
               placeholder="Start Time"
               options={Time.time_options()}
             />
@@ -71,17 +91,17 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
             <span>to</span>
 
             <.input
-              field={@form[:upgrade_end_hour]}
               type="select"
+              field={@form[:upgrade_end_hour]}
               placeholder="End Time"
               options={Time.time_options()}
             />
           </div>
-        </.simple_form>
+        </.fieldset>
       </.panel>
 
       <.panel title="Advanced" variant="gray">
-        <.simple_form variant="nested">
+        <.fieldset>
           <div class="flex justify-between items-center">
             <div class="flex-1 text-sm">Secret Key</div>
 
@@ -89,7 +109,7 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
               <%= TextHelpers.obfuscate(@form[:secret_key].value, keep: 2, char_limit: 6) %>
             </div>
           </div>
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

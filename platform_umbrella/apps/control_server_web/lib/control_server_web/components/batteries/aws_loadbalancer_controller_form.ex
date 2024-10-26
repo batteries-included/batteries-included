@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Batteries.AWSLoadBalancerControllerForm do
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
 
           <.image_version
@@ -52,12 +52,15 @@ defmodule ControlServerWeb.Batteries.AWSLoadBalancerControllerForm do
             image_id={:aws_load_balancer_controller}
             label="Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:service_role_arn]} label="Service Role ARN" />
+        <.fieldset>
+          <.field>
+            <:label>Service Role ARN</:label>
+            <.input field={@form[:service_role_arn]} />
+          </.field>
 
           <.input_list
             :let={field}
@@ -82,7 +85,7 @@ defmodule ControlServerWeb.Batteries.AWSLoadBalancerControllerForm do
           >
             <.input field={field} placeholder="Enter an IP address" />
           </.input_list>
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

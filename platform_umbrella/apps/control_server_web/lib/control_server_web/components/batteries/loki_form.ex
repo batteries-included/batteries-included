@@ -13,17 +13,24 @@ defmodule ControlServerWeb.Batteries.LokiForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:replication_factor]} type="number" label="Replication Factor" />
-          <.input field={@form[:replicas]} type="number" label="Replicas" />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Replication Factor</:label>
+            <.input field={@form[:replication_factor]} type="number" />
+          </.field>
+
+          <.field>
+            <:label>Replicas</:label>
+            <.input field={@form[:replicas]} type="number" />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
           <.image_version field={@form[:image_tag_override]} image_id={:loki} label="Version" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

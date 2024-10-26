@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Batteries.KubeMonitoringForm do
       </.panel>
 
       <.panel title="Images">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:kube_state_metrics_image].value %><br />
             <%= @form[:node_exporter_image].value %><br />
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Batteries.KubeMonitoringForm do
             image_id={:addon_resizer}
             label="Addon Resizer Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

@@ -9,7 +9,7 @@ defmodule ControlServerWeb.BatteriesFormSubcomponents do
 
   def image(assigns) do
     ~H"""
-    <div class="bg-gray-darkest font-mono font-bold text-sm text-gray-lighter rounded-lg whitespace-nowrap overflow-auto px-3 py-2">
+    <div class="bg-gray-darkest dark:bg-black font-mono font-bold text-sm text-gray-lighter rounded-lg whitespace-nowrap overflow-auto px-3 py-2">
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -21,13 +21,15 @@ defmodule ControlServerWeb.BatteriesFormSubcomponents do
 
   def image_version(assigns) do
     ~H"""
-    <.input
-      field={@field}
-      type="select"
-      placeholder="Choose a custom version"
-      label={@label}
-      options={Images.get_image(@image_id).tags}
-    />
+    <.field>
+      <:label><%= @label %></:label>
+      <.input
+        type="select"
+        field={@field}
+        placeholder="Choose a custom version"
+        options={Images.get_image(@image_id).tags}
+      />
+    </.field>
     """
   end
 end

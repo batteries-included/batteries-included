@@ -13,13 +13,16 @@ defmodule ControlServerWeb.Batteries.SSOForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:dev]} type="switch" label="Dev" />
-        </.simple_form>
+        <.fieldset>
+          <.field variant="beside">
+            <:label>Dev</:label>
+            <.input type="switch" field={@form[:dev]} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:oauth2_proxy_image].value %></.image>
 
           <.image_version
@@ -27,7 +30,7 @@ defmodule ControlServerWeb.Batteries.SSOForm do
             image_id={:oauth2_proxy}
             label="OAuth2 Proxy Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

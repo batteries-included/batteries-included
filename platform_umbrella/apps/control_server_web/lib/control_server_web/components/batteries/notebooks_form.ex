@@ -11,14 +11,12 @@ defmodule ControlServerWeb.Batteries.NotebooksForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input
-            field={@form[:cookie_secret]}
-            type="password"
-            label="Cookie Secret"
-            disabled={@action != :new}
-          />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Cookie Secret</:label>
+            <.input type="password" field={@form[:cookie_secret]} disabled={@action != :new} />
+          </.field>
+        </.fieldset>
       </.panel>
     </div>
     """

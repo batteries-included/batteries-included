@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Batteries.TrustManagerForm do
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image>
             <%= @form[:image].value %><br />
             <%= @form[:init_image].value %>
@@ -30,7 +30,7 @@ defmodule ControlServerWeb.Batteries.TrustManagerForm do
             image_id={:trust_manager_init}
             label="Init Version"
           />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """

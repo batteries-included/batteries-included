@@ -13,18 +13,29 @@ defmodule ControlServerWeb.Batteries.KarpenterForm do
       </.panel>
 
       <.panel title="Configuration">
-        <.simple_form variant="nested">
-          <.input field={@form[:queue_name]} label="Queue Name" />
-          <.input field={@form[:service_role_arn]} label="Service Role ARN" />
-          <.input field={@form[:node_role_name]} label="Node Role Name" />
-        </.simple_form>
+        <.fieldset>
+          <.field>
+            <:label>Queue Name</:label>
+            <.input field={@form[:queue_name]} />
+          </.field>
+
+          <.field>
+            <:label>Service Role ARN</:label>
+            <.input field={@form[:service_role_arn]} />
+          </.field>
+
+          <.field>
+            <:label>Node Role Name</:label>
+            <.input field={@form[:node_role_name]} />
+          </.field>
+        </.fieldset>
       </.panel>
 
       <.panel title="Image">
-        <.simple_form variant="nested">
+        <.fieldset>
           <.image><%= @form[:image].value %></.image>
           <.image_version field={@form[:image_tag_override]} image_id={:karpenter} label="Version" />
-        </.simple_form>
+        </.fieldset>
       </.panel>
     </div>
     """
