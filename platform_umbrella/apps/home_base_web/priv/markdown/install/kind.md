@@ -1,6 +1,8 @@
 ## For Kind
 
-[Kind](https://kind.sigs.k8s.io/) is an open source project that allows you to run Kubernetes clusters on your local machine. Using it as a Kubernetes provider allows installing locally without needing a cloud provider.
+[Kind](https://kind.sigs.k8s.io/) is an open source project that allows you to
+run Kubernetes clusters on your local machine. Using it as a Kubernetes provider
+allows installing locally without needing a cloud provider.
 
 When installing on Kind, Batteries Included will:
 
