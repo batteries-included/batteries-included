@@ -67,7 +67,7 @@ defmodule HomeBaseWeb.SignupLiveTest do
       render_submit(form)
       conn = follow_trigger_action(form, conn)
 
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/installations/new"
 
       # Now do a logged in request and assert on the menu
       conn = get(conn, ~p"/")
