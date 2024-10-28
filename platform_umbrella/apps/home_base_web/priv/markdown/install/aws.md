@@ -13,9 +13,9 @@ and deploy batteries needed to automatically run your cluster. We will:
 
 ### Needed
 
-For AWS installs the `bi` binary will needed
+For AWS installs, the `bi` binary will need:
 
-- an AWS account with admin permissions
-- you have logged in via `aws sso login` or similar
-- You have set your aws profile environment variables correctly
-  `export AWS_PROFILE=<YOUR_PROFILE_NAME>`
+- An AWS account with admin permissions
+- Authenticated via `aws sso login` or similar
+- Profile environment variables set correctly
+  (`export AWS_PROFILE=<YOUR_PROFILE_NAME>`)

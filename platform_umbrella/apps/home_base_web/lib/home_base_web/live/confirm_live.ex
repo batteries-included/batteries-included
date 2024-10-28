@@ -48,22 +48,22 @@ defmodule HomeBaseWeb.ConfirmLive do
 
   def render(assigns) do
     ~H"""
-    <.h2>Confirm your account</.h2>
+    <.panel variant="shadowed" title="Confirm your account" title_size="lg">
+      <p class="mb-8">
+        Thanks for signing up with Batteries Included, we're so excited to have you here!
+        Please take a moment to confirm your email address by clicking on the button below.
+      </p>
 
-    <p class="mb-8">
-      Thanks for signing up with Batteries Included, we're so excited to have you here!
-      Please take a moment to confirm your email address by clicking on the button below.
-    </p>
-
-    <.button
-      variant="primary"
-      class="w-full"
-      icon={:check_circle}
-      icon_position={:right}
-      phx-click="confirm"
-    >
-      Confirm your account
-    </.button>
+      <.button
+        variant="primary"
+        class="w-full"
+        icon={:check_circle}
+        icon_position={:right}
+        phx-click="confirm"
+      >
+        Confirm your account
+      </.button>
+    </.panel>
     """
   end
 end

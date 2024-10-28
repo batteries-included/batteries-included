@@ -4,9 +4,9 @@ defmodule HomeBaseWeb.InstallationNewLive do
 
   use CommonCore.IncludeResource,
     aws_description: "priv/markdown/install/aws.md",
-    kitchen_sink_description: "priv/markdown/install/kitchen_sink.md",
+    internal_description: "priv/markdown/install/internal.md",
     kind_description: "priv/markdown/install/kind.md",
-    kind_kitchen_sink_description: "priv/markdown/install/kind_kitchen_sink.md",
+    kitchen_sink_description: "priv/markdown/install/kitchen_sink.md",
     provided_description: "priv/markdown/install/provided.md"
 
   alias CommonCore.Installation
@@ -154,39 +154,32 @@ defmodule HomeBaseWeb.InstallationNewLive do
     ~s"""
     # What will this do, exactly?
 
-    Once you have made your choices on usage and where this will
-    be hosted, Batteries Included will:
+    Once you have made your choices on usage and where this will be hosted (you can run it on your
+    local machine or on a Kubernetes cluster), Batteries Included will:
 
-    - Generate a customized install script with bash and curl as the only dependencies.
+    - Generate a customized install script with bash and curl as the only dependencies
     - Start the configured Kubernetes cluster and dependencies
-    - Start the control server for and configure web routing
+    - Start the control server and configure web routing
 
-    #{explanation_more(form[:usage].value, form[:kube_provider].value)}
+    #{explanation_more(form[:usage].value)}
+    #{explanation_more(form[:kube_provider].value)}
     """
   end
 
-  def explanation_more(usage, provider) when is_binary(usage) do
-    explanation_more(String.to_existing_atom(usage), provider)
+  def explanation_more(value) when is_binary(value) do
+    explanation_more(String.to_existing_atom(value))
   end
 
-  def explanation_more(usage, provider) when is_binary(provider) do
-    explanation_more(usage, String.to_existing_atom(provider))
-  end
+  # usages
+  def explanation_more(:internal_dev), do: get_resource(:internal_description)
+  def explanation_more(:kitchen_sink), do: get_resource(:kitchen_sink_description)
 
-  def explanation_more(:kitchen_sink, :kind), do: get_resource(:kind_kitchen_sink_description)
+  # providers
+  def explanation_more(:kind), do: get_resource(:kind_description)
+  def explanation_more(:aws), do: get_resource(:aws_description)
+  def explanation_more(:provided), do: get_resource(:provided_description)
 
-  def explanation_more(:internal_dev, :kind) do
-    "Internal. Who are you and what network snooper are you running?"
-  end
-
-  def explanation_more(_, :kind), do: get_resource(:kind_description)
-
-  def explanation_more(:kitchen_sink, _), do: get_resource(:kitchen_sink_description)
-  def explanation_more(_, :aws), do: get_resource(:aws_description)
-
-  def explanation_more(_, :provided), do: get_resource(:provided_description)
-
-  def explanation_more(_, _), do: ""
+  def explanation_more(_), do: ""
 
   defp put_recommended_size(changeset) do
     provider = Changeset.get_field(changeset, :kube_provider)

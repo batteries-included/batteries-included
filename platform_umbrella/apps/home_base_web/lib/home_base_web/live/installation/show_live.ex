@@ -201,7 +201,8 @@ defmodule HomeBaseWeb.InstallationShowLive do
     """
     ## What will this do?
 
-    #{InstallationNewLive.explanation_more(installation.usage, installation.kube_provider)}
+    #{InstallationNewLive.explanation_more(installation.usage)}
+    #{InstallationNewLive.explanation_more(installation.kube_provider)}
     """
   end
 end

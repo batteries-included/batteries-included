@@ -228,7 +228,7 @@ defmodule HomeBaseWeb.Layouts do
     </div>
 
     <.link
-      :if={@page != :help}
+      :if={@page != :help && @flash == %{}}
       navigate={~p"/help"}
       class="fixed bottom-8 right-8 size-16 hover:opacity-80 invisible lg:visible"
     >
