@@ -7,6 +7,7 @@ defmodule HomeBaseWeb.UserAuth do
 
   alias CommonCore.Accounts.AdminTeams
   alias HomeBase.Accounts
+  alias HomeBase.CustomerInstalls
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -31,11 +32,14 @@ defmodule HomeBaseWeb.UserAuth do
     token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
 
+    installations = CustomerInstalls.count_installations(user)
+    path = if installations <= 0, do: ~p"/installations/new", else: signed_in_path(conn)
+
     conn
     |> renew_session()
     |> put_token_in_session(token)
     |> maybe_write_remember_me_cookie(token, params)
-    |> redirect(to: user_return_to || signed_in_path(conn))
+    |> redirect(to: user_return_to || path)
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
