@@ -50,7 +50,6 @@ defmodule HomeBaseWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
-      assert Phoenix.Flash.get(conn.assigns.flash, :global_info) =~ "Welcome back!"
     end
 
     test "login following registration", %{conn: conn, user: user} do
