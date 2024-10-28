@@ -178,7 +178,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
   def explanation_more(:kind), do: get_resource(:kind_description)
   def explanation_more(:aws), do: get_resource(:aws_description)
   def explanation_more(:provided), do: get_resource(:provided_description)
-  
+
   def explanation_more(_), do: ""
 
   defp put_recommended_size(changeset) do
