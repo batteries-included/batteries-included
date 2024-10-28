@@ -51,37 +51,34 @@ defmodule HomeBaseWeb.ResetPasswordLive do
 
   def render(assigns) do
     ~H"""
-    <.simple_form
-      for={@form}
-      id="reset-password-form"
-      phx-change="validate"
-      phx-submit="reset"
-      title="Reset your password"
-      flash={@flash}
-    >
-      <.badge>
-        <:item label="Email"><%= @user.email %></:item>
-      </.badge>
+    <.panel variant="shadowed" title="Reset your password" title_size="lg">
+      <.form for={@form} id="reset-password-form" phx-change="validate" phx-submit="reset">
+        <.fieldset flash={@flash}>
+          <.badge>
+            <:item label="Email"><%= @user.email %></:item>
+          </.badge>
 
-      <.input
-        field={@form[:password]}
-        type="password"
-        placeholder="New password"
-        autocomplete="new-password"
-        autofocus
-      />
+          <.input
+            type="password"
+            field={@form[:password]}
+            placeholder="New password"
+            autocomplete="new-password"
+            autofocus
+          />
 
-      <.input
-        field={@form[:password_confirmation]}
-        type="password"
-        placeholder="Retype password"
-        autocomplete="new-password"
-      />
+          <.input
+            type="password"
+            field={@form[:password_confirmation]}
+            placeholder="Retype password"
+            autocomplete="new-password"
+          />
 
-      <.button type="submit" variant="primary">
-        Reset Password
-      </.button>
-    </.simple_form>
+          <.button type="submit" variant="primary">
+            Reset Password
+          </.button>
+        </.fieldset>
+      </.form>
+    </.panel>
     """
   end
 end

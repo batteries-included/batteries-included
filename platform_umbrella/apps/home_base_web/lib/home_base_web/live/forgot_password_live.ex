@@ -35,27 +35,30 @@ defmodule HomeBaseWeb.ForgotPasswordLive do
 
   def render(assigns) do
     ~H"""
-    <.simple_form
-      for={@form}
-      id="reset-password-form"
-      phx-submit="send"
-      title="Forgot your password?"
-      flash={@flash}
-      class="mb-4"
-    >
-      <p>We'll send a password reset link to your inbox.</p>
+    <.panel variant="shadowed" title="Forgot your password?" title_size="lg">
+      <.form for={@form} id="reset-password-form" phx-submit="send">
+        <.fieldset flash={@flash}>
+          <p>We'll send a password reset link to your inbox.</p>
 
-      <.input field={@form[:email]} type="email" placeholder="Email" autocomplete="email" autofocus />
+          <.input
+            type="email"
+            field={@form[:email]}
+            placeholder="Email"
+            autocomplete="email"
+            autofocus
+          />
 
-      <.button type="submit" variant="primary" icon={:envelope} icon_position={:right}>
-        Send reset instructions
-      </.button>
-    </.simple_form>
+          <.button type="submit" variant="primary" icon={:envelope} icon_position={:right}>
+            Send reset instructions
+          </.button>
+        </.fieldset>
+      </.form>
 
-    <div class="text-center">
-      Remembered your password?
-      <.a navigate={~p"/login"}>Log in</.a>
-    </div>
+      <div class="text-center mt-4">
+        Remembered your password?
+        <.a navigate={~p"/login"}>Log in</.a>
+      </div>
+    </.panel>
     """
   end
 end
