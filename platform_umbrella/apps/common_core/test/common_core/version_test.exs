@@ -37,5 +37,10 @@ defmodule CommonCore.VersionTest do
     test "compare_version/2 returns {:ok, :greater} when first version is greater in last place" do
       assert CommonCore.Version.compare("1.2.4", "1.2.3") == {:ok, :greater}
     end
+
+    test "compare_version/2 returns {:error, :incomparable} when an invalid version is used" do
+      assert CommonCore.Version.compare("1.2.4", "jdt-test") == {:error, :incomparable}
+      assert CommonCore.Version.compare("jdt-test", "1.2.3") == {:error, :incomparable}
+    end
   end
 end
