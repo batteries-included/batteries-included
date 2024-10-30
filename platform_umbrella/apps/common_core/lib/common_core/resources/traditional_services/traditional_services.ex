@@ -47,6 +47,7 @@ defmodule CommonCore.Resources.TraditionalServices do
   defp virtual_service(%{ports: []}, _battery, _state), do: nil
 
   defp virtual_service(service, battery, state) do
+    ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
     ports = to_svc_ports(service)
 
     # TODO: allow specifying 'default' port instead of just using the first port?
@@ -56,6 +57,7 @@ defmodule CommonCore.Resources.TraditionalServices do
       [hosts: traditional_hosts(state, service)]
       |> VirtualService.new!()
       |> V.fallback(service.name, default_port.port)
+      |> V.maybe_https_redirect("/.well-known/acme-challenge/", ssl_enabled?)
 
     :istio_virtual_service
     |> B.build_resource()

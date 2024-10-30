@@ -22,6 +22,20 @@ defmodule CommonCore.Resources.VirtualServiceBuilder do
     add_route(virtual_service, route)
   end
 
+  @spec maybe_https_redirect(VirtualService.t(), String.t(), boolean()) :: VirtualService.t()
+  def maybe_https_redirect(%VirtualService{} = virtual_service, _prefix, false = _ssl_enabled?), do: virtual_service
+
+  def maybe_https_redirect(%VirtualService{} = virtual_service, prefix, true = _ssl_enabled?) do
+    {:ok, route} =
+      HTTPRoute.new(
+        name: name_from_prefix(prefix),
+        match: [%{uri: %{prefix: prefix}}],
+        redirect: %{scheme: "https", derivePort: "FROM_PROTOCOL_DEFAULT"}
+      )
+
+    add_route(virtual_service, route)
+  end
+
   @spec rewriting(VirtualService.t(), String.t(), String.t(), non_neg_integer()) :: VirtualService.t()
   @doc """
   Adds a route to the given VirtualService that matches requests
