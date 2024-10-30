@@ -1,11 +1,10 @@
 <section class="prose dark:prose-invert">
   <p>
-  Shows that quotes work in code blocks
-</p>
+Shows that quotes work in code blocks</p>
 <pre><code class="elixir lang-elixir">defmodule Test do
   def test do
     IO.puts &quot;Hello, World!&quot;
   end
-end
-</code></pre>
+end</code></pre>
+
 </section>

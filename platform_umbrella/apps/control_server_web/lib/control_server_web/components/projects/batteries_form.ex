@@ -5,6 +5,12 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
 
+  @description """
+  All of the required batteries for this project are already toggled and will be installed in the next step.
+
+  If you want to enable any additional batteries while we're here, you can select as many as you would like.
+  """
+
   def mount(socket) do
     groups = Catalog.groups_for_projects()
 
@@ -91,6 +97,8 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   end
 
   def render(assigns) do
+    assigns = assign(assigns, :description, @description)
+
     ~H"""
     <div class="contents">
       <.simple_form
@@ -102,11 +110,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={~s"
-        All of the required batteries for this project are already toggled and will be installed in the next step.
-
-        If you want to enable any additional batteries while we're here, you can select as many as you would like.
-        "}
+        description={@description}
       >
         <.input
           field={@form[:search]}

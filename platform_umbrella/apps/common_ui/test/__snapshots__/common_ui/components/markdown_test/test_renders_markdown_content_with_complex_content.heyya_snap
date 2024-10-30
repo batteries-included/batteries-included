@@ -1,29 +1,21 @@
 <section class="prose dark:prose-invert">
-  <h2>
-  Markdown
-</h2>
+  <h1>
+Markdown</h1>
 <p>
-  This is a markdown component and it supports:
-</p>
+This is a markdown component and it supports:</p>
 <ul>
   <li>
-    Lists
-  </li>
+Lists  </li>
   <li>
-    Headers
-  </li>
+Headers  </li>
   <li>
-    Inline Code 
-<code class="code-inline">defmodule Test do</code>
-  </li>
+Inline Code <code class="inline">defmodule Test do</code>  </li>
   <li>
-    Sub Header
-  </li>
+Sub Header  </li>
 </ul>
-<h3>
-  Sub Header
-</h3>
+<h2>
+Sub Header</h2>
 <pre><code>auto test = 100;
-cout &lt;&lt; test &lt;&lt; endl;
-</code></pre>
+cout &lt;&lt; test &lt;&lt; endl;</code></pre>
+
 </section>

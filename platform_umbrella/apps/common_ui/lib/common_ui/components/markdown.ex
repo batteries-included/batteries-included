@@ -5,25 +5,33 @@ defmodule CommonUI.Components.Markdown do
 
   import Phoenix.HTML
 
-  attr :class, :any, default: nil
   attr :tag, :string, default: "section"
+  attr :class, :any, default: nil
   attr :content, :string
+  attr :options, :list, default: []
   attr :rest, :global
 
   def markdown(assigns) do
-    value = generate_content(assigns.content)
-    assigns = Map.put(assigns, :content, value)
-
     ~H"""
     <.dynamic_tag name={@tag} class={["prose dark:prose-invert", @class]} {@rest}>
-      <%= raw(@content) %>
+      <%= render(@content, @options) %>
     </.dynamic_tag>
     """
   end
 
-  defp generate_content(content) do
-    Md.Parser.generate(content, parser: markdown_parser())
-  end
+  defp render(content, opts) do
+    default_opts = [
+      code_class_prefix: "lang-",
+      # Since we are using `Phoenix.HTML.html_escape/1`
+      # and we don't want to escape entities twice
+      escape: false
+    ]
 
-  defp markdown_parser, do: CommonUI.Helpers.Parser
+    content
+    |> String.trim()
+    |> html_escape()
+    |> safe_to_string()
+    |> Earmark.as_html!(opts ++ default_opts)
+    |> raw()
+  end
 end

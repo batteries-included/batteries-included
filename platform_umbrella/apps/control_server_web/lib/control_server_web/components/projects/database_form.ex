@@ -11,6 +11,12 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.RedisFormSubcomponents
 
+  @description """
+  Database-only projects are just what they sound like—they don't require any other resources outside of a database and caching layer.
+
+  If a FerretDB instance is created, it will automatically be attached to the Postgres cluster.
+  """
+
   def update(assigns, socket) do
     {class, assigns} = Map.pop(assigns, :class)
 
@@ -138,6 +144,8 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   end
 
   def render(assigns) do
+    assigns = assign(assigns, :description, @description)
+
     ~H"""
     <div class="contents">
       <.simple_form
@@ -149,11 +157,7 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={~s"
-        Database-only projects are just what they sound like—they don't require any other resources outside of a database and caching layer.
-
-        If a FerretDB instance is created, it will automatically be attached to the Postgres cluster.
-        "}
+        description={@description}
       >
         <.input field={@form[:need_postgres]} type="switch" label="I need a Postgres instance" />
 

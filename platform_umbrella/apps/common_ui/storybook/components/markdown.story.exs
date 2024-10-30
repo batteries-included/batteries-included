@@ -3,33 +3,51 @@ defmodule Storybook.Components.Markdown do
   use PhoenixStorybook.Story, :component
 
   def function, do: &CommonUI.Components.Markdown.markdown/1
+  def container, do: {:div, [class: "w-full p-4"]}
 
-  defp big_content do
-    """
-    # Markdown
+  @content """
+  # Markdown
 
-    This is a markdown component.
+  This is a markdown component.
 
-    - It supports lists
-    - And with good spacing
-    - And headers
+  - **Bold**
+  - _Italic_
+  - ~~Strikethrough~~
+  - [Link](https://www.batteriesincl.com)
 
-    ## Subheader
+  ## Code
 
-    Subheaders are also supported `inline: code`.
-
-    ```elixir
-    defmodule Test do
-      def test do
-        IO.puts ~s'Hello, World!'
-      end
+  ```elixir
+  defmodule Test do
+    def test do
+      IO.puts ~s'Hello, World!'
     end
-    ```
-    """
   end
+  ```
 
-  def variations,
-    do: [
-      %Variation{id: :default, description: "Markdown Showcase", attributes: %{name: "showcase", content: big_content()}}
+  `inline code` is also supported.
+
+  ---
+
+  ## H2
+
+  ### H3
+  
+  #### H4
+  
+  ##### H5
+  
+  ###### H6
+  """
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        attributes: %{
+          content: @content
+        }
+      }
     ]
+  end
 end

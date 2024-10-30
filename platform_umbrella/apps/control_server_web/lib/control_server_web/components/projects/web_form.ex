@@ -14,6 +14,12 @@ defmodule ControlServerWeb.Projects.WebForm do
   alias ControlServerWeb.RedisFormSubcomponents
   alias ControlServerWeb.TraditionalFormSubcomponents
 
+  @description """
+  Choose between a Knative (serverless) or Traditional Service web project, and attach an optional database and cache.
+
+  The database URL will automatically be added to the instance's environment variables.
+  """
+
   def update(assigns, socket) do
     {class, assigns} = Map.pop(assigns, :class)
 
@@ -159,6 +165,8 @@ defmodule ControlServerWeb.Projects.WebForm do
   end
 
   def render(assigns) do
+    assigns = assign(assigns, :description, @description)
+
     ~H"""
     <div class="contents">
       <.simple_form
@@ -170,11 +178,7 @@ defmodule ControlServerWeb.Projects.WebForm do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={~s"
-        Choose between a Knative (serverless) or Traditional Service web project, and attach an optional database and cache.
-
-        The database URL will automatically be added to the instance's environment variables.
-        "}
+        description={@description}
       >
         <.input type="hidden" name="service_type" value={@service_type} />
 

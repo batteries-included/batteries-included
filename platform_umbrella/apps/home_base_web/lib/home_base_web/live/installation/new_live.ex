@@ -152,7 +152,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
 
   def explanation(form) do
     ~s"""
-    # What will this do, exactly?
+    ## What will this do, exactly?
 
     Once you have made your choices on usage and where this will be hosted (you can run it on your
     local machine or on a Kubernetes cluster), Batteries Included will:
@@ -160,7 +160,6 @@ defmodule HomeBaseWeb.InstallationNewLive do
     - Generate a customized install script with bash and curl as the only dependencies
     - Start the configured Kubernetes cluster and dependencies
     - Start the control server and configure web routing
-
     #{explanation_more(form[:usage].value)}
     #{explanation_more(form[:kube_provider].value)}
     """
