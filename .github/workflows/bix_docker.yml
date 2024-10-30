@@ -16,8 +16,6 @@ permissions:
   packages: write
 
 env:
-  ECR_ROLE: arn:aws:iam::037532365270:role/GHA-Main-ECR-PowerUser
-  REGISTRY_ALIAS: p2f3z8m1
   PUSH: 'false'
 
 jobs:
@@ -83,27 +81,6 @@ jobs:
         run: |
           echo "ADDITIONAL_TAGS=${{ github.ref_name }}" >> "$GITHUB_ENV"
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        if: ${{ fromJSON(env.PUSH) }}
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ env.ECR_ROLE }}
-      - name: Login to Amazon ECR
-        id: login-ecr
-        if: ${{ fromJSON(env.PUSH) }}
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-      - name: Push to ECR
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        if: ${{ fromJSON(env.PUSH) }}
-        run:
-          bin/bix push-images "$REGISTRY/$REGISTRY_ALIAS" ${{
-          env.ADDITIONAL_TAGS }}
-
-      # dual push to GHCR while we are migrating
       - name: Login to GHCR
         if: ${{ fromJSON(env.PUSH) }}
         uses: docker/login-action@v3
