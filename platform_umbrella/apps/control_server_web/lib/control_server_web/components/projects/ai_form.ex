@@ -10,6 +10,15 @@ defmodule ControlServerWeb.Projects.AIForm do
   alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
 
+  @description """
+  Jupyter is a web application that lets you create and share documents
+  that include live code, equations, AI models, and other resources.
+
+  Choose the instance size for your project's Jupyter notebook, and add
+  an optional Postgres database. The database URL will automatically be
+  added to the instance's environment variables.
+  """
+
   def update(assigns, socket) do
     {class, assigns} = Map.pop(assigns, :class)
 
@@ -117,6 +126,8 @@ defmodule ControlServerWeb.Projects.AIForm do
   end
 
   def render(assigns) do
+    assigns = assign(assigns, :description, @description)
+
     ~H"""
     <div class="contents">
       <.simple_form
@@ -128,11 +139,7 @@ defmodule ControlServerWeb.Projects.AIForm do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={~s"
-        Jupyter is a web application that lets you create and share documents that include live code, equations, AI models, and other resources.
-
-        Choose the instance size for your project's Jupyter notebook, and add an optional Postgres database. The database URL will automatically be added to the instance's environment variables.
-        "}
+        description={@description}
       >
         <.grid columns={[sm: 1, xl: 2]}>
           <.input field={@form[:jupyter].value[:name]} label="Name of the Jupyter notebook" />

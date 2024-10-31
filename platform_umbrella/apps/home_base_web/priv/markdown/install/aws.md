@@ -1,4 +1,4 @@
-## For AWS
+### For AWS
 
 On Amazon Web Services (AWS), Batteries Included will create a new EKS cluster
 and deploy batteries needed to automatically run your cluster. We will:
@@ -11,7 +11,7 @@ and deploy batteries needed to automatically run your cluster. We will:
 - Deploy the Istio Ingress Gateway battery for web traffic routing
 - Deploy the Cert Manager battery for SSL certificates
 
-### Needed
+#### Needed
 
 For AWS installs, the `bi` binary will need:
 

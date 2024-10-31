@@ -14,7 +14,7 @@ defmodule ControlServerWeb.Projects.ProjectForm do
 
   - Start incident response documentation
   - Alert on-call rotations
-  - Start shared commincation
+  - Start shared communication
   """
 
   def mount(socket) do

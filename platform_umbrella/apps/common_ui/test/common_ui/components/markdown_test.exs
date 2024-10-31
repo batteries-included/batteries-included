@@ -41,6 +41,12 @@ defmodule CommonUI.Components.MarkdownTest do
   ```
   """
 
+  @with_malicious_script """
+  # Markdown
+
+  <script>window.alert("hacker man")</script>
+  """
+
   component_snapshot_test "renders markdown content" do
     assigns = %{content: @simple_content}
 
@@ -67,6 +73,14 @@ defmodule CommonUI.Components.MarkdownTest do
 
   component_snapshot_test "renders markdown content with complex content" do
     assigns = %{content: @with_complex_content}
+
+    ~H"""
+    <.markdown content={@content} />
+    """
+  end
+
+  component_snapshot_test "renders markdown content with malicious script" do
+    assigns = %{content: @with_malicious_script}
 
     ~H"""
     <.markdown content={@content} />
