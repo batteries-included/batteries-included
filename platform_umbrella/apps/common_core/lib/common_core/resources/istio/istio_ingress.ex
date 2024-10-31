@@ -404,6 +404,10 @@ defmodule CommonCore.Resources.IstioIngress do
         port: %{number: 443, name: "https-#{type}", protocol: "HTTPS"},
         tls: %{mode: "SIMPLE", credentialName: "#{type}-ingress-cert"},
         hosts: hosts
+      },
+      %{
+        port: %{number: 80, name: "http2-#{sanitize(type)}", protocol: "HTTP"},
+        hosts: hosts
       }
     ]
   end
@@ -431,6 +435,10 @@ defmodule CommonCore.Resources.IstioIngress do
       %{
         port: %{number: 443, name: "#{port.name}-https", protocol: "HTTPS"},
         tls: %{mode: "SIMPLE", credentialName: "traditional-services-ingress-cert"},
+        hosts: hosts
+      },
+      %{
+        port: %{number: 80, name: "#{port.name}-http", protocol: normalize_protocol(port.protocol)},
         hosts: hosts
       }
     ]

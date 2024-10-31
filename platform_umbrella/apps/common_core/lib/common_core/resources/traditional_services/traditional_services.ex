@@ -57,7 +57,7 @@ defmodule CommonCore.Resources.TraditionalServices do
       [hosts: traditional_hosts(state, service)]
       |> VirtualService.new!()
       |> V.fallback(service.name, default_port.port)
-      |> V.maybe_https_redirect("/.well-known/acme-challenge/", ssl_enabled?)
+      |> V.maybe_https_redirect(ssl_enabled?)
 
     :istio_virtual_service
     |> B.build_resource()

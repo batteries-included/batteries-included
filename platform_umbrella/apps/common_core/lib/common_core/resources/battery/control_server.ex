@@ -23,7 +23,7 @@ defmodule CommonCore.Resources.ControlServer do
       [hosts: control_hosts(state)]
       |> VirtualService.new!()
       |> V.fallback(@app_name, @web_port)
-      |> V.maybe_https_redirect("/.well-known/acme-challenge/", ssl_enabled?)
+      |> V.maybe_https_redirect(ssl_enabled?)
 
     :istio_virtual_service
     |> B.build_resource()

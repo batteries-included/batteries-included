@@ -22,18 +22,18 @@ defmodule CommonCore.Resources.VirtualServiceBuilder do
     add_route(virtual_service, route)
   end
 
-  @spec maybe_https_redirect(VirtualService.t(), String.t(), boolean()) :: VirtualService.t()
-  def maybe_https_redirect(%VirtualService{} = virtual_service, _prefix, false = _ssl_enabled?), do: virtual_service
+  @spec maybe_https_redirect(VirtualService.t(), boolean()) :: VirtualService.t()
+  def maybe_https_redirect(%VirtualService{} = virtual_service, false = _ssl_enabled?), do: virtual_service
 
-  def maybe_https_redirect(%VirtualService{} = virtual_service, prefix, true = _ssl_enabled?) do
+  def maybe_https_redirect(%VirtualService{} = virtual_service, true = _ssl_enabled?) do
     {:ok, route} =
       HTTPRoute.new(
-        name: name_from_prefix(prefix),
-        match: [%{uri: %{prefix: prefix}}],
-        redirect: %{scheme: "https", derivePort: "FROM_PROTOCOL_DEFAULT"}
+        name: "https-redirect",
+        match: [%{uri: %{prefix: "/"}, scheme: %{exact: "http"}}],
+        redirect: %{scheme: "https"}
       )
 
-    add_route(virtual_service, route)
+    prepend_route(virtual_service, route)
   end
 
   @spec rewriting(VirtualService.t(), String.t(), String.t(), non_neg_integer()) :: VirtualService.t()
@@ -100,6 +100,10 @@ defmodule CommonCore.Resources.VirtualServiceBuilder do
       )
 
     add_tcp(virtual_service, route)
+  end
+
+  defp prepend_route(%VirtualService{} = virtual_service, route) do
+    update_in(virtual_service, [Access.key!(:http)], fn existing -> [route] ++ existing end)
   end
 
   defp add_route(%VirtualService{} = virtual_service, route) do
