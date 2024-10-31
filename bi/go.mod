@@ -5,7 +5,7 @@ go 1.23.1
 toolchain go1.23.2
 
 require (
-	github.com/adrg/xdg v0.5.2
+	github.com/adrg/xdg v0.5.3
 	github.com/apparentlymart/go-cidr v1.1.0
 	github.com/aws/aws-sdk-go-v2/config v1.28.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.32.3
