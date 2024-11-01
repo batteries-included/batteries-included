@@ -17,10 +17,13 @@ defmodule CommonCore.Resources.ControlServer do
   @web_port 4001
 
   resource(:virtual_service, battery, state) do
+    ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
+
     spec =
       [hosts: control_hosts(state)]
       |> VirtualService.new!()
       |> V.fallback(@app_name, @web_port)
+      |> V.maybe_https_redirect(ssl_enabled?)
 
     :istio_virtual_service
     |> B.build_resource()

@@ -22,6 +22,30 @@ defmodule CommonCore.Resources.VirtualServiceBuilder do
     add_route(virtual_service, route)
   end
 
+  @spec maybe_https_redirect(VirtualService.t(), boolean()) :: VirtualService.t()
+  @doc """
+  Adds a route to the given VirtualService that redirects http
+  requests to https if SSL is enabled.
+
+  Since we use cert_manager to provide certificates, we add the
+  redirect here instead of at the gateway so that the cert_manager
+  created ingress for HTTP01 verification will be more specific
+  and not hit the redirect. Otherwise, the redirect applies to
+  the verification request and it gets redirected and never validates.
+  """
+  def maybe_https_redirect(%VirtualService{} = virtual_service, false = _ssl_enabled?), do: virtual_service
+
+  def maybe_https_redirect(%VirtualService{} = virtual_service, true = _ssl_enabled?) do
+    {:ok, route} =
+      HTTPRoute.new(
+        name: "https-redirect",
+        match: [%{uri: %{prefix: "/"}, scheme: %{exact: "http"}}],
+        redirect: %{scheme: "https"}
+      )
+
+    prepend_route(virtual_service, route)
+  end
+
   @spec rewriting(VirtualService.t(), String.t(), String.t(), non_neg_integer()) :: VirtualService.t()
   @doc """
   Adds a route to the given VirtualService that matches requests
@@ -86,6 +110,10 @@ defmodule CommonCore.Resources.VirtualServiceBuilder do
       )
 
     add_tcp(virtual_service, route)
+  end
+
+  defp prepend_route(%VirtualService{} = virtual_service, route) do
+    update_in(virtual_service, [Access.key!(:http)], fn existing -> [route] ++ existing end)
   end
 
   defp add_route(%VirtualService{} = virtual_service, route) do
