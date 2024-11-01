@@ -331,43 +331,34 @@ defmodule ControlServerWeb.Live.ProjectsNew do
       <div class="flex-1 relative">
         <.flash_group flash={@flash} />
 
-        <.subform
-          module={ProjectForm}
+        <.live_component
           id="project-form"
-          current_step={@current_step}
-          steps={@steps}
-          data={@form_data}
+          module={ProjectForm}
+          class={subform_class(@current_step, ProjectForm)}
         />
 
-        <.subform
-          module={WebForm}
+        <.live_component
           id="project-web-form"
-          current_step={@current_step}
-          steps={@steps}
-          data={@form_data}
+          module={WebForm}
+          class={subform_class(@current_step, WebForm)}
         />
 
-        <.subform
-          module={AIForm}
+        <.live_component
           id="project-ai-form"
-          current_step={@current_step}
-          steps={@steps}
-          data={@form_data}
+          module={AIForm}
+          class={subform_class(@current_step, AIForm)}
         />
 
-        <.subform
-          module={DatabaseForm}
+        <.live_component
           id="project-database-form"
-          current_step={@current_step}
-          steps={@steps}
-          data={@form_data}
+          module={DatabaseForm}
+          class={subform_class(@current_step, DatabaseForm)}
         />
 
-        <.subform
-          module={BatteriesForm}
+        <.live_component
           id="project-batteries-form"
-          current_step={@current_step}
-          steps={@steps}
+          module={BatteriesForm}
+          class={subform_class(@current_step, BatteriesForm)}
           data={@form_data}
           installed={@batteries}
         />
@@ -389,34 +380,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
     """
   end
 
-  defp subform(assigns) do
-    ~H"""
-    <.live_component class={["h-full", @current_step != @module && "hidden"]} {assigns}>
-      <.button variant="secondary" icon={:play_circle} phx-click={show_modal("demo-video-modal")}>
-        View Demo Video
-      </.button>
-
-      <.button
-        :if={@current_step != Enum.at(@steps, -1)}
-        variant="primary"
-        icon={:arrow_right}
-        icon_position={:right}
-        type="submit"
-      >
-        Next Step
-      </.button>
-
-      <.button
-        :if={@current_step == Enum.at(@steps, -1)}
-        variant="primary"
-        type="submit"
-        phx-disable-with="Creating..."
-      >
-        Create Project
-      </.button>
-    </.live_component>
-    """
-  end
+  defp subform_class(step, subform), do: ["h-full", step != subform && "hidden"]
 
   # Defines the ordering of the new project subform flow
 

@@ -23,23 +23,6 @@ defmodule Storybook.Components.Form do
           </:actions>
           """
         ]
-      },
-      %Variation{
-        id: :stepped,
-        attributes: %{
-          variant: "stepped",
-          title: "Foo Bar",
-          description: "Lorem ipsum dolor sit amet."
-        },
-        slots: [
-          ~s"""
-          <.input name="name" value="" placeholder="Name" />
-          <.input name="email" value="" placeholder="Email" />
-          <:actions>
-            <.button variant="primary">Submit</.button>
-          </:actions>
-          """
-        ]
       }
     ]
   end

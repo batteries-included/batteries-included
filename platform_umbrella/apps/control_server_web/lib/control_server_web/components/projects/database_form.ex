@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.ProjectsSubcomponents
+
   alias CommonCore.Ecto.Validations
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Postgres.Cluster, as: PGCluster
@@ -148,55 +150,62 @@ defmodule ControlServerWeb.Projects.DatabaseForm do
 
     ~H"""
     <div class="contents">
-      <.simple_form
+      <.form
         id={@id}
         for={@form}
         class={@class}
-        variant="stepped"
-        title="Database Only"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={@description}
       >
-        <.input field={@form[:need_postgres]} type="switch" label="I need a Postgres instance" />
+        <.subform flash={@flash} title="Database Only" description={@description}>
+          <.field variant="beside">
+            <:label>I need a Postgres instance</:label>
+            <.input type="switch" field={@form[:need_postgres]} />
+          </.field>
 
-        <PostgresFormSubcomponents.size_form
-          class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}
-          form={to_form(@form[:postgres].value, as: :postgres)}
-          phx_target={@myself}
-          ticks={PGCluster.compact_storage_range_ticks()}
-          action={:new}
-        />
+          <PostgresFormSubcomponents.size_form
+            class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}
+            form={to_form(@form[:postgres].value, as: :postgres)}
+            phx_target={@myself}
+            ticks={PGCluster.compact_storage_range_ticks()}
+            action={:new}
+          />
 
-        <.input field={@form[:need_redis]} type="switch" label="I need a Redis instance" />
+          <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
 
-        <RedisFormSubcomponents.size_form
-          class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
-          form={to_form(@form[:redis].value, as: :redis)}
-          action={:new}
-        />
+          <.field variant="beside">
+            <:label>I need a Redis instance</:label>
+            <.input type="switch" field={@form[:need_redis]} />
+          </.field>
 
-        <.input
-          field={@form[:need_ferret]}
-          type="switch"
-          label="I need a FerretDB/MongoDB instance"
-          disabled={@form[:need_postgres].value == "false"}
-        />
+          <RedisFormSubcomponents.size_form
+            class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
+            form={to_form(@form[:redis].value, as: :redis)}
+            action={:new}
+          />
 
-        <FerretDBFormSubcomponents.size_form
-          class={
-            (!normalize_value("checkbox", @form[:need_postgres].value) ||
-               !normalize_value("checkbox", @form[:need_ferret].value)) && "hidden"
-          }
-          form={to_form(@form[:ferret].value, as: :ferret)}
-          action={:new}
-        />
+          <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
 
-        <:actions>
-          <%= render_slot(@inner_block) %>
-        </:actions>
-      </.simple_form>
+          <.field variant="beside">
+            <:label>I need a FerretDB/MongoDB instance</:label>
+            <.input
+              type="switch"
+              field={@form[:need_ferret]}
+              disabled={@form[:need_postgres].value == "false"}
+            />
+          </.field>
+
+          <FerretDBFormSubcomponents.size_form
+            class={
+              (!normalize_value("checkbox", @form[:need_postgres].value) ||
+                 !normalize_value("checkbox", @form[:need_ferret].value)) && "hidden"
+            }
+            form={to_form(@form[:ferret].value, as: :ferret)}
+            action={:new}
+          />
+        </.subform>
+      </.form>
     </div>
     """
   end

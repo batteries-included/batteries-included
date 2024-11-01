@@ -2,7 +2,7 @@ defmodule ControlServerWeb.RecentProjectsPanel do
   @moduledoc false
   use ControlServerWeb, :live_component
 
-  import ControlServerWeb.ProjectsTable
+  import ControlServerWeb.ProjectsSubcomponents
   import KubeServices.SystemState.SummaryRecent
 
   def mount(socket) do

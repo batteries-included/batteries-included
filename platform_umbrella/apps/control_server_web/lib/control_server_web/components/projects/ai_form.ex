@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Projects.AIForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.ProjectsSubcomponents
+
   alias CommonCore.Ecto.Validations
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres.Cluster, as: PGCluster
@@ -130,90 +132,93 @@ defmodule ControlServerWeb.Projects.AIForm do
 
     ~H"""
     <div class="contents">
-      <.simple_form
+      <.form
         id={@id}
         for={@form}
         class={@class}
-        variant="stepped"
-        title="Artificial Intelligence"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={@description}
       >
-        <.grid columns={[sm: 1, xl: 2]}>
-          <.input field={@form[:jupyter].value[:name]} label="Name of the Jupyter notebook" />
+        <.subform flash={@flash} title="Artificial Intelligence" description={@description}>
+          <.fieldset responsive>
+            <.field>
+              <:label>Name of the Jupyter notebook</:label>
+              <.input field={@form[:jupyter].value[:name]} />
+            </.field>
 
-          <.input
-            field={@form[:jupyter].value[:virtual_size]}
-            type="select"
-            label="Size of the Jupyter notebook"
-            placeholder="Choose size"
-            options={JupyterLabNotebook.preset_options_for_select()}
-          />
-        </.grid>
+            <.field>
+              <:label>Size of the Jupyter notebook</:label>
+              <.input
+                type="select"
+                field={@form[:jupyter].value[:virtual_size]}
+                placeholder="Choose size"
+                options={JupyterLabNotebook.preset_options_for_select()}
+              />
+            </.field>
+          </.fieldset>
 
-        <.data_list
-          variant="horizontal-bolded"
-          class="mt-3 mb-5"
-          data={[
-            {"Storage size:", Memory.humanize(@form[:jupyter].value[:storage_size].value)},
-            {"Memory limits:", Memory.humanize(@form[:jupyter].value[:memory_limits].value)},
-            {"CPU limits:", @form[:jupyter].value[:cpu_limits].value}
-          ]}
-        />
-
-        <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
-
-        <.input field={@form[:need_postgres]} type="switch" label="I need a database" />
-
-        <div class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}>
-          <.tab_bar variant="secondary" class="mb-6">
-            <:tab
-              phx-click="db_type"
-              phx-value-type={:new}
-              phx-target={@myself}
-              selected={@db_type == :new}
-            >
-              New Database
-            </:tab>
-
-            <:tab
-              phx-click="db_type"
-              phx-value-type={:existing}
-              phx-target={@myself}
-              selected={@db_type == :existing}
-            >
-              Existing Database
-            </:tab>
-          </.tab_bar>
-
-          <.input type="hidden" name="db_type" value={@db_type} />
-
-          <.input
-            :if={@db_type == :existing}
-            field={@form[:postgres_ids]}
-            type="select"
-            label="Existing set of databases"
-            placeholder="Choose a set of databases"
-            options={Postgres.clusters_available_for_project()}
-            multiple
+          <.data_list
+            variant="horizontal-bolded"
+            class="mt-3 mb-5"
+            data={[
+              {"Storage size:", Memory.humanize(@form[:jupyter].value[:storage_size].value)},
+              {"Memory limits:", Memory.humanize(@form[:jupyter].value[:memory_limits].value)},
+              {"CPU limits:", @form[:jupyter].value[:cpu_limits].value}
+            ]}
           />
 
-          <PostgresFormSubcomponents.size_form
-            class={@db_type != :new && "hidden"}
-            form={to_form(@form[:postgres].value, as: :postgres)}
-            phx_target={@myself}
-            with_divider={false}
-            ticks={PGCluster.compact_storage_range_ticks()}
-            action={:new}
-          />
-        </div>
+          <.flex class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker" />
 
-        <:actions>
-          <%= render_slot(@inner_block) %>
-        </:actions>
-      </.simple_form>
+          <.field variant="beside">
+            <:label>I need a database</:label>
+            <.input type="switch" field={@form[:need_postgres]} />
+          </.field>
+
+          <div class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}>
+            <.tab_bar variant="secondary" class="mb-6">
+              <:tab
+                phx-click="db_type"
+                phx-value-type={:new}
+                phx-target={@myself}
+                selected={@db_type == :new}
+              >
+                New Database
+              </:tab>
+
+              <:tab
+                phx-click="db_type"
+                phx-value-type={:existing}
+                phx-target={@myself}
+                selected={@db_type == :existing}
+              >
+                Existing Database
+              </:tab>
+            </.tab_bar>
+
+            <.input type="hidden" name="db_type" value={@db_type} />
+
+            <.field :if={@db_type == :existing}>
+              <.input
+                type="select"
+                field={@form[:postgres_ids]}
+                placeholder="Choose a set of databases"
+                options={Postgres.clusters_available_for_project()}
+                multiple
+              />
+            </.field>
+
+            <PostgresFormSubcomponents.size_form
+              class={@db_type != :new && "hidden"}
+              form={to_form(@form[:postgres].value, as: :postgres)}
+              phx_target={@myself}
+              with_divider={false}
+              ticks={PGCluster.compact_storage_range_ticks()}
+              action={:new}
+            />
+          </div>
+        </.subform>
+      </.form>
     </div>
     """
   end
