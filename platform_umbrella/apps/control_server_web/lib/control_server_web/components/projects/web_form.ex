@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Projects.WebForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.ProjectsSubcomponents
+
   alias CommonCore.Ecto.Validations
   alias CommonCore.Knative.Service, as: KnativeService
   alias CommonCore.Postgres.Cluster, as: PGCluster
@@ -169,117 +171,121 @@ defmodule ControlServerWeb.Projects.WebForm do
 
     ~H"""
     <div class="contents">
-      <.simple_form
+      <.form
         id={@id}
         for={@form}
         class={@class}
-        variant="stepped"
-        title="Web"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={@description}
       >
-        <.input type="hidden" name="service_type" value={@service_type} />
+        <.subform flash={@flash} title="Web" description={@description}>
+          <.input type="hidden" name="service_type" value={@service_type} />
 
-        <.tab_bar variant="secondary">
-          <:tab
-            phx-click="service_type"
-            phx-value-type={:knative}
-            phx-target={@myself}
-            selected={@service_type == :knative}
-          >
-            Knative
-          </:tab>
-
-          <:tab
-            phx-click="service_type"
-            phx-value-type={:traditional}
-            phx-target={@myself}
-            selected={@service_type == :traditional}
-          >
-            Traditional Service
-          </:tab>
-        </.tab_bar>
-
-        <.grid columns={2}>
-          <.light_text>
-            Knative services are serverless, and allow you to scale to zero as a request-driven approach to HTTP services.
-          </.light_text>
-          <.light_text>
-            Traditional services are useful for long-running processes that don't conform to serverless. Choose this if you need OAuth support.
-          </.light_text>
-        </.grid>
-
-        <KnativeFormSubcomponents.main_panel
-          form={to_form(@form[:knative].value, as: :knative)}
-          class={@service_type != :knative && "hidden"}
-        />
-
-        <TraditionalFormSubcomponents.main_panel
-          form={to_form(@form[:traditional].value, as: :traditional)}
-          class={@service_type != :traditional && "hidden"}
-          with_divider={false}
-        />
-
-        <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
-
-        <.input field={@form[:need_postgres]} type="switch" label="I need a database" />
-
-        <.flex column class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}>
           <.tab_bar variant="secondary">
             <:tab
-              phx-click="db_type"
-              phx-value-type={:new}
+              phx-click="service_type"
+              phx-value-type={:knative}
               phx-target={@myself}
-              selected={@db_type == :new}
+              selected={@service_type == :knative}
             >
-              New Database
+              Knative
             </:tab>
 
             <:tab
-              phx-click="db_type"
-              phx-value-type={:existing}
+              phx-click="service_type"
+              phx-value-type={:traditional}
               phx-target={@myself}
-              selected={@db_type == :existing}
+              selected={@service_type == :traditional}
             >
-              Existing Database
+              Traditional Service
             </:tab>
           </.tab_bar>
 
-          <.input type="hidden" name="db_type" value={@db_type} />
+          <.grid columns={2}>
+            <.light_text>
+              Knative services are serverless, and allow you to scale to zero as a request-driven approach to HTTP services.
+            </.light_text>
+            <.light_text>
+              Traditional services are useful for long-running processes that don't conform to serverless. Choose this if you need OAuth support.
+            </.light_text>
+          </.grid>
 
-          <.input
-            :if={@db_type == :existing}
-            field={@form[:postgres_ids]}
-            type="select"
-            label="Existing set of databases"
-            placeholder="Choose a set of databases"
-            options={Postgres.clusters_available_for_project()}
-            multiple
+          <KnativeFormSubcomponents.main_panel
+            form={to_form(@form[:knative].value, as: :knative)}
+            class={@service_type != :knative && "hidden"}
           />
 
-          <PostgresFormSubcomponents.size_form
-            class={@db_type != :new && "hidden"}
-            form={to_form(@form[:postgres].value, as: :postgres)}
-            phx_target={@myself}
-            ticks={PGCluster.compact_storage_range_ticks()}
+          <TraditionalFormSubcomponents.main_panel
+            form={to_form(@form[:traditional].value, as: :traditional)}
+            class={@service_type != :traditional && "hidden"}
+            with_divider={false}
+          />
+
+          <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
+
+          <.field variant="beside">
+            <:label>I need a database</:label>
+            <.input type="switch" field={@form[:need_postgres]} />
+          </.field>
+
+          <.flex column class={!normalize_value("checkbox", @form[:need_postgres].value) && "hidden"}>
+            <.tab_bar variant="secondary">
+              <:tab
+                phx-click="db_type"
+                phx-value-type={:new}
+                phx-target={@myself}
+                selected={@db_type == :new}
+              >
+                New Database
+              </:tab>
+
+              <:tab
+                phx-click="db_type"
+                phx-value-type={:existing}
+                phx-target={@myself}
+                selected={@db_type == :existing}
+              >
+                Existing Database
+              </:tab>
+            </.tab_bar>
+
+            <.input type="hidden" name="db_type" value={@db_type} />
+
+            <.field :if={@db_type == :existing}>
+              <:label>Existing set of databases</:label>
+              <.input
+                type="select"
+                field={@form[:postgres_ids]}
+                placeholder="Choose a set of databases"
+                options={Postgres.clusters_available_for_project()}
+                multiple
+              />
+            </.field>
+
+            <PostgresFormSubcomponents.size_form
+              class={@db_type != :new && "hidden"}
+              form={to_form(@form[:postgres].value, as: :postgres)}
+              phx_target={@myself}
+              ticks={PGCluster.compact_storage_range_ticks()}
+              action={:new}
+            />
+          </.flex>
+
+          <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
+
+          <.field variant="beside">
+            <:label>I need a redis instance</:label>
+            <.input type="switch" field={@form[:need_redis]} />
+          </.field>
+
+          <RedisFormSubcomponents.size_form
+            class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
+            form={to_form(@form[:redis].value, as: :redis)}
             action={:new}
           />
-        </.flex>
-
-        <.input field={@form[:need_redis]} type="switch" label="I need a redis instance" />
-
-        <RedisFormSubcomponents.size_form
-          class={!normalize_value("checkbox", @form[:need_redis].value) && "hidden"}
-          form={to_form(@form[:redis].value, as: :redis)}
-          action={:new}
-        />
-
-        <:actions>
-          <%= render_slot(@inner_block) %>
-        </:actions>
-      </.simple_form>
+        </.subform>
+      </.form>
     </div>
     """
   end

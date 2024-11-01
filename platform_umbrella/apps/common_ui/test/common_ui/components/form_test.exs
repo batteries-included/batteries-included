@@ -30,18 +30,4 @@ defmodule CommonUI.Components.FormTest do
     </.simple_form>
     """
   end
-
-  component_snapshot_test "stepped form" do
-    assigns = %{flash: %{"info" => "This is a test"}}
-
-    ~H"""
-    <.simple_form variant="stepped" title="Some title" description="Some description" flash={@flash}>
-      <div>Some inputs would go here</div>
-
-      <:actions>
-        <div>Some actions would go here</div>
-      </:actions>
-    </.simple_form>
-    """
-  end
 end

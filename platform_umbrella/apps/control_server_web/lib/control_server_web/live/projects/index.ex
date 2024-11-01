@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.ProjectsIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import ControlServerWeb.ProjectsTable
+  import ControlServerWeb.ProjectsSubcomponents
 
   alias ControlServer.Projects
 

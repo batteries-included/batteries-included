@@ -2,6 +2,8 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.ProjectsSubcomponents
+
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
 
@@ -101,86 +103,86 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
     ~H"""
     <div class="contents">
-      <.simple_form
+      <.form
         id={@id}
         for={@form}
         class={@class}
-        variant="stepped"
-        title="Turn On Additional Batteries"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        description={@description}
       >
-        <.input
-          field={@form[:search]}
-          icon={:magnifying_glass}
-          placeholder="Type to search..."
-          debounce="10"
-        />
+        <.subform
+          flash={@flash}
+          title="Turn On Additional Batteries"
+          description={@description}
+          last_step
+        >
+          <.input
+            field={@form[:search]}
+            icon={:magnifying_glass}
+            placeholder="Type to search..."
+            debounce="10"
+          />
 
-        <.tab_bar variant="secondary">
-          <:tab
-            phx-click="tab"
-            phx-target={@myself}
-            phx-value-id={:required}
-            selected={@tab == :required}
-          >
-            Required
-          </:tab>
+          <.tab_bar variant="secondary">
+            <:tab
+              phx-click="tab"
+              phx-target={@myself}
+              phx-value-id={:required}
+              selected={@tab == :required}
+            >
+              Required
+            </:tab>
 
-          <:tab
-            :for={group <- @groups}
-            phx-click="tab"
-            phx-value-id={group.type}
-            phx-target={@myself}
-            selected={@tab == group.type}
-          >
-            <%= group.name %>
-          </:tab>
+            <:tab
+              :for={group <- @groups}
+              phx-click="tab"
+              phx-value-id={group.type}
+              phx-target={@myself}
+              selected={@tab == group.type}
+            >
+              <%= group.name %>
+            </:tab>
 
-          <:tab phx-click="tab" phx-target={@myself} phx-value-id={:all} selected={@tab == :all}>
-            All Batteries
-          </:tab>
-        </.tab_bar>
+            <:tab phx-click="tab" phx-target={@myself} phx-value-id={:all} selected={@tab == :all}>
+              All Batteries
+            </:tab>
+          </.tab_bar>
 
-        <p :if={@tab == :required && @required == []} class="text-sm text-gray-light">
-          No batteries are required for this project.
-        </p>
+          <p :if={@tab == :required && @required == []} class="text-sm text-gray-light">
+            No batteries are required for this project.
+          </p>
 
-        <.battery_toggle
-          :for={battery <- search_filter(@required, @form[:search].value)}
-          :if={@tab == :required}
-          installed={has_battery?(@installed, battery)}
-          required={has_battery?(@required, battery)}
-          battery={battery}
-          form={@form}
-        />
-
-        <%= for group <- @groups do %>
           <.battery_toggle
-            :for={battery <- search_filter(Catalog.all(group.type), @form[:search].value)}
-            :if={@tab == group.type}
+            :for={battery <- search_filter(@required, @form[:search].value)}
+            :if={@tab == :required}
             installed={has_battery?(@installed, battery)}
             required={has_battery?(@required, battery)}
             battery={battery}
             form={@form}
           />
-        <% end %>
 
-        <.battery_toggle
-          :for={battery <- search_filter(Catalog.all(), @form[:search].value)}
-          :if={@tab == :all}
-          installed={has_battery?(@installed, battery)}
-          required={has_battery?(@required, battery)}
-          battery={battery}
-          form={@form}
-        />
+          <%= for group <- @groups do %>
+            <.battery_toggle
+              :for={battery <- search_filter(Catalog.all(group.type), @form[:search].value)}
+              :if={@tab == group.type}
+              installed={has_battery?(@installed, battery)}
+              required={has_battery?(@required, battery)}
+              battery={battery}
+              form={@form}
+            />
+          <% end %>
 
-        <:actions>
-          <%= render_slot(@inner_block) %>
-        </:actions>
-      </.simple_form>
+          <.battery_toggle
+            :for={battery <- search_filter(Catalog.all(), @form[:search].value)}
+            :if={@tab == :all}
+            installed={has_battery?(@installed, battery)}
+            required={has_battery?(@required, battery)}
+            battery={battery}
+            form={@form}
+          />
+        </.subform>
+      </.form>
     </div>
     """
   end

@@ -4,8 +4,6 @@ defmodule CommonUI.Components.Form do
   use Gettext, backend: CommonUI.Gettext, warn: false
 
   import CommonUI.Components.FlashGroup
-  import CommonUI.Components.Markdown
-  import CommonUI.Components.Panel
   import CommonUI.Components.Typography
 
   @doc """
@@ -32,31 +30,6 @@ defmodule CommonUI.Components.Form do
 
   slot :inner_block, required: true
   slot :actions
-
-  # TODO: Deprecated, remove when everything is migrated to Fieldset component
-  def simple_form(%{variant: "stepped"} = assigns) do
-    ~H"""
-    <.form id={@id} class={["flex flex-col h-full", @class]} novalidate {@rest}>
-      <div class={["grid lg:grid-cols-[2fr,1fr] content-start flex-1 gap-4", @class]}>
-        <.panel title={@title}>
-          <.simple_form variant="nested">
-            <.flash_group id={"#{@id}-flash"} flash={@flash} />
-
-            <%= render_slot(@inner_block) %>
-          </.simple_form>
-        </.panel>
-
-        <.panel :if={@description} title="Description">
-          <.markdown content={@description} />
-        </.panel>
-      </div>
-
-      <div class="flex items-center justify-end gap-4">
-        <%= render_slot(@actions) %>
-      </div>
-    </.form>
-    """
-  end
 
   def simple_form(%{variant: "nested"} = assigns) do
     ~H"""
