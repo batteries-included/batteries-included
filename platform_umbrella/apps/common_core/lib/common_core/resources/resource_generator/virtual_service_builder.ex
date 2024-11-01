@@ -23,6 +23,16 @@ defmodule CommonCore.Resources.VirtualServiceBuilder do
   end
 
   @spec maybe_https_redirect(VirtualService.t(), boolean()) :: VirtualService.t()
+  @doc """
+  Adds a route to the given VirtualService that redirects http
+  requests to https if SSL is enabled.
+
+  Since we use cert_manager to provide certificates, we add the
+  redirect here instead of at the gateway so that the cert_manager
+  created ingress for HTTP01 verification will be more specific
+  and not hit the redirect. Otherwise, the redirect applies to
+  the verification request and it gets redirected and never validates.
+  """
   def maybe_https_redirect(%VirtualService{} = virtual_service, false = _ssl_enabled?), do: virtual_service
 
   def maybe_https_redirect(%VirtualService{} = virtual_service, true = _ssl_enabled?) do
