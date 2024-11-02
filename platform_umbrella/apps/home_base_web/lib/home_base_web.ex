@@ -16,6 +16,7 @@ defmodule HomeBaseWeb do
   below. Instead, define additional modules and import
   those modules here.
   """
+  alias ControlServerWeb.Common
 
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
@@ -57,7 +58,7 @@ defmodule HomeBaseWeb do
           endpoint: HomeBaseWeb.Endpoint,
           from: {"Batteries Included", "system@batteriesincl.com"},
           street_address: "Batteries Included, 8 The Green, Ste. B, Dover, DE 19901",
-          marketing_url: Application.fetch_env!(:common_core, :marketing_url)
+          marketing_url: CommonCore.URLs.marketing_url()
         ],
         opts
       )
