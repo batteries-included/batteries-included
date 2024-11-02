@@ -16,7 +16,6 @@ defmodule HomeBaseWeb do
   below. Instead, define additional modules and import
   those modules here.
   """
-  alias ControlServerWeb.Common
 
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
