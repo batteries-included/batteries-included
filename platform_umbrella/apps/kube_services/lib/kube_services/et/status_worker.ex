@@ -54,9 +54,11 @@ defmodule KubeServices.ET.InstallStatusWorker do
     GenServer.start_link(__MODULE__, state_opts, opts)
   end
 
-  @spec get_status(atom() | pid() | {atom(), any()}) :: CommonCore.ET.InstallStatus.t()
+  @spec get_status(atom() | pid() | {atom(), any()}) :: CommonCore.ET.InstallStatus.t() | {:error, any()}
   def get_status(client \\ __MODULE__) do
     GenServer.call(client, :get_status)
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
   end
 
   defp schedule_report(%State{sleep_time: sleep_time} = _state) do
