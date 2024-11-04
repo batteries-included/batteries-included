@@ -50,7 +50,8 @@ defmodule ControlServerWeb.HealthzController do
       #
       # This check is simply here to make sure that the worker is running
       %CommonCore.ET.InstallStatus{} = status ->
-        {:ok, "InstallStatusWorker is healthy: #{status}"}
+        {:ok,
+         "InstallStatusWorker is healthy. staus: #{status.status} iss: #{status.iss} exp: #{status.exp} message: #{status.message}"}
 
       _ ->
         {:error, "InstallStatusWorker is not healthy"}
