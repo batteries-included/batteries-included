@@ -4,4 +4,5 @@ defmodule HomeBase.Repo do
     adapter: Ecto.Adapters.Postgres
 
   use ExAudit.Repo
+  use Ecto.SoftDelete.Repo
 end

@@ -41,6 +41,7 @@ defmodule HomeBase.MixProject do
   defp deps do
     [
       {:common_core, in_umbrella: true},
+      {:ecto_soft_delete, "~> 2.0"},
       {:ecto_sql, "~> 3.11"},
       {:ex_audit, "~> 0.10"},
       {:ex_machina, "~> 2.7", only: [:dev, :test]},

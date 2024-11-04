@@ -8,6 +8,8 @@ defmodule CommonCore.Installation do
 
   use CommonCore, {:schema, no_encode: [:user, :team]}
 
+  import Ecto.SoftDelete.Schema
+
   alias CommonCore.Accounts.User
   alias CommonCore.Installs.Options
   alias CommonCore.Teams.Team
@@ -34,6 +36,7 @@ defmodule CommonCore.Installation do
     belongs_to :team, Team
 
     timestamps()
+    soft_delete_schema()
   end
 
   @doc false

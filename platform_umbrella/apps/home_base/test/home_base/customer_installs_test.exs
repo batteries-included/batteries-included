@@ -2,6 +2,7 @@ defmodule HomeBase.CustomerInstallsTest do
   use HomeBase.DataCase
 
   alias HomeBase.CustomerInstalls
+  alias HomeBase.Repo
 
   describe "installations" do
     import HomeBase.CustomerInstallsFixtures
@@ -132,6 +133,10 @@ defmodule HomeBase.CustomerInstallsTest do
       assert_raise Ecto.NoResultsError, fn ->
         CustomerInstalls.get_installation!(installation.id)
       end
+
+      all_installations = Repo.all(Installation, with_deleted: true)
+      assert length(all_installations) == 1
+      assert installation.slug == all_installations |> List.first() |> Map.get(:slug)
     end
 
     test "change_installation/1 returns a installation changeset" do

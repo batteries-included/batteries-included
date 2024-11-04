@@ -32,6 +32,7 @@ defmodule CommonCore.MixProject do
       {:telemetry, "~> 1.1"},
 
       # Types for all the things
+      {:ecto_soft_delete, "~> 2.0"},
       {:typed_ecto_schema, "~> 0.4"},
       {:typed_struct, "~> 0.3", runtime: false},
 

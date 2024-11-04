@@ -10,6 +10,7 @@ defmodule HomeBase do
   def context do
     quote do
       import Ecto.Query, warn: false
+      import Ecto.SoftDelete.Query
 
       alias Ecto.Changeset
       alias Ecto.Multi
