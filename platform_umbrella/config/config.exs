@@ -18,7 +18,6 @@ config :common_core, CommonCore.JWK,
   verify_keys: [:test_pub, :home_a_pub, :home_b_pub]
 
 config :common_core, CommonCore.Resources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
-config :common_core, marketing_url: "http://127.0.0.1:4321"
 
 config :common_ui, CommonUIWeb.Endpoint,
   url: [host: "127.0.0.1"],
