@@ -5,6 +5,7 @@ title:
 excerpt: Now in public beta Batteries Included automated DevOps platform
 tags: ['company', 'open', 'beta', 'free', 'signup', 'kubernetes']
 image: ./public-beta-announcement/install_screenshot.png
+publishDate: 2024-10-15
 ---
 
 # The automated DevOps platform built to help teams reduce site reliability overheadd
