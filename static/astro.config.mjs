@@ -62,7 +62,7 @@ export default defineConfig({
       (await import('@playform/compress')).default({
         CSS: true,
         HTML: true,
-        Image: true,
+        Image: false,
         JavaScript: true,
         SVG: true,
       }),
