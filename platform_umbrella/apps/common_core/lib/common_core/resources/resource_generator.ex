@@ -52,14 +52,16 @@ defmodule CommonCore.Resources.ResourceGenerator do
   defmacro resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state), do: resource_block) do
     quote do
       @resource_generator {:single, unquote(name)}
-      def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
+      @spec unquote(name)(CommonCore.Batteries.SystemBattery.t(), CommonCore.StateSummary.t()) :: map() | nil
+      def unquote(name)(unquote(battery), %CommonCore.StateSummary{} = unquote(state)), do: unquote(resource_block)
     end
   end
 
   defmacro multi_resource(name, battery \\ quote(do: _battery), state \\ quote(do: _state), do: resource_block) do
     quote do
       @resource_generator {:multi, unquote(name)}
-      def unquote(name)(unquote(battery), unquote(state)), do: unquote(resource_block)
+      @spec unquote(name)(CommonCore.Batteries.SystemBattery.t(), CommonCore.StateSummary.t()) :: map() | list() | nil
+      def unquote(name)(unquote(battery), %CommonCore.StateSummary{} = unquote(state)), do: unquote(resource_block)
     end
   end
 
