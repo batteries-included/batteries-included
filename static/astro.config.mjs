@@ -15,7 +15,7 @@ import sectionize from '@hbsnow/rehype-sectionize';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const whenExternalScripts = (items = []) =>
   ANALYTICS.vendors.googleAnalytics.id &&
-  ANALYTICS.vendors.googleAnalytics.partytown
+    ANALYTICS.vendors.googleAnalytics.partytown
     ? Array.isArray(items)
       ? items.map((item) => item())
       : [items()]
@@ -59,13 +59,13 @@ export default defineConfig({
     tasks(),
     react(),
     import.meta.env.PROD &&
-      (await import('@playform/compress')).default({
-        CSS: true,
-        HTML: true,
-        Image: true,
-        JavaScript: true,
-        SVG: true,
-      }),
+    (await import('@playform/compress')).default({
+      CSS: true,
+      HTML: true,
+      Image: false,
+      JavaScript: true,
+      SVG: true,
+    }),
   ],
   markdown: {
     remarkPlugins: [readingTimeRemarkPlugin],
