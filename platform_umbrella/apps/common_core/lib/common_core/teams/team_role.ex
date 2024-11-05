@@ -3,6 +3,8 @@ defmodule CommonCore.Teams.TeamRole do
 
   use CommonCore, :schema
 
+  import Ecto.SoftDelete.Schema
+
   alias CommonCore.Accounts.User
   alias CommonCore.Teams.Team
 
@@ -16,6 +18,8 @@ defmodule CommonCore.Teams.TeamRole do
     belongs_to :team, Team
 
     timestamps()
+
+    soft_delete_schema()
   end
 
   def changeset(team_role, attrs \\ %{}, opts \\ []) do

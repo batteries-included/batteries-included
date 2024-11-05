@@ -77,7 +77,7 @@ defmodule HomeBase.TeamsTest do
     end
   end
 
-  describe "delete_team/2" do
+  describe "delete_team/1" do
     test "should delete the team and the team roles", ctx do
       assert {:ok, %Team{}} = Teams.delete_team(ctx.team1)
       refute Repo.get(Team, ctx.team1.id)
@@ -88,6 +88,18 @@ defmodule HomeBase.TeamsTest do
       installation_fixture(team_id: ctx.team1.id)
       assert {:error, changeset} = Teams.delete_team(ctx.team1)
       assert changeset |> errors_on() |> Map.has_key?(:installations)
+    end
+  end
+
+  describe "soft_delete_team/1" do
+    test "should soft_delete the team but not the team roles", ctx do
+      assert {:ok, %Team{}} = Teams.soft_delete_team(ctx.team1)
+      refute Repo.get(Team, ctx.team1.id)
+      assert %CommonCore.Teams.TeamRole{} = Repo.get_by(TeamRole, team_id: ctx.team1.id)
+
+      # assert that there's still a record and that it's "soft" deleted
+      found = Repo.get!(Team, ctx.team1.id, with_deleted: true)
+      assert ctx.team1.id == found.id
     end
   end
 
@@ -178,6 +190,17 @@ defmodule HomeBase.TeamsTest do
 
     test "should not delete team role if last admin", ctx do
       assert {:error, :last_admin} = Teams.delete_team_role(ctx.team2_role)
+    end
+  end
+
+  describe "soft_delete_team_role/1" do
+    test "should soft_delete the role", ctx do
+      assert {:ok, %TeamRole{}} = Teams.soft_delete_team_role(ctx.team1_role)
+      refute Repo.get(TeamRole, ctx.team1_role.id)
+
+      # assert that there's still a record and that it's "soft" deleted
+      found = Repo.get!(TeamRole, ctx.team1_role.id, with_deleted: true)
+      assert ctx.team1_role.id == found.id
     end
   end
 end

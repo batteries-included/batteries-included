@@ -62,6 +62,10 @@ defmodule HomeBase.Teams do
     |> Repo.delete()
   end
 
+  def soft_delete_team(%Team{} = team) do
+    Repo.soft_delete(team)
+  end
+
   ## Team Roles
 
   def preload_team_roles(%Team{} = team, %User{} = user) do
@@ -115,6 +119,10 @@ defmodule HomeBase.Teams do
 
   def delete_team_role(%TeamRole{} = role) do
     Repo.delete(role)
+  end
+
+  def soft_delete_team_role(%TeamRole{} = role) do
+    Repo.soft_delete(role)
   end
 
   # Converts a role to a current user account from the

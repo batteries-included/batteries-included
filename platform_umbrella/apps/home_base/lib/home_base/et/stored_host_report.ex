@@ -2,6 +2,8 @@ defmodule HomeBase.ET.StoredHostReport do
   @moduledoc false
   use CommonCore, {:schema, no_encode: [:installation]}
 
+  import Ecto.SoftDelete.Schema
+
   @required_fields ~w(report installation_id)a
 
   batt_schema "stored_host_reports" do
@@ -14,5 +16,7 @@ defmodule HomeBase.ET.StoredHostReport do
 
     # This is when they told us
     timestamps()
+
+    soft_delete_schema()
   end
 end

@@ -3,6 +3,8 @@ defmodule CommonCore.Accounts.User do
 
   use CommonCore, :schema
 
+  import Ecto.SoftDelete.Schema
+
   alias CommonCore.Installation
   alias CommonCore.Teams.TeamRole
 
@@ -17,6 +19,8 @@ defmodule CommonCore.Accounts.User do
     has_many :installations, Installation
 
     timestamps()
+
+    soft_delete_schema()
   end
 
   @doc """

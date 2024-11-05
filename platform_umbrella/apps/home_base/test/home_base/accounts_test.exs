@@ -50,6 +50,18 @@ defmodule HomeBase.AccountsTest do
     end
   end
 
+  describe "delete_user/1" do
+    test "soft deletes the user" do
+      %{id: id} = user = user_fixture()
+      assert %User{id: ^id} = Accounts.get_user!(id)
+
+      assert {:ok, %User{}} = Accounts.delete_user(user)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(id) end
+
+      assert %User{id: ^id} = Repo.get(User, id, with_deleted: true)
+    end
+  end
+
   describe "register_user/1" do
     test "requires email and password to be set" do
       {:error, changeset} = Accounts.register_user(%{})

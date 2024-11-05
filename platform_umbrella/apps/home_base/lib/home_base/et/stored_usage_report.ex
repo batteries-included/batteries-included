@@ -2,6 +2,8 @@ defmodule HomeBase.ET.StoredUsageReport do
   @moduledoc false
   use CommonCore, {:schema, no_encode: [:installation]}
 
+  import Ecto.SoftDelete.Schema
+
   @required_fields ~w(report installation_id)a
 
   @derive {
@@ -19,5 +21,7 @@ defmodule HomeBase.ET.StoredUsageReport do
 
     # This is when they told us
     timestamps()
+
+    soft_delete_schema()
   end
 end
