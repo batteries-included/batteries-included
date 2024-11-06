@@ -103,6 +103,22 @@ defmodule HomeBase.ET do
   end
 
   @doc """
+  Soft deletes a stored_usage_report.
+
+  ## Examples
+
+      iex> soft_delete_stored_usage_report(stored_usage_report)
+      {:ok, %StoredUsageReport{}}
+
+      iex> soft_delete_stored_usage_report(stored_usage_report)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def soft_delete_stored_usage_report(%StoredUsageReport{} = stored_usage_report) do
+    Repo.soft_delete(stored_usage_report)
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking stored_usage_report changes.
 
   ## Examples
@@ -204,6 +220,22 @@ defmodule HomeBase.ET do
   """
   def delete_stored_host_report(%StoredHostReport{} = stored_host_report) do
     Repo.delete(stored_host_report)
+  end
+
+  @doc """
+  Soft deletes a stored_host_report.
+
+  ## Examples
+
+      iex> soft_delete_stored_host_report(stored_host_report)
+      {:ok, %StoredHostReport{}}
+
+      iex> soft_delete_stored_host_report(stored_host_report)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def soft_delete_stored_host_report(%StoredHostReport{} = stored_host_report) do
+    Repo.soft_delete(stored_host_report)
   end
 
   @doc """

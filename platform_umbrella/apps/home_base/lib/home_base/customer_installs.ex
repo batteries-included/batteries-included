@@ -138,7 +138,7 @@ defmodule HomeBase.CustomerInstalls do
 
   """
   def delete_installation(%Installation{} = installation) do
-    Repo.delete(installation)
+    Repo.soft_delete(installation)
   end
 
   @doc """

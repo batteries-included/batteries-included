@@ -56,6 +56,33 @@ defmodule HomeBase.ETTest do
       assert_raise Ecto.NoResultsError, fn -> ET.get_stored_usage_report!(stored_usage_report.id) end
     end
 
+    test "soft_delete_stored_usage_report/1 deletes the stored_usage_report" do
+      stored_usage_report = insert(:stored_usage_report)
+      assert {:ok, %StoredUsageReport{}} = ET.soft_delete_stored_usage_report(stored_usage_report)
+      assert_raise Ecto.NoResultsError, fn -> ET.get_stored_usage_report!(stored_usage_report.id) end
+
+      # assert that there's still a record and that it's "soft" deleted
+      all_reports = Repo.list_with_soft_deleted(StoredUsageReport)
+      assert length(all_reports) == 1
+
+      found = List.first(all_reports)
+      assert stored_usage_report.id == found.id
+      assert found.deleted_at != nil
+    end
+
+    test "soft deleted usage reports are still readable" do
+      stored_usage_report = insert(:stored_usage_report)
+      assert {:ok, %StoredUsageReport{}} = ET.soft_delete_stored_usage_report(stored_usage_report)
+
+      # assert that there's still a record and that it's "soft" deleted
+      all_reports = Repo.list_with_soft_deleted(StoredUsageReport)
+      assert length(all_reports) == 1
+
+      found = List.first(all_reports)
+      assert stored_usage_report.id == found.id
+      assert found.deleted_at != nil
+    end
+
     test "change_stored_usage_report/1 returns a stored_usage_report changeset" do
       stored_usage_report = insert(:stored_usage_report)
       assert %Ecto.Changeset{} = ET.change_stored_usage_report(stored_usage_report)
@@ -113,6 +140,33 @@ defmodule HomeBase.ETTest do
       stored_host_report = insert(:stored_host_report)
       assert {:ok, %StoredHostReport{}} = ET.delete_stored_host_report(stored_host_report)
       assert_raise Ecto.NoResultsError, fn -> ET.get_stored_host_report!(stored_host_report.id) end
+    end
+
+    test "soft_delete_stored_host_report/1 deletes the stored_host_report" do
+      stored_host_report = insert(:stored_host_report)
+      assert {:ok, %StoredHostReport{}} = ET.soft_delete_stored_host_report(stored_host_report)
+      assert_raise Ecto.NoResultsError, fn -> ET.get_stored_host_report!(stored_host_report.id) end
+
+      # assert that there's still a record and that it's "soft" deleted
+      all_reports = Repo.list_with_soft_deleted(StoredHostReport)
+      assert length(all_reports) == 1
+
+      found = List.first(all_reports)
+      assert stored_host_report.id == found.id
+      assert found.deleted_at != nil
+    end
+
+    test "soft deleted host reports are still readable" do
+      stored_host_report = insert(:stored_host_report)
+      assert {:ok, %StoredHostReport{}} = ET.soft_delete_stored_host_report(stored_host_report)
+
+      # assert that there's still a record and that it's "soft" deleted
+      all_reports = Repo.list_with_soft_deleted(StoredHostReport)
+      assert length(all_reports) == 1
+
+      found = List.first(all_reports)
+      assert stored_host_report.id == found.id
+      assert found.deleted_at != nil
     end
 
     test "change_stored_host_report/1 returns a stored_host_report changeset" do

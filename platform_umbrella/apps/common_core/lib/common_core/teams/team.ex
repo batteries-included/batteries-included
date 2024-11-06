@@ -3,6 +3,8 @@ defmodule CommonCore.Teams.Team do
 
   use CommonCore, {:schema, no_encode: [:users, :roles, :installations]}
 
+  import Ecto.SoftDelete.Schema
+
   alias CommonCore.Installation
   alias CommonCore.Teams.TeamRole
 
@@ -17,6 +19,8 @@ defmodule CommonCore.Teams.Team do
     has_many :installations, Installation
 
     timestamps()
+
+    soft_delete_schema()
   end
 
   def changeset(team, attrs \\ %{}, opts \\ []) do

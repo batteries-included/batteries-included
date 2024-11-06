@@ -65,6 +65,10 @@ defmodule HomeBase.Accounts do
     Repo.all(User)
   end
 
+  def delete_user(%User{} = user) do
+    Repo.soft_delete(user)
+  end
+
   ## User registration
 
   @doc """

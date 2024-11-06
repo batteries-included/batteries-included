@@ -2,6 +2,7 @@ defmodule HomeBase.CustomerInstallsTest do
   use HomeBase.DataCase
 
   alias HomeBase.CustomerInstalls
+  alias HomeBase.Repo
 
   describe "installations" do
     import HomeBase.CustomerInstallsFixtures
@@ -125,13 +126,34 @@ defmodule HomeBase.CustomerInstallsTest do
       assert installation.id == CustomerInstalls.get_installation!(installation.id).id
     end
 
-    test "delete_installation/1 deletes the installation" do
+    test "delete_installation/1 soft deletes the record" do
       installation = installation_fixture()
       assert {:ok, %Installation{}} = CustomerInstalls.delete_installation(installation)
 
       assert_raise Ecto.NoResultsError, fn ->
         CustomerInstalls.get_installation!(installation.id)
       end
+
+      # assert that there's still a record and that it's "soft" deleted
+      all_installations = Repo.list_with_soft_deleted(Installation)
+      assert length(all_installations) == 1
+
+      found = List.first(all_installations)
+      assert installation.slug == found.slug
+      assert found.deleted_at != nil
+    end
+
+    test "soft deleted installations are still readable" do
+      installation = installation_fixture()
+      assert {:ok, %Installation{}} = CustomerInstalls.delete_installation(installation)
+
+      # assert that there's still a record and that it's "soft" deleted
+      all_installations = Repo.list_with_soft_deleted(Installation)
+      assert length(all_installations) == 1
+
+      found = List.first(all_installations)
+      assert installation.id == found.id
+      assert installation.slug == found.slug
     end
 
     test "change_installation/1 returns a installation changeset" do
