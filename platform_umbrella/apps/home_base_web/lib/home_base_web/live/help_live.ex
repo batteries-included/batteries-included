@@ -38,7 +38,7 @@ defmodule HomeBaseWeb.HelpLive do
       </div>
       <.flex class="mt-auto items-center justify-around text-gray">
         <span><%= CommonCore.Version.version() %></span>
-        <spam><%= CommonCore.Version.hash() %></spam>
+        <span><%= CommonCore.Version.hash() %></span>
       </.flex>
     </.flex>
     """
