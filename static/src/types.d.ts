@@ -1,4 +1,4 @@
-import { MarkdownHeading } from 'astro';
+import { ImageMetadata, MarkdownHeading } from 'astro';
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import type { HTMLAttributes } from 'astro/types';
 
@@ -22,7 +22,7 @@ export interface Post {
   /** Optional summary of post content. */
   excerpt?: string;
   /**  */
-  image?: string;
+  image?: ImageMetadata | string;
 
   /**  */
   category?: string;
@@ -129,11 +129,6 @@ export interface MetaDataTwitter {
   cardType?: string;
 }
 
-export interface Image {
-  src: string;
-  alt?: string;
-}
-
 export interface Video {
   src: string;
   type?: string;
@@ -155,7 +150,7 @@ export interface Headline {
 interface TeamMember {
   name?: string;
   job?: string;
-  image?: Image;
+  image?: ImageMetadata;
   socials?: Array<Social>;
   description?: string;
   classes?: Record<string, string>;
@@ -172,7 +167,7 @@ export interface Item {
   icon?: string;
   classes?: Record<string, string>;
   callToAction?: CallToAction;
-  image?: Image;
+  image?: ImageMetadata;
   link?: string;
 }
 
@@ -256,7 +251,7 @@ export interface Pricing extends Headline, Widget {
 }
 
 export interface Testimonials extends Headline, Widget {
-  testimonials?: Array<Testimonial>;
+  testimonials?: Array<Testimonials>;
   callToAction?: CallToAction;
 }
 

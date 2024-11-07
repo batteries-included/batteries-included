@@ -6,13 +6,13 @@ export interface Props {
   posts: Array<Post>;
 }
 
-const { posts } = Astro.props;
+const { posts } = Astro.props as Props;
 ---
 
 <div class="mt-12">
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
     {
-      posts.map((item, i) => {
+      posts.map((item, _) => {
         return <PostCard post={item} />;
       })
     }

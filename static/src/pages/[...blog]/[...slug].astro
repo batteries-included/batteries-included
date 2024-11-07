@@ -4,11 +4,7 @@ import type { ImageMetadata } from 'astro';
 import Layout from '~/layouts/PageLayout.astro';
 
 import { getCanonical, getPermalink } from '~/utils/permalinks';
-import {
-  getStaticPathsBlogPost,
-  blogPostRobots,
-  fetchPosts,
-} from '~/utils/posts';
+import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/posts';
 import { findImage } from '~/utils/images';
 import Breadcrumbs from '~/components/widgets/Breadcrumbs.astro';
 import { format } from 'date-fns';
