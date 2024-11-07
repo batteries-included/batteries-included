@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
 
   defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
     ~H"""
-    <%= @env_value.value %>
+    <%= CommonUI.TextHelpers.obfuscate(@env_value.value) %>
     """
   end
 
