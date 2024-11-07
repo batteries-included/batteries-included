@@ -7,7 +7,6 @@ import {
   trimSlash,
   BLOG_BASE,
   POST_PERMALINK_PATTERN,
-  CATEGORY_BASE,
   TAG_BASE,
 } from './permalinks';
 
