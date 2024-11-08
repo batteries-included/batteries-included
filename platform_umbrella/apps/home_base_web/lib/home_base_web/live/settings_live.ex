@@ -235,7 +235,7 @@ defmodule HomeBaseWeb.SettingsLive do
   def handle_event("delete_team", _params, socket) do
     team = socket.assigns.current_role.team
 
-    case Teams.delete_team(team) do
+    case Teams.soft_delete_team(team) do
       {:ok, _} ->
         {:noreply,
          socket
