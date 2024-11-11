@@ -21,7 +21,7 @@ defmodule CommonCore.Resources.VMCluster do
     spec =
       %{}
       |> Map.put("replicationFactor", battery.config.replication_factor)
-      |> Map.put("retentionPeriod", "14")
+      |> Map.put("retentionPeriod", "14d")
       |> Map.put(
         "vminsert",
         %{
