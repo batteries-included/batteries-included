@@ -82,7 +82,7 @@ defmodule KubeServices.SnapshotApply.MissingKeycloakLauncher do
 
   # handle case where snapshot fails while we're backing off
   defp schedule_start(%State{timer_reference: _} = state) do
-    Logger.error("Missing keyclaok snapshot timer already running. Ignoring")
+    Logger.error("Missing keycloak snapshot timer already running. Ignoring")
     state
   end
 

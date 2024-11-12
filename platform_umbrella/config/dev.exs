@@ -1,6 +1,6 @@
 import Config
 
-config :common_core, :clusters, default: {:file, "~/.kube/config"}
+config :common_core, :clusters, default: {:file, System.get_env("KUBE_CONFIG_FILE") || "~/.kube/config"}
 
 config :common_ui, CommonUIWeb.Endpoint,
   http: [port: 4200],
