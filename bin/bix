@@ -224,12 +224,13 @@ do_bootstrap() {
 
 do_dev() {
     log "${GREEN}Starting Development Environment${NOFORMAT}"
-    try_portforward "dev" &
+    try_portforward dev &
 
     portforward_pid=$!
     log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}dev${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
     bi_pushd "${ROOT_DIR}/platform_umbrella"
-    iex -S mix phx.server
+
+    KUBE_CONFIG_FILE=$(run_bi debug kube-config-path dev) iex -S mix phx.server
     bi_popd
 }
 
@@ -669,7 +670,7 @@ bootstrap)
     do_bootstrap "${args[@]}"
     ;;
 dev)
-    do_dev
+    do_dev "${args[@]}"
     ;;
 phx-server)
     do_phx_server
