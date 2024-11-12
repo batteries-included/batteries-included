@@ -26,7 +26,6 @@ jobs:
             ~/.asdf/plugins
             ~/.asdf/shims
           key: ${{ runner.os }}-asdf-tools-${{ hashFiles('.tool-versions') }}
-          restore-keys: ${{ runner.os }}-asdf-tools-
 
       - name: Install ASDF Tools
         uses: asdf-vm/actions/install@v3
