@@ -20,6 +20,7 @@ defmodule KubeServices.SnapshotApply.Worker do
     field :running, boolean(), default: true
     field :init_delay, non_neg_integer(), default: 5_000
     field :delay, non_neg_integer(), default: 300_000
+    field :last_success, DateTime.t(), default: nil
   end
 
   def start_link(opts \\ []) do
@@ -59,6 +60,18 @@ defmodule KubeServices.SnapshotApply.Worker do
     _e, _r -> false
   end
 
+  @spec get_last_success(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) ::
+          {:ok, DateTime.t() | nil} | {:error, String.t()}
+  def get_last_success(target \\ @me) do
+    last = GenServer.call(target, :get_last_success)
+    {:ok, last}
+  rescue
+    _ -> {:error, "Can't get last success"}
+  catch
+    _ -> {:error, "Can't get last success"}
+    _, _ -> {:error, "Can't get last success"}
+  end
+
   @doc """
   Handle the background message sent through `Process.send_after()` for periodic
   """
@@ -76,13 +89,17 @@ defmodule KubeServices.SnapshotApply.Worker do
     {:reply, was_running, state}
   end
 
+  def handle_call(:get_last_success, _from, %State{last_success: last_success} = state) do
+    {:reply, last_success, state}
+  end
+
   def handle_call({:set_running, running}, _from, %State{running: was_running} = state) do
     {:reply, was_running, %State{state | running: running}}
   end
 
   def handle_cast({:perform, umbrella_snapshot}, %State{} = state) do
     :ok = do_perform(umbrella_snapshot, state)
-    {:noreply, state}
+    {:noreply, %State{state | last_success: DateTime.utc_now()}}
   end
 
   defp do_start(false), do: {:ok, nil}
