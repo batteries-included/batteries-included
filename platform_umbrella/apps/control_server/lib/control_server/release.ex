@@ -75,7 +75,7 @@ defmodule ControlServer.Release do
   defp ensure_repo_created(repo) do
     Logger.info("Creating #{inspect(repo)} database if it doesn't exist")
 
-    case repo.__adapter__().storage_up(repo.config) do
+    case repo.__adapter__().storage_up(repo.config()) do
       :ok -> :ok
       {:error, :already_up} -> :ok
       {:error, term} -> {:error, term}
