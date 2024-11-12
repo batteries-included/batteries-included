@@ -3,6 +3,16 @@ defmodule ControlServerWeb.HealthzController do
 
   require Logger
 
+  @doc """
+  Healthz controller for the control server.
+
+  This will perform small actions to check the health of each of the subsystems
+
+  - KubeState has some pods
+  - SQL Repo can run a query
+  - InstallStatusWorker is running
+  - SnapshotApplyWorker has a last success (even if it is nil)
+  """
   action_fallback ControlServerWeb.FallbackController
 
   def index(conn, params) do
@@ -18,7 +28,8 @@ defmodule ControlServerWeb.HealthzController do
   def check_healthz(conn, params) do
     with {:ok, _} <- check_kube_state_healthz(conn, params),
          {:ok, _} <- check_sql_repo_healthz(conn, params),
-         {:ok, _} <- check_install_status_healthz(conn, params) do
+         {:ok, _} <- check_install_status_healthz(conn, params),
+         {:ok, _} <- check_snapshot_apply_worker_healthz(conn, params) do
       %{status: 200, message: "OK"}
     else
       {:error, message} ->
@@ -55,6 +66,17 @@ defmodule ControlServerWeb.HealthzController do
 
       _ ->
         {:error, "InstallStatusWorker is not healthy"}
+    end
+  end
+
+  defp check_snapshot_apply_worker_healthz(_conn, _params) do
+    case KubeServices.SnapshotApply.Worker.get_last_success() do
+      {:ok, last} ->
+        {:ok,
+         "SnapshotApplyWorker is healthy. Previous Success: #{(last != nil && DateTime.to_iso8601(last)) || "never"}"}
+
+      {:error, _} ->
+        {:error, "SnapshotApplyWorker is not healthy"}
     end
   end
 end
