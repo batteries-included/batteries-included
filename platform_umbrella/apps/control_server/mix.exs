@@ -4,7 +4,7 @@ defmodule ControlServer.MixProject do
   def project do
     [
       app: :control_server,
-      version: "0.34.0",
+      version: "0.35.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
