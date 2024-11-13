@@ -10,8 +10,8 @@ defmodule CommonCore.Actions.RootActionGenerator do
   alias CommonCore.Actions.Notebooks
   alias CommonCore.Actions.Smtp4dev
   alias CommonCore.Actions.SSO
+  alias CommonCore.Actions.VictoriaMetrics
   alias CommonCore.Actions.VMAgent
-  alias CommonCore.Actions.VMCluster
   alias CommonCore.StateSummary
 
   @default_generator_mappings [
@@ -24,7 +24,7 @@ defmodule CommonCore.Actions.RootActionGenerator do
     smtp4dev: [Smtp4dev],
     sso: [SSO],
     vm_agent: [VMAgent],
-    victoria_metrics: [VMCluster]
+    victoria_metrics: [VictoriaMetrics]
   ]
 
   @spec materialize(StateSummary.t()) :: list(FreshGeneratedAction.t())
