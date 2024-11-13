@@ -18,7 +18,7 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.59.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.59.1
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.8
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.9
 	github.com/pulumi/pulumi/sdk/v3 v3.138.0
