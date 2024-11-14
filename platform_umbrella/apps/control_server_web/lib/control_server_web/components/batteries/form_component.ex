@@ -40,8 +40,6 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.TrustManagerForm
   alias ControlServerWeb.Batteries.VictoriaMetricsForm
   alias ControlServerWeb.Batteries.VMAgentForm
-  alias ControlServerWeb.Batteries.VMClusterForm
-  alias ControlServerWeb.Batteries.VMOperatorForm
 
   @possible_forms [
     aws_load_balancer_controller: AWSLoadBalancerControllerForm,
@@ -75,9 +73,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     trivy_operator: TrivyOperatorForm,
     trust_manager: TrustManagerForm,
     victoria_metrics: VictoriaMetricsForm,
-    vm_agent: VMAgentForm,
-    vm_cluster: VMClusterForm,
-    vm_operator: VMOperatorForm
+    vm_agent: VMAgentForm
   ]
 
   def update(assigns, socket) do

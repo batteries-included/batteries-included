@@ -5,7 +5,7 @@ defmodule CommonCore.Resources.SSO do
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.Batteries
 
-  @proxy_enabled_batteries ~w[notebooks smtp4dev vm_agent vm_cluster]a
+  @proxy_enabled_batteries ~w[notebooks smtp4dev vm_agent victoria_metrics]a
 
   def proxy_enabled_batteries, do: @proxy_enabled_batteries
 

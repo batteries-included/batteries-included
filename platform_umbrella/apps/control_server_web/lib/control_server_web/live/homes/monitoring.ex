@@ -55,7 +55,7 @@ defmodule ControlServerWeb.Live.MonitoringHome do
     """
   end
 
-  defp battery_link_panel(%{battery: %{type: :vm_cluster}} = assigns) do
+  defp battery_link_panel(%{battery: %{type: :victoria_metrics}} = assigns) do
     ~H"""
     <.a href={"//#{vmselect_host()}/select/0/vmui"} variant="bordered">VM Select</.a>
     """
