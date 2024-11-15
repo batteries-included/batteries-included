@@ -12,28 +12,30 @@ defmodule CommonCore.Keycloak.AdminClient do
   ## Realms
 
   - List the realms on the keycloak instance
+  - Get a single realm
+  - Create a new realm
 
   ## Clients
 
   - List all the clients that can connect to a given realm.
+  - Get a single client
+  - Create / Update a client
 
   ## Users
 
   - List all the users that can login to a given realm
   - Get a single user
-  - Create a single user
+  - Create / Delete a single user
   - Reset a single user's password
-  - Delete a single user
+
+  ## Groups
+
+  - List all groups for a realm
 
   ## REST Auth
 
   - Force a username/password login.
   - Force a refresh of the access token
-
-  ## Miscellaneous
-
-  - Query openid discovery endpoint
-  - Ping server
 
   """
   use GenServer
@@ -44,16 +46,19 @@ defmodule CommonCore.Keycloak.AdminClient do
   alias CommonCore.Keycloak.TeslaBuilder
   alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.OpenAPI.KeycloakAdminSchema
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.AuthenticationExecutionInfoRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.GroupRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RequiredActionProviderRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
 
   require Logger
 
   @type keycloak_url :: binary()
+  @type result(inner) :: {:ok, inner} | {:error, any()}
 
   @state_opts ~w(username password base_url adapter)a
 
@@ -112,19 +117,17 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, :refresh)
   end
 
-  @spec realms(atom | pid | {atom, any} | {:via, atom, any}) ::
-          {:ok, list(RealmRepresentation.t())} | {:error, any()}
+  @spec realms(GenServer.server()) :: result(list(RealmRepresentation.t()))
   @doc """
   List the realms on Keycloak
 
   This is a rest call into the api server.
   """
   def realms(target \\ @me) do
-    GenServer.call(target, :realms)
+    GenServer.call(target, {:realms})
   end
 
-  @spec realm(atom | pid | {atom, any} | {:via, atom, any}, any) ::
-          {:ok, RealmRepresentation.t()} | {:error, any()}
+  @spec realm(GenServer.server(), any) :: result(RealmRepresentation.t())
   @doc """
   Get the realm representation from Keycloak
 
@@ -134,8 +137,7 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:realm, name})
   end
 
-  @spec create_realm(atom | pid | {atom, any} | {:via, atom, any}, map()) ::
-          {:ok, keycloak_url()} | {:error, any()}
+  @spec create_realm(GenServer.server(), map()) :: result(keycloak_url())
   @doc """
   Given a realm representation create it.
 
@@ -145,103 +147,112 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:create_realm, realm})
   end
 
-  @spec clients(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
-          {:ok, list(ClientRepresentation.t())} | {:error, any()}
+  @spec clients(GenServer.server(), String.t()) :: result(list(ClientRepresentation.t()))
   def clients(target \\ @me, realm_name) do
     GenServer.call(target, {:clients, realm_name})
   end
 
-  @spec client(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) ::
-          {:ok, ClientRepresentation.t()} | {:error, any()}
+  @spec client(GenServer.server(), String.t(), String.t()) :: result(ClientRepresentation.t())
   def client(target \\ @me, realm_name, client_id) do
     GenServer.call(target, {:client, realm_name, client_id})
   end
 
-  @spec delete_client(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) :: any
+  @spec delete_client(GenServer.server(), String.t(), String.t()) :: result(any())
   def delete_client(target \\ @me, realm_name, client_id) do
     GenServer.call(target, {:delete_client, realm_name, client_id})
   end
 
-  @spec create_client(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          ClientRepresentation.t()
-        ) ::
-          {:ok, keycloak_url()} | {:error, any()}
+  @spec create_client(GenServer.server(), String.t(), ClientRepresentation.t()) :: result(keycloak_url())
   def create_client(target \\ @me, realm_name, client_data) do
     GenServer.call(target, {:create_client, realm_name, client_data})
   end
 
-  @spec update_client(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          ClientRepresentation.t()
-        ) ::
-          {:ok, keycloak_url()} | {:error, any()}
-  def update_client(target \\ @me, realm_name, client_data) do
-    GenServer.call(target, {:update_client, realm_name, client_data})
+  @spec update_client(GenServer.server(), String.t(), ClientRepresentation.t() | map()) :: result(keycloak_url())
+  def update_client(target \\ @me, realm_name, client_data)
+
+  def update_client(target, realm_name, %{id: id} = client_data) do
+    GenServer.call(target, {:update_client, realm_name, id, client_data})
   end
 
-  @spec users(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
-          {:ok, list(UserRepresentation.t())} | {:error, any()}
+  def update_client(target, realm_name, %{"id" => id} = client_data) do
+    GenServer.call(target, {:update_client, realm_name, id, client_data})
+  end
+
+  @spec users(GenServer.server(), String.t()) :: result(list(UserRepresentation.t()))
   def users(target \\ @me, realm_name) do
     GenServer.call(target, {:users, realm_name})
   end
 
-  @spec user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) ::
-          {:ok, UserRepresentation.t()} | {:error, any()}
+  @spec user(GenServer.server(), String.t(), String.t()) :: result(UserRepresentation.t())
   def user(target \\ @me, realm_name, user_id) do
     GenServer.call(target, {:user, realm_name, user_id})
   end
 
-  @spec delete_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) :: any
+  @spec delete_user(GenServer.server(), String.t(), String.t()) :: result(any)
   def delete_user(target \\ @me, realm_name, user_id) do
     GenServer.call(target, {:delete_user, realm_name, user_id})
   end
 
-  @spec create_user(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          UserRepresentation.t()
-        ) ::
-          {:ok, UserRepresentation.t()} | {:error, any()}
+  @spec create_user(GenServer.server(), String.t(), UserRepresentation.t()) :: result(UserRepresentation.t())
   def create_user(target \\ @me, realm_name, user_data) do
     GenServer.call(target, {:create_user, realm_name, user_data})
   end
 
-  @spec groups(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
-          {:ok, list(GroupRepresentation.t())} | {:error, any()}
+  @spec groups(GenServer.server(), String.t()) :: result(list(GroupRepresentation.t()))
   def groups(target \\ @me, realm_name) do
     GenServer.call(target, {:groups, realm_name})
   end
 
-  @spec roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
-          {:ok, list(RoleRepresentation.t())} | {:error, any()}
+  @spec roles(GenServer.server(), String.t()) :: result(list(RoleRepresentation.t()))
   def roles(target \\ @me, realm_name) do
     GenServer.call(target, {:roles, realm_name})
   end
 
-  @spec client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary()) ::
-          {:ok, list(ClientRepresentation.t())} | {:error, any()}
+  @spec client_roles(GenServer.server(), String.t(), binary()) :: result(list(ClientRepresentation.t()))
   def client_roles(target \\ @me, realm_name, client_id) do
     GenServer.call(target, {:client_roles, realm_name, client_id})
   end
 
-  @spec add_client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary(), binary(), list()) ::
-          {:ok, any()} | {:error, any()}
+  @spec add_client_roles(GenServer.server(), String.t(), binary(), binary(), list()) :: result(any())
   def add_client_roles(target \\ @me, realm_name, user_id, client_id, roles_payload) do
     GenServer.call(target, {:add_client_roles, realm_name, user_id, client_id, roles_payload})
   end
 
-  @spec reset_password_user(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          String.t(),
-          CredentialRepresentation.t()
-        ) :: any
+  @spec reset_password_user(GenServer.server(), String.t(), String.t(), CredentialRepresentation.t()) :: result(any)
   def reset_password_user(target \\ @me, realm_name, user_id, creds) do
     GenServer.call(target, {:reset_password_user, realm_name, user_id, creds})
   end
+
+  #### Realm authentication 
+
+  @spec required_actions(GenServer.server(), String.t()) :: result(list(RequiredActionProviderRepresentation.t()))
+  def required_actions(target \\ @me, realm_name) do
+    GenServer.call(target, {:required_actions, realm_name})
+  end
+
+  @spec required_action(GenServer.server(), String.t(), String.t()) :: result(RequiredActionProviderRepresentation.t())
+  def required_action(target \\ @me, realm_name, alias) do
+    GenServer.call(target, {:required_action, realm_name, alias})
+  end
+
+  @spec update_required_action(GenServer.server(), String.t(), RequiredActionProviderRepresentation.t()) :: result(atom())
+  def update_required_action(target \\ @me, realm_name, action) do
+    GenServer.call(target, {:update_required_action, realm_name, action})
+  end
+
+  @spec flow_executions(GenServer.server(), String.t(), String.t()) ::
+          result(list(AuthenticationExecutionInfoRepresentation.t()))
+  def flow_executions(target \\ @me, realm_name, alias) do
+    GenServer.call(target, {:flow_executions, realm_name, alias})
+  end
+
+  @spec update_flow_execution(GenServer.server(), String.t(), String.t(), AuthenticationExecutionInfoRepresentation.t()) ::
+          result(atom())
+  def update_flow_execution(target \\ @me, realm_name, alias, execution) do
+    GenServer.call(target, {:update_flow_execution, realm_name, alias, execution})
+  end
+
+  ### Handles
 
   def handle_call(:refresh, _from, state) do
     with {:ok, %State{} = with_refresh} <- maybe_aquire_refresh(state),
@@ -259,100 +270,152 @@ defmodule CommonCore.Keycloak.AdminClient do
     end
   end
 
-  # These are the handle_call/3 functions that will send requests to keycloak
+  # catchall that wraps the request with_auth()
+  def handle_call(request, _from, %State{} = state), do: with_auth(state, &run(request, &1.bearer_client))
 
-  #
-  # Realms
-  #
-  def handle_call(:realms, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_list_realms(new_state) end)
+  defp run({:realms}, client) do
+    client
+    |> Tesla.get(@base_path)
+    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
   end
 
-  def handle_call({:realm, realm_name}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_get_realm(realm_name, new_state) end)
+  defp run({:realm, realm_name}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name)
+    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
   end
 
-  def handle_call({:create_realm, realm}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_create_realm(realm, new_state) end)
-  end
-
-  #
-  #  Clients
-  #
-
-  def handle_call({:clients, realm_name}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_list_clients(realm_name, new_state) end)
-  end
-
-  def handle_call({:client, realm_name, client_id}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_get_client(realm_name, client_id, new_state) end)
-  end
-
-  def handle_call({:create_client, realm_name, client_data}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_create_client(realm_name, client_data, new_state) end)
-  end
-
-  # map/struct with atom keys
-  def handle_call({:update_client, realm_name, %{id: id} = client_data}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_update_client(realm_name, id, client_data, new_state) end)
-  end
-
-  # map with string keys
-  def handle_call({:update_client, realm_name, %{"id" => id} = client_data}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_update_client(realm_name, id, client_data, new_state) end)
+  defp run({:create_realm, realm}, client) do
+    client
+    |> Tesla.post(@base_path, realm)
+    |> to_result(nil)
   end
 
   #
-  # Users
+  # Clients http methods
   #
 
-  def handle_call({:users, realm_name}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_list_users(realm_name, new_state) end)
+  defp run({:clients, realm_name}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/clients")
+    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
   end
 
-  def handle_call({:user, realm_name, user_id}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_get_user(realm_name, user_id, new_state) end)
+  defp run({:client, realm_name, client_id}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id)
+    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
   end
 
-  def handle_call({:delete_user, realm_name, user_id}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_delete_user(realm_name, user_id, new_state) end)
+  defp run({:create_client, realm_name, client_data}, client) do
+    client
+    |> Tesla.post(@base_path <> realm_name <> "/clients", client_data)
+    |> to_result(nil)
   end
 
-  def handle_call({:create_user, realm_name, user_data}, _from, %State{} = state) do
-    with_auth(state, fn new_state -> do_create_user(realm_name, user_data, new_state) end)
-  end
-
-  def handle_call({:reset_password_user, realm_name, user_id, creds}, _from, %State{} = state) do
-    with_auth(state, fn new_state ->
-      do_reset_password_user(realm_name, user_id, creds, new_state)
-    end)
-  end
-
-  #
-  # Groups
-  #
-  def handle_call({:groups, realm_name}, _from, %State{} = state) do
-    with_auth(state, fn new_state ->
-      do_list_groups(realm_name, new_state)
-    end)
+  defp run({:update_client, realm_name, id, client_data}, client) do
+    client
+    |> Tesla.put(@base_path <> realm_name <> "/clients/" <> id, client_data)
+    |> to_result(nil)
   end
 
   #
-  # Roles
+  # Users http methods
   #
 
-  def handle_call({:roles, realm_name}, _from, state) do
-    with_auth(state, fn new_state -> do_list_roles(realm_name, new_state) end)
+  defp run({:users, realm_name}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/users")
+    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
   end
 
-  def handle_call({:client_roles, realm_name, client_id}, _from, state) do
-    with_auth(state, fn new_state -> do_list_client_roles(realm_name, client_id, new_state) end)
+  defp run({:user, realm_name, user_id}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/users/" <> user_id)
+    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
   end
 
-  def handle_call({:add_client_roles, realm_name, user_id, client_id, roles_payload}, _from, state) do
-    with_auth(state, fn new_state -> do_add_client_roles(realm_name, user_id, client_id, roles_payload, new_state) end)
+  defp run({:delete_user, realm_name, user_id}, client) do
+    client
+    |> Tesla.delete(@base_path <> realm_name <> "/users/" <> user_id)
+    |> to_result(nil)
   end
 
+  defp run({:create_user, realm_name, user_data}, client) do
+    client
+    |> Tesla.post(@base_path <> realm_name <> "/users", user_data)
+    |> to_result(nil)
+  end
+
+  defp run({:reset_password_user, realm_name, user_id, creds}, client) do
+    client
+    |> Tesla.put(@base_path <> realm_name <> "/users/" <> user_id <> "/reset-password", creds)
+    |> to_result(nil)
+  end
+
+  #
+  # Groups http methods
+  #
+  defp run({:groups, realm_name}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/groups")
+    |> to_result(&KeycloakAdminSchema.GroupRepresentation.new!/1)
+  end
+
+  #
+  # roles http methods
+  #
+  defp run({:roles, realm_name}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/roles")
+    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
+  end
+
+  defp run({:client_roles, realm_name, client_id}, client) do
+    client
+    |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id <> "/roles")
+    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
+  end
+
+  defp run({:add_client_roles, realm_name, user_id, client_id, role}, client) do
+    client
+    |> Tesla.post(@base_path <> realm_name <> "/users/" <> user_id <> "/role-mappings/clients/" <> client_id, role)
+    |> to_result(nil)
+  end
+
+  #### Realm authentication settings
+
+  defp run({:required_actions, realm_name}, client) do
+    client
+    |> Tesla.get("/admin/realms/#{realm_name}/authentication/required-actions")
+    |> to_result(&RequiredActionProviderRepresentation.new!/1)
+  end
+
+  defp run({:required_action, realm_name, alias}, client) do
+    client
+    |> Tesla.get("/admin/realms/#{realm_name}/authentication/required-actions/#{alias}")
+    |> to_result(&RequiredActionProviderRepresentation.new!/1)
+  end
+
+  defp run({:update_required_action, realm_name, %RequiredActionProviderRepresentation{alias: alias} = action}, client) do
+    client
+    |> Tesla.put("/admin/realms/#{realm_name}/authentication/required-actions/#{alias}", action)
+    |> to_result(&RequiredActionProviderRepresentation.new!/1)
+  end
+
+  defp run({:flow_executions, realm_name, alias}, client) do
+    client
+    |> Tesla.get("/admin/realms/#{realm_name}/authentication/flows/#{alias}/executions")
+    |> to_result(&AuthenticationExecutionInfoRepresentation.new!/1)
+  end
+
+  defp run({:update_flow_execution, realm_name, alias, %AuthenticationExecutionInfoRepresentation{} = execution}, client) do
+    client
+    |> Tesla.put("/admin/realms/#{realm_name}/authentication/flows/#{alias}/executions", execution)
+    |> to_result(&AuthenticationExecutionInfoRepresentation.new!/1)
+  end
+
+  #### Helpers
   defp with_auth(state, fun) do
     case handle_auth(state) do
       {:ok, %State{} = new_state} ->
@@ -414,7 +477,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   # If there's no good refresh token then we need to login
-  @spec maybe_aquire_refresh(State.t()) :: {:ok, State.t()} | {:error, any()}
+  @spec maybe_aquire_refresh(State.t()) :: result(State.t())
   defp maybe_aquire_refresh(%State{refresh_token: tok, refresh_expire: expire} = state) do
     cond do
       tok == nil -> do_login(state)
@@ -425,7 +488,7 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   # If there's no good access token, but there is a refresh token
   # Then use the refresh token.
-  @spec maybe_aquire_access(State.t()) :: {:ok, State.t()} | {:error, any()}
+  @spec maybe_aquire_access(State.t()) :: result(State.t())
   defp maybe_aquire_access(%State{access_expire: nil} = state) do
     do_refresh(state)
   end
@@ -438,14 +501,11 @@ defmodule CommonCore.Keycloak.AdminClient do
     end
   end
 
-  @spec build_bearer_client(State.t() | {:error, any()} | any()) :: State.t() | {:error, any()}
-  def build_bearer_client(%State{access_token: token, base_url: base_url, adapter: adapter} = state) do
+  defp build_bearer_client(%State{access_token: token, base_url: base_url, adapter: adapter} = state) do
     %State{state | bearer_client: TeslaBuilder.build_client(base_url, token, adapter)}
   end
 
-  def build_bearer_client({:error, err}), do: {:error, err}
-
-  def build_base_client(%State{base_url: base_url, adapter: adapter} = state) do
+  defp build_base_client(%State{base_url: base_url, adapter: adapter} = state) do
     %State{state | base_client: TeslaBuilder.build_client(base_url, nil, adapter)}
   end
 
@@ -460,7 +520,7 @@ defmodule CommonCore.Keycloak.AdminClient do
     })
   end
 
-  @spec do_login(State.t() | {:error, any()}) :: {:ok, State.t()} | {:error, any()}
+  @spec do_login(State.t() | {:error, any()}) :: result(State.t())
   defp do_login(%State{base_client: client, username: username, password: password} = state) do
     case TokenAcquirer.login(client, username, password) do
       {:ok, token_result} -> {:ok, update_token(token_result, state)}
@@ -468,125 +528,11 @@ defmodule CommonCore.Keycloak.AdminClient do
     end
   end
 
-  @spec do_refresh(State.t()) :: {:ok, State.t()} | {:error, any()}
+  @spec do_refresh(State.t()) :: result(State.t())
   defp do_refresh(%State{base_client: client, refresh_token: refresh_token} = state) do
     case TokenAcquirer.refresh(client, refresh_token) do
       {:ok, token_result} -> {:ok, update_token(token_result, state)}
       {:error, err} -> {:error, err}
     end
-  end
-
-  #
-  # Realms http methods
-  #
-
-  defp do_list_realms(%State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get("/admin/realms")
-    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
-  end
-
-  defp do_get_realm(realm_name, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name)
-    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
-  end
-
-  defp do_create_realm(realm, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.post("/admin/realms", realm)
-    |> to_result(nil)
-  end
-
-  #
-  # Clients http methods
-  #
-
-  defp do_list_clients(realm_name, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name <> "/clients")
-    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
-  end
-
-  defp do_get_client(realm_name, client_id, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id)
-    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
-  end
-
-  defp do_create_client(realm_name, client_data, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.post(@base_path <> realm_name <> "/clients", client_data)
-    |> to_result(nil)
-  end
-
-  defp do_update_client(realm_name, id, client_data, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.put(@base_path <> realm_name <> "/clients/" <> id, client_data)
-    |> to_result(nil)
-  end
-
-  #
-  # Users http methods
-  #
-
-  defp do_list_users(realm_name, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name <> "/users")
-    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
-  end
-
-  defp do_get_user(realm_name, user_id, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name <> "/users/" <> user_id)
-    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
-  end
-
-  defp do_delete_user(realm_name, user_id, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.delete(@base_path <> realm_name <> "/users/" <> user_id)
-    |> to_result(nil)
-  end
-
-  defp do_create_user(realm_name, user_data, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.post(@base_path <> realm_name <> "/users", user_data)
-    |> to_result(nil)
-  end
-
-  defp do_reset_password_user(realm_name, user_id, creds, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.put(@base_path <> realm_name <> "/users/" <> user_id <> "/reset-password", creds)
-    |> to_result(nil)
-  end
-
-  #
-  # Groups http methods
-  #
-  defp do_list_groups(realm_name, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name <> "/groups")
-    |> to_result(&KeycloakAdminSchema.GroupRepresentation.new!/1)
-  end
-
-  #
-  # roles http methods
-  #
-  defp do_list_roles(realm_name, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name <> "/roles")
-    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
-  end
-
-  defp do_list_client_roles(realm_name, client_id, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id <> "/roles")
-    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
-  end
-
-  defp do_add_client_roles(realm_name, user_id, client_id, role, %State{bearer_client: client} = _state) do
-    client
-    |> Tesla.post(@base_path <> realm_name <> "/users/" <> user_id <> "/role-mappings/clients/" <> client_id, role)
-    |> to_result(nil)
   end
 end
