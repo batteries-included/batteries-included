@@ -30,7 +30,7 @@ defmodule KubeServices.Keycloak.UserClient do
   @impl GenServer
   def init(opts) do
     state = struct!(State, opts)
-    Logger.info("Starting KubeSerivces.Keycloak.UserClient", realm: state.realm)
+    Logger.info("Starting KubeServices.Keycloak.UserClient", realm: state.realm)
     {:ok, state}
   end
 

@@ -17,6 +17,8 @@ defmodule KubeServices.Keycloak.AdminClient do
 
   require Logger
 
+  @type result(inner) :: {:ok, inner} | {:error, any()}
+
   @state_opts ~w(username password realm client_id)a
 
   @me __MODULE__
@@ -48,15 +50,15 @@ defmodule KubeServices.Keycloak.AdminClient do
   @impl GenServer
   def init(opts) do
     state = struct!(State, opts)
-    Logger.info("Starting KubeSerivces.Keycloak.AdminClient", realm: state.realm)
+    Logger.info("Starting KubeServices.Keycloak.AdminClient", realm: state.realm)
     {:ok, state}
   end
 
   #
   # Realms
   #
-  @spec realms(atom | pid | {atom, any} | {:via, atom, any}) ::
-          {:ok, list(RealmRepresentation.t())} | {:error, any()}
+  @spec realms(atom | pid | {atom, any} | {:via, atom, any}) :: result(list(RealmRepresentation.t()))
+
   @doc """
   List the realms on Keycloak
 
@@ -77,7 +79,7 @@ defmodule KubeServices.Keycloak.AdminClient do
     GenServer.call(target, {:realm, name})
   end
 
-  @spec create_realm(atom | pid | {atom, any} | {:via, atom, any}, map()) :: {:ok, String.t()} | {:error, any()}
+  @spec create_realm(GenServer.server(), map()) :: result(String.t())
   @doc """
   Given a realm representation create it.
   """
@@ -88,32 +90,22 @@ defmodule KubeServices.Keycloak.AdminClient do
   #
   # Clients
   #
-  @spec clients(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
-          {:ok, list(ClientRepresentation.t())} | {:error, any()}
+  @spec clients(GenServer.server(), String.t()) :: result(list(ClientRepresentation.t()))
   def clients(target \\ @me, realm_name) do
     GenServer.call(target, {:clients, realm_name})
   end
 
-  @spec client(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) ::
-          {:ok, ClientRepresentation.t()} | {:error, any()}
+  @spec client(GenServer.server(), String.t(), String.t()) :: result(ClientRepresentation.t())
   def client(target \\ @me, realm_name, client_id) do
     GenServer.call(target, {:client, realm_name, client_id})
   end
 
-  @spec create_client(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          ClientRepresentation.t() | map()
-        ) :: {:ok, String.t()} | {:error, any()}
+  @spec create_client(GenServer.server(), String.t(), ClientRepresentation.t() | map()) :: result(String.t())
   def create_client(target \\ @me, realm_name, client_data) do
     GenServer.call(target, {:create_client, realm_name, client_data})
   end
 
-  @spec update_client(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          ClientRepresentation.t() | map()
-        ) :: {:ok, String.t()} | {:error, any()}
+  @spec update_client(GenServer.server(), String.t(), ClientRepresentation.t() | map()) :: result(String.t())
   def update_client(target \\ @me, realm_name, client_data)
 
   def update_client(target, realm_name, %{id: client_id} = client_data) do
@@ -127,29 +119,22 @@ defmodule KubeServices.Keycloak.AdminClient do
   #
   # Users
   #
-  @spec users(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
-          {:ok, list(UserRepresentation.t())} | {:error, any()}
+  @spec users(GenServer.server(), String.t()) :: result(list(UserRepresentation.t()))
   def users(target \\ @me, realm_name) do
     GenServer.call(target, {:users, realm_name})
   end
 
-  @spec user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t()) ::
-          {:ok, UserRepresentation.t()} | {:error, any()}
+  @spec user(GenServer.server(), String.t(), String.t()) :: result(UserRepresentation.t())
   def user(target \\ @me, realm_name, user_id) do
     GenServer.call(target, {:user, realm_name, user_id})
   end
 
-  @spec create_user(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          UserRepresentation.t()
-        ) ::
-          {:ok, UserRepresentation.t()} | {:error, any()}
+  @spec create_user(GenServer.server(), String.t(), UserRepresentation.t()) :: result(UserRepresentation.t())
   def create_user(target \\ @me, realm_name, user_data) do
     GenServer.call(target, {:create_user, realm_name, user_data})
   end
 
-  @spec update_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), map()) :: any
+  @spec update_user(GenServer.server(), String.t(), map()) :: any
   def update_user(target \\ @me, realm_name, user_data)
 
   def update_user(target, realm_name, %{id: user_id} = user_data) do
@@ -160,7 +145,7 @@ defmodule KubeServices.Keycloak.AdminClient do
     GenServer.call(target, {:update_user, realm_name, user_id, user_data})
   end
 
-  @spec delete_user(atom | pid | {atom, any} | {:via, atom, any}, String.t(), String.t() | map()) :: any
+  @spec delete_user(GenServer.server(), String.t(), String.t() | map()) :: any
   def delete_user(target \\ @me, realm_name, id_or_user_data)
 
   def delete_user(target, realm_name, %{id: user_id}) do
@@ -175,12 +160,7 @@ defmodule KubeServices.Keycloak.AdminClient do
     GenServer.call(target, {:delete_user, realm_name, user_id})
   end
 
-  @spec reset_password_user(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          String.t(),
-          CredentialRepresentation.t() | map()
-        ) :: any
+  @spec reset_password_user(GenServer.server(), String.t(), String.t(), CredentialRepresentation.t() | map()) :: any
   def reset_password_user(target \\ @me, realm_name, user_id, creds) do
     GenServer.call(target, {:reset_password_user, realm_name, user_id, creds})
   end
@@ -188,8 +168,7 @@ defmodule KubeServices.Keycloak.AdminClient do
   #
   # Groups
   #
-  @spec groups(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
-          {:ok, list(GroupRepresentation.t())} | {:error, any()}
+  @spec groups(GenServer.server(), String.t()) :: result(list(GroupRepresentation.t()))
   def groups(target \\ @me, realm_name) do
     GenServer.call(target, {:groups, realm_name})
   end
@@ -197,26 +176,22 @@ defmodule KubeServices.Keycloak.AdminClient do
   #
   # Roles
   #
-  @spec roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t()) ::
-          {:ok, list(RoleRepresentation.t())} | {:error, any()}
+  @spec roles(GenServer.server(), String.t()) :: result(list(RoleRepresentation.t()))
   def roles(target \\ @me, realm_name) do
     GenServer.call(target, {:roles, realm_name})
   end
 
-  @spec client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), String.t()) ::
-          {:ok, list(RoleRepresentation.t())} | {:error, any()}
+  @spec client_roles(GenServer.server(), String.t(), String.t()) :: result(list(RoleRepresentation.t()))
   def client_roles(target \\ @me, realm_name, client_id) do
     GenServer.call(target, {:client_roles, realm_name, client_id})
   end
 
-  @spec add_client_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary(), binary(), list()) ::
-          {:ok, any()} | {:error, any()}
+  @spec add_client_roles(GenServer.server(), String.t(), binary(), binary(), list()) :: result(any())
   def add_client_roles(target \\ @me, realm_name, user_id, client_id, roles_payload) do
     GenServer.call(target, {:add_client_roles, realm_name, user_id, client_id, roles_payload})
   end
 
-  @spec add_roles(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary(), list()) ::
-          {:ok, any()} | {:error, any()}
+  @spec add_roles(GenServer.server(), String.t(), binary(), list()) :: result(any())
   def add_roles(target \\ @me, realm_name, user_id, roles_payload) do
     GenServer.call(target, {:add_roles, realm_name, user_id, roles_payload})
   end

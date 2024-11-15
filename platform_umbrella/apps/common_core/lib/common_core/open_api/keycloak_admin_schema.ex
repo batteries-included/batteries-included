@@ -36,6 +36,28 @@ defmodule CommonCore.OpenAPI.KeycloakAdminSchema do
     end
   end
 
+  defmodule AuthenticationExecutionInfoRepresentation do
+    @moduledoc false
+    use CommonCore, :embedded_schema
+
+    batt_embedded_schema do
+      field :alias, :string
+      field :authenticationConfig, :string
+      field :authenticationFlow, :boolean
+      field :configurable, :boolean
+      field :description, :string
+      field :displayName, :string
+      field :flowId, :string
+      field :id, :string
+      field :index, :integer
+      field :level, :integer
+      field :priority, :integer
+      field :providerId, :string
+      field :requirement, :string
+      field :requirementChoices, {:array, :string}
+    end
+  end
+
   defmodule ClaimRepresentation do
     @moduledoc false
     use CommonCore, :embedded_schema
