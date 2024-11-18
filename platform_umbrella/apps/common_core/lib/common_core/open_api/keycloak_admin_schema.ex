@@ -5,7 +5,12 @@ defmodule CommonCore.OpenAPI.KeycloakAdminSchema do
     use CommonCore, :embedded_schema
 
     batt_embedded_schema do
+      field :authenticator, :string
+      field :authenticatorConfig, :string
+      field :authenticatorFlow, :boolean
       field :flowAlias, :string
+      field :priority, :integer
+      field :requirement, :string
       field :userSetupAllowed, :boolean
     end
   end

@@ -42,8 +42,10 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
         # If we get something then try and enrich that
         summary =
           realms
-          |> add_all_clients()
-          |> add_all_users()
+          |> add_all(&add_clients/1)
+          |> add_all(&add_users/1)
+          |> add_all(&add_required_actions/1)
+          |> add_all(&add_flows/1)
           |> get_realm_configurations()
           |> to_summary()
 
@@ -92,6 +94,26 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
     end
   end
 
+  defp add_required_actions(%RealmRepresentation{realm: name} = realm) do
+    case AdminClient.required_actions(name) do
+      {:ok, actions} ->
+        %RealmRepresentation{realm | requiredActions: actions}
+
+      _ ->
+        realm
+    end
+  end
+
+  defp add_flows(%RealmRepresentation{realm: name} = realm) do
+    case AdminClient.flows(name) do
+      {:ok, flows} ->
+        %RealmRepresentation{realm | authenticationFlows: flows}
+
+      _ ->
+        realm
+    end
+  end
+
   defp get_realm_configurations(realms) do
     # For each realm try and get the OIDC configuration
     #
@@ -114,13 +136,7 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
     end
   end
 
-  defp add_all_clients(realms) do
-    Enum.map(realms, &add_clients/1)
-  end
-
-  defp add_all_users(realms) do
-    Enum.map(realms, &add_users/1)
-  end
+  defp add_all(realms, func), do: Enum.map(realms, func)
 
   def snapshot(target \\ @me) do
     GenServer.call(target, :snapshot, 30_000)
