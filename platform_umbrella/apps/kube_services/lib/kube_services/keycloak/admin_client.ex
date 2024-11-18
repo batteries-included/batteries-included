@@ -5,10 +5,13 @@ defmodule KubeServices.Keycloak.AdminClient do
 
   import CommonCore.Util.Tesla
 
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.AuthenticationExecutionInfoRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.AuthenticationFlowRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.GroupRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RequiredActionProviderRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
   alias KubeServices.Keycloak.TokenStrategy
@@ -197,6 +200,47 @@ defmodule KubeServices.Keycloak.AdminClient do
   end
 
   #
+  # Realm authentication 
+  #
+
+  @spec required_actions(GenServer.server(), String.t()) :: result(list(RequiredActionProviderRepresentation.t()))
+  def required_actions(target \\ @me, realm_name) do
+    GenServer.call(target, {:required_actions, realm_name})
+  end
+
+  @spec required_action(GenServer.server(), String.t(), String.t()) :: result(RequiredActionProviderRepresentation.t())
+  def required_action(target \\ @me, realm_name, alias) do
+    GenServer.call(target, {:required_action, realm_name, alias})
+  end
+
+  @spec update_required_action(GenServer.server(), String.t(), RequiredActionProviderRepresentation.t()) :: result(atom())
+  def update_required_action(target \\ @me, realm_name, action) do
+    GenServer.call(target, {:update_required_action, realm_name, action})
+  end
+
+  @spec flows(GenServer.server(), String.t()) :: result(list(AuthenticationFlowRepresentation.t()))
+  def flows(target \\ @me, realm_name) do
+    GenServer.call(target, {:flows, realm_name})
+  end
+
+  @spec flow(GenServer.server(), String.t(), String.t()) :: result(AuthenticationFlowRepresentation.t())
+  def flow(target \\ @me, realm_name, id) do
+    GenServer.call(target, {:flow, realm_name, id})
+  end
+
+  @spec flow_executions(GenServer.server(), String.t(), String.t()) ::
+          result(list(AuthenticationExecutionInfoRepresentation.t()))
+  def flow_executions(target \\ @me, realm_name, alias) do
+    GenServer.call(target, {:flow_executions, realm_name, alias})
+  end
+
+  @spec update_flow_execution(GenServer.server(), String.t(), String.t(), AuthenticationExecutionInfoRepresentation.t()) ::
+          result(atom())
+  def update_flow_execution(target \\ @me, realm_name, alias, execution) do
+    GenServer.call(target, {:update_flow_execution, realm_name, alias, execution})
+  end
+
+  #
   # Genserver Implementation
   #
 
@@ -320,6 +364,50 @@ defmodule KubeServices.Keycloak.AdminClient do
     client
     |> post("/admin/realms/#{realm_name}/users/#{user_id}/role-mappings/realm", role)
     |> to_result(nil)
+  end
+
+  #### Realm authentication settings
+
+  defp run({:required_actions, realm_name}, client) do
+    client
+    |> get("/admin/realms/#{realm_name}/authentication/required-actions")
+    |> to_result(&RequiredActionProviderRepresentation.new!/1)
+  end
+
+  defp run({:required_action, realm_name, alias}, client) do
+    client
+    |> get("/admin/realms/#{realm_name}/authentication/required-actions/#{alias}")
+    |> to_result(&RequiredActionProviderRepresentation.new!/1)
+  end
+
+  defp run({:update_required_action, realm_name, %RequiredActionProviderRepresentation{alias: alias} = action}, client) do
+    client
+    |> put("/admin/realms/#{realm_name}/authentication/required-actions/#{alias}", action)
+    |> to_result(&RequiredActionProviderRepresentation.new!/1)
+  end
+
+  defp run({:flows, realm_name}, client) do
+    client
+    |> get("/admin/realms/#{realm_name}/authentication/flows")
+    |> to_result(&AuthenticationFlowRepresentation.new!/1)
+  end
+
+  defp run({:flow, realm_name, id}, client) do
+    client
+    |> get("/admin/realms/#{realm_name}/authentication/flows/#{id}")
+    |> to_result(&AuthenticationFlowRepresentation.new!/1)
+  end
+
+  defp run({:flow_executions, realm_name, alias}, client) do
+    client
+    |> get("/admin/realms/#{realm_name}/authentication/flows/#{alias}/executions")
+    |> to_result(&AuthenticationExecutionInfoRepresentation.new!/1)
+  end
+
+  defp run({:update_flow_execution, realm_name, alias, %AuthenticationExecutionInfoRepresentation{} = execution}, client) do
+    client
+    |> put("/admin/realms/#{realm_name}/authentication/flows/#{alias}/executions", execution)
+    |> to_result(&AuthenticationExecutionInfoRepresentation.new!/1)
   end
 
   #

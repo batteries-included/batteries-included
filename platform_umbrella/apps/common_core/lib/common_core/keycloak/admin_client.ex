@@ -46,12 +46,10 @@ defmodule CommonCore.Keycloak.AdminClient do
   alias CommonCore.Keycloak.TeslaBuilder
   alias CommonCore.Keycloak.TokenAcquirer
   alias CommonCore.OpenAPI.KeycloakAdminSchema
-  alias CommonCore.OpenAPI.KeycloakAdminSchema.AuthenticationExecutionInfoRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.GroupRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
-  alias CommonCore.OpenAPI.KeycloakAdminSchema.RequiredActionProviderRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RoleRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.UserRepresentation
 
@@ -223,35 +221,6 @@ defmodule CommonCore.Keycloak.AdminClient do
     GenServer.call(target, {:reset_password_user, realm_name, user_id, creds})
   end
 
-  #### Realm authentication 
-
-  @spec required_actions(GenServer.server(), String.t()) :: result(list(RequiredActionProviderRepresentation.t()))
-  def required_actions(target \\ @me, realm_name) do
-    GenServer.call(target, {:required_actions, realm_name})
-  end
-
-  @spec required_action(GenServer.server(), String.t(), String.t()) :: result(RequiredActionProviderRepresentation.t())
-  def required_action(target \\ @me, realm_name, alias) do
-    GenServer.call(target, {:required_action, realm_name, alias})
-  end
-
-  @spec update_required_action(GenServer.server(), String.t(), RequiredActionProviderRepresentation.t()) :: result(atom())
-  def update_required_action(target \\ @me, realm_name, action) do
-    GenServer.call(target, {:update_required_action, realm_name, action})
-  end
-
-  @spec flow_executions(GenServer.server(), String.t(), String.t()) ::
-          result(list(AuthenticationExecutionInfoRepresentation.t()))
-  def flow_executions(target \\ @me, realm_name, alias) do
-    GenServer.call(target, {:flow_executions, realm_name, alias})
-  end
-
-  @spec update_flow_execution(GenServer.server(), String.t(), String.t(), AuthenticationExecutionInfoRepresentation.t()) ::
-          result(atom())
-  def update_flow_execution(target \\ @me, realm_name, alias, execution) do
-    GenServer.call(target, {:update_flow_execution, realm_name, alias, execution})
-  end
-
   ### Handles
 
   def handle_call(:refresh, _from, state) do
@@ -381,38 +350,6 @@ defmodule CommonCore.Keycloak.AdminClient do
     client
     |> Tesla.post(@base_path <> realm_name <> "/users/" <> user_id <> "/role-mappings/clients/" <> client_id, role)
     |> to_result(nil)
-  end
-
-  #### Realm authentication settings
-
-  defp run({:required_actions, realm_name}, client) do
-    client
-    |> Tesla.get("/admin/realms/#{realm_name}/authentication/required-actions")
-    |> to_result(&RequiredActionProviderRepresentation.new!/1)
-  end
-
-  defp run({:required_action, realm_name, alias}, client) do
-    client
-    |> Tesla.get("/admin/realms/#{realm_name}/authentication/required-actions/#{alias}")
-    |> to_result(&RequiredActionProviderRepresentation.new!/1)
-  end
-
-  defp run({:update_required_action, realm_name, %RequiredActionProviderRepresentation{alias: alias} = action}, client) do
-    client
-    |> Tesla.put("/admin/realms/#{realm_name}/authentication/required-actions/#{alias}", action)
-    |> to_result(&RequiredActionProviderRepresentation.new!/1)
-  end
-
-  defp run({:flow_executions, realm_name, alias}, client) do
-    client
-    |> Tesla.get("/admin/realms/#{realm_name}/authentication/flows/#{alias}/executions")
-    |> to_result(&AuthenticationExecutionInfoRepresentation.new!/1)
-  end
-
-  defp run({:update_flow_execution, realm_name, alias, %AuthenticationExecutionInfoRepresentation{} = execution}, client) do
-    client
-    |> Tesla.put("/admin/realms/#{realm_name}/authentication/flows/#{alias}/executions", execution)
-    |> to_result(&AuthenticationExecutionInfoRepresentation.new!/1)
   end
 
   #### Helpers
