@@ -1,15 +1,35 @@
 defmodule Mix.Tasks.Gen.Openapi.Schema do
   @shortdoc "Given a json schema for open api generate a module for the given stuct types using Ecto.Schema"
+  @moduledoc """
+  Given a json schema for open api generate a module for the given stuct types using Ecto.Schema.
 
-  @moduledoc false
+  This task supports:
+  - Regular object schemas with embedded schemas using Ecto.Schema
+  - Enum schemas (with "enum" and "type": "string") using CommonCore.Ecto.Enum
+  - Proper dependency tracking and ordering of generated modules
+  - Exclusion of problematic schema types via @dont_specialize_spec_types
+
+  Enum schemas are automatically detected and converted to keyword lists where:
+  - Enum values become atoms with underscores replacing special characters
+  - The original string values are preserved for serialization
+
+  Usage:
+    mix gen.openapi.schema <path> <root_schema> <module_name>
+
+  Examples:
+    mix gen.openapi.schema openapi.json "*" "MySchema"  # Generate all schemas
+    mix gen.openapi.schema openapi.json "User" "UserSchema"  # Generate specific schema
+  """
+
   use Mix.Task
   use TypedStruct
 
   @dont_specialize_spec_types [
     "ResourceRepresentation",
-    "Currency",
-    "Country",
-    "Timezone",
+    "ResourceOwnerRepresentation",
+    "ScopeRepresentation",
+    "PolicyRepresentation",
+    "UserManagedAccessConfig",
     "CustomerChargeFiltersUsageObject",
     "CustomerChargeGroupsUsageObject",
     "CustomerChargeGroupedUsageObject"
@@ -17,11 +37,11 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   @field_regex ~r/^(\s*)(field|embeds_many|embeds_one)\((.*)\)$/
 
   def run(args) do
-    [path, schema, module_name] = args
+    [path, root_schema, module_name] = args
 
     {:ok, open_api} = decode(path)
 
-    module = module(open_api, schema, module_name)
+    module = module(open_api, root_schema, module_name)
 
     module_file_name = Macro.underscore(module_name)
 
@@ -45,6 +65,8 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   typedstruct module: State do
     field :modules, map(), default: %{}
     field :deps, map(), default: %{}
+    field :enums, map(), default: %{}
+    field :enum_deps, map(), default: %{}
   end
 
   def contents(module) do
@@ -72,7 +94,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
       end
 
     module_name = String.to_atom("Elixir.CommonCore.OpenAPI.#{module_name}")
-    {:ok, modules_sorted} = sorted_modules(state)
+    {:ok, modules_sorted} = sorted_modules_and_enums(state)
 
     quote do
       defmodule unquote(module_name) do
@@ -81,32 +103,73 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end
   end
 
-  defp sorted_modules(state) do
-    do_sorted_modules([], state)
+  defp sorted_modules_and_enums(state) do
+    do_sorted_modules_and_enums([], state)
   end
 
-  defp do_sorted_modules(result, %State{modules: modules}) when map_size(modules) == 0 do
+  defp do_sorted_modules_and_enums(result, %State{modules: modules, enums: enums})
+       when map_size(modules) == 0 and map_size(enums) == 0 do
     {:ok, Enum.reverse(result)}
   end
 
-  defp do_sorted_modules(result, %State{deps: deps} = state) do
-    possible =
+  defp do_sorted_modules_and_enums(result, %State{deps: deps, enum_deps: enum_deps} = state) do
+    # Try to find an enum with no dependencies first
+    enum_possible =
+      enum_deps
+      |> Enum.filter(fn {_enum_name, deps} -> Enum.empty?(deps) end)
+      |> List.first()
+
+    # Try to find a module with no dependencies
+    module_possible =
       deps
       |> Enum.filter(fn {_schema_name, deps} -> Enum.empty?(deps) end)
       |> List.first()
 
-    case possible do
-      nil ->
+    cond do
+      enum_possible != nil ->
+        {enum_name, _} = enum_possible
+        {new_result, new_state} = add_sorted_enum(result, state, enum_name)
+        do_sorted_modules_and_enums(new_result, new_state)
+
+      module_possible != nil ->
+        case module_possible do
+          nil ->
+            {:error, :cant_find_no_deps}
+
+          {:single, schema_name} ->
+            {new_result, new_state} = add_sorted_module(result, state, schema_name)
+            do_sorted_modules_and_enums(new_result, new_state)
+
+          {schema_name, _} ->
+            {new_result, new_state} = add_sorted_module(result, state, schema_name)
+            do_sorted_modules_and_enums(new_result, new_state)
+        end
+
+      true ->
         {:error, :cant_find_no_deps}
-
-      {:single, schema_name} ->
-        {new_result, new_state} = add_sorted_module(result, state, schema_name)
-        do_sorted_modules(new_result, new_state)
-
-      {schema_name, _} ->
-        {new_result, new_state} = add_sorted_module(result, state, schema_name)
-        do_sorted_modules(new_result, new_state)
     end
+  end
+
+  defp add_sorted_enum(result, state, enum_name) do
+    enum_module = Map.fetch!(state.enums, enum_name)
+
+    new_enum_deps =
+      state.enum_deps
+      |> Enum.map(fn {k, deps} ->
+        kept = Enum.reject(deps, &(&1 == enum_name))
+        {k, kept}
+      end)
+      |> Enum.reject(fn {k, _v} -> k == enum_name end)
+      |> Map.new()
+
+    new_deps =
+      Map.new(state.deps, fn {k, deps} ->
+        kept = Enum.reject(deps, &(&1 == enum_name))
+        {k, kept}
+      end)
+
+    {[enum_module | result],
+     %{state | enums: Map.delete(state.enums, enum_name), enum_deps: new_enum_deps, deps: new_deps}}
   end
 
   defp add_sorted_module(result, state, schema_name) do
@@ -129,8 +192,11 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     schema = get_in(open_api, ["components", "schemas", schema_name])
 
     cond do
-      Map.has_key?(state.modules, schema_name) ->
+      Map.has_key?(state.modules, schema_name) or Map.has_key?(state.enums, schema_name) ->
         state
+
+      schema != nil and enum_schema?(schema) ->
+        do_add_enum(state, open_api, schema_name, schema)
 
       schema != nil ->
         do_add(state, open_api, schema_name, schema)
@@ -140,12 +206,57 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end
   end
 
+  defp enum_schema?(%{"enum" => _enum_values, "type" => "string"}), do: true
+  defp enum_schema?(_), do: false
+
+  # Adds an enum schema to the state.
+  #
+  # Enum schemas are those with "enum" and "type": "string" properties.
+  # They are converted to modules using CommonCore.Ecto.Enum.
+  defp do_add_enum(state, _open_api, schema_name, schema) do
+    enum_values = Map.get(schema, "enum", [])
+    enum_module = enum_module_definition(schema_name, enum_values)
+
+    %{
+      state
+      | enums: Map.put(state.enums, schema_name, enum_module),
+        enum_deps: Map.put(state.enum_deps, schema_name, [])
+    }
+  end
+
+  # Generates a module definition for an enum schema.
+  #
+  # Converts enum values to a keyword list where:
+  # - Keys are normalized atom versions of the enum values (lowercase, underscores)
+  # - Values are the original string values for proper serialization
+  defp enum_module_definition(schema_name, enum_values) do
+    # Convert enum values to keyword list for CommonCore.Ecto.Enum
+    enum_keyword_list =
+      enum_values
+      |> Enum.with_index()
+      |> Enum.map(fn {value, _index} ->
+        atom_key =
+          value
+          |> String.downcase()
+          |> String.replace(~r/[^a-z0-9_]/, "_")
+          |> String.to_atom()
+
+        {atom_key, value}
+      end)
+
+    quote do
+      defmodule unquote(String.to_atom("Elixir.#{schema_name}")) do
+        use CommonCore.Ecto.Enum, unquote(enum_keyword_list)
+      end
+    end
+  end
+
   defp do_add(state, open_api, schema_name, schema) do
-    {seen, schema} = definition(schema, schema_name, open_api)
+    {seen, schema_module} = definition(schema, schema_name, open_api)
 
     with_this = %{
       state
-      | modules: Map.put(state.modules, schema_name, schema),
+      | modules: Map.put(state.modules, schema_name, schema_module),
         deps: Map.put(state.deps, schema_name, seen)
     }
 
@@ -154,7 +265,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end)
   end
 
-  defp definition(%{"oneOf" => one_of} = _schema, schema_name, _open_api) do
+  defp definition(%{"oneOf" => one_of} = _schema, schema_name, open_api) do
     properties =
       one_of
       |> Enum.map(fn v -> Map.get(v, "properties", %{}) end)
@@ -162,7 +273,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
       |> Enum.sort_by(fn {name, _} -> name end)
 
     seen = seen_schema_names(schema_name, properties)
-    res = typed_ecto_module(properties, schema_name)
+    res = typed_ecto_module(properties, schema_name, open_api)
     {seen, res}
   end
 
@@ -181,11 +292,11 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
       |> Map.merge(Map.get(schema, "properties", %{}))
 
     seen = seen_schema_names(schema_name, properties)
-    res = typed_ecto_module(properties, schema_name)
+    res = typed_ecto_module(properties, schema_name, open_api)
     {seen, res}
   end
 
-  defp definition(%{} = schema, schema_name, _open_api) do
+  defp definition(%{} = schema, schema_name, open_api) do
     properties =
       schema
       |> Map.get("properties", [])
@@ -196,13 +307,13 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     else
       seen = seen_schema_names(schema_name, properties)
 
-      res = typed_ecto_module(properties, schema_name)
+      res = typed_ecto_module(properties, schema_name, open_api)
       {seen, res}
     end
   end
 
-  defp typed_ecto_module(properties, schema_name) do
-    typed_ecto_schema = typed_ecto_schema(schema_name, properties)
+  defp typed_ecto_module(properties, schema_name, open_api) do
+    typed_ecto_schema = typed_ecto_schema(schema_name, properties, open_api)
 
     quote do
       defmodule unquote(String.to_atom("Elixir.#{schema_name}")) do
@@ -213,8 +324,8 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     end
   end
 
-  defp typed_ecto_schema(schema_name, properties) do
-    inner = Enum.map(properties, fn prop -> field_def(schema_name, prop) end)
+  defp typed_ecto_schema(schema_name, properties, open_api) do
+    inner = Enum.map(properties, fn prop -> field_def(schema_name, prop, open_api) end)
 
     quote do
       batt_embedded_schema do
@@ -230,7 +341,9 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     |> Enum.map(fn {_property_name, info} ->
       ref_schema_name(info)
     end)
-    |> Enum.filter(fn value -> value != nil && value != schema_name end)
+    |> Enum.filter(fn value ->
+      value != nil && value != schema_name && value not in @dont_specialize_spec_types
+    end)
     |> Enum.uniq()
   end
 
@@ -240,16 +353,10 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeFiltersUsageObject"}), do: nil
   defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeGroupsUsageObject"}), do: nil
   defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeGroupedUsageObject"}), do: nil
+  defp ref_schema_name(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringComponentExportRepresentation"}), do: nil
+  defp ref_schema_name(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringString"}), do: nil
 
   defp ref_schema_name(%{"$ref" => ref_name}), do: ref_name_to_schema_name(ref_name)
-
-  # Special case for Lago. The huge enums are strings
-  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Currency"}]}), do: nil
-  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Currency"}, _]}), do: nil
-  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Country"}]}), do: nil
-  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Country"}, _]}), do: nil
-  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Timezone"}]}), do: nil
-  defp ref_schema_name(%{"allOf" => [%{"$ref" => "#/components/schemas/Timezone"}, _]}), do: nil
 
   defp ref_schema_name(%{"allOf" => [%{"$ref" => ref_name}]}), do: ref_name_to_schema_name(ref_name)
   defp ref_schema_name(%{"allOf" => [%{"$ref" => ref_name}, _]}), do: ref_name_to_schema_name(ref_name)
@@ -263,40 +370,112 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp ref_name_to_schema_name(ref_name) do
     case String.split(ref_name, "#/components/schemas/") do
       ["", "OAuthClientRepresentation"] -> nil
+      ["", "MultivaluedHashMapStringString"] -> nil
       ["", schema_name] -> schema_name
       _ -> nil
     end
   end
 
-  defp field_def(schema_name, {field_name, %{"$ref" => _} = field_info})
+  defp field_def(schema_name, {field_name, %{"$ref" => _} = field_info}, open_api)
        when schema_name not in @dont_specialize_spec_types do
     case ref_schema_name(field_info) do
       nil ->
         non_embed_def(field_name, field_info)
 
-      embeded_schema_name ->
-        embedded_def(field_name, embeded_schema_name)
+      referenced_schema_name ->
+        cond do
+          referenced_schema_name in @dont_specialize_spec_types ->
+            non_embed_def(field_name, field_info)
+
+          enum_reference?(field_info, open_api) ->
+            enum_field_def(field_name, referenced_schema_name)
+
+          true ->
+            embedded_def(field_name, referenced_schema_name)
+        end
     end
   end
 
-  defp field_def(schema_name, {field_name, %{"type" => "array"} = field_info})
+  defp field_def(schema_name, {field_name, %{"type" => "array"} = field_info}, open_api)
        when schema_name not in @dont_specialize_spec_types do
     case ref_schema_name(field_info) do
       nil ->
         non_embed_def(field_name, field_info)
 
-      embeded_schema_name ->
-        embedded_many_def(field_name, embeded_schema_name)
+      referenced_schema_name ->
+        cond do
+          referenced_schema_name in @dont_specialize_spec_types ->
+            non_embed_def(field_name, field_info)
+
+          enum_reference?(field_info, open_api) ->
+            enum_array_field_def(field_name, referenced_schema_name)
+
+          true ->
+            embedded_many_def(field_name, referenced_schema_name)
+        end
     end
   end
 
-  defp field_def(_schema_name, {field_name, field_info}) do
+  defp field_def(_schema_name, {field_name, field_info}, open_api) do
     case ref_schema_name(field_info) do
       nil ->
         non_embed_def(field_name, field_info)
 
-      embeded_schema_name ->
-        embedded_many_def(field_name, embeded_schema_name)
+      referenced_schema_name ->
+        cond do
+          referenced_schema_name in @dont_specialize_spec_types ->
+            non_embed_def(field_name, field_info)
+
+          enum_reference?(field_info, open_api) ->
+            enum_field_def(field_name, referenced_schema_name)
+
+          true ->
+            embedded_many_def(field_name, referenced_schema_name)
+        end
+    end
+  end
+
+  defp enum_reference?(%{"$ref" => ref_name}, open_api) do
+    schema_name = ref_name_to_schema_name(ref_name)
+
+    if schema_name do
+      referenced_schema = get_in(open_api, ["components", "schemas", schema_name])
+      referenced_schema && enum_schema?(referenced_schema)
+    else
+      false
+    end
+  end
+
+  defp enum_reference?(%{"items" => %{"$ref" => ref_name}}, open_api) do
+    schema_name = ref_name_to_schema_name(ref_name)
+
+    if schema_name do
+      referenced_schema = get_in(open_api, ["components", "schemas", schema_name])
+      referenced_schema && enum_schema?(referenced_schema)
+    else
+      false
+    end
+  end
+
+  defp enum_reference?(_, _), do: false
+
+  # Generates a field definition for an enum type.
+  #
+  # Uses the enum module directly as the field type for proper validation.
+  defp enum_field_def(field_name, enum_schema_name) do
+    quote do
+      field unquote(String.to_atom(field_name)),
+            unquote(String.to_atom("Elixir.#{enum_schema_name}"))
+    end
+  end
+
+  # Generates a field definition for an array of enum values.
+  #
+  # Uses {:array, EnumModule} as the field type.
+  defp enum_array_field_def(field_name, enum_schema_name) do
+    quote do
+      field unquote(String.to_atom(field_name)),
+            {:array, unquote(String.to_atom("Elixir.#{enum_schema_name}"))}
     end
   end
 
@@ -325,6 +504,18 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp type(%{"type" => "object"}) do
     quote do
       :map
+    end
+  end
+
+  defp type(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringComponentExportRepresentation"} = _info) do
+    quote do
+      {:array, :map}
+    end
+  end
+
+  defp type(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringString"} = _info) do
+    quote do
+      {:array, :string}
     end
   end
 
@@ -442,6 +633,12 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp type(%{"type" => "boolean"}) do
     quote do
       :boolean
+    end
+  end
+
+  defp type(%{}) do
+    quote do
+      :string
     end
   end
 end

@@ -236,6 +236,26 @@ do_gen_static_specs() {
     run_mix clean
 }
 
+do_gen_keycloak_specs() {
+    log "Generating Keycloak specs"
+    # Make a tempfile
+    local temp_file
+    temp_file=$(mktemp /tmp/keycloak-openai.XXXXXX)
+
+    # Download https://www.keycloak.org/docs-api/latest/rest-api/openapi.json
+    # into the tempfile
+    curl -sSL https://www.keycloak.org/docs-api/latest/rest-api/openapi.json -o "${temp_file}"
+
+    run_mix "do" \
+        deps.get, \
+        compile --force, \
+        gen.openapi.schema "${temp_file}" '*' "KeycloakAdminSchema"
+
+    rm "${temp_file}"
+
+    run_mix "format"
+}
+
 do_print_jwk_json() {
     local path=${1}
     local absolute_path
@@ -313,11 +333,12 @@ Available options:
 
 Available commands:
 
-- fmt               Format code in the project [default: all]
-- check-fmt         Check if all code in the project is formatted  [default: all]
-- gen-static-specs  Generate static installation specs
-- print-jwk-json    Print the JWK key given a path as JSON for use in a secret
-- set-version       Change the version of the project in mix.exs and bin/bix
+- fmt                Format code in the project [default: all]
+- check-fmt          Check if all code in the project is formatted  [default: all]
+- gen-static-specs   Generate static installation specs
+- gen-keycloak-specs Generate Keycloak OpenAPI specs
+- print-jwk-json     Print the JWK key given a path as JSON for use in a secret
+- set-version        Change the version of the project in mix.exs and bin/bix
 EOF
     exit 1
 }
@@ -362,6 +383,9 @@ check-fmt)
     ;;
 gen-static-specs)
     do_gen_static_specs
+    ;;
+gen-keycloak-specs)
+    do_gen_keycloak_specs
     ;;
 print-jwk-json)
     do_print_jwk_json "${args[@]}"
