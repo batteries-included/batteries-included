@@ -35,7 +35,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
 
   defp empty_state(assigns) do
     ~H"""
-    <.panel title="Empty Delete Archive">
+    <.panel title="Empty Delete Archive" id="empty-state-deleted">
       <div class="max-w-none prose prose-lg dark:prose-invert my-4">
         <p>
           There no deleted resources. If the Batteries Included platform does delete any resources it will
@@ -79,7 +79,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
         <:col :let={resource} field={:kind} label="When">
           <%= CommonCore.Util.Time.from_now(resource.inserted_at) %>
         </:col>
-        <:col :let={resource} label="Restore">
+        <:col :let={resource} label="Restore" field={nil}>
           <.button
             :if={!resource.been_undeleted}
             variant="minimal"
@@ -106,6 +106,7 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
 
     <.deleted_resources_table
       :if={@deleted_resources != nil && @deleted_resources != []}
+      meta={@meta}
       rows={@deleted_resources}
     />
     <.empty_state

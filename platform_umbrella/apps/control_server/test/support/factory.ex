@@ -20,6 +20,16 @@ defmodule ControlServer.Factory do
     %ControlServer.SnapshotApply.UmbrellaSnapshot{}
   end
 
+  def deleted_resource_factory do
+    %ControlServer.Deleted.DeletedResource{
+      name: sequence("deleted-resource-"),
+      namespace: sequence("battery-core-"),
+      kind: sequence(:kind, CommonCore.ApiVersionKind.all_known()),
+      hash: Hashing.compute_hash(%{}),
+      been_undeleted: false
+    }
+  end
+
   def kube_snapshot_factory do
     %ControlServer.SnapshotApply.KubeSnapshot{
       status: sequence(:status, [:creation, :generation, :applying, :ok, :error])
