@@ -21,60 +21,58 @@ defmodule CommonCore.Actions.SSO do
 
   defp ping, do: %FreshGeneratedAction{action: :ping, type: :realm, value: %{}}
 
-  # if mfa isn't enabled, do nothing
-  defp ensure_totp_flow(%SystemBattery{config: %SSOConfig{mfa: false}}, %StateSummary{} = _state_summary), do: nil
   # if we don't have a good summary, do nothing
   defp ensure_totp_flow(_, %StateSummary{keycloak_state: nil}), do: nil
   defp ensure_totp_flow(_, %StateSummary{keycloak_state: %KeycloakSummary{realms: []}}), do: nil
 
-  # if mfa and summary, make sure conditional otp form is required
-  defp ensure_totp_flow(%SystemBattery{config: %SSOConfig{mfa: true}}, %StateSummary{} = _state_summary) do
+  # make sure conditional otp form is configured
+  defp ensure_totp_flow(%SystemBattery{config: %SSOConfig{mfa: mfa}}, %StateSummary{} = _state_summary) do
+    requirement = if mfa, do: "REQUIRED", else: "CONDITIONAL"
+
     %FreshGeneratedAction{
       action: :sync,
       type: :flow_execution,
       realm: Keycloak.realm_name(),
-      value: %{flow_alias: "browser", display_name: "Browser - Conditional OTP"}
+      value: %{flow_alias: "browser", display_name: "Browser - Conditional OTP", requirement: requirement}
     }
   end
 
-  # if mfa isn't enabled, do nothing
-  defp ensure_totp_required_action(%SystemBattery{config: %SSOConfig{mfa: false}}, _), do: nil
   # if we don't have a good summary, do nothing
   defp ensure_totp_required_action(_, %StateSummary{keycloak_state: nil}), do: nil
   defp ensure_totp_required_action(_, %StateSummary{keycloak_state: %KeycloakSummary{realms: []}}), do: nil
 
-  # if mfa and summary, make sure TOTP configure page is enabled
+  # make sure TOTP configure page is enabled / disabled
   defp ensure_totp_required_action(
-         %SystemBattery{config: %SSOConfig{mfa: true}},
+         %SystemBattery{config: %SSOConfig{mfa: mfa}},
          %StateSummary{keycloak_state: %KeycloakSummary{realms: realms}} = _state_summary
        ) do
     realms
     |> Enum.find(fn %RealmRepresentation{realm: name} = _realm -> name == Keycloak.realm_name() end)
-    |> determine_totp_action()
+    |> determine_totp_action(mfa)
   end
 
   #
   # Helpers
   #
 
-  defp determine_totp_action(nil), do: nil
-  defp determine_totp_action(%RealmRepresentation{requiredActions: nil}), do: nil
+  defp determine_totp_action(nil, _mfa), do: nil
+  defp determine_totp_action(%RealmRepresentation{requiredActions: nil}, _mfa), do: nil
 
-  defp determine_totp_action(%RealmRepresentation{requiredActions: actions, realm: name}) do
+  defp determine_totp_action(%RealmRepresentation{requiredActions: actions, realm: name}, mfa) do
     case Enum.find(actions, &(&1.alias == "CONFIGURE_TOTP")) do
       nil ->
         Logger.warning("Couldn't find OTP required action")
         nil
 
-      %RequiredActionProviderRepresentation{defaultAction: true} ->
+      %RequiredActionProviderRepresentation{defaultAction: ^mfa} ->
         nil
 
-      %RequiredActionProviderRepresentation{defaultAction: false} = action ->
+      %RequiredActionProviderRepresentation{} = action ->
         %FreshGeneratedAction{
           action: :sync,
           type: :required_action,
           realm: name,
-          value: Map.from_struct(%RequiredActionProviderRepresentation{action | defaultAction: true})
+          value: Map.from_struct(%RequiredActionProviderRepresentation{action | defaultAction: mfa})
         }
     end
   end

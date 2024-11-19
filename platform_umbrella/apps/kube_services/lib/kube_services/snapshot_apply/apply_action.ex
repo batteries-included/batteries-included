@@ -104,7 +104,9 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
         action: :sync,
         type: :flow_execution,
         realm: realm,
-        document: %Document{value: %{"flow_alias" => flow_alias, "display_name" => display_name}}
+        document: %Document{
+          value: %{"flow_alias" => flow_alias, "display_name" => display_name, "requirement" => requirement}
+        }
       }) do
     with {:ok, executions} <- AdminClient.flow_executions(realm, flow_alias) do
       execution =
@@ -114,12 +116,12 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
           &(&1.displayName == display_name)
         )
 
-      case require_flow_execution(realm, flow_alias, execution) do
-        {:ok, :already_required} ->
+      case require_flow_execution(realm, flow_alias, execution, requirement) do
+        {:ok, :requirement_matched} ->
           {:ok, nil}
 
         {:ok, :success} ->
-          updated_execution = Map.from_struct(struct(execution, %{requirement: "REQUIRED"}))
+          updated_execution = Map.from_struct(struct(execution, %{requirement: requirement}))
 
           :ok =
             EventCenter.Keycloak.broadcast(%Payload{
@@ -152,13 +154,17 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
 
   def apply(%KeycloakAction{} = _action), do: {:ok, nil}
 
-  defp require_flow_execution(_realm, _alias, %AuthenticationExecutionInfoRepresentation{requirement: "REQUIRED"}),
-    do: {:ok, :already_required}
+  defp require_flow_execution(
+         _realm,
+         _alias,
+         %AuthenticationExecutionInfoRepresentation{requirement: requirement},
+         desired
+       )
+       when requirement == desired,
+       do: {:ok, :requirement_matched}
 
-  defp require_flow_execution(realm, alias, %AuthenticationExecutionInfoRepresentation{} = execution) do
-    AdminClient.update_flow_execution(realm, alias, %AuthenticationExecutionInfoRepresentation{
-      execution
-      | requirement: "REQUIRED"
-    })
+  defp require_flow_execution(realm, alias, %AuthenticationExecutionInfoRepresentation{} = execution, desired) do
+    updated = %AuthenticationExecutionInfoRepresentation{execution | requirement: desired}
+    AdminClient.update_flow_execution(realm, alias, updated)
   end
 end
