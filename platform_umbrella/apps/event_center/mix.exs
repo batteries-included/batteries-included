@@ -4,7 +4,7 @@ defmodule EventCenter.MixProject do
   def project do
     [
       app: :event_center,
-      version: "0.36.0",
+      version: "0.37.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
