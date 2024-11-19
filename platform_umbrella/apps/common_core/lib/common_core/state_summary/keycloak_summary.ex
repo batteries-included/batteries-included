@@ -3,14 +3,14 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
 
   use CommonCore, :embedded_schema
 
-  alias CommonCore.OpenAPI.KeycloakAdminSchema
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.StateSummary.RealmOIDCConfiguration
 
   require Logger
 
   batt_embedded_schema do
-    embeds_many :realms, KeycloakAdminSchema.RealmRepresentation
+    embeds_many :realms, RealmRepresentation
     embeds_many :realm_configurations, RealmOIDCConfiguration
   end
 
@@ -24,7 +24,7 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
   def realm_member?(%__MODULE__{realms: nil} = _keycloak_summary, _), do: true
 
   def realm_member?(%__MODULE__{realms: realms} = _keycloak_summary, realm_name) do
-    Enum.any?(realms, fn %KeycloakAdminSchema.RealmRepresentation{} = realm ->
+    Enum.any?(realms, fn %RealmRepresentation{} = realm ->
       realm.realm == realm_name
     end)
   end
@@ -78,13 +78,11 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
   end
 
   def clients_for_realm(%__MODULE__{realms: realms}, realm) do
-    existing_realm = Enum.find(realms, &(&1.realm == realm))
-
-    case existing_realm do
+    case Enum.find(realms, &(&1.realm == realm)) do
       nil ->
         []
 
-      _ ->
+      existing_realm ->
         existing_realm.clients
     end
   end
