@@ -62,19 +62,32 @@ defmodule ControlServer.Factory do
     }
   end
 
-  def postgres_cluster_factory do
+  def postgres_cluster_factory(attrs \\ %{}) do
+    # Ensure this is a map
+    attrs = Map.new(attrs)
+
     user_one = build(:postgres_user)
     user_two = build(:postgres_user)
 
-    %Postgres.Cluster{
-      name: sequence("postgres-cluster-"),
-      num_instances: sequence(:num_instances, [1, 2, 5]),
+    name = Map.get_lazy(attrs, :name, fn -> sequence("postgres-cluster-") end)
+    num_instances = Map.get_lazy(attrs, :num_instances, fn -> sequence(:num_instances, [1, 2, 5]) end)
+    type = Map.get_lazy(attrs, :type, fn -> sequence(:type, ~w(standard internal)a) end)
+    project_id = Map.get(attrs, :project_id, nil)
+
+    virtual_size =
+      Map.get_lazy(attrs, :virtual_size, fn -> sequence(:virtual_size, ~w(tiny small medium large xlarge huge)) end)
+
+    evaluate_lazy_attributes(%Postgres.Cluster{
+      name: name,
+      num_instances: num_instances,
+      type: type,
       storage_size: 500 * 1024 * 1024,
       storage_class: "default",
-      virtual_size: sequence(:virtual_size, ~w(tiny small medium large xlarge huge)),
+      virtual_size: virtual_size,
       database: %{name: "postgres", owner: user_one.username},
-      users: [user_one, user_two]
-    }
+      users: [user_one, user_two],
+      project_id: project_id
+    })
   end
 
   def redis_cluster_factory do

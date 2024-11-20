@@ -22,7 +22,7 @@ defmodule ControlServerWeb.PostgresClusterTable do
     >
       <:col :let={pg} :if={!@abridged} field={:id} label="ID"><%= pg.id %></:col>
       <:col :let={pg} field={:name} label="Name"><%= pg.name %></:col>
-      <:col :let={pg} :if={!@abridged} field={:type} label="Type"><%= pg.type %></:col>
+      <:col :let={pg} field={:type} label="Type"><%= pg.type %></:col>
       <:col :let={pg} :if={!@abridged} field={:num_instances} label="Instances">
         <%= pg.num_instances %>
       </:col>
