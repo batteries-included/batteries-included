@@ -28,7 +28,7 @@ defmodule CommonUI.Components.Badge do
 
   def badge(%{value: _} = assigns) do
     ~H"""
-    <div class={["rounded-xl gap-3 px-6 py-3", badge_class(), @class]} {@rest}>
+    <div class={["rounded-xl gap-3 px-3 py-2", badge_class(), @class]} {@rest}>
       <span class="text-2xl font-semibold"><%= @value %></span>
       <span><%= @label %></span>
     </div>
