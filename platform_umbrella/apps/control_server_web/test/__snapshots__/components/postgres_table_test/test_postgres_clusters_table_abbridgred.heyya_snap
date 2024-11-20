@@ -2,7 +2,7 @@
   <table id="postgres-cluster-table" class="w-[40rem] mt-4 sm:w-full">
     <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
       <tr>
-        <th class="pb-4">ID</th><th class="pb-4">Name</th><th class="pb-4">Type</th><th class="pb-4">Instances</th><th class="pb-4">User Count</th><th class="pb-4">Storage Size</th>
+        <th class="pb-4">Name</th><th class="pb-4">Type</th>
         <th class="pb-4">
           <span class="sr-only">Actions</span>
         </th>
@@ -12,23 +12,9 @@
     <tbody id="postgres-cluster-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
       <tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-01/show&quot;}]]">
-          00-00-00-00-00-00-00-00-00-00-01
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-01/show&quot;}]]">
           cluster1
         </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-01/show&quot;}]]">
           standard
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-01/show&quot;}]]">
-          
-    1
-  
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-01/show&quot;}]]">
-          
-    2
-  
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-01/show&quot;}]]">
-          
-    500MB
-  
         </td>
 
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
@@ -36,7 +22,7 @@
             
     <div class="gap-4 lg:gap-6 flex justify-items-center">
   
-      <a id="edit_postgres_00-00-00-00-00-00-00-00-00-00-01" href="/postgres/00-00-00-00-00-00-00-00-00-00-01/edit" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" data-phx-link="redirect" data-phx-link-state="push">
+      <a id="edit_postgres_00-00-00-00-00-00-00-00-00-00-01" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" href="/postgres/00-00-00-00-00-00-00-00-00-00-01/edit" data-phx-link="redirect" data-phx-link-state="push">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"/>
 </svg>
@@ -54,7 +40,7 @@
   </div>
 </div>
 
-      <a id="pg_show_link_00-00-00-00-00-00-00-00-00-00-01" href="/postgres/00-00-00-00-00-00-00-00-00-00-01/show" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" data-phx-link="redirect" data-phx-link-state="push">
+      <a id="pg_show_link_00-00-00-00-00-00-00-00-00-00-01" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" href="/postgres/00-00-00-00-00-00-00-00-00-00-01/show" data-phx-link="redirect" data-phx-link-state="push">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
 </svg>
@@ -77,23 +63,9 @@
         </td>
       </tr><tr class="cursor-pointer hover:bg-gray-lightest dark:hover:bg-gray-darkest-tint">
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-02/show&quot;}]]">
-          00-00-00-00-00-00-00-00-00-00-02
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-02/show&quot;}]]">
           cluster2
         </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-02/show&quot;}]]">
           internal
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-02/show&quot;}]]">
-          
-    2
-  
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-02/show&quot;}]]">
-          
-    2
-  
-        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-02/show&quot;}]]">
-          
-    500MB
-  
         </td>
 
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
@@ -101,7 +73,7 @@
             
     <div class="gap-4 lg:gap-6 flex justify-items-center">
   
-      <a id="edit_postgres_00-00-00-00-00-00-00-00-00-00-02" href="/postgres/00-00-00-00-00-00-00-00-00-00-02/edit" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" data-phx-link="redirect" data-phx-link-state="push">
+      <a id="edit_postgres_00-00-00-00-00-00-00-00-00-00-02" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" href="/postgres/00-00-00-00-00-00-00-00-00-00-02/edit" data-phx-link="redirect" data-phx-link-state="push">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"/>
 </svg>
@@ -119,7 +91,7 @@
   </div>
 </div>
 
-      <a id="pg_show_link_00-00-00-00-00-00-00-00-00-00-02" href="/postgres/00-00-00-00-00-00-00-00-00-00-02/show" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" data-phx-link="redirect" data-phx-link-state="push">
+      <a id="pg_show_link_00-00-00-00-00-00-00-00-00-00-02" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" href="/postgres/00-00-00-00-00-00-00-00-00-00-02/show" data-phx-link="redirect" data-phx-link-state="push">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
 </svg>

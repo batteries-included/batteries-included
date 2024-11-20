@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Components.PostgresClustersTableTest do
       }
 
       ~H"""
-      <.postgres_clusters_table rows={@clusters} abbridged />
+      <.postgres_clusters_table rows={@clusters} abridged />
       """
     end
 
