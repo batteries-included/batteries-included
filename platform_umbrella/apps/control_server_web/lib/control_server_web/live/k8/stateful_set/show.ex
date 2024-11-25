@@ -60,10 +60,12 @@ defmodule ControlServerWeb.Live.StatefulSetShow do
 
     <div class="flex flex-col gap-8 mb-10">
       <div class="flex flex-wrap gap-4 mt-6">
-        <.badge label="Total Replicas" value={Map.get(@status, "replicas", 0)} />
-        <.badge label="Available Replicas" value={Map.get(@status, "availableReplicas", 0)} />
-        <.badge label="Updated Replicas" value={Map.get(@status, "updatedReplicas", 0)} />
-        <.badge label="Generations" value={Map.get(@status, "observedGeneration", 0)} />
+        <.badge>
+          <:item label="Total Replicas"><%= Map.get(@status, "replicas", 0) %></:item>
+          <:item label="Available Replicas"><%= Map.get(@status, "availableReplicas", 0) %></:item>
+          <:item label="Updated Replicas"><%= Map.get(@status, "updatedReplicas", 0) %></:item>
+          <:item label="Generations"><%= Map.get(@status, "observedGeneration", 0) %></:item>
+        </.badge>
       </div>
 
       <.panel variant="gray" title="Details">
