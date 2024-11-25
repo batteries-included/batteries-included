@@ -5,7 +5,7 @@ defmodule CommonCore.Defaults.Images do
 
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
 
-  @cert_manager_allowed_tags ~w(v1.15.4)
+  @cert_manager_allowed_tags ~w(v1.15.1 v1.15.4)
   @cert_manager_default_tag "v1.15.4"
 
   @knative_allowed_tags ~w(v1.15.1 v1.15.2)
