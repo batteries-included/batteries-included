@@ -1,7 +1,8 @@
 {
-  "id": "batt_0192b52f145d761b8546fd316265d70f",
+  "id": "batt_0193649d28aa71c0af473665b4edaf6e",
   "name": "Batteries Included Team",
   "inserted_at": null,
   "updated_at": null,
-  "op_email": "elliott@batteriesincl.com"
+  "op_email": "elliott@batteriesincl.com",
+  "deleted_at": null
 }
