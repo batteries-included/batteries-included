@@ -25,7 +25,7 @@ require (
 	github.com/samber/slog-multi v1.2.4
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/vbauerster/mpb/v8 v8.8.3
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
 	golang.org/x/sync v0.9.0
