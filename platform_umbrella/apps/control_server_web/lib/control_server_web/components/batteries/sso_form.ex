@@ -15,8 +15,8 @@ defmodule ControlServerWeb.Batteries.SSOForm do
       <.panel title="Configuration">
         <.fieldset>
           <.field variant="beside">
-            <:label>Dev</:label>
-            <.input type="switch" field={@form[:dev]} />
+            <:label>Require MFA?</:label>
+            <.input type="switch" field={@form[:mfa]} />
           </.field>
         </.fieldset>
       </.panel>

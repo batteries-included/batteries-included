@@ -14,7 +14,9 @@ defmodule EventCenter.Keycloak do
     :create_realm,
     :create_user,
     :reset_user_password,
-    :update_client
+    :update_client,
+    :update_required_action,
+    :update_flow_execution
   ]
 
   typedstruct module: Payload do

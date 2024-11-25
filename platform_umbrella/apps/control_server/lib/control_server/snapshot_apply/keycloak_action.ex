@@ -14,7 +14,7 @@ defmodule ControlServer.SnapshotApply.KeycloakAction do
     field :action, Ecto.Enum, values: [:create, :sync, :delete, :ping]
 
     # What we're trying to create
-    field :type, Ecto.Enum, values: [:realm, :client, :user]
+    field :type, Ecto.Enum, values: [:realm, :client, :user, :required_action, :flow_execution]
 
     # The owning realm
     field :realm, :string

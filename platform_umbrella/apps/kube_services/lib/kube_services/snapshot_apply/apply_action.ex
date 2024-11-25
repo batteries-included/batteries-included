@@ -1,6 +1,8 @@
 defmodule KubeServices.SnapshotApply.ApplyAction do
   @moduledoc false
 
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.AuthenticationExecutionInfoRepresentation
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.RequiredActionProviderRepresentation
   alias ControlServer.ContentAddressable.Document
   alias ControlServer.SnapshotApply.KeycloakAction
   alias EventCenter.Keycloak.Payload
@@ -80,6 +82,63 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
     end
   end
 
+  def apply(%KeycloakAction{action: :sync, type: :required_action, realm: realm, document: %Document{value: value}}) do
+    case AdminClient.update_required_action(realm, RequiredActionProviderRepresentation.new!(value)) do
+      {:ok, :success} ->
+        :ok =
+          EventCenter.Keycloak.broadcast(%Payload{
+            action: :update_required_action,
+            resource: %{contents: value}
+          })
+
+        Logger.debug("Updating required_action: #{inspect(value)}")
+        {:ok, nil}
+
+      {:error, err} ->
+        Logger.error("Error updating required_action: #{inspect(err)}")
+        {:error, err}
+    end
+  end
+
+  def apply(%KeycloakAction{
+        action: :sync,
+        type: :flow_execution,
+        realm: realm,
+        document: %Document{
+          value: %{"flow_alias" => flow_alias, "display_name" => display_name, "requirement" => requirement}
+        }
+      }) do
+    with {:ok, executions} <- AdminClient.flow_executions(realm, flow_alias) do
+      execution =
+        Enum.find(
+          executions,
+          {:err, "execution not found with display name: #{display_name}"},
+          &(&1.displayName == display_name)
+        )
+
+      case require_flow_execution(realm, flow_alias, execution, requirement) do
+        {:ok, :requirement_matched} ->
+          {:ok, nil}
+
+        {:ok, :success} ->
+          updated_execution = Map.from_struct(struct(execution, %{requirement: requirement}))
+
+          :ok =
+            EventCenter.Keycloak.broadcast(%Payload{
+              action: :update_flow_execution,
+              resource: %{contents: updated_execution}
+            })
+
+          Logger.debug("Updating flow execution: #{inspect(updated_execution)}")
+          {:ok, nil}
+
+        err ->
+          Logger.error("Failed to require flow execution: #{inspect(err)}")
+          {:err, err}
+      end
+    end
+  end
+
   def apply(%KeycloakAction{action: :ping, type: :realm}) do
     # For ping we check that the openid wellknown
     # for the master realm (which is always created on startup)
@@ -94,4 +153,18 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
   end
 
   def apply(%KeycloakAction{} = _action), do: {:ok, nil}
+
+  defp require_flow_execution(
+         _realm,
+         _alias,
+         %AuthenticationExecutionInfoRepresentation{requirement: requirement},
+         desired
+       )
+       when requirement == desired,
+       do: {:ok, :requirement_matched}
+
+  defp require_flow_execution(realm, alias, %AuthenticationExecutionInfoRepresentation{} = execution, desired) do
+    updated = %AuthenticationExecutionInfoRepresentation{execution | requirement: desired}
+    AdminClient.update_flow_execution(realm, alias, updated)
+  end
 end
