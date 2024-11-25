@@ -5,8 +5,8 @@ defmodule CommonCore.Defaults.Images do
 
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
 
-  @cert_manager_allowed_tags ~w(v1.15.1)
-  @cert_manager_default_tag "v1.15.1"
+  @cert_manager_allowed_tags ~w(v1.15.1 v1.15.4)
+  @cert_manager_default_tag "v1.15.4"
 
   @knative_allowed_tags ~w(v1.15.1 v1.15.2)
   @knative_default_tag "v1.15.2"
@@ -60,8 +60,8 @@ defmodule CommonCore.Defaults.Images do
     cloudnative_pg:
       Image.new!(%{
         name: "ghcr.io/cloudnative-pg/cloudnative-pg",
-        tags: ~w(1.23.2 1.24.0),
-        default_tag: "1.24.0"
+        tags: ~w(1.23.2 1.24.0 1.24.1),
+        default_tag: "1.24.1"
       }),
     ferretdb:
       Image.new!(%{
@@ -78,21 +78,21 @@ defmodule CommonCore.Defaults.Images do
     grafana:
       Image.new!(%{
         name: "grafana/grafana",
-        tags: ~w(10.4.5 11.2.0),
-        default_tag: "11.2.0"
+        tags: ~w(10.4.5 11.2.0 11.3.1),
+        default_tag: "11.3.1"
       }),
     # Be sure to check: https://kiali.io/docs/installation/installation-guide/prerequisites/#version-compatibility
     istio_pilot:
       Image.new!(%{
         name: "docker.io/istio/pilot",
-        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless),
-        default_tag: "1.23.2-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless),
+        default_tag: "1.23.3-distroless"
       }),
     istio_proxy:
       Image.new!(%{
         name: "docker.io/istio/proxyv2",
-        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless),
-        default_tag: "1.23.2-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless),
+        default_tag: "1.23.3-distroless"
       }),
     karpenter:
       Image.new!(%{
@@ -103,8 +103,8 @@ defmodule CommonCore.Defaults.Images do
     keycloak:
       Image.new!(%{
         name: "quay.io/keycloak/keycloak",
-        tags: ~w(25.0.2),
-        default_tag: "25.0.2"
+        tags: ~w(25.0.2 25.0.6),
+        default_tag: "25.0.6"
       }),
     # Be sure to check: https://kiali.io/docs/installation/installation-guide/prerequisites/#version-compatibility
     kiali:
@@ -122,8 +122,8 @@ defmodule CommonCore.Defaults.Images do
     kube_state_metrics:
       Image.new!(%{
         name: "registry.k8s.io/kube-state-metrics/kube-state-metrics",
-        tags: ~w(v2.12.0),
-        default_tag: "v2.12.0"
+        tags: ~w(v2.12.0 v2.14.0),
+        default_tag: "v2.14.0"
       }),
     loki:
       Image.new!(%{
@@ -182,26 +182,26 @@ defmodule CommonCore.Defaults.Images do
     promtail:
       Image.new!(%{
         name: "grafana/promtail",
-        tags: ~w(2.9.8),
+        tags: ~w(2.9.8 3.3.0),
         default_tag: "2.9.8"
       }),
     redis:
       Image.new!(%{
         name: "quay.io/opstree/redis",
-        tags: ~w(v7.2.3),
-        default_tag: "v7.2.3"
+        tags: ~w(v7.2.3 v7.2.6),
+        default_tag: "v7.2.6"
       }),
     redis_exporter:
       Image.new!(%{
         name: "quay.io/opstree/redis-exporter",
-        tags: ~w(v1.45.0),
-        default_tag: "v1.45.0"
+        tags: ~w(v1.45.0 v1.48.0),
+        default_tag: "v1.48.0"
       }),
     redis_operator:
       Image.new!(%{
         name: "ghcr.io/ot-container-kit/redis-operator/redis-operator",
-        tags: ~w(v0.18.0),
-        default_tag: "v0.18.0"
+        tags: ~w(v0.18.0 v0.18.1),
+        default_tag: "v0.18.1"
       }),
     smtp4dev:
       Image.new!(%{
