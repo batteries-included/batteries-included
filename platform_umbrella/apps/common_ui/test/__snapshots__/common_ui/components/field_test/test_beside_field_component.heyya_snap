@@ -1,5 +1,5 @@
 <div class="w-full ">
-  <label class="select-none grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2 items-center">
+  <label class="select-none grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2 items-center" id="foo">
     <div class="flex items-center gap-2 text-sm text-gray-darkest dark:text-gray-lighter ">
       Label
 

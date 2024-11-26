@@ -27,7 +27,7 @@
   
         </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-03/show&quot;}]]">
           
-    500MB
+    16GB
   
         </td>
 
@@ -92,7 +92,7 @@
   
         </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/postgres/00-00-00-00-00-00-00-00-00-00-04/show&quot;}]]">
           
-    500MB
+    1.0TB
   
         </td>
 
