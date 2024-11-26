@@ -77,17 +77,25 @@ defmodule ControlServer.Factory do
     virtual_size =
       Map.get_lazy(attrs, :virtual_size, fn -> sequence(:virtual_size, ~w(tiny small medium large xlarge huge)) end)
 
-    evaluate_lazy_attributes(%Postgres.Cluster{
+    # Factories don't go through changesets so we apply the virtual size attributes here
+    # if there is one
+    virtual_size_attrs =
+      CommonCore.Postgres.Cluster.presets() |> Enum.find(%{}, fn pre -> pre.name == virtual_size end) |> Map.delete(:name)
+
+    storage_class = Map.get(attrs, :storage_class, "default")
+
+    %Postgres.Cluster{
       name: name,
       num_instances: num_instances,
       type: type,
-      storage_size: 500 * 1024 * 1024,
-      storage_class: "default",
+      storage_class: storage_class,
       virtual_size: virtual_size,
       database: %{name: "postgres", owner: user_one.username},
       users: [user_one, user_two],
       project_id: project_id
-    })
+    }
+    |> merge_attributes(virtual_size_attrs)
+    |> evaluate_lazy_attributes()
   end
 
   def redis_cluster_factory do

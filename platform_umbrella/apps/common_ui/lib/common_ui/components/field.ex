@@ -32,6 +32,7 @@ defmodule CommonUI.Components.Field do
           "select-none",
           @variant == "beside" && "grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2 items-center"
         ]}
+        id={@id}
         {@rest}
       >
         <div

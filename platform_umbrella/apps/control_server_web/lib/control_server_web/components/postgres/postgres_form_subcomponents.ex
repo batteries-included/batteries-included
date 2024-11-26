@@ -197,7 +197,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         <.input field={@form[:name]} autofocus={@action == :new} disabled={@action != :new} />
       </.field>
 
-      <.field>
+      <.field id="postgres_virtual_size">
         <:label>Size</:label>
         <.input
           type="select"

@@ -194,6 +194,10 @@ defmodule CommonCore.Postgres.Cluster do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
   end
 
+  def presets do
+    @presets
+  end
+
   def storage_range_ticks do
     [
       {"500MB", 0},
