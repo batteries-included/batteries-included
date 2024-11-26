@@ -192,7 +192,6 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("serviceName", "keycloak-headless")
       |> B.template(template)
       |> Map.put("updateStrategy", %{"rollingUpdate" => %{}, "type" => "RollingUpdate"})
-      |> B.app_labels(@app_name)
       |> B.match_labels_selector(@app_name)
 
     :stateful_set
