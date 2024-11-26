@@ -26,10 +26,10 @@ defmodule ControlServerWeb.Components.PostgresClustersTableTest do
       assigns = %{
         clusters: [
           :postgres_cluster
-          |> build(type: :standard, name: "cluster1", num_instances: 3)
+          |> build(type: :standard, name: "cluster1", num_instances: 3, virtual_size: "small")
           |> Map.put(:id, "00-00-00-00-00-00-00-00-00-00-03"),
           :postgres_cluster
-          |> build(type: :internal, name: "cluster2", num_instances: 1)
+          |> build(type: :internal, name: "cluster2", num_instances: 1, virtual_size: "huge")
           |> Map.put(:id, "00-00-00-00-00-00-00-00-00-00-04")
         ]
       }

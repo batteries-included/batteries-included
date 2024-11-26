@@ -28,7 +28,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
 
   describe "create cluster" do
     test "renders cluster when data is valid", %{conn: conn} do
-      attrs = params_for(:postgres_cluster, name: "some-name", type: :standard)
+      attrs = params_for(:postgres_cluster, name: "some-name", type: :standard, virtual_size: "tiny")
       conn = post(conn, ~p"/api/postgres/clusters", cluster: attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]

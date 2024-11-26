@@ -67,7 +67,9 @@ defmodule ControlServerWeb.PostgresLiveTest do
       params =
         :postgres_cluster
         |> params_for(project_id: project.id)
-        |> Map.drop(~w(id users project type storage_class storage_size database password_versions)a)
+        |> Map.drop(
+          ~w(id users project type storage_class storage_size database password_versions cpu_limits memory_limits cpu_requested memory_requested)a
+        )
 
       conn
       |> start(~p"/postgres/new")
@@ -176,7 +178,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
         Runner.delete(@kube_table_name, namespace)
       end)
 
-      cluster = insert(:postgres_cluster)
+      cluster = insert(:postgres_cluster, virtual_size: "small", num_instances: 1)
 
       %{namespace: namespace, cluster: cluster}
     end
