@@ -264,9 +264,34 @@ defmodule CommonCore.Resources.Istiod do
     |> B.spec(spec)
   end
 
-  resource(:config_map_sidecar_injector, battery, _state) do
-    data =
-      %{} |> Map.put("config", get_resource(:config)) |> Map.put("values", get_resource(:values))
+  # There's a pretty static json config full of values
+  #
+  # That json needs just a little updating.
+  defp values(battery, _state) do
+    namespace = battery.config.namespace
+    tag = CommonCore.Defaults.Images.get_image!(:istio_proxy).default_tag
+
+    :values
+    |> get_resource()
+    |> Jason.decode!()
+    # The whole value is wrapped in a "global"
+    # update that here
+    |> update_in(~w(global), fn val ->
+      # The namespace is where the config is installed
+      # and the tag is the default tag for this Batteries Included version
+      val
+      |> Map.put("namespace", namespace)
+      |> Map.put("istioNamespace", namespace)
+      |> Map.put("tag", tag)
+      |> Map.put("logAsJson", true)
+    end)
+    |> Jason.encode!()
+  end
+
+  defp config(_battery, _state), do: get_resource(:config)
+
+  resource(:config_map_sidecar_injector, battery, state) do
+    data = %{"values" => values(battery, state), "config" => config(battery, state)}
 
     :config_map
     |> B.build_resource()
