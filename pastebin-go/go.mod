@@ -6,7 +6,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/lmittmann/tint v1.0.5
 	github.com/satori/go.uuid v1.2.0
-	gorm.io/driver/postgres v1.5.10
+	gorm.io/driver/postgres v1.5.11
 	gorm.io/gorm v1.25.12
 )
 
