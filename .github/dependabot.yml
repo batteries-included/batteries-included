@@ -1,71 +1,71 @@
 ---
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
       interval: daily
     groups:
       actions-deps:
         patterns:
-          - "*"
+          - '*'
   - package-ecosystem: npm
-    directory: "/platform_umbrella/apps/common_ui/assets/"
+    directory: '/platform_umbrella/apps/common_ui/assets/'
     schedule:
       interval: daily
     groups:
       dependencies:
         patterns:
-          - "*"
+          - '*'
   - package-ecosystem: npm
-    directory: "/platform_umbrella/apps/control_server_web/assets/"
+    directory: '/platform_umbrella/apps/control_server_web/assets/'
     schedule:
       interval: daily
     groups:
       dependencies:
         patterns:
-          - "*"
+          - '*'
   - package-ecosystem: npm
-    directory: "/platform_umbrella/apps/home_base_web/assets/"
+    directory: '/platform_umbrella/apps/home_base_web/assets/'
     schedule:
       interval: daily
     groups:
       dependencies:
         patterns:
-          - "*"
+          - '*'
   - package-ecosystem: npm
-    directory: "/pastebin-go/assets/"
+    directory: '/pastebin-go/assets/'
     schedule:
       interval: daily
     groups:
       dependencies:
         patterns:
-          - "*"
+          - '*'
   - package-ecosystem: npm
-    directory: "/static/"
+    directory: '/static/'
     schedule:
       interval: daily
     groups:
       dependencies:
         patterns:
-          - "*"
-  - package-ecosystem: "mix"
-    directory: "/platform_umbrella/"
+          - '*'
+  - package-ecosystem: 'mix'
+    directory: '/platform_umbrella/'
     schedule:
       interval: daily
-  - package-ecosystem: "gomod"
-    directory: "/bi/"
-    schedule:
-      interval: daily
-    groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "gomod"
-    directory: "/pastebin-go/"
+  - package-ecosystem: 'gomod'
+    directory: '/bi/'
     schedule:
       interval: daily
     groups:
       dependencies:
         patterns:
-          - "*"
+          - '*'
+  - package-ecosystem: 'gomod'
+    directory: '/pastebin-go/'
+    schedule:
+      interval: daily
+    groups:
+      dependencies:
+        patterns:
+          - '*'
