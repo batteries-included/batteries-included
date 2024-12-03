@@ -79,7 +79,9 @@ defmodule ControlServerWeb.ClusterControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, cluster: %Cluster{id: id} = cluster} do
-      update_attrs = params_for(:postgres_cluster, name: cluster.name, type: cluster.type)
+      update_attrs =
+        params_for(:postgres_cluster, name: cluster.name, type: cluster.type, virtual_size: "tiny")
+
       conn = put(conn, ~p"/api/postgres/clusters/#{cluster}", cluster: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
@@ -102,7 +104,7 @@ defmodule ControlServerWeb.ClusterControllerTest do
   end
 
   defp create_cluster(_) do
-    cluster = insert(:postgres_cluster, type: :standard)
+    cluster = insert(:postgres_cluster, type: :standard, virtual_size: "tiny")
     %{cluster: cluster}
   end
 end
