@@ -23,7 +23,7 @@ defmodule HomeBaseWeb.TeamRoleEmail do
     <.email_container>
       <p>Hi there,</p>
       <p>
-        We're just letting you know that you've been added to the <b><%= @team.name %></b>
+        We're just letting you know that you've been added to the <b>{@team.name}</b>
         team. You can now view and manage your team's installations.
       </p>
       <br />

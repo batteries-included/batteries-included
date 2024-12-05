@@ -26,7 +26,7 @@ defmodule HomeBaseWeb.TeamInvitedEmail do
     <.email_container>
       <p>Hi there,</p>
       <p>
-        You have been invited to the <b><%= @team.name %></b>
+        You have been invited to the <b>{@team.name}</b>
         team on Batteries Included. Please click on the button below to sign up for an account and get started!
       </p>
       <br />

@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.TrivyOperatorForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -24,9 +24,9 @@ defmodule ControlServerWeb.Batteries.TrivyOperatorForm do
       <.panel title="Image">
         <.fieldset>
           <.image>
-            <%= @form[:image].value %><br />
-            <%= @form[:node_collector_image].value %><br />
-            <%= @form[:trivy_checks_image].value %>
+            {@form[:image].value}<br />
+            {@form[:node_collector_image].value}<br />
+            {@form[:trivy_checks_image].value}
           </.image>
 
           <.image_version

@@ -169,7 +169,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   defp edit_user_modal(assigns) do
     ~H"""
     <.modal show id="edit-user-modal" on_cancel={JS.push("close_modal")}>
-      <:title>Editing <%= @user.username %></:title>
+      <:title>Editing {@user.username}</:title>
 
       <div class="flex items-center gap-4">
         <.button
@@ -199,7 +199,7 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   defp temp_password_modal(assigns) do
     ~H"""
     <.modal show id="temp-password-modal" on_cancel={JS.push("close_modal")}>
-      <:title><%= if @user_created, do: "New User", else: "Reset Password" %></:title>
+      <:title>{if @user_created, do: "New User", else: "Reset Password"}</:title>
 
       <p class="mb-4">
         <%= if @user_created do %>
@@ -233,8 +233,8 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
     ~H"""
     <.page_header title={@realm.displayName} back_link={~p"/keycloak/realms"}>
       <.badge>
-        <:item label="Name"><%= @realm.realm %></:item>
-        <:item label="ID"><%= @realm.id %></:item>
+        <:item label="Name">{@realm.realm}</:item>
+        <:item label="ID">{@realm.id}</:item>
       </.badge>
     </.page_header>
 
@@ -242,19 +242,19 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
       <.panel variant="gray" title="Details">
         <.data_list>
           <:item title="ID">
-            <%= @realm.id %>
+            {@realm.id}
           </:item>
           <:item title="Realm Name">
-            <%= @realm.realm %>
+            {@realm.realm}
           </:item>
           <:item title="Display Name">
-            <%= @realm.displayName %>
+            {@realm.displayName}
           </:item>
           <:item title="Enabled">
-            <%= @realm.enabled %>
+            {@realm.enabled}
           </:item>
           <:item title="Require SSL">
-            <%= @realm.sslRequired %>
+            {@realm.sslRequired}
           </:item>
         </.data_list>
       </.panel>

@@ -212,7 +212,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
             </.button>
 
             <.button variant="dark" type="submit">
-              <%= if @action == :new, do: "Install", else: "Save" %> Battery
+              {if @action == :new, do: "Install", else: "Save"} Battery
             </.button>
           </div>
         </.page_header>

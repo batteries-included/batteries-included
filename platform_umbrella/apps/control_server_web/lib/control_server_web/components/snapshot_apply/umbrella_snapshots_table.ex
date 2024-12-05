@@ -18,7 +18,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
       row_click={&JS.navigate(show_url(&1))}
     >
       <:col :let={snapshot} :if={!@abridged} field={:id} label="ID">
-        <%= snapshot.id %>
+        {snapshot.id}
       </:col>
       <:col :let={snapshot} :if={!@skip_date} field={:inserted_at} label="Started">
         <.relative_display time={snapshot.inserted_at} />
@@ -55,7 +55,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
 
   defp kube_status(assigns) do
     ~H"""
-    <%= @snapshot.status %>
+    {@snapshot.status}
     """
   end
 
@@ -69,7 +69,7 @@ defmodule ControlServerWeb.UmbrellaSnapshotsTable do
 
   defp keycloak_snapshot(%{} = assigns) do
     ~H"""
-    <%= @snapshot.status %>
+    {@snapshot.status}
     """
   end
 

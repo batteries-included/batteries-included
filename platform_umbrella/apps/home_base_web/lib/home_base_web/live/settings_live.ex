@@ -406,7 +406,7 @@ defmodule HomeBaseWeb.SettingsLive do
             class="flex gap-3 bg-gray-lightest dark:bg-gray-darkest dark:border dark:border-gray-darker-tint mb-3 px-3 py-1 rounded-md"
           >
             <div class="flex items-center gap-2 flex-1">
-              <%= role.invited_email || role.user.email %>
+              {role.invited_email || role.user.email}
 
               <.badge :if={role.invited_email} label="pending" minimal />
               <.badge :if={role.id == @current_role.id} label="you" minimal />
@@ -485,7 +485,7 @@ defmodule HomeBaseWeb.SettingsLive do
         <.grid columns={%{sm: 1, lg: 2, xl: 3}}>
           <.panel>
             <div class="mb-4">
-              <%= @current_role.team.name %>
+              {@current_role.team.name}
             </div>
 
             <.button

@@ -4,7 +4,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
 
   defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
     ~H"""
-    <%= CommonUI.TextHelpers.obfuscate(@env_value.value) %>
+    {CommonUI.TextHelpers.obfuscate(@env_value.value)}
     """
   end
 
@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
     ~H"""
     <.panel title="Environment Variables" class={@class}>
       <.table id="env-var-table" rows={@env_values}>
-        <:col :let={ev} label="Name"><%= ev.name %></:col>
+        <:col :let={ev} label="Name">{ev.name}</:col>
         <:col :let={ev} label="Value"><.env_value_value env_value={ev} /></:col>
       </.table>
     </.panel>
@@ -40,7 +40,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
       </:menu>
 
       <.table id="env-var-table" rows={Enum.with_index(@env_values)}>
-        <:col :let={{ev, _idx}} label="Name"><%= ev.name %></:col>
+        <:col :let={{ev, _idx}} label="Name">{ev.name}</:col>
         <:col :let={{ev, _idx}} label="Value"><.env_value_value env_value={ev} /></:col>
         <:action :let={{ev, idx}}>
           <.button

@@ -12,10 +12,10 @@ defmodule ControlServerWeb.PgUserTable do
   def pg_users_table(assigns) do
     ~H"""
     <.table id={@id} rows={@users}>
-      <:col :let={user} label="User Name"><%= user.username %></:col>
-      <:col :let={user} label="Roles"><%= Enum.join(user.roles, ", ") %></:col>
-      <:col :let={user} label="Secret"><%= secret_name(@cluster, user) %></:col>
-      <:col :let={user} label="Namespace"><%= namespaces(user, @cluster) %></:col>
+      <:col :let={user} label="User Name">{user.username}</:col>
+      <:col :let={user} label="Roles">{Enum.join(user.roles, ", ")}</:col>
+      <:col :let={user} label="Secret">{secret_name(@cluster, user)}</:col>
+      <:col :let={user} label="Namespace">{namespaces(user, @cluster)}</:col>
     </.table>
     """
   end

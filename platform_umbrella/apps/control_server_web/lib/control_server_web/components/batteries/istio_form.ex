@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.IstioForm do
     ~H"""
     <div class="contents">
       <.panel title="Description" class="lg:col-span-2">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Batteries.IstioForm do
 
       <.panel title="Image">
         <.fieldset>
-          <.image><%= @form[:pilot_image].value %></.image>
+          <.image>{@form[:pilot_image].value}</.image>
 
           <.image_version
             field={@form[:pilot_image_tag_override]}

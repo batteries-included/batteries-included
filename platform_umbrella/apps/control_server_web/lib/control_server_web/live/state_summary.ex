@@ -39,52 +39,52 @@ defmodule ControlServerWeb.Live.StateSummary do
   def render(assigns) do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/magic"}>
-      Captured At: <%= Calendar.strftime(
+      Captured At: {Calendar.strftime(
         @state_summary.captured_at || DateTime.utc_now(),
         "%b %-d, %-I:%M%p"
-      ) %>
+      )}
     </.page_header>
 
     <.grid columns={%{sm: 1, xl: 2}}>
       <.panel title="Batteries">
         <ul>
           <%= for battery <- @state_summary.batteries do %>
-            <li><%= battery.type %></li>
+            <li>{battery.type}</li>
           <% end %>
         </ul>
       </.panel>
       <.panel :if={@state_summary.install_status} title="Install Status">
         <.data_list>
-          <:item title="Status"><%= @state_summary.install_status.status %></:item>
-          <:item title="Message"><%= @state_summary.install_status.message %></:item>
-          <:item title="Expires"><%= @state_summary.install_status.exp %></:item>
+          <:item title="Status">{@state_summary.install_status.status}</:item>
+          <:item title="Message">{@state_summary.install_status.message}</:item>
+          <:item title="Expires">{@state_summary.install_status.exp}</:item>
         </.data_list>
       </.panel>
 
       <.panel title="Stable Versions">
         <.data_list>
           <:item title="Current Control Server Image">
-            <%= CommonCore.Defaults.Images.control_server_image() %>
+            {CommonCore.Defaults.Images.control_server_image()}
           </:item>
           <:item title="Stable Control Server Image">
-            <%= @upgrade_control_server %>
+            {@upgrade_control_server}
           </:item>
           <:item :for={{day, avail} <- @upgrade_days_of_week} title={"Can upgrade on #{day}"}>
-            <%= avail %>
+            {avail}
           </:item>
         </.data_list>
       </.panel>
       <.panel :if={@state_summary.keycloak_state} title="Keycloak Status">
         <ul>
           <%= for realm <- (@state_summary.keycloak_state.realms || [] ) do %>
-            <li><%= realm.displayName %></li>
+            <li>{realm.displayName}</li>
           <% end %>
         </ul>
       </.panel>
       <.panel :if={@state_summary.kube_state} title="Kube Status">
         <.data_list>
           <:item :for={{type, res} <- @state_summary.kube_state} title={type}>
-            <%= length(res) %>
+            {length(res)}
           </:item>
         </.data_list>
       </.panel>

@@ -108,7 +108,7 @@ defmodule ControlServerWeb.Keycloak.NewUserForm do
     <div id={@id}>
       <.flex column>
         <.alert :if={@api_error} variant="error">
-          <%= @api_error %>
+          {@api_error}
         </.alert>
 
         <.simple_form for={@form} phx-change="validate" phx-submit="save" phx-target={@myself}>

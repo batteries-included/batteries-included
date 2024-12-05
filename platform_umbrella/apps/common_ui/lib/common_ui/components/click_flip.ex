@@ -41,7 +41,7 @@ defmodule CommonUI.Components.ClickFlip do
         id={content_id(@id)}
         phx-click={show_edit_content(@id)}
       >
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
         <.tooltip
           :if={@id != nil and @tooltip != nil}
           target_id={content_id(@id)}
@@ -55,7 +55,7 @@ defmodule CommonUI.Components.ClickFlip do
         phx-click-away={hide_edit_content(@id)}
         id={edit_id(@id)}
       >
-        <%= render_slot(@hidden) %>
+        {render_slot(@hidden)}
         <.button variant="icon" icon={:check} phx-click={hide_edit_content(@id)} />
       </.flex>
     </.flex>

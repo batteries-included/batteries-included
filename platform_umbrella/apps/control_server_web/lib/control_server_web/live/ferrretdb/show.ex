@@ -90,7 +90,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
       <:menu>
         <.badge :if={@ferret_service.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@ferret_service.project_id}"}>
-            <%= @ferret_service.project.name %>
+            {@ferret_service.project.name}
           </:item>
         </.badge>
       </:menu>
@@ -123,10 +123,10 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
       <.panel title="Details" variant="gray">
         <.data_list>
           <:item title="Instances">
-            <%= @ferret_service.instances %>
+            {@ferret_service.instances}
           </:item>
           <:item :if={@ferret_service.memory_limits} title="Memory Limits">
-            <%= Memory.humanize(@ferret_service.memory_limits) %>
+            {Memory.humanize(@ferret_service.memory_limits)}
           </:item>
           <:item title="Started">
             <.relative_display time={@ferret_service.inserted_at} />

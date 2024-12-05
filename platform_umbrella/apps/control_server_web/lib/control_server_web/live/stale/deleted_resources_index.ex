@@ -68,16 +68,16 @@ defmodule ControlServerWeb.Live.DeletedResourcesIndex do
         path={~p"/deleted_resources"}
       >
         <:col :let={resource} field={:kind} label="Kind">
-          <%= resource.kind %>
+          {resource.kind}
         </:col>
         <:col :let={resource} field={:name} label="Name">
-          <%= resource.name %>
+          {resource.name}
         </:col>
         <:col :let={resource} field={:namespace} label="Namespace">
-          <%= resource.namespace %>
+          {resource.namespace}
         </:col>
         <:col :let={resource} field={:kind} label="When">
-          <%= CommonCore.Util.Time.from_now(resource.inserted_at) %>
+          {CommonCore.Util.Time.from_now(resource.inserted_at)}
         </:col>
         <:col :let={resource} label="Restore" field={nil}>
           <.button

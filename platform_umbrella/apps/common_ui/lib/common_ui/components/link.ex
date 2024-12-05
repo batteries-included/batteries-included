@@ -14,7 +14,7 @@ defmodule CommonUI.Components.Link do
   def a(%{variant: "external"} = assigns) do
     ~H"""
     <.link class={[link_class(@variant), @class]} target="_blank" {@rest}>
-      <span class="flex-initial"><%= render_slot(@inner_block) %></span>
+      <span class="flex-initial">{render_slot(@inner_block)}</span>
       <.icon name={:arrow_top_right_on_square} class="ml-2 w-5 h-5 flex-none" />
     </.link>
     """
@@ -34,7 +34,7 @@ defmodule CommonUI.Components.Link do
 
     ~H"""
     <.link class={[link_class(@variant), @class]} {@rest}>
-      <span class="font-medium"><%= render_slot(@inner_block) %></span>
+      <span class="font-medium">{render_slot(@inner_block)}</span>
       <.icon name={@icon} class="w-5 h-5 text-primary my-auto" />
     </.link>
     """
@@ -44,7 +44,7 @@ defmodule CommonUI.Components.Link do
     ~H"""
     <.link class={[link_class(@variant), @class]} {@rest}>
       <.icon name={@icon} class="size-10 text-primary my-auto" />
-      <span class="text-lg font-medium"><%= render_slot(@inner_block) %></span>
+      <span class="text-lg font-medium">{render_slot(@inner_block)}</span>
     </.link>
     """
   end
@@ -52,7 +52,7 @@ defmodule CommonUI.Components.Link do
   def a(assigns) do
     ~H"""
     <.link class={[link_class(assigns[:variant]), @class]} {@rest}>
-      <span><%= render_slot(@inner_block) %></span>
+      <span>{render_slot(@inner_block)}</span>
       <.icon :if={@icon} name={@icon} class={icon_class(assigns[:variant])} />
     </.link>
     """

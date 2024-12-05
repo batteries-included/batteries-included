@@ -27,7 +27,7 @@ defmodule ControlServerWeb.Layouts do
       main_menu_items={Catalog.groups_for_nav()}
       current_page={if assigns[:current_page], do: @current_page, else: nil}
     >
-      <%= @inner_content %>
+      {@inner_content}
     </ControlServerWeb.SidebarLayout.sidebar_layout>
     """
   end

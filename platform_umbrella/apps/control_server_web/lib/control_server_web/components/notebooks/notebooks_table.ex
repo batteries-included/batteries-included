@@ -20,13 +20,13 @@ defmodule ControlServerWeb.NotebooksTable do
       path={~p"/notebooks"}
       row_click={&JS.navigate(show_url(&1))}
     >
-      <:col :let={notebook} :if={!@abridged} field={:id} label="ID"><%= notebook.id %></:col>
-      <:col :let={notebook} field={:name} label="Name"><%= notebook.name %></:col>
+      <:col :let={notebook} :if={!@abridged} field={:id} label="ID">{notebook.id}</:col>
+      <:col :let={notebook} field={:name} label="Name">{notebook.name}</:col>
       <:col :let={notebook} :if={!@abridged} field={:storage_size} label="Storage Size">
-        <%= Memory.humanize(notebook.storage_size) %>
+        {Memory.humanize(notebook.storage_size)}
       </:col>
       <:col :let={notebook} :if={!@abridged} field={:memory_limits} label="Memory Limits">
-        <%= Memory.humanize(notebook.memory_limits) %>
+        {Memory.humanize(notebook.memory_limits)}
       </:col>
       <:action :let={notebook}>
         <.flex class="justify-items-center">

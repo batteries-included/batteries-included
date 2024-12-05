@@ -43,7 +43,7 @@ defmodule CommonUI.Components.Field do
             label[:class]
           ]}
         >
-          <%= render_slot(label) %>
+          {render_slot(label)}
 
           <div :if={label[:help]}>
             <.icon
@@ -54,16 +54,16 @@ defmodule CommonUI.Components.Field do
             />
 
             <.tooltip target_id={"#{@id}-help"}>
-              <%= label.help %>
+              {label.help}
             </.tooltip>
           </div>
         </div>
 
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </label>
 
       <div :for={note <- @note} class={["text-xs text-gray-light mt-2", note[:class]]}>
-        <%= render_slot(note) %>
+        {render_slot(note)}
       </div>
     </div>
     """

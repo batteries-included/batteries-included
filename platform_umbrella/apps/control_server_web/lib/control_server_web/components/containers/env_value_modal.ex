@@ -137,7 +137,7 @@ defmodule ControlServerWeb.Containers.EnvValueModal do
     ~H"""
     <.fieldset>
       <.field>
-        <:label><%= @label %></:label>
+        <:label>{@label}</:label>
         <.input
           type="select"
           field={@form[:source_name]}

@@ -55,7 +55,7 @@ defmodule HomeBaseWeb.ResetPasswordLive do
       <.form for={@form} id="reset-password-form" phx-change="validate" phx-submit="reset">
         <.fieldset flash={@flash}>
           <.badge>
-            <:item label="Email"><%= @user.email %></:item>
+            <:item label="Email">{@user.email}</:item>
           </.badge>
 
           <.input

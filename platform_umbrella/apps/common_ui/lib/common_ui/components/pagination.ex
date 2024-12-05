@@ -16,8 +16,8 @@ defmodule CommonUI.Components.Pagination do
         "px-4 py-0.5",
         (@meta.has_next_page? || @meta.has_previous_page?) && "border-r border-r-gray-lighter"
       ]}>
-        <span class="font-semibold"><%= current_page_range(@meta) %></span>
-        <span class="text-gray-light">of <%= @meta.total_count %></span>
+        <span class="font-semibold">{current_page_range(@meta)}</span>
+        <span class="text-gray-light">of {@meta.total_count}</span>
       </div>
 
       <Flop.Phoenix.pagination

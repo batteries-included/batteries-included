@@ -21,7 +21,7 @@ defmodule CommonUI.Components.Badge do
       "bg-gray-lighter dark:bg-gray-darkest-tint text-xs text-white dark:text-gray-darker-tint font-semibold rounded px-1 py-0.5 whitespace-nowrap",
       @class
     ]}>
-      <%= @label %>
+      {@label}
     </div>
     """
   end
@@ -29,8 +29,8 @@ defmodule CommonUI.Components.Badge do
   def badge(%{value: _} = assigns) do
     ~H"""
     <div class={["rounded-xl gap-3 px-3 py-2", badge_class(), @class]} {@rest}>
-      <span class="text-2xl font-semibold"><%= @value %></span>
-      <span><%= @label %></span>
+      <span class="text-2xl font-semibold">{@value}</span>
+      <span>{@label}</span>
     </div>
     """
   end
@@ -47,14 +47,14 @@ defmodule CommonUI.Components.Badge do
     >
       <%= for item <- @item do %>
         <div class="flex text-sm px-5 my-2 gap-1">
-          <span class="text-gray"><%= item.label %>:</span>
+          <span class="text-gray">{item.label}:</span>
 
           <%= if item[:navigate] || item[:patch] || item[:href] do %>
             <.link class="hover:underline" {assigns_to_attributes(item, [:label])}>
-              <%= render_slot(item) %>
+              {render_slot(item)}
             </.link>
           <% else %>
-            <span><%= render_slot(item) %></span>
+            <span>{render_slot(item)}</span>
           <% end %>
         </div>
       <% end %>

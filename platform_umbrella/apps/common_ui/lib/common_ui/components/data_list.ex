@@ -26,7 +26,7 @@ defmodule CommonUI.Components.DataList do
           @class
         ]}
       >
-        <%= "#{key}=#{value}" %>
+        {"#{key}=#{value}"}
       </span>
     </div>
     """
@@ -36,10 +36,10 @@ defmodule CommonUI.Components.DataList do
     ~H"""
     <div {@rest} class={["flex justify-between", @class]}>
       <.flex :for={{key, value} <- @data} class="items-center justify-center">
-        <span class="text-sm"><%= key %></span>
+        <span class="text-sm">{key}</span>
 
         <.h5 class="font-semibold">
-          <%= value %>
+          {value}
         </.h5>
       </.flex>
     </div>
@@ -57,11 +57,11 @@ defmodule CommonUI.Components.DataList do
     >
       <%= for item <- @item do %>
         <div class="text-gray-light text-md font-medium leading-5">
-          <%= item.title %>
+          {item.title}
         </div>
 
         <div class="text-base leading-5">
-          <%= render_slot(item) %>
+          {render_slot(item)}
         </div>
       <% end %>
     </div>

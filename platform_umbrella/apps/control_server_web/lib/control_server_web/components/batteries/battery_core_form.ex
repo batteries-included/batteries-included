@@ -11,7 +11,7 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
     ~H"""
     <div class="contents">
       <.panel title="Description" class="lg:col-span-2">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -106,7 +106,7 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
             <div class="flex-1 text-sm">Secret Key</div>
 
             <div class="font-mono font-bold text-sm">
-              <%= TextHelpers.obfuscate(@form[:secret_key].value, keep: 2, char_limit: 6) %>
+              {TextHelpers.obfuscate(@form[:secret_key].value, keep: 2, char_limit: 6)}
             </div>
           </div>
         </.fieldset>

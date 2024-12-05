@@ -38,7 +38,7 @@ defmodule HomeBaseWeb.InstallationLive do
 
     <div :if={@installations != []}>
       <div class="flex items-center justify-between mb-2">
-        <.h2><%= @page_title %></.h2>
+        <.h2>{@page_title}</.h2>
 
         <.button variant="dark" icon={:plus} link={~p"/installations/new"}>
           New Installation
@@ -51,9 +51,9 @@ defmodule HomeBaseWeb.InstallationLive do
           rows={@installations}
           row_click={&JS.navigate(~p"/installations/#{&1}")}
         >
-          <:col :let={installation} label="ID"><%= installation.id %></:col>
-          <:col :let={installation} label="Slug"><%= installation.slug %></:col>
-          <:col :let={installation} label="Provider"><%= installation.kube_provider %></:col>
+          <:col :let={installation} label="ID">{installation.id}</:col>
+          <:col :let={installation} label="Slug">{installation.slug}</:col>
+          <:col :let={installation} label="Provider">{installation.kube_provider}</:col>
 
           <:action :let={installation}>
             <.button

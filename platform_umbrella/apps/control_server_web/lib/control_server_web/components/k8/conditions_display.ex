@@ -36,8 +36,8 @@ defmodule ControlServerWeb.ConditionsDisplay do
         id="conditions-display-table"
         rows={Enum.sort_by(@conditions, &get_condition_time/1, :desc)}
       >
-        <:col :let={condition} label="Type"><%= Map.get(condition, "type", "") %></:col>
-        <:col :let={condition} label="Message"><%= Map.get(condition, "message", "") %></:col>
+        <:col :let={condition} label="Type">{Map.get(condition, "type", "")}</:col>
+        <:col :let={condition} label="Message">{Map.get(condition, "message", "")}</:col>
         <:col :let={condition} label="Time">
           <.relative_display time={get_condition_time(condition)} />
         </:col>

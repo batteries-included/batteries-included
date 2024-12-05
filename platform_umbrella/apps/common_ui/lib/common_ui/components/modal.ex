@@ -64,7 +64,7 @@ defmodule CommonUI.Components.Modal do
                 :if={@title}
                 class="text-2xl font-semibold leading-8 text-gray-darkest dark:text-gray-lightest"
               >
-                <%= render_slot(@title) %>
+                {render_slot(@title)}
               </h2>
 
               <.button
@@ -77,7 +77,7 @@ defmodule CommonUI.Components.Modal do
             </div>
 
             <div class={@class}>
-              <%= render_slot(@inner_block) %>
+              {render_slot(@inner_block)}
             </div>
 
             <div :if={@actions != []} class="flex items-center justify-end gap-4 px-5 pb-5">
@@ -87,10 +87,10 @@ defmodule CommonUI.Components.Modal do
                   variant="secondary"
                   phx-click={hide_modal(@on_cancel, @id)}
                 >
-                  <%= cancel %>
+                  {cancel}
                 </.button>
 
-                <%= render_slot(action) %>
+                {render_slot(action)}
               <% end %>
             </div>
           </.focus_wrap>

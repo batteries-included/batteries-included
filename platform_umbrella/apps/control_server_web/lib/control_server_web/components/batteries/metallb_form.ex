@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.MetalLBForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -24,9 +24,9 @@ defmodule ControlServerWeb.Batteries.MetalLBForm do
       <.panel title="Images">
         <.fieldset>
           <.image>
-            <%= @form[:speaker_image].value %><br />
-            <%= @form[:controller_image].value %><br />
-            <%= @form[:frrouting_image].value %>
+            {@form[:speaker_image].value}<br />
+            {@form[:controller_image].value}<br />
+            {@form[:frrouting_image].value}
           </.image>
 
           <.image_version

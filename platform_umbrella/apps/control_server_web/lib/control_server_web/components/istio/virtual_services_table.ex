@@ -12,11 +12,11 @@ defmodule ControlServerWeb.Istio.VirtualServicesTable do
   def virtual_services_table(assigns) do
     ~H"""
     <.table id="virtual-services-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={virtual_service} :if={!@abridged} label="ID"><%= uid(virtual_service) %></:col>
-      <:col :let={virtual_service} label="Name"><%= name(virtual_service) %></:col>
-      <:col :let={virtual_service} label="Namespace"><%= namespace(virtual_service) %></:col>
+      <:col :let={virtual_service} :if={!@abridged} label="ID">{uid(virtual_service)}</:col>
+      <:col :let={virtual_service} label="Name">{name(virtual_service)}</:col>
+      <:col :let={virtual_service} label="Namespace">{namespace(virtual_service)}</:col>
       <:col :let={virtual_service} :if={!@abridged} label="Hosts">
-        <%= format_hosts(virtual_service) %>
+        {format_hosts(virtual_service)}
       </:col>
 
       <:action :let={virtual_service}>

@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.SSOForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Batteries.SSOForm do
 
       <.panel title="Image">
         <.fieldset>
-          <.image><%= @form[:oauth2_proxy_image].value %></.image>
+          <.image>{@form[:oauth2_proxy_image].value}</.image>
 
           <.image_version
             field={@form[:oauth2_proxy_image_tag_override]}

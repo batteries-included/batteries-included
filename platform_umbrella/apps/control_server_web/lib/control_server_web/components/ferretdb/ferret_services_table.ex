@@ -16,10 +16,10 @@ defmodule ControlServerWeb.FerretServicesTable do
       path={~p"/ferretdb"}
       row_click={&JS.navigate(show_url(&1))}
     >
-      <:col :let={service} :if={!@abridged} field={:id} label="ID"><%= service.id %></:col>
-      <:col :let={service} field={:name} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} field={:id} label="ID">{service.id}</:col>
+      <:col :let={service} field={:name} label="Name">{service.name}</:col>
       <:col :let={service} :if={!@abridged} field={:instances} label="Instances">
-        <%= service.instances %>
+        {service.instances}
       </:col>
       <:action :let={service}>
         <.flex class="justify-items-center align-middle">

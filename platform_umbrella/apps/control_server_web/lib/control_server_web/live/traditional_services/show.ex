@@ -35,7 +35,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
       <:menu>
         <.badge :if={@service.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@service.project_id}"}>
-            <%= @service.project.name %>
+            {@service.project.name}
           </:item>
         </.badge>
       </:menu>
@@ -60,13 +60,13 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
       <.panel title="Details" variant="gray">
         <.data_list>
           <:item title="Instances">
-            <%= @service.num_instances %>
+            {@service.num_instances}
           </:item>
           <:item :if={@service.memory_limits} title="Memory limits">
-            <%= Memory.humanize(@service.memory_limits) %>
+            {Memory.humanize(@service.memory_limits)}
           </:item>
           <:item title="Deployment Type">
-            <%= @service.kube_deployment_type %>
+            {@service.kube_deployment_type}
           </:item>
           <:item title="Started">
             <.relative_display time={@service.inserted_at} />

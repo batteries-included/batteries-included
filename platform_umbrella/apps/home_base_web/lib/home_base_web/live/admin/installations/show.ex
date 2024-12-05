@@ -25,11 +25,11 @@ defmodule HomeBaseWeb.Live.Admin.InstallationsShow do
     <.grid columns={%{sm: 1, lg: 2}}>
       <.panel title="Installation">
         <.data_list>
-          <:item title="ID"><%= @installation.id %></:item>
-          <:item title="Slug"><%= @installation.slug %></:item>
+          <:item title="ID">{@installation.id}</:item>
+          <:item title="Slug">{@installation.slug}</:item>
           <:item :if={@installation.team} title="Team">
             <.a navigate={~p"/admin/teams/#{@installation.team.id}/"} variant="underlined">
-              <%= @installation.team.name %>
+              {@installation.team.name}
             </.a>
           </:item>
           <:item title="User">
@@ -38,7 +38,7 @@ defmodule HomeBaseWeb.Live.Admin.InstallationsShow do
               navigate={~p"/admin/users/#{@installation.user.id}/"}
               variant="underlined"
             >
-              <%= @installation.user.email %>
+              {@installation.user.email}
             </.a>
             <div :if={@installation.user == nil}>Only owned by Team</div>
           </:item>
@@ -47,7 +47,7 @@ defmodule HomeBaseWeb.Live.Admin.InstallationsShow do
       <.panel title="Hosts">
         <.data_list :if={@host_report && @host_report.report}>
           <:item title="Control Server Host">
-            <%= @host_report.report.control_server_host %>
+            {@host_report.report.control_server_host}
           </:item>
         </.data_list>
       </.panel>

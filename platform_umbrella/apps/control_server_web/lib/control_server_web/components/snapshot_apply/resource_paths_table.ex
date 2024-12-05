@@ -21,9 +21,9 @@ defmodule ControlServerWeb.ResourcePathsTable do
   def resource_paths_table(assigns) do
     ~H"""
     <.table id="resource-paths" rows={@rows}>
-      <:col :let={rp} label="Path"><%= rp.path %></:col>
+      <:col :let={rp} label="Path">{rp.path}</:col>
       <:col :let={rp} label="Successful"><.status_icon is_success={rp.is_success} /></:col>
-      <:col :let={rp} label="Result"><%= rp.apply_result %></:col>
+      <:col :let={rp} label="Result">{rp.apply_result}</:col>
       <:col :let={rp} label="Hash">
         <.truncate_tooltip value={rp.hash} length={16} />
       </:col>

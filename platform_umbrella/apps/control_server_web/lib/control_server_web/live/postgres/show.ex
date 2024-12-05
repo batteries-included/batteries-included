@@ -172,16 +172,16 @@ defmodule ControlServerWeb.Live.PostgresShow do
     <.panel title="Details" variant="gray">
       <.data_list>
         <:item title="Running Status">
-          <%= phase(@k8_cluster) %>
+          {phase(@k8_cluster)}
         </:item>
         <:item title="Instances">
-          <%= @cluster.num_instances %>
+          {@cluster.num_instances}
         </:item>
         <:item title="Storage Size">
-          <%= Memory.humanize(@cluster.storage_size) %>
+          {Memory.humanize(@cluster.storage_size)}
         </:item>
         <:item :if={@cluster.memory_limits} title="Memory limits">
-          <%= Memory.humanize(@cluster.memory_limits) %>
+          {Memory.humanize(@cluster.memory_limits)}
         </:item>
         <:item title="Started">
           <.relative_display time={creation_timestamp(@k8_cluster)} />
@@ -194,10 +194,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp sync_status_table(assigns) do
     ~H"""
     <.table id="postgres-sync-status-table" rows={all_roles(@status)}>
-      <:col :let={user} label="Name"><%= user %></:col>
-      <:col :let={user} label="Status"><%= get_role_status(@status, user) %></:col>
+      <:col :let={user} label="Name">{user}</:col>
+      <:col :let={user} label="Status">{get_role_status(@status, user)}</:col>
       <:col :let={user} label="Password Resource">
-        <%= password_resource_version(@status, user) %>
+        {password_resource_version(@status, user)}
       </:col>
     </.table>
     """
@@ -209,7 +209,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       <:menu>
         <.badge :if={@cluster.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@cluster.project_id}"}>
-            <%= @cluster.project.name %>
+            {@cluster.project.name}
           </:item>
         </.badge>
       </:menu>

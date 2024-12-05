@@ -28,7 +28,7 @@ defmodule CommonUI.Components.TabBar do
           ]}
         >
           <.icon :if={icon = Map.get(tab, :icon)} name={icon} class="size-6" />
-          <span><%= render_slot(tab) %></span>
+          <span>{render_slot(tab)}</span>
         </.link>
       <% end %>
     </div>

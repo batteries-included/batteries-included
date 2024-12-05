@@ -19,13 +19,13 @@ defmodule ControlServerWeb.RedisTable do
       path={~p"/redis"}
       row_click={&JS.navigate(show_url(&1))}
     >
-      <:col :let={redis} :if={!@abridged} field={:id} label="ID"><%= redis.id %></:col>
-      <:col :let={redis} field={:name} label="Name"><%= redis.name %></:col>
+      <:col :let={redis} :if={!@abridged} field={:id} label="ID">{redis.id}</:col>
+      <:col :let={redis} field={:name} label="Name">{redis.name}</:col>
       <:col :let={redis} :if={!@abridged} field={:num_instances} label="Instances">
-        <%= redis.num_instances %>
+        {redis.num_instances}
       </:col>
       <:col :let={redis} :if={!@abridged} field={:memory_limits} label="Memory Limits">
-        <%= Memory.humanize(redis.memory_limits) %>
+        {Memory.humanize(redis.memory_limits)}
       </:col>
       <:action :let={redis}>
         <.flex>

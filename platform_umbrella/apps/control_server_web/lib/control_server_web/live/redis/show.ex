@@ -64,7 +64,7 @@ defmodule ControlServerWeb.Live.RedisShow do
       <:menu>
         <.badge :if={@redis_instance.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@redis_instance.project_id}"}>
-            <%= @redis_instance.project.name %>
+            {@redis_instance.project.name}
           </:item>
         </.badge>
       </:menu>
@@ -89,10 +89,10 @@ defmodule ControlServerWeb.Live.RedisShow do
       <.panel title="Details" variant="gray">
         <.data_list>
           <:item title="Instances">
-            <%= @redis_instance.num_instances %>
+            {@redis_instance.num_instances}
           </:item>
           <:item :if={@redis_instance.memory_limits} title="Memory Limits">
-            <%= Memory.humanize(@redis_instance.memory_limits) %>
+            {Memory.humanize(@redis_instance.memory_limits)}
           </:item>
           <:item title="Started">
             <.relative_display time={creation_timestamp(@k8_failover)} />

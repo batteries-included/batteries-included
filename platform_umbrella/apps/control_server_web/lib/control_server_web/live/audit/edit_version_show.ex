@@ -114,7 +114,7 @@ defmodule ControlServerWeb.Live.EditVersionShow do
 
   defp patch_value(%{value: _} = assigns) do
     ~H"""
-    <div class="text-gray dark:text-gray-darker"><%= @value %></div>
+    <div class="text-gray dark:text-gray-darker">{@value}</div>
     """
   end
 
@@ -142,10 +142,10 @@ defmodule ControlServerWeb.Live.EditVersionShow do
       }
     >
       <:col :let={{field, _change}} label="Field">
-        <%= field %>
+        {field}
       </:col>
       <:col :let={{_field, {field_action, value}}} label="Field Action">
-        <%= field_action(field_action, value) %>
+        {field_action(field_action, value)}
       </:col>
       <:col :let={{_field, {_field_action, value}}} label="Change">
         <.patch_value value={value} />
@@ -159,7 +159,7 @@ defmodule ControlServerWeb.Live.EditVersionShow do
     ~H"""
     <.page_header title={@page_title} back_link={entity_history_url(@edit_version)}>
       <.badge>
-        <:item label="Action"><%= @edit_version.action %></:item>
+        <:item label="Action">{@edit_version.action}</:item>
         <:item label="Recorded At">
           <.relative_display time={@edit_version.recorded_at} />
         </:item>

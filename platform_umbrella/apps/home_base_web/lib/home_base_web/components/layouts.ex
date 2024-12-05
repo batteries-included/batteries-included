@@ -21,14 +21,14 @@ defmodule HomeBaseWeb.Layouts do
 
         <title :if={!@page_title}>Batteries Included</title>
         <.live_title :if={@page_title} suffix=" · Batteries Included">
-          <%= @page_title %>
+          {@page_title}
         </.live_title>
 
         <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
         <script phx-track-static defer type="text/javascript" src={~p"/assets/app.js"} />
       </head>
       <body class="antialiased font-sans font-normal leading-loose text-gray-darkest dark:text-gray-lighter">
-        <%= @inner_content %>
+        {@inner_content}
       </body>
     </html>
     """
@@ -56,7 +56,7 @@ defmodule HomeBaseWeb.Layouts do
           <.logo class="h-24" />
         </.link>
 
-        <%= @inner_content %>
+        {@inner_content}
       </div>
     </div>
     """
@@ -125,7 +125,7 @@ defmodule HomeBaseWeb.Layouts do
                   class="hidden lg:flex"
                 >
                   <div class="flex items-center">
-                    <%= @current_entity %>
+                    {@current_entity}
                     <.icon name={:chevron_down} class="size-7" mini />
                   </div>
                 </.button>
@@ -137,7 +137,7 @@ defmodule HomeBaseWeb.Layouts do
                 "bg-gray-lightest dark:bg-gray-darkest-tint",
                 "text-gray-light dark:text-gray-dark"
               ]}>
-                <%= @current_entity %>
+                {@current_entity}
               </div>
 
               <.dropdown_link
@@ -215,7 +215,7 @@ defmodule HomeBaseWeb.Layouts do
                 href={~p"/teams/#{team.id}"}
                 selected={@current_role && @current_role.team_id == team.id}
               >
-                <%= team.name %>
+                {team.name}
               </.dropdown_link>
             </.dropdown>
           </div>
@@ -223,7 +223,7 @@ defmodule HomeBaseWeb.Layouts do
       </div>
 
       <div class="block relative px-4 lg:px-6 flex-1 overflow-auto">
-        <%= @inner_content %>
+        {@inner_content}
       </div>
     </div>
 

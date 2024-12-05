@@ -27,7 +27,7 @@ defmodule CommonUI.Components.FlashGroup do
           type="fixed"
           class="relative mb-3 last:mb-0"
         >
-          <%= msg %>
+          {msg}
         </.alert>
       <% else %>
         <.alert
@@ -37,7 +37,7 @@ defmodule CommonUI.Components.FlashGroup do
           variant={variant}
           class="mb-3 last:mb-0"
         >
-          <%= msg %>
+          {msg}
         </.alert>
       <% end %>
     </div>

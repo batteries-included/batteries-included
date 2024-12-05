@@ -10,7 +10,7 @@ defmodule CommonUI.Components.Email do
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
       <tr>
         <td class="wrapper">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </td>
       </tr>
     </table>
@@ -37,7 +37,7 @@ defmodule CommonUI.Components.Email do
               <tbody>
                 <tr>
                   <td>
-                    <a href={@href} target="_blank"><%= render_slot(@inner_block) %></a>
+                    <a href={@href} target="_blank">{render_slot(@inner_block)}</a>
                   </td>
                 </tr>
               </tbody>
@@ -67,7 +67,7 @@ defmodule CommonUI.Components.Email do
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="x-apple-disable-message-reformatting" />
 
-        <title :if={assigns[:subject]}><%= @subject %></title>
+        <title :if={assigns[:subject]}>{@subject}</title>
 
         <style media="all" type="text/css">
           /* GLOBAL RESETS */
@@ -338,7 +338,7 @@ defmodule CommonUI.Components.Email do
             <td class="container">
               <div class="content">
                 <span :if={assigns[:preheader]} class="preheader">
-                  <%= @preheader %>
+                  {@preheader}
                 </span>
 
                 <div class="header">
@@ -356,14 +356,14 @@ defmodule CommonUI.Components.Email do
                   </table>
                 </div>
 
-                <%= @inner_content %>
+                {@inner_content}
 
                 <div :if={assigns[:street_address]} class="footer">
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td class="content-block">
                         <span class="apple-link">
-                          <%= @street_address %>
+                          {@street_address}
                         </span>
                       </td>
                     </tr>

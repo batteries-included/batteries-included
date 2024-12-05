@@ -12,12 +12,12 @@ defmodule ControlServerWeb.Batteries.VictoriaMetricsForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Image">
         <.fieldset>
-          <.image><%= @form[:operator_image].value %></.image>
+          <.image>{@form[:operator_image].value}</.image>
 
           <.image_version
             field={@form[:operator_image_tag_override]}
@@ -77,7 +77,7 @@ defmodule ControlServerWeb.Batteries.VictoriaMetricsForm do
             <.fieldset>
               <.field>
                 <:label>
-                  VMSelect Volume Size · <%= Memory.humanize(@form[:vmselect_volume_size].value) %>
+                  VMSelect Volume Size · {Memory.humanize(@form[:vmselect_volume_size].value)}
                 </:label>
                 <:note>You can't reduce this once it has been created.</:note>
                 <.input type="number" field={@form[:vmselect_volume_size]} debounce={false} />
@@ -87,7 +87,7 @@ defmodule ControlServerWeb.Batteries.VictoriaMetricsForm do
             <.fieldset>
               <.field>
                 <:label>
-                  VMStorage Volume Size · <%= Memory.humanize(@form[:vmstorage_volume_size].value) %>
+                  VMStorage Volume Size · {Memory.humanize(@form[:vmstorage_volume_size].value)}
                 </:label>
                 <:note>You can't reduce this once it has been created.</:note>
                 <.input type="number" field={@form[:vmstorage_volume_size]} debounce={false} />
