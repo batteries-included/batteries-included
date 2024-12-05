@@ -21,7 +21,10 @@ defmodule CommonUI.Components.Typography do
   def h1(%{} = assigns) do
     ~H"""
     <h1 class={[@base_class, @class]} {@rest}>
-      {render_slot(@inner_block)}<span class={@sep_class}>::<span class={@sub_header_class}><%= render_slot(@sub_header) %></span></span>
+      {render_slot(@inner_block)}
+      <span class={@sep_class}>
+        ::<span class={@sub_header_class}>{render_slot(@sub_header)}</span>
+      </span>
     </h1>
     """
   end
