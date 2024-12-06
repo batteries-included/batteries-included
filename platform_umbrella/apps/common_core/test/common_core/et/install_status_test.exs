@@ -40,7 +40,7 @@ defmodule CommonCore.ET.InstallStatusTest do
       assert InstallStatus.redirect_path(status) == "/error/needs_account"
     end
 
-    test "returns ni`CommonCore.Resources.MapUtilsl when status is :ok" do
+    test "returns nil when status is :ok" do
       status = InstallStatus.new!(status: :ok)
       assert InstallStatus.redirect_path(status) == nil
     end
