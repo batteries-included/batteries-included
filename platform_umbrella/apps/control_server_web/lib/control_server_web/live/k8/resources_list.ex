@@ -157,7 +157,7 @@ defmodule ControlServerWeb.Live.ResourceList do
         selected={@live_action == live_action}
         patch={path}
       >
-        <%= title %>
+        {title}
       </:tab>
     </.tab_bar>
     """

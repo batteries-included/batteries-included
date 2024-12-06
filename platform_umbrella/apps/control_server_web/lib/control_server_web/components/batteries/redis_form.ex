@@ -9,15 +9,15 @@ defmodule ControlServerWeb.Batteries.RedisForm do
     ~H"""
     <div class="contents">
       <.panel title="Description" class="lg:col-span-2">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Images">
         <.fieldset>
           <.image>
-            <%= @form[:operator_image].value %><br />
-            <%= @form[:redis_image].value %><br />
-            <%= @form[:exporter_image].value %>
+            {@form[:operator_image].value}<br />
+            {@form[:redis_image].value}<br />
+            {@form[:exporter_image].value}
           </.image>
 
           <.image_version

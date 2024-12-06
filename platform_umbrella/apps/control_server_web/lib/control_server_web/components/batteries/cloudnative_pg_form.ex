@@ -9,12 +9,12 @@ defmodule ControlServerWeb.Batteries.CloudnativePGForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Image">
         <.fieldset>
-          <.image><%= @form[:image].value %></.image>
+          <.image>{@form[:image].value}</.image>
 
           <.image_version
             field={@form[:image_tag_override]}

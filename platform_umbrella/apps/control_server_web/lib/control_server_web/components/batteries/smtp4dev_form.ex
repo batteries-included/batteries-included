@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.Smtp4devForm do
     ~H"""
     <div class="contents">
       <.panel title="Description" class="lg:col-span-2">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Batteries.Smtp4devForm do
 
       <.panel title="Image">
         <.fieldset>
-          <.image><%= @form[:image].value %></.image>
+          <.image>{@form[:image].value}</.image>
           <.image_version field={@form[:image_tag_override]} image_id={:smtp4dev} label="Version" />
         </.fieldset>
       </.panel>

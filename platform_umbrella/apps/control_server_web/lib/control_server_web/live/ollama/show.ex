@@ -37,7 +37,7 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceShow do
       <:menu>
         <.badge :if={@model_instance.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@model_instance.project_id}"}>
-            <%= @model_instance.project.name %>
+            {@model_instance.project.name}
           </:item>
         </.badge>
       </:menu>
@@ -61,13 +61,13 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceShow do
       <.panel title="Details" variant="gray">
         <.data_list>
           <:item title="Model">
-            <%= @model_instance.model %>
+            {@model_instance.model}
           </:item>
           <:item title="Instances">
-            <%= @model_instance.num_instances %>
+            {@model_instance.num_instances}
           </:item>
           <:item :if={@model_instance.memory_limits} title="Memory Limits">
-            <%= Memory.humanize(@model_instance.memory_limits) %>
+            {Memory.humanize(@model_instance.memory_limits)}
           </:item>
         </.data_list>
       </.panel>

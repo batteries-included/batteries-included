@@ -73,10 +73,10 @@ defmodule ControlServerWeb.Live.ServiceShow do
     ~H"""
     <.panel title="Ports">
       <.table :if={@ports} id="ports-table" rows={@ports}>
-        <:col :let={port} label="Name"><%= Map.get(port, "name", "") %></:col>
-        <:col :let={port} label="Port"><%= Map.get(port, "port", "") %></:col>
-        <:col :let={port} label="Target Port"><%= Map.get(port, "targetPort", "") %></:col>
-        <:col :let={port} label="Protocol"><%= Map.get(port, "protocol", "") %></:col>
+        <:col :let={port} label="Name">{Map.get(port, "name", "")}</:col>
+        <:col :let={port} label="Port">{Map.get(port, "port", "")}</:col>
+        <:col :let={port} label="Target Port">{Map.get(port, "targetPort", "")}</:col>
+        <:col :let={port} label="Protocol">{Map.get(port, "protocol", "")}</:col>
       </.table>
 
       <div :if={@ports == []}>No ports.</div>
@@ -88,16 +88,16 @@ defmodule ControlServerWeb.Live.ServiceShow do
     ~H"""
     <.panel variant="gray" title="Endpoint" class="lg:col-span-2">
       <.table :if={@addresses} id="endpoint-addresses-table" rows={@addresses}>
-        <:col :let={address} label="Address"><%= Map.get(address, "ip", "") %></:col>
-        <:col :let={address} label="Node Name"><%= Map.get(address, "nodeName", "") %></:col>
+        <:col :let={address} label="Address">{Map.get(address, "ip", "")}</:col>
+        <:col :let={address} label="Node Name">{Map.get(address, "nodeName", "")}</:col>
         <:col :let={address} label="Target Kind">
-          <%= Map.get(address, "targetRef", %{}) |> Map.get("kind", "") %>
+          {Map.get(address, "targetRef", %{}) |> Map.get("kind", "")}
         </:col>
         <:col :let={address} label="Target Name">
-          <%= Map.get(address, "targetRef", %{}) |> Map.get("name", "") %>
+          {Map.get(address, "targetRef", %{}) |> Map.get("name", "")}
         </:col>
         <:col :let={address} label="Target Namespace">
-          <%= Map.get(address, "targetRef", %{}) |> Map.get("namespace", "") %>
+          {Map.get(address, "targetRef", %{}) |> Map.get("namespace", "")}
         </:col>
       </.table>
 
@@ -135,19 +135,19 @@ defmodule ControlServerWeb.Live.ServiceShow do
     <.panel title="Details">
       <.data_list>
         <:item :if={@lb_ips && @lb_ips != []} title="Load Balancer IPs">
-          <%= Enum.join(@lb_ips, ", ") %>
+          {Enum.join(@lb_ips, ", ")}
         </:item>
 
         <:item :if={@cluster_ips} title="Cluster IPs">
-          <%= Enum.join(@cluster_ips, ", ") %>
+          {Enum.join(@cluster_ips, ", ")}
         </:item>
 
         <:item title="IP Policy">
-          <%= ip_family_policy(@resource) %> <%= ip_families(@resource) %>
+          {ip_family_policy(@resource)} {ip_families(@resource)}
         </:item>
 
         <:item title="Traffic Policy">
-          <%= traffic_policy(@resource) %>
+          {traffic_policy(@resource)}
         </:item>
       </.data_list>
     </.panel>
@@ -174,7 +174,7 @@ defmodule ControlServerWeb.Live.ServiceShow do
     ~H"""
     <.page_header title={@name} back_link={~p"/kube/services"}>
       <.badge>
-        <:item label="Namespace"><%= @namespace %></:item>
+        <:item label="Namespace">{@namespace}</:item>
         <:item label="Started">
           <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
         </:item>

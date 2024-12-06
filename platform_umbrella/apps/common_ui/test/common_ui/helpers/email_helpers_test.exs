@@ -19,7 +19,7 @@ defmodule CommonUI.EmailHelpersTest do
 
   def html(assigns) do
     ~H"""
-    <p>Hey <%= @name %></p>
+    <p>Hey {@name}</p>
     """
   end
 

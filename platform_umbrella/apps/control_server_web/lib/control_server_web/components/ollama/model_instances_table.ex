@@ -18,12 +18,12 @@ defmodule ControlServerWeb.ModelInstancesTable do
       row_click={&JS.navigate(show_url(&1))}
     >
       <:col :let={model_instance} :if={!@abridged} field={:id} label="ID">
-        <%= model_instance.id %>
+        {model_instance.id}
       </:col>
-      <:col :let={model_instance} field={:name} label="Name"><%= model_instance.name %></:col>
-      <:col :let={model_instance} field={:model} label="Model"><%= model_instance.model %></:col>
+      <:col :let={model_instance} field={:name} label="Name">{model_instance.name}</:col>
+      <:col :let={model_instance} field={:model} label="Model">{model_instance.model}</:col>
       <:col :let={model_instance} :if={!@abridged} field={:memory_limits} label="Memory Limits">
-        <%= Memory.humanize(model_instance.memory_limits) %>
+        {Memory.humanize(model_instance.memory_limits)}
       </:col>
 
       <:action :let={model_instance}>

@@ -15,9 +15,9 @@ defmodule ControlServerWeb.IPAddressPoolsTable do
       meta={@meta}
       path={~p"/ip_address_pools"}
     >
-      <:col :let={pool} :if={!@abridged} field={:id} label="ID"><%= pool.id %></:col>
-      <:col :let={pool} field={:name} label="Name"><%= pool.name %></:col>
-      <:col :let={pool} field={:subnet} label="Subnet"><%= pool.subnet %></:col>
+      <:col :let={pool} :if={!@abridged} field={:id} label="ID">{pool.id}</:col>
+      <:col :let={pool} field={:name} label="Name">{pool.name}</:col>
+      <:col :let={pool} field={:subnet} label="Subnet">{pool.subnet}</:col>
 
       <:action :let={pool}>
         <.flex>

@@ -34,11 +34,11 @@ defmodule CommonUI.Components.Form do
   def simple_form(%{variant: "nested"} = assigns) do
     ~H"""
     <div class={["grid grid-cols-1 gap-x-4 gap-y-6", @class]}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
 
     <div :if={@actions != []} class="flex items-center justify-end gap-2 mt-6">
-      <%= render_slot(@actions) %>
+      {render_slot(@actions)}
     </div>
     """
   end
@@ -47,13 +47,13 @@ defmodule CommonUI.Components.Form do
     ~H"""
     <.form id={@id} {@rest}>
       <.simple_form variant="nested" class={@class}>
-        <.h2 :if={@title}><%= @title %></.h2>
+        <.h2 :if={@title}>{@title}</.h2>
         <.flash_group id={"#{@id}-flash"} flash={@flash} />
 
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
 
         <:actions :if={@actions != []}>
-          <%= render_slot(@actions) %>
+          {render_slot(@actions)}
         </:actions>
       </.simple_form>
     </.form>

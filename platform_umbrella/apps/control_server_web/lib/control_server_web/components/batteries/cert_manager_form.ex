@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.CertManagerForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -24,11 +24,11 @@ defmodule ControlServerWeb.Batteries.CertManagerForm do
       <.panel title="Images">
         <.fieldset>
           <.image>
-            <%= @form[:acmesolver_image].value %><br />
-            <%= @form[:cainjector_image].value %><br />
-            <%= @form[:controller_image].value %><br />
-            <%= @form[:ctl_image].value %><br />
-            <%= @form[:webhook_image].value %>
+            {@form[:acmesolver_image].value}<br />
+            {@form[:cainjector_image].value}<br />
+            {@form[:controller_image].value}<br />
+            {@form[:ctl_image].value}<br />
+            {@form[:webhook_image].value}
           </.image>
 
           <.image_version

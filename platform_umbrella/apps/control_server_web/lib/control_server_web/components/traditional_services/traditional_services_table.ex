@@ -21,10 +21,10 @@ defmodule ControlServerWeb.TraditionalServicesTable do
       path={~p"/traditional_services"}
       row_click={&JS.navigate(show_url(&1))}
     >
-      <:col :let={service} :if={!@abridged} field={:id} label="ID"><%= service.id %></:col>
-      <:col :let={service} field={:name} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} field={:id} label="ID">{service.id}</:col>
+      <:col :let={service} field={:name} label="Name">{service.name}</:col>
       <:col :let={service} :if={!@abridged} field={:num_instances} label="Instances">
-        <%= service.num_instances %>
+        {service.num_instances}
       </:col>
       <:action :let={service}>
         <.flex class="justify-items-center">

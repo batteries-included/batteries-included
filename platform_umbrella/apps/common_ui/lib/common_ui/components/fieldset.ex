@@ -30,14 +30,14 @@ defmodule CommonUI.Components.Fieldset do
       ]}>
         <.flash_group id={"#{@id}-flash"} flash={@flash} class="col-span-2" />
 
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
 
       <div
         :for={actions <- @actions}
         class={["flex items-center justify-end gap-2 mt-6", actions[:class]]}
       >
-        <%= render_slot(actions) %>
+        {render_slot(actions)}
       </div>
     </div>
     """

@@ -57,7 +57,7 @@ defmodule ControlServerWeb.Live.GroupBatteriesIndex do
           <% end %>
         </:menu>
 
-        <p class="text-sm"><%= battery.description %></p>
+        <p class="text-sm">{battery.description}</p>
       </.panel>
     </.grid>
     """

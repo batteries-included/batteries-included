@@ -21,10 +21,10 @@ defmodule ControlServerWeb.KeycloakActionsTable do
   def keycloak_action_table(assigns) do
     ~H"""
     <.table id="actions" rows={@rows}>
-      <:col :let={act} label="Realm"><%= act.realm %></:col>
-      <:col :let={act} label="Action"><%= act.action %></:col>
+      <:col :let={act} label="Realm">{act.realm}</:col>
+      <:col :let={act} label="Action">{act.action}</:col>
       <:col :let={act} label="Successful"><.status_icon is_success={act.is_success} /></:col>
-      <:col :let={act} label="Result"><%= act.apply_result %></:col>
+      <:col :let={act} label="Result">{act.apply_result}</:col>
       <:col :let={act} label="Updated">
         <.relative_display time={act.updated_at} />
       </:col>

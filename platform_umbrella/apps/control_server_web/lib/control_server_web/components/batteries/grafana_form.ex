@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.GrafanaForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -24,8 +24,8 @@ defmodule ControlServerWeb.Batteries.GrafanaForm do
       <.panel title="Images">
         <.fieldset>
           <.image>
-            <%= @form[:image].value %><br />
-            <%= @form[:sidecar_image].value %>
+            {@form[:image].value}<br />
+            {@form[:sidecar_image].value}
           </.image>
 
           <.image_version

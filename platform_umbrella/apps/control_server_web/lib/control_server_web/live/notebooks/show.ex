@@ -37,7 +37,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
       <:menu>
         <.badge :if={@notebook.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@notebook.project_id}"}>
-            <%= @notebook.project.name %>
+            {@notebook.project.name}
           </:item>
         </.badge>
       </:menu>
@@ -62,13 +62,13 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
       <.panel title="Details" variant="gray">
         <.data_list>
           <:item title="Image">
-            <%= @notebook.image %>
+            {@notebook.image}
           </:item>
           <:item title="Storage Size">
-            <%= Memory.humanize(@notebook.storage_size) %>
+            {Memory.humanize(@notebook.storage_size)}
           </:item>
           <:item :if={@notebook.memory_limits} title="Memory limits">
-            <%= Memory.humanize(@notebook.memory_limits) %>
+            {Memory.humanize(@notebook.memory_limits)}
           </:item>
           <:item title="Started">
             <.relative_display time={@notebook.inserted_at} />

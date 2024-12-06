@@ -17,8 +17,8 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
         </.button>
       </:menu>
       <.table id={"containers-table-#{@id}"} rows={Enum.with_index(@containers ++ @init_containers)}>
-        <:col :let={{c, _idx}} label="Name"><%= c.name %></:col>
-        <:col :let={{c, _idx}} label="Image"><%= c.image %></:col>
+        <:col :let={{c, _idx}} label="Name">{c.name}</:col>
+        <:col :let={{c, _idx}} label="Image">{c.image}</:col>
 
         <:action :let={{c, idx}}>
           <.button

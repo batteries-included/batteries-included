@@ -18,7 +18,7 @@ defmodule CommonUI.Components.Dropdown do
     ~H"""
     <div class="relative z-40">
       <div class="cursor-pointer" phx-click={show_dropdown(@id, :slide_y)}>
-        <%= render_slot(@trigger) %>
+        {render_slot(@trigger)}
       </div>
 
       <nav
@@ -31,7 +31,7 @@ defmodule CommonUI.Components.Dropdown do
           @class
         ]}
       >
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </nav>
     </div>
     """
@@ -55,7 +55,7 @@ defmodule CommonUI.Components.Dropdown do
       {@rest}
     >
       <.icon :if={@icon} name={@icon} class="size-5" />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.link>
     """
   end

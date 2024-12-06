@@ -73,7 +73,7 @@ defmodule ControlServerWeb.SidebarLayout do
                   navigate={item.path}
                   selected={item.type == @current_page}
                 >
-                  <%= item.name %>
+                  {item.name}
                 </:tab>
               </.tab_bar>
 
@@ -84,7 +84,7 @@ defmodule ControlServerWeb.SidebarLayout do
                   navigate={item.path}
                   selected={item.type == @current_page}
                 >
-                  <%= item.name %>
+                  {item.name}
                 </:tab>
               </.tab_bar>
             </nav>
@@ -108,7 +108,7 @@ defmodule ControlServerWeb.SidebarLayout do
           </button>
         </div>
 
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </div>
     """

@@ -146,7 +146,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
       <:menu>
         <.badge :if={@service.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@service.project_id}"}>
-            <%= @service.project.name %>
+            {@service.project.name}
           </:item>
         </.badge>
       </:menu>
@@ -182,8 +182,8 @@ defmodule ControlServerWeb.Live.KnativeShow do
     <.panel title="Traffic Split" class="lg:col-span-2">
       <.grid columns={[sm: 1, lg: 2]} class="items-center">
         <.table rows={@traffic} id="traffic-table">
-          <:col :let={split} label="Revision"><%= Map.get(split, "revisionName", "") %></:col>
-          <:col :let={split} label="Percent"><%= Map.get(split, "percent", 0) %></:col>
+          <:col :let={split} label="Revision">{Map.get(split, "revisionName", "")}</:col>
+          <:col :let={split} label="Percent">{Map.get(split, "percent", 0)}</:col>
         </.table>
         <.chart class="max-h-[32rem] mx-auto" id="traffic-chart" data={traffic_chart_data(@traffic)} />
       </.grid>
@@ -195,9 +195,9 @@ defmodule ControlServerWeb.Live.KnativeShow do
     ~H"""
     <.panel title="Revisions">
       <.table rows={@revisions} id="revisions-table">
-        <:col :let={rev} label="Name"><%= name(rev) %></:col>
-        <:col :let={rev} label="Replicas"><%= actual_replicas(rev) %></:col>
-        <:col :let={rev} label="Created"><%= creation_timestamp(rev) %></:col>
+        <:col :let={rev} label="Name">{name(rev)}</:col>
+        <:col :let={rev} label="Replicas">{actual_replicas(rev)}</:col>
+        <:col :let={rev} label="Created">{creation_timestamp(rev)}</:col>
       </.table>
     </.panel>
     """
@@ -211,10 +211,10 @@ defmodule ControlServerWeb.Live.KnativeShow do
       <.panel title="Details" variant="gray">
         <.data_list>
           <:item title="Rollout Duration">
-            <%= @service.rollout_duration %>
+            {@service.rollout_duration}
           </:item>
           <:item title="Namespace">
-            <%= namespace(@k8_service) %>
+            {namespace(@k8_service)}
           </:item>
           <:item title="Started">
             <.relative_display time={creation_timestamp(@k8_service)} />

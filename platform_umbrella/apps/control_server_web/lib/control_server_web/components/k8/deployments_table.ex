@@ -12,10 +12,10 @@ defmodule ControlServerWeb.DeploymentsTable do
       row_click={&JS.navigate(resource_path(&1))}
       id="deployments_table"
     >
-      <:col :let={deployment} label="Name"><%= name(deployment) %></:col>
-      <:col :let={deployment} label="Namespace"><%= namespace(deployment) %></:col>
-      <:col :let={deployment} label="Replicas"><%= replicas(deployment) %></:col>
-      <:col :let={deployment} label="Available"><%= available_replicas(deployment) %></:col>
+      <:col :let={deployment} label="Name">{name(deployment)}</:col>
+      <:col :let={deployment} label="Namespace">{namespace(deployment)}</:col>
+      <:col :let={deployment} label="Replicas">{replicas(deployment)}</:col>
+      <:col :let={deployment} label="Available">{available_replicas(deployment)}</:col>
 
       <:action :let={deployment}>
         <.flex>

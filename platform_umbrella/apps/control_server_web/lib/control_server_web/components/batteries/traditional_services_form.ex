@@ -7,7 +7,7 @@ defmodule ControlServerWeb.Batteries.TraditionalServicesForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">

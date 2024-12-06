@@ -9,16 +9,16 @@ defmodule ControlServerWeb.Batteries.KubeMonitoringForm do
     ~H"""
     <div class="contents">
       <.panel title="Description" class="lg:col-span-2">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Images">
         <.fieldset>
           <.image>
-            <%= @form[:kube_state_metrics_image].value %><br />
-            <%= @form[:node_exporter_image].value %><br />
-            <%= @form[:metrics_server_image].value %><br />
-            <%= @form[:addon_resizer_image].value %>
+            {@form[:kube_state_metrics_image].value}<br />
+            {@form[:node_exporter_image].value}<br />
+            {@form[:metrics_server_image].value}<br />
+            {@form[:addon_resizer_image].value}
           </.image>
 
           <.image_version

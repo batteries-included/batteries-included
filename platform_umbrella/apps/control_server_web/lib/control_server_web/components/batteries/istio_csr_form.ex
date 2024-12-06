@@ -7,7 +7,7 @@ defmodule ControlServerWeb.Batteries.IstioCSRForm do
     ~H"""
     <div class="contents">
       <.panel title="Description" class="lg:col-span-2">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
     </div>
     """

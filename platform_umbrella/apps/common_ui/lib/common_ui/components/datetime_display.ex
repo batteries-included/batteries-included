@@ -10,9 +10,9 @@ defmodule CommonUI.Components.DatetimeDisplay do
     ~H"""
     <.hover_tooltip>
       <:tooltip>
-        <%= full(@time) %>
+        {full(@time)}
       </:tooltip>
-      <%= relative(@time) %>
+      {relative(@time)}
     </.hover_tooltip>
     """
   end

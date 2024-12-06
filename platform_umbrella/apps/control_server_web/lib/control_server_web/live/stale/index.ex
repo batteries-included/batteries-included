@@ -54,13 +54,13 @@ defmodule ControlServerWeb.Live.StaleIndex do
     <.panel title="Stale Queue">
       <.table id="stale-table" rows={@rows}>
         <:col :let={resource} label="Kind">
-          <%= Naming.humanize(ApiVersionKind.resource_type!(resource)) %>
+          {Naming.humanize(ApiVersionKind.resource_type!(resource))}
         </:col>
         <:col :let={resource} label="Name">
-          <%= name(resource) %>
+          {name(resource)}
         </:col>
         <:col :let={resource} label="Namespace">
-          <%= namespace(resource) %>
+          {namespace(resource)}
         </:col>
 
         <:col :let={resource} label="Delete Now">

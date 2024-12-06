@@ -38,7 +38,7 @@ defmodule CommonUI.Components.List do
             <.icon :if={item[:completed]} name={:check} class="size-4" solid />
           </div>
 
-          <%= render_slot(item) %>
+          {render_slot(item)}
         </.link>
       </li>
     </ul>
@@ -53,7 +53,7 @@ defmodule CommonUI.Components.List do
     >
       <li :for={item <- @item} class="flex items-center gap-3 mb-8 last:mb-0">
         <.icon name={:check_circle} class="size-7 text-green-500" />
-        <%= render_slot(item) %>
+        {render_slot(item)}
       </li>
     </ul>
     """

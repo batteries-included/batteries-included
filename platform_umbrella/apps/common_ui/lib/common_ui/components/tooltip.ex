@@ -29,7 +29,7 @@ defmodule CommonUI.Components.Tooltip do
       data-tippy-options={Jason.encode!(@tippy_options)}
     >
       <div {@rest}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </div>
     """
@@ -46,7 +46,7 @@ defmodule CommonUI.Components.Tooltip do
     <div :if={@inner_block != nil && @inner_block != []} class={@class}>
       <.icon name={:question_mark_circle} id={@id} class="w-6 h-auto" />
       <.tooltip target_id={@id}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.tooltip>
     </div>
     """
@@ -59,7 +59,7 @@ defmodule CommonUI.Components.Tooltip do
 
   def hover_tooltip(%{tooltip: tooltip} = assigns) when tooltip == nil or tooltip == [] do
     ~H"""
-    <%= render_slot(@inner_block) %>
+    {render_slot(@inner_block)}
     """
   end
 
@@ -82,9 +82,9 @@ defmodule CommonUI.Components.Tooltip do
         role="tooltip"
         aria-hidden="true"
       >
-        <%= render_slot(@tooltip) %>
+        {render_slot(@tooltip)}
       </div>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -96,7 +96,7 @@ defmodule CommonUI.Components.Tooltip do
   def truncate_tooltip(%{value: v, length: l} = assigns) when byte_size(v) <= l do
     ~H"""
     <div class={@class}>
-      <%= @value %>
+      {@value}
     </div>
     """
   end
@@ -106,10 +106,10 @@ defmodule CommonUI.Components.Tooltip do
     <.hover_tooltip class={@class}>
       <:tooltip>
         <div class="max-w-md">
-          <p class="break-words"><%= @value %></p>
+          <p class="break-words">{@value}</p>
         </div>
       </:tooltip>
-      <%= truncate(@value, length: @length) %>
+      {truncate(@value, length: @length)}
     </.hover_tooltip>
     """
   end

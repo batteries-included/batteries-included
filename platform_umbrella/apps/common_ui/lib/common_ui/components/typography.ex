@@ -13,7 +13,7 @@ defmodule CommonUI.Components.Typography do
   def h1(%{sub_header: []} = assigns) do
     ~H"""
     <h1 class={[@base_class, @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h1>
     """
   end
@@ -21,7 +21,10 @@ defmodule CommonUI.Components.Typography do
   def h1(%{} = assigns) do
     ~H"""
     <h1 class={[@base_class, @class]} {@rest}>
-      <%= render_slot(@inner_block) %><span class={@sep_class}>::<span class={@sub_header_class}><%= render_slot(@sub_header) %></span></span>
+      {render_slot(@inner_block)}
+      <span class={@sep_class}>
+        ::<span class={@sub_header_class}>{render_slot(@sub_header)}</span>
+      </span>
     </h1>
     """
   end
@@ -40,7 +43,7 @@ defmodule CommonUI.Components.Typography do
     ~H"""
     <h2 class={[@base_class, @class]} {@rest}>
       <span class={[@fancy_class]}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </span>
     </h2>
     """
@@ -49,7 +52,7 @@ defmodule CommonUI.Components.Typography do
   def h2(%{variant: _} = assigns) do
     ~H"""
     <h2 class={[@base_class, @color_class, @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h2>
     """
   end
@@ -62,7 +65,7 @@ defmodule CommonUI.Components.Typography do
   def h3(assigns) do
     ~H"""
     <h3 class={[@base_class, @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h3>
     """
   end
@@ -77,7 +80,7 @@ defmodule CommonUI.Components.Typography do
   def h4(assigns) do
     ~H"""
     <h4 class={[@base_class, @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h4>
     """
   end
@@ -91,7 +94,7 @@ defmodule CommonUI.Components.Typography do
   def h5(assigns) do
     ~H"""
     <h5 class={[@base_class, @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h5>
     """
   end
@@ -103,7 +106,7 @@ defmodule CommonUI.Components.Typography do
   def light_text(assigns) do
     ~H"""
     <div class={["text-gray-dark text-sm dark:text-gray", @class]} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

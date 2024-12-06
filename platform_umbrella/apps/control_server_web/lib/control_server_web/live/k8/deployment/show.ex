@@ -61,7 +61,7 @@ defmodule ControlServerWeb.Live.DeploymentShow do
   defp deployment_facts_section(assigns) do
     ~H"""
     <.badge>
-      <:item label="Namespace"><%= @namespace %></:item>
+      <:item label="Namespace">{@namespace}</:item>
       <:item label="Started">
         <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
       </:item>
@@ -79,9 +79,9 @@ defmodule ControlServerWeb.Live.DeploymentShow do
     <div class="flex flex-col gap-8 mb-10">
       <div class="flex flex-wrap gap-4 mt-6">
         <.badge>
-          <:item label="Total Replicas"><%= Map.get(@status, "replicas", 0) %></:item>
-          <:item label="Available Replicas"><%= Map.get(@status, "availableReplicas", 0) %></:item>
-          <:item label="Generations"><%= Map.get(@status, "observedGeneration", 0) %></:item>
+          <:item label="Total Replicas">{Map.get(@status, "replicas", 0)}</:item>
+          <:item label="Available Replicas">{Map.get(@status, "availableReplicas", 0)}</:item>
+          <:item label="Generations">{Map.get(@status, "observedGeneration", 0)}</:item>
         </.badge>
       </div>
 

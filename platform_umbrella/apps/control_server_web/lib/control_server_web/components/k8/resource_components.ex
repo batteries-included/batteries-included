@@ -22,18 +22,18 @@ defmodule ControlServerWeb.ResourceComponents do
     ~H"""
     <.panel title="Events" class={@class}>
       <.table :if={@events && @events != []} id="resource-events-table" rows={@events}>
-        <:col :let={event} label="Reason"><%= get_in(event, ~w(reason)) %></:col>
+        <:col :let={event} label="Reason">{get_in(event, ~w(reason))}</:col>
         <:col :let={event} label="Message">
           <.truncate_tooltip value={event |> get_in(~w(message))} />
         </:col>
-        <:col :let={event} label="Type"><%= get_in(event, ~w(type)) %></:col>
+        <:col :let={event} label="Type">{get_in(event, ~w(type))}</:col>
         <:col :let={event} label="First Time">
           <.relative_display time={event["firstTimestamp"]} />
         </:col>
         <:col :let={event} label="Last Time">
           <.relative_display time={event["lastTimestamp"]} />
         </:col>
-        <:col :let={event} label="Count"><%= get_in(event, ~w(count)) %></:col>
+        <:col :let={event} label="Count">{get_in(event, ~w(count))}</:col>
       </.table>
 
       <.light_text :if={@events == []}>No events</.light_text>
@@ -81,7 +81,7 @@ defmodule ControlServerWeb.ResourceComponents do
         <code class="block p-3 overflow-x-scroll dark:text-white">
           <p :for={line <- @logs || []} class="mb-3 leading-none whitespace-normal">
             <span class="inline-block px-2 font-mono text-sm  bg-opacity-20">
-              <%= line %>
+              {line}
             </span>
           </p>
           <div id="anchor"></div>

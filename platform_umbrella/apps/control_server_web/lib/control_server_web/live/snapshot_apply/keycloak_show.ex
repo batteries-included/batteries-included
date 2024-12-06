@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.KeycloakSnapshotShow do
     <.page_header title="Keycloak Deploy" back_link={~p"/deploy/#{@umbrella_id}/show"}>
       <.flex>
         <.badge>
-          <:item label="Status"><%= @snapshot.status %></:item>
+          <:item label="Status">{@snapshot.status}</:item>
           <:item label="Started">
             <.relative_display time={@snapshot.inserted_at} />
           </:item>

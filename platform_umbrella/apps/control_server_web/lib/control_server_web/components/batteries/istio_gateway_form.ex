@@ -9,12 +9,12 @@ defmodule ControlServerWeb.Batteries.IstioGatewayForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Image">
         <.fieldset>
-          <.image><%= @form[:proxy_image].value %></.image>
+          <.image>{@form[:proxy_image].value}</.image>
 
           <.image_version
             field={@form[:proxy_image_tag_override]}

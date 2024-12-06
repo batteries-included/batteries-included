@@ -20,10 +20,10 @@ defmodule ControlServerWeb.KnativeServicesTable do
       path={~p"/knative/services"}
       row_click={&JS.navigate(show_url(&1))}
     >
-      <:col :let={service} :if={!@abridged} field={:id} label="ID"><%= service.id %></:col>
-      <:col :let={service} field={:name} label="Name"><%= service.name %></:col>
+      <:col :let={service} :if={!@abridged} field={:id} label="ID">{service.id}</:col>
+      <:col :let={service} field={:name} label="Name">{service.name}</:col>
       <:col :let={service} :if={!@abridged} field={:rollout_duration} label="Rollout Duration">
-        <%= service.rollout_duration %>
+        {service.rollout_duration}
       </:col>
       <:action :let={service}>
         <.flex class="justify-items-center">

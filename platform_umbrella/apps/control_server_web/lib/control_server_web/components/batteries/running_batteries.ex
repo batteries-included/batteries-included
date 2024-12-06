@@ -97,10 +97,10 @@ defmodule ControlServerWeb.RunningBatteriesPanel do
           path={~p"/"}
         >
           <:col :let={battery} field={:type} label="Battery name">
-            <%= Naming.humanize(battery.type) %>
+            {Naming.humanize(battery.type)}
           </:col>
           <:col :let={battery} field={:group} label="Type">
-            <%= battery.group %>
+            {battery.group}
           </:col>
           <:col :let={battery} field={:inserted_at} label="Installed">
             <.relative_display time={battery.inserted_at} />

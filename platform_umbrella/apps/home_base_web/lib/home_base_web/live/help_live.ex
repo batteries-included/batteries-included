@@ -37,8 +37,8 @@ defmodule HomeBaseWeb.HelpLive do
         </.flex>
       </div>
       <.flex class="mt-auto items-center justify-around text-gray">
-        <span><%= CommonCore.Version.version() %></span>
-        <span><%= CommonCore.Version.hash() %></span>
+        <span>{CommonCore.Version.version()}</span>
+        <span>{CommonCore.Version.hash()}</span>
       </.flex>
     </.flex>
     """

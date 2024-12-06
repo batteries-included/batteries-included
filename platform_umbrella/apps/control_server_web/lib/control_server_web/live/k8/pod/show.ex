@@ -183,8 +183,8 @@ defmodule ControlServerWeb.Live.PodShow do
   def pod_facts_section(%{} = assigns) do
     ~H"""
     <.badge>
-      <:item label="Namespace"><%= @namespace %></:item>
-      <:item label="Phase"><%= phase(@resource) %></:item>
+      <:item label="Namespace">{@namespace}</:item>
+      <:item label="Phase">{phase(@resource)}</:item>
       <:item label="Started">
         <.relative_display time={creation_timestamp(@resource)} />
       </:item>
@@ -198,12 +198,12 @@ defmodule ControlServerWeb.Live.PodShow do
     ~H"""
     <.panel title="Containers" class="col-span-2">
       <.table id="container-status-table" rows={@container_statuses}>
-        <:col :let={cs} label="Name"><%= Map.get(cs, "name", "") %></:col>
-        <:col :let={cs} label="Image"><%= Map.get(cs, "image", "") %></:col>
+        <:col :let={cs} label="Name">{Map.get(cs, "name", "")}</:col>
+        <:col :let={cs} label="Image">{Map.get(cs, "image", "")}</:col>
         <:col :let={cs} label="Started"><.status_icon status={Map.get(cs, "started", false)} /></:col>
         <:col :let={cs} label="Ready"><.status_icon status={Map.get(cs, "ready", false)} /></:col>
         <:col :let={cs} label="Restart Count">
-          <%= Map.get(cs, "restartCount", 0) %>
+          {Map.get(cs, "restartCount", 0)}
         </:col>
         <:action :let={cs}>
           <.button
@@ -227,19 +227,19 @@ defmodule ControlServerWeb.Live.PodShow do
     <.panel title="Details" variant="gray">
       <.data_list>
         <:item title="Running Status">
-          <%= phase(@resource) %>
+          {phase(@resource)}
         </:item>
         <:item :if={service_account(@resource)} title="Account">
-          <%= service_account(@resource) %>
+          {service_account(@resource)}
         </:item>
         <:item :if={node_name(@resource)} title="Node">
-          <%= node_name(@resource) %>
+          {node_name(@resource)}
         </:item>
         <:item :if={pod_ip(@resource)} title="Pod IP">
-          <%= pod_ip(@resource) %>
+          {pod_ip(@resource)}
         </:item>
         <:item :if={qos_class(@resource)} title="Quality Of Service">
-          <%= qos_class(@resource) %>
+          {qos_class(@resource)}
         </:item>
       </.data_list>
     </.panel>
@@ -332,34 +332,34 @@ defmodule ControlServerWeb.Live.PodShow do
           <.grid columns={%{sm: 1, lg: 3}}>
             <.data_list>
               <:item title="Container">
-                <%= report |> labels() |> Map.get("trivy-operator.container.name", "") %>
+                {report |> labels() |> Map.get("trivy-operator.container.name", "")}
               </:item>
               <:item title="Artifact">
-                <%= report |> get_in(~w(report artifact repository)) %> (<%= report
-                |> get_in(~w(report artifact tag)) %>)
+                {report |> get_in(~w(report artifact repository))} ({report
+                |> get_in(~w(report artifact tag))})
               </:item>
               <:item title="Registry">
-                <%= report |> get_in(~w(report registry server)) %>
+                {report |> get_in(~w(report registry server))}
               </:item>
             </.data_list>
             <.data_list>
               <:item title="Critical">
-                <%= report |> get_in(~w(report summary criticalCount)) %>
+                {report |> get_in(~w(report summary criticalCount))}
               </:item>
               <:item title="High">
-                <%= report |> get_in(~w(report summary highCount)) %>
+                {report |> get_in(~w(report summary highCount))}
               </:item>
               <:item title="Medium">
-                <%= report |> get_in(~w(report summary mediumCount)) %>
+                {report |> get_in(~w(report summary mediumCount))}
               </:item>
             </.data_list>
 
             <.data_list>
               <:item title="Scanner">
-                <%= report |> get_in(~w(report scanner name)) %>
+                {report |> get_in(~w(report scanner name))}
               </:item>
               <:item title="Version">
-                <%= report |> get_in(~w(report scanner version)) %>
+                {report |> get_in(~w(report scanner version))}
               </:item>
               <:item title="Last Updated">
                 <.relative_display time={report |> get_in(~w(report scanner updateTime))} />
@@ -410,7 +410,7 @@ defmodule ControlServerWeb.Live.PodShow do
       <% :security -> %>
         <.security_page resource={@resource} namespace={@namespace} name={@name} reports={@reports} />
       <% _ -> %>
-        <%= @live_action %>
+        {@live_action}
     <% end %>
     """
   end

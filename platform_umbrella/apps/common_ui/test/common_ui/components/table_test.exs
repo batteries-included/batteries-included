@@ -14,8 +14,8 @@ defmodule CommonUI.Components.TableTest do
 
     ~H"""
     <.table id="foobar" rows={@rows}>
-      <:col :let={row} label="A"><%= row.a %></:col>
-      <:col :let={row} label="B"><%= row.b %></:col>
+      <:col :let={row} label="A">{row.a}</:col>
+      <:col :let={row} label="B">{row.b}</:col>
     </.table>
     """
   end
@@ -31,8 +31,8 @@ defmodule CommonUI.Components.TableTest do
 
     ~H"""
     <.table id="foobar" rows={@rows} row_click={fn _ -> nil end}>
-      <:col :let={row} label="A"><%= row.a %></:col>
-      <:col :let={row} label="B"><%= row.b %></:col>
+      <:col :let={row} label="A">{row.a}</:col>
+      <:col :let={row} label="B">{row.b}</:col>
     </.table>
     """
   end

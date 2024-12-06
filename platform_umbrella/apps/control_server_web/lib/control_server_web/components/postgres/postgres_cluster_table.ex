@@ -20,17 +20,17 @@ defmodule ControlServerWeb.PostgresClusterTable do
       path={~p"/postgres"}
       row_click={&JS.navigate(show_url(&1))}
     >
-      <:col :let={pg} :if={!@abridged} field={:id} label="ID"><%= pg.id %></:col>
-      <:col :let={pg} field={:name} label="Name"><%= pg.name %></:col>
-      <:col :let={pg} field={:type} label="Type"><%= pg.type %></:col>
+      <:col :let={pg} :if={!@abridged} field={:id} label="ID">{pg.id}</:col>
+      <:col :let={pg} field={:name} label="Name">{pg.name}</:col>
+      <:col :let={pg} field={:type} label="Type">{pg.type}</:col>
       <:col :let={pg} :if={!@abridged} field={:num_instances} label="Instances">
-        <%= pg.num_instances %>
+        {pg.num_instances}
       </:col>
       <:col :let={pg} :if={!@abridged} field={:users} label="User Count">
-        <%= length(pg.users) %>
+        {length(pg.users)}
       </:col>
       <:col :let={pg} :if={!@abridged} field={:storage_size} label="Storage Size">
-        <%= Memory.humanize(pg.storage_size) %>
+        {Memory.humanize(pg.storage_size)}
       </:col>
       <:action :let={pg}>
         <.flex class="justify-items-center">

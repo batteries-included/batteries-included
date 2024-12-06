@@ -9,7 +9,7 @@ defmodule ControlServerWeb.Batteries.KnativeForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Configuration">
@@ -24,13 +24,13 @@ defmodule ControlServerWeb.Batteries.KnativeForm do
       <.panel title="Images">
         <.fieldset>
           <.image>
-            <%= @form[:queue_image].value %><br />
-            <%= @form[:activator_image].value %><br />
-            <%= @form[:autoscaler_image].value %><br />
-            <%= @form[:controller_image].value %><br />
-            <%= @form[:webhook_image].value %><br />
-            <%= @form[:istio_controller_image].value %><br />
-            <%= @form[:istio_webhook_image].value %>
+            {@form[:queue_image].value}<br />
+            {@form[:activator_image].value}<br />
+            {@form[:autoscaler_image].value}<br />
+            {@form[:controller_image].value}<br />
+            {@form[:webhook_image].value}<br />
+            {@form[:istio_controller_image].value}<br />
+            {@form[:istio_webhook_image].value}
           </.image>
 
           <.image_version

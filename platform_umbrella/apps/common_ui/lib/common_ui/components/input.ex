@@ -92,7 +92,7 @@ defmodule CommonUI.Components.Input do
                 "bg-gray-lighter dark:bg-gray-darker-tint text-gray-dark dark:text-gray-light"
               ]}
             >
-              <%= value %>
+              {value}
             </div>
           </div>
         </:trigger>
@@ -115,11 +115,11 @@ defmodule CommonUI.Components.Input do
             class={checkbox_class()}
           />
 
-          <%= option.name %>
+          {option.name}
         </label>
       </.dropdown>
 
-      <div :if={@note} class={note_class()}><%= @note %></div>
+      <div :if={@note} class={note_class()}>{@note}</div>
       <.error id={@id} errors={@errors} />
     </div>
     """
@@ -144,7 +144,7 @@ defmodule CommonUI.Components.Input do
                 "bg-gray-lighter dark:bg-gray-darker-tint text-gray-dark dark:text-gray-light"
               ]}
             >
-              <%= value %>
+              {value}
             </div>
           </div>
         </:trigger>
@@ -167,7 +167,7 @@ defmodule CommonUI.Components.Input do
             class={checkbox_class()}
           />
 
-          <%= option.name %>
+          {option.name}
         </label>
       </.dropdown>
 
@@ -200,13 +200,13 @@ defmodule CommonUI.Components.Input do
           disabled={!@placeholder_selectable}
           selected={!@value || @value == ""}
         >
-          <%= assigns[:placeholder] %>
+          {assigns[:placeholder]}
         </option>
 
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
 
-      <div :if={@note} class={note_class()}><%= @note %></div>
+      <div :if={@note} class={note_class()}>{@note}</div>
       <.error id={@id} errors={@errors} />
     </label>
     """
@@ -233,10 +233,10 @@ defmodule CommonUI.Components.Input do
           disabled={!@placeholder_selectable}
           selected={!@value || @value == ""}
         >
-          <%= assigns[:placeholder] %>
+          {assigns[:placeholder]}
         </option>
 
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
 
       <.error id={@id} errors={@errors} />
@@ -262,11 +262,11 @@ defmodule CommonUI.Components.Input do
       />
 
       <span class={[label_class(), "peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"]}>
-        <%= @label %>
-        <%= render_slot(@inner_block) %>
+        {@label}
+        {render_slot(@inner_block)}
       </span>
 
-      <div :if={@note} class={note_class()}><%= @note %></div>
+      <div :if={@note} class={note_class()}>{@note}</div>
       <.error id={@id} errors={@errors} class="w-full mt-2" />
     </label>
     """
@@ -293,7 +293,7 @@ defmodule CommonUI.Components.Input do
           :if={@inner_block != []}
           class={["peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"]}
         >
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </span>
       </label>
 
@@ -337,11 +337,11 @@ defmodule CommonUI.Components.Input do
         />
 
         <span class={[label_class(), "peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"]}>
-          <%= render_slot(option) %>
+          {render_slot(option)}
         </span>
       </label>
 
-      <div :if={@note} class={note_class()}><%= @note %></div>
+      <div :if={@note} class={note_class()}>{@note}</div>
       <.error id={@id} errors={@errors} class="w-full mt-2" />
     </div>
     """
@@ -368,7 +368,7 @@ defmodule CommonUI.Components.Input do
           />
 
           <span class="peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
-            <%= render_slot(option) %>
+            {render_slot(option)}
           </span>
         </label>
       </div>
@@ -400,7 +400,7 @@ defmodule CommonUI.Components.Input do
                 "text-gray-lighter dark:text-gray-darker cursor-default hover:no-underline"
             ]}
           >
-            <%= label %>
+            {label}
           </span>
 
           <span class="w-0.5 bg-gray-lighter dark:bg-gray-darkest-tint h-3 mt-1 rounded-lg" />
@@ -463,7 +463,7 @@ defmodule CommonUI.Components.Input do
             "text-primary peer-disabled:text-primary-light"
           ]}
         >
-          <%= @value %>
+          {@value}
         </div>
       </div>
 
@@ -515,7 +515,7 @@ defmodule CommonUI.Components.Input do
         ]} />
       </div>
 
-      <div :if={@note} class={note_class()}><%= @note %></div>
+      <div :if={@note} class={note_class()}>{@note}</div>
       <.error id={@id} errors={@errors} class="w-full mt-0" />
     </label>
     """
@@ -579,7 +579,7 @@ defmodule CommonUI.Components.Input do
         {@rest}
       ><%= normalize_value("textarea", @value) %></textarea>
 
-      <div :if={@note} class={note_class()}><%= @note %></div>
+      <div :if={@note} class={note_class()}>{@note}</div>
       <.error id={@id} errors={@errors} />
     </label>
     """
@@ -624,7 +624,7 @@ defmodule CommonUI.Components.Input do
       </div>
 
       <div class="font-mono font-bold text-sm">
-        <%= TextHelpers.obfuscate(@value, keep: 1, char_limit: 12) %>
+        {TextHelpers.obfuscate(@value, keep: 1, char_limit: 12)}
       </div>
     </label>
     """
@@ -633,7 +633,7 @@ defmodule CommonUI.Components.Input do
   def input(%{type: "password", rest: %{disabled: true}} = assigns) do
     ~H"""
     <div class={["font-mono font-bold text-sm", @class]}>
-      <%= TextHelpers.obfuscate(@value, keep: 1, char_limit: 12) %>
+      {TextHelpers.obfuscate(@value, keep: 1, char_limit: 12)}
     </div>
     """
   end
@@ -664,7 +664,7 @@ defmodule CommonUI.Components.Input do
         />
       </div>
 
-      <div :if={@note} class={note_class()}><%= @note %></div>
+      <div :if={@note} class={note_class()}>{@note}</div>
       <.error id={@id} errors={@errors} />
     </label>
     """
@@ -762,7 +762,7 @@ defmodule CommonUI.Components.Input do
   defp label(assigns) do
     ~H"""
     <div :if={@label} class={[label_class(), @class]} {@rest}>
-      <span><%= @label %></span>
+      <span>{@label}</span>
 
       <div :if={@help}>
         <.icon
@@ -773,7 +773,7 @@ defmodule CommonUI.Components.Input do
         />
 
         <.tooltip target_id={"#{@id}-help"}>
-          <%= @help %>
+          {@help}
         </.tooltip>
       </div>
     </div>
@@ -796,7 +796,7 @@ defmodule CommonUI.Components.Input do
       type="minimal"
       class={["phx-no-feedback:hidden", @class]}
     >
-      <%= error %>
+      {error}
     </.alert>
     """
   end

@@ -140,11 +140,11 @@ defmodule HomeBaseWeb.InstallationNewLive do
         !@description && "items-center"
       ]}>
         <.flex column gaps={2}>
-          <p class="font-bold leading-tight"><%= @title %></p>
-          <.light_text :if={@description} class="max-w-md"><%= @description %></.light_text>
+          <p class="font-bold leading-tight">{@title}</p>
+          <.light_text :if={@description} class="max-w-md">{@description}</.light_text>
         </.flex>
 
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </.panel>
     """

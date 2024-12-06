@@ -11,25 +11,25 @@ defmodule HomeBaseWeb.Admin.UsageReportsTable do
     <.table id="stored_usage_reports-table" rows={@rows}>
       <:col :let={report} label="Inserted At"><.relative_display time={report.inserted_at} /></:col>
       <:col :let={report} label="Nodes">
-        <%= (report.report.node_report.pod_counts || %{}) |> map_size() %>
+        {(report.report.node_report.pod_counts || %{}) |> map_size()}
       </:col>
       <:col :let={report} label="Pods">
-        <%= NamespaceReport.pod_count(report.report.namespace_report) %>
+        {NamespaceReport.pod_count(report.report.namespace_report)}
       </:col>
       <:col :let={report} label="Postgres Clusters">
-        <%= map_size(report.report.postgres_report.instance_counts) %>
+        {map_size(report.report.postgres_report.instance_counts)}
       </:col>
       <:col :let={report} label="Redis Clusters">
-        <%= map_size(report.report.redis_report.instance_counts) %>
+        {map_size(report.report.redis_report.instance_counts)}
       </:col>
       <:col :let={report} label="Knative Services">
-        <%= map_size(report.report.knative_report.pod_counts) %>
+        {map_size(report.report.knative_report.pod_counts)}
       </:col>
       <:col :let={report} label="Batteries">
-        <%= (report.report.batteries || []) |> length() %>
+        {(report.report.batteries || []) |> length()}
       </:col>
       <:col :let={report} label="Projects">
-        <%= report.report.num_projects %>
+        {report.report.num_projects}
       </:col>
     </.table>
     """

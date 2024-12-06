@@ -51,7 +51,7 @@ defmodule HomeBaseWeb.MixProject do
       {:telemetry_poller, "~> 1.1"},
       {:heyya, "~> 1.0", only: [:dev, :test]},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
-      {:phoenix_live_view, "~> 0.20", override: true},
+      {:phoenix_live_view, "~> 1.0", override: true},
       {:flop_phoenix, "~> 0.23"},
 
       # Log to json

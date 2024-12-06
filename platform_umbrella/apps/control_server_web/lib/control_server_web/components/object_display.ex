@@ -29,7 +29,7 @@ defmodule ControlServerWeb.ObjectDisplay do
 
   defp column_title(assigns) do
     ~H"""
-    <.h3 class="my-4"><%= titleize(@selected) %></.h3>
+    <.h3 class="my-4">{titleize(@selected)}</.h3>
     """
   end
 
@@ -84,7 +84,7 @@ defmodule ControlServerWeb.ObjectDisplay do
       patch={object_path_url(@base_url, @path ++ [key])}
     >
       <.value_icon value_type={value_type(value)} class={@icon_class} />
-      <span class="grow"><%= key %></span>
+      <span class="grow">{key}</span>
       <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
     </.a>
     """
@@ -98,7 +98,7 @@ defmodule ControlServerWeb.ObjectDisplay do
       patch={object_path_url(@base_url, @path ++ [Integer.to_string(idx)])}
     >
       <.value_icon value_type={value_type(value)} class={@icon_class} />
-      <span class="grow">Index <%= idx %></span>
+      <span class="grow">Index {idx}</span>
       <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
     </.a>
     """

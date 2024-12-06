@@ -19,14 +19,14 @@ defmodule CommonUI.Components.Panel do
     ~H"""
     <div class={[panel_class(assigns[:variant]), @class]} {@rest}>
       <.flex :if={@title} class="items-center justify-between flex-wrap w-full px-6 pt-5">
-        <.h2 :if={@title_size == "lg"}><%= @title %></.h2>
-        <.h3 :if={@title_size == "md"} class="font-semibold"><%= @title %></.h3>
+        <.h2 :if={@title_size == "lg"}>{@title}</.h2>
+        <.h3 :if={@title_size == "md"} class="font-semibold">{@title}</.h3>
 
-        <%= if @menu, do: render_slot(@menu) %>
+        {if @menu, do: render_slot(@menu)}
       </.flex>
 
       <div class={["relative flex-1 px-6 py-5", @inner_class]}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </div>
     """

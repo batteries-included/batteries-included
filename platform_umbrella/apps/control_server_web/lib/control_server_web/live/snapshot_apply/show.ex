@@ -46,7 +46,7 @@ defmodule ControlServerWeb.Live.UmbrellaSnapshotShow do
     <.page_header title="Show Deploy" back_link={~p"/deploy"}>
       <.flex>
         <.badge>
-          <:item label="Status"><%= total_status(@snapshot) %></:item>
+          <:item label="Status">{total_status(@snapshot)}</:item>
           <:item label="Started">
             <.relative_display time={@snapshot.inserted_at} />
           </:item>

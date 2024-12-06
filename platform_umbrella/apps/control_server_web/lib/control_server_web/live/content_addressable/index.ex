@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.ContentAddressableIndex do
     <.page_header title="Content Addressable Storage" back_link={~p"/magic"}>
       <.flex>
         <.badge>
-          <:item label="Resource Count"><%= @count %></:item>
+          <:item label="Resource Count">{@count}</:item>
           <:item label="Oldest">
             <.relative_display time={@oldest} />
           </:item>

@@ -9,14 +9,14 @@ defmodule ControlServerWeb.Batteries.TrustManagerForm do
     ~H"""
     <div class="contents">
       <.panel title="Description" class="lg:col-span-2">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Image">
         <.fieldset>
           <.image>
-            <%= @form[:image].value %><br />
-            <%= @form[:init_image].value %>
+            {@form[:image].value}<br />
+            {@form[:init_image].value}
           </.image>
 
           <.image_version

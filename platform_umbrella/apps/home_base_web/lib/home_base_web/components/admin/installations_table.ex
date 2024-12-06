@@ -12,11 +12,11 @@ defmodule HomeBaseWeb.Admin.InstallationsTable do
       rows={@rows}
       row_click={&JS.navigate("/admin/installations/#{&1.id}")}
     >
-      <:col :let={installation} label="ID"><%= installation.id %></:col>
-      <:col :let={installation} label="Slug"><%= installation.slug %></:col>
-      <:col :let={installation} label="Usage"><%= installation.usage %></:col>
-      <:col :let={installation} label="Provider"><%= installation.kube_provider %></:col>
-      <:col :let={installation} label="Default Size"><%= installation.default_size %></:col>
+      <:col :let={installation} label="ID">{installation.id}</:col>
+      <:col :let={installation} label="Slug">{installation.slug}</:col>
+      <:col :let={installation} label="Usage">{installation.usage}</:col>
+      <:col :let={installation} label="Provider">{installation.kube_provider}</:col>
+      <:col :let={installation} label="Default Size">{installation.default_size}</:col>
 
       <:action :let={installation}>
         <.button

@@ -28,7 +28,7 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_container(assigns) do
     ~H"""
     <.flex column class="rounded-sm bg-gray-light/15 px-6 py-4">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.flex>
     """
   end
@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_event(assigns) do
     ~H"""
     <div class="font-bold text-black dark:text-white">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Live.Timeline do
   defp payload_event_description(assigns) do
     ~H"""
     <div class="text-sm text-gray-darker dark:text-gray-light">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Live.Timeline do
         Keycloak User Password Reset
       </.payload_event>
       <.payload_event_description>
-        The user in realm <%= @payload.realm %> with ID <%= @payload.entity_id %> was created/updated.
+        The user in realm {@payload.realm} with ID {@payload.entity_id} was created/updated.
       </.payload_event_description>
     </.payload_container>
     """
@@ -72,7 +72,7 @@ defmodule ControlServerWeb.Live.Timeline do
         Removed Kubernetes Resource
       </.payload_event>
       <.payload_event_description>
-        The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was removed from <%= @payload.namespace %>.
+        The {Naming.humanize(@payload.resource_type)} resource {@payload.name} was removed from {@payload.namespace}.
       </.payload_event_description>
     </.payload_container>
     """
@@ -85,8 +85,8 @@ defmodule ControlServerWeb.Live.Timeline do
         Added Kubernetes Resource
       </.payload_event>
       <.payload_event_description>
-        The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was
-        added to <%= @payload.namespace %>.
+        The {Naming.humanize(@payload.resource_type)} resource {@payload.name} was
+        added to {@payload.namespace}.
       </.payload_event_description>
     </.payload_container>
     """
@@ -99,9 +99,9 @@ defmodule ControlServerWeb.Live.Timeline do
         Updated Kubernetes Resource
       </.payload_event>
       <.payload_event_description>
-        The <%= Naming.humanize(@payload.resource_type) %> resource <%= @payload.name %> was
-        updated in <%= @payload.namespace %>. The new status
-        is <%= Naming.humanize(@payload.computed_status) %>.
+        The {Naming.humanize(@payload.resource_type)} resource {@payload.name} was
+        updated in {@payload.namespace}. The new status
+        is {Naming.humanize(@payload.computed_status)}.
       </.payload_event_description>
     </.payload_container>
     """
@@ -111,12 +111,12 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <.payload_event>
-        Ollama Model <%= Naming.humanize(@payload.action) %>
+        Ollama Model {Naming.humanize(@payload.action)}
       </.payload_event>
 
       <.data_list>
         <:item title="Show Model">
-          <.link navigate={~p(/model_instances)}><%= @payload.name %></.link>
+          <.link navigate={~p(/model_instances)}>{@payload.name}</.link>
         </:item>
       </.data_list>
     </.payload_container>
@@ -127,12 +127,12 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <.payload_event>
-        Traditional Service <%= Naming.humanize(@payload.action) %>
+        Traditional Service {Naming.humanize(@payload.action)}
       </.payload_event>
 
       <.data_list>
         <:item title="Show Traditional Service">
-          <.link navigate={~p(/traditional_services)}><%= @payload.name %></.link>
+          <.link navigate={~p(/traditional_services)}>{@payload.name}</.link>
         </:item>
       </.data_list>
     </.payload_container>
@@ -143,12 +143,12 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <.payload_event>
-        Postgres Cluster <%= Naming.humanize(@payload.action) %>
+        Postgres Cluster {Naming.humanize(@payload.action)}
       </.payload_event>
 
       <.data_list>
         <:item title="Show Cluster">
-          <.link navigate={~p(/postgres/#{@payload.entity_id}/show)}><%= @payload.name %></.link>
+          <.link navigate={~p(/postgres/#{@payload.entity_id}/show)}>{@payload.name}</.link>
         </:item>
         <:item title="Edit History">
           <.link navigate={~p(/postgres/#{@payload.entity_id}/edit_versions)}>Edit History</.link>
@@ -162,13 +162,13 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <.payload_event>
-        KNative Serverless <%= Naming.humanize(@payload.action) %>
+        KNative Serverless {Naming.humanize(@payload.action)}
       </.payload_event>
 
       <.data_list>
         <:item title="Show Service">
           <.link navigate={~p(/knative/services/#{@payload.entity_id}/show)}>
-            <%= @payload.name %>
+            {@payload.name}
           </.link>
         </:item>
         <:item title="Edit History">
@@ -185,12 +185,12 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <.payload_event>
-        FerretDB/MongoDB <%= Naming.humanize(@payload.action) %>
+        FerretDB/MongoDB {Naming.humanize(@payload.action)}
       </.payload_event>
 
       <.data_list>
         <:item title="Show Service">
-          <.link navigate={~p(/ferretdb/#{@payload.entity_id}/show)}><%= @payload.name %></.link>
+          <.link navigate={~p(/ferretdb/#{@payload.entity_id}/show)}>{@payload.name}</.link>
         </:item>
         <:item title="Edit History">
           <.link navigate={~p(/ferretdb/#{@payload.entity_id}/edit_versions)}>Edit History</.link>
@@ -204,7 +204,7 @@ defmodule ControlServerWeb.Live.Timeline do
     ~H"""
     <.payload_container>
       <.payload_event>
-        New Battery Installed <%= Naming.humanize(@payload.battery_type) %>
+        New Battery Installed {Naming.humanize(@payload.battery_type)}
       </.payload_event>
     </.payload_container>
     """

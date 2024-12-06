@@ -71,7 +71,7 @@ defmodule HomeBaseWeb.DashboardLive do
         </p>
 
         <.button disabled={@confirmation_resent} variant="secondary" phx-click="resend_confirm">
-          <%= if @confirmation_resent, do: "Sent!", else: "Resend Confirmation Link" %>
+          {if @confirmation_resent, do: "Sent!", else: "Resend Confirmation Link"}
         </.button>
       </.panel>
 
@@ -81,9 +81,9 @@ defmodule HomeBaseWeb.DashboardLive do
           rows={@recent_installations}
           row_click={&JS.navigate(show_installation_url(&1))}
         >
-          <:col :let={installation} label="Slug"><%= installation.slug %></:col>
+          <:col :let={installation} label="Slug">{installation.slug}</:col>
           <:col :let={installation} label="Team">
-            <%= if installation.team, do: installation.team.name, else: "Personal" %>
+            {if installation.team, do: installation.team.name, else: "Personal"}
           </:col>
 
           <:action :let={installation}>

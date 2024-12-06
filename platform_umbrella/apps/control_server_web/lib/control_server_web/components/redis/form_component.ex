@@ -37,7 +37,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
             />
 
             <.grid :if={@instance_type != :standalone} columns={[sm: 1, lg: 2]} class="items-center">
-              <.h5>Number of instances <%= @instance_type %></.h5>
+              <.h5>Number of instances {@instance_type}</.h5>
               <.input
                 field={@form[:num_instances]}
                 type="range"

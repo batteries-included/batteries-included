@@ -9,8 +9,8 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
   def keycloak_realms_table(%{} = assigns) do
     ~H"""
     <.table id="keycloak-realms-table" rows={@rows} row_click={&JS.navigate(show_url(&1))}>
-      <:col :let={realm} :if={!@abridged} label="ID"><%= realm.id %></:col>
-      <:col :let={realm} label="Name"><%= realm.displayName %></:col>
+      <:col :let={realm} :if={!@abridged} label="ID">{realm.id}</:col>
+      <:col :let={realm} label="Name">{realm.displayName}</:col>
 
       <:col :let={realm} :if={!@abridged} label="Admin">
         <.a href={admin_url(@keycloak_url, realm)} variant="external">Keycloak Admin</.a>
@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Keycloak.RealmsTable do
         />
 
         <.tooltip target_id={"realm_show_link_" <> realm.id}>
-          Show realm <%= realm.displayName %>
+          Show realm {realm.displayName}
         </.tooltip>
       </:action>
     </.table>

@@ -19,8 +19,8 @@ defmodule HomeBaseWeb.Live.Admin.TeamsShow do
     <.grid columns={%{sm: 1, lg: 2}}>
       <.panel title="Team">
         <.data_list>
-          <:item title="ID"><%= @team.id %></:item>
-          <:item title="Name"><%= @team.name %></:item>
+          <:item title="ID">{@team.id}</:item>
+          <:item title="Name">{@team.name}</:item>
         </.data_list>
       </.panel>
       <.panel title="Users">

@@ -17,7 +17,7 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
       <div class="grid lg:grid-cols-[2fr,1fr] content-start flex-1 gap-4">
         <.panel title={@title}>
           <.fieldset flash={@flash}>
-            <%= render_slot(@inner_block) %>
+            {render_slot(@inner_block)}
           </.fieldset>
         </.panel>
 
@@ -63,8 +63,8 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
       path={~p"/projects"}
       row_click={&JS.navigate(show_url(&1))}
     >
-      <:col :let={project} :if={!@abridged} field={:id} label="ID"><%= project.id %></:col>
-      <:col :let={project} field={:name} label="Name"><%= project.name %></:col>
+      <:col :let={project} :if={!@abridged} field={:id} label="ID">{project.id}</:col>
+      <:col :let={project} field={:name} label="Name">{project.name}</:col>
 
       <:action :let={project}>
         <.button

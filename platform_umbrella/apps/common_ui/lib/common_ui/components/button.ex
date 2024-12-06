@@ -58,7 +58,7 @@ defmodule CommonUI.Components.Button do
         name={@icon}
       />
 
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
 
       <.icon
         :if={@icon && @icon_position == :right}
@@ -78,7 +78,7 @@ defmodule CommonUI.Components.Button do
         name={@icon}
       />
 
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
 
       <.icon
         :if={@icon && @icon_position == :right}

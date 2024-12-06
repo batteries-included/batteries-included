@@ -42,7 +42,7 @@ defmodule CommonUI.Components.Alert do
         Attempting to reconnect
       <% else %>
         <div class="flex-1">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </div>
 
         <.icon

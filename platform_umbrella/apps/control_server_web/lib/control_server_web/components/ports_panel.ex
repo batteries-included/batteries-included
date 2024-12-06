@@ -23,9 +23,9 @@ defmodule ControlServerWeb.PortPanel do
     ~H"""
     <.panel title="Ports" class={@class}>
       <.table id="ports-table" rows={@ports}>
-        <:col :let={p} label="Name"><%= p.name %></:col>
-        <:col :let={p} label="Port"><%= p.number %></:col>
-        <:col :let={p} label="Protocol"><%= p.protocol %></:col>
+        <:col :let={p} label="Name">{p.name}</:col>
+        <:col :let={p} label="Port">{p.number}</:col>
+        <:col :let={p} label="Protocol">{p.protocol}</:col>
       </.table>
     </.panel>
     """
@@ -41,9 +41,9 @@ defmodule ControlServerWeb.PortPanel do
       </:menu>
 
       <.table id="ports-table" rows={Enum.with_index(@ports)}>
-        <:col :let={{p, _idx}} label="Name"><%= p.name %></:col>
-        <:col :let={{p, _idx}} label="Port"><%= p.number %></:col>
-        <:col :let={{p, _idx}} label="Protocol"><%= p.protocol %></:col>
+        <:col :let={{p, _idx}} label="Name">{p.name}</:col>
+        <:col :let={{p, _idx}} label="Port">{p.number}</:col>
+        <:col :let={{p, _idx}} label="Protocol">{p.protocol}</:col>
         <:action :let={{p, idx}}>
           <.button
             variant="minimal"

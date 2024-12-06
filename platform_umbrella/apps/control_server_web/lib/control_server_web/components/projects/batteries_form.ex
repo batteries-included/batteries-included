@@ -141,7 +141,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
               phx-target={@myself}
               selected={@tab == group.type}
             >
-              <%= group.name %>
+              {group.name}
             </:tab>
 
             <:tab phx-click="tab" phx-target={@myself} phx-value-id={:all} selected={@tab == :all}>
@@ -201,14 +201,14 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
       <div>
         <div class="flex items-center gap-3 mb-2">
           <h3 class="text-xl font-semibold">
-            <%= @battery.name %>
+            {@battery.name}
           </h3>
 
           <.badge :if={@installed} label="ALREADY INSTALLED" minimal />
         </div>
 
         <p class="text-sm">
-          <%= @battery.description %>
+          {@battery.description}
         </p>
       </div>
 

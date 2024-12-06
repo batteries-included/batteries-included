@@ -29,7 +29,7 @@ defmodule CommonUI.Components.Script do
     >
       <div class="relative flex-1 h-full">
         <div class="flex items-center absolute inset-0 whitespace-nowrap overflow-auto px-5">
-          <span id={@id}><%= String.replace(@template, "@src", @src) %></span>
+          <span id={@id}>{String.replace(@template, "@src", @src)}</span>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ defmodule CommonUI.Components.Script do
         <.icon name={:arrow_top_right_on_square} class="size-6" solid />
       </.link>
 
-      <.tooltip target_id={"#{@id}-open"}><%= @link_url_text %></.tooltip>
+      <.tooltip target_id={"#{@id}-open"}>{@link_url_text}</.tooltip>
     </div>
     """
   end

@@ -8,8 +8,8 @@ defmodule HomeBaseWeb.Admin.TeamsTable do
   def teams_table(assigns) do
     ~H"""
     <.table id="teams-table" rows={@rows} row_click={&JS.navigate(~p"/admin/teams/#{&1}")}>
-      <:col :let={team} label="ID"><%= team.id %></:col>
-      <:col :let={team} label="name"><%= team.name %></:col>
+      <:col :let={team} label="ID">{team.id}</:col>
+      <:col :let={team} label="name">{team.name}</:col>
 
       <:action :let={team}>
         <.button

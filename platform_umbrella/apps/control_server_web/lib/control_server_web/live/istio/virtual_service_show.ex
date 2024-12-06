@@ -38,8 +38,8 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
     <.grid columns={%{sm: 1, xl: 2}}>
       <.panel title="Item Details" variant="gray">
         <.data_list>
-          <:item title="Name"><%= name(@virtual_service) %></:item>
-          <:item title="Namespace"><%= namespace(@virtual_service) %></:item>
+          <:item title="Name">{name(@virtual_service)}</:item>
+          <:item title="Namespace">{namespace(@virtual_service)}</:item>
           <:item title="UID">
             <.truncate_tooltip value={uid(@virtual_service)} length={16} />
           </:item>
@@ -50,7 +50,7 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
           <:item title="Host">
             <.truncate_tooltip value={format_hosts(@virtual_service)} length={36} />
           </:item>
-          <:item title="Gateway"><%= format_gateways(@virtual_service) %></:item>
+          <:item title="Gateway">{format_gateways(@virtual_service)}</:item>
         </.data_list>
       </.panel>
 
@@ -59,7 +59,7 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
           id="http-services-table"
           rows={@virtual_service |> spec() |> Map.get("http") |> Enum.with_index()}
         >
-          <:col :let={{service, idx}} label="Name"><%= service |> Map.get("name") || idx %></:col>
+          <:col :let={{service, idx}} label="Name">{service |> Map.get("name") || idx}</:col>
           <:col :let={{service, _idx}} label="Match">
             <.match_display match={service |> Map.get("match") |> List.first()} />
           </:col>
@@ -93,21 +93,21 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
         <.h2 class="mt-0">gateways</.h2>
         <ul>
           <%= for gateway <- @match |> Map.get("gateways") do %>
-            <li><%= gateway %></li>
+            <li>{gateway}</li>
           <% end %>
         </ul>
       </div>
 
       <div :if={@match |> get_in(~w(authority prefix)) != nil}>
         <.h2 class="mt-0">Authority</.h2>
-        Prefix: <%= @match |> get_in(~w(authority prefix)) %>
+        Prefix: {@match |> get_in(~w(authority prefix))}
       </div>
 
       <div :if={@match |> get_in(~w(headers)) != nil}>
         <.h2 class="mt-0">Headers</.h2>
         <ul>
           <%= for {key, value} <- @match |> get_in(~w(headers)) do %>
-            <li><%= key %>: <%= inspect(value) %></li>
+            <li>{key}: {inspect(value)}</li>
           <% end %>
         </ul>
       </div>
@@ -121,13 +121,13 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
       <%= for route <- @routes do %>
         <div :if={route |> Map.get("destination", nil) != nil}>
           <.h2 class="mt-0">Destination</.h2>
-          <%= route |> get_in(~w(destination host)) %> : <%= route
-          |> get_in(~w(destination port number)) %>
+          {route |> get_in(~w(destination host))} : {route
+          |> get_in(~w(destination port number))}
         </div>
 
         <div :if={route |> Map.get("weight", nil) != nil}>
           <.h2 class="mt-0">Weight</.h2>
-          <%= route |> Map.get("weight") %>
+          {route |> Map.get("weight")}
         </div>
 
         <div :if={route |> Map.get("headers", nil) != nil}>
@@ -135,7 +135,7 @@ defmodule ControlServerWeb.Live.IstioVirtualServiceShow do
 
           <ul>
             <%= for {key, value} <- route |> get_in(~w(headers request set)) do %>
-              <li><%= key %>: <%= inspect(value) %></li>
+              <li>{key}: {inspect(value)}</li>
             <% end %>
           </ul>
         </div>

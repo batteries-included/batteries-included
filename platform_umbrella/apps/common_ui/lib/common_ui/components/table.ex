@@ -62,12 +62,12 @@ defmodule CommonUI.Components.Table do
       opts={@opts}
     >
       <:col :let={item} :for={col <- @col} field={col.field} label={col.label}>
-        <%= render_slot(col, item) %>
+        {render_slot(col, item)}
       </:col>
 
       <:col :let={item} :if={@action != []}>
         <div class={actions_class()}>
-          <%= render_slot(@action, item) %>
+          {render_slot(@action, item)}
         </div>
       </:col>
     </Flop.Phoenix.table>
@@ -89,7 +89,7 @@ defmodule CommonUI.Components.Table do
       <table id={@id} class={table_class()}>
         <thead class={thead_class()}>
           <tr>
-            <th :for={col <- @col} class={thead_th_class()}><%= col[:label] %></th>
+            <th :for={col <- @col} class={thead_th_class()}>{col[:label]}</th>
             <th :if={@action && @action != []} class={thead_th_class()}>
               <span class="sr-only">Actions</span>
             </th>
@@ -103,12 +103,12 @@ defmodule CommonUI.Components.Table do
         >
           <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class={@row_click && tbody_tr_class()}>
             <td :for={col <- @col} class={tbody_td_class()} phx-click={@row_click && @row_click.(row)}>
-              <%= render_slot(col, @row_item.(row)) %>
+              {render_slot(col, @row_item.(row))}
             </td>
 
             <td :if={@action != []} class={tbody_td_class()}>
               <div class={actions_class()}>
-                <%= render_slot(@action, @row_item.(row)) %>
+                {render_slot(@action, @row_item.(row))}
               </div>
             </td>
           </tr>

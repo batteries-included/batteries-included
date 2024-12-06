@@ -21,7 +21,7 @@ defmodule HomeBaseWeb.TeamBootedEmail do
     <.email_container>
       <p>Hi there,</p>
       <p>
-        We're just letting you know that you've been removed from the <b><%= @team.name %></b>
+        We're just letting you know that you've been removed from the <b>{@team.name}</b>
         team. You can no longer view or manage the team's installations.
       </p>
     </.email_container>

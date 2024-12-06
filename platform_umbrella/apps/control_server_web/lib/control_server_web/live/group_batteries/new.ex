@@ -69,12 +69,12 @@ defmodule ControlServerWeb.Live.GroupBatteriesNew do
     />
 
     <.modal :if={@installing} id="install-modal" allow_close={false} show>
-      <:title>Installing <%= @catalog_battery.name %></:title>
+      <:title>Installing {@catalog_battery.name}</:title>
 
       <.progress total={install_steps() |> Enum.count()} current={max(@current_step, 0)} />
 
       <div :if={step = install_steps() |> Enum.at(@current_step)} class="mt-2 text-sm text-gray-light">
-        <%= step %>
+        {step}
       </div>
 
       <.data_list
@@ -82,15 +82,15 @@ defmodule ControlServerWeb.Live.GroupBatteriesNew do
         class="mt-4 bg-gray-lightest dark:bg-gray-darkest-tint p-6"
       >
         <:item title="New Batteries Installed">
-          <%= map_size(@install_result.installed) %>
+          {map_size(@install_result.installed)}
         </:item>
 
         <:item title="Batteries Already Installed">
-          <%= map_size(@install_result.selected) %>
+          {map_size(@install_result.selected)}
         </:item>
 
         <:item :if={@apply_result != nil} title="Kubernetes Deploy Status">
-          <%= @apply_result %>
+          {@apply_result}
         </:item>
       </.data_list>
 

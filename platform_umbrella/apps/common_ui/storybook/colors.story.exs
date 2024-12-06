@@ -18,11 +18,11 @@ defmodule Storybook.Colors do
         "flex flex-col items-center justify-center rounded w-40 h-20 mr-5 font-mono",
         @class
       ]}>
-        <span class="text-base mb-1"><%= @hex %></span>
-        <span class="text-xs opacity-75"><%= @name %></span>
+        <span class="text-base mb-1">{@hex}</span>
+        <span class="text-xs opacity-75">{@name}</span>
       </div>
 
-      <div :if={assigns[:description]}><%= @description %></div>
+      <div :if={assigns[:description]}>{@description}</div>
     </div>
     """
   end

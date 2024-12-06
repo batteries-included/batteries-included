@@ -66,14 +66,14 @@ defmodule CommonUI.Components.InputList do
   def input_list(%{sort_param: _, drop_param: _} = assigns) do
     ~H"""
     <div>
-      <div :if={@label} class={label_class()}><%= @label %></div>
+      <div :if={@label} class={label_class()}>{@label}</div>
 
       <.inputs_for :let={f} field={@field}>
         <input type="hidden" name={"#{@field.form.name}[#{@sort_param}][]"} value={f.index} />
 
         <div class={wrapper_class()}>
           <div class="flex-1">
-            <%= render_slot(@inner_block, f) %>
+            {render_slot(@inner_block, f)}
           </div>
 
           <.button
@@ -96,7 +96,7 @@ defmodule CommonUI.Components.InputList do
         value="new"
         phx-click={JS.dispatch("change")}
       >
-        <%= @add_label %>
+        {@add_label}
       </.button>
     </div>
     """
@@ -105,15 +105,15 @@ defmodule CommonUI.Components.InputList do
   def input_list(assigns) do
     ~H"""
     <div>
-      <div :if={@label} class={label_class()}><%= @label %></div>
+      <div :if={@label} class={label_class()}>{@label}</div>
 
       <.list :let={{value, index}} field={@field}>
         <div class={wrapper_class()}>
           <div class="flex-1">
-            <%= render_slot(
+            {render_slot(
               @inner_block,
               Map.merge(@field, %{name: @field.name <> "[]", value: value})
-            ) %>
+            )}
           </div>
 
           <.button
@@ -133,7 +133,7 @@ defmodule CommonUI.Components.InputList do
         phx-click={@add_click}
         phx-target={@phx_target}
       >
-        <%= @add_label %>
+        {@add_label}
       </.button>
     </div>
     """
@@ -153,7 +153,7 @@ defmodule CommonUI.Components.InputList do
   defp list(assigns) do
     ~H"""
     <%= for {value, index} <- Enum.with_index(@field.value) do %>
-      <%= render_slot(@inner_block, {value, index}) %>
+      {render_slot(@inner_block, {value, index})}
     <% end %>
     """
   end

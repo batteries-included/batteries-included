@@ -18,9 +18,9 @@ defmodule HomeBaseWeb.Live.Admin.UsersShow do
     <.grid columns={%{sm: 1, lg: 2}}>
       <.panel title="User">
         <.data_list>
-          <:item title="ID"><%= @user.id %></:item>
-          <:item title="email"><%= @user.email %></:item>
-          <:item title="Confirmed at"><%= @user.confirmed_at %></:item>
+          <:item title="ID">{@user.id}</:item>
+          <:item title="email">{@user.email}</:item>
+          <:item title="Confirmed at">{@user.confirmed_at}</:item>
         </.data_list>
       </.panel>
       <.panel title="Teams">

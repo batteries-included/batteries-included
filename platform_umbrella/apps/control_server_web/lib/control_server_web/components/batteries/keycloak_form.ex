@@ -9,12 +9,12 @@ defmodule ControlServerWeb.Batteries.KeycloakForm do
     ~H"""
     <div class="contents">
       <.panel title="Description">
-        <%= @battery.description %>
+        {@battery.description}
       </.panel>
 
       <.panel title="Image">
         <.fieldset>
-          <.image><%= @form[:image].value %></.image>
+          <.image>{@form[:image].value}</.image>
           <.image_version field={@form[:image_tag_override]} image_id={:keycloak} label="Version" />
         </.fieldset>
       </.panel>

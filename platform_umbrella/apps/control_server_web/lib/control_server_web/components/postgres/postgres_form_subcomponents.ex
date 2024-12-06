@@ -67,9 +67,9 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
       </div>
 
       <.table rows={@users} id="users_table">
-        <:col :let={user} label="Name"><%= user.username %></:col>
+        <:col :let={user} label="Name">{user.username}</:col>
         <:col :let={user} label="Roles">
-          <%= user.roles |> Enum.join(", ") |> truncate(length: 35) %>
+          {user.roles |> Enum.join(", ") |> truncate(length: 35)}
         </:col>
         <:action :let={user}>
           <.flex>
@@ -137,7 +137,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         size="lg"
         on_cancel={JS.push("close_modal", target: @phx_target)}
       >
-        <:title><%= @action_text %></:title>
+        <:title>{@action_text}</:title>
 
         <.fieldset>
           <.input field={@user_form[:position]} type="hidden" />
@@ -162,8 +162,8 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
               variant="beside"
               class="bg-gray-lightest dark:bg-gray-darkest-tint rounded-lg p-3 cursor-pointer"
             >
-              <:label class="text-xl font-semibold"><%= role.label %></:label>
-              <:note><%= role.help_text %></:note>
+              <:label class="text-xl font-semibold">{role.label}</:label>
+              <:note>{role.help_text}</:note>
               <.input
                 type="switch"
                 name={@user_form[:roles].name <> "[]"}
@@ -175,7 +175,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         </.fieldset>
 
         <:actions cancel="Cancel">
-          <.button variant="primary" type="submit"><%= @action_text %></.button>
+          <.button variant="primary" type="submit">{@action_text}</.button>
         </:actions>
       </.modal>
     </.form>
@@ -231,7 +231,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           </.field>
 
           <.field>
-            <:label>Storage Size · <%= Memory.humanize(@form[:storage_size].value) %></:label>
+            <:label>Storage Size · {Memory.humanize(@form[:storage_size].value)}</:label>
             <:note>You can't reduce this once it has been created.</:note>
             <.input type="number" field={@form[:storage_size]} debounce={false} />
           </.field>

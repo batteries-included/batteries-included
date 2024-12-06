@@ -28,13 +28,13 @@ defmodule ControlServerWeb.Common.Page do
         <.button :if={@back_click} phx-click={@back_click} {@back_button_attrs} />
 
         <.h3 :if={@title} class="text-2xl font-medium text-black dark:text-white">
-          <%= @title %>
+          {@title}
         </.h3>
 
-        <%= render_slot(@menu) %>
+        {render_slot(@menu)}
       </.flex>
 
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.flex>
     """
   end
