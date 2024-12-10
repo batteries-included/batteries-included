@@ -33,6 +33,46 @@ defmodule ControlServerWeb.TraditionalFormSubcomponents do
         ]}
       />
 
+      <%= if @form[:virtual_size].value == "custom" do %>
+        <.h3 class="lg:col-span-2">Running Limits</.h3>
+
+        <.fieldset responsive>
+          <.field>
+            <:label>CPU Requested</:label>
+            <.input
+              type="select"
+              field={@form[:cpu_requested]}
+              options={Service.cpu_select_options()}
+            />
+          </.field>
+
+          <.field>
+            <:label>CPU Limits</:label>
+            <.input type="select" field={@form[:cpu_limits]} options={Service.cpu_select_options()} />
+          </.field>
+        </.fieldset>
+
+        <.fieldset responsive>
+          <.field>
+            <:label>Memory Requested</:label>
+            <.input
+              type="select"
+              field={@form[:memory_requested]}
+              options={Service.memory_options() |> Memory.bytes_as_select_options()}
+            />
+          </.field>
+
+          <.field>
+            <:label>Memory Limits</:label>
+            <.input
+              type="select"
+              field={@form[:memory_limits]}
+              options={Service.memory_options() |> Memory.bytes_as_select_options()}
+            />
+          </.field>
+        </.fieldset>
+      <% end %>
+
       <.flex
         :if={@with_divider}
         class="justify-between w-full py-3 border-t border-gray-lighter dark:border-gray-darker"
