@@ -95,6 +95,40 @@ defmodule CommonCore.TraditionalServices.Service do
   end
 
   def preset_options_for_select do
-    Enum.map(@service_size_preset, &{String.capitalize(&1.name), &1.name})
+    Enum.map(@service_size_preset, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
+  end
+
+  def cpu_select_options do
+    [
+      {"None", nil},
+      {"0.05 cores", 50},
+      {"0.1 cores", 100},
+      {"0.2 cores", 200},
+      {"0.5 cores", 500},
+      {"1 core", 1000},
+      {"2 cores", 2000},
+      {"4 cores", 4000},
+      {"8 cores", 8000},
+      {"16 cores", 16_000},
+      {"24 cores", 24_000},
+      {"32 cores", 32_000}
+    ]
+  end
+
+  def memory_options do
+    [
+      Memory.to_bytes(512, :MB),
+      Memory.to_bytes(1, :GB),
+      Memory.to_bytes(2, :GB),
+      Memory.to_bytes(4, :GB),
+      Memory.to_bytes(8, :GB),
+      Memory.to_bytes(16, :GB),
+      Memory.to_bytes(32, :GB),
+      Memory.to_bytes(64, :GB),
+      Memory.to_bytes(128, :GB),
+      Memory.to_bytes(256, :GB),
+      Memory.to_bytes(512, :GB),
+      Memory.to_bytes(1024, :GB)
+    ]
   end
 end
