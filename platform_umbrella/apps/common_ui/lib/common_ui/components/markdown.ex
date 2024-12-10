@@ -13,7 +13,7 @@ defmodule CommonUI.Components.Markdown do
 
   def markdown(assigns) do
     ~H"""
-    <.dynamic_tag name={@tag} class={["prose dark:prose-invert", @class]} {@rest}>
+    <.dynamic_tag tag_name={@tag} class={["prose dark:prose-invert", @class]} {@rest}>
       {render(@content, @options)}
     </.dynamic_tag>
     """

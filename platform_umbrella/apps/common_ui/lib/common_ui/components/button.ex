@@ -71,7 +71,7 @@ defmodule CommonUI.Components.Button do
 
   def button(assigns) do
     ~H"""
-    <.dynamic_tag name={@tag} class={[button_class(assigns[:variant]), @class]} {@rest}>
+    <.dynamic_tag tag_name={@tag} class={[button_class(assigns[:variant]), @class]} {@rest}>
       <.icon
         :if={@icon && @icon_position == :left}
         class={icon_class(assigns[:variant])}
