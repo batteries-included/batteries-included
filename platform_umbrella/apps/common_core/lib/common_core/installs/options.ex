@@ -6,12 +6,13 @@ defmodule CommonCore.Installs.Options do
   @sizes [:tiny, :small, :medium, :large, :xlarge, :huge]
   @providers [Kind: :kind, AWS: :aws, Provided: :provided]
   @usages [
-    "Kitchen Sink": :kitchen_sink,
     "Internal Dev": :internal_dev,
     "Internal Test": :internal_int_test,
     "Internal Production": :internal_prod,
     Development: :development,
-    Production: :production
+    Production: :production,
+    "Secure Production": :secure_production,
+    "Kitchen Sink": :kitchen_sink
   ]
 
   def usages, do: @usages
@@ -37,7 +38,9 @@ defmodule CommonCore.Installs.Options do
     @providers
   end
 
-  def provider_options(:production), do: Enum.filter(@providers, &(elem(&1, 1) != :kind))
+  def provider_options(usage) when usage in ~w(production secure_production)a,
+    do: Enum.filter(@providers, &(elem(&1, 1) != :kind))
+
   def provider_options(_environment), do: @providers
   def provider_options, do: @providers
 end
