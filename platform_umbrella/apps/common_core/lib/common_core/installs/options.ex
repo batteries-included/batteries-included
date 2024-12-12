@@ -11,7 +11,8 @@ defmodule CommonCore.Installs.Options do
     "Internal Production": :internal_prod,
     Development: :development,
     Production: :production,
-    "Secure Production": :secure_production
+    "Secure Production": :secure_production,
+    "Kitchen Sink": :kitchen_sink
   ]
 
   def usages, do: @usages

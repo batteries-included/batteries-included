@@ -10,7 +10,8 @@ defmodule CommonCore.Installs.Batteries do
   @standard_battery_types ~w(battery_core cloudnative_pg istio istio_gateway stale_resource_cleaner)a
 
   @kind_battery_types ~w(metallb)a
-  @aws_battery_types ~w(karpenter battery_ca aws_load_balancer_controller)a
+  @aws_only_battery_types ~w(aws_load_balancer_controller karpenter)a
+  @aws_battery_types ~w(battery_ca)a ++ @aws_only_battery_types
 
   @internal_int_test_battery_types ~w(battery_core cloudnative_pg istio_gateway metallb traditional_services)a
   @internal_prod_battery_types ~w(traditional_services victoria_metrics grafana)a
@@ -78,6 +79,7 @@ defmodule CommonCore.Installs.Batteries do
 
   defp provider_batteries(%{kube_provider: :kind} = _install), do: @kind_battery_types
   defp provider_batteries(%{kube_provider: :aws} = _install), do: @aws_battery_types
+  defp provider_batteries(%{kube_provider: _} = _install), do: []
 
   defp usage_batteries(_batteries, %Installation{usage: :internal_int_test} = _install) do
     # Internal int test is a special case where we want total control
@@ -94,6 +96,20 @@ defmodule CommonCore.Installs.Batteries do
 
   defp usage_batteries(batteries, %Installation{usage: :secure_production} = _install) do
     batteries ++ @standard_battery_types ++ @production_battery_types ++ @secure_battery_types
+  end
+
+  defp usage_batteries(_batteries, %Installation{usage: :kitchen_sink, kube_provider: :aws} = _install) do
+    # AWS Doesn't work with metallb since that requires icmp broadcast to affect layer 2 routing
+    # and AWS doesn't support that.
+    Catalog.all()
+    |> Enum.reject(fn cb -> cb.type in [:metallb] end)
+    |> Enum.map(fn cb -> cb.type end)
+  end
+
+  defp usage_batteries(_batteries, %Installation{usage: :kitchen_sink, kube_provider: _} = _install) do
+    Catalog.all()
+    |> Enum.reject(fn cb -> cb.type in @aws_only_battery_types end)
+    |> Enum.map(fn cb -> cb.type end)
   end
 
   defp usage_batteries(batteries, _install) do
