@@ -7,8 +7,16 @@ defmodule CommonCore.Installs.Batteries do
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Installation
 
-  @standard_battery_types ~w(battery_core cloudnative_pg istio istio_gateway stale_resource_cleaner)
-  @aws_battery_types ~w(karpenter battery_ca aws_load_balancer_controller)
+  @standard_battery_types ~w(battery_core cloudnative_pg istio istio_gateway stale_resource_cleaner)a
+
+  @kind_battery_types ~w(metallb)a
+  @aws_battery_types ~w(karpenter battery_ca aws_load_balancer_controller)a
+
+  @internal_int_test_battery_types ~w(battery_core cloudnative_pg istio_gateway metallb traditional_services)a
+  @internal_prod_battery_types ~w(traditional_services victoria_metrics grafana)a
+
+  @production_battery_types ~w(timeline victoria_metrics grafana)a
+  @secure_battery_types ~w(keycloak)a
 
   def default_batteries(%Installation{} = install) do
     # TODO: This is utter shit. I should have done better
@@ -62,61 +70,33 @@ defmodule CommonCore.Installs.Batteries do
     |> Enum.uniq_by(& &1.type)
   end
 
-  defp battery_types(%Installation{kube_provider: kube_provider} = install) do
-    case kube_provider do
-      :kind -> kind_batteries(install)
-      :aws -> aws_batteries(install)
-      :provided -> provided_batteries(install)
-    end
+  defp battery_types(install) do
+    install
+    |> provider_batteries()
+    |> usage_batteries(install)
   end
 
-  defp kind_batteries(install) do
-    case install.usage do
-      # We have a special case where kind is used for integration tests
-      # that needs to be slim for now to keep GH's runners happy. They run on fucking potatos.
-      :internal_int_test ->
-        ~w(battery_core cloudnative_pg istio_gateway metallb traditional_services)a
+  defp provider_batteries(%{kube_provider: :kind} = _install), do: @kind_battery_types
+  defp provider_batteries(%{kube_provider: :aws} = _install), do: @aws_battery_types
 
-      :internal_prod ->
-        ~w(metallb traditional_services)a ++ @standard_battery_types
-
-      :kitchen_sink ->
-        # This is a kind cluster so no aws things are going to work.
-        Catalog.all()
-        |> Enum.reject(fn cb -> cb.type in [:karpenter, :aws_load_balancer] end)
-        |> Enum.map(fn cb -> cb.type end)
-
-      _ ->
-        ~w(metallb)a ++ @standard_battery_types
-    end
+  defp usage_batteries(_batteries, %Installation{usage: :internal_int_test} = _install) do
+    # Internal int test is a special case where we want total control
+    @internal_int_test_battery_types
   end
 
-  defp aws_batteries(install) do
-    case install.usage do
-      :internal_prod ->
-        ~w(traditional_services)a ++ @aws_battery_types ++ @standard_battery_types
-
-      :kitchen_sink ->
-        # AWS doesn't work with some batteries
-        Catalog.all()
-        |> Enum.reject(fn cb -> cb.type in [:metallb] end)
-        |> Enum.map(fn cb -> cb.type end)
-
-      _ ->
-        @aws_battery_types ++ @standard_battery_types
-    end
+  defp usage_batteries(batteries, %Installation{usage: :internal_prod} = _install) do
+    batteries ++ @internal_prod_battery_types
   end
 
-  defp provided_batteries(install) do
-    case install.usage do
-      :kitchen_sink ->
-        # AWS doesn't work with some batteries
-        Catalog.all()
-        |> Enum.reject(fn cb -> cb.type in [:metallb] end)
-        |> Enum.map(fn cb -> cb.type end)
+  defp usage_batteries(batteries, %Installation{usage: :production} = _install) do
+    batteries ++ @standard_battery_types ++ @production_battery_types
+  end
 
-      _ ->
-        @standard_battery_types
-    end
+  defp usage_batteries(batteries, %Installation{usage: :secure_production} = _install) do
+    batteries ++ @standard_battery_types ++ @production_battery_types ++ @secure_battery_types
+  end
+
+  defp usage_batteries(batteries, _install) do
+    batteries ++ @standard_battery_types
   end
 end

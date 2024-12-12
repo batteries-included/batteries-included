@@ -44,7 +44,7 @@ defmodule CommonCore.Installs.Generator do
     GenServer.call(target, {:build, identifier})
   end
 
-  def available_builds, do: ~w(dev int_test int_prod local elliott jason maurer damian)a
+  def available_builds, do: ~w(dev int_test int_prod local jason)a
 
   defp build_base_team do
     Team.new!(
@@ -95,36 +95,8 @@ defmodule CommonCore.Installs.Generator do
     )
   end
 
-  defp do_build(:elliott, team_id) do
-    # Demo cluster for showing off
-    Installation.new!("elliott",
-      kube_provider: :aws,
-      usage: :development,
-      team_id: team_id,
-      id: BatteryUUID.autogenerate()
-    )
-  end
-
   defp do_build(:jason, team_id) do
     Installation.new!("jason",
-      kube_provider: :aws,
-      usage: :development,
-      team_id: team_id,
-      id: BatteryUUID.autogenerate()
-    )
-  end
-
-  defp do_build(:maurer, team_id) do
-    Installation.new!("maurer",
-      kube_provider: :aws,
-      usage: :development,
-      team_id: team_id,
-      id: BatteryUUID.autogenerate()
-    )
-  end
-
-  defp do_build(:damian, team_id) do
-    Installation.new!("damian",
       kube_provider: :aws,
       usage: :development,
       team_id: team_id,
