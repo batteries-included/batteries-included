@@ -14,13 +14,13 @@ require (
 	github.com/docker/docker v27.4.0+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/go-jose/go-jose/v4 v4.0.4
-	github.com/lmittmann/tint v1.0.5
+	github.com/lmittmann/tint v1.0.6
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.64.0
-	github.com/pulumi/pulumi-cloudinit/sdk v1.4.8
-	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.9
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.65.0
+	github.com/pulumi/pulumi-cloudinit/sdk v1.4.9
+	github.com/pulumi/pulumi-tls/sdk/v5 v5.0.10
 	github.com/pulumi/pulumi/sdk/v3 v3.143.0
 	github.com/samber/slog-multi v1.2.4
 	github.com/spf13/cobra v1.8.1
