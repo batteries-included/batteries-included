@@ -96,6 +96,7 @@ var components = []component{
 	{"cluster", &clusterConfig{}},
 	{"lbcontroller", &lbControllerConfig{}},
 	{"karpenter", &karpenterConfig{}},
+	{"postgres", &cnpgConfig{}},
 }
 
 func (e *eks) Up(ctx context.Context, progressReporter *util.ProgressReporter) error {
