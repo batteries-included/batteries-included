@@ -27,7 +27,7 @@ defmodule CommonCore.Resources.CloudnativePG do
     |> B.subject(B.build_service_account("cloudnative-pg", namespace))
   end
 
-  resource(:cluster_role_cnpg_cloudnative_pg) do
+  resource(:cluster_role_cloudnative_pg) do
     rules = [
       %{
         "apiGroups" => [""],
