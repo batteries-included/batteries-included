@@ -226,6 +226,7 @@ defmodule CommonCore.Resources.CloudnativePG do
             %{
               "args" => [
                 "controller",
+                "--log-level=debug",
                 "--leader-elect",
                 "--config-map-name=cnpg-controller-manager-config",
                 "--secret-name=cnpg-controller-manager-config",
