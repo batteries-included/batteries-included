@@ -31,55 +31,31 @@ defmodule CommonCore.Resources.CloudnativePG do
     rules = [
       %{
         "apiGroups" => [""],
-        "resources" => ["configmaps"],
+        "resources" => ["configmaps", "secrets", "services"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
-      %{"apiGroups" => [""], "resources" => ["configmaps/status"], "verbs" => ["get", "patch", "update"]},
+      %{
+        "apiGroups" => [""],
+        "resources" => ["configmaps/status", "secrets/status"],
+        "verbs" => ["get", "patch", "update"]
+      },
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
-      %{"apiGroups" => [""], "resources" => ["namespaces"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => [""],
-        "resources" => ["persistentvolumeclaims"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "watch"]
-      },
-      %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["create", "delete", "get", "list", "patch", "watch"]},
-      %{
-        "apiGroups" => [""],
-        "resources" => ["pods/exec"],
+        "resources" => ["persistentvolumeclaims", "pods", "pods/exec"],
         "verbs" => ["create", "delete", "get", "list", "patch", "watch"]
       },
       %{"apiGroups" => [""], "resources" => ["pods/status"], "verbs" => ["get"]},
-      %{
-        "apiGroups" => [""],
-        "resources" => ["secrets"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{"apiGroups" => [""], "resources" => ["secrets/status"], "verbs" => ["get", "patch", "update"]},
       %{
         "apiGroups" => [""],
         "resources" => ["serviceaccounts"],
         "verbs" => ["create", "get", "list", "patch", "update", "watch"]
       },
       %{
-        "apiGroups" => [""],
-        "resources" => ["services"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
         "apiGroups" => ["admissionregistration.k8s.io"],
-        "resources" => ["mutatingwebhookconfigurations"],
-        "verbs" => ["get", "list", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["admissionregistration.k8s.io"],
-        "resources" => ["validatingwebhookconfigurations"],
-        "verbs" => ["get", "list", "patch", "update"]
-      },
-      %{
-        "apiGroups" => ["apiextensions.k8s.io"],
-        "resources" => ["customresourcedefinitions"],
-        "verbs" => ["get", "list", "update"]
+        "resources" => ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"],
+        "verbs" => ["get", "patch"]
       },
       %{
         "apiGroups" => ["apps"],
@@ -104,56 +80,32 @@ defmodule CommonCore.Resources.CloudnativePG do
       },
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["backups"],
+        "resources" => ["backups", "clusters", "poolers", "scheduledbackups"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
-      %{"apiGroups" => ["postgresql.cnpg.io"], "resources" => ["backups/status"], "verbs" => ["get", "patch", "update"]},
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["clusterimagecatalogs"],
+        "resources" => ["backups/status", "scheduledbackups/status"],
+        "verbs" => ["get", "patch", "update"]
+      },
+      %{
+        "apiGroups" => ["postgresql.cnpg.io"],
+        "resources" => ["clusterimagecatalogs", "imagecatalogs"],
         "verbs" => ["get", "list", "watch"]
       },
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["clusters"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
+        "resources" => ["clusters/finalizers", "poolers/finalizers"],
+        "verbs" => ["update"]
       },
-      %{"apiGroups" => ["postgresql.cnpg.io"], "resources" => ["clusters/finalizers"], "verbs" => ["update"]},
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["clusters/status"],
-        "verbs" => ["get", "patch", "update", "watch"]
-      },
-      %{"apiGroups" => ["postgresql.cnpg.io"], "resources" => ["imagecatalogs"], "verbs" => ["get", "list", "watch"]},
-      %{
-        "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["poolers"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{"apiGroups" => ["postgresql.cnpg.io"], "resources" => ["poolers/finalizers"], "verbs" => ["update"]},
-      %{
-        "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["poolers/status"],
+        "resources" => ["clusters/status", "poolers/status"],
         "verbs" => ["get", "patch", "update", "watch"]
       },
       %{
-        "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["scheduledbackups"],
-        "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["scheduledbackups/status"],
-        "verbs" => ["get", "patch", "update"]
-      },
-      %{
         "apiGroups" => ["rbac.authorization.k8s.io"],
-        "resources" => ["rolebindings"],
-        "verbs" => ["create", "get", "list", "patch", "update", "watch"]
-      },
-      %{
-        "apiGroups" => ["rbac.authorization.k8s.io"],
-        "resources" => ["roles"],
+        "resources" => ["rolebindings", "roles"],
         "verbs" => ["create", "get", "list", "patch", "update", "watch"]
       },
       %{
@@ -332,7 +284,7 @@ defmodule CommonCore.Resources.CloudnativePG do
           }
         },
         "failurePolicy" => "Fail",
-        "name" => "mbackup.kb.io",
+        "name" => "mbackup.cnpg.io",
         "rules" => [
           %{
             "apiGroups" => ["postgresql.cnpg.io"],
@@ -354,7 +306,7 @@ defmodule CommonCore.Resources.CloudnativePG do
           }
         },
         "failurePolicy" => "Fail",
-        "name" => "mcluster.kb.io",
+        "name" => "mcluster.cnpg.io",
         "rules" => [
           %{
             "apiGroups" => ["postgresql.cnpg.io"],
@@ -376,7 +328,7 @@ defmodule CommonCore.Resources.CloudnativePG do
           }
         },
         "failurePolicy" => "Fail",
-        "name" => "mscheduledbackup.kb.io",
+        "name" => "mscheduledbackup.cnpg.io",
         "rules" => [
           %{
             "apiGroups" => ["postgresql.cnpg.io"],
@@ -436,7 +388,7 @@ defmodule CommonCore.Resources.CloudnativePG do
           }
         },
         "failurePolicy" => "Fail",
-        "name" => "vbackup.kb.io",
+        "name" => "vbackup.cnpg.io",
         "rules" => [
           %{
             "apiGroups" => ["postgresql.cnpg.io"],
@@ -458,7 +410,7 @@ defmodule CommonCore.Resources.CloudnativePG do
           }
         },
         "failurePolicy" => "Fail",
-        "name" => "vcluster.kb.io",
+        "name" => "vcluster.cnpg.io",
         "rules" => [
           %{
             "apiGroups" => ["postgresql.cnpg.io"],
@@ -480,7 +432,7 @@ defmodule CommonCore.Resources.CloudnativePG do
           }
         },
         "failurePolicy" => "Fail",
-        "name" => "vscheduledbackup.kb.io",
+        "name" => "vscheduledbackup.cnpg.io",
         "rules" => [
           %{
             "apiGroups" => ["postgresql.cnpg.io"],
@@ -502,7 +454,7 @@ defmodule CommonCore.Resources.CloudnativePG do
           }
         },
         "failurePolicy" => "Fail",
-        "name" => "vpooler.kb.io",
+        "name" => "vpooler.cnpg.io",
         "rules" => [
           %{
             "apiGroups" => ["postgresql.cnpg.io"],
