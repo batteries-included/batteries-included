@@ -95,6 +95,10 @@ func (env *InstallEnv) startAWS(ctx context.Context, progressReporter *util.Prog
 		return fmt.Errorf("error configuring karpenter battery: %w", err)
 	}
 
+	if err := env.configureCNPGBattery(parsed); err != nil {
+		return fmt.Errorf("error configuring cloudnative_pg battery: %w", err)
+	}
+
 	return nil
 }
 
@@ -108,6 +112,7 @@ type eksOutputs struct {
 	Gateway      map[string]output `json:"gateway"`
 	Karpenter    map[string]output `json:"karpenter"`
 	LBController map[string]output `json:"lbcontroller"`
+	Postgres     map[string]output `json:"postgres"`
 	VPC          map[string]output `json:"vpc"`
 }
 
@@ -120,7 +125,7 @@ func parseEKSOutputs(output []byte) (*eksOutputs, error) {
 func (env *InstallEnv) configureLBControllerBattery(outputs *eksOutputs) error {
 	b, err := env.Spec.GetBatteryByType("aws_load_balancer_controller")
 	if err != nil {
-		return fmt.Errorf("tried to configure aws_load_balancer_controller battery but it wasn't found in install spec")
+		return fmt.Errorf("aws_load_balancer_controller battery wasn't found in install spec")
 	}
 
 	b.Config["service_role_arn"] = outputs.LBController["roleARN"].Value
@@ -155,12 +160,25 @@ func toStringSlice(maybeStrings []interface{}) ([]string, error) {
 func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
 	b, err := env.Spec.GetBatteryByType("karpenter")
 	if err != nil {
-		return fmt.Errorf("tried to configure karpenter battery but it wasn't found in install spec")
+		return fmt.Errorf("karpenter battery wasn't found in install spec")
 	}
 
 	b.Config["node_role_name"] = outputs.Cluster["nodeRoleName"].Value
 	b.Config["queue_name"] = outputs.Karpenter["queueName"].Value
 	b.Config["service_role_arn"] = outputs.Karpenter["roleARN"].Value
+
+	return nil
+}
+
+func (env *InstallEnv) configureCNPGBattery(outputs *eksOutputs) error {
+	b, err := env.Spec.GetBatteryByType("cloudnative_pg")
+	if err != nil {
+		return fmt.Errorf("cloudnative_pg battery wasn't found in install spec")
+	}
+
+	b.Config["bucket_name"] = outputs.Postgres["bucketName"].Value
+	b.Config["bucket_arn"] = outputs.Postgres["bucketARN"].Value
+	b.Config["service_role_arn"] = outputs.Postgres["roleARN"].Value
 
 	return nil
 }
