@@ -8,6 +8,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Batteries
+  alias CommonCore.StateSummary.Core
   alias CommonCore.StateSummary.PostgresState
 
   multi_resource(:postgres_clusters, battery, state) do
@@ -39,38 +40,41 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     end)
   end
 
-  def cluster_resource(%Cluster{} = cluster, _battery, state) do
+  def cluster_resource(%Cluster{} = cluster, battery, state) do
     db = cluster.database || %{database: "app", owner: "app"}
     cluster_name = cluster_name(cluster)
 
-    spec = %{
-      instances: cluster.num_instances,
-      storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
-      enableSuperuserAccess: false,
-      bootstrap: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}},
-      postgresql: %{
-        parameters: postgres_paramters(cluster)
-      },
-      affinity: %{
-        enablePodAntiAffinity: true,
-        topologyKey: "failure-domain.beta.kubernetes.io/zone"
-      },
-      resources: resources(cluster),
+    spec =
+      %{
+        instances: cluster.num_instances,
+        storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
+        enableSuperuserAccess: false,
+        bootstrap: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}},
+        postgresql: %{
+          parameters: postgres_paramters(cluster)
+        },
+        affinity: %{
+          enablePodAntiAffinity: true,
+          topologyKey: "failure-domain.beta.kubernetes.io/zone"
+        },
+        resources: resources(cluster),
 
-      # Users are called roles in postgres just to confuse
-      # the fuck out of us here.
-      #
-      # Roles also called users in the damn cli are also inheritable
-      # bags of permissions.
-      #
-      # In this case we just use them as users.
-      managed: %{
-        roles:
-          Enum.map(cluster.users, fn user ->
-            pg_user_to_pg_role(state, cluster, user)
-          end)
+        # Users are called roles in postgres just to confuse
+        # the fuck out of us here.
+        #
+        # Roles also called users in the damn cli are also inheritable
+        # bags of permissions.
+        #
+        # In this case we just use them as users.
+        managed: %{
+          roles:
+            Enum.map(cluster.users, fn user ->
+              pg_user_to_pg_role(state, cluster, user)
+            end)
+        }
       }
-    }
+      |> maybe_add_certificates(Batteries.batteries_installed?(state, :battery_ca), cluster)
+      |> maybe_add_sa_annotations(Core.config_field(state, :cluster_type) == :aws, battery)
 
     :cloudnative_pg_cluster
     |> B.build_resource()
@@ -79,7 +83,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.component_labels(@app_name)
     |> B.namespace(PostgresState.cluster_namespace(state, cluster))
     |> B.add_owner(cluster)
-    |> B.spec(maybe_add_certificates(spec, Batteries.batteries_installed?(state, :battery_ca), cluster))
+    |> B.spec(spec)
   end
 
   defp maybe_add_certificates(spec, predicate, _cluster) when not predicate, do: spec
@@ -95,6 +99,14 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       "serverCASecret" => server_secret_name
     })
   end
+
+  defp maybe_add_sa_annotations(spec, predicate, %{config: %{service_role_arn: arn}}) when predicate do
+    Map.put(spec, :serviceAccountTemplate, %{
+      metadata: %{annotations: %{"eks.amazonaws.com/role-arn" => arn}}
+    })
+  end
+
+  defp maybe_add_sa_annotations(spec, _predicate, _battery), do: spec
 
   defp resources(%Cluster{} = cluster) do
     requests =
