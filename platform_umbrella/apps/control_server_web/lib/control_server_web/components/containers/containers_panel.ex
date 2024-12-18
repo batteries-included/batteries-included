@@ -24,28 +24,28 @@ defmodule ControlServerWeb.Containers.ContainersPanel do
           <.button
             variant="minimal"
             icon={:x_mark}
-            id={"delete_container_" <> String.replace(c.name, " ", "")}
+            id={@id <> "_delete_container_" <> String.replace(c.name, " ", "")}
             phx-click="del:container"
             phx-target={@target}
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
             phx-value-id={@id}
           />
 
-          <.tooltip target_id={"delete_container_" <> String.replace(c.name, " ", "")}>
+          <.tooltip target_id={@id <> "_delete_container_" <> String.replace(c.name, " ", "")}>
             Remove
           </.tooltip>
 
           <.button
             variant="minimal"
             icon={:pencil}
-            id={"edit_container_" <> String.replace(c.name, " ", "")}
+            id={@id <> "_edit_container_" <> String.replace(c.name, " ", "")}
             phx-target={@target}
             phx-click="edit:container"
             phx-value-idx={if idx > length(@containers), do: idx - length(@containers), else: idx}
             phx-value-id={@id}
           />
 
-          <.tooltip target_id={"edit_container_" <> String.replace(c.name, " ", "")}>
+          <.tooltip target_id={@id<> "_edit_container_" <> String.replace(c.name, " ", "")}>
             Edit
           </.tooltip>
         </:action>
