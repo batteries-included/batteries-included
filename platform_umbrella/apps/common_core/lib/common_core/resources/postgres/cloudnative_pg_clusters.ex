@@ -8,12 +8,19 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Batteries
-  alias CommonCore.StateSummary.Core
   alias CommonCore.StateSummary.PostgresState
+
+  defguardp is_empty(arg) when is_nil(arg) or arg == ""
 
   multi_resource(:postgres_clusters, battery, state) do
     Enum.map(state.postgres_clusters, fn cluster ->
       cluster_resource(cluster, battery, state)
+    end)
+  end
+
+  multi_resource(:scheduled_backups, battery, state) do
+    Enum.map(state.postgres_clusters, fn cluster ->
+      scheduled_backup(cluster, battery, state)
     end)
   end
 
@@ -74,7 +81,8 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         }
       }
       |> maybe_add_certificates(Batteries.batteries_installed?(state, :battery_ca), cluster)
-      |> maybe_add_sa_annotations(Core.config_field(state, :cluster_type) == :aws, battery)
+      |> maybe_add_sa_annotations(battery)
+      |> maybe_add_backup(battery)
 
     :cloudnative_pg_cluster
     |> B.build_resource()
@@ -100,13 +108,45 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     })
   end
 
-  defp maybe_add_sa_annotations(spec, predicate, %{config: %{service_role_arn: arn}}) when predicate do
+  defp maybe_add_sa_annotations(spec, %{config: %{service_role_arn: arn}}) when not is_empty(arn) do
     Map.put(spec, :serviceAccountTemplate, %{
       metadata: %{annotations: %{"eks.amazonaws.com/role-arn" => arn}}
     })
   end
 
-  defp maybe_add_sa_annotations(spec, _predicate, _battery), do: spec
+  defp maybe_add_sa_annotations(spec, _battery), do: spec
+
+  defp maybe_add_backup(spec, %{config: %{bucket_name: bucket}}) when not is_empty(bucket) do
+    Map.put(spec, :backup, %{
+      retentionPolicy: "30d",
+      barmanObjectStore: %{
+        # the backups are stored in a prefix (default: cluster_name) under this path
+        destinationPath: "s3://#{bucket}",
+        data: %{compression: "snappy"},
+        wal: %{compression: "snappy"},
+        s3Credentials: %{inheritFromIAMRole: true}
+      }
+    })
+  end
+
+  defp maybe_add_backup(spec, _battery), do: spec
+
+  def scheduled_backup(cluster, battery, state) do
+    cluster_name = cluster_name(cluster)
+
+    spec = %{schedule: "0 0 0 * * *", cluster: %{name: cluster_name}}
+
+    :cloudnative_pg_scheduledbackup
+    |> B.build_resource()
+    |> B.name(cluster_name)
+    |> B.app_labels(cluster_name)
+    |> B.component_labels(@app_name)
+    |> B.namespace(PostgresState.cluster_namespace(state, cluster))
+    |> B.add_owner(cluster)
+    |> B.spec(spec)
+    |> F.require_non_nil(battery.config.bucket_name)
+    |> F.require_non_nil(battery.config.service_role_arn)
+  end
 
   defp resources(%Cluster{} = cluster) do
     requests =
