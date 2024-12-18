@@ -13,7 +13,7 @@ defmodule ControlServerWeb.Postgres.ClusterLiveTest do
       conn
       |> start(url)
       |> assert_html(cluster.name)
-      |> assert_matches_snapshot(selector: "#postgres_virtual_size")
+      |> assert_matches_snapshot(selector: "select[name='cluster[virtual_size]']")
     end
   end
 end
