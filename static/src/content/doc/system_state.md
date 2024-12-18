@@ -1,5 +1,7 @@
 ---
 title: 'System State Overview'
+description:
+  Internal system state management and caching mechanisms of the platform.
 tags: ['overview', 'code', 'control-server']
 draft: false
 ---

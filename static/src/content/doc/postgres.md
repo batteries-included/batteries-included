@@ -1,7 +1,6 @@
 ---
 title: PostgreSQL
-description:
-  Learn how to start and manage a PostgreSQL database with Batteries Included.
+description: Start and manage a PostgreSQL database with Batteries Included.
 tags: ['database', 'postgres', 'datastore']
 draft: false
 ---

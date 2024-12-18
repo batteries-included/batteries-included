@@ -204,6 +204,10 @@ export const headerData = [
     ],
   },
   {
+    label: 'Docs',
+    link: '/docs',
+  },
+  {
     label: 'Pricing',
     link: '/pricing',
   },

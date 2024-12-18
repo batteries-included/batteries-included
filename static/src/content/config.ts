@@ -67,6 +67,7 @@ const postCollection = defineCollection({
 const docCollection = defineCollection({
   schema: z.object({
     title: z.string(),
+    description: z.string().optional(),
     draft: z.boolean().optional(),
     category: z.string().optional(),
     tags: z.array(z.string()).optional(),

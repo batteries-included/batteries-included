@@ -1,5 +1,8 @@
 ---
 title: 'Resource Hashing'
+description:
+  Implementation of cryptographic hashing for tracking and comparing resources
+  in the control system.
 tags: ['overview', 'code', 'control-server', 'kubernetes']
 draft: false
 ---
