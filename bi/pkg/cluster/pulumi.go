@@ -81,7 +81,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"cluster:maxSize":        {Value: "4"},
 		"cluster:minSize":        {Value: "2"},
 		"cluster:name":           {Value: p.slug},
-		"cluster:version":        {Value: "1.32"},
+		"cluster:version":        {Value: "1.31"},
 		"cluster:volumeSize":     {Value: "20"},
 		"cluster:volumeType":     {Value: "gp3"},
 		"gateway:cidrBlock":      {Value: "100.64.250.0/24"},
