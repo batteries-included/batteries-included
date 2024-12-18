@@ -1,8 +1,8 @@
 ---
 title: Monitoring
 description:
-  Learn how to set up and use monitoring tools like Grafana and VictoriaMetrics
-  in Batteries Included.
+  Set up comprehensive monitoring using Grafana and VictoriaMetrics in your
+  cluster.
 tags: ['monitoring', 'grafana', 'victoriametrics']
 draft: false
 ---

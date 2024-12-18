@@ -1,5 +1,6 @@
 ---
 title: 'Ubuntu Dev prepare'
+description: Set up an Ubuntu development environment for platform development.
 tags: ['code', 'tools', 'internal']
 ---
 

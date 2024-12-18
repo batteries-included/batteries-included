@@ -1,5 +1,6 @@
 ---
 title: 'Gen Resource - Yaml to Elixir'
+description: Convert Kubernetes YAML definitions into Elixir source modules.
 tags: ['overview', 'code', 'control-server', 'yaml']
 draft: false
 ---

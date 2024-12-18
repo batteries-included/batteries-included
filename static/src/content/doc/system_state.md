@@ -1,5 +1,6 @@
 ---
 title: 'System State Overview'
+description: Understanding the platform's system state management and caching.
 tags: ['overview', 'code', 'control-server']
 draft: false
 ---

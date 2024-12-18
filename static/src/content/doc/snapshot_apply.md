@@ -1,5 +1,6 @@
 ---
 title: 'Snapshot Apply'
+description: Implement repeatable system state changes across your cluster.
 tags: ['overview', 'code', 'control-server', 'kubernetes', 'keycloak']
 draft: false
 ---

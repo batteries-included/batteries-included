@@ -1,5 +1,7 @@
 ---
 title: 'Resource Hashing'
+description:
+  Track and compare Kubernetes resource changes using cryptographic hashing.
 tags: ['overview', 'code', 'control-server', 'kubernetes']
 draft: false
 ---

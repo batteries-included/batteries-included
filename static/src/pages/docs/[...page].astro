@@ -17,6 +17,40 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { page } = Astro.props;
 const currentPage = page.currentPage ?? 1;
 
+// Organize docs into categories
+const categorizedDocs = {
+  gettingStarted: page.data.filter((doc) =>
+    ['postgres', 'monitoring', 'pgvector'].includes(doc.slug)
+  ),
+
+  development: page.data.filter((doc) =>
+    [
+      'major_parts_install',
+      'build_and_packaging',
+      'gen_resource',
+      'resource_hashing',
+      'snapshot_apply',
+      'system_state',
+      'our_tools',
+      'ubuntu',
+    ].includes(doc.slug)
+  ),
+
+  batteries: page.data.filter((doc) =>
+    [
+      'postgres',
+      'alertmanager',
+      'cert-manager',
+      'cloud-nativ',
+      'grafana',
+      'istio',
+      'keycloak',
+      'knative',
+      'victoria-metrics',
+    ].includes(doc.slug)
+  ),
+};
+
 const metadata = {
   title: `Docs${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
   robots: {
@@ -37,25 +71,71 @@ const metadata = {
   </div>
   <div class="py-12 lg:py-16">
     <div class="u-container">
-      <div>
+      <div class="max-w-3xl mb-12">
         <h1
-          class="font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl">
-          Docs
+          class="font-bold ding-tighter tracking-tighter font-heading text-heading text-3xl lg:text-4xl xl:text-5xl mb-4">
+          Documentation
         </h1>
+        <p class="text-lg text-gray-600">
+          Everything you need to know about deploying and managing your
+          infrastructure with Batteries Included, from getting started to
+          technical deep dives.
+        </p>
       </div>
-      <ul>
-        {
-          page.data.map((doc, i) => (
-            <li key={doc.slug}>
-              <a
-                href={getPermalink(doc.permalink, 'docs')}
-                class="block py-4 cursor-pointer hover:text-primary hover:underline transition-colors duration-600 ease-in-out">
-                <h2 class="text-xl font-bold">{doc.title}</h2>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+
+      <div class="space-y-16">
+        <!-- Getting Started -->
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Getting Started</h2>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {
+              categorizedDocs.gettingStarted.map((doc) => (
+                <a
+                  href={getPermalink(doc.permalink, 'docs')}
+                  class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
+                  <p class="text-gray-600 text-sm">{doc.description}</p>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+
+        <!-- Development -->
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Development</h2>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {
+              categorizedDocs.development.map((doc) => (
+                <a
+                  href={getPermalink(doc.permalink, 'docs')}
+                  class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
+                  <p class="text-gray-600 text-sm">{doc.description}</p>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+
+        <!-- Batteries -->
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Batteries</h2>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {
+              categorizedDocs.batteries.map((doc) => (
+                <a
+                  href={getPermalink(doc.permalink, 'docs')}
+                  class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
+                  <p class="text-gray-600 text-sm">{doc.description}</p>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      </div>
+
       <div class="mt-12">
         <Pagination
           prevUrl={page.url.prev}

@@ -9,12 +9,14 @@ const getNormalizedDoc = async (doc: CollectionEntry<'doc'>): Promise<Doc> => {
 
   const {
     title,
+    description,
     tags: rawTags = [],
     category: rawCategory,
     draft = false,
     metadata = {},
   } = data as {
     title: string;
+    description?: string;
     tags?: string[];
     category?: string;
     draft?: boolean;
@@ -33,6 +35,7 @@ const getNormalizedDoc = async (doc: CollectionEntry<'doc'>): Promise<Doc> => {
     permalink: '/docs/' + slug,
 
     title: title,
+    description: description,
     category: category,
     tags: tags,
 

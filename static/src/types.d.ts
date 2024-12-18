@@ -56,6 +56,8 @@ export interface Doc {
   /**  */
   title: string;
   /**  */
+  description?: string;
+  /**  */
   category?: string;
   /**  */
   tags?: Array<string>;
