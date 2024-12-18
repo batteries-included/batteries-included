@@ -1,19 +1,18 @@
 ---
 title: 'PGVector and PostgreSQL'
 description:
-  Learn how to create AI applications using PostgreSQL and PGVector with Jupyter
-  Notebooks.
+  Create AI applications using PostgreSQL and PGVector with Jupyter Notebooks.
 tags: ['AI', 'Postgres', 'PGVector', 'Jupyter Notebooks']
 draft: false
 ---
 
 In the realm of artificial intelligence, the ability to efficiently store and
-retrieve high-dimensional data has become increasingly pertinent. As a result,
-it's only natural that database systems have evolved to meet these needs. Enter
-`pgvector` -- a powerful extension for Postgres that brings vector similarity
-search capabilities to an industry-standard database system.
+retrieve high-dimensional data is increasingly pertinent. As a result, it's only
+natural that database systems have evolved to meet these needs. Enter `pgvector`
+-- a powerful extension for Postgres that brings vector similarity search
+capabilities to an industry-standard database system.
 
-In this article, we'll explore how we can leverage `pgvector` and Postgres
+In this guide, we'll explore how we can leverage `pgvector` and Postgres
 together with the OpenAI API in order to create AI-driven applications. Along
 the way, we'll briefly explain key concepts such as embeddings and vector
 similarity search.

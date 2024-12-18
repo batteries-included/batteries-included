@@ -17,23 +17,9 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { page } = Astro.props;
 const currentPage = page.currentPage ?? 1;
 
-// Organize docs into categories
 const categorizedDocs = {
   gettingStarted: page.data.filter((doc) =>
     ['postgres', 'monitoring', 'pgvector'].includes(doc.slug)
-  ),
-
-  development: page.data.filter((doc) =>
-    [
-      'major_parts_install',
-      'build_and_packaging',
-      'gen_resource',
-      'resource_hashing',
-      'snapshot_apply',
-      'system_state',
-      'our_tools',
-      'ubuntu',
-    ].includes(doc.slug)
   ),
 
   batteries: page.data.filter((doc) =>
@@ -47,6 +33,19 @@ const categorizedDocs = {
       'keycloak',
       'knative',
       'victoria-metrics',
+    ].includes(doc.slug)
+  ),
+
+  development: page.data.filter((doc) =>
+    [
+      'major_parts_install',
+      'build_and_packaging',
+      'gen_resource',
+      'resource_hashing',
+      'snapshot_apply',
+      'system_state',
+      'our_tools',
+      'ubuntu',
     ].includes(doc.slug)
   ),
 };
@@ -101,12 +100,12 @@ const metadata = {
           </div>
         </section>
 
-        <!-- Development -->
+        <!-- Batteries -->
         <section>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Development</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Batteries</h2>
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {
-              categorizedDocs.development.map((doc) => (
+              categorizedDocs.batteries.map((doc) => (
                 <a
                   href={getPermalink(doc.permalink, 'docs')}
                   class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -118,12 +117,12 @@ const metadata = {
           </div>
         </section>
 
-        <!-- Batteries -->
+        <!-- Development -->
         <section>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Batteries</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Development</h2>
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {
-              categorizedDocs.batteries.map((doc) => (
+              categorizedDocs.development.map((doc) => (
                 <a
                   href={getPermalink(doc.permalink, 'docs')}
                   class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">

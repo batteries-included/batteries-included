@@ -1,8 +1,7 @@
 ---
 title: 'Build/Packaging Our Software'
 description:
-  Guide to building and packaging platform components with Docker and Mix
-  releases.
+  How the platform handles building and packaging with Docker and Mix releases.
 tags: ['overview', 'code', 'production', 'build']
 draft: false
 ---

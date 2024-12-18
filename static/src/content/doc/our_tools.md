@@ -1,6 +1,7 @@
 ---
 title: 'Internal Dev Tools'
-description: Development tools and utilities for working with the platform.
+description:
+  Overview of development tools and utilities in the platform codebase.
 tags: ['code', 'tools', 'internal']
 draft: false
 ---

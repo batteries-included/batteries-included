@@ -1,6 +1,8 @@
 ---
 title: 'Snapshot Apply'
-description: Implement repeatable system state changes across your cluster.
+description:
+  Internal process for managing system state changes and applying them across
+  the cluster.
 tags: ['overview', 'code', 'control-server', 'kubernetes', 'keycloak']
 draft: false
 ---
