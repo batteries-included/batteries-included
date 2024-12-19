@@ -87,7 +87,7 @@ defmodule CommonCore.Installs.Batteries do
   end
 
   defp usage_batteries(batteries, %Installation{usage: :internal_prod} = _install) do
-    batteries ++ @internal_prod_battery_types
+    batteries ++ @standard_battery_types ++ @internal_prod_battery_types
   end
 
   defp usage_batteries(batteries, %Installation{usage: :production} = _install) do
