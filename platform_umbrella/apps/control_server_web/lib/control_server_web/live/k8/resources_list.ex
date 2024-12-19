@@ -151,7 +151,7 @@ defmodule ControlServerWeb.Live.ResourceList do
 
   defp tabs(assigns) do
     ~H"""
-    <.tab_bar class="mb-4">
+    <.tab_bar variant="navigation">
       <:tab
         :for={{title, path, live_action} <- resource_tabs()}
         selected={@live_action == live_action}
@@ -182,61 +182,45 @@ defmodule ControlServerWeb.Live.ResourceList do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title="Kubernetes" />
-    <.tabs live_action={@live_action} />
-
-    <%= case @live_action do %>
-      <% :deployment -> %>
-        <.panel title="Deployments">
-          <:menu>
+    <.grid columns={[sm: 1, lg: 4]}>
+      <.flex column class="lg:order-last">
+        <.panel variant="gray">
+          <.flex column>
             <.filter_form value={@filter_value} />
-          </:menu>
-          <.async_result :let={objects} assign={@deployment}>
-            <:loading><.loader /></:loading>
-            <.deployments_table deployments={objects} />
-          </.async_result>
+            <.tabs live_action={@live_action} />
+          </.flex>
         </.panel>
-      <% :stateful_set -> %>
-        <.panel title="Stateful Sets">
-          <:menu>
-            <.filter_form value={@filter_value} />
-          </:menu>
-          <.async_result :let={objects} assign={@stateful_set}>
-            <:loading><.loader /></:loading>
-            <.stateful_sets_table stateful_sets={objects} />
-          </.async_result>
-        </.panel>
-      <% :node -> %>
-        <.panel title="Nodes">
-          <:menu>
-            <.filter_form value={@filter_value} />
-          </:menu>
-          <.async_result :let={objects} assign={@node}>
-            <:loading><.loader /></:loading>
-            <.nodes_table nodes={objects} />
-          </.async_result>
-        </.panel>
-      <% :pod -> %>
-        <.panel title="Pods">
-          <:menu>
-            <.filter_form value={@filter_value} />
-          </:menu>
-          <.async_result :let={objects} assign={@pod}>
-            <:loading><.loader /></:loading>
-            <.pods_table pods={objects} />
-          </.async_result>
-        </.panel>
-      <% :service -> %>
-        <.panel title="Services">
-          <:menu>
-            <.filter_form value={@filter_value} />
-          </:menu>
-          <.async_result :let={objects} assign={@service}>
-            <:loading><.loader /></:loading>
-            <.services_table services={objects} />
-          </.async_result>
-        </.panel>
-    <% end %>
+      </.flex>
+      <.panel title={@page_title} class="lg:col-span-3">
+        <%= case @live_action do %>
+          <% :deployment -> %>
+            <.async_result :let={objects} assign={@deployment}>
+              <:loading><.loader /></:loading>
+              <.deployments_table deployments={objects} />
+            </.async_result>
+          <% :stateful_set -> %>
+            <.async_result :let={objects} assign={@stateful_set}>
+              <:loading><.loader /></:loading>
+              <.stateful_sets_table stateful_sets={objects} />
+            </.async_result>
+          <% :node -> %>
+            <.async_result :let={objects} assign={@node}>
+              <:loading><.loader /></:loading>
+              <.nodes_table nodes={objects} />
+            </.async_result>
+          <% :pod -> %>
+            <.async_result :let={objects} assign={@pod}>
+              <:loading><.loader /></:loading>
+              <.pods_table pods={objects} />
+            </.async_result>
+          <% :service -> %>
+            <.async_result :let={objects} assign={@service}>
+              <:loading><.loader /></:loading>
+              <.services_table services={objects} />
+            </.async_result>
+        <% end %>
+      </.panel>
+    </.grid>
     """
   end
 end
