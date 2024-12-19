@@ -104,6 +104,7 @@ defmodule ControlServerWeb.Router do
     live "/pods", Live.ResourceList, :pod
     live "/services", Live.ResourceList, :service
 
+    live "/raw/:resource_type/:name", Live.RawResource, :index
     live "/raw/:resource_type/:namespace/:name", Live.RawResource, :index
 
     live "/pod/:namespace/:name/events", Live.PodShow, :events

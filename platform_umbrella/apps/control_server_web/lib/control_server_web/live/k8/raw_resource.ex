@@ -10,9 +10,11 @@ defmodule ControlServerWeb.Live.RawResource do
   require Logger
 
   @impl Phoenix.LiveView
-  def mount(%{"resource_type" => rt, "namespace" => namespace, "name" => name} = params, _session, socket) do
+  def mount(%{"resource_type" => rt, "name" => name} = params, _session, socket) do
     resource_type = String.to_existing_atom(rt)
     subscribe(resource_type)
+
+    namespace = Map.get(params, "namespace", nil)
 
     {:ok,
      socket
@@ -23,6 +25,10 @@ defmodule ControlServerWeb.Live.RawResource do
      |> assign(:namespace, namespace)
      |> assign(:name, name)
      |> assign(:resource, resource(resource_type, namespace, name))}
+  end
+
+  defp base_url(resource_type, nil, name) do
+    ~p"/kube/raw/#{resource_type}/#{name}"
   end
 
   defp base_url(resource_type, namespace, name) do
