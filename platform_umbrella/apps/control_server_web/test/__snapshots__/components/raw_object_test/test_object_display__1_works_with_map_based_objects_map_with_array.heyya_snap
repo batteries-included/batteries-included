@@ -1,42 +1,54 @@
 <div class="gap-4 lg:gap-6 flex overflow-x-auto focus:outline-none full-screen-minus mx-2">
   
   <div class="flex-none border-r-[1px] border-gray-lighter/90 w-96 overflow-x-clip">
-  <div class="gap-4 lg:gap-6 flex h-full w-full overflow-y-auto flex-col">
+  <div class="gap-4 lg:gap-6 flex h-full overflow-y-auto flex-col">
   
     <h3 class="text-xl font-medium text-gray-darker dark:text-white my-4">
   Root
 </h3>
-    <a href="/?path[]=a" data-phx-link="patch" data-phx-link-state="push" class="inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+    <a href="/?path[]=a" data-phx-link="patch" data-phx-link-state="push" class=" group hover:bg-pink-500/10 rounded-md">
   <span>
-  <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+  <div class="gap-4 lg:gap-6 flex justify-between align-center p-1">
+  
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M6 4.75A.75.75 0 0 1 6.75 4h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 4.75ZM6 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 10Zm0 5.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75a.75.75 0 0 1-.75-.75ZM1.99 4.75a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 15.25a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 10a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1V10Z" clip-rule="evenodd"/>
 </svg>
-  <span class="grow">a</span>
-  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+    <span>a</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"/>
 </svg>
+  
+</div>
 </span>
   
-</a><a href="/?path[]=b" data-phx-link="patch" data-phx-link-state="push" class="inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+</a><a href="/?path[]=b" data-phx-link="patch" data-phx-link-state="push" class=" group hover:bg-pink-500/10 rounded-md">
   <span>
-  <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+  <div class="gap-4 lg:gap-6 flex justify-between align-center p-1">
+  
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M6 4.75A.75.75 0 0 1 6.75 4h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 4.75ZM6 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 10Zm0 5.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75a.75.75 0 0 1-.75-.75ZM1.99 4.75a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 15.25a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 10a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1V10Z" clip-rule="evenodd"/>
 </svg>
-  <span class="grow">b</span>
-  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+    <span>b</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"/>
 </svg>
+  
+</div>
 </span>
   
-</a><a href="/?path[]=c" data-phx-link="patch" data-phx-link-state="push" class="inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark hover:underline flex flex-row h-10 hover:bg-pink-100/50 items-center group">
+</a><a href="/?path[]=c" data-phx-link="patch" data-phx-link-state="push" class=" group hover:bg-pink-500/10 rounded-md">
   <span>
-  <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 mr-2 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+  <div class="gap-4 lg:gap-6 flex justify-between align-center p-1">
+  
+    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray w-6 my-auto group-hover:text-primary-dark" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
   <path fill-rule="evenodd" d="M6 4.75A.75.75 0 0 1 6.75 4h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 4.75ZM6 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 10Zm0 5.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H6.75a.75.75 0 0 1-.75-.75ZM1.99 4.75a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 15.25a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1v-.01ZM1.99 10a1 1 0 0 1 1-1H3a1 1 0 0 1 1 1v.01a1 1 0 0 1-1 1h-.01a1 1 0 0 1-1-1V10Z" clip-rule="evenodd"/>
 </svg>
-  <span class="grow">c</span>
-  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+    <span>c</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"/>
 </svg>
+  
+</div>
 </span>
   
 </a>
