@@ -51,7 +51,7 @@ defmodule ControlServerWeb.ObjectDisplay do
   defp column(%{object: object} = assigns) when is_map(object) or is_list(object) do
     ~H"""
     <div class={@class}>
-      <.flex column class="h-full w-full overflow-y-auto">
+      <.flex column class="h-full overflow-y-auto">
         <.column_title selected={selected(@path)} />
         <.column_data object={@object} path={@path} base_url={@base_url} />
       </.flex>
@@ -62,7 +62,7 @@ defmodule ControlServerWeb.ObjectDisplay do
   defp column(assigns) do
     ~H"""
     <div class={@class}>
-      <.flex column class="h-full w-full overflow-y-auto">
+      <.flex column class="h-full overflow-y-auto">
         <.column_title selected={selected(@path)} />
         <.truncate_tooltip value={to_string(@object)} class="text-md" />
       </.flex>
@@ -73,19 +73,23 @@ defmodule ControlServerWeb.ObjectDisplay do
   attr :base_url, :string, default: "/"
   attr :path, :any, default: []
   attr :object, :any, default: %{}
-  attr :class, :string, default: "flex flex-row h-10 hover:bg-pink-100/50 items-center group"
-  attr :icon_class, :string, default: "text-gray w-6 mr-2 my-auto group-hover:text-primary-dark"
+  attr :class, :string, default: "group hover:bg-pink-500/10 rounded-md"
+  attr :flex_class, :string, default: "justify-between align-center p-1"
+  attr :icon_class, :string, default: "text-gray w-6 my-auto group-hover:text-primary-dark"
 
   defp column_data(%{object: object} = assigns) when is_map(object) do
     ~H"""
     <.a
       :for={{key, value} <- @object}
-      class={@class}
       patch={object_path_url(@base_url, @path ++ [key])}
+      class={@class}
+      variant="unstyled"
     >
-      <.value_icon value_type={value_type(value)} class={@icon_class} />
-      <span class="grow">{key}</span>
-      <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
+      <.flex class={@flex_class}>
+        <.value_icon value_type={value_type(value)} class={@icon_class} />
+        <span>{key}</span>
+        <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
+      </.flex>
     </.a>
     """
   end
@@ -94,12 +98,15 @@ defmodule ControlServerWeb.ObjectDisplay do
     ~H"""
     <.a
       :for={{value, idx} <- Enum.with_index(@object)}
-      class={@class}
       patch={object_path_url(@base_url, @path ++ [Integer.to_string(idx)])}
+      class={@class}
+      variant="unstyled"
     >
-      <.value_icon value_type={value_type(value)} class={@icon_class} />
-      <span class="grow">Index {idx}</span>
-      <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
+      <.flex class={@flex_class}>
+        <.value_icon value_type={value_type(value)} class={@icon_class} />
+        <span>Index {idx}</span>
+        <.icon name={:chevron_double_right} class={["w-6 h-6 text-gray"]} />
+      </.flex>
     </.a>
     """
   end

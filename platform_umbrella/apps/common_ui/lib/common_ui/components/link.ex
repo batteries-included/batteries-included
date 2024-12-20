@@ -4,7 +4,7 @@ defmodule CommonUI.Components.Link do
 
   import CommonUI.Components.Icon
 
-  attr :variant, :string, values: ["underlined", "external", "bordered", "bordered-lg"]
+  attr :variant, :string, values: ["underlined", "external", "bordered", "bordered-lg", "unstyled"]
   attr :icon, :atom, default: nil
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(download hreflang replace referrerpolicy rel target type href navigate patch method)
@@ -74,6 +74,8 @@ defmodule CommonUI.Components.Link do
       "border-gray-lighter dark:border-gray-darker hover:border-primary"
     ]
   end
+
+  defp link_class("unstyled"), do: ""
 
   defp link_class(_) do
     "inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark hover:underline"
