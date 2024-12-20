@@ -11,6 +11,7 @@ defmodule ControlServerWeb.Live.MagicHome do
   alias EventCenter.SystemStateSummary, as: SystemStateSummaryEventCenter
   alias KubeServices.SnapshotApply.Worker
   alias KubeServices.SystemState.SummaryBatteries
+  alias KubeServices.SystemState.SummaryURLs
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
@@ -78,14 +79,6 @@ defmodule ControlServerWeb.Live.MagicHome do
     assign(socket, page_title: socket.assigns.catalog_group.name)
   end
 
-  defp home_base_url(config) do
-    config
-    |> CommonCore.ET.URLs.home_base_url()
-    |> URI.new!()
-    |> Map.put(:path, "/")
-    |> URI.to_string()
-  end
-
   defp battery_link_panel(%{battery: %{type: :timeline}} = assigns) do
     ~H"""
     <.a variant="bordered" navigate={~p"/history/timeline"}>Timeline</.a>
@@ -100,8 +93,8 @@ defmodule ControlServerWeb.Live.MagicHome do
     """
   end
 
-  defp battery_link_panel(%{battery: %{type: :battery_core, config: config}} = assigns) do
-    assigns = assign(assigns, :home_base_url, home_base_url(config))
+  defp battery_link_panel(%{battery: %{type: :battery_core}} = assigns) do
+    assigns = assign(assigns, home_base_url: SummaryURLs.home_base_url())
 
     ~H"""
     <.a variant="bordered" href={@home_base_url}>
