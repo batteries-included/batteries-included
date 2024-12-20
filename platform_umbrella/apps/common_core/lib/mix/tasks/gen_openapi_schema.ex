@@ -12,7 +12,8 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
     "Timezone",
     "CustomerChargeFiltersUsageObject",
     "CustomerChargeGroupsUsageObject",
-    "CustomerChargeGroupedUsageObject"
+    "CustomerChargeGroupedUsageObject",
+    "ScopeRepresentation"
   ]
   @field_regex ~r/^(\s*)(field|embeds_many|embeds_one)\((.*)\)$/
 
@@ -240,6 +241,8 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeFiltersUsageObject"}), do: nil
   defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeGroupsUsageObject"}), do: nil
   defp ref_schema_name(%{"$ref" => "#/components/schemas/CustomerChargeGroupedUsageObject"}), do: nil
+  defp ref_schema_name(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringComponentExportRepresentation"}), do: nil
+  defp ref_schema_name(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringString"}), do: nil
 
   defp ref_schema_name(%{"$ref" => ref_name}), do: ref_name_to_schema_name(ref_name)
 
@@ -263,6 +266,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp ref_name_to_schema_name(ref_name) do
     case String.split(ref_name, "#/components/schemas/") do
       ["", "OAuthClientRepresentation"] -> nil
+      ["", "MultivaluedHashMapStringString"] -> nil
       ["", schema_name] -> schema_name
       _ -> nil
     end
@@ -325,6 +329,18 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp type(%{"type" => "object"}) do
     quote do
       :map
+    end
+  end
+
+  defp type(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringComponentExportRepresentation"} = _info) do
+    quote do
+      {:array, :map}
+    end
+  end
+
+  defp type(%{"$ref" => "#/components/schemas/MultivaluedHashMapStringString"} = _info) do
+    quote do
+      {:array, :string}
     end
   end
 
@@ -442,6 +458,12 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp type(%{"type" => "boolean"}) do
     quote do
       :boolean
+    end
+  end
+
+  defp type(%{}) do
+    quote do
+      :string
     end
   end
 end
