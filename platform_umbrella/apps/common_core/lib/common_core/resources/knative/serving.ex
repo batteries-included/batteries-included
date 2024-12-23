@@ -72,7 +72,9 @@ defmodule CommonCore.Resources.KnativeServing do
   resource(:cluster_role_admin, _battery, _state) do
     :cluster_role
     |> B.build_resource()
-    |> B.aggregation_rule(%{"clusterRoleSelectors" => [%{"matchLabels" => %{"serving.knative.dev/controller" => "true"}}]})
+    |> B.aggregation_rule(%{
+      "clusterRoleSelectors" => [%{"matchLabels" => %{"serving.knative.dev/controller" => "true"}}]
+    })
     |> B.name("knative-serving-admin")
   end
 

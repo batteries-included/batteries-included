@@ -208,7 +208,9 @@ defmodule CommonUI.Components.Container do
 
   defp to_class(break_points, fun) do
     break_points
-    |> Enum.sort_by(fn {breakpoint, _} -> Enum.find_index(@breakpoints, fn b -> b == to_string(breakpoint) end) || 100 end)
+    |> Enum.sort_by(fn {breakpoint, _} ->
+      Enum.find_index(@breakpoints, fn b -> b == to_string(breakpoint) end) || 100
+    end)
     |> Enum.with_index()
     |> Enum.map(fn
       {{_breakpoint, num}, idx} when idx == 0 -> fun.(nil, num)
