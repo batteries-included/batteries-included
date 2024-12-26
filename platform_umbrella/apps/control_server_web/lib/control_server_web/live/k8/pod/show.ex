@@ -222,43 +222,33 @@ defmodule ControlServerWeb.Live.PodShow do
     """
   end
 
-  defp details_panel(assigns) do
-    ~H"""
-    <.panel title="Details" variant="gray">
-      <.data_list>
-        <:item title="Running Status">
-          {phase(@resource)}
-        </:item>
-        <:item :if={service_account(@resource)} title="Account">
-          {service_account(@resource)}
-        </:item>
-        <:item :if={node_name(@resource)} title="Node">
-          {node_name(@resource)}
-        </:item>
-        <:item :if={pod_ip(@resource)} title="Pod IP">
-          {pod_ip(@resource)}
-        </:item>
-        <:item :if={qos_class(@resource)} title="Quality Of Service">
-          {qos_class(@resource)}
-        </:item>
-      </.data_list>
-    </.panel>
-    """
-  end
-
   defp link_panel(assigns) do
     ~H"""
-    <.flex column class="justify-start">
-      <.a variant="bordered" navigate={resource_path(@resource, :events)}>Events</.a>
-      <.a variant="bordered" navigate={resource_path(@resource, :labels)}>Labels/Annotations</.a>
-      <.a variant="bordered" navigate={raw_resource_path(@resource)}>Raw Kubernetes</.a>
+    <.panel variant="gray" class="lg:order-last">
+      <.tab_bar variant="navigation">
+        <:tab selected={@live_action == :index} patch={resource_path(@resource)}>Overview</:tab>
+        <:tab selected={@live_action == :events} patch={resource_path(@resource, :events)}>
+          Events
+        </:tab>
+        <:tab selected={@live_action == :labels} patch={resource_path(@resource, :labels)}>
+          Labels
+        </:tab>
+        <:tab selected={@live_action == :annotations} patch={resource_path(@resource, :annotations)}>
+          Annotations
+        </:tab>
+        <:tab
+          :if={@trivy_enabled}
+          selected={@live_action == :security}
+          patch={resource_path(@resource, :security)}
+        >
+          Security Report
+        </:tab>
+        <:tab navigate={raw_resource_path(@resource)}>Raw</:tab>
+      </.tab_bar>
       <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
         Grafana Dashboard
       </.a>
-      <.a :if={@trivy_enabled} variant="bordered" navigate={resource_path(@resource, :security)}>
-        Security Report
-      </.a>
-    </.flex>
+    </.panel>
     """
   end
 
@@ -269,14 +259,34 @@ defmodule ControlServerWeb.Live.PodShow do
     </.page_header>
 
     <.flex column>
-      <.grid columns={[sm: 1, lg: 2]}>
-        <.details_panel resource={@resource} />
+      <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
         <.link_panel
+          live_action={@live_action}
           resource={@resource}
           trivy_enabled={@trivy_enabled}
           grafana_dashboard_url={@grafana_dashboard_url}
         />
+        <.panel title="Details" class="lg:col-span-3 lg:row-span-2">
+          <.data_list>
+            <:item title="Running Status">
+              {phase(@resource)}
+            </:item>
+            <:item :if={service_account(@resource)} title="Account">
+              {service_account(@resource)}
+            </:item>
+            <:item :if={node_name(@resource)} title="Node">
+              {node_name(@resource)}
+            </:item>
+            <:item :if={pod_ip(@resource)} title="Pod IP">
+              {pod_ip(@resource)}
+            </:item>
+            <:item :if={qos_class(@resource)} title="Quality Of Service">
+              {qos_class(@resource)}
+            </:item>
+          </.data_list>
+        </.panel>
       </.grid>
+
       <.pod_containers_section resource={@resource} />
       <.conditions_display conditions={conditions(@resource)} />
     </.flex>
@@ -288,7 +298,16 @@ defmodule ControlServerWeb.Live.PodShow do
     <.page_header title={@name} back_link={resource_path(@resource)}>
       <.pod_facts_section resource={@resource} namespace={@namespace} />
     </.page_header>
-    <.events_panel events={@events} />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.link_panel
+        live_action={@live_action}
+        resource={@resource}
+        trivy_enabled={@trivy_enabled}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+      <.events_panel events={@events} class="lg:col-span-3 lg:row-span-2" />
+    </.grid>
     """
   end
 
@@ -298,15 +317,39 @@ defmodule ControlServerWeb.Live.PodShow do
       <.pod_facts_section resource={@resource} namespace={@namespace} />
     </.page_header>
 
-    <.flex column>
-      <.panel title="Labels">
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.link_panel
+        live_action={@live_action}
+        resource={@resource}
+        trivy_enabled={@trivy_enabled}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+
+      <.panel title="Labels" class="lg:col-span-3 lg:row-span-2">
         <.data_list>
           <:item :for={{key, value} <- labels(@resource)} title={key}>
             <.truncate_tooltip value={value} />
           </:item>
         </.data_list>
       </.panel>
-      <.panel title="Annotations">
+    </.grid>
+    """
+  end
+
+  defp annotations_page(assigns) do
+    ~H"""
+    <.page_header title={@name} back_link={resource_path(@resource)}>
+      <.pod_facts_section resource={@resource} namespace={@namespace} />
+    </.page_header>
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.link_panel
+        live_action={@live_action}
+        resource={@resource}
+        trivy_enabled={@trivy_enabled}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+      <.panel title="Annotations" class="lg:col-span-3 lg:row-span-2">
         <.data_list>
           <:item :for={{key, value} <- annotations(@resource)} title={key}>
             <%!--
@@ -317,7 +360,7 @@ defmodule ControlServerWeb.Live.PodShow do
           </:item>
         </.data_list>
       </.panel>
-    </.flex>
+    </.grid>
     """
   end
 
@@ -387,26 +430,16 @@ defmodule ControlServerWeb.Live.PodShow do
     ~H"""
     <%= case @live_action do %>
       <% :index -> %>
-        <.main_page
-          resource={@resource}
-          namespace={@namespace}
-          name={@name}
-          trivy_enabled={@trivy_enabled}
-          grafana_dashboard_url={@grafana_dashboard_url}
-        />
+        <.main_page {assigns} />
       <% :logs -> %>
-        <.main_page
-          resource={@resource}
-          namespace={@namespace}
-          name={@name}
-          trivy_enabled={@trivy_enabled}
-          grafana_dashboard_url={@grafana_dashboard_url}
-        />
+        <.main_page {assigns} />
         <.logs_modal :if={@logs} resource={@resource} logs={@logs} />
       <% :events -> %>
-        <.events_page resource={@resource} namespace={@namespace} name={@name} events={@events} />
+        <.events_page {assigns} />
       <% :labels -> %>
-        <.labels_page resource={@resource} namespace={@namespace} name={@name} />
+        <.labels_page {assigns} />
+      <% :annotations -> %>
+        <.annotations_page {assigns} />
       <% :security -> %>
         <.security_page resource={@resource} namespace={@namespace} name={@name} reports={@reports} />
       <% _ -> %>

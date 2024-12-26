@@ -109,6 +109,7 @@ defmodule ControlServerWeb.Router do
 
     live "/pod/:namespace/:name/events", Live.PodShow, :events
     live "/pod/:namespace/:name/labels", Live.PodShow, :labels
+    live "/pod/:namespace/:name/annotations", Live.PodShow, :annotations
     live "/pod/:namespace/:name/security", Live.PodShow, :security
     live "/pod/:namespace/:name/logs", Live.PodShow, :logs
     live "/pod/:namespace/:name/show", Live.PodShow, :index
