@@ -7,7 +7,10 @@ defmodule ControlServerWeb.Live.GroupBatteriesIndex do
   alias EventCenter.Database, as: DatabaseEventCenter
 
   def mount(%{"group" => group}, _session, socket) do
-    :ok = DatabaseEventCenter.subscribe(:system_battery)
+    if connected?(socket) do
+      :ok = DatabaseEventCenter.subscribe(:system_battery)
+    end
+
     group = Catalog.group(group)
 
     {:ok,

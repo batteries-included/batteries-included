@@ -6,7 +6,9 @@ defmodule ControlServerWeb.Live.StateSummary do
   alias EventCenter.SystemStateSummary, as: SummaryEventCenter
 
   def mount(_params, _session, socket) do
-    :ok = SummaryEventCenter.subscribe()
+    if connected?(socket) do
+      :ok = SummaryEventCenter.subscribe()
+    end
 
     {:ok, socket |> assign_state_summary() |> assign_page_title()}
   end

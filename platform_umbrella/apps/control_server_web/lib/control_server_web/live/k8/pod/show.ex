@@ -39,10 +39,12 @@ defmodule ControlServerWeb.Live.PodShow do
         _uri,
         %{assigns: %{live_action: :logs, name: name, namespace: namespace}} = socket
       ) do
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(@resource_type)
+    end
+
     # If this is a logs live_action and the container name was passed
     # Get the logs
-    :ok = KubeEventCenter.subscribe(@resource_type)
-
     {:noreply, monitor_and_assign_logs(socket, namespace, name, container)}
   end
 

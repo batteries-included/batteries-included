@@ -12,7 +12,10 @@ defmodule ControlServerWeb.Live.RawResource do
   @impl Phoenix.LiveView
   def mount(%{"resource_type" => rt, "name" => name} = params, _session, socket) do
     resource_type = String.to_existing_atom(rt)
-    subscribe(resource_type)
+
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(resource_type)
+    end
 
     namespace = Map.get(params, "namespace", nil)
 
@@ -38,10 +41,6 @@ defmodule ControlServerWeb.Live.RawResource do
   @impl Phoenix.LiveView
   def handle_params(params, _url, socket) do
     {:noreply, assign(socket, :path, Map.get(params, "path", []))}
-  end
-
-  defp subscribe(resource_type) do
-    :ok = KubeEventCenter.subscribe(resource_type)
   end
 
   @impl Phoenix.LiveView

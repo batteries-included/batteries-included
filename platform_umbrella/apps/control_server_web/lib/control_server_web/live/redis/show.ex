@@ -14,9 +14,11 @@ defmodule ControlServerWeb.Live.RedisShow do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = KubeEventCenter.subscribe(:pod)
-    :ok = KubeEventCenter.subscribe(:service)
-    :ok = KubeEventCenter.subscribe(:redis_failover)
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(:pod)
+      :ok = KubeEventCenter.subscribe(:service)
+      :ok = KubeEventCenter.subscribe(:redis_failover)
+    end
 
     {:ok,
      socket

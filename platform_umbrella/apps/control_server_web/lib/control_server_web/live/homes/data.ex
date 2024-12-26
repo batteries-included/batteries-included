@@ -15,7 +15,9 @@ defmodule ControlServerWeb.Live.DataHome do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = SystemStateSummaryEventCenter.subscribe()
+    if connected?(socket) do
+      :ok = SystemStateSummaryEventCenter.subscribe()
+    end
 
     {:ok,
      socket
