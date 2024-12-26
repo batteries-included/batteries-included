@@ -16,7 +16,10 @@ defmodule ControlServerWeb.Live.DeploymentShow do
 
   @impl Phoenix.LiveView
   def mount(%{"name" => name, "namespace" => namespace}, _session, socket) do
-    :ok = KubeEventCenter.subscribe(@resource_type)
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(@resource_type)
+    end
+
     resource = get_resource!(namespace, name)
 
     {:ok,

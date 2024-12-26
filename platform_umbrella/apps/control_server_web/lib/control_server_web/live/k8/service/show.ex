@@ -14,7 +14,9 @@ defmodule ControlServerWeb.Live.ServiceShow do
 
   @impl Phoenix.LiveView
   def mount(%{"name" => name, "namespace" => namespace}, _session, socket) do
-    :ok = KubeEventCenter.subscribe(@resource_type)
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(@resource_type)
+    end
 
     {:ok,
      socket

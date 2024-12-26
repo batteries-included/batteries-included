@@ -12,7 +12,10 @@ defmodule ControlServerWeb.Live.Timeline do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = DatabaseEventCenter.subscribe(:timeline_event)
+    if connected?(socket) do
+      :ok = DatabaseEventCenter.subscribe(:timeline_event)
+    end
+
     {:ok, assign(socket, :events, events())}
   end
 

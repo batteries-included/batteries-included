@@ -19,7 +19,10 @@ defmodule ControlServerWeb.Live.ResourceList do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     live_action = socket.assigns.live_action
-    subscribe(live_action)
+
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(live_action)
+    end
 
     {:ok,
      socket
@@ -70,10 +73,6 @@ defmodule ControlServerWeb.Live.ResourceList do
          Map.put(objects, type, type == live_action && objs)
        end)}
     end)
-  end
-
-  defp subscribe(resource_type) do
-    :ok = KubeEventCenter.subscribe(resource_type)
   end
 
   @impl Phoenix.LiveView

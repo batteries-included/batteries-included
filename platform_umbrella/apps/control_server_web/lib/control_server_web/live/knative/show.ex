@@ -22,9 +22,11 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = KubeEventCenter.subscribe(:pod)
-    :ok = KubeEventCenter.subscribe(:knative_service)
-    :ok = KubeEventCenter.subscribe(:knative_revision)
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(:pod)
+      :ok = KubeEventCenter.subscribe(:knative_service)
+      :ok = KubeEventCenter.subscribe(:knative_revision)
+    end
 
     {:ok,
      socket

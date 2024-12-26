@@ -17,8 +17,11 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = KubeEventCenter.subscribe(:pod)
-    :ok = KubeEventCenter.subscribe(:cloudnative_pg_cluster)
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(:pod)
+      :ok = KubeEventCenter.subscribe(:cloudnative_pg_cluster)
+    end
+
     {:ok, socket}
   end
 

@@ -12,7 +12,10 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
 
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do
-    :ok = EventCenter.Keycloak.subscribe(:create_user)
+    if connected?(socket) do
+      :ok = EventCenter.Keycloak.subscribe(:create_user)
+    end
+
     {:ok, socket |> assign_keycloak_url() |> assign_current_page()}
   end
 

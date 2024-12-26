@@ -14,7 +14,10 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    :ok = KubeEventCenter.subscribe(:pod)
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(:pod)
+    end
+
     {:ok, assign_page_title(socket)}
   end
 

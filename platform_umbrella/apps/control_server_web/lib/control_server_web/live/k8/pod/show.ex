@@ -19,6 +19,10 @@ defmodule ControlServerWeb.Live.PodShow do
 
   @impl Phoenix.LiveView
   def mount(%{"name" => name, "namespace" => namespace}, _session, socket) do
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(@resource_type)
+    end
+
     {:ok,
      socket
      |> assign(
@@ -41,8 +45,6 @@ defmodule ControlServerWeb.Live.PodShow do
       ) do
     # If this is a logs live_action and the container name was passed
     # Get the logs
-    :ok = KubeEventCenter.subscribe(@resource_type)
-
     {:noreply, monitor_and_assign_logs(socket, namespace, name, container)}
   end
 
@@ -60,8 +62,6 @@ defmodule ControlServerWeb.Live.PodShow do
   end
 
   def handle_params(_params, _uri, %{assigns: %{live_action: :events}} = socket) do
-    :ok = KubeEventCenter.subscribe(@resource_type)
-
     {:noreply, assign_events(socket)}
   end
 
