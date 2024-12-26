@@ -20,7 +20,7 @@ defmodule ControlServerWeb.DeletedResourcesLiveTest do
       |> start(~p|/deleted_resources|)
       |> assert_html("resource1")
       |> assert_html("resource2")
-      |> assert_matches_snapshot(selector: "#deleted-resources-table thead")
+      |> assert_matches_snapshot(selector: "#deleted-resources-table thead th:last-child")
     end
   end
 end

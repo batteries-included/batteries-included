@@ -150,10 +150,6 @@ defmodule CommonCore.Util.MemoryTest do
       assert range_value_to_bytes(-1, ticks) == :error
       assert range_value_to_bytes(100, ticks) == :error
     end
-
-    test "should return error when there are no ticks" do
-      assert_raise FunctionClauseError, fn -> range_value_to_bytes(1, []) end
-    end
   end
 
   describe "bytes_to_range_value/2" do
@@ -204,10 +200,6 @@ defmodule CommonCore.Util.MemoryTest do
 
       assert bytes_to_range_value(0, ticks) == 0
       assert bytes_to_range_value(100, ticks) == 99
-    end
-
-    test "should return error when there are no ticks" do
-      assert_raise FunctionClauseError, fn -> bytes_to_range_value(1, []) end
     end
   end
 

@@ -26,7 +26,6 @@ defmodule CommonCore.Ecto.BatteryUUIDTest do
   end
 
   test "autogenerate/0" do
-    assert BatteryUUID.autogenerate() != nil
     assert String.starts_with?(BatteryUUID.autogenerate(), "batt_")
     assert String.length(BatteryUUID.autogenerate()) == 37
   end
