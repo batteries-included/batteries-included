@@ -1,9 +1,10 @@
 awscli 2.19.5
-elixir 1.17.3-otp-27
-erlang 27.1
+elixir 1.18.0-otp-27
+erlang 27.1.2
 golang 1.23.3
 goreleaser 2.4.4
 kind 0.25.0
 kubectl 1.32.0
 nodejs 22.11.0
 shfmt 3.10.0
+python 3.12.8

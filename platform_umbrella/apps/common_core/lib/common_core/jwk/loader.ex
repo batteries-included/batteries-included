@@ -29,7 +29,7 @@ defmodule CommonCore.JWK.Loader do
     string_value =
       System.get_env(@env_name)
 
-    if string_value && !string_value != "" do
+    if string_value && string_value != "" do
       string_value
       |> JOSE.JWK.from_binary()
       |> to_map()
