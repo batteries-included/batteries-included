@@ -1,34 +1,20 @@
 ---
-title: 'PGVector and PostgreSQL'
+title: 'AI with PGVector and PostgreSQL'
 description:
   Create AI applications using PostgreSQL and PGVector with Jupyter Notebooks.
 tags: ['AI', 'Postgres', 'PGVector', 'Jupyter Notebooks']
 draft: false
 ---
 
-In the realm of artificial intelligence, the ability to efficiently store and
-retrieve high-dimensional data is increasingly pertinent. As a result, it's only
-natural that database systems have evolved to meet these needs. Enter `pgvector`
--- a powerful extension for Postgres that brings vector similarity search
-capabilities to an industry-standard database system.
+This guide shows you how to use `pgvector` with PostgreSQL and the OpenAI API to
+build AI applications. We'll cover embeddings, vector similarity search, and how
+to implement them in your projects.
 
-In this guide, we'll explore how we can leverage `pgvector` and Postgres
-together with the OpenAI API in order to create AI-driven applications. Along
-the way, we'll briefly explain key concepts such as embeddings and vector
-similarity search.
-
-## Understanding PostgreSQL and `pgvector`
-
-_PostgreSQL_, also known as _Postgres_, is an open-source object-relational
-database system with over 30 years of active development. Known for reliability,
-a wide range of features, and performance, Postgres is a popular choice for any
-application, from small projects to large enterprise software.
-
-`pgvector` is a Postgres extension that adds vector similarity search
-capabilities to the database. In AI, vector similarity search is crucial for
-many applications, including recommendation systems, natural language
-processing, image recognition, and more. `pgvector` allows you to both store and
-query high-dimensional vectors efficiently within your Postgres database.
+PostgreSQL is a reliable, feature-rich open-source database, and pgvector
+extends it with powerful vector similarity search capabilities. This combination
+lets you efficiently store and query the high-dimensional vectors used in AI
+applications like recommendation systems, natural language processing, and image
+recognition, all within a familiar SQL environment.
 
 ## The Power of Embeddings in AI
 

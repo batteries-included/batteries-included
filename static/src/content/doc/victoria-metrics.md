@@ -1,91 +1,63 @@
 ---
-title: Victoria Metrics
-description: Moriensque est bis Tarpeias Capetusque alter
-tags: ['test', 'default doc']
-draft: true
+title: VictoriaMetrics
+description:
+  Deploy VictoriaMetrics for efficient and scalable metrics collection and
+  storage.
+tags: ['monitoring', 'metrics', 'victoriametrics']
+draft: false
 ---
 
-## Ala eris
+VictoriaMetrics is a fast, cost-effective time series database and monitoring
+solution. It serves as an optional metrics collection service in Batteries
+Included, providing efficient storage and retrieval for all your monitoring data
+while maintaining high performance even with large amounts of metrics.
 
-Lorem markdownum humo. Arma opus attoniti heros.
+## Installing VictoriaMetrics
 
-    trim.safe(ssdPathDvr, memory(daemon_algorithm_exbibyte,
-            emulation_lte_control.listserv_camelcase(character)), ethernet);
-    if (2) {
-        dnsTargetMarketing(5, gate);
-        panel(cybercrimeComponent, 3 + wheelZip);
-    } else {
-        raster_character += pum;
-    }
-    snippet.blacklistMemoryFlash(resources, dv);
-    skyscraper_raw += login_tweet_modem;
-    url.localhostVariable *= promptCpuSnmp + faqDsl;
+1. Navigate to the `Monitoring` tab in the control server.
+2. Click `Manage Batteries` to view available monitoring components.
+3. Find the `VictoriaMetrics` battery and click `Install`.
 
-## Ligo simul curvamine una stridore nepotum solus
+When installing VictoriaMetrics, you can configure the replication factor,
+number of nodes for different operations, and storage size based on your needs.
+For most installations, the default settings work well out of the box.
 
-Sparsos phoenica remoto. Fronde media sceleri inquit duxere pacifer multamque
-colla. Ipse umidus [ignes](http://www.edaxmea.io/quaeet), est nisi duae flexit
-verba. Illuc ad aut sacrilegi, ipsum?
+Installing the `VictoriaMetrics` battery will also automatically install the
+`VM Agent` battery.
 
-    if (menu_ruby.domain.southbridge(edutainment_up_install.integer_forum_root(
-            processorPetabyte))) {
-        twain.algorithm_right += solidChip(57, impact_friendly_leopard);
-    }
-    if (template(desktop_disk.icmp_bar(boot))) {
-        hertz_warm(browserLdapRom(device_packet, home_mbr), hardGammaCable.net(
-                3), cycleFlowchartIeee + plug);
-        cmyk += spool_yottabyte.input(printerBsod, crop) /
-                biometricsSpriteHyperlink;
-        southbridge.insertionVertical = waveform_osi(adPathMetadata, dv_mca);
-    }
-    var kilobit_system_ibm = systemDmaWord + 1;
+<video src="/videos/docs/vm/installing-vm.mp4" controls></video>
 
-## Aethere testataque mihi gaudet illi dicunt
+## VMUI Query Interface
 
-Tuque tamen ros posita sub cum aere Mopsum, domitis. Non dissimulat sed, in
-iugis. Illa et miratur bracchia perstat, toto illi Calliroe
-[mota vimine](http://boves-quodque.net/naribuscupressu.php).
+The VMUI (VictoriaMetrics User Interface) provides a powerful web interface for
+querying and exploring your metrics. Access it through the `Monitoring` tab by
+clicking `VM Select`:
 
-> Regna turpe sacra atque. Siccoque Finierat, mihi est quem unum patientem
-> _deprensus pedem_ per ille futura primisque murmure. Sua aether, ne duc utque
-> [harenam](http://et.net/), spesque parentem.
+- Write and execute [MetricsQL](https://docs.victoriametrics.com/metricsql/)
+  queries.
+- View results in graph, table, or JSON formats.
+- Explore metric names and labels.
 
-## Caput turbatusque meroque si manum Atlas crinem
+<video src="/videos/docs/vm/vm-query.mp4" controls></video>
 
-Suis quae capitis Baucis. Morsu te, fata discrimina tempus sollicitive, **numero
-ita**. Medicata iter. Tolle deam, totoque, ubi: metu radios quoque inplet.
+## VM Agent
 
-    if (motionDma(5)) {
-        logic_time_simplex = t_apple;
-    } else {
-        gif = session;
-    }
-    if (bounce_simm_error == stationEFrequency.rateDefault.xhtml(
-            dimmMultiplatformGolden, 1, up_duplex)) {
-        domain(input_w_sku(e), 3);
-        cookie_navigation(minisite_public - barcraftPupHot);
-    } else {
-        kbps_and_input.certificate_application = 2;
-        ip_pcb /= shortcutFunction;
-        video_controller.adf(editorPiconetPort, tweak_download_post(5, 21, 2),
-                recycleThread + rpm);
-    }
-    hardware_encoding_tutorial(2, system_bare_wavelength(navigation_gps +
-            srgbIoBox, threading_dvd - pretest_dlc_folder, ipv), -1 +
-            dac_internic(gamma_ram_code));
-    favicon = sql_pci.friendWebEncoding.interface_pim_standalone(
-            address.myspace(4), raster, 3) + artHit;
-    if (ringNat >= fat) {
-        dnsInputBookmark *= cold.version_spider(keyboard_multimedia_ip);
-        scrollMmsManagement += 385319;
-        pcmcia_interpreter_and += snippetSlashdot / databaseOpacity +
-                vistaComponentSource;
-    } else {
-        slashdot_metal_ddl.ram.search_parity(icmp, 57896);
-        onClickData = hdd_cron;
-        pHeader += logScannerSymbolic;
-    }
+The VM Agent handles metrics collection and scraping. Access its interface
+through the `Monitoring` tab by clicking `VM Agent`. This provides several
+useful endpoints:
 
-Erunt lunae summos partique versus! Iamdudum tamen tecta tenues nunc prementem
-acerno Phrygiae reformatus nova; sacerdos ecce: quanto et gemini iamque est;
-**echidnae**.
+- `/targets` - View status of discovered active targets.
+- `/service-discovery` - Explore labels before and after relabeling.
+- `/metric-relabel-debug` - Debug metric relabeling.
+- `/api/v1/targets` - Get detailed tar-get information in JSON format.
+
+You can access these endpoints directly through the VM Agent URL, for example:
+`http://vmagent.<your-cluster>/api/v1/targets`
+
+## Additional Resources
+
+- Visit the official
+  [VictoriaMetrics documentation](https://docs.victoriametrics.com/) for usage
+  details.
+- Check the [Grafana docs](/docs/grafana) for metrics dashboards and
+  visualization.

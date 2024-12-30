@@ -19,7 +19,7 @@ const currentPage = page.currentPage ?? 1;
 
 const categorizedDocs = {
   gettingStarted: page.data.filter((doc) =>
-    ['postgres', 'monitoring', 'pgvector'].includes(doc.slug)
+    ['getting-started', 'projects', 'monitoring', 'pgvector'].includes(doc.slug)
   ),
 
   batteries: page.data.filter((doc) =>
@@ -29,6 +29,7 @@ const categorizedDocs = {
       'cert-manager',
       'cloud-nativ',
       'grafana',
+      'jupyter',
       'istio',
       'keycloak',
       'knative',
@@ -78,7 +79,7 @@ const metadata = {
         <p class="text-lg text-gray-600">
           Everything you need to know about deploying and managing your
           infrastructure with Batteries Included, from getting started to
-          technical deep dives.
+          architectural deep dives.
         </p>
       </div>
 
