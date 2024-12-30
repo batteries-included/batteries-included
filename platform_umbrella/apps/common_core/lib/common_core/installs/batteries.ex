@@ -33,34 +33,7 @@ defmodule CommonCore.Installs.Batteries do
     # All the batteries have default configs
     # Pass the settings from install into the batteries that will eventually
     # run on the control server
-    |> add_battery_core_config(install)
-  end
-
-  defp add_battery_core_config(batteries, %Installation{
-         id: id,
-         slug: slug,
-         kube_provider: cluster_type,
-         default_size: default_size,
-         usage: usage,
-         control_jwk: control_jwk
-       }) do
-    Enum.map(batteries, fn
-      %SystemBattery{type: :battery_core, config: config} = sb ->
-        new_config = %BatteryCoreConfig{
-          config
-          | cluster_type: cluster_type,
-            default_size: default_size,
-            cluster_name: slug,
-            install_id: id,
-            control_jwk: control_jwk,
-            usage: usage
-        }
-
-        %SystemBattery{sb | config: new_config}
-
-      battery ->
-        battery
-    end)
+    |> enrich_all_battery_configs(install)
   end
 
   defp recursive_batteries(types) do
@@ -114,5 +87,34 @@ defmodule CommonCore.Installs.Batteries do
 
   defp usage_batteries(batteries, _install) do
     batteries ++ @standard_battery_types
+  end
+
+  defp enrich_all_battery_configs(batteries, %Installation{} = install) do
+    Enum.map(batteries, &enrich_single_battery_config(&1, install))
+  end
+
+  defp enrich_single_battery_config(%SystemBattery{type: :battery_core, config: config} = sb, %Installation{
+         id: id,
+         slug: slug,
+         kube_provider: cluster_type,
+         default_size: default_size,
+         usage: usage,
+         control_jwk: control_jwk
+       }) do
+    new_config = %BatteryCoreConfig{
+      config
+      | cluster_type: cluster_type,
+        default_size: default_size,
+        cluster_name: slug,
+        install_id: id,
+        control_jwk: control_jwk,
+        usage: usage
+    }
+
+    %SystemBattery{sb | config: new_config}
+  end
+
+  defp enrich_single_battery_config(battery, _install) do
+    battery
   end
 end
