@@ -4,7 +4,7 @@ defmodule KubeBootstrap.MixProject do
   def project do
     [
       app: :kube_bootstrap,
-      version: "0.47.0",
+      version: "0.48.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
