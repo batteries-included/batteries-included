@@ -2,6 +2,7 @@
 title: Alertmanager
 description: Lorem markdownum adesto diruit ferunt
 tags: ['test', 'default doc']
+category: batteries
 draft: true
 ---
 

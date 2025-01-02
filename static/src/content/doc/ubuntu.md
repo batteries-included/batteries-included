@@ -3,6 +3,7 @@ title: 'Ubuntu Dev prepare'
 description:
   Setting up an Ubuntu development environment for platform development.
 tags: ['code', 'tools', 'internal']
+category: development
 ---
 
 ## Install Ubuntu

@@ -3,6 +3,7 @@ title: 'Major Parts Tour via Install'
 description:
   Overview of platform architecture components and installation process.
 tags: ['overview', 'code', 'install', 'control-server', 'home-base']
+category: development
 draft: false
 ---
 

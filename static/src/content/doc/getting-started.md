@@ -2,6 +2,7 @@
 title: Getting Started
 description: Getting started with Batteries Included.
 tags: ['getting-started', 'overview']
+category: getting-started
 draft: false
 ---
 

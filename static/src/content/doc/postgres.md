@@ -2,6 +2,7 @@
 title: PostgreSQL
 description: Start and manage a PostgreSQL database with Batteries Included.
 tags: ['database', 'postgres', 'datastore']
+category: batteries
 draft: false
 ---
 

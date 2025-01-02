@@ -4,6 +4,7 @@ description:
   Deploy and manage Grafana dashboards for comprehensive monitoring
   visualization.
 tags: ['monitoring', 'grafana', 'visualization']
+category: batteries
 draft: false
 ---
 

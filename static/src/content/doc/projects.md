@@ -2,6 +2,7 @@
 title: Projects
 description: Create and manage projects to organize your services and resources.
 tags: ['projects', 'overview', 'management']
+category: getting-started
 draft: false
 ---
 

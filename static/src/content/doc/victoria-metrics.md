@@ -4,6 +4,7 @@ description:
   Deploy VictoriaMetrics for efficient and scalable metrics collection and
   storage.
 tags: ['monitoring', 'metrics', 'victoriametrics']
+category: batteries
 draft: false
 ---
 

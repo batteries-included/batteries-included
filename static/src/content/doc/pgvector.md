@@ -3,6 +3,7 @@ title: 'AI with PGVector and PostgreSQL'
 description:
   Create AI applications using PostgreSQL and PGVector with Jupyter Notebooks.
 tags: ['AI', 'Postgres', 'PGVector', 'Jupyter Notebooks']
+category: getting-started
 draft: false
 ---
 

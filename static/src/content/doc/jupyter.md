@@ -2,6 +2,7 @@
 title: Jupyter Notebooks
 description: Set up and manage Jupyter Notebooks for interactive development.
 tags: ['AI', 'jupyter', 'notebooks', 'data-science']
+category: batteries
 draft: false
 ---
 

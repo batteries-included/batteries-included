@@ -3,6 +3,7 @@ title: 'Build/Packaging Our Software'
 description:
   How the platform handles building and packaging with Docker and Mix releases.
 tags: ['overview', 'code', 'production', 'build']
+category: development
 draft: false
 ---
 
