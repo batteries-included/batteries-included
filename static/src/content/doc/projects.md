@@ -68,6 +68,17 @@ giving you a central place to monitor and control your infrastructure.
 
 <img src="/images/docs/projects/dashboard.png">
 
+## Project Sync (Coming Soon)
+
+Project Sync is a powerful feature that grants you the ability to copy and reuse
+your project configurations across different installations:
+
+- Copy production setups to local development environments with e.g. adjusted
+  resource sizes.
+- Promote projects from staging to production environments.
+- Use existing projects as templates for new installations.
+- Export projects to serve as templates for your team.
+
 ## Additional Resources
 
 - Check our [PGVector guide](/docs/pgvector) for a full-fledged AI application
