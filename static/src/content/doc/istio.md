@@ -2,6 +2,7 @@
 title: Istio
 description: Lorem markdownum harundine perdet contactus
 tags: ['test', 'default doc']
+category: batteries
 draft: true
 ---
 

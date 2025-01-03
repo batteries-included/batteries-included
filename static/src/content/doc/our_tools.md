@@ -3,6 +3,7 @@ title: 'Internal Dev Tools'
 description:
   Overview of development tools and utilities in the platform codebase.
 tags: ['code', 'tools', 'internal']
+category: development
 draft: false
 ---
 

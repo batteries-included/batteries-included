@@ -2,6 +2,7 @@
 title: Cloud Native Postgres
 description: Lorem markdownum medium undas non dixit hinc pectore vagantem
 tags: ['test', 'default doc']
+category: batteries
 draft: true
 ---
 

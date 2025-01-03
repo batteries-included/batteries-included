@@ -1,52 +1,59 @@
 ---
 title: Grafana
-description: Quotiens garrula, aerias tuas ut visceribus fassoque
-tags: ['test', 'default doc']
-draft: true
+description:
+  Deploy and manage Grafana dashboards for comprehensive monitoring
+  visualization.
+tags: ['monitoring', 'grafana', 'visualization']
+category: batteries
+draft: false
 ---
 
-## Quam in loci visa locutus venit inclusum
+Grafana is an open-source analytics and monitoring platform that transforms your
+metrics into insightful visualizations and dashboards. With Batteries Included,
+Grafana comes pre-configured with dashboards for all your services, making it a
+perfect choice for monitoring everything from database performance to kubernetes
+cluster health.
 
-Lorem markdownum _Semeleia rura_, tenus? Leto ille velit mihi induitur, astringi
-di [coeunt loquor clamavit](http://memorantur.net/fuimusve.html) non licet
-tincto sunt Ichnobates arcus.
+## Installing Grafana
 
-Quotiens garrula, aerias tuas ut visceribus fassoque caeli ex nulla virtute
-antiquum. Innixus celeberrimus aetas! Valle nec saepe nullamque vitiis cur morae
-teneram, et amor colitur.
+Installing Grafana in your cluster is straightforward:
 
-## At mea cum illos sanguine
+1. Navigate to the `Monitoring` tab in the control server.
+2. Click `Manage Batteries` to view available monitoring components.
 
-Cum valens permansit sustinet fulvis. Est sed, quos Iovis **mihi** armentaque
-varios **umeros** colla aves, confundimur spectavit exstant. Illo vae, nam
-quamvis vecta, **licent**. Fit illa vinclo putat ut fatur ratae laurea:
-**formosus promissae superest** Berecyntius.
+<video src="/videos/docs/grafana/installing-grafana.mp4" controls></video>
 
-1. Indis et hominis quo nec iaculi amorem
-2. Femineam dubiaque
-3. Quis tempus
-4. Eduxit mihi
-5. Crinis nil plectro cur praecordia eram
+## Accessing Grafana
 
-## Senectae evitata patrem possederat Crotonis dapibus Deoia
+Once installed, accessing Grafana is simple:
 
-Profecisse errat petit feroci pro incognita victa non tu
-[vivum digitos fores](http://regna.com/) frondescere rector cadis amore mirata
-regale Tydidae humana! Ipsa easdem veros Aeneas, tuae caedis regina in dixit
-Aesoniden sacerdos quater adversas nimium: undas. Vocem aestus, nocti saevit qua
-aer quacumque liventia spatiantibus orbem.
+1. Go to the `Monitoring` tab in the control server.
+2. Click on the `Grafana` entry to open the Grafana interface in a new tab.
 
-## Inde omne vel negabo laetabitur viridi
+<video src="/videos/docs/grafana/opening-grafana.mp4" controls></video>
 
-Mihi acto et cum intendens, festo placet moderatius mearum est _reor_ obstantis,
-sic Pelasgi sacra dignoque ignesque! Fallit fidem torus possit furialiaque
-exitioque scilicet; undis atricolor teloque. Rogis noviens?
+## Pre-configured Dashboards
 
-> Hesioneque fertilitas minuant triplicesque planxerunt centum. Genitus umbrae
-> focus mutasse feri coeptas avenis. Et quos, in facitote ego.
+Batteries Included automatically creates and maintains dashboards for your
+services.
 
-Arto resonabat nam, iam recurva Ilion contempto Cytherea Iuppiter negabit
-cuncta: meruit. Petebat saepius aperite illi vincla ortu speciosaque movit. Tabe
-cum et, [quo exit tectis](http://www.foret-fessa.io/spatium) per, huc hos huius.
-Pigra Aglauros aequora Thessalus in inmanem fauces, ego ignes cinguntur. Omina
-medios corpora aderat, ora pectora quantum.
+For example, database dashboards are created automatically when you deploy a
+database:
+
+1. Navigate to `Datastores` in the control server.
+2. Select your database instance.
+3. Click the `Grafana Dashboard` button.
+
+<video src="/videos/docs/grafana/opening-pg-grafana.mp4" controls></video>
+
+Similarly, other clusters will have their own dashboards automatically
+configured.
+
+## Additional Resources
+
+- Read the official [Grafana documentation](https://grafana.com/docs/) for
+  advanced usage.
+- Visit our [Monitoring overview](/docs/monitoring) for general monitoring
+  setup.
+- Check the [VictoriaMetrics guide](/docs/victoria-metrics) for metrics
+  collection.

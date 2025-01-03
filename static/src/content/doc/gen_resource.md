@@ -4,6 +4,7 @@ description:
   Internal conversion mechanism for transforming Kubernetes YAML into platform
   Elixir modules.
 tags: ['overview', 'code', 'control-server', 'yaml']
+category: development
 draft: false
 ---
 

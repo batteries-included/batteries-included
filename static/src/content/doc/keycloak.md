@@ -2,6 +2,7 @@
 title: Keycloak
 description: Lorem markdownum caelo tollensque cernit
 tags: ['test', 'default doc']
+category: batteries
 draft: true
 ---
 

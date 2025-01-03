@@ -2,6 +2,7 @@
 title: Cert manager
 description: Lorem markdownum quocumque erat pharetras
 tags: ['test', 'default doc']
+category: batteries
 draft: true
 ---
 

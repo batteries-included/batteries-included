@@ -4,6 +4,7 @@ description:
   Set up comprehensive monitoring using Grafana and VictoriaMetrics in your
   cluster.
 tags: ['monitoring', 'grafana', 'victoriametrics']
+category: getting-started
 draft: false
 ---
 

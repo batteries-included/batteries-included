@@ -2,6 +2,7 @@
 title: Knative
 description: Lorem markdownum terga Elysiasque vertere
 tags: ['test', 'default doc']
+category: batteries
 draft: true
 ---
 
