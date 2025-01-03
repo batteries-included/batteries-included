@@ -6,46 +6,94 @@ category: getting-started
 draft: false
 ---
 
-# Getting Started with Batteries Included
+## Getting Started with Batteries Included
 
 Whether you're building web services, running AI workloads, or managing
-databases, getting started takes just a few minutes:
+databases, getting started takes just a few minutes!
 
-1. **Choose Where to Run**: Deploy locally for development or to your preferred
-   cloud environment.
-2. **Tell Us What You Need**: Select the components you want to run - databases,
-   web services, AI tools, monitoring, etc.
-3. **Get Going**: We'll handle the setup and configuration automatically.
+### Create Your Installation
 
-That's it! After setup completes, you'll have access to the control server where
-you can:
+Start by logging in or creating an account at
+[https://home.batteriesincl.com/login](https://home.batteriesincl.com/login).
+Once logged in, click `Create an installation` and provide some basic details
+for your environment.
 
-- Create new projects and services.
-- Monitor system health and metrics.
-- Manage databases and configurations.
-- Deploy AI and machine learning workloads.
+Then, choose your preferred deployment type:
 
-Ready to begin? [Sign up!](https://home.batteriesincl.com/login)
+- **Local Development**: Perfect for testing locally using Kind (requires
+  Docker).
+- **Cloud Deployment**: Seamless automated setup on AWS with EKS.
+- **Existing Cluster**: Simple installation on your current Kubernetes
+  infrastructure, whether it's running on AWS, Azure, or any other cloud
+  provider.
+
+<div align="center">
+   <img src="/images/docs/getting-started/install-1.png" width="80%">
+</div>
+
+### Run Installation
+
+After configuring your installation details, you'll receive a simple one-line
+shell script. Just copy and run this command - we'll take care of all the
+configuration, security, and integration automatically!
+
+<div align="center">
+   <img src="/images/docs/getting-started/install-2.png" width="50%">
+</div>
 
 ## Post-Installation
 
-Once installation completes, the control server becomes your central hub for:
+That's it! Once installation completes, the control server becomes your central
+hub for:
 
-1. **Project Management**: Create and organize your services and applications
-2. **Component Installation**: Add the tools you need:
-   - Set up databases
-   - Configure monitoring
-   - Deploy web services
-   - Add AI capabilities
-3. **System Overview**: Use our modern UI to:
-   - View resource usage
-   - Check service health
-   - Access logs
-   - Manage configurations
+### Battery Management
+
+Choose from our wide arsenal of batteries to include in your installation:
+
+- **Databases**: Deploy and manage PostgreSQL, FerretDB/MongoDB, and Redis
+  instances.
+- **Monitoring**: Set up VictoriaMetrics with Grafana dashboards.
+- **Web Services**: Deploy with Knative for automatic serverless scaling.
+- **AI/ML**: Add Jupyter notebooks, vector databases, and LLMs (Ollama).
+- **Security**: Configure OAuth and SSO with Keycloak, SSL certificates, mTLS,
+  and more.
+
+### Project Management
+
+Build and manage your infrastructure through our intuitive project system:
+
+- Choose specialized project templates for Web, AI/ML, Database, or custom
+  needs.
+- Access monitoring, logging, and management through a unified dashboard.
+
+### System Overview
+
+Monitor and manage your entire infrastructure from one place:
+
+- Monitor resource usage across your cluster(s).
+- Check service health and status.
+- Access centralized logging.
+- Manage configurations and settings.
+- View performance metrics and alerts.
 
 <img src="/images/docs/getting-started/dashboard.png">
 
+## Next Steps
+
+- Visit our [Projects guide](/docs/projects) to learn about organizing your
+  services.
+- Check out [Monitoring](/docs/monitoring) for setting up observability.
+- Explore [PGVector](/docs/pgvector) for AI/ML capabilities.
+
 ## Need Help?
 
-Check out our [documentation](/docs/) for detailed guides on our features and
-components.
+We're here to support you every step of the way:
+
+- Browse our comprehensive [documentation](/docs) for guides and information on
+  available batteries.
+- Connect with us on
+  [Slack](https://join.slack.com/t/batteries-included/shared_invite/zt-2qw1pm9pz-egaqvjbMuzKNvCpG1QXXHg) -
+  we're always happy to help!
+- Found something that needs fixing? Submit an issue on
+  [GitHub](https://github.com/batteries-included/batteries-included/issues) to
+  help us improve.
