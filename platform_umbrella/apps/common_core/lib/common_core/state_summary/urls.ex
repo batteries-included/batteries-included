@@ -125,6 +125,20 @@ defmodule CommonCore.StateSummary.URLs do
     |> Enum.map(&build_uri(&1, SSL.ssl_enabled?(state)))
   end
 
+  @spec home_base_url(StateSummary.t()) :: URI.t()
+  def home_base_url(state) do
+    case_result =
+      case Core.config_field(state, :usage) do
+        :internal_dev ->
+          "http://home.127-0-0-1.batrsinc.co:4100"
+
+        _ ->
+          "https://home.prod.batteriesincl.com/"
+      end
+
+    URI.new!(case_result)
+  end
+
   @spec append_path_to_string(URI.t(), String.t()) :: String.t()
   def append_path_to_string(uri, path), do: uri |> URI.append_path(path) |> URI.to_string()
 
