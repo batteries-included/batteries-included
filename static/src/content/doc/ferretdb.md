@@ -9,7 +9,7 @@ draft: false
 ---
 
 FerretDB is a document-oriented database that provides a MongoDB-compatible API.
-It is built on top of PostgreSQL and offers a truely open-source alternative to
+It is built on top of PostgreSQL and offers a truly open-source alternative to
 MongoDB.
 
 ## Installing FerretDB
