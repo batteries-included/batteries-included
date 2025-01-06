@@ -1,24 +1,4 @@
 <script is:inline>
-  // elements
-  const btnMenu = document.getElementById('btn-menu');
-  const btnClose = document.getElementById('btn-close');
-  const menu = document.getElementById('menu');
-
-  // functions
-  function openMenu() {
-    menu.classList.remove('-left-full');
-    menu.classList.add('left-0');
-  }
-
-  function closeMenu() {
-    menu.classList.remove('left-0');
-    menu.classList.add('-left-full');
-  }
-
-  // event listener
-  btnMenu.addEventListener('click', openMenu);
-  btnClose.addEventListener('click', closeMenu);
-
   function attachEvent(selector, event, fn) {
     const matches =
       typeof selector === 'string'
