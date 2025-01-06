@@ -37,10 +37,17 @@ defmodule KubeServices.PodLogs do
     with {:ok, log_str} <- K8s.Client.run(conn, get_operation(opts)) do
       {:ok,
        log_str
-       |> to_string()
+       |> decode()
        |> String.split(~r{\n+})
        |> Enum.filter(&(&1 != ""))}
     end
+  end
+
+  defp decode(b) do
+    b
+    |> String.chunk(:printable)
+    |> Enum.filter(fn s -> String.printable?(s) end)
+    |> Enum.join()
   end
 
   @spec get_operation(keyword()) :: K8s.Operation.t()
