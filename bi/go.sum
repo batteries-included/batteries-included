@@ -193,6 +193,8 @@ github.com/hashicorp/hcl/v2 v2.23.0 h1:Fphj1/gCylPxHutVSEOf2fBOh1VE4AuLV7+kbJf3q
 github.com/hashicorp/hcl/v2 v2.23.0/go.mod h1:62ZYHrXgPoX8xBnzl8QzbWq4dyDsDtfCRgIq1rbJEvA=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+github.com/iwdgo/sigintwindows v0.2.2 h1:P6oWzpvV7MrEAmhUgs+zmarrWkyL77ycZz4v7+1gYAE=
+github.com/iwdgo/sigintwindows v0.2.2/go.mod h1:70wPb8oz8OnxPvsj2QMUjgIVhb8hMu5TUgX8KfFl7QY=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
@@ -324,8 +326,8 @@ github.com/pulumi/pulumi-cloudinit/sdk v1.4.9 h1:1Ct8xhIYv+ee1tk4wndtvwcbgmnsmhM
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.9/go.mod h1:sTJH2pXWoY+DdF0GtUrU4VUEaWj7w8EAUarOjnIXD1U=
 github.com/pulumi/pulumi-tls/sdk/v5 v5.0.10 h1:HQa/PKU3QRTKx+7FdLu1MjHOITZ7e0FbE9+53IJycC0=
 github.com/pulumi/pulumi-tls/sdk/v5 v5.0.10/go.mod h1:KFQJLr3TxrNB+qi7iTSCgQey7RdQ78Fj4XoivsFhTFM=
-github.com/pulumi/pulumi/sdk/v3 v3.144.1 h1:QQtCDERihhlfvcmRzqHeBmOER1Fg1VkFj9933Lxqv00=
-github.com/pulumi/pulumi/sdk/v3 v3.144.1/go.mod h1:/6gxU2XirnLlImBy5OoqV6I4HcjOf+IznNIZNZExZzo=
+github.com/pulumi/pulumi/sdk/v3 v3.145.0 h1:r5iOgz67RElFXJt4GVVY2SBGh5sR24mL9NOcKBiBi/k=
+github.com/pulumi/pulumi/sdk/v3 v3.145.0/go.mod h1:5pZySnw3RiQKddx8orThjEFmWsXkGAY3ktKOxZj2Ym4=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
 github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
