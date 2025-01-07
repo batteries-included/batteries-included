@@ -11,7 +11,7 @@ defmodule CommonCore.Installs.Postgres do
   # be done post install.
   def cluster_arg_list(batteries, installation) do
     batteries
-    |> Enum.map(fn b -> cluster_args(b, installation) end)
+    |> Enum.flat_map(fn b -> cluster_args(b, installation) end)
     |> Enum.filter(&(&1 != nil))
   end
 
@@ -30,41 +30,45 @@ defmodule CommonCore.Installs.Postgres do
         local_user_password_version = CommonCore.Defaults.ControlDB.local_user_password_version()
         password_versions = [local_user_password_version | Map.get(config, :password_versions, [])]
 
-        %{cluster | users: users, password_versions: password_versions}
+        [%{cluster | users: users, password_versions: password_versions}]
 
       _ ->
-        cluster
+        [cluster]
     end
   end
 
   defp cluster_args(%SystemBattery{type: :forgejo}, %Installation{default_size: default_size}),
-    do: CommonCore.Defaults.ForgejoDB.forgejo_cluster(default_size)
+    do: [CommonCore.Defaults.ForgejoDB.forgejo_cluster(default_size)]
 
   defp cluster_args(%SystemBattery{type: :keycloak}, %Installation{default_size: default_size}),
-    do: CommonCore.Defaults.KeycloakDB.pg_cluster(default_size)
+    do: [CommonCore.Defaults.KeycloakDB.pg_cluster(default_size)]
 
   defp cluster_args(%SystemBattery{type: :traditional_services, config: config}, %Installation{
          usage: usage,
          default_size: default_size
        }) do
     case usage do
+      # create home-base and CLA assistant clusters
       usage when usage in [:internal_int_test, :internal_prod] ->
-        name = TraditionalServices.name()
+        home_base = TraditionalServices.home_base_name()
+        cla = TraditionalServices.cla_name()
 
-        %{
-          :name => name,
-          :num_instances => 1,
-          :virtual_size => to_string(default_size),
-          :type => :internal,
-          :users => [%{username: name, roles: ["createdb", "login"], credential_namespaces: [config.namespace]}],
-          :password_versions => [],
-          :database => %{name: name, owner: name}
-        }
+        Enum.map([home_base, cla], fn name ->
+          %{
+            :name => name,
+            :num_instances => 1,
+            :virtual_size => to_string(default_size),
+            :type => :standard,
+            :users => [%{username: name, roles: ["createdb", "login"], credential_namespaces: [config.namespace]}],
+            :password_versions => [],
+            :database => %{name: name, owner: name}
+          }
+        end)
 
       _ ->
-        nil
+        []
     end
   end
 
-  defp cluster_args(_, _), do: nil
+  defp cluster_args(_, _), do: []
 end

@@ -21,7 +21,10 @@ defmodule CommonCore.StateSummary do
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Installation
+  alias CommonCore.Installs.Batteries
   alias CommonCore.Installs.HomeBaseInitData
+  alias CommonCore.Installs.Postgres
+  alias CommonCore.Installs.TraditionalServices
 
   batt_embedded_schema do
     # Database backed fields
@@ -49,16 +52,14 @@ defmodule CommonCore.StateSummary do
 
   def target_summary(%Installation{} = installation, opts \\ []) do
     home_base_init_data = Keyword.get(opts, :home_base_init_data, %HomeBaseInitData{})
-    batteries = CommonCore.Installs.Batteries.default_batteries(installation)
-
-    cluster_args = CommonCore.Installs.Postgres.cluster_arg_list(batteries, installation)
+    batteries = Batteries.default_batteries(installation)
 
     %__MODULE__{}
     |> changeset(
       %{
         batteries: Enum.map(batteries, fn b -> %{Map.from_struct(b) | config: Map.from_struct(b.config)} end),
-        postgres_clusters: cluster_args,
-        traditional_services: CommonCore.Installs.TraditionalServices.services(installation),
+        postgres_clusters: Postgres.cluster_arg_list(batteries, installation),
+        traditional_services: TraditionalServices.services(installation),
         home_base_init_data: Map.from_struct(home_base_init_data),
         # For now we don't have projects to add to the target summary
         # once we work out inter-cluster project sharing we can add this
