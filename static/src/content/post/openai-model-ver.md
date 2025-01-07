@@ -1,19 +1,19 @@
 ---
 title: 'OpenAIs Model Versioning Is Only The Beginning'
 excerpt:
-  In the ever-evolving world of artificial intelligence, OpenAI has recently
-  shown the significance of periodic machine learning model retraining
-publishDate: 2024-08-18
+  In the world of artificial intelligence, OpenAI has recently shown the
+  significance of periodic machine learning model retraining
+publishDate: 2025-01-07
 tags: ['openai', 'ml', 'machine-learning', 'model', 'platform']
 image: ./covers/post-8.jpg
-draft: true
+draft: false
 ---
 
-In the ever-evolving world of artificial intelligence, OpenAI has recently shown
-the significance of periodic machine learning model retraining. Whether you're a
-supporter or a skeptic, their accelerated pace of releasing new versions
-underscores a pivotal shift in the AI landscape: the necessity of continuously
-updating machine learning models.
+In the world of artificial intelligence, OpenAI has shown the significance of
+periodic machine learning model retraining. Whether you're a supporter or a
+skeptic, their accelerated pace of releasing new versions underscores a pivotal
+shift in the AI landscape: the necessity of continuously updating machine
+learning models.
 
 ## The Imperative of Timely Data
 
@@ -26,9 +26,10 @@ the latest data can identify and adapt to emerging trends, leading to more
 accurate predictions.
 
 In the context of OpenAI, timely retraining allows the model to incorporate new
-trends and data, enhancing its understanding beyond static embedding. This
+trends and data enhancing its understanding beyond static embedding. This
 dynamic approach ensures the model remains relevant and effective in its
-predictions.
+predictions. They have adopted these relases to also include model architecture
+changes alongside training changes.
 
 ## Business Needs and RLHF
 
