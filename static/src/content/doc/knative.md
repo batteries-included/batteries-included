@@ -1,64 +1,59 @@
 ---
 title: Knative
-description: Lorem markdownum terga Elysiasque vertere
-tags: ['test', 'default doc']
+description: Deploy and manage serverless workloads with Knative.
+tags: ['serverless', 'knative', 'web-services']
 category: batteries
-draft: true
+draft: false
 ---
 
-## Palustribus foedere sacrifica procul
+Knative is a Kubernetes-based platform that provides serverless capabilities,
+enabling you to run stateless containers that automatically scale based on
+traffic - including scaling to zero when there's none. It works in conjunction
+with Istio, an open-source service mesh that provides a unified way to control
+how microservices share data with each another.
 
-Lorem markdownum terga Elysiasque vertere, animique hunc umquam flebilis sulcis.
-Procne Pergama dedistis in virgineam de Booten perque **ad unum** partu, quae
-magnum vita communis. Ponentem a _siqua sceleri_ addit suis Musa Inoo scopulus
-tendere, cui faticinasque tamen. Querellae iacet dispersa, omnis pinguis undique
-potuisse? In aut undique tua linoque terra, nunc nata; mite.
+With Batteries Included, deploying and managing Knative services is
+straightforward and seamlessly integrated with the rest of your infrastructure.
 
-1. Dryope nil Delius putaret quod factus
-2. Superare Acheloia vivatis in orbem capillos signaque
-3. Et semel lacrimis intremuit demurmurat et multa
-4. Credite furori concubitus concordi secuta nostri inprudens
-5. Secundo bisque veste quoniam finitimi protinus
-6. O nescio quicquid semina se puta quo
+## Installing Knative
 
-## Tibi eodem perfudit cupiunt
+To get started with Knative:
 
-Nemorum Aesone teneris inque dempsistis est canosque celebrant enim recanduit:
-oracla a ipsam Veneris fluxit at. Coniugis quibus dolor moenia
-[sidera](http://auris.com/), et populo formamque leto, per? Pars felicem non
-possederat _fluit transibant collum_ saevit.
+1. Navigate to the `DevTools` section in the control server.
+2. Click `Manage Batteries`.
+3. Find the `Knative` battery and click `Install`.
 
-- Nunc illis et nabat unica inmanemque nodosaque
-- Quam modo alii non
-- Mors pulchra
-- Vel modo diversis omni
+The Knative battery includes all necessary components like activators,
+autoscalers, and controllers, all pre-configured for optimal performance and
+integrated with the existing Istio installation.
 
-## Ille adest qui imagine quoque
+<video src="/videos/docs/knative/knative-install.mp4" controls></video>
 
-Habet iuga sermone atque nascique e venit adsunt vise se summo; quo falsa
-ablatus relinquunt gravidis? I rates, abdidit iam saepe vestem possidet: hos
-deus modo de crinem fugere. Sociati rauco redis, sed timor ubi alter Hippalmon
-reluxit contactu thalamis fuerat feritatis Oriens septemflua inserui? Agmen in
-invito terras Amphitryoniadae paritura; forte neque, tempus. Amnis mecum, amici
-adest pariter iuvenis fratri carmen merere.
+## Creating a New Service
 
-## Praedam hic corpusque inferre
+Once Knative is installed, you can create new services:
 
-Lacrimas cognoverat loco officium fuerit lapsu movet, neve! Nec tenui metuunt
-quo inposuere corymbis et este nec imbres Arcadiae. Et iuvat matres vecta
-inposuit revelli desit neve timeo
-[urebant hoc](http://natarum-ergo.net/non.html); infernas enim perque lacus!
-Aqua erat at melioris corpora et Europaei quaque et portans.
+1. Go to the `DevTools` section.
+2. Find the new `Knative` subsection.
+3. Click `New Service`.
+4. Configure your service as necessary and save your changes; this means adding
+   containers, setting environment variables (e.g. database connection URLs),
+   assigning it to a project, etc.
 
-> Eadem vellem, praecipiunt petenti, diversaeque reddebant dolor vacent, deam.
-> Praestantia moderator sonantia decipere referre, ab
-> [frementis germanamque](http://www.clarus-nobilitas.org/matrem.html) opibus et
-> nec, illum. Prima quaque, bibebatur malles, correptus didicit.
+<video src="/videos/docs/knative/knative-add-service.mp4" controls></video>
 
-Votum [laboris nec atque](http://nullasustinet.net/) fieri:
-[illa](http://et-mota.io/movet.html) eliso antraque pro sic quam Cithaeron haec.
-Quidem pectora sopore fixo quidque bracchia; natum optime eo mihi ut
-[iurat](http://www.nam.net/arsuros), est medios pollice. Incerti silvas quam
-dei, ubi dat inimicos, inmurmurat ad fuissem pontum ingeniis igne spoliata
-sublimis petiere. Aetnaeo **Danaam**, ab velit, nives: vocibus illam nymphae
-verum obsistere tabuerint minaces esse **annos** medullis ignes.
+## Environment Integration
+
+Knative services automatically integrate with other components in your
+installation.
+
+For example, you can get automatically generated database connection strings as
+environment variables, and monitoring and logging batteries (e.g.
+VictoriaMetrics and Grafana) will integrate automatically.
+
+## Additional Resources
+
+- Check our [Projects](/docs/projects) for ready-to-use templates that go even
+  further in out-of-the-box integration.
+- Visit [Monitoring](/docs/monitoring) for observability setup.
+- Explore [Security](/docs/security) for network policies and access control.
