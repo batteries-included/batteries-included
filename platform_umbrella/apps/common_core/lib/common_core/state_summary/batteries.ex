@@ -7,6 +7,13 @@ defmodule CommonCore.StateSummary.Batteries do
   alias CommonCore.StateSummary.Hosts
 
   @doc """
+  Get the battery from the summary matching type.
+  """
+  def get_battery(%StateSummary{} = summary, type, default \\ nil) do
+    Enum.find(summary.batteries, default, &(&1.type == type))
+  end
+
+  @doc """
   Generate a map of battery type to host.
 
   Filters out any types that don't have a host.
