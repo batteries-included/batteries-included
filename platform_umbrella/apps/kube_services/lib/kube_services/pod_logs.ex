@@ -39,7 +39,7 @@ defmodule KubeServices.PodLogs do
         split_log =
           log_str
           |> decode_printable()
-          |> String.split(~r{\n+})
+          |> String.split(~r{[\r\n]+})
           |> Enum.filter(&(&1 != ""))
 
         {:ok, split_log}
