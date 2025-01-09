@@ -3,12 +3,11 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
 
   import CommonCore.Resources.MapUtils
   import CommonCore.Resources.ProxyUtils
+  import CommonCore.StateSummary.Batteries, only: [get_battery: 2, batteries_installed?: 2]
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.StateSummary
-  alias CommonCore.StateSummary.Batteries
-  alias CommonCore.StateSummary.Core
 
   @default_mesh_config %{
     "defaultProviders" => %{"metrics" => ["prometheus"]},
@@ -27,14 +26,14 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
     namespace = istio_namespace(state)
 
     # partially apply so we can re-use
-    battery_installed? = fn battery -> Batteries.batteries_installed?(state, battery) end
+    battery_installed? = fn battery -> batteries_installed?(state, battery) end
 
     # generate extension providers for sso enabled batteries that are installed
     authz_ext_providers =
       CommonCore.Resources.SSO.proxy_enabled_batteries()
       |> Enum.filter(battery_installed?)
       |> Enum.map(fn battery_type ->
-        batt = Core.get_battery(state, battery_type)
+        batt = get_battery(state, battery_type)
         build_authz_ext_provider(batt, state)
       end)
 

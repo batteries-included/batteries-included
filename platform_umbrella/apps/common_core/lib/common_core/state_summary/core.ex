@@ -5,10 +5,9 @@ defmodule CommonCore.StateSummary.Core do
   alias CommonCore.Defaults
   alias CommonCore.ET.StableVersionsReport
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Batteries
 
-  def get_battery(%StateSummary{} = summary, type) do
-    Enum.find(summary.batteries, &(&1.type == type))
-  end
+  def get_battery_core(%StateSummary{} = summary), do: Batteries.get_battery(summary, :battery_core)
 
   @spec config_field(CommonCore.StateSummary.t(), atom()) :: any() | nil
   def config_field(summary, key) do
@@ -24,7 +23,7 @@ defmodule CommonCore.StateSummary.Core do
   # Return nil if the config isn't there
   # Return nil if the config isn't valid.
   defp battery_core_config(summary) do
-    with %SystemBattery{} = sb <- get_battery(summary, :battery_core),
+    with %SystemBattery{} = sb <- get_battery_core(summary),
          %BatteryCoreConfig{} = config <- sb.config do
       config
     else

@@ -1,6 +1,7 @@
 defmodule CommonCore.StateSummary.Namespaces do
   @moduledoc false
-  import CommonCore.StateSummary.Core
+  import CommonCore.StateSummary.Batteries, only: [get_battery: 2]
+  import CommonCore.StateSummary.Core, only: [config_field: 2]
 
   alias CommonCore.StateSummary
 

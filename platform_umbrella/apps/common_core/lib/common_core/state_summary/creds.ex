@@ -1,6 +1,6 @@
 defmodule CommonCore.StateSummary.Creds do
   @moduledoc false
-  import CommonCore.StateSummary.Core
+  import CommonCore.StateSummary.Batteries
 
   alias CommonCore.Batteries.KeycloakConfig
   alias CommonCore.Batteries.SystemBattery
