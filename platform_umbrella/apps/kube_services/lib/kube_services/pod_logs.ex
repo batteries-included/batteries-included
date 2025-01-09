@@ -34,15 +34,13 @@ defmodule KubeServices.PodLogs do
   def get_logs(opts \\ [tailLines: 100]) do
     conn = CommonCore.ConnectionPool.get!()
 
-    run_get_logs(conn, opts)
-  end
-
-  @spec run_get_logs(K8s.Conn.t(), keyword()) :: {:ok, binary()} | {:error, any()}
-  defp run_get_logs(conn, opts) do
     case K8s.Client.run(conn, get_operation(opts)) do
       {:ok, log_str} ->
-        decoded = decode(log_str)
-        split_log = decoded |> String.split(~r{\n+}) |> Enum.filter(&(&1 != ""))
+        split_log =
+          log_str
+          |> decode_printable()
+          |> String.split(~r{\n+})
+          |> Enum.filter(&(&1 != ""))
 
         {:ok, split_log}
 
@@ -51,13 +49,14 @@ defmodule KubeServices.PodLogs do
     end
   end
 
-  @spec decode(binary()) :: binary()
-  defp decode(b) do
+  defp decode_printable(b) when is_binary(b) do
     b
     |> String.chunk(:printable)
     |> Enum.filter(&String.printable?/1)
     |> Enum.join()
   end
+
+  defp decode_printable(_), do: ""
 
   @spec get_operation(keyword()) :: K8s.Operation.t()
   defp get_operation(opts) do
