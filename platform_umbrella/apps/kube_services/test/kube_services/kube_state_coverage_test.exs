@@ -15,8 +15,10 @@ defmodule KubeServices.KubeStateCoverageTest do
     {"operator.victoriametrics.com/v1beta1", "VMUser"},
 
     # We don't emit or display these
+    {"elbv2.k8s.aws/v1alpha", "TargetGroupBinding"},
     {"elbv2.k8s.aws/v1beta1", "TargetGroupBinding"},
     {"karpenter.sh/v1beta1", "NodeClaim"},
+    {"karpenter.sh/v1", "NodeClaim"},
 
     # BGP will come later
     {"metallb.io/v1beta1", "BGPAdvertisement"},
