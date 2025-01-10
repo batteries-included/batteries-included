@@ -57,14 +57,6 @@ spec:
                 IngressClassParamsSpec defines the desired state of
                 IngressClassParams
               properties:
-                certificateArn:
-                  description:
-                    CertificateArn specifies the ARN of the certificates for all
-                    Ingresses that belong to IngressClass with this
-                    IngressClassParams.
-                  items:
-                    type: string
-                  type: array
                 group:
                   description:
                     Group defines the IngressGroup for all Ingresses that belong
@@ -91,40 +83,7 @@ spec:
                   enum:
                     - ipv4
                     - dualstack
-                    - dualstack-without-public-ipv4
                   type: string
-                listeners:
-                  description:
-                    Listeners define a list of listeners with their protocol,
-                    port and attributes.
-                  items:
-                    properties:
-                      listenerAttributes:
-                        description: The attributes of the listener
-                        items:
-                          description:
-                            Attributes defines custom attributes on resources.
-                          properties:
-                            key:
-                              description: The key of the attribute.
-                              type: string
-                            value:
-                              description: The value of the attribute.
-                              type: string
-                          required:
-                            - key
-                            - value
-                          type: object
-                        type: array
-                      port:
-                        description: The port of the listener
-                        format: int32
-                        type: integer
-                      protocol:
-                        description: The protocol of the listener
-                        type: string
-                    type: object
-                  type: array
                 loadBalancerAttributes:
                   description:
                     LoadBalancerAttributes define the custom attributes to
@@ -145,19 +104,6 @@ spec:
                       - value
                     type: object
                   type: array
-                minimumLoadBalancerCapacity:
-                  description:
-                    MinimumLoadBalancerCapacity define the capacity reservation
-                    for LoadBalancers for all Ingress that belong to
-                    IngressClass with this IngressClassParams.
-                  properties:
-                    capacityUnits:
-                      description: The Capacity Units Value.
-                      format: int32
-                      type: integer
-                  required:
-                    - capacityUnits
-                  type: object
                 namespaceSelector:
                   description: |-
                     NamespaceSelector restrict the namespaces of Ingresses that are allowed to specify the IngressClass with this IngressClassParams.
@@ -190,13 +136,11 @@ spec:
                             items:
                               type: string
                             type: array
-                            x-kubernetes-list-type: atomic
                         required:
                           - key
                           - operator
                         type: object
                       type: array
-                      x-kubernetes-list-type: atomic
                     matchLabels:
                       additionalProperties:
                         type: string
