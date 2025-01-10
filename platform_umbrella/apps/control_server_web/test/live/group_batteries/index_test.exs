@@ -2,6 +2,15 @@ defmodule ControlServerWeb.GroupBatteries.IndexLiveTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
+  alias ControlServer.Batteries.Installer
+  alias KubeServices.SystemState.Summarizer
+
+  setup ctx do
+    Installer.install!(:battery_core)
+    Summarizer.new()
+    ctx
+  end
+
   describe "magic group batteries" do
     test "can list the group batteries", %{conn: conn} do
       conn

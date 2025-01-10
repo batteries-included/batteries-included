@@ -4,6 +4,9 @@ defmodule ControlServerWeb.ProjectLiveTest do
   import ControlServer.ProjectsFixtures
   import Phoenix.LiveViewTest
 
+  alias ControlServer.Batteries.Installer
+  alias KubeServices.SystemState.Summarizer
+
   setup do
     %{project: project_fixture()}
   end
@@ -21,6 +24,8 @@ defmodule ControlServerWeb.ProjectLiveTest do
   describe "/projects/new" do
     @tag :slow
     test "should go through the new project flow", %{conn: conn} do
+      Installer.install!(:battery_core)
+      Summarizer.new()
       {:ok, view, _html} = live(conn, ~p"/projects/new")
 
       assert view

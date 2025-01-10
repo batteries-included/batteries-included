@@ -354,6 +354,9 @@ defmodule CommonCore.Batteries.Catalog do
     Enum.filter(@all, &(&1.group == group))
   end
 
+  def all_for_usage(usage), do: Enum.filter(@all, &Enum.member?(&1.allowed_usages, usage))
+  def all_for_usage(usage, group), do: Enum.filter(all(group), &Enum.member?(&1.allowed_usages, usage))
+
   def get(type) when is_binary(type) do
     get(String.to_existing_atom(type))
   end

@@ -15,12 +15,14 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
   def mount(socket) do
     groups = Catalog.groups_for_projects()
+    core_battery = KubeServices.SystemState.SummaryBatteries.core_battery()
 
     {:ok,
      socket
      |> assign(:class, nil)
      |> assign(:tab, :required)
-     |> assign(:groups, groups)}
+     |> assign(:groups, groups)
+     |> assign(:usage, core_battery.config.usage)}
   end
 
   def update(assigns, socket) do
@@ -164,7 +166,10 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
           <%= for group <- @groups do %>
             <.battery_toggle
-              :for={battery <- search_filter(Catalog.all(group.type), @form[:search].value)}
+              :for={
+                battery <-
+                  search_filter(Catalog.all_for_usage(@usage, group.type), @form[:search].value)
+              }
               :if={@tab == group.type}
               installed={has_battery?(@installed, battery)}
               required={has_battery?(@required, battery)}
@@ -174,7 +179,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
           <% end %>
 
           <.battery_toggle
-            :for={battery <- search_filter(Catalog.all(), @form[:search].value)}
+            :for={battery <- search_filter(Catalog.all_for_usage(@usage), @form[:search].value)}
             :if={@tab == :all}
             installed={has_battery?(@installed, battery)}
             required={has_battery?(@required, battery)}

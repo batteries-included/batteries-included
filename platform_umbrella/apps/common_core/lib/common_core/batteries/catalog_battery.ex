@@ -4,6 +4,7 @@ defmodule CommonCore.Batteries.CatalogBattery do
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Ecto.BatteryUUID
+  alias CommonCore.Installs.Options
 
   typedstruct do
     field :type, atom(), enforce: true
@@ -12,6 +13,7 @@ defmodule CommonCore.Batteries.CatalogBattery do
     field :name, String.t(), enforce: true
     field :description, String.t(), default: ""
     field :uninstallable, boolean(), default: true
+    field :allowed_usages, list(atom()), default: Keyword.values(Options.usages())
   end
 
   def to_fresh_args(%__MODULE__{} = catalog_battery) do

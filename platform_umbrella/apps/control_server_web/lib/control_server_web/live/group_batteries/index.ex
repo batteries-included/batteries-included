@@ -12,13 +12,14 @@ defmodule ControlServerWeb.Live.GroupBatteriesIndex do
     end
 
     group = Catalog.group(group)
+    core_battery = KubeServices.SystemState.SummaryBatteries.core_battery()
 
     {:ok,
      socket
      |> assign(:group, group)
      |> assign(:current_page, group.type)
      |> assign(:page_title, "#{String.trim_trailing(group.name, "s")} Batteries")
-     |> assign(:catalog_batteries, Catalog.all(group.type))
+     |> assign(:catalog_batteries, Catalog.all_for_usage(core_battery.config.usage, group.type))
      |> assign_system_batteries(group)}
   end
 
