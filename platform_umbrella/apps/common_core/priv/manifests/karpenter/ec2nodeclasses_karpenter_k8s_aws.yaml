@@ -17,7 +17,18 @@ spec:
     singular: ec2nodeclass
   scope: Cluster
   versions:
-    - name: v1beta1
+    - additionalPrinterColumns:
+        - jsonPath: .status.conditions[?(@.type=="Ready")].status
+          name: Ready
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+        - jsonPath: .spec.role
+          name: Role
+          priority: 1
+          type: string
+      name: v1
       schema:
         openAPIV3Schema:
           description: EC2NodeClass is the Schema for the EC2NodeClass API
@@ -45,12 +56,17 @@ spec:
                 This will contain configuration necessary to launch instances in AWS.
               properties:
                 amiFamily:
-                  description: AMIFamily is the AMI family that instances use.
+                  description: |-
+                    AMIFamily dictates the UserData format and default BlockDeviceMappings used when generating launch templates.
+                    This field is optional when using an alias amiSelectorTerm, and the value will be inferred from the alias'
+                    family. When an alias is specified, this field may only be set to its corresponding family or 'Custom'. If no
+                    alias is specified, this field is required.
+                    NOTE: We ignore the AMIFamily for hashing here because we hash the AMIFamily dynamically by using the alias using
+                    the AMIFamily() helper function
                   enum:
                     - AL2
                     - AL2023
                     - Bottlerocket
-                    - Ubuntu
                     - Custom
                     - Windows2019
                     - Windows2022
@@ -64,6 +80,35 @@ spec:
                       AMISelectorTerm defines selection logic for an ami used by Karpenter to launch nodes.
                       If multiple fields are used for selection, the requirements are ANDed.
                     properties:
+                      alias:
+                        description: |-
+                          Alias specifies which EKS optimized AMI to select.
+                          Each alias consists of a family and an AMI version, specified as "family@version".
+                          Valid families include: al2, al2023, bottlerocket, windows2019, and windows2022.
+                          The version can either be pinned to a specific AMI release, with that AMIs version format (ex: "al2023@v20240625" or "bottlerocket@v1.10.0").
+                          The version can also be set to "latest" for any family. Setting the version to latest will result in drift when a new AMI is released. This is **not** recommended for production environments.
+                          Note: The Windows families do **not** support version pinning, and only latest may be used.
+                        maxLength: 30
+                        type: string
+                        x-kubernetes-validations:
+                          - message:
+                              "'alias' is improperly formatted, must match the
+                              format 'family@version'"
+                            rule: "self.matches('^[a-zA-Z0-9]+@.+$')"
+                          - message:
+                              "family is not supported, must be one of the
+                              following: 'al2', 'al2023', 'bottlerocket',
+                              'windows2019', 'windows2022'"
+                            rule:
+                              "self.split('@')[0] in
+                              ['al2','al2023','bottlerocket','windows2019','windows2022']"
+                          - message:
+                              "windows families may only specify version
+                              'latest'"
+                            rule:
+                              "self.split('@')[0] in
+                              ['windows2019','windows2022'] ? self.split('@')[1]
+                              == 'latest' : true"
                       id:
                         description: ID is the ami id in EC2
                         pattern: ami-[0-9a-z]+
@@ -82,7 +127,7 @@ spec:
                         additionalProperties:
                           type: string
                         description: |-
-                          Tags is a map of key/value tags used to select subnets
+                          Tags is a map of key/value tags used to select amis.
                           Specifying '*' for a value selects all values for a given tag key.
                         maxProperties: 20
                         type: object
@@ -91,17 +136,32 @@ spec:
                             rule: "self.all(k, k != '' && self[k] != '')"
                     type: object
                   maxItems: 30
+                  minItems: 1
                   type: array
                   x-kubernetes-validations:
                     - message:
-                        "expected at least one, got none, ['tags', 'id', 'name']"
-                      rule: self.all(x, has(x.tags) || has(x.id) || has(x.name))
+                        "expected at least one, got none, ['tags', 'id', 'name',
+                        'alias']"
+                      rule:
+                        self.all(x, has(x.tags) || has(x.id) || has(x.name) ||
+                        has(x.alias))
                     - message:
                         "'id' is mutually exclusive, cannot be set with a
                         combination of other fields in amiSelectorTerms"
                       rule:
-                        '!self.all(x, has(x.id) && (has(x.tags) || has(x.name)
-                        || has(x.owner)))'
+                        '!self.exists(x, has(x.id) && (has(x.alias) ||
+                        has(x.tags) || has(x.name) || has(x.owner)))'
+                    - message:
+                        "'alias' is mutually exclusive, cannot be set with a
+                        combination of other fields in amiSelectorTerms"
+                      rule:
+                        '!self.exists(x, has(x.alias) && (has(x.id) ||
+                        has(x.tags) || has(x.name) || has(x.owner)))'
+                    - message:
+                        "'alias' is mutually exclusive, cannot be set with a
+                        combination of other amiSelectorTerms"
+                      rule:
+                        '!(self.exists(x, has(x.alias)) && self.size() != 1)'
                 associatePublicIPAddress:
                   description:
                     AssociatePublicIPAddress controls if public IP addresses are
@@ -139,23 +199,17 @@ spec:
                               gp2 volumes, this represents the baseline performance of the volume and the
                               rate at which the volume accumulates I/O credits for bursting.
 
-
                               The following are the supported values for each volume type:
-
 
                                  * gp3: 3,000-16,000 IOPS
 
-
                                  * io1: 100-64,000 IOPS
 
-
                                  * io2: 100-64,000 IOPS
-
 
                               For io1 and io2 volumes, we guarantee 64,000 IOPS only for Instances built
                               on the Nitro System (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html#ec2-nitro-instances).
                               Other instance families guarantee performance up to 32,000 IOPS.
-
 
                               This parameter is supported for io1, io2, and gp3 volumes only. This parameter
                               is not supported for gp2, st1, sc1, or standard volumes.
@@ -181,15 +235,11 @@ spec:
                               a volume size. The following are the supported volumes sizes for each volume
                               type:
 
-
                                  * gp2 and gp3: 1-16,384
-
 
                                  * io1 and io2: 4-16,384
 
-
                                  * st1 and sc1: 125-16,384
-
 
                                  * standard: 1-1,024
                             pattern: ^((?:[1-9][0-9]{0,3}|[1-4][0-9]{4}|[5][0-8][0-9]{3}|59000)Gi|(?:[1-9][0-9]{0,3}|[1-5][0-9]{4}|[6][0-3][0-9]{3}|64000)G|([1-9]||[1-5][0-7]|58)Ti|([1-9]||[1-5][0-9]|6[0-3]|64)T)$
@@ -253,15 +303,180 @@ spec:
                   enum:
                     - RAID0
                   type: string
+                kubelet:
+                  description: |-
+                    Kubelet defines args to be used when configuring kubelet on provisioned nodes.
+                    They are a subset of the upstream types, recognizing not all options may be supported.
+                    Wherever possible, the types and names should reflect the upstream kubelet types.
+                  properties:
+                    clusterDNS:
+                      description: |-
+                        clusterDNS is a list of IP addresses for the cluster DNS server.
+                        Note that not all providers may use all addresses.
+                      items:
+                        type: string
+                      type: array
+                    cpuCFSQuota:
+                      description:
+                        CPUCFSQuota enables CPU CFS quota enforcement for
+                        containers that specify CPU limits.
+                      type: boolean
+                    evictionHard:
+                      additionalProperties:
+                        pattern: ^((\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)%||(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?)$
+                        type: string
+                      description:
+                        EvictionHard is the map of signal names to quantities
+                        that define hard eviction thresholds
+                      type: object
+                      x-kubernetes-validations:
+                        - message:
+                            "valid keys for evictionHard are
+                            ['memory.available','nodefs.available','nodefs.inodesFree','imagefs.available','imagefs.inodesFree','pid.available']"
+                          rule:
+                            "self.all(x, x in
+                            ['memory.available','nodefs.available','nodefs.inodesFree','imagefs.available','imagefs.inodesFree','pid.available'])"
+                    evictionMaxPodGracePeriod:
+                      description: |-
+                        EvictionMaxPodGracePeriod is the maximum allowed grace period (in seconds) to use when terminating pods in
+                        response to soft eviction thresholds being met.
+                      format: int32
+                      type: integer
+                    evictionSoft:
+                      additionalProperties:
+                        pattern: ^((\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)%||(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?)$
+                        type: string
+                      description:
+                        EvictionSoft is the map of signal names to quantities
+                        that define soft eviction thresholds
+                      type: object
+                      x-kubernetes-validations:
+                        - message:
+                            "valid keys for evictionSoft are
+                            ['memory.available','nodefs.available','nodefs.inodesFree','imagefs.available','imagefs.inodesFree','pid.available']"
+                          rule:
+                            "self.all(x, x in
+                            ['memory.available','nodefs.available','nodefs.inodesFree','imagefs.available','imagefs.inodesFree','pid.available'])"
+                    evictionSoftGracePeriod:
+                      additionalProperties:
+                        type: string
+                      description:
+                        EvictionSoftGracePeriod is the map of signal names to
+                        quantities that define grace periods for each eviction
+                        signal
+                      type: object
+                      x-kubernetes-validations:
+                        - message:
+                            "valid keys for evictionSoftGracePeriod are
+                            ['memory.available','nodefs.available','nodefs.inodesFree','imagefs.available','imagefs.inodesFree','pid.available']"
+                          rule:
+                            "self.all(x, x in
+                            ['memory.available','nodefs.available','nodefs.inodesFree','imagefs.available','imagefs.inodesFree','pid.available'])"
+                    imageGCHighThresholdPercent:
+                      description: |-
+                        ImageGCHighThresholdPercent is the percent of disk usage after which image
+                        garbage collection is always run. The percent is calculated by dividing this
+                        field value by 100, so this field must be between 0 and 100, inclusive.
+                        When specified, the value must be greater than ImageGCLowThresholdPercent.
+                      format: int32
+                      maximum: 100
+                      minimum: 0
+                      type: integer
+                    imageGCLowThresholdPercent:
+                      description: |-
+                        ImageGCLowThresholdPercent is the percent of disk usage before which image
+                        garbage collection is never run. Lowest disk usage to garbage collect to.
+                        The percent is calculated by dividing this field value by 100,
+                        so the field value must be between 0 and 100, inclusive.
+                        When specified, the value must be less than imageGCHighThresholdPercent
+                      format: int32
+                      maximum: 100
+                      minimum: 0
+                      type: integer
+                    kubeReserved:
+                      additionalProperties:
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        type: string
+                      description:
+                        KubeReserved contains resources reserved for Kubernetes
+                        system components.
+                      type: object
+                      x-kubernetes-validations:
+                        - message:
+                            "valid keys for kubeReserved are
+                            ['cpu','memory','ephemeral-storage','pid']"
+                          rule:
+                            "self.all(x, x=='cpu' || x=='memory' ||
+                            x=='ephemeral-storage' || x=='pid')"
+                        - message:
+                            kubeReserved value cannot be a negative resource
+                            quantity
+                          rule: "self.all(x, !self[x].startsWith('-'))"
+                    maxPods:
+                      description: |-
+                        MaxPods is an override for the maximum number of pods that can run on
+                        a worker node instance.
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    podsPerCore:
+                      description: |-
+                        PodsPerCore is an override for the number of pods that can run on a worker node
+                        instance based on the number of cpu cores. This value cannot exceed MaxPods, so, if
+                        MaxPods is a lower value, that value will be used.
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    systemReserved:
+                      additionalProperties:
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        type: string
+                      description:
+                        SystemReserved contains resources reserved for OS system
+                        daemons and kernel memory.
+                      type: object
+                      x-kubernetes-validations:
+                        - message:
+                            "valid keys for systemReserved are
+                            ['cpu','memory','ephemeral-storage','pid']"
+                          rule:
+                            "self.all(x, x=='cpu' || x=='memory' ||
+                            x=='ephemeral-storage' || x=='pid')"
+                        - message:
+                            systemReserved value cannot be a negative resource
+                            quantity
+                          rule: "self.all(x, !self[x].startsWith('-'))"
+                  type: object
+                  x-kubernetes-validations:
+                    - message:
+                        imageGCHighThresholdPercent must be greater than
+                        imageGCLowThresholdPercent
+                      rule:
+                        'has(self.imageGCHighThresholdPercent) &&
+                        has(self.imageGCLowThresholdPercent)
+                        ?  self.imageGCHighThresholdPercent >
+                        self.imageGCLowThresholdPercent  : true'
+                    - message:
+                        evictionSoft OwnerKey does not have a matching
+                        evictionSoftGracePeriod
+                      rule:
+                        has(self.evictionSoft) ? self.evictionSoft.all(e, (e in
+                        self.evictionSoftGracePeriod)):true
+                    - message:
+                        evictionSoftGracePeriod OwnerKey does not have a
+                        matching evictionSoft
+                      rule:
+                        has(self.evictionSoftGracePeriod) ?
+                        self.evictionSoftGracePeriod.all(e, (e in
+                        self.evictionSoft)):true
                 metadataOptions:
                   default:
                     httpEndpoint: enabled
                     httpProtocolIPv6: disabled
-                    httpPutResponseHopLimit: 2
+                    httpPutResponseHopLimit: 1
                     httpTokens: required
                   description: |-
                     MetadataOptions for the generated launch template of provisioned nodes.
-
 
                     This specifies the exposure of the Instance Metadata Service to
                     provisioned EC2 nodes. For more information,
@@ -269,12 +484,11 @@ spec:
                     (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html)
                     in the Amazon Elastic Compute Cloud User Guide.
 
-
                     Refer to recommended, security best practices
                     (https://aws.github.io/aws-eks-best-practices/security/docs/iam/#restrict-access-to-the-instance-profile-assigned-to-the-worker-node)
                     for limiting exposure of Instance Metadata and User Data to pods.
                     If omitted, defaults to httpEndpoint enabled, with httpProtocolIPv6
-                    disabled, with httpPutResponseLimit of 2, and with httpTokens
+                    disabled, with httpPutResponseLimit of 1, and with httpTokens
                     required.
                   properties:
                     httpEndpoint:
@@ -283,7 +497,6 @@ spec:
                         HTTPEndpoint enables or disables the HTTP metadata endpoint on provisioned
                         nodes. If metadata options is non-nil, but this parameter is not specified,
                         the default state is "enabled".
-
 
                         If you specify a value of "disabled", instance metadata will not be accessible
                         on the node.
@@ -302,13 +515,13 @@ spec:
                         - disabled
                       type: string
                     httpPutResponseHopLimit:
-                      default: 2
+                      default: 1
                       description: |-
                         HTTPPutResponseHopLimit is the desired HTTP PUT response hop limit for
                         instance metadata requests. The larger the number, the further instance
                         metadata requests can travel. Possible values are integers from 1 to 64.
                         If metadata options is non-nil, but this parameter is not specified, the
-                        default value is 2.
+                        default value is 1.
                       format: int64
                       maximum: 64
                       minimum: 1
@@ -320,13 +533,11 @@ spec:
                         requests. If metadata options is non-nil, but this parameter is not
                         specified, the default state is "required".
 
-
                         If the state is optional, one can choose to retrieve instance metadata with
                         or without a signed token header on the request. If one retrieves the IAM
                         role credentials without a token, the version 1.0 role credentials are
                         returned. If one retrieves the IAM role credentials using a valid signed
                         token, the version 2.0 role credentials are returned.
-
 
                         If the state is "required", one must send a signed token header with any
                         instance metadata retrieval requests. In this state, retrieving the IAM
@@ -372,7 +583,7 @@ spec:
                         additionalProperties:
                           type: string
                         description: |-
-                          Tags is a map of key/value tags used to select subnets
+                          Tags is a map of key/value tags used to select security groups.
                           Specifying '*' for a value selects all values for a given tag key.
                         maxProperties: 20
                         type: object
@@ -448,6 +659,10 @@ spec:
                       rule: "self.all(k, k != '')"
                     - message:
                         tag contains a restricted tag matching
+                        eks:eks-cluster-name
+                      rule: "self.all(k, k !='eks:eks-cluster-name')"
+                    - message:
+                        tag contains a restricted tag matching
                         kubernetes.io/cluster/
                       rule:
                         "self.all(k, !k.startsWith('kubernetes.io/cluster') )"
@@ -455,10 +670,6 @@ spec:
                         tag contains a restricted tag matching
                         karpenter.sh/nodepool
                       rule: "self.all(k, k != 'karpenter.sh/nodepool')"
-                    - message:
-                        tag contains a restricted tag matching
-                        karpenter.sh/managed-by
-                      rule: "self.all(k, k !='karpenter.sh/managed-by')"
                     - message:
                         tag contains a restricted tag matching
                         karpenter.sh/nodeclaim
@@ -474,16 +685,11 @@ spec:
                     this UserData to ensure nodes are being provisioned with the correct configuration.
                   type: string
               required:
-                - amiFamily
+                - amiSelectorTerms
                 - securityGroupSelectorTerms
                 - subnetSelectorTerms
               type: object
               x-kubernetes-validations:
-                - message:
-                    "amiSelectorTerms is required when amiFamily == 'Custom'"
-                  rule:
-                    "self.amiFamily == 'Custom' ? self.amiSelectorTerms.size()
-                    != 0 : true"
                 - message:
                     "must specify exactly one of ['role', 'instanceProfile']"
                   rule:
@@ -496,6 +702,52 @@ spec:
                   rule:
                     (has(oldSelf.role) && has(self.role)) ||
                     (has(oldSelf.instanceProfile) && has(self.instanceProfile))
+                - message:
+                    "if set, amiFamily must be 'AL2' or 'Custom' when using an
+                    AL2 alias"
+                  rule:
+                    "!has(self.amiFamily) || (self.amiSelectorTerms.exists(x,
+                    has(x.alias) && x.alias.find('^[^@]+') == 'al2') ?
+                    (self.amiFamily == 'Custom' || self.amiFamily == 'AL2') :
+                    true)"
+                - message:
+                    "if set, amiFamily must be 'AL2023' or 'Custom' when using
+                    an AL2023 alias"
+                  rule:
+                    "!has(self.amiFamily) || (self.amiSelectorTerms.exists(x,
+                    has(x.alias) && x.alias.find('^[^@]+') == 'al2023') ?
+                    (self.amiFamily == 'Custom' || self.amiFamily == 'AL2023') :
+                    true)"
+                - message:
+                    "if set, amiFamily must be 'Bottlerocket' or 'Custom' when
+                    using a Bottlerocket alias"
+                  rule:
+                    "!has(self.amiFamily) || (self.amiSelectorTerms.exists(x,
+                    has(x.alias) && x.alias.find('^[^@]+') == 'bottlerocket') ?
+                    (self.amiFamily == 'Custom' || self.amiFamily ==
+                    'Bottlerocket') : true)"
+                - message:
+                    "if set, amiFamily must be 'Windows2019' or 'Custom' when
+                    using a Windows2019 alias"
+                  rule:
+                    "!has(self.amiFamily) || (self.amiSelectorTerms.exists(x,
+                    has(x.alias) && x.alias.find('^[^@]+') == 'windows2019') ?
+                    (self.amiFamily == 'Custom' || self.amiFamily ==
+                    'Windows2019') : true)"
+                - message:
+                    "if set, amiFamily must be 'Windows2022' or 'Custom' when
+                    using a Windows2022 alias"
+                  rule:
+                    "!has(self.amiFamily) || (self.amiSelectorTerms.exists(x,
+                    has(x.alias) && x.alias.find('^[^@]+') == 'windows2022') ?
+                    (self.amiFamily == 'Custom' || self.amiFamily ==
+                    'Windows2022') : true)"
+                - message:
+                    must specify amiFamily if amiSelectorTerms does not contain
+                    an alias
+                  rule:
+                    'self.amiSelectorTerms.exists(x, has(x.alias)) ? true :
+                    has(self.amiFamily)'
             status:
               description:
                 EC2NodeClassStatus contains the resolved state of the
@@ -510,6 +762,9 @@ spec:
                       AMI contains resolved AMI selector values utilized for
                       node launch
                     properties:
+                      deprecated:
+                        description: Deprecation status of the AMI
+                        type: boolean
                       id:
                         description: ID of the AMI
                         type: string
@@ -603,12 +858,9 @@ spec:
                           - Unknown
                         type: string
                       type:
-                        description: |-
-                          type of condition in CamelCase or in foo.example.com/CamelCase.
-                          ---
-                          Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
-                          useful (see .node.status.conditions), the ability to deconflict is important.
-                          The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                        description:
+                          type of condition in CamelCase or in
+                          foo.example.com/CamelCase.
                         maxLength: 316
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                         type: string
@@ -627,7 +879,7 @@ spec:
                   type: string
                 securityGroups:
                   description: |-
-                    SecurityGroups contains the current Security Groups values that are available to the
+                    SecurityGroups contains the current security group values that are available to the
                     cluster under the SecurityGroups selectors.
                   items:
                     description:
@@ -646,7 +898,7 @@ spec:
                   type: array
                 subnets:
                   description: |-
-                    Subnets contains the current Subnet values that are available to the
+                    Subnets contains the current subnet values that are available to the
                     cluster under the subnet selectors.
                   items:
                     description:
