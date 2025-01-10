@@ -21,13 +21,11 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(1.8.22),
         default_tag: "1.8.22"
       }),
-    # https://gallery.ecr.aws/eks/aws-load-balancer-controller
-    # https://github.com/kubernetes-sigs/aws-load-balancer-controller
     aws_load_balancer_controller:
       Image.new!(%{
         name: "public.ecr.aws/eks/aws-load-balancer-controller",
-        tags: ~w(v2.8.1 v2.8.2 v2.11.0),
-        default_tag: "v2.11.0"
+        tags: ~w(v2.8.1 v2.8.2),
+        default_tag: "v2.8.2"
       }),
     cert_manager_acmesolver:
       Image.new!(%{
@@ -96,12 +94,11 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless),
         default_tag: "1.23.3-distroless"
       }),
-    # https://gallery.ecr.aws/karpenter/controller
     karpenter:
       Image.new!(%{
         name: "public.ecr.aws/karpenter/controller",
-        tags: ~w(0.37.0 1.1.1),
-        default_tag: "1.1.1"
+        tags: ~w(0.37.0),
+        default_tag: "0.37.0"
       }),
     keycloak:
       Image.new!(%{
