@@ -12,6 +12,9 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.Batteries
+  alias CommonCore.StateSummary.Core
+  alias CommonCore.StateSummary.Namespaces
+  alias CommonCore.StateSummary.SSL
   alias EventCenter.SystemStateSummary
   alias KubeServices.SystemState.Summarizer
 
@@ -71,28 +74,39 @@ defmodule KubeServices.SystemState.SummaryBatteries do
     {:reply, false, state}
   end
 
+  @impl GenServer
+  def handle_call(:core_battery, _from, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, Core.get_battery_core(summary), state}
+  end
+
+  @impl GenServer
   def handle_call(:default_size, _, %{summary: %StateSummary{} = summary} = state) do
-    {:reply, StateSummary.Core.config_field(summary, :default_size) || :tiny, state}
+    {:reply, Core.config_field(summary, :default_size) || :tiny, state}
   end
 
+  @impl GenServer
   def handle_call(:ai_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
-    {:reply, StateSummary.Namespaces.ai_namespace(summary), state}
+    {:reply, Namespaces.ai_namespace(summary), state}
   end
 
+  @impl GenServer
   def handle_call(:core_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
-    {:reply, StateSummary.Namespaces.core_namespace(summary), state}
+    {:reply, Namespaces.core_namespace(summary), state}
   end
 
+  @impl GenServer
   def handle_call(:knative_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
-    {:reply, StateSummary.Namespaces.knative_namespace(summary), state}
+    {:reply, Namespaces.knative_namespace(summary), state}
   end
 
+  @impl GenServer
   def handle_call(:traditional_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
-    {:reply, StateSummary.Namespaces.traditional_namespace(summary), state}
+    {:reply, Namespaces.traditional_namespace(summary), state}
   end
 
+  @impl GenServer
   def handle_call(:ssl_enabled?, _from, %{summary: %StateSummary{} = summary} = state) do
-    {:reply, StateSummary.SSL.ssl_enabled?(summary), state}
+    {:reply, SSL.ssl_enabled?(summary), state}
   end
 
   # Is the battery installed?
@@ -109,6 +123,10 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   def installed_batteries(target, group) do
     GenServer.call(target, {:installed_batteries, group})
+  end
+
+  def core_battery(target \\ @me) do
+    GenServer.call(target, :core_battery)
   end
 
   def default_size(target \\ @me) do
