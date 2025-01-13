@@ -24,6 +24,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.NotebooksConfig
   alias CommonCore.Batteries.NvidiaDevicePluginConfig
   alias CommonCore.Batteries.OllamaConfig
+  alias CommonCore.Batteries.ProjectExportConfig
   alias CommonCore.Batteries.PromtailConfig
   alias CommonCore.Batteries.RedisConfig
   alias CommonCore.Batteries.Smtp4devConfig
@@ -71,6 +72,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     notebooks: NotebooksConfig,
     nvidia_device_plugin: NvidiaDevicePluginConfig,
     ollama: OllamaConfig,
+    project_export: ProjectExportConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
     stale_resource_cleaner: StaleResourceCleanerConfig,
