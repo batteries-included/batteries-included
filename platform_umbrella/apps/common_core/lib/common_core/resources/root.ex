@@ -80,6 +80,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     notebooks: [Notebooks],
     nvidia_device_plugin: [NvidiaDevicePlugin],
     ollama: [Ollama],
+    project_export: [],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],
     smtp4dev: [Smtp4Dev],
