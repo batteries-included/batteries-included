@@ -20,7 +20,7 @@
     "chart.js": "~4.4",
     "esbuild": "~0.24",
     "lodash": "~4.17",
-    "postcss": "~8.4",
+    "postcss": "~8.5",
     "postcss-import": "~16.1",
     "postcss-url": "~10.1",
     "tailwindcss": "~3.4",
