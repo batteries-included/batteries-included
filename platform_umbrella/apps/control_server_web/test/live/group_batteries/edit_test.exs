@@ -2,9 +2,11 @@ defmodule ControlServerWeb.GroupBatteries.EditLiveTest do
   use ControlServerWeb.ConnCase
 
   alias ControlServer.Batteries.Installer
+  alias KubeServices.SystemState.Summarizer
 
   setup do
     timeline_report = Installer.install!(:timeline)
+    Summarizer.new()
 
     %{system_battery: timeline_report.installed.timeline}
   end

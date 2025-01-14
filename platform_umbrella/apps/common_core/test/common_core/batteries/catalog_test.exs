@@ -38,6 +38,18 @@ defmodule CommonCore.Batteries.CatalogTest do
     assert [%CatalogBattery{group: :magic} | _] = all(:magic)
   end
 
+  describe "all_for_usage" do
+    test "all_for_usage/1" do
+      assert all() == all_for_usage(:internal_dev)
+      assert [] == all_for_usage(:not_a_real_usage)
+    end
+
+    test "all_for_usage/2" do
+      assert [%CatalogBattery{group: :magic} | _] = all_for_usage(:internal_dev, :magic)
+      assert [] == all_for_usage(:not_a_real_usage, :magic)
+    end
+  end
+
   describe "get/1" do
     test "should get battery with string" do
       assert %CatalogBattery{type: :timeline} = get("timeline")
