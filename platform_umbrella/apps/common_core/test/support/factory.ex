@@ -6,9 +6,12 @@ defmodule CommonCore.Factory do
   use ExMachina
 
   alias CommonCore.Ecto.BatteryUUID
+  alias CommonCore.FerretDB.FerretService
   alias CommonCore.Installs.Options
+  alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
+  alias CommonCore.Projects.Project
   alias CommonCore.StateSummary.KeycloakSummary
 
   # with Ecto
@@ -236,5 +239,63 @@ defmodule CommonCore.Factory do
 
   def client_factory do
     %ClientRepresentation{id: BatteryUUID.autogenerate(), name: sequence("keycloak-client")}
+  end
+
+  def project_factory do
+    %Project{
+      name: sequence("project-"),
+      type: sequence(:type, [:web, :ai, :db]),
+      description: sequence("description-"),
+      postgres_clusters: [build(:postgres)],
+      redis_instances: [build(:redis)],
+      ferret_services: [build(:ferret_service)],
+      jupyter_notebooks: [build(:jupyter_lab_notebook)],
+      knative_services: [build(:knative_service)],
+      traditional_services: [build(:traditional_service)]
+    }
+  end
+
+  def knative_service_factory do
+    %CommonCore.Knative.Service{
+      name: sequence("knative-service-"),
+      rollout_duration: sequence(:rollout_duration, ["10s", "1m", "2m", "10m", "20m", "30m"]),
+      oauth2_proxy: sequence(:oauth2_proxy, [true, false]),
+      keycloak_realm: sequence("realm_"),
+      containers: [build(:containers_container)],
+      env_values: [build(:containers_env_value), build(:containers_env_value)]
+    }
+  end
+
+  def traditional_service_factory do
+    %CommonCore.TraditionalServices.Service{
+      name: sequence("knative-service-"),
+      virtual_size: sequence(:virtual_size, ~w(tiny small medium large xlarge huge)),
+      kube_deployment_type: sequence(:kube_deployment_type, [:statefulset, :deployment]),
+      num_instances: sequence(:num_instances, [1, 2, 3, 4]),
+      containers: [build(:containers_container)],
+      env_values: [build(:containers_env_value), build(:containers_env_value)]
+    }
+  end
+
+  def jupyter_lab_notebook_factory do
+    %JupyterLabNotebook{
+      name: sequence("kube-notebook-"),
+      storage_size: 500 * 1024 * 1024,
+      storage_class: "default"
+    }
+  end
+
+  def ferret_service_factory do
+    %FerretService{
+      postgres_cluster: build(:postgres)
+    }
+  end
+
+  def containers_container_factory do
+    %CommonCore.Containers.Container{name: sequence("container-"), image: "nginx:latest"}
+  end
+
+  def containers_env_value_factory do
+    %CommonCore.Containers.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
   end
 end

@@ -60,4 +60,18 @@ defmodule CommonCore.Projects.Project do
       :traditional_services
     ]
   end
+
+  def export(%__MODULE__{} = project) do
+    Jason.encode(project)
+  end
+
+  def export!(%__MODULE__{} = project) do
+    case export(project) do
+      {:ok, json} ->
+        json
+
+      {:error, err} ->
+        raise "Error exporting project: #{inspect(err)}"
+    end
+  end
 end
