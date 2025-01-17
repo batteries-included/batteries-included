@@ -324,8 +324,8 @@ github.com/pulumi/pulumi-aws/sdk/v6 v6.66.3 h1:s/cWv0g4NUL6ZMwsUM/ttPlmV1DE2+654
 github.com/pulumi/pulumi-aws/sdk/v6 v6.66.3/go.mod h1:WSA4oz7YvZxNNjolk2yKaQR3PvT8KsPgCga0KyCqxBc=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.9 h1:1Ct8xhIYv+ee1tk4wndtvwcbgmnsmhMc/qFcszH9+xg=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.9/go.mod h1:sTJH2pXWoY+DdF0GtUrU4VUEaWj7w8EAUarOjnIXD1U=
-github.com/pulumi/pulumi-tls/sdk/v5 v5.0.10 h1:HQa/PKU3QRTKx+7FdLu1MjHOITZ7e0FbE9+53IJycC0=
-github.com/pulumi/pulumi-tls/sdk/v5 v5.0.10/go.mod h1:KFQJLr3TxrNB+qi7iTSCgQey7RdQ78Fj4XoivsFhTFM=
+github.com/pulumi/pulumi-tls/sdk/v5 v5.1.0 h1:eLl9zlIWn0APS5ol+jX7rndH3SYH7YtGc6+YKCDpoj0=
+github.com/pulumi/pulumi-tls/sdk/v5 v5.1.0/go.mod h1:4nbc+X3iHeYH/rRFRRluVQedNYWydJY+bDOhHT0hJX0=
 github.com/pulumi/pulumi/sdk/v3 v3.146.0 h1:L7+qD0pe9RjX7PaLhXXJPizMZ50qN5eZtI3Ae/i4P4c=
 github.com/pulumi/pulumi/sdk/v3 v3.146.0/go.mod h1:4iCUMfpr1Kj5/YzY13/Ef2GPKFJy5Kk4hCe2dEXRVoc=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
