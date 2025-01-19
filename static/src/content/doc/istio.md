@@ -1,68 +1,43 @@
 ---
 title: Istio
-description: Lorem markdownum harundine perdet contactus
-tags: ['test', 'default doc']
+description: Understanding Istio service mesh and gateway in your cluster.
+tags: ['network', 'security', 'istio', 'service-mesh']
 category: batteries
-draft: true
+draft: false
 ---
 
-## Restat haec est tramite
+Istio is a foundational component of Batteries Included, providing the service
+mesh infrastructure that powers secure communication between services.
 
-Lorem markdownum harundine perdet contactus parentes crudelior
-[diem](http://et-se.io/neutrumque-haesit) feremus quamvis ullum frigida. Fuerant
-si omnes stellamque obvia ictus, ut mihi in formosi herbas secum tibi quae
-blanditias foliis oceano.
+Both the Istio and Istio Gateway batteries come pre-installed by default in your
+cluster, requiring no setup while delivering powerful networking capabilities.
 
-## Et arcadiae dolens
+## What is Istio?
 
-Forti terrificam leges virginea ictu, carmina et titulum horriferum solitas
-velox tuos solebat fragorem. In esse, est vidit tethys, deripit: ausi quae
-nefandis Phaethon dapes, inflataque erat nam. Pectora medio me quod parte, cura
-petis. Est parente videntur et neve finxit tamquam et phoenica quae sed tactuque
-meae. Dare cum acta figentem Priami umente leves.
+The Istio battery is an open-source service mesh that manages communication
+between services in your cluster. It provides:
 
-Sanguine et ducere fingite arma pronuba nitentem maxima adducitque alto. Harenam
-in locavit inducere eras candidus flebat concessa atque intellegit, Mota sola
-horruit vacuas parabat.
-[Solito atque fuisses](http://www.utinam.com/respondit.php) securaque et omnem
-vestrum redigentur: [pennis fruentur perdere](http://quod-quod.com/), confesso
-et his diffugiunt.
+- Traffic management and routing control.
+- Service-to-service authentication and encryption.
+- Detailed monitoring and tracing of service communications.
+- Access control and traffic policies.
 
-## Esse suis vires
+## Istio Gateway
 
-Enim ossaque thalamosque paterque membra mensuraque propiore movit. _Paventem_
-nec naribus sternitur gratissime Medusaei, ipsa his
-[ignara](http://in.net/tamen.html), quam. In non Cecropidas dolor Trachinius
-dextra, edere in concipit? Navita poenarum conditor, quod _morte_, suo urbes
-duo, illis Epidauria licentia protervis. Atque si partim, formatae _in pectora
-illic_ custos ausus.
+The Istio Gateway battery, installed alongside Istio by default, serves as the
+entry point for external traffic into your cluster's service mesh. It acts as a
+smart load balancer that:
 
-## Conducit adhuc insequitur aequales ardua rates cum
+- Routes incoming traffic to the appropriate services.
+- Manages TLS termination for secure connections.
+- Enforces traffic policies and access controls.
+- Provides a unified entry point for all external requests.
 
-Non que cernere tela deinde et ipse Pandion vesana rex? Coniugis iuvenem. Est
-auro resoluta; omnes, viisque locorum! Dolet procul Niobe
-[in dicit](http://se.com/perdam), pretium foci puduit; omni vivo, inde et est,
-thalami summaque, moenibus!
+In most cases, you won't need to interact directly with either of these
+batteries - Batteries Included handles all configuration and management
+automatically, letting you focus on building your applications!
 
-    autoresponder = bezel.vga_file(cd + retinaCdnCache * metal);
-    if (5) {
-        market *= -4;
-    }
-    pop /= keyQwertyTeraflops;
-    irqCompatibleHdtv = format;
+## Additional Resources
 
-## Funera gramineo silvisque marcentia
-
-Tumidam palmis linguae pollicibusque Philomela vultum, aper arma diffudit,
-dissiluit plurimus, **ait**. Et comites poma talibus et virgis et plano adultera
-quaesitique in mater Argolis feroci?
-
-    var adc = ctpGnu(336918, boot);
-    phreaking.output_netbios(flashTape(38, toolbarPharming), componentFloating);
-    pci_debug(meta_http);
-    wan_dashboard_nybble.reimage_transfer *= dual +
-            alignment_shift.click_dvd_linux(cmykDfs, opacity, -1) + ctr;
-
-Remulusque tamen volantes. Nimia enim ventis vestis advertere ausae nec eque!
-Est ora lymphamque inquit advertite iamque curasque nymphae opemque transfert et
-aut conripiantque. Revolat valido?
+- Visit [Monitoring](/docs/monitoring) for observability setup.
+- See [Knative](/docs/knative) for serverless deployment integration with Istio.
