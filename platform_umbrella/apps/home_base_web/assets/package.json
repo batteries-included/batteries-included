@@ -14,7 +14,7 @@
     "@tailwindcss/forms": "~0.5",
     "@tailwindcss/typography": "~0.5",
     "@types/phoenix": "~1.6",
-    "@types/phoenix_live_view": "~0.20",
+    "@types/phoenix_live_view": "~1.0",
     "autoprefixer": "~10.4",
     "esbuild": "~0.24",
     "chart.js": "~4.4",
