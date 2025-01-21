@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceNew do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias CommonCore.Ollama.ModelInstance
-  alias ControlServerWeb.Live.Ollama.FormComponent
+  alias ControlServerWeb.Live.OllamaFormComponent
   alias KubeServices.SmartBuilder
 
   def mount(params, _session, socket) do
@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceNew do
   def render(assigns) do
     ~H"""
     <.live_component
-      module={FormComponent}
+      module={OllamaFormComponent}
       model_instance={@model_instance}
       id="model_instance-form"
       action={:new}

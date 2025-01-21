@@ -6,9 +6,12 @@ defmodule ControlServerWeb.Projects.AIForm do
 
   alias CommonCore.Ecto.Validations
   alias CommonCore.Notebooks.JupyterLabNotebook
+  alias CommonCore.Ollama.ModelInstance
   alias CommonCore.Postgres.Cluster, as: PGCluster
   alias CommonCore.Util.Memory
+  alias ControlServer.Ollama
   alias ControlServer.Postgres
+  alias ControlServerWeb.OllamaFormSubcomponents
   alias ControlServerWeb.PostgresFormSubcomponents
   alias ControlServerWeb.Projects.ProjectForm
 
@@ -33,6 +36,12 @@ defmodule ControlServerWeb.Projects.AIForm do
         Map.get(form_data, "jupyter", %{name: resource_name})
       )
 
+    ollama_changeset =
+      ModelInstance.changeset(
+        KubeServices.SmartBuilder.new_model_instance_params(),
+        Map.get(form_data, "ollama", %{name: resource_name})
+      )
+
     postgres_changeset =
       PGCluster.changeset(
         KubeServices.SmartBuilder.new_postgres(),
@@ -42,9 +51,11 @@ defmodule ControlServerWeb.Projects.AIForm do
 
     form =
       to_form(%{
-        "need_postgres" => Map.get(form_data, "need_postgres", false),
         "jupyter" => to_form(jupyter_changeset, as: :jupyter),
-        "postgres" => postgres_changeset
+        "need_postgres" => Map.get(form_data, "need_postgres", false),
+        "postgres" => postgres_changeset,
+        "need_ollama" => Map.get(form_data, "need_ollama", false),
+        "ollama" => to_form(ollama_changeset, as: :ollama)
       })
 
     {:ok,
@@ -52,11 +63,16 @@ defmodule ControlServerWeb.Projects.AIForm do
      |> assign(assigns)
      |> assign(:form, form)
      |> assign(:class, class)
-     |> assign(:db_type, Map.get(form_data, "db_type", :new))}
+     |> assign(:db_type, Map.get(form_data, "db_type", :new))
+     |> assign(:ollama_type, Map.get(form_data, "ollama_type", :new))}
   end
 
   def handle_event("db_type", %{"type" => type}, socket) do
     {:noreply, assign(socket, :db_type, String.to_existing_atom(type))}
+  end
+
+  def handle_event("ollama_type", %{"type" => type}, socket) do
+    {:noreply, assign(socket, :ollama_type, String.to_existing_atom(type))}
   end
 
   def handle_event("validate", params, socket) do
@@ -70,10 +86,16 @@ defmodule ControlServerWeb.Projects.AIForm do
       |> PGCluster.changeset(params["postgres"], range_ticks: PGCluster.compact_storage_range_ticks())
       |> Map.put(:action, :validate)
 
+    ollama_changeset =
+      %ModelInstance{}
+      |> ModelInstance.changeset(params["ollama"])
+      |> Map.put(:action, :validate)
+
     form =
       params
       |> Map.put("jupyter", to_form(jupyter_changeset, as: :jupyter))
       |> Map.put("postgres", postgres_changeset)
+      |> Map.put("ollama", to_form(ollama_changeset, as: :ollama))
       |> to_form()
 
     {:noreply, assign(socket, :form, form)}
@@ -110,15 +132,20 @@ defmodule ControlServerWeb.Projects.AIForm do
       params
       |> Map.take([
         "need_postgres",
+        "need_ollama",
         "jupyter",
         if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "new", do: "postgres"),
-        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "existing", do: "postgres_ids")
+        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "existing", do: "postgres_ids"),
+        if(normalize_value("checkbox", params["need_ollama"]) && params["ollama_type"] == "new", do: "ollama"),
+        if(normalize_value("checkbox", params["need_ollama"]) && params["ollama_type"] == "existing", do: "ollama_ids")
       ])
       |> Map.put("db_type", socket.assigns.db_type)
+      |> Map.put("ollama_type", socket.assigns.ollama_type)
 
     if Validations.subforms_valid?(params, %{
          "jupyter" => &JupyterLabNotebook.changeset(%JupyterLabNotebook{}, &1),
-         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, range_ticks: PGCluster.compact_storage_range_ticks())
+         "postgres" => &PGCluster.changeset(%PGCluster{}, &1, range_ticks: PGCluster.compact_storage_range_ticks()),
+         "ollama" => &ModelInstance.changeset(%ModelInstance{}, &1)
        }) do
       # Don't create the resources yet, send data to parent liveview
       send(self(), {:next, {__MODULE__, params}})
@@ -214,6 +241,53 @@ defmodule ControlServerWeb.Projects.AIForm do
               phx_target={@myself}
               with_divider={false}
               ticks={PGCluster.compact_storage_range_ticks()}
+              action={:new}
+            />
+          </div>
+
+          <.flex class="justify-between w-full pt-3 border-t border-gray-lighter dark:border-gray-darker" />
+
+          <.field variant="beside">
+            <:label>I need an Ollama model</:label>
+            <.input type="switch" field={@form[:need_ollama]} />
+          </.field>
+
+          <div class={!normalize_value("checkbox", @form[:need_ollama].value) && "hidden"}>
+            <.tab_bar variant="secondary" class="mb-6">
+              <:tab
+                phx-click="ollama_type"
+                phx-value-type={:new}
+                phx-target={@myself}
+                selected={@ollama_type == :new}
+              >
+                New Model
+              </:tab>
+
+              <:tab
+                phx-click="ollama_type"
+                phx-value-type={:existing}
+                phx-target={@myself}
+                selected={@ollama_type == :existing}
+              >
+                Existing Model
+              </:tab>
+            </.tab_bar>
+
+            <.input type="hidden" name="ollama_type" value={@ollama_type} />
+
+            <.field :if={@ollama_type == :existing}>
+              <.input
+                type="select"
+                field={@form[:ollama_ids]}
+                placeholder="Choose a set of models"
+                options={Ollama.model_instances_available_for_project()}
+                multiple
+              />
+            </.field>
+
+            <OllamaFormSubcomponents.model_form
+              class={@ollama_type != :new && "hidden"}
+              form={to_form(@form[:ollama].value, as: :ollama)}
               action={:new}
             />
           </div>

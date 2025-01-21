@@ -1,10 +1,11 @@
-defmodule ControlServerWeb.Live.Ollama.FormComponent do
+defmodule ControlServerWeb.Live.OllamaFormComponent do
   @moduledoc false
 
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.OllamaFormSubcomponents
+
   alias CommonCore.Ollama.ModelInstance
-  alias CommonCore.Util.Memory
   alias ControlServer.Ollama
   alias ControlServer.Projects
   alias KubeServices.SystemState.SummaryBatteries
@@ -102,35 +103,10 @@ defmodule ControlServerWeb.Live.Ollama.FormComponent do
 
         <.grid columns={[sm: 1, lg: 2]}>
           <.panel>
-            <.grid columns={[sm: 1, lg: 2]} class="items-center">
-              <.input field={@form[:name]} label="Name" />
-              <.input
-                field={@form[:model]}
-                label="Model"
-                type="select"
-                placeholder="Select Model"
-                options={ModelInstance.model_options_for_select()}
-              />
-            </.grid>
+            <.model_form form={@form} action={@action} />
           </.panel>
           <.panel variant="gray">
-            <.flex column>
-              <.input
-                field={@form[:virtual_size]}
-                type="select"
-                label="Size"
-                placeholder="Choose a size"
-                options={ModelInstance.preset_options_for_select()}
-              />
-
-              <.data_list
-                variant="horizontal-bolded"
-                data={[
-                  {"Memory limits:", Memory.humanize(@form[:memory_limits].value)},
-                  {"CPU Request:", @form[:cpu_requested].value}
-                ]}
-              />
-            </.flex>
+            <.size_form form={@form} />
           </.panel>
         </.grid>
       </.form>

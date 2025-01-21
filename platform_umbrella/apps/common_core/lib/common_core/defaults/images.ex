@@ -170,8 +170,8 @@ defmodule CommonCore.Defaults.Images do
     ollama:
       Image.new!(%{
         name: "ollama/ollama",
-        tags: ~w(0.3.9 0.3.10),
-        default_tag: "0.3.10"
+        tags: ~w(0.3.9 0.3.10 0.5.7),
+        default_tag: "0.5.7"
       }),
     oauth2_proxy:
       Image.new!(%{
