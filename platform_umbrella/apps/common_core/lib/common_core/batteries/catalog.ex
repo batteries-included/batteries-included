@@ -163,6 +163,7 @@ defmodule CommonCore.Batteries.Catalog do
           "This is useful for running long running processes, or for running services that need to be accessed by other services."
     },
     %CatalogBattery{
+      allowed_usages: ~w(internal_dev internal_int_test)a,
       group: :devtools,
       type: :forgejo,
       dependencies: [:cloudnative_pg, :istio_gateway, :battery_core],
