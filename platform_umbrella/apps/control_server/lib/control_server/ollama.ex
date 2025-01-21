@@ -27,6 +27,21 @@ defmodule ControlServer.Ollama do
   end
 
   @doc """
+  Returns the list of model instance names and ids available for a project (not assigned to any project).
+
+  ## Examples
+
+      iex> model_instances_available_for_project()
+      [{_, _}, ...]
+
+  """
+  def model_instances_available_for_project do
+    from(c in ModelInstance, where: is_nil(c.project_id))
+    |> Repo.all()
+    |> Enum.map(&{&1.name, &1.id})
+  end
+
+  @doc """
   Gets a single model_instance.
 
   Raises `Ecto.NoResultsError` if the Model instance does not exist.

@@ -251,25 +251,28 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   # This is recursive, so it will also get all the dependencies for each battery.
   defp required_batteries(data) do
     data
-    |> Enum.map(fn {_, v} ->
-      Enum.map(
-        Map.keys(v),
-        &case &1 do
-          "postgres" -> [:cloudnative_pg]
-          "postgres_ids" -> [:cloudnative_pg]
-          "redis" -> [:redis]
-          "ferret" -> [:ferretdb]
-          "jupyter" -> [:notebooks]
-          "knative" -> [:knative]
-          "traditional" -> [:traditional_services]
-          _ -> nil
-        end
-      )
-    end)
+    |> Enum.map(&required_from_step/1)
     |> List.flatten()
     |> Enum.filter(&(&1 != nil))
-    |> Enum.map(&Catalog.get_recursive/1)
-    |> List.flatten()
+    |> Enum.flat_map(&Catalog.get_recursive/1)
     |> Enum.uniq()
   end
+
+  # This takes a single step form and figured out the batteries needed for that step.
+  defp required_from_step({_, v}) do
+    Enum.map(Map.keys(v), &required_batteries_from_form_name/1)
+  end
+
+  # Take all the inner form keys and determine what batteries are needed to run those
+  # requested services.
+
+  defp required_batteries_from_form_name("postgres"), do: [:cloudnative_pg]
+  defp required_batteries_from_form_name("postgres_ids"), do: [:cloudnative_pg]
+  defp required_batteries_from_form_name("redis"), do: [:redis]
+  defp required_batteries_from_form_name("ferret"), do: [:ferretdb]
+  defp required_batteries_from_form_name("jupyter"), do: [:notebooks]
+  defp required_batteries_from_form_name("knative"), do: [:knative]
+  defp required_batteries_from_form_name("ollama"), do: [:ollama]
+  defp required_batteries_from_form_name("traditional"), do: [:traditional_services]
+  defp required_batteries_from_form_name(_), do: nil
 end

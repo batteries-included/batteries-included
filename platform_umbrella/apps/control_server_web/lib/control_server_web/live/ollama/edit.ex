@@ -3,7 +3,7 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceEdit do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   alias ControlServer.Ollama
-  alias ControlServerWeb.Live.Ollama.FormComponent
+  alias ControlServerWeb.Live.OllamaFormComponent
 
   def mount(%{"id" => id}, _session, socket) do
     model_instance = Ollama.get_model_instance!(id, preload: [:project])
@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceEdit do
   def render(assigns) do
     ~H"""
     <.live_component
-      module={FormComponent}
+      module={OllamaFormComponent}
       model_instance={@model_instance}
       id="model_instances-form"
       action={:edit}
