@@ -130,15 +130,7 @@ defmodule ControlServerWeb.Projects.AIForm do
   def handle_event("save", params, socket) do
     params =
       params
-      |> Map.take([
-        "need_postgres",
-        "need_ollama",
-        "jupyter",
-        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "new", do: "postgres"),
-        if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "existing", do: "postgres_ids"),
-        if(normalize_value("checkbox", params["need_ollama"]) && params["ollama_type"] == "new", do: "ollama"),
-        if(normalize_value("checkbox", params["need_ollama"]) && params["ollama_type"] == "existing", do: "ollama_ids")
-      ])
+      |> clean_params()
       |> Map.put("db_type", socket.assigns.db_type)
       |> Map.put("ollama_type", socket.assigns.ollama_type)
 
@@ -152,6 +144,18 @@ defmodule ControlServerWeb.Projects.AIForm do
     end
 
     {:noreply, socket}
+  end
+
+  defp clean_params(params) do
+    Map.take(params, [
+      "need_postgres",
+      "need_ollama",
+      "jupyter",
+      if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "new", do: "postgres"),
+      if(normalize_value("checkbox", params["need_postgres"]) && params["db_type"] == "existing", do: "postgres_ids"),
+      if(normalize_value("checkbox", params["need_ollama"]) && params["ollama_type"] == "new", do: "ollama"),
+      if(normalize_value("checkbox", params["need_ollama"]) && params["ollama_type"] == "existing", do: "ollama_ids")
+    ])
   end
 
   def render(assigns) do
