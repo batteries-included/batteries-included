@@ -136,6 +136,8 @@ defmodule ControlServerWeb.Router do
     live "/new", Live.PostgresNew, :new
     live "/:id/edit", Live.PostgresEdit, :edit
     live "/:id/show", Live.PostgresShow, :show
+    live "/:id/events", Live.PostgresShow, :events
+    live "/:id/pods", Live.PostgresShow, :pods
     live "/:id/users", Live.PostgresShow, :users
     live "/:id/services", Live.PostgresShow, :services
     live "/:id/edit_versions", Live.PostgresShow, :edit_versions

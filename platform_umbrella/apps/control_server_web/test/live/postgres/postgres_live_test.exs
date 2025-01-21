@@ -1,5 +1,5 @@
 defmodule ControlServerWeb.PostgresLiveTest do
-  use Heyya.LiveCase
+  use Heyya.LiveCase, async: false
   use ControlServerWeb.ConnCase
 
   import ControlServer.Factory
@@ -265,11 +265,17 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
     setup [:create_cluster]
 
-    test "show cluster page", %{conn: conn, cluster: cluster, pod: pod} do
+    test "show cluster page", %{conn: conn, cluster: cluster} do
       conn
       |> start(~p"/postgres/#{cluster.id}/show")
       |> assert_html("Postgres Cluster: ")
       |> assert_html(cluster.name)
+    end
+
+    test "show cluster page with pod", %{conn: conn, cluster: cluster, pod: pod} do
+      conn
+      |> start(~p"/postgres/#{cluster.id}/pods")
+      |> assert_html("Pods")
       |> assert_html(FieldAccessors.name(pod))
     end
   end
