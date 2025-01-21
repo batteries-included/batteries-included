@@ -24,7 +24,7 @@ defmodule CommonUI.Components.DataListTest do
         Something that needs to be explained
       </:item>
       <:item title="Fact">Not everything needs a help text</:item>
-      <:item title="Anohter" hel="More help here">
+      <:item title="Another" help="More help here">
         it can be up to the developer where to use the help
       </:item>
     </.data_list>
