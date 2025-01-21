@@ -1,54 +1,55 @@
 ---
 title: Redis
-description: Se mea ite adhuc, vix ordo emisitque Iuppiter
-
-tags: ['test', 'default doc']
-draft: true
+description: Deploy and manage Redis databases with Batteries Included.
+tags: ['database', 'redis', 'datastore']
+category: batteries
+draft: false
 ---
 
-## Cum ultima nec sustulit feruntur urbes secreta
+Redis is an open-source, in-memory data store that can be used as a database,
+cache, message broker, and queue.
 
-Lorem markdownum taurorum est caede ite: quam somno, reliquit ferro, in. Geminos
-et utroque istis iam radiosque et orbem Thebae firmat. Martius campos in,
-tulerat saucius decor nequiquam mutato, sed. Ignes _ungulaque_ cygnis _vices_
-procumbere coetum vidisti coeamus exitium, in crevit.
+Batteries Included leverages
+[Redis Operator](https://ot-redis-operator.netlify.app/docs/getting-started/standalone/)
+to provide robust Redis support, complete with multiple deployment options to
+suit your needs!
 
-- Vulgus satyrique
-- Iunxit et
-- Dare vidisse intravit vertice vident
-- In sub vix galeae ignes inpleratque
+## Installing Redis
 
-## Suas Argolicae Lichan
+To set up Redis support in your cluster:
 
-Per sit aestatem inductas, arcumque conveniunt undis. Tibi quod amare conubia?
-Paene puer Mnemonidas finitimosque rursus. Deducens peragat tarda iam illis qua
-agmen Venus ire regia tantos eiectat: quod.
+1. Navigate to the `Datastores` section in the control server.
+2. Click `Manage Batteries` and install the Redis battery.
+3. Once installed, you'll see a new `Redis` section in the Datastores area.
 
-> Pyram dira, Phaestiadas arcus: carpit quod atque cum montibus et **Themis**,
-> cum diuque cornuque; in. Annis muros cruore, sua, sub epulas Argo prole
-> caelataeque et minimum fronte posset nomenque. Patitur attollere, axis nisi
-> patria animam: sed teneram prima quondamque cingebant satis effodiuntur.
-> Munera satyros ut Avernas creatus; trahit everberat locutus. Tremulis vivacem
-> fumis, suis tanta, confiteorque cavus sepulto Boeotiaque inmensa placido
-> erroris fraude nec.
+<video src="/videos/docs/redis/redis-install.mp4" controls></video>
 
-## Atque index harenis unda uni longoque illa
+## Creating a Redis Database
 
-Minimos fastigia; pericula [renascitur tamen](http://suum.io/palato), cunctantem
-tributum, potiere _niveisque omnis_ socialia simul tellus alta! Ait ut aut,
-timidi felicia aura iamque vos aperire vult. _Pugnax deus_ virum togaque ratae
-cognoscere **iamque hunc crus** cupit puer Capitolia eurus, aurora non.
+To create a new Redis instance:
 
-Regnum praemia. Voto quo. Venefica **ante** ostia furibunda ignem!
+1. Click `New Redis` in the Redis section.
+2. Configure your instance settings by choosing a deployment type (standalone,
+   replication, or cluster), memory size, and optionally associating it with a
+   project.
 
-## Superest adiectoque fatigat pauca nequiquam Minervae perfectaque
+<video src="/videos/docs/redis/redis-create.mp4" controls></video>
 
-Retinere argumenta fonti non. Aut esse cumque potae nostras. Sibi vultus habent,
-idem fuerat **actorum unda albas** vertice fovit fonte.
+## Accessing Your Redis Database
 
-- Quisquis nos ipse attollere petit coepit praevia
-- Annorum colloque
-- Nec fatemur tandem ex et aut cannas
-- Fiducia tinctam saevo permaneo somnos multis sceptri
+To view your Redis instance details:
 
-Arva Aesone stupet notas salutem. Vires fuit adimam esse tamen tectus.
+1. Navigate to the `Datastores` section in the control server.
+2. Find your Redis cluster under the Redis section.
+3. Click the `Services` tab to view connection information, such as the service
+   name/namespace, cluster IP, and port number.
+
+<video src="/videos/docs/redis/redis-view.mp4" controls></video>
+
+## Additional Resources
+
+- Visit the official [Redis documentation](https://redis.io/documentation) for
+  detailed usage information.
+- Check our [Projects](/docs/projects) guide for setting up Redis as part of
+  larger applications.
+- Visit [Monitoring](/docs/monitoring) for setting up observability.
