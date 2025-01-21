@@ -3,7 +3,7 @@ title: Forgejo
 description: Deploy and manage your own lightweight Git forge.
 tags: ['devtools', 'git', 'forge']
 category: batteries
-draft: false
+draft: true
 ---
 
 Forgejo is a self-hosted lightweight software forge that provides a complete
