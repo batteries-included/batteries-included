@@ -10,8 +10,6 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
   attr :action, :atom, default: nil
 
   def model_form(assigns) do
-    dbg(assigns)
-
     ~H"""
     <.fieldset responsive class={@class}>
       <.field>

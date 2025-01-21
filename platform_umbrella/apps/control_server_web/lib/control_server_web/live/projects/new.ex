@@ -14,6 +14,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   alias ControlServer.FerretDB
   alias ControlServer.Knative
   alias ControlServer.Notebooks
+  alias ControlServer.Ollama
   alias ControlServer.Postgres
   alias ControlServer.Projects
   alias ControlServer.Redis
@@ -106,6 +107,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
          {:ok, _db_redis} <- create_redis(project, form_data[DatabaseForm]),
          {:ok, _db_ferret} <- create_ferret(project, form_data[DatabaseForm], db_pg),
          {:ok, ai_pg} <- create_postgres(project, form_data[AIForm]),
+         {:ok, _ai_ollama} <- create_ollama(project, form_data[AIForm]),
          {:ok, _ai_notebook} <- create_jupyter(project, form_data[AIForm], ai_pg),
          {:ok, web_pg} <- create_postgres(project, form_data[WebForm]),
          {:ok, web_redis} <- create_redis(project, form_data[WebForm]),
@@ -189,6 +191,14 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   end
 
   defp create_ferret(_project, _ferret_data, _pg), do: {:ok, nil}
+
+  defp create_ollama(project, %{"ollama" => ollama_data}) do
+    ollama_data
+    |> Map.put("project_id", project.id)
+    |> Ollama.create_model_instance()
+  end
+
+  defp create_ollama(_project, _ollama_data), do: {:ok, nil}
 
   defp create_jupyter(project, %{"jupyter" => jupyter_data}, pg) do
     jupyter_data

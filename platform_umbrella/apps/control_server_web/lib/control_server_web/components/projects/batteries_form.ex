@@ -261,6 +261,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
           "ferret" -> [:ferretdb]
           "jupyter" -> [:notebooks]
           "knative" -> [:knative]
+          "ollama" -> [:ollama]
           "traditional" -> [:traditional_services]
           _ -> nil
         end
