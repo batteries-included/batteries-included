@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PgUserTable
   import ControlServerWeb.PodsTable
+  import ControlServerWeb.ResourceComponents
   import ControlServerWeb.ServicesTable
 
   alias CommonCore.Util.Memory
@@ -36,8 +37,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
      |> assign_k8_services()
      |> assign_k8_pods()
      |> assign_timeline_installed()
-     |> maybe_assign_grafana_url()
-     |> maybe_assign_edit_versions()}
+     |> assign_grafana_url()
+     |> maybe_assign_edit_versions()
+     |> maybe_assign_events()}
   end
 
   @impl Phoenix.LiveView
@@ -84,6 +86,12 @@ defmodule ControlServerWeb.Live.PostgresShow do
     assign(socket, :k8_pods, pods)
   end
 
+  defp assign_grafana_url(%{assigns: %{cluster: cluster}} = socket) do
+    assign(socket, :grafana_dashboard_url, grafana_url(cluster))
+  end
+
+  defp assign_grafana_url(socket), do: socket
+
   defp maybe_assign_edit_versions(%{assigns: %{cluster: cluster, live_action: live_action}} = socket)
        when live_action == :edit_versions do
     assign(socket, :edit_versions, ControlServer.Audit.history(cluster))
@@ -91,11 +99,12 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp maybe_assign_edit_versions(socket), do: socket
 
-  defp maybe_assign_grafana_url(%{assigns: %{cluster: cluster, live_action: :show}} = socket) do
-    assign(socket, :grafana_dashboard_url, grafana_url(cluster))
+  defp maybe_assign_events(%{assigns: %{live_action: live_action, k8_cluster: k8_cluster}} = socket)
+       when live_action == :events do
+    assign(socket, :events, KubeState.get_events(k8_cluster))
   end
 
-  defp maybe_assign_grafana_url(socket), do: socket
+  defp maybe_assign_events(socket), do: socket
 
   defp grafana_url(nil), do: nil
 
@@ -147,6 +156,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp page_title(:show), do: "Postgres Cluster"
+  defp page_title(:events), do: "Postgres Cluster: Events"
+  defp page_title(:pods), do: "Postgres Cluster: Pods"
   defp page_title(:users), do: "Postgres Cluster: Users"
   defp page_title(:services), do: "Postgres Cluster: Services"
   defp page_title(:edit_versions), do: "Postgres Cluster: Edit History"
@@ -157,28 +168,24 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp users_url(cluster), do: ~p"/postgres/#{cluster}/users"
   defp services_url(cluster), do: ~p"/postgres/#{cluster}/services"
   defp edit_versions_url(cluster), do: ~p"/postgres/#{cluster}/edit_versions"
-
-  defp links_panel(assigns) do
-    ~H"""
-    <.flex column class="justify-start">
-      <.a variant="bordered" navigate={users_url(@cluster)}>Users</.a>
-      <.a variant="bordered" navigate={services_url(@cluster)}>Services</.a>
-      <.a :if={@grafana_dashboard_url} variant="bordered" href={@grafana_dashboard_url}>
-        Grafana Dashboard
-      </.a>
-    </.flex>
-    """
-  end
+  defp events_url(cluster), do: ~p"/postgres/#{cluster}/events"
+  defp pods_url(cluster), do: ~p"/postgres/#{cluster}/pods"
 
   defp info_panel(assigns) do
     ~H"""
-    <.panel title="Details" variant="gray">
+    <.panel title="Details" class="lg:col-span-3">
       <.data_list>
         <:item title="Running Status">
           {phase(@k8_cluster)}
         </:item>
         <:item title="Instances">
           {@cluster.num_instances}
+        </:item>
+        <:item
+          title="Type"
+          help="Internal clusters are created by batteries, while standard clusters are managed by users"
+        >
+          {String.capitalize(Atom.to_string(@cluster.type))}
         </:item>
         <:item title="Storage Size">
           {Memory.humanize(@cluster.storage_size)}
@@ -206,9 +213,33 @@ defmodule ControlServerWeb.Live.PostgresShow do
     """
   end
 
-  defp main_page(assigns) do
+  defp links_panel(assigns) do
     ~H"""
-    <.page_header title={"Postgres Cluster: #{@cluster.name}"} back_link={~p"/postgres"}>
+    <.panel variant="gray">
+      <.tab_bar variant="navigation">
+        <:tab selected={@live_action == :show} patch={show_url(@cluster)}>Overview</:tab>
+        <:tab selected={@live_action == :users} patch={users_url(@cluster)}>Users</:tab>
+        <:tab selected={@live_action == :pods} patch={pods_url(@cluster)}>Pods</:tab>
+        <:tab selected={@live_action == :services} patch={services_url(@cluster)}>Services</:tab>
+        <:tab selected={@live_action == :events} patch={events_url(@cluster)}>Events</:tab>
+        <:tab
+          :if={@timeline_installed}
+          selected={@live_action == :edit_versions}
+          patch={edit_versions_url(@cluster)}
+        >
+          Edit Versions
+        </:tab>
+      </.tab_bar>
+      <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
+        Grafana Dashboard
+      </.a>
+    </.panel>
+    """
+  end
+
+  defp pg_page_header(assigns) do
+    ~H"""
+    <.page_header title={@title} back_link={@back_link}>
       <:menu>
         <.badge :if={@cluster.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@cluster.project_id}"}>
@@ -218,17 +249,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </:menu>
 
       <.flex>
-        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
         <.tooltip target_id="edit-tooltip">Edit Cluster</.tooltip>
         <.tooltip target_id="delete-tooltip">Delete Cluster</.tooltip>
         <.flex gaps="0">
-          <.button
-            :if={@timeline_installed}
-            id="history-tooltip"
-            variant="icon"
-            icon={:clock}
-            link={edit_versions_url(@cluster)}
-          />
           <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@cluster)} />
           <.button
             id="delete-tooltip"
@@ -240,47 +263,141 @@ defmodule ControlServerWeb.Live.PostgresShow do
         </.flex>
       </.flex>
     </.page_header>
+    """
+  end
 
-    <.grid columns={%{sm: 1, lg: 2}}>
+  defp main_page(assigns) do
+    ~H"""
+    <.pg_page_header
+      cluster={@cluster}
+      title={"Postgres Cluster: #{@cluster.name}"}
+      back_link={~p"/postgres"}
+    />
+    <.grid columns={%{sm: 1, lg: 4}}>
       <.info_panel cluster={@cluster} k8_cluster={@k8_cluster} />
-      <.links_panel cluster={@cluster} grafana_dashboard_url={@grafana_dashboard_url} />
-      <.panel title="Pods" class="col-span-2">
-        <.pods_table pods={@k8_pods} />
-      </.panel>
+      <.links_panel
+        cluster={@cluster}
+        grafana_dashboard_url={@grafana_dashboard_url}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
     </.grid>
     """
   end
 
   defp users_page(assigns) do
     ~H"""
-    <.page_header title="Users" back_link={show_url(@cluster)} />
+    <.pg_page_header
+      cluster={@cluster}
+      grafana_dashboard_url={@grafana_dashboard_url}
+      title={"Postgres Users: #{@cluster.name}"}
+      back_link={show_url(@cluster)}
+    />
 
-    <.flex column>
-      <.panel title="Users">
-        <.pg_users_table users={@cluster.users} cluster={@cluster} />
-      </.panel>
-      <.panel title="Sync Status" variant="gray">
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-3">
+      <.panel title="Sync Status" class="lg:col-span-3 lg:row-span-2">
         <.sync_status_table status={get_in(@k8_cluster, ~w(status managedRolesStatus))} />
       </.panel>
-    </.flex>
+      <.links_panel
+        cluster={@cluster}
+        grafana_dashboard_url={@grafana_dashboard_url}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
+      <.panel title="Users" variant="gray" class="lg:col-span-4">
+        <.pg_users_table users={@cluster.users} cluster={@cluster} />
+      </.panel>
+    </.grid>
     """
   end
 
   defp services_page(assigns) do
     ~H"""
-    <.page_header title="Network Services" back_link={show_url(@cluster)} />
-    <.panel title="Services">
-      <.services_table services={@k8_services} />
-    </.panel>
+    <.pg_page_header
+      cluster={@cluster}
+      grafana_dashboard_url={@grafana_dashboard_url}
+      title={"Postgres Services: #{@cluster.name}"}
+      back_link={show_url(@cluster)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.panel title="Services" class="lg:col-span-3 lg:row-span-2">
+        <.services_table services={@k8_services} />
+      </.panel>
+      <.links_panel
+        cluster={@cluster}
+        grafana_dashboard_url={@grafana_dashboard_url}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
+    </.grid>
     """
   end
 
   defp edit_versions_page(assigns) do
     ~H"""
-    <.page_header title="Edit History" back_link={show_url(@cluster)} />
-    <.panel title="Edit History">
-      <.edit_versions_table rows={@edit_versions} abridged />
-    </.panel>
+    <.pg_page_header
+      cluster={@cluster}
+      grafana_dashboard_url={@grafana_dashboard_url}
+      title={"Edit History: #{@cluster.name}"}
+      back_link={show_url(@cluster)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.panel title="Edit History" class="lg:col-span-3 lg:row-span-2">
+        <.edit_versions_table rows={@edit_versions} abridged />
+      </.panel>
+      <.links_panel
+        cluster={@cluster}
+        grafana_dashboard_url={@grafana_dashboard_url}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
+    </.grid>
+    """
+  end
+
+  defp events_page(assigns) do
+    ~H"""
+    <.pg_page_header
+      cluster={@cluster}
+      grafana_dashboard_url={@grafana_dashboard_url}
+      title={"Edit History: #{@cluster.name}"}
+      back_link={show_url(@cluster)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-3">
+      <.events_panel class="lg:col-span-3  lg:row-span-2" events={@events} />
+      <.links_panel
+        cluster={@cluster}
+        grafana_dashboard_url={@grafana_dashboard_url}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
+    </.grid>
+    """
+  end
+
+  defp pods_page(assigns) do
+    ~H"""
+    <.pg_page_header
+      cluster={@cluster}
+      grafana_dashboard_url={@grafana_dashboard_url}
+      title={"Pods: #{@cluster.name}"}
+      back_link={show_url(@cluster)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-3">
+      <.panel title="Pods" class="lg:col-span-3 lg:row-span-2">
+        <.pods_table pods={@k8_pods} />
+      </.panel>
+      <.links_panel
+        cluster={@cluster}
+        grafana_dashboard_url={@grafana_dashboard_url}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
+    </.grid>
     """
   end
 
@@ -290,19 +407,56 @@ defmodule ControlServerWeb.Live.PostgresShow do
     <%= case @live_action do %>
       <% :show -> %>
         <.main_page
+          live_action={@live_action}
           cluster={@cluster}
           k8_cluster={@k8_cluster}
-          k8_pods={@k8_pods}
-          k8_services={@k8_services}
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
         />
+      <% :events -> %>
+        <.events_page
+          live_action={@live_action}
+          cluster={@cluster}
+          k8_cluster={@k8_cluster}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          timeline_installed={@timeline_installed}
+          events={@events}
+        />
+      <% :pods -> %>
+        <.pods_page
+          live_action={@live_action}
+          cluster={@cluster}
+          k8_cluster={@k8_cluster}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          timeline_installed={@timeline_installed}
+          k8_pods={@k8_pods}
+        />
       <% :users -> %>
-        <.users_page cluster={@cluster} k8_cluster={@k8_cluster} />
+        <.users_page
+          live_action={@live_action}
+          cluster={@cluster}
+          k8_cluster={@k8_cluster}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          timeline_installed={@timeline_installed}
+        />
       <% :services -> %>
-        <.services_page cluster={@cluster} k8_services={@k8_services} />
+        <.services_page
+          live_action={@live_action}
+          cluster={@cluster}
+          k8_cluster={@k8_cluster}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          timeline_installed={@timeline_installed}
+          k8_services={@k8_services}
+        />
       <% :edit_versions -> %>
-        <.edit_versions_page cluster={@cluster} edit_versions={@edit_versions} />
+        <.edit_versions_page
+          live_action={@live_action}
+          cluster={@cluster}
+          k8_cluster={@k8_cluster}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          timeline_installed={@timeline_installed}
+          edit_versions={@edit_versions}
+        />
     <% end %>
     """
   end

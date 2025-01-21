@@ -12,7 +12,7 @@ defmodule Storybook.Components.DataList do
         slots: [
           ~s|<:item title="First">Main Text</:item>|,
           ~s|<:item title="Field Name">More Text</:item>|,
-          ~s|<:item title="Views">200</:item>|
+          ~s|<:item title="Views" help="The total views bots have driven to twitter">200B</:item>|
         ]
       },
       %Variation{
