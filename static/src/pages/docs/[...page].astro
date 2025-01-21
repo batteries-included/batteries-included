@@ -57,55 +57,63 @@ const metadata = {
 
       <div class="space-y-16">
         <!-- Getting Started -->
-        <section>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Getting Started</h2>
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {
-              categorizedDocs.gettingStarted.map((doc) => (
-                <a
-                  href={getPermalink(doc.permalink, 'docs')}
-                  class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
-                  <p class="text-gray-600 text-sm">{doc.description}</p>
-                </a>
-              ))
-            }
-          </div>
-        </section>
+        {
+          categorizedDocs.gettingStarted.length != 0 && (
+            <section>
+              <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                Getting Started
+              </h2>
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {categorizedDocs.gettingStarted.map((doc) => (
+                  <a
+                    href={getPermalink(doc.permalink, 'docs')}
+                    class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
+                    <p class="text-gray-600 text-sm">{doc.description}</p>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )
+        }
 
         <!-- Batteries -->
-        <section>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Batteries</h2>
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {
-              categorizedDocs.batteries.map((doc) => (
-                <a
-                  href={getPermalink(doc.permalink, 'docs')}
-                  class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
-                  <p class="text-gray-600 text-sm">{doc.description}</p>
-                </a>
-              ))
-            }
-          </div>
-        </section>
+        {
+          categorizedDocs.batteries.length != 0 && (
+            <section>
+              <h2 class="text-2xl font-bold text-gray-900 mb-6">Batteries</h2>
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {categorizedDocs.batteries.map((doc) => (
+                  <a
+                    href={getPermalink(doc.permalink, 'docs')}
+                    class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
+                    <p class="text-gray-600 text-sm">{doc.description}</p>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )
+        }
 
         <!-- Development -->
-        <section>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Development</h2>
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {
-              categorizedDocs.development.map((doc) => (
-                <a
-                  href={getPermalink(doc.permalink, 'docs')}
-                  class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
-                  <p class="text-gray-600 text-sm">{doc.description}</p>
-                </a>
-              ))
-            }
-          </div>
-        </section>
+        {
+          categorizedDocs.development.length != 0 && (
+            <section>
+              <h2 class="text-2xl font-bold text-gray-900 mb-6">Development</h2>
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {categorizedDocs.development.map((doc) => (
+                  <a
+                    href={getPermalink(doc.permalink, 'docs')}
+                    class="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <h3 class="text-xl font-semibold mb-2">{doc.title}</h3>
+                    <p class="text-gray-600 text-sm">{doc.description}</p>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )
+        }
       </div>
 
       <div class="mt-12">
