@@ -64,7 +64,6 @@ const load = async function (): Promise<Array<Doc>> {
   const results = (await Promise.all(normalizedDocs))
     .filter((doc) => !doc.draft)
     .sort((a, b) => {
-
       const aCategory = categoryOrder.indexOf(a.category || 'uncategorized');
       const bCategory = categoryOrder.indexOf(b.category || 'uncategorized');
       if (aCategory === bCategory) {
