@@ -54,9 +54,25 @@ const load = async function (): Promise<Array<Doc>> {
 
   const normalizedDocs = docs.map(async (doc) => await getNormalizedDoc(doc));
 
-  const results = (await Promise.all(normalizedDocs)).filter(
-    (doc) => !doc.draft
-  );
+  const categoryOrder = [
+    'getting-started',
+    'batteries',
+    'development',
+    'uncategorized',
+  ];
+
+  const results = (await Promise.all(normalizedDocs))
+    .filter((doc) => !doc.draft)
+    .sort((a, b) => {
+
+      const aCategory = categoryOrder.indexOf(a.category || 'uncategorized');
+      const bCategory = categoryOrder.indexOf(b.category || 'uncategorized');
+      if (aCategory === bCategory) {
+        console.log(a.category, b.category);
+        return a.title.localeCompare(b.title);
+      }
+      return aCategory - bCategory;
+    });
 
   return results;
 };
