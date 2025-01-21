@@ -67,7 +67,6 @@ const load = async function (): Promise<Array<Doc>> {
       const aCategory = categoryOrder.indexOf(a.category || 'uncategorized');
       const bCategory = categoryOrder.indexOf(b.category || 'uncategorized');
       if (aCategory === bCategory) {
-        console.log(a.category, b.category);
         return a.title.localeCompare(b.title);
       }
       return aCategory - bCategory;
