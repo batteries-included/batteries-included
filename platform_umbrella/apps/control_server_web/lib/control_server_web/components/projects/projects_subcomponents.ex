@@ -52,6 +52,7 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
   attr :rows, :list, default: []
   attr :meta, :map, default: nil
   attr :abridged, :boolean, default: false, doc: "the abridged property control display of the id column and formatting"
+  attr :export_enabled, :boolean, default: false
 
   def projects_table(assigns) do
     ~H"""
@@ -79,6 +80,17 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
         </.tooltip>
 
         <.button
+          :if={@export_enabled}
+          variant="minimal"
+          link={export_url(project)}
+          icon={:arrow_down_tray}
+          id={"export_project_" <> project.id}
+        />
+        <.tooltip :if={@export_enabled} target_id={"export_project_" <> project.id}>
+          Export Project
+        </.tooltip>
+
+        <.button
           variant="minimal"
           link={show_url(project)}
           icon={:eye}
@@ -95,4 +107,5 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
 
   def show_url(%Project{} = project), do: ~p"/projects/#{project}"
   def edit_url(%Project{} = project), do: ~p"/projects/#{project}/edit"
+  def export_url(%Project{} = project), do: ~p"/projects/#{project}/export"
 end

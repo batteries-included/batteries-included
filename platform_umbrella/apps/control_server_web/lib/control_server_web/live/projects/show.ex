@@ -27,16 +27,12 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign_timeline_installed()
+     |> assign(:project_export_installed, SummaryBatteries.battery_installed(:project_export))
+     |> assign(:timeline_installed, SummaryBatteries.battery_installed(:timeline))
      |> assign_project(id)
      |> assign_page_title()
      |> assign_pods()
-     |> assign_grafana_dashboard()
-     |> assign_export_enabled()}
-  end
-
-  defp assign_timeline_installed(socket) do
-    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
+     |> assign_grafana_dashboard()}
   end
 
   defp assign_project(socket, id) do
@@ -78,10 +74,6 @@ defmodule ControlServerWeb.Live.ProjectsShow do
       end
 
     assign(socket, :grafana_dashboard_url, url)
-  end
-
-  defp assign_export_enabled(socket) do
-    assign(socket, :export_enabled, SummaryBatteries.battery_installed(:project_export))
   end
 
   @impl Phoenix.LiveView
@@ -175,14 +167,14 @@ defmodule ControlServerWeb.Live.ProjectsShow do
           />
 
           <.button
-            :if={@export_enabled}
+            :if={@project_export_installed}
             variant="icon"
             icon={:arrow_down_tray}
             id={"export_project_" <> @project.id}
-            phx-click={show_modal("project-export-modal-" <> @project.id)}
+            link={~p"/projects/#{@project.id}/export"}
           />
 
-          <.tooltip :if={@export_enabled} target_id={"export_project_" <> @project.id}>
+          <.tooltip :if={@project_export_installed} target_id={"export_project_" <> @project.id}>
             Export Project
           </.tooltip>
 
@@ -266,15 +258,6 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         <.pods_table pods={@pods} />
       </.panel>
     </.grid>
-    <.modal
-      :if={@export_enabled}
-      id={"project-export-modal-" <> @project.id}
-      size="lg"
-      class="p-2 pt-4"
-    >
-      <:title>Export project</:title>
-      <.script template="@src" src={Project.export!(@project)} link_url="#" />
-    </.modal>
     """
   end
 end
