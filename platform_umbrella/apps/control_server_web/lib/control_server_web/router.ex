@@ -180,7 +180,11 @@ defmodule ControlServerWeb.Router do
     live "/", Live.TraditionalServicesIndex, :index
     live "/new", Live.TraditionalServicesNew, :new
     live "/:id/edit", Live.TraditionalServicesEdit, :edit
+
     live "/:id/show", Live.TraditionalServicesShow, :show
+    live "/:id/edit_versions", Live.TraditionalServicesShow, :edit_versions
+    live "/:id/events", Live.TraditionalServicesShow, :events
+    live "/:id/pods", Live.TraditionalServicesShow, :pods
   end
 
   scope "/trivy_reports", ControlServerWeb do

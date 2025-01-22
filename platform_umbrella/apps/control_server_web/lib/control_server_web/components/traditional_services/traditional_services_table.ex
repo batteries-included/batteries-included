@@ -57,8 +57,8 @@ defmodule ControlServerWeb.TraditionalServicesTable do
             link={show_url(service)}
             icon={:eye}
             id={"traditional_service_show_link_" <> service.id}
-            class="sm:hidden"
           />
+
           <.tooltip target_id={"traditional_service_show_link_" <> service.id}>
             Show Service
           </.tooltip>
