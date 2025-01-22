@@ -23,4 +23,8 @@ defmodule CommonCore.Defaults.Image do
     |> Kernel.||([])
     |> then(&Ecto.Changeset.validate_inclusion(changeset, :default_tag, &1))
   end
+
+  def default_image(%__MODULE__{} = image) do
+    "#{image.name}:#{image.default_tag}"
+  end
 end
