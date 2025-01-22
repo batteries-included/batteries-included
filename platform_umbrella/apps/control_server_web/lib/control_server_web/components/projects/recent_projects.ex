@@ -5,11 +5,14 @@ defmodule ControlServerWeb.RecentProjectsPanel do
   import ControlServerWeb.ProjectsSubcomponents
   import KubeServices.SystemState.SummaryRecent
 
+  alias KubeServices.SystemState.SummaryBatteries
+
   def mount(socket) do
     {:ok,
      socket
      |> assign(:class, nil)
-     |> assign(:projects, projects())}
+     |> assign(:projects, projects())
+     |> assign(:project_export_installed, SummaryBatteries.battery_installed(:project_export))}
   end
 
   def render(assigns) do
@@ -20,7 +23,12 @@ defmodule ControlServerWeb.RecentProjectsPanel do
           <.button variant="minimal" link={~p"/projects"}>View All</.button>
         </:menu>
 
-        <.projects_table :if={@projects != []} abridged rows={@projects} />
+        <.projects_table
+          :if={@projects != []}
+          abridged
+          rows={@projects}
+          export_enabled={@project_export_installed}
+        />
 
         <div
           :if={@projects == []}

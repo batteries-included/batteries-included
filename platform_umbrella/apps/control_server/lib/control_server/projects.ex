@@ -14,8 +14,12 @@ defmodule ControlServer.Projects do
   end
 
   def get_project!(id) do
+    # This is temporarily useful for exporting projects as simple JSON,
+    # we should be able to remove the additions once we're doing something a bit smarter
+    preloads = Project.resource_types() ++ [redis_instances: [:sentinel_instances, :replication_redis_instance]]
+
     Project
-    |> preload(^Project.resource_types())
+    |> preload(^preloads)
     |> Repo.get!(id)
   end
 

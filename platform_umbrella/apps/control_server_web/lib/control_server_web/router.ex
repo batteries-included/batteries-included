@@ -93,6 +93,7 @@ defmodule ControlServerWeb.Router do
     live "/:id", Live.ProjectsShow
     live "/:id/edit", Live.ProjectsEdit
     live "/:id/timeline", Live.ProjectsTimeline
+    live "/:id/export", Live.ProjectsExport
   end
 
   scope "/kube", ControlServerWeb do
