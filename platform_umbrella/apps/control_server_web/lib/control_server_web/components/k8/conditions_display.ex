@@ -4,6 +4,8 @@ defmodule ControlServerWeb.ConditionsDisplay do
 
   attr :conditions, :list, required: true
   attr :empty, :boolean, default: nil, required: false
+  attr :variant, :string, default: "gray", required: false
+  attr :class, :string, default: nil, required: false
 
   def conditions_display(%{empty: nil} = assigns) do
     conditions = Map.get(assigns, :conditions, [])
@@ -23,7 +25,7 @@ defmodule ControlServerWeb.ConditionsDisplay do
 
   def conditions_display(%{conditions: []} = assigns) do
     ~H"""
-    <.panel variant="gray" title="Conditions">
+    <.panel variant={@variant} title="Conditions" class={@class}>
       <.light_text>No outstanding messages!</.light_text>
     </.panel>
     """
@@ -31,7 +33,7 @@ defmodule ControlServerWeb.ConditionsDisplay do
 
   def conditions_display(assigns) do
     ~H"""
-    <.panel variant="gray" title="Conditions">
+    <.panel variant={@variant} title="Conditions" class={@class}>
       <.table
         id="conditions-display-table"
         rows={Enum.sort_by(@conditions, &get_condition_time/1, :desc)}
