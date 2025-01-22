@@ -39,6 +39,7 @@ defmodule ControlServerWeb.KnativeServicesTable do
           </.tooltip>
 
           <.button
+            :if={!service.kube_internal}
             variant="minimal"
             link={service_url(service)}
             link_type="external"
@@ -47,7 +48,7 @@ defmodule ControlServerWeb.KnativeServicesTable do
             id={"open_service_" <> service.id}
           />
 
-          <.tooltip target_id={"open_service_" <> service.id}>
+          <.tooltip :if={!service.kube_internal} target_id={"open_service_" <> service.id}>
             Open Knative Service
           </.tooltip>
 
@@ -56,7 +57,6 @@ defmodule ControlServerWeb.KnativeServicesTable do
             link={show_url(service)}
             icon={:eye}
             id={"knative_service_show_link_" <> service.id}
-            class="sm:hidden"
           />
         </.flex>
       </:action>

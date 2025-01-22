@@ -108,6 +108,7 @@ defmodule CommonCore.Resources.TraditionalServices do
     |> B.name(service.name)
     |> B.namespace(battery.config.namespace)
     |> B.app_labels(service.name)
+    |> B.add_owner(service)
     |> B.component_labels(@app_name)
     |> B.spec(spec)
   end
@@ -129,6 +130,7 @@ defmodule CommonCore.Resources.TraditionalServices do
     |> B.namespace(battery.config.namespace)
     |> B.app_labels(service.name)
     |> B.component_labels(@app_name)
+    |> B.add_owner(service)
     |> B.spec(spec)
   end
 

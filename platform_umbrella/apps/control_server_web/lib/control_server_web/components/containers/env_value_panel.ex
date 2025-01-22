@@ -18,10 +18,11 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
   attr :editable, :boolean, default: false
   attr :env_values, :list, default: []
   attr :target, :any, default: nil
+  attr :variant, :string, default: "gray"
 
   def env_var_panel(%{editable: false} = assigns) do
     ~H"""
-    <.panel title="Environment Variables" class={@class}>
+    <.panel title="Environment Variables" class={@class} variant={@variant}>
       <.table id="env-var-table" rows={@env_values}>
         <:col :let={ev} label="Name">{ev.name}</:col>
         <:col :let={ev} label="Value"><.env_value_value env_value={ev} /></:col>
@@ -32,7 +33,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
 
   def env_var_panel(%{editable: true} = assigns) do
     ~H"""
-    <.panel title="Environment Variables" class={@class}>
+    <.panel title="Environment Variables" class={@class} variant={@variant}>
       <:menu>
         <.button icon={:plus} phx-click="new_env_value" phx-target={@target}>
           Add Variable

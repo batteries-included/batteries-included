@@ -387,7 +387,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
       back_link={show_url(@cluster)}
     />
 
-    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-3">
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
       <.panel title="Pods" class="lg:col-span-3 lg:row-span-2">
         <.pods_table pods={@k8_pods} />
       </.panel>

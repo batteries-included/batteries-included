@@ -11,7 +11,9 @@ defmodule ControlServerWeb.Live.KnativeShow do
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.Containers.EnvValuePanel
+  import ControlServerWeb.DeploymentsTable
   import ControlServerWeb.PodsTable
+  import ControlServerWeb.ResourceComponents
   import KubeServices.SystemState.SummaryURLs
 
   alias CommonCore.Resources.OwnerReference
@@ -40,9 +42,12 @@ defmodule ControlServerWeb.Live.KnativeShow do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign_service(id)
-     |> assign_k8s()
+     |> assign_main_k8s()
      |> assign_timeline_installed()
-     |> maybe_assign_edit_versions()}
+     |> maybe_assign_edit_versions()
+     |> maybe_assign_k8_pods()
+     |> maybe_assign_events()
+     |> maybe_assign_k8_deployments()}
   end
 
   defp assign_timeline_installed(socket) do
@@ -54,17 +59,29 @@ defmodule ControlServerWeb.Live.KnativeShow do
     assign(socket, service: service, id: id)
   end
 
-  defp assign_k8s(%{assigns: %{service: service}} = socket) do
+  defp assign_main_k8s(%{assigns: %{service: service}} = socket) do
     k8_service = k8_service(service)
     k8_configuration = k8_configuration(k8_service)
-    k8_pods = k8_pods(service)
 
     socket
-    |> assign(:k8_pods, k8_pods)
     |> assign(:k8_service, k8_service)
     |> assign(:k8_configuration, k8_configuration)
     |> assign(:k8_revisions, k8_revisions(k8_configuration))
   end
+
+  defp maybe_assign_k8_pods(%{assigns: %{service: service, live_action: live_action}} = socket)
+       when live_action == :pods do
+    assign(socket, :k8_pods, k8_pods(service))
+  end
+
+  defp maybe_assign_k8_pods(socket), do: socket
+
+  defp maybe_assign_k8_deployments(%{assigns: %{service: service, live_action: live_action}} = socket)
+       when live_action == :deployments do
+    assign(socket, :k8_deployments, k8_deployments(service))
+  end
+
+  defp maybe_assign_k8_deployments(socket), do: socket
 
   defp maybe_assign_edit_versions(%{assigns: %{service: service, live_action: live_action}} = socket)
        when live_action == :edit_versions do
@@ -73,9 +90,16 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp maybe_assign_edit_versions(socket), do: socket
 
+  defp maybe_assign_events(%{assigns: %{live_action: live_action, k8_service: k8_service}} = socket)
+       when live_action == :events do
+    assign(socket, :events, KubeState.get_events(k8_service))
+  end
+
+  defp maybe_assign_events(socket), do: socket
+
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
-    {:noreply, assign_k8s(socket)}
+    {:noreply, socket |> assign_main_k8s() |> maybe_assign_k8_pods() |> maybe_assign_k8_deployments()}
   end
 
   def k8_service(service) do
@@ -105,6 +129,12 @@ defmodule ControlServerWeb.Live.KnativeShow do
     |> Enum.filter(fn pod -> service.id == labeled_owner(pod) end)
   end
 
+  defp k8_deployments(service) do
+    :deployment
+    |> KubeState.get_all()
+    |> Enum.filter(fn deployment -> service.id == labeled_owner(deployment) end)
+  end
+
   @impl Phoenix.LiveView
   def handle_event("delete", _, socket) do
     {:ok, _} = Knative.delete_service(socket.assigns.service)
@@ -114,13 +144,18 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp page_title(:show), do: "Knative Service"
   defp page_title(:edit_versions), do: "Knative Service: Edit History"
-  defp page_title(:env_vars), do: "Knative Service: Environment Variables"
+  defp page_title(:pods), do: "Knative Service: Pods"
+  defp page_title(:deployments), do: "Knative Service: Deployments"
+  defp page_title(:events), do: "Knative Service: Events"
 
   defp edit_url(service), do: ~p"/knative/services/#{service}/edit"
   defp show_url(service), do: ~p"/knative/services/#{service}/show"
-  defp env_vars_url(service), do: ~p"/knative/services/#{service}/env_vars"
 
   defp edit_versions_url(service), do: ~p"/knative/services/#{service}/edit_versions"
+  defp events_url(service), do: ~p"/knative/services/#{service}/events"
+  defp pods_url(service), do: ~p"/knative/services/#{service}/pods"
+  defp deployments_url(service), do: ~p"/knative/services/#{service}/deployments"
+
   defp service_url(service), do: knative_service_url(service)
 
   defp traffic(service) do
@@ -144,7 +179,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp header(assigns) do
     ~H"""
-    <.page_header title={"Knative Service: #{@service.name}"} back_link={~p"/knative/services"}>
+    <.page_header title={"Knative Service: #{@service.name}"} back_link={@back_link}>
       <:menu>
         <.badge :if={@service.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@service.project_id}"}>
@@ -154,17 +189,9 @@ defmodule ControlServerWeb.Live.KnativeShow do
       </:menu>
 
       <.flex>
-        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
         <.tooltip target_id="edit-tooltip">Edit Service</.tooltip>
         <.tooltip target_id="delete-tooltip">Delete Service</.tooltip>
         <.flex gaps="0">
-          <.button
-            :if={@timeline_installed}
-            id="history-tooltip"
-            variant="icon"
-            icon={:clock}
-            link={edit_versions_url(@service)}
-          />
           <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@service)} />
           <.button
             id="delete-tooltip"
@@ -181,7 +208,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp traffic_display(assigns) do
     ~H"""
-    <.panel title="Traffic Split" class="lg:col-span-2">
+    <.panel title="Traffic Split" class={@class}>
       <.grid columns={[sm: 1, lg: 2]} class="items-center">
         <.table rows={@traffic} id="traffic-table">
           <:col :let={split} label="Revision">{Map.get(split, "revisionName", "")}</:col>
@@ -195,7 +222,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   def revisions_display(assigns) do
     ~H"""
-    <.panel title="Revisions">
+    <.panel title="Revisions" class={@class}>
       <.table rows={@revisions} id="revisions-table">
         <:col :let={rev} label="Name">{name(rev)}</:col>
         <:col :let={rev} label="Replicas">{actual_replicas(rev)}</:col>
@@ -207,10 +234,10 @@ defmodule ControlServerWeb.Live.KnativeShow do
 
   defp main_page(assigns) do
     ~H"""
-    <.header service={@service} timeline_installed={@timeline_installed} />
+    <.header service={@service} back_link={~p"/knative/services"} />
 
-    <.grid columns={%{sm: 1, lg: 2}}>
-      <.panel title="Details" variant="gray">
+    <.grid columns={%{sm: 1, lg: 4}}>
+      <.panel title="Details" class="lg:col-span-3 lg:row-span-2">
         <.data_list>
           <:item title="Rollout Duration">
             {@service.rollout_duration}
@@ -224,41 +251,137 @@ defmodule ControlServerWeb.Live.KnativeShow do
         </.data_list>
       </.panel>
 
-      <.flex column class="justify-start">
-        <.a variant="bordered" navigate={env_vars_url(@service)}>Env Variables</.a>
-        <.a variant="bordered" href={service_url(@service)}>Running Service</.a>
-      </.flex>
+      <.links_panel
+        service={@service}
+        live_action={@live_action}
+        timeline_installed={@timeline_installed}
+      />
 
-      <.traffic_display :if={length(traffic(@k8_service)) > 1} traffic={traffic(@k8_service)} />
-      <.revisions_display revisions={@k8_revisions} />
-      <.conditions_display conditions={conditions(@k8_service)} />
-      <.panel title="Pods" class="col-span-2">
-        <.pods_table pods={@k8_pods} />
-      </.panel>
-    </.grid>
-    """
-  end
-
-  defp environment_variables_page(assigns) do
-    ~H"""
-    <.header service={@service} timeline_installed={@timeline_installed} />
-
-    <.grid columns={%{sm: 1, lg: 2}}>
-      <.env_var_panel env_values={@service.env_values} />
-      <.flex column class="justify-start">
-        <.a variant="bordered" navigate={show_url(@service)}>Show Service</.a>
-        <.a variant="bordered" href={service_url(@service)}>Running Service</.a>
-      </.flex>
+      <.traffic_display
+        :if={length(traffic(@k8_service)) > 1}
+        traffic={traffic(@k8_service)}
+        class="lg:col-span-4"
+      />
+      <.revisions_display revisions={@k8_revisions} class="lg:col-span-2" variant="gray" />
+      <.env_var_panel
+        env_values={@service.env_values}
+        class="lg:col-span-2"
+        editable={false}
+        variant="gray"
+      />
+      <.conditions_display
+        conditions={conditions(@k8_service)}
+        class="lg:col-span-4"
+        variant="default"
+      />
     </.grid>
     """
   end
 
   defp edit_versions_page(assigns) do
     ~H"""
-    <.header service={@service} timeline_installed={@timeline_installed} />
+    <.header
+      service={@service}
+      timeline_installed={@timeline_installed}
+      back_link={show_url(@service)}
+    />
 
-    <.panel title="Edit History">
-      <.edit_versions_table rows={@edit_versions} abridged />
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.panel title="Edit History" class="lg:col-span-3 lg:row-span-2">
+        <.edit_versions_table rows={@edit_versions} abridged />
+      </.panel>
+
+      <.links_panel
+        service={@service}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
+    </.grid>
+    """
+  end
+
+  defp pods_page(assigns) do
+    ~H"""
+    <.header
+      service={@service}
+      timeline_installed={@timeline_installed}
+      back_link={show_url(@service)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.panel title="Pods" class="lg:col-span-3 lg:row-span-2">
+        <.pods_table pods={@k8_pods} />
+      </.panel>
+
+      <.links_panel
+        service={@service}
+        live_action={@live_action}
+        timeline_installed={@timeline_installed}
+      />
+    </.grid>
+    """
+  end
+
+  defp deployments_page(assigns) do
+    ~H"""
+    <.header
+      service={@service}
+      timeline_installed={@timeline_installed}
+      back_link={show_url(@service)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.panel title="Deployments" class="lg:col-span-3 lg:row-span-2">
+        <.deployments_table deployments={@k8_deployments} />
+      </.panel>
+
+      <.links_panel
+        service={@service}
+        live_action={@live_action}
+        timeline_installed={@timeline_installed}
+      />
+    </.grid>
+    """
+  end
+
+  defp events_page(assigns) do
+    ~H"""
+    <.header
+      service={@service}
+      timeline_installed={@timeline_installed}
+      back_link={show_url(@service)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-3">
+      <.events_panel class="lg:col-span-3  lg:row-span-2" events={@events} />
+      <.links_panel
+        service={@service}
+        live_action={@live_action}
+        timeline_installed={@timeline_installed}
+      />
+    </.grid>
+    """
+  end
+
+  defp links_panel(assigns) do
+    ~H"""
+    <.panel variant="gray">
+      <.tab_bar variant="navigation">
+        <:tab selected={@live_action == :show} patch={show_url(@service)}>Overview</:tab>
+        <:tab selected={@live_action == :pods} patch={pods_url(@service)}>Pods</:tab>
+        <:tab selected={@live_action == :deployments} patch={deployments_url(@service)}>
+          Deployments
+        </:tab>
+        <:tab selected={@live_action == :events} patch={events_url(@service)}>Events</:tab>
+        <:tab
+          :if={@timeline_installed}
+          selected={@live_action == :edit_versions}
+          patch={edit_versions_url(@service)}
+        >
+          Edit Versions
+        </:tab>
+      </.tab_bar>
+      <.a variant="bordered" href={service_url(@service)}>Running Service</.a>
     </.panel>
     """
   end
@@ -269,15 +392,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
     <%= case @live_action do %>
       <% :show -> %>
         <.main_page
-          k8_service={@k8_service}
-          service={@service}
-          k8_revisions={@k8_revisions}
-          page_title={@page_title}
-          timeline_installed={@timeline_installed}
-          k8_pods={@k8_pods}
-        />
-      <% :env_vars -> %>
-        <.environment_variables_page
+          live_action={@live_action}
           k8_service={@k8_service}
           service={@service}
           k8_revisions={@k8_revisions}
@@ -286,8 +401,30 @@ defmodule ControlServerWeb.Live.KnativeShow do
         />
       <% :edit_versions -> %>
         <.edit_versions_page
+          live_action={@live_action}
           service={@service}
           edit_versions={@edit_versions}
+          timeline_installed={@timeline_installed}
+        />
+      <% :pods -> %>
+        <.pods_page
+          live_action={@live_action}
+          service={@service}
+          k8_pods={@k8_pods}
+          timeline_installed={@timeline_installed}
+        />
+      <% :deployments -> %>
+        <.deployments_page
+          live_action={@live_action}
+          service={@service}
+          timeline_installed={@timeline_installed}
+          k8_deployments={@k8_deployments}
+        />
+      <% :events -> %>
+        <.events_page
+          live_action={@live_action}
+          service={@service}
+          events={@events}
           timeline_installed={@timeline_installed}
         />
     <% end %>
