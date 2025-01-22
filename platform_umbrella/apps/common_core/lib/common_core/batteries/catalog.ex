@@ -176,7 +176,8 @@ defmodule CommonCore.Batteries.Catalog do
       type: :smtp4dev,
       dependencies: [:battery_core, :istio_gateway],
       name: "SMTP4Dev",
-      description: "SMTP4Dev is a dummy SMTP server for development, testing, and debugging of email systems."
+      description: "SMTP4Dev is a dummy SMTP server for development, testing, and debugging of email systems.",
+      allowed_usages: ~w(internal_dev internal_int_test)a
     },
     # AI
     %CatalogBattery{
