@@ -94,6 +94,12 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless),
         default_tag: "1.23.3-distroless"
       }),
+    jupyter_datascience_lab:
+      Image.new!(%{
+        name: "quay.io/jupyter/datascience-notebook",
+        tags: ~w(lab-4.3.4),
+        default_tag: "lab-4.3.4"
+      }),
     karpenter:
       Image.new!(%{
         name: "public.ecr.aws/karpenter/controller",

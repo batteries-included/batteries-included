@@ -68,7 +68,13 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
   batt_schema "jupyter_lab_notebooks" do
     slug_field :name
-    field :image, :string, default: "jupyter/datascience-notebook:lab-4.0.7"
+
+    field :image, :string,
+      default:
+        :jupyter_datascience_lab
+        |> CommonCore.Defaults.Images.get_image!()
+        |> CommonCore.Defaults.Image.default_image()
+
     field :storage_size, :integer
     field :storage_class, :string
     field :cpu_requested, :integer
