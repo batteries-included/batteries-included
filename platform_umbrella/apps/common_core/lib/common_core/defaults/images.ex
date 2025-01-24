@@ -24,8 +24,8 @@ defmodule CommonCore.Defaults.Images do
     aws_load_balancer_controller:
       Image.new!(%{
         name: "public.ecr.aws/eks/aws-load-balancer-controller",
-        tags: ~w(v2.8.1 v2.8.2),
-        default_tag: "v2.8.2"
+        tags: ~w(v2.8.1 v2.8.2 v2.11.0),
+        default_tag: "v2.11.0"
       }),
     cert_manager_acmesolver:
       Image.new!(%{
