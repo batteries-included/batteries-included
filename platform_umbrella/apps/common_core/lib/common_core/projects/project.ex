@@ -14,6 +14,7 @@ defmodule CommonCore.Projects.Project do
     field :name, :string
     field :description, :string
 
+    # this is used for creation to show the user a multistep form
     field :type, Ecto.Enum, values: [:ai, :web, :db, :bare], virtual: true
 
     has_many :postgres_clusters, CommonCore.Postgres.Cluster
@@ -22,6 +23,7 @@ defmodule CommonCore.Projects.Project do
     has_many :jupyter_notebooks, CommonCore.Notebooks.JupyterLabNotebook
     has_many :knative_services, CommonCore.Knative.Service
     has_many :traditional_services, CommonCore.TraditionalServices.Service
+    has_many :model_instances, CommonCore.Ollama.ModelInstance
 
     timestamps()
   end
@@ -36,6 +38,7 @@ defmodule CommonCore.Projects.Project do
     |> no_assoc_constraint(:jupyter_notebooks, name: :jupyter_lab_notebooks_project_id_fkey)
     |> no_assoc_constraint(:knative_services, name: :knative_services_project_id_fkey)
     |> no_assoc_constraint(:traditional_services, name: :traditional_services_project_id_fkey)
+    |> no_assoc_constraint(:model_instances, name: :model_instances_project_id_fkey)
   end
 
   def type_options_for_select do
@@ -57,6 +60,7 @@ defmodule CommonCore.Projects.Project do
       :ferret_services,
       :jupyter_notebooks,
       :knative_services,
+      :model_instances,
       :traditional_services
     ]
   end
