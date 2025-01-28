@@ -23,8 +23,6 @@ defmodule ControlServer.Projects.Snapshoter do
   end
 
   def take_snapshot(project_id) do
-    take_snapshot(ControlServer.Projects.get_project!(project_id))
-
     case ControlServer.Projects.get_project(project_id) do
       {:ok, project} -> take_snapshot(project)
       {:error, _} = error -> error
