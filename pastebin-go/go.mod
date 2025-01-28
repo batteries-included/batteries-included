@@ -4,7 +4,7 @@ go 1.21.7
 
 require (
 	github.com/gorilla/mux v1.8.1
-	github.com/lmittmann/tint v1.0.6
+	github.com/lmittmann/tint v1.0.7
 	github.com/satori/go.uuid v1.2.0
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gorm v1.25.12
