@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.ProjectsExport do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Projects.Project
   alias ControlServer.Projects
   alias KubeServices.SystemState.SummaryBatteries
 
