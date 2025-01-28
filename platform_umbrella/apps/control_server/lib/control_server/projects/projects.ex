@@ -13,14 +13,22 @@ defmodule ControlServer.Projects do
     Repo.Flop.validate_and_run(Project, params, for: Project)
   end
 
-  def get_project!(id) do
+  defp preloads do
     # This is temporarily useful for exporting projects as simple JSON,
     # we should be able to remove the additions once we're doing something a bit smarter
-    preloads = Project.resource_types() ++ [redis_instances: [:sentinel_instances, :replication_redis_instance]]
+    Project.resource_types() ++ [redis_instances: [:sentinel_instances, :replication_redis_instance]]
+  end
 
+  def get_project!(id) do
     Project
-    |> preload(^preloads)
+    |> preload(^preloads())
     |> Repo.get!(id)
+  end
+
+  def get_project(id) do
+    Project
+    |> preload(^preloads())
+    |> Repo.get(id)
   end
 
   def create_project(attrs \\ %{}) do

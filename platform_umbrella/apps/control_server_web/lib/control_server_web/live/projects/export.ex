@@ -2,7 +2,6 @@ defmodule ControlServerWeb.Live.ProjectsExport do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  alias CommonCore.Projects.Project
   alias ControlServer.Projects
   alias KubeServices.SystemState.SummaryBatteries
 
@@ -21,7 +20,7 @@ defmodule ControlServerWeb.Live.ProjectsExport do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}"} />
     <.panel :if={@project_export_installed} title="Export">
-      {Project.export!(@project)}
+      Some Exported Project Here
     </.panel>
     <div :if={!@project_export_installed}>Project export is not enabled for this install.</div>
     """
