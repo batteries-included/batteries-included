@@ -17,39 +17,16 @@ defmodule CommonCore.Resources.Karpenter do
   @webhook_metrics_port 8001
   @health_probe_port 8081
 
-  resource(:crd_ec2nodeclasses_karpenter_k8s_aws, _battery, state) do
-    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws)), state)
+  resource(:crd_ec2nodeclasses_karpenter_k8s_aws) do
+    YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws))
   end
 
-  resource(:crd_nodeclaims_karpenter_sh, _battery, state) do
-    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:nodeclaims_karpenter_sh)), state)
+  resource(:crd_nodeclaims_karpenter_sh) do
+    YamlElixir.read_all_from_string!(get_resource(:nodeclaims_karpenter_sh))
   end
 
-  resource(:crd_nodepools_karpenter_sh, _battery, state) do
-    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh)), state)
-  end
-
-  def put_conversion_webhook(crds, state) do
-    namespace = base_namespace(state)
-
-    crds
-    |> List.first()
-    |> put_in(
-      ["spec", "conversion"],
-      %{
-        "strategy" => "Webhook",
-        "webhook" => %{
-          "conversionReviewVersions" => ["v1beta1", "v1"],
-          "clientConfig" => %{
-            "service" => %{
-              "name" => @app_name,
-              "namespace" => namespace,
-              "port" => @webhook_port
-            }
-          }
-        }
-      }
-    )
+  resource(:crd_nodepools_karpenter_sh) do
+    YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh))
   end
 
   resource(:pod_disruption_budget_main, _battery, state) do

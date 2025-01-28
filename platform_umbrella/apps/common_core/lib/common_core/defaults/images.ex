@@ -103,8 +103,8 @@ defmodule CommonCore.Defaults.Images do
     karpenter:
       Image.new!(%{
         name: "public.ecr.aws/karpenter/controller",
-        tags: ~w(0.37.0 1.0.8),
-        default_tag: "1.0.8"
+        tags: ~w(0.37.0 1.0.8 1.2.0),
+        default_tag: "1.2.0"
       }),
     keycloak:
       Image.new!(%{
