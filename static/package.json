@@ -35,7 +35,7 @@
     "react-dom": "^19.0.0",
     "react-select": "^5.10.0",
     "slugify": "^1.6.6",
-    "tailwindcss-animated": "^1.1.2",
+    "tailwindcss-animated": "^2.0.0",
     "unpic": "^4.0.0"
   },
   "devDependencies": {
