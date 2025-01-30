@@ -28,6 +28,11 @@ defmodule ControlServerWeb.Batteries.KarpenterForm do
             <:label>Node Role Name</:label>
             <.input field={@form[:node_role_name]} />
           </.field>
+
+          <.field>
+            <:label>AMI Alias</:label>
+            <.input field={@form[:ami_alias]} />
+          </.field>
         </.fieldset>
       </.panel>
 
