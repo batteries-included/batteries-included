@@ -2,8 +2,10 @@ name: Release
 
 on:
   push:
+    # Only release on tags that look like a semantic version
+    # 1.0.0 of 0.50.0
     tags:
-      - '*'
+      - '[0-9]+.[0-9]+.[0-9]+*'
 
 permissions:
   contents: write
