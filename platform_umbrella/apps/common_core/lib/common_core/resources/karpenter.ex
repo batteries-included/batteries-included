@@ -12,16 +12,44 @@ defmodule CommonCore.Resources.Karpenter do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.StateSummary.Core
 
-  resource(:crd_ec2nodeclasses_karpenter_k8s_aws) do
-    YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws))
+  @metrics_port 8000
+  @webhook_port 8443
+  @webhook_metrics_port 8001
+  @health_probe_port 8081
+
+  resource(:crd_ec2nodeclasses_karpenter_k8s_aws, _battery, state) do
+    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws)), state)
   end
 
-  resource(:crd_nodeclaims_karpenter_sh) do
-    YamlElixir.read_all_from_string!(get_resource(:nodeclaims_karpenter_sh))
+  resource(:crd_nodeclaims_karpenter_sh, _battery, state) do
+    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:nodeclaims_karpenter_sh)), state)
   end
 
-  resource(:crd_nodepools_karpenter_sh) do
-    YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh))
+  resource(:crd_nodepools_karpenter_sh, _battery, state) do
+    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh)), state)
+  end
+
+  def put_conversion_webhook(crds, state) do
+    namespace = base_namespace(state)
+
+    crds
+    |> List.first()
+    |> put_in(
+      ["spec", "conversion"],
+      %{
+        "strategy" => "Webhook",
+        "webhook" => %{
+          "conversionReviewVersions" => ["v1beta1", "v1"],
+          "clientConfig" => %{
+            "service" => %{
+              "name" => @app_name,
+              "namespace" => namespace,
+              "port" => @webhook_port
+            }
+          }
+        }
+      }
+    )
   end
 
   resource(:pod_disruption_budget_main, _battery, state) do
@@ -47,6 +75,18 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.annotation("eks.amazonaws.com/role-arn", battery.config.service_role_arn)
+  end
+
+  resource(:secret_webhook_cert, _battery, state) do
+    namespace = base_namespace(state)
+
+    data = %{}
+
+    :secret
+    |> B.build_resource()
+    |> B.name("#{@app_name}-cert")
+    |> B.namespace(namespace)
+    |> B.data(data)
   end
 
   resource(:cluster_role_admin) do
@@ -91,7 +131,7 @@ defmodule CommonCore.Resources.Karpenter do
       },
       %{
         "apiGroups" => ["storage.k8s.io"],
-        "resources" => ["storageclasses", "csinodes"],
+        "resources" => ["storageclasses", "csinodes", "volumeattachments"],
         "verbs" => ["get", "watch", "list"]
       },
       %{
@@ -99,7 +139,13 @@ defmodule CommonCore.Resources.Karpenter do
         "resources" => ["daemonsets", "deployments", "replicasets", "statefulsets"],
         "verbs" => ["list", "watch"]
       },
+      %{
+        "apiGroups" => ["apiextensions.k8s.io"],
+        "resources" => ["customresourcedefinitions"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{"apiGroups" => ["policy"], "resources" => ["poddisruptionbudgets"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => ["karpenter.sh"],
         "resources" => ["nodeclaims", "nodeclaims/status"],
@@ -111,8 +157,21 @@ defmodule CommonCore.Resources.Karpenter do
         "verbs" => ["update", "patch"]
       },
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
-      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["patch", "delete"]},
-      %{"apiGroups" => [""], "resources" => ["pods/eviction"], "verbs" => ["create"]}
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["patch", "delete", "update"]},
+      %{"apiGroups" => [""], "resources" => ["pods/eviction"], "verbs" => ["create"]},
+      %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["delete"]},
+      %{
+        "apiGroups" => ["apiextensions.k8s.io"],
+        "resources" => ["customresourcedefinitions/status"],
+        "resourceNames" => ["ec2nodeclasses.karpenter.k8s.aws", "nodepools.karpenter.sh", "nodeclaims.karpenter.sh"],
+        "verbs" => ["patch"]
+      },
+      %{
+        "apiGroups" => ["apiextensions.k8s.io"],
+        "resources" => ["customresourcedefinitions"],
+        "resourceNames" => ["ec2nodeclasses.karpenter.k8s.aws", "nodepools.karpenter.sh", "nodeclaims.karpenter.sh"],
+        "verbs" => ["update"]
+      }
     ]
 
     :cluster_role
@@ -162,6 +221,8 @@ defmodule CommonCore.Resources.Karpenter do
 
     rules = [
       %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["get", "watch"]},
+      %{"apiGroups" => [""], "resources" => ["configmaps", "secrets"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["update"], "resourceNames" => ["#{@app_name}-cert"]},
       %{
         "apiGroups" => ["coordination.k8s.io"],
         "resourceNames" => ["karpenter-leader-election"],
@@ -248,7 +309,14 @@ defmodule CommonCore.Resources.Karpenter do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "http-metrics", "port" => 8000, "protocol" => "TCP", "targetPort" => "http-metrics"}
+        %{"name" => "http-metrics", "port" => @metrics_port, "protocol" => "TCP", "targetPort" => "http-metrics"},
+        %{
+          "name" => "webhook-metrics",
+          "port" => @webhook_metrics_port,
+          "protocol" => "TCP",
+          "targetPort" => "webhook-metrics"
+        },
+        %{"name" => "https-webhook", "port" => @webhook_port, "protocol" => "TCP", "targetPort" => "https-webhook"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
       |> Map.put("type", "ClusterIP")
@@ -302,8 +370,11 @@ defmodule CommonCore.Resources.Karpenter do
                 %{"name" => "KUBERNETES_MIN_VERSION", "value" => "1.19.0-0"},
                 %{"name" => "KARPENTER_SERVICE", "value" => @app_name},
                 %{"name" => "LOG_LEVEL", "value" => "info"},
-                %{"name" => "METRICS_PORT", "value" => "8000"},
-                %{"name" => "HEALTH_PROBE_PORT", "value" => "8081"},
+                %{"name" => "DISABLE_WEBHOOK", "value" => "false"},
+                %{"name" => "METRICS_PORT", "value" => "#{@metrics_port}"},
+                %{"name" => "WEBHOOK_PORT", "value" => "#{@webhook_port}"},
+                %{"name" => "WEBHOOK_METRICS_PORT", "value" => "#{@webhook_metrics_port}"},
+                %{"name" => "HEALTH_PROBE_PORT", "value" => "#{@health_probe_port}"},
                 %{"name" => "SYSTEM_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}},
                 %{
                   "name" => "MEMORY_LIMIT",
@@ -333,8 +404,10 @@ defmodule CommonCore.Resources.Karpenter do
               },
               "name" => "controller",
               "ports" => [
-                %{"containerPort" => 8000, "name" => "http-metrics", "protocol" => "TCP"},
-                %{"containerPort" => 8081, "name" => "http", "protocol" => "TCP"}
+                %{"containerPort" => @metrics_port, "name" => "http-metrics", "protocol" => "TCP"},
+                %{"containerPort" => @webhook_metrics_port, "name" => "webhook-metrics", "protocol" => "TCP"},
+                %{"containerPort" => @webhook_port, "name" => "https-webhook", "protocol" => "TCP"},
+                %{"containerPort" => @health_probe_port, "name" => "http", "protocol" => "TCP"}
               ],
               "readinessProbe" => %{
                 "httpGet" => %{"path" => "/readyz", "port" => "http"},
@@ -400,6 +473,7 @@ defmodule CommonCore.Resources.Karpenter do
 
     spec = %{
       "amiFamily" => "AL2",
+      "amiSelectorTerms" => [%{"alias" => battery.config.ami_alias}],
       "role" => battery.config.node_role_name,
       "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
       "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
@@ -419,11 +493,11 @@ defmodule CommonCore.Resources.Karpenter do
 
   resource(:node_pool) do
     spec = %{
-      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmpty", "expireAfter" => "12h"},
+      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmpty"},
       "limits" => %{"cpu" => 1000},
       "template" => %{
         "spec" => %{
-          "nodeClassRef" => %{"name" => "default"},
+          "nodeClassRef" => %{"name" => "default", "group" => "karpenter.k8s.aws", "kind" => "EC2NodeClass"},
           "requirements" => [
             %{"key" => "kubernetes.io/arch", "operator" => "In", "values" => ["amd64"]},
             %{"key" => "karpenter.sh/capacity-type", "operator" => "In", "values" => ["spot", "on-demand"]},
