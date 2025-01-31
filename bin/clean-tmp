@@ -13,10 +13,32 @@ setup_colors
 setup_trace
 
 log "Cleaning /tmp/go-build* directories"
-rm -rf /tmp/go-build*
 
-# If there's a GOTEMPDIR, clean it
-if [[ -n "${GOTMPDIR:-}" ]]; then
-    log "Cleaning ${GOTMPDIR:?}/go-build* directories"
-    rm -rf "${GOTMPDIR:?}"/go-build*
+tryDelete() {
+    local basePath="$1"
+    local foundToDelete
+
+    foundToDelete=$(find "$basePath" -maxdepth 1 -iname "go-build*" -type d)
+    for dir in $foundToDelete; do
+        log "Deleting ${dir}"
+        rm -rf "${dir}"
+    done
+}
+
+# IF there's a GITHUB_JOB env var, we're in a GitHub Actions runner
+# so we can clean the /tmp directory and the GOTMPDIR
+#
+# That's because we build too many go binaries and their object files
+# fill up the meager Github Actions runner disk space.
+#
+# However I don't want this to be single threaded at home.
+if [[ -n "${GITHUB_JOB:-}" ]]; then
+    log "Cleaning /tmp/go-build* directories"
+    tryDelete "/tmp"
+
+    # If there's a GOTMPDIR, clean it
+    if [[ -n "${GOTMPDIR:-}" ]]; then
+        log "Cleaning ${GOTMPDIR:?}/go-build* directories"
+        tryDelete "${GOTMPDIR}"
+    fi
 fi

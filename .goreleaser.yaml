@@ -26,6 +26,19 @@ builds:
 
     hooks:
       post: ./bin/clean-tmp
+upx:
+  - enabled: true
+    goos:
+      - linux
+    compress: '9'
+    lzma: true
+  - enabled: true
+    goos:
+      - windows
+    goarch:
+      - amd64
+    compress: '9'
+    lzma: true
 archives:
   - formats: ['tar.gz']
     # this name template makes the OS and Arch compatible with the results of `uname`.
@@ -38,16 +51,38 @@ archives:
     format_overrides:
       - goos: windows
         formats: ['zip']
-
 changelog:
   sort: asc
   filters:
     exclude:
+      # Docs are pushed on the master branch to netlify
+      # don't include them in the changelog
       - '^docs:'
-      - '^test:'
-
+  groups:
+    - title: New Features
+      regexp: '^.*feat[(\w)]*:+.*$'
+      order: 100
+    - title: Bug Fixes
+      regexp: '^.*fix[(\w)]*:+.*$'
+      order: 110
+    - title: Refactors/Improvements
+      regexp: '^.*refactor[(\w)]*:+.*$'
+      order: 120
+    - title: Performance
+      regexp: '^.*perf[(\w)]*:+.*$'
+      order: 130
+    - title: Style
+      regexp: '^.*style[(\w)]*:+.*$'
+      order: 140
+    - title: Tests
+      regexp: '^.test|tests|testing[(\w)]*:+.*$'
+      order: 150
+    - title: Build/CI
+      regexp: '^.*build|ci[(\w)]*:+.*$'
+      order: 160
+    - title: Chore
+      regexp: '^.*chore[(\w)]*:+.*$'
 report_sizes: true
-
 snapshot:
   version_template: '{{ .Version }}-{{.ShortCommit}}'
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
