@@ -229,7 +229,11 @@ defmodule ControlServerWeb.Router do
     live "/", Live.OllamaModelInstancesIndex
     live "/new", Live.OllamaModelInstanceNew
     live "/:id/edit", Live.OllamaModelInstanceEdit
-    live "/:id/show", Live.OllamaModelInstanceShow
+
+    live "/:id/show", Live.OllamaModelInstanceShow, :show
+    live "/:id/pods", Live.OllamaModelInstanceShow, :pods
+    live "/:id/services", Live.OllamaModelInstanceShow, :services
+    live "/:id/edit_versions", Live.OllamaModelInstanceShow, :edit_versions
   end
 
   scope "/history", ControlServerWeb do

@@ -38,6 +38,7 @@ defmodule CommonCore.Resources.Ollama do
     |> B.name("ollama-#{model_instance.name}")
     |> B.spec(spec)
     |> B.namespace(namespace)
+    |> B.add_owner(model_instance)
   end
 
   def deployment(model_instance, battery, state) do
@@ -79,7 +80,7 @@ defmodule CommonCore.Resources.Ollama do
       %{}
       |> B.spec(spec)
       |> B.app_labels(@app_name)
-      |> B.add_owner(battery)
+      |> B.add_owner(model_instance)
       |> B.label("battery/ollama", model_instance.name)
       |> B.label("battery/managed", "true")
 
@@ -97,7 +98,7 @@ defmodule CommonCore.Resources.Ollama do
     |> B.name("ollama-#{model_instance.name}")
     |> B.spec(spec)
     |> B.namespace(namespace)
-    |> B.label("battery/ollama", model_instance.name)
+    |> B.add_owner(model_instance)
   end
 
   defp resources(%{} = model_instance) do
