@@ -80,6 +80,17 @@ defmodule CommonCore.Ollama.ModelInstance do
   end
 
   def model_options_for_select do
-    [{"Meta's Llama 3.1", "llama3.1"}, {"Google's Gemma 2", "gemma2"}, {"mxbai embed (Large)", "mxbai-embed-large"}]
+    [
+      {"Deepseek R1 1.5b (1.1GB)", "deepseek-r1:1.5b"},
+      {"Deepseek R1 7b (4.7GB)", "deepseek-r1:7b"},
+      {"Llama 3.2 3b (2.0GB)", "llama3.2:3b"},
+      {"Llama 3.2 1b (1.3GB)", "llama3.2:1b"},
+      {"Phi4 14b (9.1GB)", "phi4"},
+      {"Llama 3.1 8b (4.9GB)", "llama3.1:8b"},
+      {"Llama 3.1 70b (43GB)", "llama3.1:70b"},
+      {"Nomic embed-text 137m (274MB)", "nomic-embed-text"},
+      {"mxbai embed [Large] 335m (670MB)", "mxbai-embed-large"},
+      {"Snowflake Arctic Embed 2.0 568m (1.2GB)", "snowflake-arctic-embed2"}
+    ]
   end
 end

@@ -44,7 +44,6 @@ defmodule ControlServerWeb.ModelInstancesTable do
             link={show_url(model_instance)}
             icon={:eye}
             id={"model_instance_show_link_" <> model_instance.id}
-            class="sm:hidden"
           />
           <.tooltip target_id={"model_instance_show_link_" <> model_instance.id}>
             Show Ollama Model
