@@ -4,7 +4,7 @@ defmodule Verify.MixProject do
   def project do
     [
       app: :verify,
-      version: "0.53.0",
+      version: "0.54.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
