@@ -53,10 +53,16 @@ complete displaying a url for running control server.`,
 			return err
 		}
 
-		return start.StartInstall(ctx, env)
+		skipBootstrap, err := cmd.Flags().GetBool("skip-bootstrap")
+		if err != nil {
+			return err
+		}
+
+		return start.StartInstall(ctx, env, skipBootstrap)
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(startCmd)
+	startCmd.Flags().Bool("skip-bootstrap", false, "Skip bootstrapping the cluster")
 }

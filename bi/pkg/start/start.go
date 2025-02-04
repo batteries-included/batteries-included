@@ -11,7 +11,7 @@ import (
 	"bi/pkg/log"
 )
 
-func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
+func StartInstall(ctx context.Context, env *installs.InstallEnv, skipBootstrap bool) error {
 	slog.Info("Starting provider")
 
 	var progressReporter *util.ProgressReporter
@@ -22,6 +22,11 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv) error {
 
 	if err := env.StartKubeProvider(ctx, progressReporter); err != nil {
 		return fmt.Errorf("unable to start kube provider: %w", err)
+	}
+
+	if skipBootstrap {
+		slog.Info("skipping bootstrap")
+		return nil
 	}
 
 	slog.Info("Connecting to cluster")
