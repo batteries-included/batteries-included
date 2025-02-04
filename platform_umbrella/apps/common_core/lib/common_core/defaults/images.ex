@@ -8,11 +8,11 @@ defmodule CommonCore.Defaults.Images do
   @cert_manager_allowed_tags ~w(v1.15.1 v1.15.4)
   @cert_manager_default_tag "v1.15.4"
 
-  @knative_allowed_tags ~w(v1.15.1 v1.15.2)
-  @knative_default_tag "v1.15.2"
+  @knative_allowed_tags ~w(v1.15.1 v1.15.2 v1.17.0)
+  @knative_default_tag "v1.17.0"
 
-  @knative_istio_allowed_tags ~w(v1.15.1)
-  @knative_istio_default_tag "v1.15.1"
+  @knative_istio_allowed_tags ~w(v1.15.1 v1.17.0)
+  @knative_istio_default_tag "v1.17.0"
 
   @registry %{
     addon_resizer:
