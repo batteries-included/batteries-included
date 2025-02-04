@@ -13,43 +13,18 @@ defmodule CommonCore.Resources.Karpenter do
   alias CommonCore.StateSummary.Core
 
   @metrics_port 8000
-  @webhook_port 8443
-  @webhook_metrics_port 8001
   @health_probe_port 8081
 
-  resource(:crd_ec2nodeclasses_karpenter_k8s_aws, _battery, state) do
-    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws)), state)
+  resource(:crd_ec2nodeclasses_karpenter_k8s_aws) do
+    YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws))
   end
 
-  resource(:crd_nodeclaims_karpenter_sh, _battery, state) do
-    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:nodeclaims_karpenter_sh)), state)
+  resource(:crd_nodeclaims_karpenter_sh) do
+    YamlElixir.read_all_from_string!(get_resource(:nodeclaims_karpenter_sh))
   end
 
-  resource(:crd_nodepools_karpenter_sh, _battery, state) do
-    put_conversion_webhook(YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh)), state)
-  end
-
-  def put_conversion_webhook(crds, state) do
-    namespace = base_namespace(state)
-
-    crds
-    |> List.first()
-    |> put_in(
-      ["spec", "conversion"],
-      %{
-        "strategy" => "Webhook",
-        "webhook" => %{
-          "conversionReviewVersions" => ["v1beta1", "v1"],
-          "clientConfig" => %{
-            "service" => %{
-              "name" => @app_name,
-              "namespace" => namespace,
-              "port" => @webhook_port
-            }
-          }
-        }
-      }
-    )
+  resource(:crd_nodepools_karpenter_sh) do
+    YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh))
   end
 
   resource(:pod_disruption_budget_main, _battery, state) do
@@ -75,18 +50,6 @@ defmodule CommonCore.Resources.Karpenter do
     |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.annotation("eks.amazonaws.com/role-arn", battery.config.service_role_arn)
-  end
-
-  resource(:secret_webhook_cert, _battery, state) do
-    namespace = base_namespace(state)
-
-    data = %{}
-
-    :secret
-    |> B.build_resource()
-    |> B.name("#{@app_name}-cert")
-    |> B.namespace(namespace)
-    |> B.data(data)
   end
 
   resource(:cluster_role_admin) do
@@ -309,14 +272,7 @@ defmodule CommonCore.Resources.Karpenter do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "http-metrics", "port" => @metrics_port, "protocol" => "TCP", "targetPort" => "http-metrics"},
-        %{
-          "name" => "webhook-metrics",
-          "port" => @webhook_metrics_port,
-          "protocol" => "TCP",
-          "targetPort" => "webhook-metrics"
-        },
-        %{"name" => "https-webhook", "port" => @webhook_port, "protocol" => "TCP", "targetPort" => "https-webhook"}
+        %{"name" => "http-metrics", "port" => @metrics_port, "protocol" => "TCP", "targetPort" => "http-metrics"}
       ])
       |> Map.put("selector", %{"battery/app" => @app_name})
       |> Map.put("type", "ClusterIP")
@@ -370,10 +326,7 @@ defmodule CommonCore.Resources.Karpenter do
                 %{"name" => "KUBERNETES_MIN_VERSION", "value" => "1.19.0-0"},
                 %{"name" => "KARPENTER_SERVICE", "value" => @app_name},
                 %{"name" => "LOG_LEVEL", "value" => "info"},
-                %{"name" => "DISABLE_WEBHOOK", "value" => "false"},
                 %{"name" => "METRICS_PORT", "value" => "#{@metrics_port}"},
-                %{"name" => "WEBHOOK_PORT", "value" => "#{@webhook_port}"},
-                %{"name" => "WEBHOOK_METRICS_PORT", "value" => "#{@webhook_metrics_port}"},
                 %{"name" => "HEALTH_PROBE_PORT", "value" => "#{@health_probe_port}"},
                 %{"name" => "SYSTEM_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}},
                 %{
@@ -405,8 +358,6 @@ defmodule CommonCore.Resources.Karpenter do
               "name" => "controller",
               "ports" => [
                 %{"containerPort" => @metrics_port, "name" => "http-metrics", "protocol" => "TCP"},
-                %{"containerPort" => @webhook_metrics_port, "name" => "webhook-metrics", "protocol" => "TCP"},
-                %{"containerPort" => @webhook_port, "name" => "https-webhook", "protocol" => "TCP"},
                 %{"containerPort" => @health_probe_port, "name" => "http", "protocol" => "TCP"}
               ],
               "readinessProbe" => %{
