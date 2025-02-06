@@ -30,17 +30,17 @@ upx:
   - enabled: true
     goos:
       - linux
-    compress: '9'
+    compress: "9"
     lzma: true
   - enabled: true
     goos:
       - windows
     goarch:
       - amd64
-    compress: '9'
+    compress: "9"
     lzma: true
 archives:
-  - formats: ['tar.gz']
+  - formats: ["tar.gz"]
     # this name template makes the OS and Arch compatible with the results of `uname`.
     name_template: >-
       {{ .ProjectName }}_ {{- title .Os }}_ {{- if eq .Arch "amd64" }}x86_64 {{-
@@ -50,14 +50,14 @@ archives:
     # use zip for windows archives
     format_overrides:
       - goos: windows
-        formats: ['zip']
+        formats: ["zip"]
 changelog:
   sort: asc
   filters:
     exclude:
       # Docs are pushed on the master branch to netlify
       # don't include them in the changelog
-      - '^docs:'
+      - "^docs:"
   groups:
     - title: New Features
       regexp: '^.*feat[(\w)]*:+.*$'
@@ -82,8 +82,9 @@ changelog:
       order: 160
     - title: Chore
       regexp: '^.*chore[(\w)]*:+.*$'
+      order: 170
 report_sizes: true
 snapshot:
-  version_template: '{{ .Version }}-{{.ShortCommit}}'
+  version_template: "{{ .Version }}-{{.ShortCommit}}"
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
