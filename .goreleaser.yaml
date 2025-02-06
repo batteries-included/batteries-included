@@ -82,6 +82,7 @@ changelog:
       order: 160
     - title: Chore
       regexp: '^.*chore[(\w)]*:+.*$'
+      order: 170
 report_sizes: true
 snapshot:
   version_template: '{{ .Version }}-{{.ShortCommit}}'
