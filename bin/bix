@@ -202,6 +202,10 @@ do_bootstrap() {
     # bootstrap_path is the full absolute path to the folder containing the spec file
     bootstrap_path=$(dirname "${spec_path}")
 
+    # make sure we're always pointing at the correct cluster
+    KUBE_CONFIG_FILE="$(run_bi debug kube-config-path "${slug}")"
+    export KUBE_CONFIG_FILE
+
     log "${GREEN}Running Kube Bootstrap${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
 
     run_mix "do" deps.get, compile, kube.bootstrap "${summary_path}" >"$out"
