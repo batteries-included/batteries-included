@@ -73,7 +73,6 @@ defmodule CommonCore.ApiVersionKind do
     persistent_volume_claim: {"v1", "PersistentVolumeClaim"},
     pod: {"v1", "Pod"},
     pod_disruption_budget: {"policy/v1", "PodDisruptionBudget"},
-    pod_security_policy: {"policy/v1beta1", "PodSecurityPolicy"},
     redis: {"redis.redis.opstreelabs.in/v1beta2", "Redis"},
     redis_cluster: {"redis.redis.opstreelabs.in/v1beta2", "RedisCluster"},
     redis_replication: {"redis.redis.opstreelabs.in/v1beta2", "RedisReplication"},
