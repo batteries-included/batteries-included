@@ -318,8 +318,8 @@ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
 github.com/pulumi/esc v0.11.1 h1:Ky07sE4lQmB6Ve2A3M3g+i0Y2No4nRVbDaCjTccuLII=
 github.com/pulumi/esc v0.11.1/go.mod h1:iCs5bP1xvleSzcMDwfNc1Ym/6EJ2P6xmrjy0iqb0ATs=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.67.0 h1:Clb/OOb2gcMeGGLixmeGVav9JQ6wUY4QwRw9oNNGuNQ=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.67.0/go.mod h1:WSA4oz7YvZxNNjolk2yKaQR3PvT8KsPgCga0KyCqxBc=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.68.0 h1:YfTi+BYKwNqlZ5Ghm6qDyf9iH57mg8Khlyeq6mCjTKM=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.68.0/go.mod h1:xQqdtDzLJQigNJykqhwEGwru8dzKaaorQ4MGXNzX1Lo=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.9 h1:1Ct8xhIYv+ee1tk4wndtvwcbgmnsmhMc/qFcszH9+xg=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.9/go.mod h1:sTJH2pXWoY+DdF0GtUrU4VUEaWj7w8EAUarOjnIXD1U=
 github.com/pulumi/pulumi-tls/sdk/v5 v5.1.0 h1:eLl9zlIWn0APS5ol+jX7rndH3SYH7YtGc6+YKCDpoj0=
@@ -381,8 +381,8 @@ github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaO
 github.com/uber/jaeger-client-go v2.30.0+incompatible/go.mod h1:WVhlPFC8FDjOFMMWRy2pZqQJSXxYSwNYOkTr/Z6d3Kk=
 github.com/uber/jaeger-lib v2.4.1+incompatible h1:td4jdvLcExb4cBISKIpHuGoVXh+dVKhn2Um6rjCsSsg=
 github.com/uber/jaeger-lib v2.4.1+incompatible/go.mod h1:ComeNDZlWwrWnDv8aPp0Ba6+uUTzImX/AauajbLI56U=
-github.com/vbauerster/mpb/v8 v8.9.1 h1:LH5R3lXPfE2e3lIGxN7WNWv3Hl5nWO6LRi2B0L0ERHw=
-github.com/vbauerster/mpb/v8 v8.9.1/go.mod h1:4XMvznPh8nfe2NpnDo1QTPvW9MVkUhbG90mPWvmOzcQ=
+github.com/vbauerster/mpb/v8 v8.9.2 h1:kb91+D643Qg040bbICYtzpjgZ9ypVO/+sjv4Jcm6si4=
+github.com/vbauerster/mpb/v8 v8.9.2/go.mod h1:hxS8Hz4C6ijnppDSIX6LjG8FYJSoPo9iIOcE53Zik0c=
 github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
 github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
