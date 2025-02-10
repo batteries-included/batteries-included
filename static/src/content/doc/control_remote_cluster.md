@@ -6,12 +6,7 @@ category: development
 draft: false
 ---
 
-## Network connectivity
-
-Follow the instructions in the [access documentation](../docs/access) to set up
-network connectivity to remote cluster.
-
-## Bootstrap cluster
+## Start cluster
 
 For a cluster that isn't already running, start it using `bi` with the
 `--skip-bootstrap` option.
@@ -27,6 +22,13 @@ export KUBE_CONFIG_FILE="$(bi debug kube-config-path $CLUSTER_NAME)"
 export INSTALL_SUMMARY="$(bi debug install-summary-path $CLUSTER_NAME)"
 ```
 
+## Network connectivity
+
+Follow the instructions in the [access documentation](../docs/access) to set up
+network connectivity to remote cluster.
+
+## Bootstrap cluster
+
 Bootstrap the cluster based on local changes. It may need to be ran multiple
 times to complete fully.
 
@@ -39,7 +41,7 @@ It is probably valuable to remove the `controlserver` deployment from the
 running cluster.
 
 ```bash
-kubectl delete deployment -n battery-core controlserver
+KUBECONFIG="${KUBE_CONFIG_FILE}" kubectl delete deployment -n battery-core controlserver
 ```
 
 ## Port forward control-server DB
