@@ -87,7 +87,8 @@
   }
 
   .frame-gradient {
-    background: linear-gradient(
+    background:
+      linear-gradient(
         90deg,
         #ebebeb 0%,
         #fafaff 0%,
