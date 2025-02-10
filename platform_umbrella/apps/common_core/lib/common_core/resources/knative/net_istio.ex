@@ -29,13 +29,25 @@ defmodule CommonCore.Resources.KnativeNetIstio do
   end
 
   resource(:config_map_istio, battery, state) do
+    # This determines the configuration of the virtual services for knative services
     data = %{
+      # This is used for "external" services - e.g. publicly accessible
       "external-gateways" =>
         Ymlr.document!([
           %{
             name: "knative-ingress-gateway",
             namespace: battery.config.namespace,
             service: "istio-ingressgateway.#{istio_namespace(state)}.svc.cluster.local."
+          }
+        ]),
+      # This is used for "internal" services - e.g. not publicly accessible
+      # By default, it is going to try to use the `istio-system` ns
+      "local-gateways" =>
+        Ymlr.document!([
+          %{
+            name: "knative-local-gateway",
+            namespace: battery.config.namespace,
+            service: "knative-local-gateway.#{battery.config.namespace}.svc.cluster.local."
           }
         ])
     }
