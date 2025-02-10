@@ -3,8 +3,8 @@ defmodule ControlServer.Projects.Snapshoter do
 
   use ControlServer, :context
 
-  alias CommonCore.ET.ProjectSnapshot
   alias CommonCore.Projects.Project
+  alias CommonCore.Projects.ProjectSnapshot
   alias Ecto.Multi
 
   @spec take_snapshot(Project.t()) :: {:ok, ProjectSnapshot.t()} | {:error, any()}
@@ -27,6 +27,12 @@ defmodule ControlServer.Projects.Snapshoter do
       {:ok, project} -> take_snapshot(project)
       {:error, _} = error -> error
     end
+  end
+
+  def apply_snapshot(_project, _snapshot) do
+    # take every part of the snapshot
+    # find the resulting part of the project
+    # then apply any updates that are needed
   end
 
   defp run_transaction(project) do

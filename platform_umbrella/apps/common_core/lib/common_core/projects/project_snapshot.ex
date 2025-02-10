@@ -1,4 +1,4 @@
-defmodule CommonCore.ET.ProjectSnapshot do
+defmodule CommonCore.Projects.ProjectSnapshot do
   @moduledoc false
 
   use CommonCore, :embedded_schema

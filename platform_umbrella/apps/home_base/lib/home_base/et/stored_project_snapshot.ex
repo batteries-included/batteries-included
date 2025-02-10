@@ -9,7 +9,7 @@ defmodule HomeBase.ET.StoredProjectSnapshot do
   batt_schema "stored_project_snapshots" do
     belongs_to :installation, CommonCore.Installation
 
-    embeds_one :report, CommonCore.ET.ProjectSnapshot, on_replace: :delete
+    embeds_one :report, CommonCore.Projects.ProjectSnapshot, on_replace: :delete
 
     # This is when they told us
     timestamps()
