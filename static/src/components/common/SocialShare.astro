@@ -15,17 +15,6 @@ const { text, url } = Astro.props;
   </div>
   <div class="flex items-center gap-x-4">
     <button
-      title="Twitter Share"
-      data-aw-social-share="twitter"
-      data-aw-url={url}
-      data-aw-text={text}>
-      <Image
-        class="size-6"
-        src="~/assets/images/icons/twitter.svg"
-        alt="twitter icon"
-      />
-    </button>
-    <button
       title="Linkedin Share"
       data-aw-social-share="linkedin"
       data-aw-url={url}
@@ -44,6 +33,17 @@ const { text, url } = Astro.props;
         class="size-6"
         src="~/assets/images/icons/facebook.svg"
         alt="facebook icon"
+      />
+    </button>
+    <button
+      title="Bluesky Publish"
+      data-aw-social-share="bluesky"
+      data-aw-url={url}
+      data-aw-text={text}>
+      <Image
+        class="size-6"
+        src="~/assets/images/icons/bluesky.svg"
+        alt="bluesky icon"
       />
     </button>
   </div>
