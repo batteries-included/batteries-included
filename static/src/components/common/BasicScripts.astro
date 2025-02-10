@@ -37,25 +37,32 @@
   window.addEventListener('DOMContentLoaded', function () {
     attachEvent('[data-aw-social-share]', 'click', function (_, elem) {
       const network = elem.getAttribute('data-aw-social-share');
-      const url = encodeURIComponent(elem.getAttribute('data-aw-url'));
-      const text = encodeURIComponent(elem.getAttribute('data-aw-text'));
+
+      const text = elem.getAttribute('data-aw-text');
+      const url = elem.getAttribute('data-aw-url');
+
+      const encodedUrl = encodeURIComponent(url);
+      const encodedText = encodeURIComponent(text);
+
+      // Bluesky only accepts the text and url as a single string
+      const bskyText = encodeURIComponent(text + ' ' + url);
 
       let href;
       switch (network) {
         case 'facebook':
-          href = `https://www.facebook.com/sharer.php?u=${url}`;
-          break;
-        case 'twitter':
-          href = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+          href = `https://www.facebook.com/sharer.php?u=${encodedUrl}`;
           break;
         case 'linkedin':
-          href = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`;
+          href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedText}`;
           break;
         case 'whatsapp':
-          href = `https://wa.me/?text=${text}%20${url}`;
+          href = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+          break;
+        case 'bluesky':
+          href = `https://bsky.app/intent/compose?text=${bskyText}`;
           break;
         case 'mail':
-          href = `mailto:?subject=%22${text}%22&body=${text}%20${url}`;
+          href = `mailto:?subject=%22${encodedText}%22&body=${encodedText}%20${encodedUrl}`;
           break;
         default:
           return;
