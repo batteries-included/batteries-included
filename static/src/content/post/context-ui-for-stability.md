@@ -1,5 +1,5 @@
 ---
-title: 'Contexutal Information Makes Platforms More Stable'
+title: 'Contextual Information Makes Platforms More Stable'
 publishDate: 2025-02-10
 tags: ['sev', 'sev-review', 'ui', 'ux', 'stability']
 draft: false
@@ -8,13 +8,13 @@ draft: false
 Learning from operational mistakes is critical, so I was excited to read a
 well-written postmortem from Cloudflare's Feb 6th, 2025 incident. The
 [postmortem](https://blog.cloudflare.com/cloudflare-incident-on-february-6-2025/)
-is a great read, and I think it shows a lot about how well CF has handled this
-that the article is out so soon after the incident. For today, I want to focus
-on things that could have stopped the cause of the incident. Reading the blog
-post, I don't see much that could be optimized regarding how the incident was
-managed or how the issue was fixed. Meaning that the most impactful thing we can
-do is to learn how to stop this kind of incident from happening in the first
-place.
+is a great read, and I think it shows a lot about how well CloudFlare has
+handled this that the article is out so soon after the incident. For today, I
+want to focus on things that could have stopped the cause of the incident.
+Reading the blog post, I don't see much that could be optimized regarding how
+the incident was managed or how the issue was fixed. Meaning that the most
+impactful thing we can do is to learn how to stop this kind of incident from
+happening in the first place.
 
 ## The Incident Cause
 
@@ -23,7 +23,7 @@ procedure (editing JSON/Yaml or entering the data into a text field) to turn off
 services on their API gateway layer. This mistaken action eventually disabled
 the root service for their
 [R2 Object Storage](https://www.cloudflare.com/developer-platform/products/r2/)
-product. Causing a cascading failure that took down dependent services and
+product, causing a cascading failure that took down dependent services and
 customers. The post doesn't specify how the root R2 service was targeted, but
 rather, the expected user-related endpoint inside.
 
@@ -39,8 +39,8 @@ contextual information. They say:
 > accounts and block disablement actions against them.
 
 In other words the contextual information of ownership was not available to the
-person/system making the change. If the operator had been shown that some ui, a
-dialogue, or a warning that said "this is tagged as a prod service" it's very
+person/system making the change. If the operator had been shown some UI, a
+dialogue, or a warning that said "this is tagged as a prod service", it's very
 likely that the operator would have stopped and thought about what they were
 doing.
 
