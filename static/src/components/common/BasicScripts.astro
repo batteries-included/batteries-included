@@ -43,8 +43,8 @@
 
       const encodedUrl = encodeURIComponent(url);
       const encodedText = encodeURIComponent(text);
-
-      // Bluesky only accepts the text and url as a single string
+      // Create a special text for Bluesky since it doesn't
+      // support the url parameter
       const bskyText = encodeURIComponent(text + ' ' + url);
 
       let href;
