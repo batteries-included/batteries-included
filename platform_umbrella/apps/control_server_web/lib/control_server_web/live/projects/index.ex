@@ -5,14 +5,10 @@ defmodule ControlServerWeb.Live.ProjectsIndex do
   import ControlServerWeb.ProjectsSubcomponents
 
   alias ControlServer.Projects
-  alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:page_title, "Projects")
-     |> assign(:project_export_installed, SummaryBatteries.battery_installed(:project_export))}
+    {:ok, assign(socket, :page_title, "Projects")}
   end
 
   @impl Phoenix.LiveView
@@ -49,7 +45,7 @@ defmodule ControlServerWeb.Live.ProjectsIndex do
         />
       </:menu>
 
-      <.projects_table rows={@projects} meta={@meta} export_enabled={@project_export_installed} />
+      <.projects_table rows={@projects} meta={@meta} />
     </.panel>
     """
   end

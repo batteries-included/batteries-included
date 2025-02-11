@@ -182,7 +182,7 @@ defmodule ControlServerWeb.Live.KnativeShow do
     <.page_header title={"Knative Service: #{@service.name}"} back_link={@back_link}>
       <:menu>
         <.badge :if={@service.project_id}>
-          <:item label="Project" navigate={~p"/projects/#{@service.project_id}"}>
+          <:item label="Project" navigate={~p"/projects/#{@service.project_id}/show"}>
             {@service.project.name}
           </:item>
         </.badge>

@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
     <.page_header title={"Jupyter Notebook: #{@notebook.name}"} back_link={~p"/notebooks"}>
       <:menu>
         <.badge :if={@notebook.project_id}>
-          <:item label="Project" navigate={~p"/projects/#{@notebook.project_id}"}>
+          <:item label="Project" navigate={~p"/projects/#{@notebook.project_id}/show"}>
             {@notebook.project.name}
           </:item>
         </.badge>

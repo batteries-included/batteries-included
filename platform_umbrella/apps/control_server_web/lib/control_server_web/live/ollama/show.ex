@@ -91,7 +91,7 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceShow do
     <.page_header title={"Ollama Model: #{@model_instance.name}"} back_link={@back_link}>
       <:menu>
         <.badge :if={@model_instance.project_id}>
-          <:item label="Project" navigate={~p"/projects/#{@model_instance.project_id}"}>
+          <:item label="Project" navigate={~p"/projects/#{@model_instance.project_id}/show"}>
             {@model_instance.project.name}
           </:item>
         </.badge>

@@ -29,7 +29,7 @@ defmodule ControlServerWeb.Live.ProjectsTimeline do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}"} />
+    <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}/show"} />
     <.panel title="All Versions">
       <.edit_versions_table rows={@edit_versions} meta={@meta} />
     </.panel>

@@ -113,7 +113,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
          {:ok, web_redis} <- create_redis(project, form_data[WebForm]),
          {:ok, _web_knative} <- create_knative(project, form_data[WebForm], web_pg, web_redis),
          {:ok, _web_traditional} <- create_traditional(project, form_data[WebForm], web_pg, web_redis) do
-      {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}")}
+      {:noreply, push_navigate(socket, to: ~p"/projects/#{project.id}/show")}
     else
       err ->
         # This should never be reached since form validation happens

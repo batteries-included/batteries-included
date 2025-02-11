@@ -90,10 +90,18 @@ defmodule ControlServerWeb.Router do
 
     live "/", Live.ProjectsIndex
     live "/new", Live.ProjectsNew
-    live "/:id", Live.ProjectsShow
     live "/:id/edit", Live.ProjectsEdit
     live "/:id/timeline", Live.ProjectsTimeline
     live "/:id/export", Live.ProjectsExport
+    live "/:id/show", Live.ProjectsShow, :show
+    live "/:id/pods", Live.ProjectsShow, :pods
+    live "/:id/postgres_clusters", Live.ProjectsShow, :postgres_clusters
+    live "/:id/redis_instances", Live.ProjectsShow, :redis_instances
+    live "/:id/ferret_services", Live.ProjectsShow, :ferret_services
+    live "/:id/jupyter_notebooks", Live.ProjectsShow, :jupyter_notebooks
+    live "/:id/knative_services", Live.ProjectsShow, :knative_services
+    live "/:id/traditional_services", Live.ProjectsShow, :traditional_services
+    live "/:id/model_instances", Live.ProjectsShow, :model_instances
   end
 
   scope "/kube", ControlServerWeb do
