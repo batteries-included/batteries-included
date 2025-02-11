@@ -35,28 +35,6 @@ defmodule ControlServer.Projects.Snapshoter do
     end
   end
 
-  # For each resouce in the database that can have a row
-  # create a query to read all of the rows for that resource
-  # that are associated with the project
-  defp resource_type_to_read_query(type, project_id) do
-    case module_by_resouce_type(type) do
-      nil -> nil
-      module -> from(m in module, where: m.project_id == ^project_id)
-    end
-  end
-
-  defp run_take_snap_transaction(project) do
-    Project.resource_types()
-    |> Enum.map(fn type ->
-      {type, resource_type_to_read_query(type, project.id)}
-    end)
-    |> Enum.filter(fn {_, query} -> query != nil end)
-    |> Enum.reduce(Multi.new(), fn {type, q}, multi ->
-      Multi.all(multi, type, q)
-    end)
-    |> Repo.transaction()
-  end
-
   @spec apply_snapshot(Project.t(), ProjectSnapshot.t(), Keyword.t()) ::
           {:ok, any()} | {:error, any()}
   def apply_snapshot(project, snapshot, opts \\ []) do
@@ -73,6 +51,28 @@ defmodule ControlServer.Projects.Snapshoter do
       end)
 
     Repo.transaction(multi)
+  end
+
+  defp run_take_snap_transaction(project) do
+    Project.resource_types()
+    |> Enum.map(fn type ->
+      {type, resource_type_to_read_query(type, project.id)}
+    end)
+    |> Enum.filter(fn {_, query} -> query != nil end)
+    |> Enum.reduce(Multi.new(), fn {type, q}, multi ->
+      Multi.all(multi, type, q)
+    end)
+    |> Repo.transaction()
+  end
+
+  # For each resouce in the database that can have a row
+  # create a query to read all of the rows for that resource
+  # that are associated with the project
+  defp resource_type_to_read_query(type, project_id) do
+    case module_by_resouce_type(type) do
+      nil -> nil
+      module -> from(m in module, where: m.project_id == ^project_id)
+    end
   end
 
   defp get_by_name(project, snapshot, type) do
