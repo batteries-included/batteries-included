@@ -33,7 +33,7 @@ defmodule ControlServerWeb.Live.ProjectsEdit do
         {:noreply,
          socket
          |> put_flash(:global_success, "Project updated successfully")
-         |> push_navigate(to: ~p"/projects/#{project.id}")}
+         |> push_navigate(to: ~p"/projects/#{project.id}/show")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -43,7 +43,7 @@ defmodule ControlServerWeb.Live.ProjectsEdit do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}"}>
+    <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}/show"}>
       <.button variant="dark" type="submit" form="edit-project-form" phx-disable-with="Saving…">
         Save Project
       </.button>

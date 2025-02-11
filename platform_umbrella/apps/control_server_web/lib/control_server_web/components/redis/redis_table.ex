@@ -56,6 +56,6 @@ defmodule ControlServerWeb.RedisTable do
     """
   end
 
-  def show_url(%RedisInstance{} = cluster), do: ~p"/redis/#{cluster}/show"
-  def edit_url(%RedisInstance{} = cluster), do: ~p"/redis/#{cluster}/edit"
+  defp show_url(%RedisInstance{} = cluster), do: ~p"/redis/#{cluster}/show"
+  defp edit_url(%RedisInstance{} = cluster), do: ~p"/redis/#{cluster}/edit"
 end

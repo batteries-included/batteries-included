@@ -65,7 +65,7 @@ defmodule ControlServerWeb.Live.RedisShow do
     <.page_header title={"Redis Cluster: #{@redis_instance.name}"} back_link={~p"/redis"}>
       <:menu>
         <.badge :if={@redis_instance.project_id}>
-          <:item label="Project" navigate={~p"/projects/#{@redis_instance.project_id}"}>
+          <:item label="Project" navigate={~p"/projects/#{@redis_instance.project_id}/show"}>
             {@redis_instance.project.name}
           </:item>
         </.badge>

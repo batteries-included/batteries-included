@@ -242,7 +242,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
     <.page_header title={@title} back_link={@back_link}>
       <:menu>
         <.badge :if={@cluster.project_id}>
-          <:item label="Project" navigate={~p"/projects/#{@cluster.project_id}"}>
+          <:item label="Project" navigate={~p"/projects/#{@cluster.project_id}/show"}>
             {@cluster.project.name}
           </:item>
         </.badge>

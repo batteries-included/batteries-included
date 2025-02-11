@@ -69,6 +69,7 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
 
       <:action :let={project}>
         <.button
+          :if={!@abridged}
           variant="minimal"
           link={edit_url(project)}
           icon={:pencil}
@@ -80,22 +81,10 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
         </.tooltip>
 
         <.button
-          :if={@export_enabled}
-          variant="minimal"
-          link={export_url(project)}
-          icon={:arrow_down_tray}
-          id={"export_project_" <> project.id}
-        />
-        <.tooltip :if={@export_enabled} target_id={"export_project_" <> project.id}>
-          Export Project
-        </.tooltip>
-
-        <.button
           variant="minimal"
           link={show_url(project)}
           icon={:eye}
           id={"project_show_link_" <> project.id}
-          class="sm:hidden"
         />
         <.tooltip target_id={"project_show_link_" <> project.id}>
           Show Project
@@ -105,7 +94,6 @@ defmodule ControlServerWeb.ProjectsSubcomponents do
     """
   end
 
-  def show_url(%Project{} = project), do: ~p"/projects/#{project}"
+  def show_url(%Project{} = project), do: ~p"/projects/#{project}/show"
   def edit_url(%Project{} = project), do: ~p"/projects/#{project}/edit"
-  def export_url(%Project{} = project), do: ~p"/projects/#{project}/export"
 end

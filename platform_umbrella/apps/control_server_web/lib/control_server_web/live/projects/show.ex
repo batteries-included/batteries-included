@@ -53,17 +53,15 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   end
 
   defp assign_pods(%{assigns: %{project: project}} = socket) do
-    postgres_ids = Enum.map(project.postgres_clusters, & &1.id)
-    redis_ids = Enum.map(project.redis_instances, & &1.id)
-    ferret_ids = Enum.map(project.ferret_services, & &1.id)
-    knative_ids = Enum.map(project.knative_services, & &1.id)
-    traditional_ids = Enum.map(project.traditional_services, & &1.id)
+    allowed_ids =
+      Project.resource_types()
+      |> Enum.flat_map(fn type -> Map.get(project, type, []) end)
+      |> MapSet.new(& &1.id)
 
-    allowed_ids = MapSet.new(postgres_ids ++ redis_ids ++ ferret_ids ++ knative_ids ++ traditional_ids)
     pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
 
     socket
-    |> assign(:pods, pods)
+    |> assign(:k8_pods, pods)
     |> assign(:pod_count, Enum.count(pods))
   end
 
@@ -97,10 +95,63 @@ defmodule ControlServerWeb.Live.ProjectsShow do
     end
   end
 
-  @impl Phoenix.LiveView
-  def render(assigns) do
+  defp show_url(project), do: ~p"/projects/#{project}/show"
+
+  defp pods_url(project), do: ~p"/projects/#{project}/pods"
+
+  defp timeline_url(project), do: ~p"/projects/#{project}/timeline"
+
+  defp postgres_clusters_url(project), do: ~p"/projects/#{project}/postgres_clusters"
+
+  defp redis_instances_url(project), do: ~p"/projects/#{project}/redis_instances"
+
+  defp ferret_services_url(project), do: ~p"/projects/#{project}/ferret_services"
+
+  defp jupyter_notebooks_url(project), do: ~p"/projects/#{project}/jupyter_notebooks"
+
+  defp knative_services_url(project), do: ~p"/projects/#{project}/knative_services"
+
+  defp traditional_services_url(project), do: ~p"/projects/#{project}/traditional_services"
+
+  defp model_instances_url(project), do: ~p"/projects/#{project}/model_instances"
+
+  defp links_panel(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/projects"}>
+    <.panel variant="gray">
+      <.tab_bar variant="navigation">
+        <:tab selected={@live_action == :show} patch={show_url(@project)}>Overview</:tab>
+        <:tab selected={@live_action == :pods} patch={pods_url(@project)}>Pods</:tab>
+        <:tab :if={@timeline_installed} navigate={timeline_url(@project)}>Timeline</:tab>
+        <:tab :if={@project.postgres_clusters != []} patch={postgres_clusters_url(@project)}>
+          Postgres Clusters
+        </:tab>
+        <:tab :if={@project.redis_instances != []} patch={redis_instances_url(@project)}>Redis</:tab>
+        <:tab :if={@project.ferret_services != []} patch={ferret_services_url(@project)}>
+          FerretDB
+        </:tab>
+        <:tab :if={@project.jupyter_notebooks != []} patch={jupyter_notebooks_url(@project)}>
+          Notebooks
+        </:tab>
+        <:tab :if={@project.knative_services != []} patch={knative_services_url(@project)}>
+          Knative Services
+        </:tab>
+        <:tab :if={@project.traditional_services != []} patch={traditional_services_url(@project)}>
+          Traditional Services
+        </:tab>
+        <:tab :if={@project.model_instances != []} patch={model_instances_url(@project)}>
+          Model Instances
+        </:tab>
+      </.tab_bar>
+      <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
+        Grafana Dashboard
+      </.a>
+    </.panel>
+    """
+  end
+
+  defp header(assigns) do
+    ~H"""
+    <.page_header title={@title} back_link={@back_link}>
       <.flex>
         <.tooltip target_id="add-tooltip">Add Resources</.tooltip>
         <.tooltip :if={@timeline_installed} target_id="history-tooltip">Project History</.tooltip>
@@ -152,14 +203,6 @@ defmodule ControlServerWeb.Live.ProjectsShow do
           </.dropdown>
 
           <.button
-            :if={@timeline_installed}
-            id="history-tooltip"
-            variant="icon"
-            icon={:clock}
-            link={~p"/projects/#{@project.id}/timeline"}
-          />
-
-          <.button
             id="edit-tooltip"
             variant="icon"
             icon={:pencil}
@@ -188,14 +231,218 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         </.flex>
       </.flex>
     </.page_header>
+    """
+  end
+
+  # Add these page components right before the render function:
+
+  def postgres_clusters_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Postgres Clusters" class="lg:col-span-3 lg:row-span-2">
+        <.postgres_clusters_table rows={@project.postgres_clusters} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
+  def redis_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Redis Instances" class="lg:col-span-3 lg:row-span-2">
+        <.redis_table rows={@project.redis_instances} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
+  def ferret_services_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="FerretDB Services" class="lg:col-span-3 lg:row-span-2">
+        <.ferret_services_table rows={@project.ferret_services} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
+  def notebooks_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Jupyter Notebooks" class="lg:col-span-3 lg:row-span-2">
+        <.notebooks_table rows={@project.jupyter_notebooks} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
+  def knative_services_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Knative Services" class="lg:col-span-3 lg:row-span-2">
+        <.knative_services_table rows={@project.knative_services} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
+  def traditional_services_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Traditional Services" class="lg:col-span-3 lg:row-span-2">
+        <.traditional_services_table rows={@project.traditional_services} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
+  def pods_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Pods" class="lg:col-span-3 lg:row-span-2">
+        <.pods_table pods={@k8_pods} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
+  def main_page(assigns) do
+    ~H"""
+    <.header
+      back_link={~p"/projects"}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
 
     <div class="flex flex-wrap gap-4 mb-4">
       <.badge label="Resources" value={@resource_count} />
       <.badge label="Pods" value={@pod_count} />
     </div>
 
-    <.grid columns={[sm: 1, lg: 2]}>
-      <.panel title="Project Details" variant="gray">
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Project Details" class="lg:col-span-3 lg:row-span-2">
         <.data_list>
           <:item title="Created">
             <.relative_display time={@project.inserted_at} />
@@ -206,58 +453,104 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         </.data_list>
       </.panel>
 
-      <div :if={@grafana_dashboard_url}>
-        <.a :if={@grafana_dashboard_url} variant="bordered" href={@grafana_dashboard_url}>
-          Grafana Dashboard
-        </.a>
-      </div>
-
-      <.panel :if={@project.postgres_clusters != []} title="Postgres">
-        <:menu>
-          <.button variant="minimal" link={~p"/postgres"}>View All</.button>
-        </:menu>
-        <.postgres_clusters_table abridged rows={@project.postgres_clusters} />
-      </.panel>
-
-      <.panel :if={@project.redis_instances != []} title="Redis">
-        <:menu>
-          <.button variant="minimal" link={~p"/redis"}>View All</.button>
-        </:menu>
-        <.redis_table abridged rows={@project.redis_instances} />
-      </.panel>
-
-      <.panel :if={@project.ferret_services != []} title="FerretDB/MongoDB">
-        <:menu>
-          <.button variant="minimal" link={~p"/ferretdb"}>View All</.button>
-        </:menu>
-        <.ferret_services_table abridged rows={@project.ferret_services} />
-      </.panel>
-
-      <.panel :if={@project.jupyter_notebooks != []} title="Jupyter Notebooks">
-        <:menu>
-          <.button variant="minimal" link={~p"/notebooks"}>View All</.button>
-        </:menu>
-        <.notebooks_table abridged rows={@project.jupyter_notebooks} />
-      </.panel>
-
-      <.panel :if={@project.knative_services != []} title="Knative Services">
-        <:menu>
-          <.button variant="minimal" link={~p"/knative/services"}>View All</.button>
-        </:menu>
-        <.knative_services_table abridged rows={@project.knative_services} />
-      </.panel>
-
-      <.panel :if={@project.traditional_services != []} title="Traditional Services">
-        <:menu>
-          <.button variant="minimal" link={~p"/traditional_services"}>View All</.button>
-        </:menu>
-        <.traditional_services_table abridged rows={@project.traditional_services} />
-      </.panel>
-
-      <.panel title="Pods" class="col-span-2">
-        <.pods_table pods={@pods} />
-      </.panel>
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
     </.grid>
+    """
+  end
+
+  @impl Phoenix.LiveView
+  def render(assigns) do
+    ~H"""
+    <%= case @live_action do %>
+      <% :show -> %>
+        <.main_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+          pod_count={@pod_count}
+        />
+      <% :pods -> %>
+        <.pods_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+          k8_pods={@k8_pods}
+        />
+      <% :postgres_clusters -> %>
+        <.postgres_clusters_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+        />
+      <% :redis_instances -> %>
+        <.redis_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+        />
+      <% :ferret_services -> %>
+        <.ferret_services_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+        />
+      <% :jupyter_notebooks -> %>
+        <.notebooks_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+        />
+      <% :knative_services -> %>
+        <.knative_services_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+        />
+      <% :traditional_services -> %>
+        <.traditional_services_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+        />
+    <% end %>
     """
   end
 end

@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Live.ProjectsExport do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}"} />
+    <.page_header title={@page_title} back_link={~p"/projects/#{@project.id}/show"} />
     <.panel :if={@project_export_installed} title="Export">
       Some Exported Project Here
     </.panel>
