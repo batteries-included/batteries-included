@@ -1,7 +1,7 @@
 defmodule CommonCore.Batteries.KnativeConfig do
   @moduledoc false
 
-  use CommonCore, :embedded_schema
+  use CommonCore, {:embedded_schema, no_encode: [:cookie_secret]}
 
   alias CommonCore.Defaults
 
@@ -16,5 +16,7 @@ defmodule CommonCore.Batteries.KnativeConfig do
 
     defaultable_image_field :istio_controller_image, image_id: :knative_istio_controller
     defaultable_image_field :istio_webhook_image, image_id: :knative_istio_webhook
+
+    secret_field :cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1
   end
 end

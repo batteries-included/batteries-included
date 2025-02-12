@@ -55,7 +55,7 @@ defmodule CommonCore.Knative.Service do
   defp validate_realm_for_proxy(_, cs), do: cs
 
   @doc """
-  Function to determine if battery has sso properly configured.
+  Function to determine if knative service has sso properly configured.
   Useful for e.g. `Enum.filter/2`
   """
   @spec sso_configured_properly?(t()) :: boolean()

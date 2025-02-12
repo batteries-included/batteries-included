@@ -6,37 +6,19 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.URLs
 
-  alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.Secret
-  alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.KeycloakSummary
 
   @serve_port 80
-  @web_port 4180
-  @metrics_port 44_180
   @user_group_id 2000
   @component "oauth2-proxy"
 
-  defp name(%SystemBattery{} = battery), do: name(battery.type)
-
-  defp name(battery) when is_atom(battery), do: name(Atom.to_string(battery))
-
-  defp name(battery) do
-    sanitize("#{@component}-#{battery}")
-  end
-
   resource(:deployment, battery, state) do
-    name = name(battery)
+    name = service_name(battery)
     namespace = core_namespace(state)
 
-    image =
-      if Batteries.sso_installed?(state) do
-        Batteries.by_type(state).sso.config.oauth2_proxy_image
-      else
-        ""
-      end
+    image = deployment_image(state)
 
     template =
       %{
@@ -45,36 +27,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
           "automountServiceAccountToken" => true,
           "containers" => [
             %{
-              "args" => [
-                "--http-address=0.0.0.0:#{@web_port}",
-                "--metrics-address=0.0.0.0:#{@metrics_port}",
-                "--email-domain=*",
-                "--upstream=static://200",
-                "--auth-logging=true",
-                "--code-challenge-method=S256",
-                "--cookie-expire=4h",
-                "--cookie-httponly=true",
-                "--cookie-refresh=4m",
-                "--cookie-samesite=lax",
-                "--cookie-secure=false",
-                "--pass-access-token=true",
-                "--pass-authorization-header=true",
-                "--pass-host-header=true",
-                "--provider=oidc",
-                "--request-logging=true",
-                "--reverse-proxy=true",
-                "--scope=openid email profile",
-                "--session-store-type=cookie",
-                "--set-authorization-header=true",
-                "--set-xauthrequest=true",
-                "--silence-ping-logging=true",
-                "--skip-auth-strip-headers=false",
-                "--skip-jwt-bearer-tokens=true",
-                "--skip-provider-button=true",
-                "--ssl-insecure-skip-verify=true",
-                "--insecure-oidc-allow-unverified-email=true",
-                "--standard-logging=true"
-              ],
+              "args" => deployment_args("static://200"),
               "env" => build_env(battery, state),
               "image" => image,
               "imagePullPolicy" => "IfNotPresent",
@@ -85,8 +38,8 @@ defmodule CommonCore.Resources.Oauth2Proxy do
               },
               "name" => @component,
               "ports" => [
-                %{"containerPort" => @web_port, "name" => "http", "protocol" => "TCP"},
-                %{"containerPort" => @metrics_port, "name" => "metrics", "protocol" => "TCP"}
+                %{"containerPort" => web_port(), "name" => "http", "protocol" => "TCP"},
+                %{"containerPort" => metrics_port(), "name" => "metrics", "protocol" => "TCP"}
               ],
               "readinessProbe" => %{
                 "httpGet" => %{"path" => "/ready", "port" => "http", "scheme" => "HTTP"},
@@ -138,58 +91,31 @@ defmodule CommonCore.Resources.Oauth2Proxy do
     |> B.component_labels(@component)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
+    |> F.require_non_nil(image)
   end
 
   defp build_env(battery, state) do
-    name = name(battery)
-    redirect_url = state |> uri_for_battery(battery.type) |> URI.to_string()
-
-    case KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
+    case KeycloakSummary.client(state.keycloak_state, battery.type) do
       %{realm: realm, client: %{}} ->
-        keycloak_url = state |> keycloak_uri_for_realm(realm) |> URI.to_string()
-
-        [
-          %{"name" => to_env_var("oidc-issuer-url"), "value" => keycloak_url},
-          %{"name" => to_env_var("redirect-url"), "value" => redirect_url},
-          %{
-            "name" => to_env_var("client-id"),
-            "valueFrom" => B.secret_key_ref(name, "client-id")
-          },
-          %{
-            "name" => to_env_var("client-secret"),
-            "valueFrom" => B.secret_key_ref(name, "client-secret")
-          },
-          %{
-            "name" => to_env_var("cookie-secret"),
-            "valueFrom" => B.secret_key_ref(name, "cookie-secret")
-          }
-        ]
+        deployment_env(%{
+          redirect_url: state |> uri_for_battery(battery.type) |> URI.to_string(),
+          keycloak_url: state |> keycloak_uri_for_realm(realm) |> URI.to_string(),
+          secret_name: service_name(battery)
+        })
 
       nil ->
         []
     end
   end
 
-  defp to_env_var(s) do
-    "OAUTH2_PROXY_#{s}"
-    |> String.upcase()
-    |> String.replace(" ", "_")
-    |> String.replace("-", "_")
-  end
-
-  # TODO(jdt): this flaps on startup. fix it.
   resource(:secret, battery, state) do
-    name = name(battery)
+    name = service_name(battery)
     namespace = core_namespace(state)
 
     data =
-      case KeycloakSummary.client(state.keycloak_state, Atom.to_string(battery.type)) do
-        %{realm: _realm, client: %{clientId: client_id, secret: client_secret}} ->
-          %{}
-          |> Map.put("client-id", client_id)
-          |> Map.put("client-secret", client_secret)
-          |> Map.put("cookie-secret", cookie_secret(battery))
-          |> Secret.encode()
+      case KeycloakSummary.client(state.keycloak_state, battery.type) do
+        %{realm: _realm, client: client} ->
+          secret_data(client, cookie_secret(battery))
 
         nil ->
           %{}
@@ -206,7 +132,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   end
 
   resource(:service_account, battery, state) do
-    name = name(battery)
+    name = service_name(battery)
     namespace = core_namespace(state)
 
     :service_account
@@ -220,7 +146,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   end
 
   resource(:service, battery, state) do
-    name = name(battery)
+    name = service_name(battery)
     namespace = core_namespace(state)
 
     spec =
@@ -236,7 +162,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
         %{
           "appProtocol" => "http",
           "name" => "metrics",
-          "port" => @metrics_port,
+          "port" => metrics_port(),
           "protocol" => "TCP",
           "targetPort" => "metrics"
         }
