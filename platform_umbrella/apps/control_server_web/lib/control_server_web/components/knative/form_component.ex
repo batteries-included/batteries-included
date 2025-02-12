@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
      |> assign_new(:save_info, fn -> "service:save" end)
      |> assign_new(:save_target, fn -> nil end)
      |> assign_new(:namespace, fn -> SummaryBatteries.knative_namespace() end)
-     |> assign_keycloak_enabled()
+     |> assign_sso_enabled()
      |> assign_projects()
      |> assign_container(nil)
      |> assign_container_idx(nil)
@@ -62,8 +62,8 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
     assign(socket, projects: ControlServer.Projects.list_projects())
   end
 
-  defp assign_keycloak_enabled(socket) do
-    assign_new(socket, :keycloak_enabled, fn -> SummaryBatteries.battery_installed(:keycloak) end)
+  defp assign_sso_enabled(socket) do
+    assign_new(socket, :sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
   end
 
   def assign_container_field_name(socket, cfn) do
@@ -277,6 +277,19 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
           <.input field={@form[:rollout_duration]} />
         </.field>
 
+        <.input
+          :if={@sso_enabled}
+          field={@form[:oauth2_proxy]}
+          type="switch"
+          label="Protect with OAuth2 Proxy"
+        />
+
+        <.input
+          :if={@sso_enabled && @form[:oauth2_proxy].value == true}
+          field={@form[:keycloak_realm]}
+          label="Keycloak Realm"
+        />
+
         <.field>
           <:label>Project</:label>
           <.input
@@ -322,11 +335,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
             <.main_panel form={@form} />
           </.panel>
 
-          <.advanced_setting_panel
-            form={@form}
-            keycloak_enabled={@keycloak_enabled}
-            projects={@projects}
-          />
+          <.advanced_setting_panel form={@form} sso_enabled={@sso_enabled} projects={@projects} />
 
           <.containers_panel
             id="containers_panel-init_containers"

@@ -87,10 +87,11 @@ defmodule CommonCore.StateSummary.KeycloakSummary do
     end
   end
 
-  @spec client(t(), binary()) ::
-          %{realm: binary(), client: ClientRepresentation.t()} | nil
+  @spec client(t(), binary() | atom()) :: %{realm: binary(), client: ClientRepresentation.t()} | nil
   def client(nil, _name), do: nil
   def client(%__MODULE__{realms: nil}, _name), do: nil
+
+  def client(%__MODULE__{} = summary, name) when is_atom(name), do: client(summary, Atom.to_string(name))
 
   def client(%__MODULE__{realms: realms}, name) do
     clients =

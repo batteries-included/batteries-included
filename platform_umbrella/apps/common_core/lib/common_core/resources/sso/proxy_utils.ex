@@ -5,11 +5,28 @@ defmodule CommonCore.Resources.ProxyUtils do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.Knative.Service
+  alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
+  alias CommonCore.Resources.Builder
+  alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.Batteries
 
   require Logger
 
   @default_port 80
+  @web_port 4180
+  @metrics_port 44_180
+
+  @spec web_port() :: pos_integer()
+  def web_port do
+    @web_port
+  end
+
+  @spec metrics_port() :: pos_integer()
+  def metrics_port do
+    @metrics_port
+  end
 
   @spec port(SystemBattery.t()) :: pos_integer()
   def port(_battery) do
@@ -23,10 +40,13 @@ defmodule CommonCore.Resources.ProxyUtils do
 
   def extension_name(_), do: nil
 
-  @spec service_name(SystemBattery.t()) :: String.t()
-  def service_name(%SystemBattery{type: battery_type} = _battery) do
-    "oauth2-proxy-#{sanitize(battery_type)}"
-  end
+  @spec service_name(SystemBattery.t() | Service.t() | atom() | String.t()) :: String.t()
+  def service_name(thing)
+
+  def service_name(%SystemBattery{type: battery_type} = _battery), do: service_name(battery_type)
+  def service_name(%Service{name: name} = _service), do: service_name(name)
+  def service_name(name) when is_atom(name), do: service_name(Atom.to_string(name))
+  def service_name(name) when is_binary(name), do: "oauth2-proxy-#{sanitize(name)}"
 
   def service_name(_), do: nil
 
@@ -81,5 +101,85 @@ defmodule CommonCore.Resources.ProxyUtils do
     |> String.downcase()
     |> String.replace(" ", "-")
     |> String.replace("_", "-")
+  end
+
+  @spec secret_data(ClientRepresentation.t(), String.t()) :: any()
+  def secret_data(%ClientRepresentation{clientId: client_id, secret: client_secret}, cookie_secret) do
+    Secret.encode(%{
+      "client-id" => client_id,
+      "client-secret" => client_secret,
+      "cookie-secret" => cookie_secret
+    })
+  end
+
+  @spec deployment_env(map()) :: list(map())
+  def deployment_env(%{secret_name: secret_name, redirect_url: redirect_url, keycloak_url: keycloak_url}) do
+    [
+      %{"name" => to_env_var("oidc-issuer-url"), "value" => keycloak_url},
+      %{"name" => to_env_var("redirect-url"), "value" => redirect_url},
+      %{
+        "name" => to_env_var("client-id"),
+        "valueFrom" => Builder.secret_key_ref(secret_name, "client-id")
+      },
+      %{
+        "name" => to_env_var("client-secret"),
+        "valueFrom" => Builder.secret_key_ref(secret_name, "client-secret")
+      },
+      %{
+        "name" => to_env_var("cookie-secret"),
+        "valueFrom" => Builder.secret_key_ref(secret_name, "cookie-secret")
+      }
+    ]
+  end
+
+  defp to_env_var(s) do
+    "OAUTH2_PROXY_#{s}"
+    |> String.upcase()
+    |> String.replace(" ", "_")
+    |> String.replace("-", "_")
+  end
+
+  def deployment_args(upstream) do
+    [
+      "--http-address=0.0.0.0:#{@web_port}",
+      "--metrics-address=0.0.0.0:#{@metrics_port}",
+      "--email-domain=*",
+      "--upstream=#{upstream}",
+      "--auth-logging=true",
+      "--code-challenge-method=S256",
+      "--cookie-expire=4h",
+      "--cookie-httponly=true",
+      "--cookie-refresh=4m",
+      "--cookie-samesite=lax",
+      "--cookie-secure=false",
+      "--pass-access-token=true",
+      "--pass-authorization-header=true",
+      "--pass-host-header=true",
+      "--provider=oidc",
+      "--request-logging=true",
+      "--reverse-proxy=true",
+      "--scope=openid email profile",
+      "--session-store-type=cookie",
+      "--set-authorization-header=true",
+      "--set-xauthrequest=true",
+      "--silence-ping-logging=true",
+      "--skip-auth-strip-headers=false",
+      "--skip-jwt-bearer-tokens=true",
+      "--skip-provider-button=true",
+      "--ssl-insecure-skip-verify=true",
+      "--insecure-oidc-allow-unverified-email=true",
+      "--standard-logging=true",
+      "--skip-auth-route=\"/healthz\"",
+      "--skip-auth-route=\"/ping\"",
+      "--exclude-logging-path=\"healthz\"",
+      "--exclude-logging-path=\"ping\""
+    ]
+  end
+
+  @spec deployment_image(StateSummary.t()) :: String.t() | nil
+  def deployment_image(state) do
+    if Batteries.sso_installed?(state) do
+      Batteries.by_type(state).sso.config.oauth2_proxy_image
+    end
   end
 end
