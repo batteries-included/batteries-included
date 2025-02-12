@@ -1,40 +1,95 @@
+&nbsp;
+
 <p align="center">
-  <img src="./.github/header-dark.png#gh-dark-mode-only" />
-  <img src="./.github/header-light.png#gh-light-mode-only" />
+  <img src="static/public/images/logo-dark.png#gh-dark-mode-only" width="600"/>
+  <img src="static/public/images/logo-light.png#gh-light-mode-only" width="600"/>
 </p>
 
-Welcome to [Batteries Included](https://www.batteriesincl.com/)—the ultimate
-platform for modern service development! Built on Kubernetes and open-source,
-our software platform gives you an incredible, all-inclusive infrastructure
-experience thanks to an intuitive UI and advanced automation.
+&nbsp;
 
-In this repo, you'll find everything you need to contribute to development. From
-code and scripts to documentation and information, this is the hub of all things
-_Batteries Included_.
+Welcome! [Batteries Included](https://www.batteriesincl.com) is your all-in-one
+platform for building and running modern applications. We take the complexity
+out of cloud infrastructure, giving you production-ready capabilities through an
+intuitive and easy-to-use interface.
 
-Let's build something amazing together!
+## Why Batteries Included?
 
-## Getting Started
+- 🚀 **Launch Production-Ready Infrastructure in Minutes**
 
-### Easiest Method
+  - Deploy databases, monitoring, and web services with just a few clicks
+  - Automatic scaling, high availability, and security out of the box
+  - Built on battle-tested open source technologies like Kubernetes
 
-The easiest method is to use our hosted UI to configure an installation. Then
-use the no-dependencies installation script to download our `bi` tool which will
-start Kubernetes (locally via Kind or on a cloud provider via Pulumi), all open
-source container based dependencies, and the Batteries Included Control Server.
+- 💻 **Focus on Building, Not Infrastructure**
 
-- Go to [batteriesincl.com](https://www.batteriesincl.com) and log in or sign up
-  for a new account.
-- Create an installation choosing the Kubernetes provider (AWS, Kind, or an
-  already provided cluster) and the intended use.
-- Run the custom install script that will (if needed) download the latest `bi`
-  version and start the installation from jwk signed by home base.
+  - No more wrestling with YAML or complex configurations
+  - Automated setup of best practices for security, monitoring, and operations
+  - Unified interface for managing all your services
+  - Runs wherever you want it to!
 
-### Manual Method
+- 🏢 **Enterprise-Grade Features, Developer-Friendly Interface**
 
-If you want to try all this out for a short time without signing up, that's
-possible. However, the installation will stop working after a few hours of not
-being able to report status.
+  - AI/ML capabilities with integrated Jupyter notebooks and vector databases
+  - Automated PostgreSQL, Redis, and MongoDB deployment and management
+  - Built-in monitoring with Grafana dashboards and VictoriaMetrics
+  - Secure networking with automatic SSL/TLS certificate management
+  - OAuth/SSO integration with Keycloak
+
+![README demo](static/public/images/readme-demo.gif)
+
+## Quick Start
+
+The fastest way to experience Batteries Included:
+
+1. Visit [batteriesincl.com](https://www.batteriesincl.com) and create an
+   account
+2. Choose your installation type (cloud, local, or existing cluster)
+3. Run the provided installation command
+4. Access your ready-to-use infrastructure dashboard
+
+## Features
+
+### 🔋 Databases & Storage
+
+- 🐘 PostgreSQL with automated backups and monitoring
+- ⚡️ Redis for caching and message queues
+- 🍃 MongoDB-compatible FerretDB
+- 🎯 Vector database capabilities with pgvector
+
+### 🔋 AI & Machine Learning
+
+- 📓 Jupyter notebooks with pre-configured environments
+- 🤖 Ollama for local LLM deployment (including DeepSeek, Phi-2, Nomic, and
+  more)
+- 🎮 GPU support and scaling (coming soon)
+
+### 🔋 Web Services
+
+- 🚀 Automated deployment and scaling
+- 🔒 Built-in SSL/TLS certificate management
+- ⚖️ Load balancing and traffic management
+- 🔄 Zero-downtime updates and serverless deployment
+
+### 🔋 Security
+
+- 🛡️ Automated certificate management
+- 🔐 OAuth/SSO integration
+- 🌐 Network policies and mTLS
+- 🗝️ Secure secret management
+
+### 🔋 Monitoring
+
+- 📊 Pre-configured Grafana dashboards
+- 📈 Metrics collection with VictoriaMetrics
+- 📝 Monitor all your clusters from one place!
+
+## Installation Methods
+
+## Manual Installation
+
+If you want to try Batteries Included without creating an account, you can run
+it locally. Note that the installation will stop working after a few hours
+without being able to report status.
 
 - Download `bi` from the
   [latest GitHub release](https://github.com/batteries-included/batteries-included/releases)
@@ -184,34 +239,45 @@ This is the UI for billing, and starting new clusters.
 
 ### Development
 
-To start the kind kubernetes cluster, start the services including postgres,
-create the db's, and seed them with target summary.
+To start the development environment:
+
+1. Initialize the Kind Kubernetes cluster, PostgreSQL services, and seed the
+   databases:
 
 ```bash
 bix bootstrap
 ```
 
-Then start the control, and home web servers and background processes. This will
-also open up a
-[iex console](https://elixirschool.com/en/lessons/basics/iex_helpers) where you
-can explore the process status:
+2. Launch the web servers and background processes:
 
 ```bash
 bix dev
 ```
 
-Now there are three web servers accessible:
+This will start three web servers:
 
-- [http://control.127-0-0-1.batrsinc.co:4000](http://control.127-0-0-1.batrsinc.co:4000)
-  for the control server,
-- [http://home.127-0-0-1.batrsinc.co:4100](http://home.127-0-0-1.batrsinc.co:4100)
-  for the home base server, and
-- [http://common.127-0-0-1.batrsinc.co:4200](http://common.127-0-0-1.batrsinc.co:4200)
-  for the common UI server.
+- [http://control.127-0-0-1.batrsinc.co:4000](http://control.127-0-0-1.batrsinc.co:4000) -
+  Control server
+- [http://home.127-0-0-1.batrsinc.co:4100](http://home.127-0-0-1.batrsinc.co:4100) -
+  Home base server
+- [http://common.127-0-0-1.batrsinc.co:4200](http://common.127-0-0-1.batrsinc.co:4200) -
+  Common UI server
+
+The `bix dev` command also opens an IEx console where you can explore the
+process status.
 
 ### VSCode
 
-To open a fully configured editor simply cd into the main dir and then open the
-`everything` workspace:
+To open the project in VSCode:
 
-`cd batteries-included && code .vscode/everything.code-workspace`
+1. Navigate to the project directory:
+
+```bash
+cd batteries-included
+```
+
+2. Launch VSCode with the workspace configuration:
+
+```bash
+code .vscode/everything.code-workspace
+```
