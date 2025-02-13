@@ -6,12 +6,7 @@ category: getting-started
 draft: false
 ---
 
-## Getting Started with Batteries Included
-
-Whether you're building web services, running AI workloads, or managing
-databases, getting started takes just a few minutes!
-
-### Create Your Installation
+## Design Your Installation
 
 Start by logging in or creating an account at
 [https://home.batteriesincl.com/login](https://home.batteriesincl.com/login).
@@ -31,7 +26,7 @@ Then, choose your preferred deployment type:
    <img src="/images/docs/getting-started/install-1.png" width="80%">
 </div>
 
-### Run Installation
+## Run Installation
 
 After configuring your installation details, you'll receive a simple one-line
 shell script. Just copy and run this command - we'll take care of all the
