@@ -96,6 +96,11 @@ Available commands:
 **Docker Commands**
 - build-image       Build a docker image
 - push-images       Push all the container images to a registry
+
+
+**Static Site Commands**
+- static-dev       Start a development environment with npm
+- static-bulid     Build the static site
 EOF
     exit 1
 }
@@ -507,6 +512,22 @@ do_push_images() {
     tag_push "pastebin" "$@"
 }
 
+do_static_dev() {
+    log "${GREEN}Starting Development Environment${NOFORMAT}"
+    bi_pushd "${ROOT_DIR}/static"
+    npm install >/dev/null
+    npm run dev
+    bi_popd
+}
+
+do_static_build() {
+    log "${GREEN}Building Static Site${NOFORMAT}"
+    bi_pushd "${ROOT_DIR}/static"
+    npm clean-install >/dev/null
+    npm run build
+    bi_popd
+}
+
 tag_push() {
     local image_name=${1}
     shift
@@ -726,6 +747,9 @@ push-images)
     ;;
 version-tag)
     do_version_tag
+    ;;
+static-dev)
+    do_static_dev
     ;;
 root-dir)
     echo "${ROOT_DIR}"
