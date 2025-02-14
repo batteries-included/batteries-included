@@ -45,6 +45,47 @@ defmodule CommonCore.Resources.Notebooks do
     |> F.require_non_empty(state.notebooks)
   end
 
+  # we can share a single configmap for now as none of the settings are configurable 
+  # or would be different between notebooks and it's super easy to change when needed
+  resource(:override_configmap, _battery, state) do
+    name = "#{@app_name}-settings-override"
+    namespace = ai_namespace(state)
+
+    data = %{
+      "overrides.json" =>
+        Jason.encode!(%{
+          "@jupyterlab/apputils-extension:notification" => %{
+            "checkForUpdates" => false,
+            # this isn't boolean, there are multiple options, "false" i.e. off is what we want
+            "fetchNews" => "false"
+          },
+          "@jupyterlab/mainmenu-extension:plugin" => %{
+            "menus" => [
+              %{
+                "id" => "jp-mainmenu-file",
+                "items" => [
+                  %{
+                    "command" => "filemenu:logout",
+                    "disabled" => true
+                  },
+                  %{
+                    "command" => "filemenu:shutdown",
+                    "disabled" => true
+                  }
+                ]
+              }
+            ]
+          }
+        })
+    }
+
+    :config_map
+    |> B.build_resource()
+    |> B.name(name)
+    |> B.namespace(namespace)
+    |> B.data(data)
+  end
+
   multi_resource(:stateful_sets, battery, state) do
     Enum.map(state.notebooks, fn notebook -> stateful_set(notebook, battery, state) end)
   end
@@ -75,9 +116,11 @@ defmodule CommonCore.Resources.Notebooks do
               ],
               "ports" => [
                 %{"containerPort" => @container_port, "name" => "http"}
-              ]
+              ],
+              "volumeMounts" => [%{"mountPath" => "/opt/conda/share/jupyter/lab/settings/", "name" => "settings"}]
             }
-          ]
+          ],
+          "volumes" => [%{"configMap" => %{"name" => "#{@app_name}-settings-override"}, "name" => "settings"}]
         }
       }
       |> B.app_labels(notebook.name)
