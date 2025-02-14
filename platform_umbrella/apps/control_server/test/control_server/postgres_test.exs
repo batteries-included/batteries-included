@@ -40,12 +40,21 @@ defmodule ControlServer.PostgresTest do
       assert Postgres.list_clusters() == [cluster]
     end
 
+    # create a number of clusters with a unique name pattern
+    # find clusters matching that pattern 1 at a time
+    # ensure we can fetch e.g. first and last "page"
     test "list_clusters/1 returns paginated clusters" do
-      cluster1 = cluster_fixture()
-      _cluster2 = cluster_fixture(%{name: "another-name"})
+      name_prefix = "list-clusters-pagination-test"
+      params = %{order_by: [:id], filters: [%{field: :name, op: :ilike, value: "#{name_prefix}-"}]}
+      created = Enum.map(0..9, fn i -> cluster_fixture(%{name: "#{name_prefix}-#{i}"}) end)
 
-      assert {:ok, {[cluster], _}} = Postgres.list_clusters(%{limit: 1})
-      assert cluster.id == cluster1.id
+      assert {:ok, {[first], meta}} = Postgres.list_clusters(Map.put(params, :first, 1))
+      assert created |> List.first() |> Map.get(:id) == first.id
+      assert {false, true} = {meta.has_previous_page?, meta.has_next_page?}
+
+      assert {:ok, {[last], meta}} = Postgres.list_clusters(Map.put(params, :last, 1))
+      assert created |> List.last() |> Map.get(:id) == last.id
+      assert {true, false} = {meta.has_previous_page?, meta.has_next_page?}
     end
 
     test "get_cluster!/1 returns the cluster with given id" do
