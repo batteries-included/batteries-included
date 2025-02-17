@@ -11,6 +11,6 @@ defmodule CommonCore.Batteries.KarpenterConfig do
     field :service_role_arn, :string
     field :node_role_name, :string
 
-    defaultable_field :ami_alias, :string, default: "al2@v20250123"
+    defaultable_field :ami_alias, :string, default: "al2@v20250212"
   end
 end
