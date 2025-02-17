@@ -13,6 +13,7 @@ permissions:
 env:
   GOCACHE: /home/runner/.cache/go-cache
   GOMODCACHE: /home/runner/.cache/go-mod
+  ASDF_BRANCH: v0.15.0
 
 jobs:
   release:
@@ -27,6 +28,8 @@ jobs:
 
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
+        with:
+          asdf_branch: ${{ env.ASDF_BRANCH }}
 
       - name: Cache ASDF
         uses: actions/cache@v4
@@ -44,7 +47,7 @@ jobs:
         # See https://github.com/asdf-vm/actions/issues/445
         if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         with:
-          asdf_branch: v0.14.1
+          asdf_branch: ${{ env.ASDF_BRANCH }}
 
       - name: Reshim ASDF
         shell: bash
