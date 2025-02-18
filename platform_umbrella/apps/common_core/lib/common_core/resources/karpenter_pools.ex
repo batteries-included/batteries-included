@@ -45,6 +45,29 @@ defmodule CommonCore.Resources.KarpenterPools do
     |> B.spec(spec)
   end
 
+  resource(:bottlerocket_node_class, battery, state) do
+    cluster_name = Core.config_field(state, :cluster_name)
+
+    spec = %{
+      "amiFamily" => "Bottlerocket",
+      "amiSelectorTerms" => [%{"alias" => battery.config.bottlerocket_ami_alias}],
+      "role" => battery.config.node_role_name,
+      "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
+      "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
+      "tags" => %{
+        "karpenter.sh/discovery" => cluster_name,
+        "batteriesincl.com/managed" => "true",
+        "batteriesincl.com/environment" => "organization/bi/#{cluster_name}",
+        "Name" => "#{cluster_name}-fleet"
+      }
+    }
+
+    :karpenter_ec2node_class
+    |> B.build_resource()
+    |> B.name("bottlerocket")
+    |> B.spec(spec)
+  end
+
   resource(:default_node_pool) do
     spec = %{
       "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmpty"},
@@ -93,7 +116,7 @@ defmodule CommonCore.Resources.KarpenterPools do
       "limits" => %{"cpu" => 1000},
       "template" => %{
         "spec" => %{
-          "nodeClassRef" => %{"name" => "default", "group" => "karpenter.k8s.aws", "kind" => "EC2NodeClass"},
+          "nodeClassRef" => %{"name" => "bottlerocket", "group" => "karpenter.k8s.aws", "kind" => "EC2NodeClass"},
           "requirements" => [
             %{"key" => "kubernetes.io/arch", "operator" => "In", "values" => ["amd64"]},
             %{"key" => "karpenter.sh/capacity-type", "operator" => "In", "values" => ["spot", "on-demand"]},
