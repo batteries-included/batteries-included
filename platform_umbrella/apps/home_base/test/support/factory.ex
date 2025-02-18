@@ -11,6 +11,7 @@ defmodule HomeBase.Factory do
 
   defdelegate usage_report_factory(), to: CommonCore.Factory
   defdelegate host_report_factory(), to: CommonCore.Factory
+  defdelegate project_factory(), to: CommonCore.Factory
 
   defdelegate installation_factory(args), to: CommonCore.Factory
 

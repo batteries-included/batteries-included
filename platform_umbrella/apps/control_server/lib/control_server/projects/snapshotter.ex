@@ -22,7 +22,7 @@ defmodule ControlServer.Projects.Snapshoter do
       values =
         res
         |> Map.put(:description, project.description)
-        |> Map.put(:captured_at, DateTime.utc_now())
+        |> Map.put(:name, "Generated snapshot for project #{project.name}")
 
       {:ok, struct!(ProjectSnapshot, values)}
     end
