@@ -17,6 +17,7 @@ permissions:
 
 env:
   PUSH: 'false'
+  ASDF_BRANCH: v0.15.0
 
 jobs:
   build-images:
@@ -26,6 +27,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
+        with:
+          asdf_branch: ${{ env.ASDF_BRANCH }}
       - name: Cache ASDF
         uses: actions/cache@v4
         id: asdf-cache
@@ -42,7 +45,7 @@ jobs:
         # See https://github.com/asdf-vm/actions/issues/445
         if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         with:
-          asdf_branch: v0.14.1
+          asdf_branch: ${{ env.ASDF_BRANCH }}
 
       - name: Reshim ASDF
         shell: bash
