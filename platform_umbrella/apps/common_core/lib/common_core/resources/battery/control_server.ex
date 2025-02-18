@@ -141,56 +141,31 @@ defmodule CommonCore.Resources.ControlServer do
     |> F.require(battery.config.usage != :internal_dev)
   end
 
-  defp main_container_base_args(state) do
-    image_ver =
-      state
-      |> Core.controlserver_image()
-      |> String.split(":")
-      |> List.last()
-
-    base = %{
+  defp main_container_base_args(_state) do
+    %{
       "command" => ["/app/bin/start", "control_server"],
-      "ports" => [%{"containerPort" => @server_port}]
+      "ports" => [%{"containerPort" => @server_port}],
+      "readinessProbe" => %{
+        "httpGet" => %{
+          "path" => "/healthz",
+          "port" => @server_port
+        },
+        # Try for 3 minutes to get ready
+        "periodSeconds" => 5,
+        "failureThreshold" => 60
+      },
+      "livenessProbe" => %{
+        "httpGet" => %{
+          "path" => "/healthz",
+          "port" => @server_port
+        },
+        # Wait until we have for sure been
+        # ready until testing liveness
+        "initialDelaySeconds" => 300,
+        "periodSeconds" => 30,
+        "failureThreshold" => 5
+      }
     }
-
-    # This is a HACK.
-    #
-    # In 0.29.0 we added the /healthz endpoint to the control server
-    # however the current stable version :0.28.0-6d94089 doesn't have it.
-    #
-    # This is a temporary fix until we can get the control server in stable
-    # to have a /healthz endpoint.
-    case CommonCore.Version.compare(image_ver, "0.28.0-6d94089") do
-      {:ok, :greater} ->
-        Map.merge(
-          base,
-          %{
-            "readinessProbe" => %{
-              "httpGet" => %{
-                "path" => "/healthz",
-                "port" => @server_port
-              },
-              # Try for 3 minutes to get ready
-              "periodSeconds" => 5,
-              "failureThreshold" => 60
-            },
-            "livenessProbe" => %{
-              "httpGet" => %{
-                "path" => "/healthz",
-                "port" => @server_port
-              },
-              # Wait until we have for sure been
-              # ready until testing liveness
-              "initialDelaySeconds" => 300,
-              "periodSeconds" => 30,
-              "failureThreshold" => 5
-            }
-          }
-        )
-
-      _ ->
-        base
-    end
   end
 
   defp control_container(battery, state, options) do
