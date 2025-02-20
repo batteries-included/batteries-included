@@ -121,7 +121,7 @@ defmodule KubeServices.ET.HomeBaseClient do
 
   defp build_client(%State{home_url: home_url, http_client: nil} = state) do
     client = Tesla.client(middleware(home_url))
-    %State{state | http_client: client}
+    %{state | http_client: client}
   end
 
   defp middleware(base_url) do

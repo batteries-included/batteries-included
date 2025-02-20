@@ -34,13 +34,13 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
   @impl GenServer
   def handle_info({_action, _object}, %State{timer_reference: ref} = state) do
     Logger.debug("Database event received, scheduling creation", state: state)
-    {:noreply, %State{state | timer_reference: schedule_start(ref)}}
+    {:noreply, %{state | timer_reference: schedule_start(ref)}}
   end
 
   @impl GenServer
   def handle_info(:do_start_creation, state) do
     _ = Worker.start()
-    {:noreply, %State{state | timer_reference: nil}}
+    {:noreply, %{state | timer_reference: nil}}
   end
 
   # handle scheduling start without overlapping

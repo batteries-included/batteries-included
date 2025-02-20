@@ -118,7 +118,7 @@ defmodule KubeServices.SystemState.Summarizer do
 
     base = struct(StateSummary, base_map)
 
-    summary = %StateSummary{
+    summary = %{
       base
       | keycloak_state: keycloak,
         kube_state: kube,

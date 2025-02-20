@@ -46,7 +46,7 @@ defmodule KubeServices.SnapshotApply.FailedKeycloakLauncher do
   def handle_info(:start_apply, state) do
     # should we handle the worker not starting?
     _ = Worker.start()
-    {:noreply, %State{state | timer_reference: nil}}
+    {:noreply, %{state | timer_reference: nil}}
   end
 
   # kick off the loop when there's a snapshot error
@@ -69,7 +69,7 @@ defmodule KubeServices.SnapshotApply.FailedKeycloakLauncher do
     new_delay = min(max_delay, delay * 2)
     Logger.warning("After a failed snapshot scheduling the next retry in #{new_delay}")
 
-    %State{
+    %{
       state
       | timer_reference: Process.send_after(self(), :start_apply, delay),
         delay: new_delay
@@ -87,6 +87,6 @@ defmodule KubeServices.SnapshotApply.FailedKeycloakLauncher do
 
   defp reset_delay(%State{initial_delay: init_delay} = state) do
     Logger.debug("Successful apply, resetting delay back to initial values #{init_delay}")
-    %State{state | delay: init_delay}
+    %{state | delay: init_delay}
   end
 end

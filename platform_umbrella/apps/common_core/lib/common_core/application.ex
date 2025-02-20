@@ -4,9 +4,6 @@ defmodule CommonCore.Application do
   use Application
 
   def start(_type, _args) do
-    # Make sure JOSE is using the fast curve25519 implementation
-    :ok = JOSE.curve25519_module(:libdecaf)
-
     children = [
       # Finch worker for HTTP requests
       # used by Tesla adapter in ET and Keycloak

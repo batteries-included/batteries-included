@@ -129,5 +129,5 @@ defmodule CommonCore.StateSummary.URLs do
   def append_path_to_string(uri, path), do: uri |> URI.append_path(path) |> URI.to_string()
 
   defp build_uri(host, false = _ssl_enabled?), do: URI.new!("http://#{host}")
-  defp build_uri(host, true = _ssl_enabled?), do: %URI{URI.new!("https://#{host}") | scheme: "https", port: 443}
+  defp build_uri(host, true = _ssl_enabled?), do: %{URI.new!("https://#{host}") | scheme: "https", port: 443}
 end

@@ -8,6 +8,7 @@ defmodule ControlServer.Factory do
   use ExMachina.Ecto, repo: ControlServer.Repo
 
   alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.Knative.Service
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres
   alias CommonCore.Redis.RedisInstance
@@ -130,9 +131,9 @@ defmodule ControlServer.Factory do
     }
   end
 
-  @spec knative_service_factory() :: CommonCore.Knative.Service.t()
+  @spec knative_service_factory() :: Service.t()
   def knative_service_factory do
-    %CommonCore.Knative.Service{
+    %Service{
       name: sequence("knative-service-"),
       rollout_duration: sequence(:rollout_duration, ["10s", "1m", "2m", "10m", "20m", "30m"]),
       oauth2_proxy: sequence(:oauth2_proxy, [true, false]),

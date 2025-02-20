@@ -476,7 +476,7 @@ defmodule CommonCore.Ecto.Schema do
 
     changeset =
       if action do
-        %Changeset{changeset | action: action}
+        %{changeset | action: action}
       else
         changeset
       end

@@ -42,7 +42,7 @@ defmodule Verify.KindInstallWorker do
       {output, 0} ->
         Logger.debug("Kind install started from #{path}")
 
-        {:reply, {:ok, extract_url(output)}, %State{state | started: [path | state.started]}}
+        {:reply, {:ok, extract_url(output)}, %{state | started: [path | state.started]}}
 
       respone ->
         Logger.warning("Unable to start Kind install from #{path}")
@@ -55,7 +55,7 @@ defmodule Verify.KindInstallWorker do
       :ok = do_stop(state, path)
     end)
 
-    {:reply, :ok, %State{state | started: []}}
+    {:reply, :ok, %{state | started: []}}
   end
 
   defp do_stop(state, path) do

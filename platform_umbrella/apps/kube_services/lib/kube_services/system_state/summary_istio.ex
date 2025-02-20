@@ -40,7 +40,7 @@ defmodule KubeServices.SystemState.SummaryIstio do
     gateways = FromKubeState.all_resources(summary, :istio_gateway)
 
     {:noreply,
-     %State{
+     %{
        state
        | virtual_services: virtual_services,
          gateways: gateways

@@ -60,13 +60,13 @@ defmodule KubeServices.Stale.Reaper do
 
     # Enque a run that will check again.
     schedule_worker(60_000)
-    {:noreply, %State{state | waiting_count: state.waiting_count + added}}
+    {:noreply, %{state | waiting_count: state.waiting_count + added}}
   end
 
   @impl GenServer
   def handle_info({:maybe_reap, _suspected_stale}, %State{running: false} = state) do
     Logger.warning("Stale worker not running.")
-    {:noreply, %State{state | waiting_count: state.waiting_count - 1}}
+    {:noreply, %{state | waiting_count: state.waiting_count - 1}}
   end
 
   @impl GenServer
@@ -82,7 +82,7 @@ defmodule KubeServices.Stale.Reaper do
       Logger.info("Stale reap result = #{inspect(res)}")
     end
 
-    {:noreply, %State{state | waiting_count: state.waiting_count - 1}}
+    {:noreply, %{state | waiting_count: state.waiting_count - 1}}
   end
 
   defp schedule_worker(delay) do

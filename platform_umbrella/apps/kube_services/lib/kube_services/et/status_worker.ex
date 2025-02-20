@@ -79,7 +79,7 @@ defmodule KubeServices.ET.InstallStatusWorker do
     Logger.info("No install_id was provided to the InstallStatusWorker")
 
     if state.last_status.status == :ok do
-      {:noreply, %State{state | last_status: InstallStatus.new_unknown!()}}
+      {:noreply, %{state | last_status: InstallStatus.new_unknown!()}}
     else
       {:noreply, state}
     end
@@ -92,7 +92,7 @@ defmodule KubeServices.ET.InstallStatusWorker do
          {:ok, ^install_id} <- BatteryUUID.cast(status.iss) do
       _ = schedule_report(state)
       Logger.info("Status of the installation is #{inspect(status)}")
-      {:noreply, %State{state | last_status: status}}
+      {:noreply, %{state | last_status: status}}
     else
       {:error, error} ->
         Logger.error("Error checking the status of the installation: #{inspect(error)}")
@@ -106,7 +106,7 @@ defmodule KubeServices.ET.InstallStatusWorker do
         #
         # If it's unknown then keep it unknown with the timer running so it will timeout
         if state.last_status.status == :ok do
-          {:noreply, %State{state | last_status: InstallStatus.new_unknown!()}}
+          {:noreply, %{state | last_status: InstallStatus.new_unknown!()}}
         else
           {:noreply, state}
         end

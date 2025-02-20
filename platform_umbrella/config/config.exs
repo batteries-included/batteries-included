@@ -10,6 +10,7 @@
 import Config
 
 alias CommonUI.Components.Table
+alias Tesla.Adapter.Finch
 
 config :common_core, CommonCore.Defaults, version_override: System.get_env("VERSION_OVERRIDE", nil)
 
@@ -118,7 +119,7 @@ config :logger,
 
 config :oauth2,
   debug: false,
-  adapter: {Tesla.Adapter.Finch, [timeout: 10_500, name: CommonCore.Finch]},
+  adapter: {Finch, [timeout: 10_500, name: CommonCore.Finch]},
   middleware: [Tesla.Middleware.Telemetry, {Tesla.Middleware.Timeout, timeout: 10_000}]
 
 # Use Jason for JSON parsing in Phoenix
@@ -126,7 +127,7 @@ config :phoenix, :json_library, Jason
 
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: CommonCore.Finch
 
-config :tesla, adapter: {Tesla.Adapter.Finch, [timeout: 30_000, name: CommonCore.Finch]}
+config :tesla, adapter: {Finch, [timeout: 30_000, name: CommonCore.Finch]}
 
 config :verify, :bi_bin_override, System.get_env("BI_BIN_OVERRIDE", nil)
 

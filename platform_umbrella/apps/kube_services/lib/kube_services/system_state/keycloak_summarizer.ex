@@ -77,7 +77,7 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
   defp add_clients(%RealmRepresentation{realm: name} = realm) do
     case AdminClient.clients(name) do
       {:ok, clients} ->
-        %RealmRepresentation{realm | clients: clients}
+        %{realm | clients: clients}
 
       _ ->
         realm
@@ -87,7 +87,7 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
   defp add_users(%RealmRepresentation{realm: name} = realm) do
     case AdminClient.users(name) do
       {:ok, users} ->
-        %RealmRepresentation{realm | users: users}
+        %{realm | users: users}
 
       _ ->
         realm
@@ -97,7 +97,7 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
   defp add_required_actions(%RealmRepresentation{realm: name} = realm) do
     case AdminClient.required_actions(name) do
       {:ok, actions} ->
-        %RealmRepresentation{realm | requiredActions: actions}
+        %{realm | requiredActions: actions}
 
       _ ->
         realm
@@ -107,7 +107,7 @@ defmodule KubeServices.SystemState.KeycloakSummarizer do
   defp add_flows(%RealmRepresentation{realm: name} = realm) do
     case AdminClient.flows(name) do
       {:ok, flows} ->
-        %RealmRepresentation{realm | authenticationFlows: flows}
+        %{realm | authenticationFlows: flows}
 
       _ ->
         realm
