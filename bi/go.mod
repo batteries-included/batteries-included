@@ -11,14 +11,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.15
 	github.com/aws/smithy-go v1.22.3
 	github.com/dghubble/ipnets v1.0.0
-	github.com/docker/docker v27.5.1+incompatible
+	github.com/docker/docker v28.0.0+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/go-jose/go-jose/v4 v4.0.4
 	github.com/lmittmann/tint v1.0.7
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.68.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.69.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.10
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.1.0
 	github.com/pulumi/pulumi/sdk/v3 v3.150.0
