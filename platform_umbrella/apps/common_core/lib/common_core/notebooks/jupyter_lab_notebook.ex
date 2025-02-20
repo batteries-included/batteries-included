@@ -82,6 +82,8 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     field :memory_requested, :integer
     field :memory_limits, :integer
 
+    field :node_type, Ecto.Enum, values: ~w(default nvidia_gpu)a, default: :default
+
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true
 
