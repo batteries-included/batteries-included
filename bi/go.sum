@@ -96,8 +96,8 @@ github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5Qvfr
 github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
 github.com/djherbis/times v1.6.0 h1:w2ctJ92J8fBvWPxugmXIv7Nz7Q3iDMKNx9v5ocVH20c=
 github.com/djherbis/times v1.6.0/go.mod h1:gOHeRAz2h+VJNZ5Gmc/o7iD9k4wW7NMVqieYCY99oc0=
-github.com/docker/docker v27.5.1+incompatible h1:4PYU5dnBYqRQi0294d1FBECqT9ECWeQAIfE8q4YnPY8=
-github.com/docker/docker v27.5.1+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
+github.com/docker/docker v28.0.0+incompatible h1:Olh0KS820sJ7nPsBKChVhk5pzqcwDR15fumfAd/p9hM=
+github.com/docker/docker v28.0.0+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
 github.com/docker/go-connections v0.5.0 h1:USnMq7hx7gwdVZq1L49hLXaFtUdTADjXGp+uj1Br63c=
 github.com/docker/go-connections v0.5.0/go.mod h1:ov60Kzw0kKElRwhNs9UlUHAE/F9Fe6GLaXnqyDdmEXc=
 github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
@@ -320,8 +320,8 @@ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
 github.com/pulumi/esc v0.11.1 h1:Ky07sE4lQmB6Ve2A3M3g+i0Y2No4nRVbDaCjTccuLII=
 github.com/pulumi/esc v0.11.1/go.mod h1:iCs5bP1xvleSzcMDwfNc1Ym/6EJ2P6xmrjy0iqb0ATs=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.68.0 h1:YfTi+BYKwNqlZ5Ghm6qDyf9iH57mg8Khlyeq6mCjTKM=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.68.0/go.mod h1:xQqdtDzLJQigNJykqhwEGwru8dzKaaorQ4MGXNzX1Lo=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.69.0 h1:SO9xo9PIgufYORBPx82lSQN0CLg1CMab+rR6JJnGv/c=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.69.0/go.mod h1:OaqbSRCkPxr8XpanQ7u3Xup9MgSnyqQFDxNhV2pXWzw=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.10 h1:oldSXFOKLVumUGV97uA3lwC6fLv5IUSPOI3OXuvKDr4=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.10/go.mod h1:MpllvEZByG9fUtN+JotOFLnXtLQDO0T6y3c+DybSVGo=
 github.com/pulumi/pulumi-tls/sdk/v5 v5.1.0 h1:eLl9zlIWn0APS5ol+jX7rndH3SYH7YtGc6+YKCDpoj0=
