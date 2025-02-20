@@ -1,7 +1,6 @@
 defmodule CommonCore.Installs.Batteries do
   @moduledoc false
 
-  alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Batteries.SystemBattery

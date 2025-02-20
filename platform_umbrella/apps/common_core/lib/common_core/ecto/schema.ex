@@ -159,8 +159,6 @@ defmodule CommonCore.Ecto.Schema do
   """
   import CommonCore.Ecto.Validations
 
-  alias Ecto.Changeset
-
   require TypedEctoSchema
 
   defmacro __using__(_ots \\ []) do
