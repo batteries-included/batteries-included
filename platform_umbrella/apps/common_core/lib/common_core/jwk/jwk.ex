@@ -99,6 +99,12 @@ defmodule CommonCore.JWK do
 
     jwk = to_jwk(jwk)
 
+    # This line make dialyzer very upset.
+    # block_encrypt accepts a tuple with two elements
+    # for public keys
+    #
+    # However that fact is not in the dialyzer spec
+    # and so it gets upset.
     case JOSE.JWE.block_decrypt({to_jwk(sign_jwk), to_jwk(jwk)}, token) do
       {:error, _} ->
         nil
