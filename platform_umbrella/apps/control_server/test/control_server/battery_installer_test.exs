@@ -39,7 +39,7 @@ defmodule ControlServer.Batteries.InstallerTest do
       :install_spec
       |> build(usage: :kitchen_sink, kube_provider: :kind, default_size: "small")
       |> then(fn spec ->
-        ControlServer.Batteries.Installer.install_all(spec.target_summary.batteries)
+        Installer.install_all(spec.target_summary.batteries)
       end)
 
       assert ControlServer.Repo.aggregate(SystemBattery, :count, :id) >= 4

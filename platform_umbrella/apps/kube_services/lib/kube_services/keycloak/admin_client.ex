@@ -465,7 +465,7 @@ defmodule KubeServices.Keycloak.AdminClient do
            |> OAuth2.Client.get_token(username: state.username, password: state.password) do
       Logger.info("Logged in getting a token that expires at #{inspect(Map.get(client.token, :expires_at, nil))}")
 
-      %State{
+      %{
         state
         | token: client.token,
           authorization_url: well_known.authorization_endpoint,
@@ -492,11 +492,11 @@ defmodule KubeServices.Keycloak.AdminClient do
            |> OAuth2.Client.refresh_token() do
         {:ok, client} ->
           Logger.debug("Refreshed token that expires at #{inspect(Map.get(client.token || %{}, :expires_at, nil))}")
-          %State{state | token: client.token}
+          %{state | token: client.token}
 
         {:error, error} ->
           Logger.warning("Failed to refresh token #{inspect(error)}", error: error)
-          maybe_login(%State{state | token: nil})
+          maybe_login(%{state | token: nil})
       end
     else
       state

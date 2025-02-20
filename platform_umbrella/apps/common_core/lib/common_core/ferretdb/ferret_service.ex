@@ -1,7 +1,7 @@
 defmodule CommonCore.FerretDB.FerretService do
   @moduledoc false
 
-  use CommonCore, {:schema, no_encode: [:project]}
+  use CommonCore, {:schema, no_encode: [:project, :postgres_cluster]}
 
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory

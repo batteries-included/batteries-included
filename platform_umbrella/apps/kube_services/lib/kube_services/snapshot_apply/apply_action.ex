@@ -164,7 +164,7 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
        do: {:ok, :requirement_matched}
 
   defp require_flow_execution(realm, alias, %AuthenticationExecutionInfoRepresentation{} = execution, desired) do
-    updated = %AuthenticationExecutionInfoRepresentation{execution | requirement: desired}
+    updated = %{execution | requirement: desired}
     AdminClient.update_flow_execution(realm, alias, updated)
   end
 end

@@ -94,12 +94,12 @@ defmodule KubeServices.SnapshotApply.Worker do
   end
 
   def handle_call({:set_running, running}, _from, %State{running: was_running} = state) do
-    {:reply, was_running, %State{state | running: running}}
+    {:reply, was_running, %{state | running: running}}
   end
 
   def handle_cast({:perform, umbrella_snapshot}, %State{} = state) do
     :ok = do_perform(umbrella_snapshot, state)
-    {:noreply, %State{state | last_success: DateTime.utc_now()}}
+    {:noreply, %{state | last_success: DateTime.utc_now()}}
   end
 
   defp do_start(false), do: {:ok, nil}

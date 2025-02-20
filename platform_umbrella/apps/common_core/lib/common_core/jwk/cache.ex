@@ -45,7 +45,7 @@ defmodule CommonCore.JWK.Cache do
 
   defp read(%{loader: loader, cache: cache} = state, key_name) do
     key = loader.get(key_name)
-    new_state = %State{state | cache: Map.put(cache, key_name, key)}
+    new_state = %{state | cache: Map.put(cache, key_name, key)}
     {:reply, key, new_state}
   end
 end

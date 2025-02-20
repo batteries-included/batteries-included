@@ -122,7 +122,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
       |> Enum.reject(fn {k, _v} -> k == schema_name end)
       |> Map.new()
 
-    {[module | result], %State{state | modules: Map.delete(state.modules, schema_name), deps: new_deps}}
+    {[module | result], %{state | modules: Map.delete(state.modules, schema_name), deps: new_deps}}
   end
 
   defp add(state, open_api, schema_name) do
@@ -143,7 +143,7 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp do_add(state, open_api, schema_name, schema) do
     {seen, schema} = definition(schema, schema_name, open_api)
 
-    with_this = %State{
+    with_this = %{
       state
       | modules: Map.put(state.modules, schema_name, schema),
         deps: Map.put(state.deps, schema_name, seen)

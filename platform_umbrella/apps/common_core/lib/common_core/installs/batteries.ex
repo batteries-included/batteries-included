@@ -1,7 +1,6 @@
 defmodule CommonCore.Installs.Batteries do
   @moduledoc false
 
-  alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
   alias CommonCore.Batteries.SystemBattery
@@ -101,7 +100,7 @@ defmodule CommonCore.Installs.Batteries do
          usage: usage,
          control_jwk: control_jwk
        }) do
-    new_config = %BatteryCoreConfig{
+    new_config = %{
       config
       | cluster_type: cluster_type,
         default_size: default_size,
@@ -111,7 +110,7 @@ defmodule CommonCore.Installs.Batteries do
         usage: usage
     }
 
-    %SystemBattery{sb | config: new_config}
+    %{sb | config: new_config}
   end
 
   defp enrich_single_battery_config(battery, _install) do

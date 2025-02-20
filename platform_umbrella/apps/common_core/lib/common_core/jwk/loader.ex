@@ -7,7 +7,7 @@ defmodule CommonCore.JWK.Loader do
     test_pub: "priv/keys/test.pub.pem",
     test: "priv/keys/test.pem"
 
-  require Logger
+  require(Logger)
 
   @env_name "HOME_JWK"
 

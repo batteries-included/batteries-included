@@ -159,8 +159,6 @@ defmodule CommonCore.Ecto.Schema do
   """
   import CommonCore.Ecto.Validations
 
-  alias Ecto.Changeset
-
   require TypedEctoSchema
 
   defmacro __using__(_ots \\ []) do
@@ -476,7 +474,7 @@ defmodule CommonCore.Ecto.Schema do
 
     changeset =
       if action do
-        %Changeset{changeset | action: action}
+        %{changeset | action: action}
       else
         changeset
       end

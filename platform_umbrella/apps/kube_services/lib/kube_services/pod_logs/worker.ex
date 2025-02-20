@@ -94,7 +94,7 @@ defmodule KubeServices.PodLogs.Worker do
       |> K8s.Client.put_conn(conn)
       |> K8s.Client.stream_to(self())
 
-    {:noreply, %State{state | conn: conn}}
+    {:noreply, %{state | conn: conn}}
   end
 
   @impl GenServer

@@ -32,7 +32,7 @@ defmodule KubeServices.ET.StableVersionsWorker do
 
   def handle_info(:fetch_versions, %State{home_base_client_pid: nil} = state) do
     Logger.info("Home base client is not set")
-    {:noreply, %State{state | cached: StableVersionsReport.new!()}}
+    {:noreply, %{state | cached: StableVersionsReport.new!()}}
   end
 
   def handle_info(:fetch_versions, %State{home_base_client_pid: client} = state) do
@@ -40,7 +40,7 @@ defmodule KubeServices.ET.StableVersionsWorker do
 
     case HomeBaseClient.get_stable_versions(client) do
       {:ok, %StableVersionsReport{} = report} ->
-        {:noreply, %State{state | cached: report}}
+        {:noreply, %{state | cached: report}}
 
       {:error, _reason} ->
         {:noreply, state}

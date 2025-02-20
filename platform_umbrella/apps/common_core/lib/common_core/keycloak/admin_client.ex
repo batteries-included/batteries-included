@@ -365,7 +365,7 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   @spec reset_tokens(State.t()) :: State.t()
   defp reset_tokens(state) do
-    %State{
+    %{
       state
       | refresh_token: nil,
         refresh_expire: nil,
@@ -439,16 +439,16 @@ defmodule CommonCore.Keycloak.AdminClient do
   end
 
   defp build_bearer_client(%State{access_token: token, base_url: base_url, adapter: adapter} = state) do
-    %State{state | bearer_client: TeslaBuilder.build_client(base_url, token, adapter)}
+    %{state | bearer_client: TeslaBuilder.build_client(base_url, token, adapter)}
   end
 
   defp build_base_client(%State{base_url: base_url, adapter: adapter} = state) do
-    %State{state | base_client: TeslaBuilder.build_client(base_url, nil, adapter)}
+    %{state | base_client: TeslaBuilder.build_client(base_url, nil, adapter)}
   end
 
   @spec update_token(TokenAcquirer.TokenResult.t(), State.t()) :: State.t()
   defp update_token(%TokenAcquirer.TokenResult{} = token_result, state) do
-    build_bearer_client(%State{
+    build_bearer_client(%{
       state
       | access_token: token_result.access_token,
         refresh_token: token_result.refresh_token,

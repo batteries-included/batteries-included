@@ -21,4 +21,14 @@ defmodule HomeBaseWeb.StoredProjectSnapshotController do
       |> render(:show, stored_project_snapshot: stored_project_snapshot)
     end
   end
+
+  def index(conn, %{"installation_id" => install_id}) do
+    installation = CustomerInstalls.get_installation!(install_id)
+
+    payload = %{snapshots: Projects.snapshots_for(installation), captured: DateTime.utc_now()}
+
+    conn
+    |> put_status(:ok)
+    |> render(:index, payload: CommonCore.JWK.encrypt(installation.control_jwk, payload))
+  end
 end

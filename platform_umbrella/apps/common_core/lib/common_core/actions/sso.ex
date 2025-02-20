@@ -72,7 +72,7 @@ defmodule CommonCore.Actions.SSO do
           action: :sync,
           type: :required_action,
           realm: name,
-          value: Map.from_struct(%RequiredActionProviderRepresentation{action | defaultAction: mfa})
+          value: Map.from_struct(%{action | defaultAction: mfa})
         }
     end
   end

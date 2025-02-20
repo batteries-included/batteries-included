@@ -58,7 +58,6 @@ defmodule CommonCore.MixProject do
       {:bcrypt_elixir, "~> 3.0"},
       # Token/Signing
       {:jose, "~> 1.11"},
-      {:libdecaf, "~> 2.1.1"},
       {:plug, "~> 1.16"},
       # History
       {:ex_audit, "~> 0.10"},

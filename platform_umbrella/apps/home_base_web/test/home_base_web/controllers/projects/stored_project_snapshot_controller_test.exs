@@ -23,4 +23,15 @@ defmodule HomeBaseWeb.StoredProjectSnapshotControllerTest do
       assert %{"id" => _id} = json_response(conn, 201)["data"]
     end
   end
+
+  test "can get snapshots", %{conn: conn, installation: install} do
+    snapshot_args = params_for(:project)
+
+    conn =
+      post(conn, ~p"/api/v1/installations/#{install.id}/project_snapshots", jwt: sign(install.control_jwk, snapshot_args))
+
+    conn = get(conn, ~p"/api/v1/installations/#{install.id}/project_snapshots")
+
+    assert %{} = json_response(conn, 200)["data"]
+  end
 end
