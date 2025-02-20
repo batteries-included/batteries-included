@@ -10,6 +10,8 @@ defmodule CommonCore.JWK do
   @default_curve {:ec, "P-256"}
   @sign_algo "ES256"
 
+  @dialyzer {:nowarn_function, decrypt: 2}
+
   @doc """
   Generate a new JWK in a form usable for embedding into ecto rows in a map field
   """
