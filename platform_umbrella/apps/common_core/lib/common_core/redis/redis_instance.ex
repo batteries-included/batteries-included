@@ -1,7 +1,7 @@
 defmodule CommonCore.Redis.RedisInstance do
   @moduledoc false
 
-  use CommonCore, {:schema, no_encode: [:project]}
+  use CommonCore, {:schema, no_encode: [:project, :replication_redis_instance, :sentinel_instances]}
 
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory

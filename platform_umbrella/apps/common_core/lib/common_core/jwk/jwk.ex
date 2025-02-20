@@ -7,15 +7,14 @@ defmodule CommonCore.JWK do
 
   require Logger
 
-  # We picked a curve that all the experts seem to say is the latest
-  # and least likely to have issues.
-  @default_curve {:okp, :Ed25519}
+  @default_curve {:ec, "P-256"}
+  @sign_algo "ES256"
 
   @doc """
   Generate a new JWK in a form usable for embedding into ecto rows in a map field
   """
   def generate_key do
-    {%{kty: :jose_jwk_kty_okp_ed25519}, result} =
+    {%{kty: _}, result} =
       @default_curve
       |> JOSE.JWK.generate_key()
       |> JOSE.JWK.to_map()
@@ -28,7 +27,7 @@ defmodule CommonCore.JWK do
   """
   def public_key(jwk) do
     # All of our keys are the same so assert that here.
-    {%{kty: :jose_jwk_kty_okp_ed25519}, result} = JOSE.JWK.to_public_map(jwk)
+    {%{kty: _}, result} = JOSE.JWK.to_public_map(jwk)
 
     result
   end
@@ -41,7 +40,7 @@ defmodule CommonCore.JWK do
     #
     # That's because assumptions are made below. If this changes
     # then inspect the code carefully.
-    {%{kty: :jose_jwk_kty_okp_ed25519}, result} = JOSE.JWK.to_map(jwk)
+    {%{kty: _}, result} = JOSE.JWK.to_map(jwk)
 
     # For this key we have two parts.
     # Assue that x is known so if d is here then
@@ -67,8 +66,49 @@ defmodule CommonCore.JWK do
     jwk_name = sign_key()
     jwk = Cache.get(jwk_name)
 
-    {%{kty: :jose_jwk_kty_okp_ed25519}, result} = JOSE.JWK.to_map(jwk)
-    result |> JOSE.JWT.sign(payload) |> elem(1)
+    {%{kty: _}, result} = JOSE.JWK.to_map(jwk)
+    result |> JOSE.JWT.sign(%{"alg" => @sign_algo}, payload) |> elem(1)
+  end
+
+  def encrypt(for_key, payload) do
+    jwk_name = sign_key()
+    sign_jwk = jwk_name |> Cache.get() |> to_jwk()
+
+    for_key = to_jwk(for_key)
+
+    signed =
+      sign_jwk
+      |> JOSE.JWT.sign(%{"alg" => @sign_algo}, payload)
+      |> JOSE.JWS.compact()
+      |> elem(1)
+
+    {for_key, sign_jwk}
+    |> JOSE.JWE.block_encrypt(
+      signed,
+      %{
+        "alg" => "ECDH-ES",
+        "enc" => "A256GCM"
+      }
+    )
+    |> elem(1)
+  end
+
+  def decrypt(jwk, token) do
+    jwk_name = sign_key()
+    sign_jwk = jwk_name |> Cache.get() |> to_jwk()
+
+    jwk = to_jwk(jwk)
+
+    case JOSE.JWE.block_decrypt({to_jwk(sign_jwk), to_jwk(jwk)}, token) do
+      {:error, _} ->
+        nil
+
+      {value, _jwe} ->
+        sign_jwk
+        |> JOSE.JWS.verify_strict(["ES512"], value)
+        |> elem(1)
+        |> JSON.decode!()
+    end
   end
 
   def verify!(nil), do: raise(BadKeyError.exception())
@@ -107,5 +147,11 @@ defmodule CommonCore.JWK do
       # - The key is not present
       _ -> nil
     end
+  end
+
+  def to_jwk(%JOSE.JWK{} = jwk), do: jwk
+
+  def to_jwk(jwk) when is_map(jwk) do
+    JOSE.JWK.from_map(jwk)
   end
 end

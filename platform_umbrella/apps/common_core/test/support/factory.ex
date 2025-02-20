@@ -65,6 +65,7 @@ defmodule CommonCore.Factory do
     control_jwk = Map.get_lazy(attrs, :control_jwk, fn -> CommonCore.JWK.generate_key() end)
 
     user_id = Map.get(attrs, :user_id, nil)
+    team_id = Map.get(attrs, :team_id, nil)
 
     attrs = Map.take(attrs, ~w(slug kube_provider kube_provider_config default_size initial_oauth_email)a)
 
@@ -75,6 +76,7 @@ defmodule CommonCore.Factory do
       usage: usage,
       control_jwk: control_jwk,
       user_id: user_id,
+      team_id: team_id,
       default_size: sequence(:default_size, Options.sizes())
     }
     |> merge_attributes(attrs)

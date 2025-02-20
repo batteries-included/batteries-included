@@ -8,6 +8,10 @@ defmodule HomeBaseWeb.StoredProjectSnapshotJSON do
     %{data: data(stored_project_snapshot)}
   end
 
+  def index(%{payload: payload}) do
+    %{data: payload}
+  end
+
   defp data(%StoredProjectSnapshot{} = stored_project_snapshot) do
     %{
       id: stored_project_snapshot.id
