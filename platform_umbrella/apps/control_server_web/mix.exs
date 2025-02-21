@@ -64,7 +64,6 @@ defmodule ControlServerWeb.MixProject do
       {:phoenix_live_dashboard, "~> 0.8"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
-      {:phoenix_live_reload, "~> 1.5", only: :dev},
       {:phoenix_live_view, "~> 1.0", override: true},
       {:flop_phoenix, "~> 0.23"},
 
@@ -72,7 +71,7 @@ defmodule ControlServerWeb.MixProject do
       {:logger_json, "~> 6.0"},
 
       # Development
-      {:phoenix_live_reload, "~> 1.3", only: :dev},
+      {:phoenix_live_reload, "~> 1.5", only: :dev},
       # Testing
       {:ex_machina, "~> 2.7", only: [:dev, :test]},
       {:heyya, "~> 1.0", only: [:dev, :test]}
