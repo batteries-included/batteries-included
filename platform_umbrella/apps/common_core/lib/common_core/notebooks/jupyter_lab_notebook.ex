@@ -66,6 +66,11 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   @required_fields ~w(name image)a
   @read_only_fields ~w(name)a
 
+  @node_types [
+    default: "None",
+    any_nvidia: "Any Nvidia GPU"
+  ]
+
   batt_schema "jupyter_lab_notebooks" do
     slug_field :name
 
@@ -81,6 +86,8 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     field :cpu_limits, :integer
     field :memory_requested, :integer
     field :memory_limits, :integer
+
+    field :node_type, Ecto.Enum, values: Keyword.keys(@node_types), default: :default
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true
@@ -142,4 +149,6 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   def preset_options_for_select do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name})
   end
+
+  def node_types_for_select, do: Enum.map(@node_types, fn {k, v} -> {v, k} end)
 end

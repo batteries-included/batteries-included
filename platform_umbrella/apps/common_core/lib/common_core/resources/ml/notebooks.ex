@@ -120,9 +120,12 @@ defmodule CommonCore.Resources.Notebooks do
               "volumeMounts" => [%{"mountPath" => "/opt/conda/share/jupyter/lab/settings/", "name" => "settings"}]
             }
           ],
-          "volumes" => [%{"configMap" => %{"name" => "#{@app_name}-settings-override"}, "name" => "settings"}]
+          "volumes" => [
+            %{"configMap" => %{"name" => "#{@app_name}-settings-override", "optional" => false}, "name" => "settings"}
+          ]
         }
       }
+      |> maybe_add_gpu_resource(notebook)
       |> B.app_labels(notebook.name)
       |> B.component_labels(notebook.name)
       |> B.label("battery/notebook", notebook.name)
@@ -143,6 +146,11 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.spec(spec)
     |> B.add_owner(notebook)
   end
+
+  defp maybe_add_gpu_resource(resource, %{node_type: :any_nvidia} = _notebook),
+    do: put_in(resource, ["spec", "containers", Access.all(), "resources"], %{"limits" => %{"nvidia.com/gpu" => 1}})
+
+  defp maybe_add_gpu_resource(resource, _notebook), do: resource
 
   defp service(notebook, _battery, state) do
     namespace = ai_namespace(state)
