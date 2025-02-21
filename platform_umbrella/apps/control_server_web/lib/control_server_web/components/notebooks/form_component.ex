@@ -210,6 +210,14 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
                 placeholder_selectable={true}
                 options={Enum.map(@projects, &{&1.name, &1.id})}
               />
+
+              <.input
+                field={@form[:node_type]}
+                type="select"
+                label="GPU"
+                placeholder="None"
+                options={JupyterLabNotebook.node_types_for_select()}
+              />
             </.flex>
           </.panel>
         </.grid>

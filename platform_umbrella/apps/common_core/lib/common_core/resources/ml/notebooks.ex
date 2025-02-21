@@ -147,7 +147,7 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.add_owner(notebook)
   end
 
-  defp maybe_add_gpu_resource(resource, %{node_type: :nvidia_gpu} = _notebook),
+  defp maybe_add_gpu_resource(resource, %{node_type: :any_nvidia} = _notebook),
     do: put_in(resource, ["spec", "containers", Access.all(), "resources"], %{"limits" => %{"nvidia.com/gpu" => 1}})
 
   defp maybe_add_gpu_resource(resource, _notebook), do: resource
