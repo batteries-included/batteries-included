@@ -151,6 +151,9 @@ defmodule CommonCore.Resources.KarpenterPools do
       "role" => role,
       "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
       "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
+      # allow containers to access the AWS metadata service
+      # necessary for e.g. aws-load-balancer-controller to run on karpenter nodes
+      # this also matches how we configure the bootstrap nodes
       "metadataOptions" => %{"httpPutResponseHopLimit" => 2},
       "tags" => %{
         "karpenter.sh/discovery" => cluster_name,
