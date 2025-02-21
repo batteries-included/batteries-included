@@ -25,19 +25,7 @@ defmodule CommonCore.Resources.KarpenterPools do
   resource(:defalt_node_class, battery, state) do
     cluster_name = Core.config_field(state, :cluster_name)
 
-    spec = %{
-      "amiFamily" => "AL2",
-      "amiSelectorTerms" => [%{"alias" => battery.config.ami_alias}],
-      "role" => battery.config.node_role_name,
-      "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
-      "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
-      "tags" => %{
-        "karpenter.sh/discovery" => cluster_name,
-        "batteriesincl.com/managed" => "true",
-        "batteriesincl.com/environment" => "organization/bi/#{cluster_name}",
-        "Name" => "#{cluster_name}-fleet"
-      }
-    }
+    spec = build_nodeclass_spec("AL2", battery.config.ami_alias, battery.config.node_role_name, cluster_name)
 
     :karpenter_ec2node_class
     |> B.build_resource()
@@ -48,19 +36,13 @@ defmodule CommonCore.Resources.KarpenterPools do
   resource(:bottlerocket_node_class, battery, state) do
     cluster_name = Core.config_field(state, :cluster_name)
 
-    spec = %{
-      "amiFamily" => "Bottlerocket",
-      "amiSelectorTerms" => [%{"alias" => battery.config.bottlerocket_ami_alias}],
-      "role" => battery.config.node_role_name,
-      "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
-      "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
-      "tags" => %{
-        "karpenter.sh/discovery" => cluster_name,
-        "batteriesincl.com/managed" => "true",
-        "batteriesincl.com/environment" => "organization/bi/#{cluster_name}",
-        "Name" => "#{cluster_name}-fleet"
-      }
-    }
+    spec =
+      build_nodeclass_spec(
+        "Bottlerocket",
+        battery.config.bottlerocket_ami_alias,
+        battery.config.node_role_name,
+        cluster_name
+      )
 
     :karpenter_ec2node_class
     |> B.build_resource()
@@ -160,5 +142,25 @@ defmodule CommonCore.Resources.KarpenterPools do
     |> B.build_resource()
     |> B.name("amd-gpu")
     |> B.spec(spec)
+  end
+
+  defp build_nodeclass_spec(family, alias, role, cluster_name) do
+    %{
+      "amiFamily" => family,
+      "amiSelectorTerms" => [%{"alias" => alias}],
+      "role" => role,
+      "securityGroupSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
+      "subnetSelectorTerms" => [%{"tags" => %{"karpenter.sh/discovery" => cluster_name}}],
+      # allow containers to access the AWS metadata service
+      # necessary for e.g. aws-load-balancer-controller to run on karpenter nodes
+      # this also matches how we configure the bootstrap nodes
+      "metadataOptions" => %{"httpPutResponseHopLimit" => 2},
+      "tags" => %{
+        "karpenter.sh/discovery" => cluster_name,
+        "batteriesincl.com/managed" => "true",
+        "batteriesincl.com/environment" => "organization/bi/#{cluster_name}",
+        "Name" => "#{cluster_name}-fleet"
+      }
+    }
   end
 end
