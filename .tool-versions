@@ -1,7 +1,7 @@
 awscli 2.22.34
 elixir 1.18.1-otp-27
 erlang 27.1.2
-golang 1.23.4
+golang 1.23.6
 goreleaser 2.6.1
 kind 0.26.0
 kubectl 1.32.0
