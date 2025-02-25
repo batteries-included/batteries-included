@@ -42,6 +42,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.MetalLBPools
   alias CommonCore.Resources.MetricsServer
   alias CommonCore.Resources.NodeExporter
+  alias CommonCore.Resources.NodeFeatureDiscovery
   alias CommonCore.Resources.Notebooks
   alias CommonCore.Resources.NvidiaDevicePlugin
   alias CommonCore.Resources.Ollama
@@ -78,6 +79,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     karpenter: [Karpenter, KarpenterPools],
     loki: [Loki],
     metallb: [MetalLB, MetalLBMonitoring, MetalLBPools],
+    node_feature_discovery: [NodeFeatureDiscovery],
     notebooks: [Notebooks],
     nvidia_device_plugin: [NvidiaDevicePlugin],
     ollama: [Ollama],

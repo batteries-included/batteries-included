@@ -167,6 +167,12 @@ defmodule CommonCore.Defaults.Images do
         tags: ~w(v1.8.1 v1.8.2),
         default_tag: "v1.8.2"
       }),
+    node_feature_discovery:
+      Image.new!(%{
+        name: "registry.k8s.io/nfd/node-feature-discovery",
+        tags: ~w(v0.17.2),
+        default_tag: "v0.17.2"
+      }),
     nvidia_device_plugin:
       Image.new!(%{
         name: "nvcr.io/nvidia/k8s-device-plugin",
