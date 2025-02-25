@@ -21,6 +21,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.KubeMonitoringConfig
   alias CommonCore.Batteries.LokiConfig
   alias CommonCore.Batteries.MetalLBConfig
+  alias CommonCore.Batteries.NodeFeatureDiscoveryConfig
   alias CommonCore.Batteries.NotebooksConfig
   alias CommonCore.Batteries.NvidiaDevicePluginConfig
   alias CommonCore.Batteries.OllamaConfig
@@ -69,6 +70,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     kube_monitoring: KubeMonitoringConfig,
     loki: LokiConfig,
     metallb: MetalLBConfig,
+    node_feature_discovery: NodeFeatureDiscoveryConfig,
     notebooks: NotebooksConfig,
     nvidia_device_plugin: NvidiaDevicePluginConfig,
     ollama: OllamaConfig,

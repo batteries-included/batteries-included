@@ -136,6 +136,13 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :magic,
+      type: :node_feature_discovery,
+      dependencies: [:battery_core],
+      name: "Node Feature Discovery",
+      description: "Node feature discovery for Kubernetes."
+    },
+    %CatalogBattery{
+      group: :magic,
       type: :project_export,
       dependencies: [:battery_core],
       name: "Project Export",

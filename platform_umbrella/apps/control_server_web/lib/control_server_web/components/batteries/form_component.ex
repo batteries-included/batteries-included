@@ -26,6 +26,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.KubeMonitoringForm
   alias ControlServerWeb.Batteries.LokiForm
   alias ControlServerWeb.Batteries.MetalLBForm
+  alias ControlServerWeb.Batteries.NodeFeatureDiscoveryForm
   alias ControlServerWeb.Batteries.NotebooksForm
   alias ControlServerWeb.Batteries.NvidiaDevicePluginForm
   alias ControlServerWeb.Batteries.OllamaForm
@@ -61,6 +62,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     kube_monitoring: KubeMonitoringForm,
     loki: LokiForm,
     metallb: MetalLBForm,
+    node_feature_discovery: NodeFeatureDiscoveryForm,
     notebooks: NotebooksForm,
     nvidia_device_plugin: NvidiaDevicePluginForm,
     ollama: OllamaForm,
