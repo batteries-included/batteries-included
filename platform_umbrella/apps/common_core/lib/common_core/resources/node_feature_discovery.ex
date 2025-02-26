@@ -3,9 +3,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
   use CommonCore.IncludeResource,
     nodefeaturegroups_nfd_k8s_sigs_io: "priv/manifests/node_feature_discovery/nodefeaturegroups_nfd_k8s_sigs_io.yaml",
     nodefeaturerules_nfd_k8s_sigs_io: "priv/manifests/node_feature_discovery/nodefeaturerules_nfd_k8s_sigs_io.yaml",
-    nodefeatures_nfd_k8s_sigs_io: "priv/manifests/node_feature_discovery/nodefeatures_nfd_k8s_sigs_io.yaml",
-    nfd_master_conf: "priv/raw_files/node_feature_discovery/nfd-master.conf",
-    nfd_worker_conf: "priv/raw_files/node_feature_discovery/nfd-worker.conf"
+    nodefeatures_nfd_k8s_sigs_io: "priv/manifests/node_feature_discovery/nodefeatures_nfd_k8s_sigs_io.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "node_feature_discovery"
 
@@ -111,7 +109,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
 
   resource(:config_map_nfd_master, _battery, state) do
     namespace = core_namespace(state)
-    data = Map.put(%{}, "nfd-master.conf", get_resource(:nfd_master_conf))
+    data = Map.put(%{}, "nfd-master.conf", Ymlr.document!(%{}))
 
     :config_map
     |> B.build_resource()
@@ -122,7 +120,8 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
 
   resource(:config_map_nfd_worker, _battery, state) do
     namespace = core_namespace(state)
-    data = Map.put(%{}, "nfd-worker.conf", get_resource(:nfd_worker_conf))
+
+    data = Map.put(%{}, "nfd-worker.conf", Ymlr.document!(%{}))
 
     :config_map
     |> B.build_resource()
@@ -143,6 +142,11 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
         "containers" => [
           %{
             "command" => ["nfd-worker"],
+            "args" => [
+              "-feature-gates=NodeFeatureGroupAPI=false",
+              "-metrics=8081",
+              "-grpc-health=8082"
+            ],
             "env" => [
               %{
                 "name" => "NODE_NAME",
@@ -165,7 +169,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
               "periodSeconds" => 10
             },
             "name" => "nfd-worker",
-            "ports" => [%{"containerPort" => 8081, "name" => "metrics"}],
+            "ports" => [%{"containerPort" => 8081, "name" => "metrics"}, %{"containerPort" => 8082, "name" => "health"}],
             "readinessProbe" => %{
               "failureThreshold" => 10,
               "grpc" => %{"port" => 8082},
@@ -173,7 +177,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
               "periodSeconds" => 10
             },
             "resources" => %{
-              "limits" => %{"cpu" => "200m", "memory" => "512Mi"},
+              "limits" => %{"cpu" => "200m", "memory" => "256Mi"},
               "requests" => %{"cpu" => "5m", "memory" => "64Mi"}
             },
             "securityContext" => %{
@@ -212,6 +216,10 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
         ],
         "dnsPolicy" => "ClusterFirstWithHostNet",
         "serviceAccount" => "nfd-worker",
+        "tolerations" => [
+          %{"key" => "CriticalAddonsOnly", "operator" => "Exists"},
+          %{"key" => "nvidia.com/gpu", "operator" => "Exists", "effect" => "NoSchedule"}
+        ],
         "volumes" => [
           %{"hostPath" => %{"path" => "/boot"}, "name" => "host-boot"},
           %{"hostPath" => %{"path" => "/proc/swaps"}, "name" => "host-proc-swaps"},
@@ -272,7 +280,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
             "name" => "nfd-gc",
             "ports" => [%{"containerPort" => 8081, "name" => "metrics"}],
             "resources" => %{
-              "limits" => %{"cpu" => "20m", "memory" => "1Gi"},
+              "limits" => %{"cpu" => "20m", "memory" => "512Mi"},
               "requests" => %{"cpu" => "10m", "memory" => "128Mi"}
             },
             "securityContext" => %{
@@ -343,6 +351,12 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
         "containers" => [
           %{
             "command" => ["nfd-master"],
+            "args" => [
+              "-enable-leader-election",
+              "-feature-gates=NodeFeatureGroupAPI=false",
+              "-metrics=8081",
+              "-grpc-health=8082"
+            ],
             "env" => [
               %{
                 "name" => "NODE_NAME",
@@ -358,16 +372,13 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
               }
             ],
             "image" => battery.config.image,
-            "imagePullPolicy" => "Always",
+            "imagePullPolicy" => "IfNotPresent",
             "livenessProbe" => %{"grpc" => %{"port" => 8082}},
             "name" => "nfd-master",
-            "ports" => [%{"containerPort" => 8081, "name" => "metrics"}],
-            "readinessProbe" => %{
-              "failureThreshold" => 10,
-              "grpc" => %{"port" => 8082}
-            },
+            "ports" => [%{"containerPort" => 8081, "name" => "metrics"}, %{"containerPort" => 8082, "name" => "health"}],
+            "readinessProbe" => %{"failureThreshold" => 10, "grpc" => %{"port" => 8082}},
             "resources" => %{
-              "limits" => %{"cpu" => "300m", "memory" => "4Gi"},
+              "limits" => %{"cpu" => "300m", "memory" => "1Gi"},
               "requests" => %{"cpu" => "100m", "memory" => "128Mi"}
             },
             "securityContext" => %{
@@ -388,20 +399,6 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
         ],
         "enableServiceLinks" => false,
         "serviceAccount" => "nfd-master",
-        "tolerations" => [
-          %{
-            "effect" => "NoSchedule",
-            "key" => "node-role.kubernetes.io/master",
-            "operator" => "Equal",
-            "value" => ""
-          },
-          %{
-            "effect" => "NoSchedule",
-            "key" => "node-role.kubernetes.io/control-plane",
-            "operator" => "Equal",
-            "value" => ""
-          }
-        ],
         "volumes" => [
           %{"configMap" => %{"name" => "nfd-master-conf"}, "name" => "nfd-master-conf"}
         ]

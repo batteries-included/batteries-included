@@ -199,7 +199,8 @@ defmodule CommonCore.Batteries.Catalog do
       type: :nvidia_device_plugin,
       dependencies: [:battery_core],
       name: "Nvidia Device Plugin",
-      description: "The Nvidia Device Plugin for Kubernetes. This exposes the nvidia device details to kubernetes."
+      description: "The Nvidia Device Plugin for Kubernetes. This exposes the nvidia device details to kubernetes.",
+      allowed_usages: ~w(internal_dev internal_int_test)a
     },
     %CatalogBattery{
       group: :ai,
