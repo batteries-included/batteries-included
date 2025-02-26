@@ -53,6 +53,10 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
           {"CPU Request:", @form[:cpu_requested].value}
         ]}
       />
+      <.field>
+        <:label>GPU Count</:label>
+        <.input field={@form[:gpu_count]} type="number" placeholder="0" />
+      </.field>
     </.fieldset>
     """
   end
