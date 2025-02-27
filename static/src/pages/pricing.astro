@@ -12,12 +12,15 @@ const metadata = {
   <div class="py-12 lg:py-16 xl:scroll-py-20">
     <div class="u-container">
       <Headline title="Pricing" classes={{ container: 'text-left' }} />
-      <div class="mt-10">
+      <div class="mt-10 text-center text-xl font-semibold">
+        While in early testing Batteries Included's platform is completely free.
+      </div>
+      <div class="mt-4">
         <div class="flex flex-col gap-y-8 md:flex-row md:gap-x-10">
           <div class="md:w-1/2">
             <PricingCard
               title="Free Plan"
-              description="All clusters less than 3 nodes"
+              description="All clusters 3 nodes or less"
               options={[
                 'OSX + Linux',
                 'Built on Open Source',
@@ -35,8 +38,8 @@ const metadata = {
               preference={{
                 description:
                   'Explore our simple usage-based pricing structure. Pay for what you use in production sized clusters.',
-                battery: { quantity: 4, price: 10, per: 'month' },
-                pod: { quantity: 3, price: 0.16, per: 'hour' },
+                battery: { quantity: 6, price: 5, per: 'month' },
+                pod: { quantity: 3, price: 0.08, per: 'hour' },
               }}
               client:load
             />
