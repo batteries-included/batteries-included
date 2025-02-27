@@ -32,6 +32,14 @@ jobs:
       POSTGRES_HOST: localhost
       POSTGRES_USER: battery-local-user
       POSTGRES_PASSWORD: 'batterypasswd'
+
+    # Elixir test reports the test results to GitHub
+    # So we need to be able to write to the checks
+    # while reading the results of other actions.
+    permissions:
+      contents: read
+      actions: read
+      checks: write
     steps:
       - uses: actions/checkout@v4
         with:
