@@ -25,6 +25,7 @@ jobs:
         # Leading to: https://goreleaser.com/ci/ |  https://goreleaser.com/ci/actions/#workflow
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
@@ -52,18 +53,6 @@ jobs:
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
-
-      - name: Setup Go cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.GOCACHE }}
-            ${{ env.GOMODCACHE }}
-          key:
-            ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum',
-            '.tool-versions') }}
-          restore-keys: |
-            ${{ runner.os }}-go-build-
 
       - name: Install upx
         run: sudo apt-get install upx zip -y

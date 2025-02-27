@@ -11,12 +11,17 @@ on:
 env:
   ASDF_BRANCH: v0.15.0
 
+# No Permissions by default
+permissions: {}
+
 jobs:
   check-fmt:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:

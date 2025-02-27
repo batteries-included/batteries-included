@@ -11,6 +11,9 @@ on:
 env:
   ASDF_BRANCH: v0.15.0
 
+# No Permissions by default
+permissions: {}
+
 jobs:
   elixir-test:
     runs-on: ubuntu-latest
@@ -29,8 +32,18 @@ jobs:
       POSTGRES_HOST: localhost
       POSTGRES_USER: battery-local-user
       POSTGRES_PASSWORD: 'batterypasswd'
+
+    # Elixir test reports the test results to GitHub
+    # So we need to be able to write to the checks
+    # while reading the results of other actions.
+    permissions:
+      contents: read
+      actions: read
+      checks: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
@@ -82,6 +95,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
@@ -127,6 +142,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:

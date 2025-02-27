@@ -13,12 +13,17 @@ env:
   GOMODCACHE: /home/runner/.cache/go-mod
   ASDF_BRANCH: v0.15.0
 
+# No Permissions by default
+permissions: {}
+
 jobs:
   go-test:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
@@ -66,6 +71,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
@@ -113,6 +120,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
