@@ -93,7 +93,42 @@ defmodule CommonCore.Resources.KarpenterPools do
   end
 
   resource(:nvidia_gpu_node_pool) do
-    spec = %{
+    :karpenter_node_pool
+    |> B.build_resource()
+    |> B.name("nvidia-gpu")
+    |> B.spec(build_nvidia_pool_spec(["p5", "p4", "g6e", "g6", "g5"]))
+  end
+
+  resource(:nvidia_h100_gpu_node_pool) do
+    :karpenter_node_pool
+    |> B.build_resource()
+    |> B.name("nvidia-h100-gpu")
+    |> B.spec(build_nvidia_pool_spec(["p5"]))
+  end
+
+  resource(:nvidia_h200_gpu_node_pool) do
+    :karpenter_node_pool
+    |> B.build_resource()
+    |> B.name("nvidia-h200-gpu")
+    |> B.spec(build_nvidia_pool_spec(["p5e", "p5en"]))
+  end
+
+  resource(:nvidia_a100_gpu_node_pool) do
+    :karpenter_node_pool
+    |> B.build_resource()
+    |> B.name("nvidia-a100-gpu")
+    |> B.spec(build_nvidia_pool_spec(["p4", "p4d", "p4de"]))
+  end
+
+  resource(:nvidia_a10_gpu_node_pool) do
+    :karpenter_node_pool
+    |> B.build_resource()
+    |> B.name("nvidia-a10-gpu")
+    |> B.spec(build_nvidia_pool_spec(["g5"]))
+  end
+
+  defp build_nvidia_pool_spec(instance_types) do
+    %{
       "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmpty"},
       "limits" => %{"cpu" => 1000},
       "template" => %{
@@ -105,7 +140,7 @@ defmodule CommonCore.Resources.KarpenterPools do
             %{
               "key" => "karpenter.k8s.aws/instance-family",
               "operator" => "In",
-              "values" => ["p5", "p4", "g6e", "g6", "g5"]
+              "values" => instance_types
             },
             %{"key" => "karpenter.k8s.aws/instance-hypervisor", "operator" => "In", "values" => ["nitro"]}
           ],
@@ -113,11 +148,6 @@ defmodule CommonCore.Resources.KarpenterPools do
         }
       }
     }
-
-    :karpenter_node_pool
-    |> B.build_resource()
-    |> B.name("nvidia-gpu")
-    |> B.spec(spec)
   end
 
   resource(:amd_gpu_node_pool) do

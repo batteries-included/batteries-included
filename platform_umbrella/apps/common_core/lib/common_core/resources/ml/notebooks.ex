@@ -126,6 +126,8 @@ defmodule CommonCore.Resources.Notebooks do
         }
       }
       |> maybe_add_gpu_resource(notebook)
+      |> maybe_add_node_selector(notebook)
+      |> maybe_add_tolerations(notebook)
       |> B.app_labels(notebook.name)
       |> B.component_labels(notebook.name)
       |> B.label("battery/notebook", notebook.name)
@@ -147,10 +149,34 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.add_owner(notebook)
   end
 
-  defp maybe_add_gpu_resource(resource, %{node_type: :any_nvidia} = _notebook),
-    do: put_in(resource, ["spec", "containers", Access.all(), "resources"], %{"limits" => %{"nvidia.com/gpu" => 1}})
+  defp maybe_add_gpu_resource(resource, %{node_type: type} = _notebook)
+       when type in [:any_nvidia, :nvidia_a10, :nvidia_a100, :nvidia_h100, :nvidia_h200],
+       do: put_in(resource, ["spec", "containers", Access.all(), "resources"], %{"limits" => %{"nvidia.com/gpu" => 1}})
 
   defp maybe_add_gpu_resource(resource, _notebook), do: resource
+
+  defp maybe_add_node_selector(resource, %{node_type: :any_nvidia} = _notebook),
+    do: put_in(resource, ["spec", "nodeSelector"], %{"karpenter.sh/nodepool" => "nvidia-gpu"})
+
+  defp maybe_add_node_selector(resource, %{node_type: :nvidia_a10} = _notebook),
+    do: put_in(resource, ["spec", "nodeSelector"], %{"karpenter.sh/nodepool" => "nvidia-a10-gpu"})
+
+  defp maybe_add_node_selector(resource, %{node_type: :nvidia_a100} = _notebook),
+    do: put_in(resource, ["spec", "nodeSelector"], %{"karpenter.sh/nodepool" => "nvidia-a100-gpu"})
+
+  defp maybe_add_node_selector(resource, %{node_type: :nvidia_h100} = _notebook),
+    do: put_in(resource, ["spec", "nodeSelector"], %{"karpenter.sh/nodepool" => "nvidia-h100-gpu"})
+
+  defp maybe_add_node_selector(resource, %{node_type: :nvidia_h200} = _notebook),
+    do: put_in(resource, ["spec", "nodeSelector"], %{"karpenter.sh/nodepool" => "nvidia-h200-gpu"})
+
+  defp maybe_add_node_selector(resource, _notebook), do: resource
+
+  defp maybe_add_tolerations(resource, %{node_type: type} = _notebook)
+       when type in [:any_nvidia, :nvidia_a10, :nvidia_a100, :nvidia_h100, :nvidia_h200],
+       do: put_in(resource, ["spec", "tolerations"], [%{"key" => "nvidia.com/gpu", "operator" => "Exists"}])
+
+  defp maybe_add_tolerations(resource, _notebook), do: resource
 
   defp service(notebook, _battery, state) do
     namespace = ai_namespace(state)

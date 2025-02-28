@@ -68,7 +68,11 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
 
   @node_types [
     default: "None",
-    any_nvidia: "Any Nvidia GPU"
+    any_nvidia: "Any Nvidia GPU",
+    nvidia_a10: "Nvidia A10",
+    nvidia_a100: "Nvidia A100",
+    nvidia_h100: "Nvidia H100",
+    nvidia_h200: "Nvidia H200"
   ]
 
   batt_schema "jupyter_lab_notebooks" do
