@@ -5,7 +5,7 @@ interface PricingCardProps {
   description: string;
   options?: string[];
   preference?: {
-    description: string;
+    description?: string;
     battery: {
       price: number;
       quantity: number;
