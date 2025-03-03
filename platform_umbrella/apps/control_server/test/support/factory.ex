@@ -8,6 +8,7 @@ defmodule ControlServer.Factory do
   use ExMachina.Ecto, repo: ControlServer.Repo
 
   alias CommonCore.Batteries.SystemBattery
+  alias CommonCore.FerretDB.FerretService
   alias CommonCore.Knative.Service
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres
@@ -19,6 +20,15 @@ defmodule ControlServer.Factory do
 
   def umbrella_snapshot_factory do
     %ControlServer.SnapshotApply.UmbrellaSnapshot{}
+  end
+
+  def ferret_service_factory(attrs \\ %{}) do
+    %FerretService{
+      name: sequence("ferret-service-"),
+      instances: sequence(:instances, [1, 2, 3])
+    }
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
   end
 
   def deleted_resource_factory do

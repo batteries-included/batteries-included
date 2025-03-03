@@ -141,10 +141,54 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         <:tab :if={@project.model_instances != []} patch={model_instances_url(@project)}>
           Model Instances
         </:tab>
+
+        <:tab :if={@project_export_installed} navigate={~p"/projects/#{@project.id}/export"}>
+          Export Project
+        </:tab>
       </.tab_bar>
       <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
         Grafana Dashboard
       </.a>
+
+      <div class="mt-4 px-2 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md drop-shadow-md">
+        <.dropdown>
+          <:trigger>
+            <.button id="add-tooltip" variant="icon" icon={:plus} /> Add Resources
+          </:trigger>
+
+          <.dropdown_link navigate={
+            add_link(:cloudnative_pg, ~p"/postgres/new?project_id=#{@project.id}")
+          }>
+            Postgres
+          </.dropdown_link>
+
+          <.dropdown_link navigate={add_link(:redis, ~p"/redis/new?project_id=#{@project.id}")}>
+            Redis
+          </.dropdown_link>
+
+          <.dropdown_link navigate={add_link(:ferretdb, ~p"/ferretdb/new?project_id=#{@project.id}")}>
+            FerretDB
+          </.dropdown_link>
+
+          <.dropdown_link navigate={
+            add_link(:notebooks, ~p"/notebooks/new?project_id=#{@project.id}")
+          }>
+            Jupyter Notebook
+          </.dropdown_link>
+
+          <.dropdown_link navigate={
+            add_link(:knative, ~p"/knative/services/new?project_id=#{@project.id}")
+          }>
+            Knative Service
+          </.dropdown_link>
+
+          <.dropdown_link navigate={
+            add_link(:traditional_services, ~p"/traditional_services/new?project_id=#{@project.id}")
+          }>
+            Traditional Service
+          </.dropdown_link>
+        </.dropdown>
+      </div>
     </.panel>
     """
   end
@@ -158,68 +202,12 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         <.tooltip target_id="edit-tooltip">Edit Project</.tooltip>
         <.tooltip target_id="delete-tooltip">Delete Project</.tooltip>
         <.flex gaps="0">
-          <div :if={@resource_count == 0} class="self-center mr-2">
-            <.badge minimal class="bg-green-500" label="Click here to add some resources -->" />
-          </div>
-
-          <.dropdown>
-            <:trigger>
-              <.button id="add-tooltip" variant="icon" icon={:plus} />
-            </:trigger>
-
-            <.dropdown_link navigate={
-              add_link(:cloudnative_pg, ~p"/postgres/new?project_id=#{@project.id}")
-            }>
-              Postgres
-            </.dropdown_link>
-
-            <.dropdown_link navigate={add_link(:redis, ~p"/redis/new?project_id=#{@project.id}")}>
-              Redis
-            </.dropdown_link>
-
-            <.dropdown_link navigate={
-              add_link(:ferretdb, ~p"/ferretdb/new?project_id=#{@project.id}")
-            }>
-              FerretDB
-            </.dropdown_link>
-
-            <.dropdown_link navigate={
-              add_link(:notebooks, ~p"/notebooks/new?project_id=#{@project.id}")
-            }>
-              Jupyter Notebook
-            </.dropdown_link>
-
-            <.dropdown_link navigate={
-              add_link(:knative, ~p"/knative/services/new?project_id=#{@project.id}")
-            }>
-              Knative Service
-            </.dropdown_link>
-
-            <.dropdown_link navigate={
-              add_link(:traditional_services, ~p"/traditional_services/new?project_id=#{@project.id}")
-            }>
-              Traditional Service
-            </.dropdown_link>
-          </.dropdown>
-
           <.button
             id="edit-tooltip"
             variant="icon"
             icon={:pencil}
             link={~p"/projects/#{@project.id}/edit"}
           />
-
-          <.button
-            :if={@project_export_installed}
-            variant="icon"
-            icon={:arrow_down_tray}
-            id={"export_project_" <> @project.id}
-            link={~p"/projects/#{@project.id}/export"}
-          />
-
-          <.tooltip :if={@project_export_installed} target_id={"export_project_" <> @project.id}>
-            Export Project
-          </.tooltip>
 
           <.button
             id="delete-tooltip"
