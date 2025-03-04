@@ -100,7 +100,7 @@ Available commands:
 
 **Static Site Commands**
 - static-dev       Start a development environment with npm
-- static-bulid     Build the static site
+- static-build     Build the static site
 EOF
     exit 1
 }
@@ -750,6 +750,9 @@ version-tag)
     ;;
 static-dev)
     do_static_dev
+    ;;
+static-build)
+    do_static_build
     ;;
 root-dir)
     echo "${ROOT_DIR}"
