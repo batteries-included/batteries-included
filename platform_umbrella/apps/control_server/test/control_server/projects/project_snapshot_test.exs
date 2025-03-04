@@ -34,10 +34,21 @@ defmodule ControlServer.Projects.ProjectSnapshotTest do
     }
   end
 
+  defp small_pg_project do
+    project = insert(:project)
+    pg_cluster = insert(:postgres_cluster, project_id: project.id, virtual_size: "small")
+
+    %{
+      small_pg_project: project,
+      small_pg_project_pg_cluster: pg_cluster
+    }
+  end
+
   setup do
     %{empty_project: insert(:project)}
     |> Map.merge(non_empty_project())
     |> Map.merge(ferretdb_project())
+    |> Map.merge(small_pg_project())
   end
 
   describe "Snapshotter" do
@@ -95,6 +106,54 @@ defmodule ControlServer.Projects.ProjectSnapshotTest do
 
       assert refetched.ferret_services |> List.first() |> Map.get(:postgres_cluster_id) ==
                List.first(refetched.postgres_clusters).id
+    end
+
+    test "apply can override virtual_size", %{small_pg_project: project} do
+      assert {:ok, snapshot} = Snapshoter.take_snapshot(project)
+
+      from_snapshot = List.first(snapshot.postgres_clusters)
+
+      # Remove the postgres cluster from the database so that we can re-apply the snapshot
+      # without any conflicts
+      assert {:ok, _} = ControlServer.Postgres.delete_cluster(List.first(snapshot.postgres_clusters))
+
+      # Now we can re-apply the snapshot
+      assert {:ok, _} = Snapshoter.apply_snapshot(project, snapshot, virtual_size: "huge")
+
+      refetched = ControlServer.Projects.get_project!(project.id)
+
+      assert refetched.postgres_clusters != []
+      assert 1 == length(refetched.postgres_clusters)
+
+      cluster = List.first(refetched.postgres_clusters)
+
+      assert cluster.cpu_requested >= from_snapshot.cpu_requested
+      assert cluster.memory_requested >= from_snapshot.memory_requested
+      assert cluster.memory_limits >= from_snapshot.memory_limits
+    end
+
+    test "setting virtual size works on larger projects", %{full_project: project} do
+      assert {:ok, snapshot} = Snapshoter.take_snapshot(project)
+
+      from_snapshot = List.first(snapshot.postgres_clusters)
+
+      # Remove the postgres cluster from the database so that we can re-apply the snapshot
+      # without any conflicts
+      assert {:ok, _} = ControlServer.Postgres.delete_cluster(List.first(snapshot.postgres_clusters))
+
+      # Now we can re-apply the snapshot
+      assert {:ok, _} = Snapshoter.apply_snapshot(project, snapshot, virtual_size: "huge")
+
+      refetched = ControlServer.Projects.get_project!(project.id)
+
+      assert refetched.postgres_clusters != []
+      assert 1 == length(refetched.postgres_clusters)
+
+      cluster = List.first(refetched.postgres_clusters)
+
+      assert cluster.cpu_requested >= from_snapshot.cpu_requested
+      assert cluster.memory_requested >= from_snapshot.memory_requested
+      assert cluster.memory_limits >= from_snapshot.memory_limits
     end
   end
 end
