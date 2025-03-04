@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+
+EMAIL="${1:-}"
+
+if [[ -z "${EMAIL}" ]]; then
+    echo "Usage: $0 <email>"
+    exit 1
+fi
+
+"${DIR}/home_base" eval "HomeBase.Release.make_admin\(\"${EMAIL}\"\)"
