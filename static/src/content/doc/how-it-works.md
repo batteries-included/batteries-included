@@ -391,34 +391,6 @@ configuration. Users can see at a glance how different components of their
 application are performing and make changes to related resources in a
 coordinated way.
 
-## Built-in Monitoring and Automated Maintenance
-
-Batteries Included provides comprehensive monitoring and automated maintenance
-capabilities out of the box, eliminating the need for separate setup while
-minimizing operational overhead:
-
-- **Metrics Collection**: VictoriaMetrics collects performance metrics from all
-  services and infrastructure components, providing insights into resource usage
-  and system health.
-- **Visualizations**: Pre-configured Grafana dashboards offer immediate
-  visibility into system performance across all components.
-- **Health Checks**: Regular service availability and performance checks provide
-  early warnings before issues impact users.
-- **Alerting**: Configurable alerts notify administrators of potential issues
-  through various channels, including email and messaging platforms.
-- **Battery Updates**: Batteries can be updated automatically with zero downtime
-  and minimal intervention.
-- **Kubernetes Updates**: For managed installations, the underlying Kubernetes
-  cluster receives automatic updates to maintain security and stability.
-- **Routine Maintenance**: Batteries Included handles tasks like log rotation,
-  certificate renewal, and database optimization automatically.
-
-The combination of proactive monitoring and seamless maintenance creates a
-self-sustaining environment where potential problems are identified early and
-routine updates occur without disruption. By automating these traditionally
-time-consuming aspects of infrastructure management, teams can focus on
-application development rather than operational overhead.
-
 ## Rollback and Versioning Capabilities
 
 Batteries Included's content-addressable storage system enables robust rollback
