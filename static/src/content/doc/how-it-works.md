@@ -166,16 +166,19 @@ component.
 Batteries Included uses a distinctive "Snapshot and Apply" pattern for
 deployments, which differs from the traditional Kubernetes reconciliation loop.
 While Kubernetes controllers continuously observe the current state and
-reconcile it with the desired state, the Snapshot and Apply pattern takes a more
+reconcile it with the desired state, the snapshot and apply pattern takes a more
 structured approach.
 
 This approach was developed to address several limitations of the reconciliation
 loop, particularly in complex environments with many interdependent resources.
-
-In our experience, the Snapshot and Apply pattern provides better debuggability,
+In our experience, the snapshot and apply pattern provides better debuggability,
 introspection, and user experience, especially at scale.
 
-The process consists of five steps:
+The Control Server maintains the desired state of the entire system in its
+database. This desired state includes the configuration of all installed
+batteries, user-provided settings, and generated resources. This comprehensive
+state data is used to generate the necessary Kubernetes resources during the
+snapshot and apply process, consisting of five steps:
 
 1. **Prepare**: Take a point-in-time snapshot of the entire system state,
    including both the database state and the current Kubernetes state.
@@ -193,16 +196,50 @@ The process consists of five steps:
   <img src="/images/docs/how-it-works/snapshot-apply.png" alt="Snapshot and Apply"/>
 </div>
 
-This approach provides several benefits:
+For change detection, Batteries Included uses a clever approach that balances
+efficiency with reliability:
 
-- **Deterministic Changes**: Each deployment is based on a complete snapshot of
-  the system, making changes more predictable and repeatable.
+- Each Kubernetes resource gets a cryptographic hash annotation based on its
+  content
+- When resources are applied, the platform compares the hash of the existing
+  resource with the hash of the desired resource
+- If the hashes match, no update is needed; if they differ, the resource is
+  updated
+
+This approach allows for efficient reconciliation without constantly applying
+unnecessary updates. It also provides a clear indication of which resources have
+changed and how, making it easier to debug issues when they occur.
+
+In addition to the hash-based change detection, Batteries Included also stores
+the complete history of each resource in its content-addressable storage system.
+This history allows for rollbacks and audit trails, providing a complete picture
+of how the system has evolved over time.
+
+As a result, using the snapshot and apply pattern yields various high-level
+benefits:
+
+- **Functional, Deterministic Changes**: Each deployment is based on a complete
+  snapshot of the system, making changes more predictable and repeatable. By
+  treating the deployment process as a functional pipeline where specific inputs
+  (the current system state) deterministically produce specific outputs (the new
+  desired state), we gain predictability and consistency in deployments.
+- **Visibility Into Plans**: Users can see the intended plan in real-time during
+  the snapshot and application phases, making it easier to understand what's
+  changing and why. In production environments, this visibility into both the
+  intended actions and final status has repeatedly proven invaluable for
+  troubleshooting.
 - **Improved Debugging**: If something goes wrong, having a complete
   before-and-after snapshot makes it easier to diagnose the issue.
 - **Atomic Updates**: Changes are applied as a single logical unit, reducing the
   risk of partial updates.
 - **Audit Trail**: The history of snapshots provides a complete audit trail of
   changes to the system.
+
+This pattern extends beyond just Kubernetes. For example, when the OAuth battery
+is enabled, the snapshot and apply process coordinates change across both
+Kubernetes and Keycloak. A unified approach like this allows for sophisticated
+behaviors like scheduling shorter retry times when Keycloak is creating user
+credentials needed by an oauth_proxy resource in Kubernetes.
 
 ## Resources (Generated/Applied)
 
@@ -228,33 +265,6 @@ storage to track resource versions. Each resource is hashed based on its
 content, and this hash is used as an identifier. This approach allows for
 efficient comparison and change detection, as the platform can quickly determine
 if a resource has changed by comparing its hash.
-
-## State Management/Reconciliation
-
-The Control Server maintains the desired state of the entire system in its
-database. This desired state includes the configuration of all installed
-batteries, user-provided settings, and generated resources. The desired state is
-used to generate the necessary Kubernetes resources during the snapshot and
-apply process.
-
-For change detection, Batteries Included uses a clever approach that balances
-efficiency with reliability:
-
-- Each Kubernetes resource gets a cryptographic hash annotation based on its
-  content
-- When resources are applied, the platform compares the hash of the existing
-  resource with the hash of the desired resource
-- If the hashes match, no update is needed; if they differ, the resource is
-  updated
-
-This approach allows for efficient reconciliation without constantly applying
-unnecessary updates. It also provides a clear indication of which resources have
-changed and how, making it easier to debug issues when they occur.
-
-In addition to the hash-based change detection, Batteries Included also stores
-the complete history of each resource in its content-addressable storage system.
-This history allows for rollbacks and audit trails, providing a complete picture
-of how the system has evolved over time.
 
 ## Automated Service Deployment and Scaling
 
@@ -345,10 +355,10 @@ grouping of related services and resources.
 A project might include a variety of resources working together to provide a
 specific application or service:
 
-- Web services handling user interfaces and API endpoints
-- Databases storing application data
-- Monitoring dashboards providing insights into project performance
-- AI notebooks for data analysis and model development
+- Web services handling user interfaces and API endpoints.
+- Databases storing application data.
+- Monitoring dashboards providing insights into project performance.
+- AI notebooks for data analysis and model development.
 
 A project-based approach makes it easier to manage complex systems by grouping
 related resources together and providing a unified view of their status and
