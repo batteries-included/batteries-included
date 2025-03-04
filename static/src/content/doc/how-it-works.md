@@ -320,12 +320,11 @@ maintainable, even as the system grows in complexity.
 
 ## Web Interface Workflow
 
-The Batteries Included web interface provides a streamlined workflow for
-managing infrastructure, making complex operations accessible to users with
-varying levels of technical expertise. The interface is designed around common
-tasks and workflows, with a focus on simplicity and usability.
+The Batteries Included web interface goes far beyond simply making Kubernetes
+more approachable - it fundamentally improves operational safety and efficiency
+through context-aware editing and immediate feedback.
 
-Key components of the web interface include:
+The main components of the web interface include:
 
 - **Dashboard**: Overview of system health, resources, and recent activities.
   The dashboard provides a quick summary of the system's status and highlights
@@ -342,10 +341,31 @@ Key components of the web interface include:
 - **Settings**: Configure system-wide settings and user access. This section
   provides control over global configurations and user permissions.
 
-The web interface abstracts away much of the complexity of Kubernetes,
-presenting users with a more approachable and task-oriented view of their
-infrastructure. This approach makes it easier for users to manage complex
-systems without deep Kubernetes expertise.
+![UI dashboard](/images/docs/getting-started/dashboard.png)
+
+What sets the interface apart is its approach to how changes are made:
+
+- **Contextual Information While Editing**: The interface provides critical
+  information to engineers during the editing process. Instead of switching
+  between documentation and configuration files, the system presents relevant
+  metrics, dependencies, and best practices directly alongside edit forms,
+  aiding decision-making in ways a traditional text editor cannot.
+- **Type-Aware Validations**: Unlike Kubernetes' string-based configuration
+  ("500" vs "500Mi" vs "500MB" vs "524288000"), the interface understands data
+  types. This prevents common errors like mismatched units, invalid ranges, or
+  incompatible settings before they occur.
+- **Immediate Feedback Cycle**: When attempting changes that might cause issues
+  (like requesting more instances than the cluster can handle), the interface
+  immediately highlights problems and explains why. This real-time feedback
+  leads to better decisions and more stable deployments compared to discovering
+  problems only after changes are applied.
+
+This approach evolved from observing a common pattern in production incidents:
+an engineer's seemingly minor configuration change triggers an outage by
+unknowingly affecting complex underlying systems. By providing a purpose-built
+interface with fewer inputs, stronger validation, and more contextual
+information, Batteries Included breaks this cycle and creates more stable
+infrastructure.
 
 ## Project-Based Resource Management
 
