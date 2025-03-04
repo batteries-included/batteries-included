@@ -203,15 +203,16 @@ For change detection, Batteries Included uses a clever approach that balances
 efficiency with reliability:
 
 - Each Kubernetes resource gets a cryptographic hash annotation based on its
-  content
+  content.
 - When resources are applied, the platform compares the hash of the existing
-  resource with the hash of the desired resource
+  resource with the hash of the desired resource.
 - If the hashes match, no update is needed; if they differ, the resource is
-  updated
+  updated.
 
-This approach allows for efficient reconciliation without constantly applying
-unnecessary updates. It also provides a clear indication of which resources have
-changed and how, making it easier to debug issues when they occur.
+With this hash-based approach, we enable efficient reconciliation without
+constantly applying unnecessary updates. It also provides a clear indication of
+which resources have changed and how, making it easier to debug issues when they
+occur.
 
 In addition to the hash-based change detection, Batteries Included also stores
 the complete history of each resource in its content-addressable storage system.
@@ -261,7 +262,7 @@ to create a complete infrastructure environment:
   authentication across services. These integration resources ensure secure and
   consistent authentication throughout the platform.
 
-These resources are generated from templates based on user configuration and
+Templates are used to generate these resources based on user configuration and
 platform defaults. The templates use a combination of static values and dynamic
 input to create resources that meet the specific needs of each installation.
 
@@ -306,10 +307,9 @@ Infrastructure as Code principles behind the scenes. This approach combines the
 best of both worlds: ease of use for users and robust, repeatable infrastructure
 management under the hood:
 
-- **Declarative Configuration**: All resources are defined declaratively,
-  specifying the desired end state rather than the steps to get there. This
-  approach makes it easier to reason about the system and reduces the risk of
-  configuration drift.
+- **Declarative Configuration**: Defining resources declaratively specifies the
+  desired end state rather than the steps to get there, making system reasoning
+  easier and reducing configuration drift risk.
 - **Version Control**: Resource definitions are stored in the Control Server
   database with versioning, allowing for rollbacks and audit trails. This
   versioning provides a complete history of changes to the system.
@@ -320,8 +320,8 @@ management under the hood:
   processes. Automation reduces the risk of human error and ensures that
   operations are performed consistently.
 
-This approach ensures that the infrastructure is reliable, reproducible, and
-maintainable, even as the system grows in complexity.
+Rolling back via snapshot and apply ensures that the infrastructure is reliable,
+reproducible, and maintainable, even as the system grows in complexity.
 
 ## Web Interface Workflow
 
