@@ -4,7 +4,7 @@ description:
   A comprehensive overview of the Batteries Included architecture and how it
   works.
 tags: ['architecture']
-category: batteries
+category: development
 draft: false
 ---
 
