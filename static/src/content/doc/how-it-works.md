@@ -443,16 +443,11 @@ Key aspects of the rollback and versioning system include:
 
 ## An All-in-One DevOps Solution
 
-Batteries Included transforms infrastructure management by combining Kubernetes'
-power with an intuitive interface. Its modular battery system, snapshot-based
-deployments, and overall organization create a flexible foundation that lets
-teams focus on building applications rather than wrestling with infrastructure.
+In essence, Batteries Included transforms infrastructure management by combining
+the power of Kubernetes with an intuitive interface. The platform's modular
+battery system and snapshot-based deployments create a flexible foundation that
+lets teams focus on building applications rather than wrestling with
+infrastructure.
 
-From simple web applications to sophisticated AI workloads, Batteries Included
-delivers the infrastructure backbone modern teams need—without requiring deep
-DevOps expertise.
-
-By automating routine tasks and providing clear visibility into system health,
-Batteries Included creates a development environment where innovation can
-flourish, allowing organizations to deploy with confidence and speed in an
-increasingly complicated infrastructure ecosystem.
+Haven't deployed your first installation yet?
+[Get started with Batteries Included](/docs/getting-started) now!
