@@ -49,15 +49,18 @@ provide a seamless user experience:
 - **Control Server**: The heart of Batteries Included, the Control Server
   manages the desired state of the instance. It provides a user-friendly web
   interface for managing batteries/resources, monitoring system health, and
-  configuring services. The Control Server maintains the state of the entire
-  system in its database, using this information to generate Kubernetes
-  resources and apply changes. It acts as a bridge between the user's intent and
-  the actual infrastructure, translating high-level goals into concrete
-  resources.
-
-Beyond these components, there's also the `bi` CLI tool used for bootstrapping
-installations, managing deployments, and interacting with Batteries Included
-programmatically.
+  configuring services. Built on Elixir and OTP for reliability and scalability,
+  the Control Server maintains the state of the entire system in its database,
+  using this information to generate Kubernetes resources and apply changes. It
+  acts as a bridge between the user's intent and the actual infrastructure,
+  translating high-level goals into concrete resources.
+- **BI CLI**: The `bi` CLI tool provides intelligent bootstrapping, deployment
+  management, and programmatic interaction with Batteries Included. It contains
+  significant built-in intelligence - for example, when running locally, it
+  automatically configures IP ranges to use addresses that Docker already
+  routes, simplifying local development. The CLI handles complex tasks like
+  cluster creation, certificate management, and service discovery while
+  abstracting away the underlying complexity from users.
 
 Batteries Included is built on top of Kubernetes, leveraging its container
 orchestration capabilities while abstracting away most of its complexity. The
