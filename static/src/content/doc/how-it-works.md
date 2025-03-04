@@ -153,13 +153,16 @@ Batteries Included handles these dependencies through several mechanisms:
   exposing sensitive information.
 - **Network Isolation**: Batteries are organized into logical namespaces (e.g.,
   `battery-data`, `battery-monitoring`) to provide network isolation and access
-  control. This helps maintain security while still allowing controlled
-  communication between batteries.
+  control, helping maintain security while allowing controlled communication
+  between batteries. Istio service mesh is used to implement sophisticated
+  network policies and traffic management between these namespaces. When the
+  Certificate Authority battery is installed, the system automatically
+  configures full mTLS with a local auditable certificate chain, providing
+  encrypted communication between services and strong authentication.
 
-This automated dependency management removes much of the complexity
-traditionally associated with integrating different software components, making
-it easier for users to build complex systems without deep expertise in each
-component.
+By removing much of the complexity traditionally associated with integrating
+different software components, it becomes easier for users to build complex
+systems without deep expertise in each component.
 
 ## Snapshot and Apply Pattern
 
@@ -253,8 +256,10 @@ to create a complete infrastructure environment:
   for specific batteries. For example, PostgreSQL clusters are defined using
   custom resources provided by the PostgreSQL operator.
 - **Integration Resources**: Resources that connect different batteries, such as
-  ServiceMonitors for Prometheus integration or network policies for controlling
-  communication between batteries.
+  ServiceMonitors for Prometheus integration, network policies for controlling
+  communication between batteries, and Keycloak realms for self-hosted OAuth
+  authentication across services. These integration resources ensure secure and
+  consistent authentication throughout the platform.
 
 These resources are generated from templates based on user configuration and
 platform defaults. The templates use a combination of static values and dynamic
