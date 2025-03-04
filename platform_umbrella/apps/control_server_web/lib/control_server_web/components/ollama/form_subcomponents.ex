@@ -42,7 +42,7 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
           field={@form[:virtual_size]}
           type="select"
           placeholder="Choose a size"
-          options={ModelInstance.preset_options_for_select()}
+          options={ModelInstance.preset_options_for_select(@form[:model].value)}
         />
       </.field>
 
