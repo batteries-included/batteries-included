@@ -2,6 +2,7 @@ defmodule CommonCore.Ollama.ModelInstance do
   @moduledoc false
   use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Defaults.GPU
   alias CommonCore.Util.Memory
 
   @required_fields ~w(name)a
@@ -69,6 +70,7 @@ defmodule CommonCore.Ollama.ModelInstance do
     field :memory_limits, :integer
 
     field :gpu_count, :integer, default: 0
+    field :node_type, Ecto.Enum, values: GPU.node_type_keys(), default: :default
 
     field :virtual_size, :string, virtual: true
 
