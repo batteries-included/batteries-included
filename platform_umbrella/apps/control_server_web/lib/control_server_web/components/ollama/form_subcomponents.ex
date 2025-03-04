@@ -2,6 +2,7 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
+  alias CommonCore.Defaults.GPU
   alias CommonCore.Ollama.ModelInstance
   alias CommonCore.Util.Memory
 
@@ -56,6 +57,15 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
       <.field>
         <:label>GPU Count</:label>
         <.input field={@form[:gpu_count]} type="number" placeholder="0" />
+      </.field>
+      <.field>
+        <.input
+          field={@form[:node_type]}
+          type="select"
+          label="GPU"
+          placeholder="None"
+          options={GPU.node_types_for_select()}
+        />
       </.field>
     </.fieldset>
     """
