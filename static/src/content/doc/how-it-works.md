@@ -1,7 +1,7 @@
 ---
 title: How does Batteries Included work?
 description:
-  A comprehensive explanation of the Batteries Included architecture and how it
+  A comprehensive overview of the Batteries Included architecture and how it
   works.
 tags: ['architecture']
 category: batteries
