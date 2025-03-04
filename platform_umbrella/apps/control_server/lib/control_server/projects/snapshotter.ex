@@ -296,15 +296,20 @@ defmodule ControlServer.Projects.Snapshoter do
   # We can't rely on the virtual size being set in the attrs
   # since it's not persisted to the database, it's not in a
   # Project snapshot.
+  #
+  # Instead we check if the schema has a virtual size field
+  # if it does then we add a virtual_size field to the attrs
+  # and set it to the size that we are using.
   defp try_set_virtual_size(attrs, module, size) do
-    module
-    |> apply(:__schema__, [:virtual_type, :virtual_size])
-    |> case do
-      nil ->
-        attrs
-
-      _ ->
-        Map.put(attrs, :virtual_size, size)
+    case apply(module, :__schema__, [:virtual_type, :virtual_size]) do
+      # If there's no field then we can't set it
+      # so we just return the attrs
+      #
+      # For example TraditionalService doesn't have a virtual size
+      nil -> attrs
+      # There is a field, we don't care about its details
+      # add the virtual size to the attrs
+      _ -> Map.put(attrs, :virtual_size, size)
     end
   end
 
