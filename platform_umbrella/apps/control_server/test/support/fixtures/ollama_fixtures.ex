@@ -11,7 +11,7 @@ defmodule ControlServer.OllamaFixtures do
     {:ok, model_instance} =
       attrs
       |> Enum.into(%{
-        model: "llama3.1",
+        model: "llama3.1:8b",
         name: "somename",
         num_replicas: 2,
         gpu_count: 0,
