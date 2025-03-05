@@ -7,8 +7,8 @@ toolchain go1.23.2
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aws/aws-sdk-go-v2/config v1.29.8
-	github.com/aws/aws-sdk-go-v2/service/sts v1.33.16
+	github.com/aws/aws-sdk-go-v2/config v1.29.9
+	github.com/aws/aws-sdk-go-v2/service/sts v1.33.17
 	github.com/aws/smithy-go v1.22.3
 	github.com/dghubble/ipnets v1.0.0
 	github.com/docker/docker v28.0.1+incompatible
@@ -18,7 +18,7 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.70.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.70.1
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.11
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.1.0
 	github.com/pulumi/pulumi/sdk/v3 v3.153.1
@@ -28,8 +28,8 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/vbauerster/mpb/v8 v8.9.3
 	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
-	golang.org/x/sync v0.11.0
-	golang.org/x/term v0.29.0
+	golang.org/x/sync v0.12.0
+	golang.org/x/term v0.30.0
 	gopkg.in/ini.v1 v1.67.0
 	k8s.io/api v0.32.2
 	k8s.io/apiextensions-apiserver v0.32.2
@@ -52,15 +52,15 @@ require (
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/avast/retry-go/v4 v4.6.1 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.36.3 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.61 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.62 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.30 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.34 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.34 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.15 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.25.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.29.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.25.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.29.1 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/charmbracelet/bubbles v0.20.0 // indirect
@@ -187,7 +187,7 @@ require (
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/oauth2 v0.26.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
 	golang.org/x/tools v0.30.0 // indirect
