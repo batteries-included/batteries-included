@@ -43,13 +43,13 @@ defmodule CommonCore.Ollama.ModelInstance do
   @models %{
     "deepseek-r1:1.5b" => %{name: "Deepseek R1 1.5b", size: Memory.to_bytes(1.1, :GB)},
     "deepseek-r1:7b" => %{name: "Deepseek R1 7b", size: Memory.to_bytes(4.7, :GB)},
-    "llama3.2:3b" => %{name: "Llama 3.2 3b", size: Memory.to_bytes(2.0, :GB)},
-    "llama3.2:1b" => %{name: "Llama 3.2 1b", size: Memory.to_bytes(1.3, :GB)},
-    "phi4" => %{name: "Phi4 14b", size: Memory.to_bytes(9.1, :GB)},
-    "llama3.1:8b" => %{name: "Llama 3.1 8b", size: Memory.to_bytes(4.9, :GB)},
     "llama3.1:70b" => %{name: "Llama 3.1 70b", size: Memory.to_bytes(43.0, :GB)},
-    "nomic-embed-text" => %{name: "Nomic embed-text 137m", size: Memory.to_bytes(274, :MB)},
+    "llama3.1:8b" => %{name: "Llama 3.1 8b", size: Memory.to_bytes(4.9, :GB)},
+    "llama3.2:1b" => %{name: "Llama 3.2 1b", size: Memory.to_bytes(1.3, :GB)},
+    "llama3.2:3b" => %{name: "Llama 3.2 3b", size: Memory.to_bytes(2.0, :GB)},
     "mxbai-embed-large" => %{name: "mxbai embed [Large] 335m", size: Memory.to_bytes(670, :MB)},
+    "nomic-embed-text" => %{name: "Nomic embed-text 137m", size: Memory.to_bytes(274, :MB)},
+    "phi4" => %{name: "Phi4 14b", size: Memory.to_bytes(9.1, :GB)},
     "snowflake-arctic-embed2" => %{name: "Snowflake Arctic Embed 2.0 568m", size: Memory.to_bytes(1.2, :GB)}
   }
 
