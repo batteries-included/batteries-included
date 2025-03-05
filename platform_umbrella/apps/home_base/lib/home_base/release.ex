@@ -54,6 +54,37 @@ defmodule HomeBase.Release do
     end
   end
 
+  def make_admin!(user_email) do
+    :ok = load_app()
+    user = HomeBase.Accounts.get_user_by_email(user_email)
+    team_ids = CommonCore.Accounts.AdminTeams.admin_team_ids()
+
+    if user == nil do
+      Logger.warning("User #{user_email} not found. Skipping make_admin.")
+      raise "User not found"
+    end
+
+    Logger.info("Making user #{user_email} an admin for teams: #{inspect(team_ids)}")
+
+    # The user email must be @batteriesincl.com
+    if !String.ends_with?(user.email, "batteriesincl.com") do
+      Logger.warning("User #{user_email} is not a Batteries Included email. Skipping make_admin.")
+      raise "User is not a Batteries Included email"
+    end
+
+    # The user must have confirmed their email
+    if user.confirmed_at == nil do
+      Logger.warning("User #{user_email} has not confirmed their email. Skipping make_admin.")
+      raise "User has not confirmed their email"
+    end
+
+    Enum.each(team_ids, fn team_id ->
+      team = HomeBase.Teams.get_team(team_id)
+
+      {:ok, _} = HomeBase.Teams.create_team_role(team, %{invited_email: user.email, is_admin: true})
+    end)
+  end
+
   defp do_seed(path) do
     path
     |> File.ls!()
