@@ -33,7 +33,7 @@ defmodule ControlServer.OllamaTest do
     test "create_model_instance/1 with valid data creates a model_instance" do
       valid_attrs = %{
         name: "somename",
-        model: "llama3.1",
+        model: "llama3.1:8b",
         num_instances: 2,
         gpu_count: 0,
         cpu_requested: 500,
@@ -43,7 +43,7 @@ defmodule ControlServer.OllamaTest do
 
       assert {:ok, %ModelInstance{} = model_instance} = Ollama.create_model_instance(valid_attrs)
       assert model_instance.name == "somename"
-      assert model_instance.model == "llama3.1"
+      assert model_instance.model == "llama3.1:8b"
     end
 
     test "create_model_instance/1 with invalid data returns error changeset" do
@@ -52,12 +52,12 @@ defmodule ControlServer.OllamaTest do
 
     test "update_model_instance/2 with valid data updates the model_instance" do
       model_instance = model_instance_fixture()
-      update_attrs = %{name: "newname", model: "newmodel"}
+      update_attrs = %{name: "newname", model: "llama3.2:3b"}
 
       assert {:ok, %ModelInstance{} = model_instance} = Ollama.update_model_instance(model_instance, update_attrs)
 
       assert model_instance.name == "newname"
-      assert model_instance.model == "newmodel"
+      assert model_instance.model == "llama3.2:3b"
     end
 
     test "update_model_instance/2 with invalid data returns error changeset" do
