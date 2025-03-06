@@ -53,6 +53,8 @@ defmodule CommonCore.Ollama.ModelInstance do
     "snowflake-arctic-embed2" => %{name: "Snowflake Arctic Embed 2.0 568m", size: Memory.to_bytes(1.2, :GB)}
   }
 
+  @gpu_node_types GPU.node_types_with_gpus()
+
   @derive {
     Flop.Schema,
     filterable: [:name], sortable: [:id, :name, :memory_limits, :gpu_count]
@@ -88,7 +90,37 @@ defmodule CommonCore.Ollama.ModelInstance do
     |> validate_number(:cpu_limits, greater_than: 0, less_than: 100_000)
     |> validate_number(:memory_requested, greater_than: 0, less_than: Memory.to_bytes(1_000, :TB))
     |> validate_number(:memory_limits, greater_than: 0, less_than: Memory.to_bytes(1_000, :TB))
+    |> validate_gpu_count()
+    |> validate_node_type()
     |> foreign_key_constraint(:project_id)
+  end
+
+  defp validate_gpu_count(changeset) do
+    validate_change(changeset, :gpu_count, fn :gpu_count, gpu_count ->
+      do_validate_gpu_count(get_field(changeset, :node_type, :default), gpu_count)
+    end)
+  end
+
+  defp do_validate_gpu_count(type, count) when type in @gpu_node_types do
+    if count > 0, do: [], else: [gpu_count: "must be greater than 0 when requesting a node type with GPU(s)"]
+  end
+
+  defp do_validate_gpu_count(_type, count) do
+    if count > 0, do: [gpu_count: "must be 0 when requesting a node type without GPU(s)"], else: []
+  end
+
+  defp validate_node_type(changeset) do
+    validate_change(changeset, :node_type, fn :node_type, node_type ->
+      do_validate_node_type(node_type, get_field(changeset, :gpu_count, 0))
+    end)
+  end
+
+  defp do_validate_node_type(type, count) when type in @gpu_node_types do
+    if count > 0, do: [], else: [node_type: "must not be a GPU type if GPU count is 0"]
+  end
+
+  defp do_validate_node_type(_type, count) do
+    if count > 0, do: [node_type: "must be a GPU type if GPU count is greater than 0"], else: []
   end
 
   def preset_options_for_select(model_name) do
