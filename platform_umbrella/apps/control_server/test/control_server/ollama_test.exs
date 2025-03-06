@@ -19,6 +19,17 @@ defmodule ControlServer.OllamaTest do
       gpu_count: nil
     }
 
+    @valid_attrs %{
+      name: "somename",
+      model: "llama3.1:8b",
+      num_instances: 2,
+      gpu_count: 0,
+      node_type: :default,
+      cpu_requested: 500,
+      memory_requested: 512_000_000,
+      memory_limits: 512_000_000
+    }
+
     test "list_model_instances/0 returns all model_instances" do
       model_instance = model_instance_fixture()
       assert Enum.map(Ollama.list_model_instances(), & &1.id) == [model_instance.id]
@@ -31,23 +42,22 @@ defmodule ControlServer.OllamaTest do
     end
 
     test "create_model_instance/1 with valid data creates a model_instance" do
-      valid_attrs = %{
-        name: "somename",
-        model: "llama3.1:8b",
-        num_instances: 2,
-        gpu_count: 0,
-        cpu_requested: 500,
-        memory_requested: 512_000_000,
-        memory_limits: 512_000_000
-      }
-
-      assert {:ok, %ModelInstance{} = model_instance} = Ollama.create_model_instance(valid_attrs)
+      assert {:ok, %ModelInstance{} = model_instance} = Ollama.create_model_instance(@valid_attrs)
       assert model_instance.name == "somename"
       assert model_instance.model == "llama3.1:8b"
+
+      assert {:ok, %ModelInstance{}} =
+               Ollama.create_model_instance(%{@valid_attrs | node_type: :nvidia_a10, gpu_count: 1})
     end
 
     test "create_model_instance/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Ollama.create_model_instance(@invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{errors: [node_type: _]}} =
+               Ollama.create_model_instance(%{@valid_attrs | node_type: :nvidia_a10})
+
+      assert {:error, %Ecto.Changeset{errors: [gpu_count: _]}} =
+               Ollama.create_model_instance(%{@valid_attrs | gpu_count: 1})
     end
 
     test "update_model_instance/2 with valid data updates the model_instance" do
