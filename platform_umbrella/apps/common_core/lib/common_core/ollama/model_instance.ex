@@ -137,5 +137,14 @@ defmodule CommonCore.Ollama.ModelInstance do
     end)
   end
 
-  defp model_size(model_name), do: @models |> Map.get(model_name, %{}) |> Map.get(:size, 0)
+  def model_size(model_name), do: @models |> Map.get(model_name, %{}) |> Map.get(:size, 0)
+
+  @doc """
+  Find the smallest preset that requests more memory than `size`.
+  """
+  def get_preset_for_size(size) do
+    @presets
+    |> Enum.sort(&(&1.memory_requested < &2.memory_requested))
+    |> Enum.find(fn %{memory_requested: memory_requested} -> memory_requested >= size end)
+  end
 end
