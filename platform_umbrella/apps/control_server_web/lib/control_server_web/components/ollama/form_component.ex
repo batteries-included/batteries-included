@@ -8,6 +8,7 @@ defmodule ControlServerWeb.Live.OllamaFormComponent do
   alias CommonCore.Ollama.ModelInstance
   alias ControlServer.Ollama
   alias ControlServer.Projects
+  alias Ecto.Changeset
   alias KubeServices.SystemState.SummaryBatteries
 
   def mount(socket) do
@@ -71,11 +72,32 @@ defmodule ControlServerWeb.Live.OllamaFormComponent do
   end
 
   defp assign_changeset(socket, changeset) do
+    changeset = maybe_update_virtual_size(changeset, Changeset.get_change(changeset, :model))
+
     assign(socket,
       changeset: changeset,
       form: to_form(changeset)
     )
   end
+
+  # if there's no model change, nothing to do
+  defp maybe_update_virtual_size(changeset, model) when is_nil(model), do: changeset
+
+  # model changed. check to make sure we've got a reasonable preset size
+  defp maybe_update_virtual_size(changeset, model),
+    do:
+      maybe_update_virtual_size_based_on_sizing(
+        changeset,
+        ModelInstance.model_size(model),
+        Changeset.get_field(changeset, :memory_requested)
+      )
+
+  # if the model is bigger than the preset, get the smallest preset that makes sense
+  defp maybe_update_virtual_size_based_on_sizing(cs, model_size, memory_requested) when model_size > memory_requested,
+    do: Changeset.change(cs, %{virtual_size: model_size |> ModelInstance.get_preset_for_size() |> Map.get(:name)})
+
+  # otherwise, we're good e.g. user selected large preset and a small model
+  defp maybe_update_virtual_size_based_on_sizing(cs, _model_size, _memory_requested), do: cs
 
   def render(assigns) do
     ~H"""
