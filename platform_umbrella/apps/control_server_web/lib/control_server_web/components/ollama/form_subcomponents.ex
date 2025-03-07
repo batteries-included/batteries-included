@@ -55,10 +55,6 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
         ]}
       />
       <.field>
-        <:label>GPU Count</:label>
-        <.input field={@form[:gpu_count]} type="number" placeholder="0" />
-      </.field>
-      <.field>
         <.input
           field={@form[:node_type]}
           type="select"
@@ -67,7 +63,14 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
           options={GPU.node_types_for_select()}
         />
       </.field>
+      <.field :if={gpu_node_type?(@form[:node_type].value)}>
+        <:label>GPU Count</:label>
+        <.input field={@form[:gpu_count]} type="number" placeholder="0" />
+      </.field>
     </.fieldset>
     """
   end
+
+  defp gpu_node_type?(node_type) when is_binary(node_type), do: node_type |> String.to_existing_atom() |> gpu_node_type?()
+  defp gpu_node_type?(node_type), do: node_type in GPU.node_types_with_gpus()
 end
