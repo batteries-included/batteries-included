@@ -2,6 +2,8 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "cloudnative-pg-clusters"
 
+  import CommonCore.Util.String
+
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Resources.Builder, as: B
@@ -9,8 +11,6 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.PostgresState
-
-  defguardp is_empty(arg) when is_nil(arg) or arg == ""
 
   multi_resource(:postgres_clusters, battery, state) do
     Enum.map(state.postgres_clusters, fn cluster ->

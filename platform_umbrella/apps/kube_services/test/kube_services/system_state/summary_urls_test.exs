@@ -12,8 +12,8 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
 
   describe "url_for_battery/2" do
     test "returns an HTTPS URL when :cert_manager is installed", %{pid: pid} do
-      sepc = build(:install_spec, usage: :kitchen_sink, kube_provider: :aws)
-      send(pid, sepc.target_summary)
+      spec = build(:install_spec, usage: :kitchen_sink, kube_provider: :aws)
+      send(pid, spec.target_summary)
 
       assert "https://keycloak.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :keycloak)
       assert "https://forgejo.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :forgejo)

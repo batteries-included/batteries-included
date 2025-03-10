@@ -300,4 +300,15 @@ defmodule CommonCore.Factory do
   def containers_env_value_factory do
     %CommonCore.Containers.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
   end
+
+  def pg_backup_factory(attrs) do
+    merge_attributes(
+      %{
+        "metadata" => %{},
+        "spec" => %{"cluster" => %{"name" => sequence("backup-"), "method" => "barmanObjectStore"}},
+        "status" => %{}
+      },
+      attrs
+    )
+  end
 end
