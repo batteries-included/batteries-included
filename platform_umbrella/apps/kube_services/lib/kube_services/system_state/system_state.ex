@@ -12,12 +12,13 @@ defmodule KubeServices.SystemState do
     children = [
       KubeServices.SystemState.KeycloakSummarizer,
       {KubeServices.SystemState.Summarizer, [should_refresh: should_refresh]},
+      KubeServices.SystemState.SummaryBackup,
       KubeServices.SystemState.SummaryBatteries,
       KubeServices.SystemState.SummaryHosts,
+      KubeServices.SystemState.SummaryIstio,
       KubeServices.SystemState.SummaryRecent,
       KubeServices.SystemState.SummaryStorage,
-      KubeServices.SystemState.SummaryURLs,
-      KubeServices.SystemState.SummaryIstio
+      KubeServices.SystemState.SummaryURLs
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
