@@ -36,7 +36,7 @@ defmodule ControlServer.Projects.ProjectSnapshotTest do
 
   defp small_pg_project do
     project = insert(:project)
-    pg_cluster = :postgres_cluster |> insert(project_id: project.id, virtual_size: "small") |> dbg()
+    pg_cluster = insert(:postgres_cluster, project_id: project.id, virtual_size: "small")
 
     %{
       small_pg_project: project,
