@@ -156,4 +156,32 @@ defmodule ControlServer.Projects.ProjectSnapshotTest do
       assert cluster.memory_limits >= from_snapshot.memory_limits
     end
   end
+
+  describe "Snapshot Process is secure" do
+    test "Removes the pasword_versions from postgres clusters", %{small_pg_project: p} do
+      assert {:ok, snapshot} = Snapshoter.take_snapshot(p)
+      assert snapshot.postgres_clusters != []
+      assert 1 == length(snapshot.postgres_clusters)
+
+      snap_cluster = List.first(snapshot.postgres_clusters)
+
+      assert snap_cluster.password_versions == []
+    end
+
+    test "import doesn't change postgres passwords", %{
+      small_pg_project: p,
+      small_pg_project_pg_cluster: pg_cluster
+    } do
+      initial_pg_cluster = ControlServer.Postgres.get_cluster!(pg_cluster.id)
+
+      assert initial_pg_cluster.password_versions != []
+
+      assert {:ok, snapshot} = Snapshoter.take_snapshot(p)
+      assert {:ok, _} = Snapshoter.apply_snapshot(p, snapshot)
+
+      refetched = ControlServer.Postgres.get_cluster!(pg_cluster.id)
+
+      assert refetched.password_versions == initial_pg_cluster.password_versions
+    end
+  end
 end
