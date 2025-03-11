@@ -36,7 +36,7 @@ defmodule ControlServer.Projects.ProjectSnapshotTest do
 
   defp small_pg_project do
     project = insert(:project)
-    pg_cluster = insert(:postgres_cluster, project_id: project.id, virtual_size: "small")
+    pg_cluster = :postgres_cluster |> insert(project_id: project.id, virtual_size: "small") |> dbg()
 
     %{
       small_pg_project: project,
@@ -172,14 +172,16 @@ defmodule ControlServer.Projects.ProjectSnapshotTest do
       small_pg_project: p,
       small_pg_project_pg_cluster: pg_cluster
     } do
+      initial_pg_cluster = ControlServer.Postgres.get_cluster!(pg_cluster.id)
+
+      assert initial_pg_cluster.password_versions != []
+
       assert {:ok, snapshot} = Snapshoter.take_snapshot(p)
       assert {:ok, _} = Snapshoter.apply_snapshot(p, snapshot)
 
       refetched = ControlServer.Postgres.get_cluster!(pg_cluster.id)
 
-      assert refetched.password_versions != []
-
-      assert refetched.password_versions == pg_cluster.password_versions
+      assert refetched.password_versions == initial_pg_cluster.password_versions
     end
   end
 end

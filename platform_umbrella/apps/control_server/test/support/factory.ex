@@ -12,6 +12,7 @@ defmodule ControlServer.Factory do
   alias CommonCore.Knative.Service
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.Postgres
+  alias CommonCore.Postgres.PGPasswordVersion
   alias CommonCore.Redis.RedisInstance
   alias CommonCore.Resources.Hashing
   alias CommonCore.Timeline
@@ -103,6 +104,18 @@ defmodule ControlServer.Factory do
       virtual_size: virtual_size,
       database: %{name: "postgres", owner: user_one.username},
       users: [user_one, user_two],
+      password_versions: [
+        %PGPasswordVersion{
+          version: 1,
+          username: user_one.username,
+          password: CommonCore.Defaults.random_key_string(24)
+        },
+        %PGPasswordVersion{
+          version: 1,
+          username: user_two.username,
+          password: CommonCore.Defaults.random_key_string(24)
+        }
+      ],
       project_id: project_id
     }
     |> merge_attributes(virtual_size_attrs)
