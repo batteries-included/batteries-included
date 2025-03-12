@@ -190,7 +190,7 @@ func (c *KindClusterProvider) getWireGuardGatewayEndpoint(ctx context.Context, c
 			}
 		}
 	default:
-		return "", fmt.Errorf("unsupported daemon host scheme: %s" + daemonHostURL.Scheme)
+		return "", fmt.Errorf("unsupported daemon host scheme: %s", daemonHostURL.Scheme)
 	}
 
 	// Do we have an IP address or a hostname?
