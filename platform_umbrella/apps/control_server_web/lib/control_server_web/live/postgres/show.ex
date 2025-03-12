@@ -40,9 +40,9 @@ defmodule ControlServerWeb.Live.PostgresShow do
      |> assign_k8_pods()
      |> assign_timeline_installed()
      |> assign_grafana_url()
+     |> assign_backups()
      |> maybe_assign_edit_versions()
-     |> maybe_assign_events()
-     |> maybe_assign_backups()}
+     |> maybe_assign_events()}
   end
 
   @impl Phoenix.LiveView
@@ -95,6 +95,12 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp assign_grafana_url(socket), do: socket
 
+  defp assign_backups(%{assigns: %{cluster: cluster}} = socket) do
+    assign(socket, :backups, cluster.name |> SummaryBackup.backups_for_cluster() |> SummaryBackup.sort(:desc))
+  end
+
+  defp assign_backups(socket), do: socket
+
   defp maybe_assign_edit_versions(%{assigns: %{cluster: cluster, live_action: live_action}} = socket)
        when live_action == :edit_versions do
     assign(socket, :edit_versions, ControlServer.Audit.history(cluster))
@@ -108,13 +114,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp maybe_assign_events(socket), do: socket
-
-  defp maybe_assign_backups(%{assigns: %{live_action: live_action, cluster: cluster}} = socket)
-       when live_action == :backups do
-    assign(socket, :backups, cluster.name |> SummaryBackup.backups_for_cluster() |> SummaryBackup.sort(:desc))
-  end
-
-  defp maybe_assign_backups(socket), do: socket
 
   defp grafana_url(nil), do: nil
 
@@ -241,7 +240,13 @@ defmodule ControlServerWeb.Live.PostgresShow do
         >
           Edit Versions
         </:tab>
-        <:tab selected={@live_action == :backups} patch={backups_url(@cluster)}>Backups</:tab>
+        <:tab
+          :if={@backups && length(@backups) > 0}
+          selected={@live_action == :backups}
+          patch={backups_url(@cluster)}
+        >
+          Backups
+        </:tab>
       </.tab_bar>
       <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
         Grafana Dashboard
@@ -287,12 +292,13 @@ defmodule ControlServerWeb.Live.PostgresShow do
       back_link={~p"/postgres"}
     />
     <.grid columns={%{sm: 1, lg: 4}}>
-      <.info_panel cluster={@cluster} k8_cluster={@k8_cluster} />
+      <.info_panel cluster={@cluster} k8_cluster={@k8_cluster} backups={@backups} />
       <.links_panel
         cluster={@cluster}
         grafana_dashboard_url={@grafana_dashboard_url}
         timeline_installed={@timeline_installed}
         live_action={@live_action}
+        backups={@backups}
       />
     </.grid>
     """
@@ -316,6 +322,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
         grafana_dashboard_url={@grafana_dashboard_url}
         timeline_installed={@timeline_installed}
         live_action={@live_action}
+        backups={@backups}
       />
       <.panel title="Users" variant="gray" class="lg:col-span-4">
         <.pg_users_table users={@cluster.users} cluster={@cluster} />
@@ -342,6 +349,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
         grafana_dashboard_url={@grafana_dashboard_url}
         timeline_installed={@timeline_installed}
         live_action={@live_action}
+        backups={@backups}
       />
     </.grid>
     """
@@ -365,6 +373,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
         grafana_dashboard_url={@grafana_dashboard_url}
         timeline_installed={@timeline_installed}
         live_action={@live_action}
+        backups={@backups}
       />
     </.grid>
     """
@@ -386,6 +395,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
         grafana_dashboard_url={@grafana_dashboard_url}
         timeline_installed={@timeline_installed}
         live_action={@live_action}
+        backups={@backups}
       />
     </.grid>
     """
@@ -409,6 +419,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
         grafana_dashboard_url={@grafana_dashboard_url}
         timeline_installed={@timeline_installed}
         live_action={@live_action}
+        backups={@backups}
       />
     </.grid>
     """
@@ -430,6 +441,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
         grafana_dashboard_url={@grafana_dashboard_url}
         timeline_installed={@timeline_installed}
         live_action={@live_action}
+        backups={@backups}
       />
     </.grid>
     """
@@ -446,6 +458,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           k8_cluster={@k8_cluster}
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
+          backups={@backups}
         />
       <% :events -> %>
         <.events_page
@@ -455,6 +468,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
           events={@events}
+          backups={@backups}
         />
       <% :pods -> %>
         <.pods_page
@@ -464,6 +478,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
           k8_pods={@k8_pods}
+          backups={@backups}
         />
       <% :users -> %>
         <.users_page
@@ -472,6 +487,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           k8_cluster={@k8_cluster}
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
+          backups={@backups}
         />
       <% :services -> %>
         <.services_page
@@ -481,6 +497,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
           k8_services={@k8_services}
+          backups={@backups}
         />
       <% :edit_versions -> %>
         <.edit_versions_page
@@ -490,6 +507,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
           edit_versions={@edit_versions}
+          backups={@backups}
         />
       <% :backups -> %>
         <.backups_page
