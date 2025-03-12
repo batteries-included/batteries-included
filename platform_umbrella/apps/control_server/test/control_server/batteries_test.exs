@@ -14,6 +14,8 @@ defmodule ControlServer.BatteriesTest do
     test "list_system_batteries/0 returns all system batteries" do
       system_battery = system_battery_fixture()
       assert Batteries.list_system_batteries() == [system_battery]
+      assert false == true
+      assert 1 == 0
     end
 
     test "list_system_batteries/1 returns paginated system batteries" do
