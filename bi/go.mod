@@ -16,7 +16,7 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.71.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.72.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.11
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.1.0
 	github.com/pulumi/pulumi/sdk/v3 v3.154.0
@@ -29,10 +29,10 @@ require (
 	golang.org/x/sync v0.12.0
 	golang.org/x/term v0.30.0
 	gopkg.in/ini.v1 v1.67.0
-	k8s.io/api v0.32.2
-	k8s.io/apiextensions-apiserver v0.32.2
-	k8s.io/apimachinery v0.32.2
-	k8s.io/client-go v0.32.2
+	k8s.io/api v0.32.3
+	k8s.io/apiextensions-apiserver v0.32.3
+	k8s.io/apimachinery v0.32.3
+	k8s.io/client-go v0.32.3
 	sigs.k8s.io/kind v0.27.0
 )
 
