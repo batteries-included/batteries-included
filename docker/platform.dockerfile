@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 #
 
-ARG ELIXIR_VERSION=1.18.1
-ARG ERLANG_VERSION=27.1.2
-ARG UBUNTU_VERSION=noble-20241015
+ARG ELIXIR_VERSION=1.18.3
+ARG ERLANG_VERSION=27.3
+ARG UBUNTU_VERSION=noble-20250127
 
 ARG BUILD_IMAGE_NAME=hexpm/elixir
 ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-ubuntu-${UBUNTU_VERSION}
@@ -63,6 +63,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
   software-properties-common \
   unzip \
   wget && \
+  locale-gen $LANG && \
   apt clean
 
 # Set the locale

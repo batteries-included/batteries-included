@@ -30,8 +30,9 @@ RUN --mount=type=cache,target=/var/cache/apt \
     npm \
     software-properties-common \
     unzip \
-    wget \
-    && locale-gen $LANG
+    wget && \
+    locale-gen $LANG \
+    && apt clean
 
 ###############################################################################
 # Build the assets
@@ -49,7 +50,7 @@ RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci && \
 ###############################################################################
 # Build the Go binary
 
-FROM golang:1.23.6 AS go-build
+FROM golang:1.24.1 AS go-build
 
 WORKDIR /source
 
@@ -73,7 +74,8 @@ WORKDIR /
 RUN apt update && \
     apt install -y \
     libssl3 tini ca-certificates locales && \
-    locale-gen $LANG
+    locale-gen $LANG && \
+    apt clean
 
 COPY --from=assets /source/dist /static
 COPY --from=go-build /source/pastebin-go /usr/bin/pastebin-go
