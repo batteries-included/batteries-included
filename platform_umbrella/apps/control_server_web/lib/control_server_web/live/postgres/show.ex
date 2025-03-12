@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PgUserTable
   import ControlServerWeb.PodsTable
+  import ControlServerWeb.Postgres.PostgresBackupsTable
   import ControlServerWeb.ResourceComponents
   import ControlServerWeb.ServicesTable
 
@@ -13,6 +14,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   alias ControlServer.Postgres
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
+  alias KubeServices.SystemState.SummaryBackup
   alias KubeServices.SystemState.SummaryBatteries
   alias KubeServices.SystemState.SummaryURLs
 
@@ -39,7 +41,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
      |> assign_timeline_installed()
      |> assign_grafana_url()
      |> maybe_assign_edit_versions()
-     |> maybe_assign_events()}
+     |> maybe_assign_events()
+     |> maybe_assign_backups()}
   end
 
   @impl Phoenix.LiveView
@@ -106,6 +109,13 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   defp maybe_assign_events(socket), do: socket
 
+  defp maybe_assign_backups(%{assigns: %{live_action: live_action, cluster: cluster}} = socket)
+       when live_action == :backups do
+    assign(socket, :backups, cluster.name |> SummaryBackup.backups_for_cluster() |> SummaryBackup.sort(:desc))
+  end
+
+  defp maybe_assign_backups(socket), do: socket
+
   defp grafana_url(nil), do: nil
 
   defp grafana_url(cluster) do
@@ -161,6 +171,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp page_title(:users), do: "Postgres Cluster: Users"
   defp page_title(:services), do: "Postgres Cluster: Services"
   defp page_title(:edit_versions), do: "Postgres Cluster: Edit History"
+  defp page_title(:backups), do: "Postgres Cluster: Backups"
 
   defp edit_url(cluster), do: ~p"/postgres/#{cluster}/edit"
 
@@ -170,6 +181,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp edit_versions_url(cluster), do: ~p"/postgres/#{cluster}/edit_versions"
   defp events_url(cluster), do: ~p"/postgres/#{cluster}/events"
   defp pods_url(cluster), do: ~p"/postgres/#{cluster}/pods"
+  defp backups_url(cluster), do: ~p"/postgres/#{cluster}/backups"
 
   defp info_panel(assigns) do
     ~H"""
@@ -229,6 +241,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
         >
           Edit Versions
         </:tab>
+        <:tab selected={@live_action == :backups} patch={backups_url(@cluster)}>Backups</:tab>
       </.tab_bar>
       <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
         Grafana Dashboard
@@ -401,6 +414,27 @@ defmodule ControlServerWeb.Live.PostgresShow do
     """
   end
 
+  defp backups_page(assigns) do
+    ~H"""
+    <.pg_page_header
+      cluster={@cluster}
+      grafana_dashboard_url={@grafana_dashboard_url}
+      title={"Backups: #{@cluster.name}"}
+      back_link={show_url(@cluster)}
+    />
+
+    <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
+      <.backups_panel class="lg:col-span-3  lg:row-span-2" backups={@backups} />
+      <.links_panel
+        cluster={@cluster}
+        grafana_dashboard_url={@grafana_dashboard_url}
+        timeline_installed={@timeline_installed}
+        live_action={@live_action}
+      />
+    </.grid>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -456,6 +490,15 @@ defmodule ControlServerWeb.Live.PostgresShow do
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
           edit_versions={@edit_versions}
+        />
+      <% :backups -> %>
+        <.backups_page
+          live_action={@live_action}
+          cluster={@cluster}
+          k8_cluster={@k8_cluster}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          timeline_installed={@timeline_installed}
+          backups={@backups}
         />
     <% end %>
     """

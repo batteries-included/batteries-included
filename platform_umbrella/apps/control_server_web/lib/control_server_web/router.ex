@@ -150,6 +150,7 @@ defmodule ControlServerWeb.Router do
     live "/:id/users", Live.PostgresShow, :users
     live "/:id/services", Live.PostgresShow, :services
     live "/:id/edit_versions", Live.PostgresShow, :edit_versions
+    live "/:id/backups", Live.PostgresShow, :backups
   end
 
   scope "/ferretdb", ControlServerWeb do

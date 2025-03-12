@@ -50,4 +50,7 @@ defmodule KubeServices.SystemState.SummaryBackup do
   def backups_for_cluster(target \\ @me, cluster) do
     GenServer.call(target, {:backups, cluster})
   end
+
+  @spec sort(list(map()), :asc | :desc) :: list(map())
+  def sort(backups, sorter \\ :asc), do: Enum.sort_by(backups, &get_in(&1, ~w(status startedAt)), sorter)
 end
