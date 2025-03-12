@@ -531,7 +531,7 @@ defmodule Mix.Tasks.Gen.Resource do
     pipe(
       pipeline,
       quote do
-        Map.put(unquote(key), unquote(value))
+        Map.put(unquote(key), unquote(Macro.escape(value)))
       end
     )
   end
@@ -794,7 +794,7 @@ defmodule Mix.Tasks.Gen.Resource do
     quote do
       resource(unquote(method_name), battery, state) do
         namespace = core_namespace(state)
-        rules = unquote(rules)
+        rules = unquote(Macro.escape(rules))
         unquote(main_pipeline)
       end
     end
@@ -803,7 +803,7 @@ defmodule Mix.Tasks.Gen.Resource do
   defp cluster_resource_method_from_pipeline_and_rules(rules, main_pipeline, method_name) do
     quote do
       resource(unquote(method_name)) do
-        rules = unquote(rules)
+        rules = unquote(Macro.escape(rules))
 
         unquote(main_pipeline)
       end
