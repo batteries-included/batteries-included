@@ -19,16 +19,8 @@ func StopInstall(ctx context.Context, env *installs.InstallEnv, skipCleanKube bo
 		defer progressReporter.Shutdown()
 	}
 
-	if !skipCleanKube && env.NeedsKubeCleanup() {
-		kubeClient, err := env.NewBatteryKubeClient()
-		if err != nil {
-			return err
-		}
-		defer kubeClient.Close()
-
-		if err := kubeClient.RemoveAll(ctx); err != nil {
-			return err
-		}
+	if err := maybeCleanKube(ctx, env, skipCleanKube); err != nil {
+		return fmt.Errorf("unable to clean up kubernetes resources: %w", err)
 	}
 
 	if err := env.StopKubeProvider(ctx, progressReporter); err != nil {
@@ -41,4 +33,23 @@ func StopInstall(ctx context.Context, env *installs.InstallEnv, skipCleanKube bo
 	}
 
 	return nil
+}
+
+// maybeCleanKube conditionally deletes all k8s resources if the env needs cleanup and we're not skipping
+// will close the client before returning to prevent wireguard log spam
+func maybeCleanKube(ctx context.Context, env *installs.InstallEnv, skip bool) error {
+	needsCleanup := env.NeedsKubeCleanup()
+
+	if skip || !needsCleanup {
+		slog.Debug("Skipping kube cleanup", slog.Bool("skip", skip), slog.Bool("envNeedsCleanup", env.NeedsKubeCleanup()))
+		return nil
+	}
+
+	kubeClient, err := env.NewBatteryKubeClient()
+	if err != nil {
+		return err
+	}
+	defer kubeClient.Close()
+
+	return kubeClient.RemoveAll(ctx)
 }
