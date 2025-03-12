@@ -30,6 +30,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.NotebooksForm
   alias ControlServerWeb.Batteries.NvidiaDevicePluginForm
   alias ControlServerWeb.Batteries.OllamaForm
+  alias ControlServerWeb.Batteries.PostgresRestoreForm
   alias ControlServerWeb.Batteries.ProjectExportForm
   alias ControlServerWeb.Batteries.PromtailForm
   alias ControlServerWeb.Batteries.RedisForm
@@ -66,6 +67,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     notebooks: NotebooksForm,
     nvidia_device_plugin: NvidiaDevicePluginForm,
     ollama: OllamaForm,
+    postgres_restore: PostgresRestoreForm,
     project_export: ProjectExportForm,
     promtail: PromtailForm,
     redis: RedisForm,

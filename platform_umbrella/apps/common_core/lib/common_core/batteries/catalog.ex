@@ -149,6 +149,15 @@ defmodule CommonCore.Batteries.Catalog do
       description: "Export projects as a template",
       allowed_usages: ~w(internal_dev internal_int_test)a
     },
+    %CatalogBattery{
+      group: :magic,
+      type: :postgres_restore,
+      dependencies: [:battery_core],
+      name: "Postgres Restore",
+      description: "Restore pg cluster from existing backup",
+      allowed_usages: ~w(internal_dev internal_int_test)a
+    },
+
     # Devtools
     %CatalogBattery{
       group: :devtools,
