@@ -32,6 +32,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
+     |> assign(:restore_form, nil)
+     |> assign(:restore_enabled, SummaryBatteries.battery_installed(:postgres_restore))
      |> assign_cluster(id)
      |> assign_page_title()
      |> assign_current_page()
@@ -55,6 +57,35 @@ defmodule ControlServerWeb.Live.PostgresShow do
     {:ok, _} = Postgres.delete_cluster(socket.assigns.cluster)
 
     {:noreply, push_navigate(socket, to: ~p"/postgres")}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("close_restore_backup_modal", _, socket) do
+    {:noreply, assign(socket, :restore_form, nil)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("restore_backup_modal", %{"backup_name" => backup_name}, socket) do
+    form = to_form(%{"backup_name" => backup_name, "new_name" => ""})
+
+    {:noreply, assign(socket, :restore_form, form)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event(
+        "do_restore",
+        %{"backup_name" => backup_name, "new_name" => new_name},
+        %{assigns: %{cluster: cluster}} = socket
+      ) do
+    {:ok, new_cluster} =
+      cluster
+      |> Map.from_struct()
+      |> Map.delete(:id)
+      |> Map.put(:name, new_name)
+      |> Map.put(:restore_from_backup, backup_name)
+      |> Postgres.create_cluster()
+
+    {:noreply, push_navigate(socket, to: ~p"/postgres/#{new_cluster.id}/show")}
   end
 
   defp assign_timeline_installed(socket) do
@@ -435,7 +466,11 @@ defmodule ControlServerWeb.Live.PostgresShow do
     />
 
     <.grid columns={%{sm: 1, lg: 4}} class="lg:template-rows-2">
-      <.backups_panel class="lg:col-span-3  lg:row-span-2" backups={@backups} />
+      <.backups_panel
+        class="lg:col-span-3  lg:row-span-2"
+        backups={@backups}
+        restore_enabled={@restore_enabled}
+      />
       <.links_panel
         cluster={@cluster}
         grafana_dashboard_url={@grafana_dashboard_url}
@@ -517,8 +552,10 @@ defmodule ControlServerWeb.Live.PostgresShow do
           grafana_dashboard_url={@grafana_dashboard_url}
           timeline_installed={@timeline_installed}
           backups={@backups}
+          restore_enabled={@restore_enabled}
         />
     <% end %>
+    <.restore_backup_modal restore_form={@restore_form} />
     """
   end
 end

@@ -56,7 +56,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         instances: cluster.num_instances,
         storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
         enableSuperuserAccess: false,
-        bootstrap: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}},
+        bootstrap: bootstrap(cluster, db),
         postgresql: %{
           parameters: postgres_paramters(cluster)
         },
@@ -93,6 +93,9 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.add_owner(cluster)
     |> B.spec(spec)
   end
+
+  defp bootstrap(%{restore_from_backup: backup}, _db), do: %{recovery: %{backup: %{name: backup}}}
+  defp bootstrap(_cluster, db), do: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}}
 
   defp maybe_add_certificates(spec, predicate, _cluster) when not predicate, do: spec
 

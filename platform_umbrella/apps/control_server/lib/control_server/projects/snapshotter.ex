@@ -71,6 +71,7 @@ defmodule ControlServer.Projects.Snapshoter do
     input
     |> Map.put(:description, project.description)
     |> Map.put(:name, "Generated snapshot for project #{project.name}")
+    |> Map.delete(:restore_from_backup)
     |> remove_postgres_cluster_passwords()
   end
 
@@ -278,6 +279,7 @@ defmodule ControlServer.Projects.Snapshoter do
     |> remove_association(module)
     |> maybe_change_virtual_size(module, opts)
     |> maybe_remove_password_versions(module)
+    |> Map.delete(:restore_from_backup)
     |> Map.put(:project_id, project.id)
   end
 

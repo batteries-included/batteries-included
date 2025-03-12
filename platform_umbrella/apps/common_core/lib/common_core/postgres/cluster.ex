@@ -76,6 +76,7 @@ defmodule CommonCore.Postgres.Cluster do
     field :cpu_limits, :integer
     field :memory_requested, :integer
     field :memory_limits, :integer
+    field :restore_from_backup, :string
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
     field :virtual_size, :string, virtual: true

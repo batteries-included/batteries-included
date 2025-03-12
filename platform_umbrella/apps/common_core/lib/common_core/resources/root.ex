@@ -83,6 +83,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     notebooks: [Notebooks],
     nvidia_device_plugin: [NvidiaDevicePlugin],
     ollama: [Ollama],
+    postgres_restore: [],
     project_export: [],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],
