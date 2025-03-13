@@ -89,6 +89,7 @@ jobs:
           name: Mix Test Results
           path: platform_umbrella/_build/**/test-junit-report.xml
           reporter: java-junit
+          use-actions-summary: 'false'
 
   elixir-credo:
     runs-on: ubuntu-latest
