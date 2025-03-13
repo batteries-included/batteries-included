@@ -94,7 +94,9 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.spec(spec)
   end
 
-  defp bootstrap(%{restore_from_backup: backup}, _db), do: %{recovery: %{backup: %{name: backup}}}
+  defp bootstrap(%{restore_from_backup: backup}, _db) when not is_empty(backup),
+    do: %{recovery: %{backup: %{name: backup}}}
+
   defp bootstrap(_cluster, db), do: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}}
 
   defp maybe_add_certificates(spec, predicate, _cluster) when not predicate, do: spec
