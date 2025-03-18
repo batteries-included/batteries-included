@@ -18,17 +18,7 @@ defmodule ControlServer.RedisTest do
     end
 
     test "list_redis_instances/1 returns paginated failover clusters" do
-      name_prefix = "list-redis-instances-pagination-test"
-      params = %{order_by: [:id], filters: [%{field: :name, op: :ilike, value: "#{name_prefix}-"}]}
-      created = Enum.map(0..9, fn i -> redis_instance_fixture(%{name: "#{name_prefix}-#{i}"}) end)
-
-      assert {:ok, {[first], meta}} = Redis.list_redis_instances(Map.put(params, :first, 1))
-      assert created |> List.first() |> Map.get(:id) == first.id
-      assert {false, true} = {meta.has_previous_page?, meta.has_next_page?}
-
-      assert {:ok, {[last], meta}} = Redis.list_redis_instances(Map.put(params, :last, 1))
-      assert created |> List.last() |> Map.get(:id) == last.id
-      assert {true, false} = {meta.has_previous_page?, meta.has_next_page?}
+      pagination_test(&redis_instance_fixture/1, &Redis.list_redis_instances/1)
     end
 
     test "get_redis_instance!/1 returns the redis_instance with given id" do

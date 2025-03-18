@@ -15,11 +15,7 @@ defmodule ControlServer.MetalLBTest do
     end
 
     test "list_ip_address_pools/1 returns paginated ip address pools" do
-      ip_address_pool1 = ip_address_pool_fixture()
-      _ip_address_pool2 = ip_address_pool_fixture()
-
-      assert {:ok, {[ip_address_pool], _}} = MetalLB.list_ip_address_pools(%{limit: 1})
-      assert ip_address_pool.id == ip_address_pool1.id
+      pagination_test(&ip_address_pool_fixture/1, &MetalLB.list_ip_address_pools/1)
     end
 
     test "get_ip_address_pool!/1 returns the ip_address_pool with given id" do
