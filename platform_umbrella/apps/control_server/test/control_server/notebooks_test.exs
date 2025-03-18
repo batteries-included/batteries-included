@@ -24,11 +24,7 @@ defmodule ControlServer.NotebooksTest do
     end
 
     test "list_jupyter_lab_notebooks/1 returns paginated jupyter lab notebooks" do
-      jupyter_lab_notebook1 = jupyter_lab_notebook_fixture()
-      _jupyter_lab_notebook2 = jupyter_lab_notebook_fixture()
-
-      assert {:ok, {[jupyter_lab_notebook], _}} = Notebooks.list_jupyter_lab_notebooks(%{limit: 1})
-      assert jupyter_lab_notebook.id == jupyter_lab_notebook1.id
+      pagination_test(&jupyter_lab_notebook_fixture/1, &Notebooks.list_jupyter_lab_notebooks/1)
     end
 
     test "get_jupyter_lab_notebook!/1 returns the jupyter_lab_notebook with given id" do

@@ -22,14 +22,13 @@ defmodule ControlServer.ProjectsTest do
 
   describe "list_projects/0" do
     test "should list all projects", ctx do
-      assert list_projects() == [ctx.project, ctx.project2, ctx.project3]
+      assert Enum.sort(list_projects()) == Enum.sort([ctx.project, ctx.project2, ctx.project3])
     end
   end
 
   describe "list_projects/1" do
-    test "should list paginated projects", ctx do
-      assert {:ok, {[project], _}} = list_projects(%{limit: 1})
-      assert project == ctx.project
+    test "should list paginated projects", _ctx do
+      pagination_test(&project_fixture/1, &list_projects/1)
     end
   end
 

@@ -20,11 +20,7 @@ defmodule ControlServer.KnativeTest do
     end
 
     test "list_services/1 returns paginated services" do
-      service1 = service_fixture()
-      _service2 = service_fixture()
-
-      assert {:ok, {[service], _}} = Knative.list_services(%{limit: 1})
-      assert service.id == service1.id
+      pagination_test(&service_fixture/1, &Knative.list_services/1)
     end
 
     test "get_service!/1 returns the service with given id" do

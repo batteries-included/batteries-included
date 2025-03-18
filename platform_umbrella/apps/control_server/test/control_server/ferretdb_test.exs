@@ -16,11 +16,7 @@ defmodule ControlServer.FerretDBTest do
     end
 
     test "list_ferret_services/1 returns paginated ferret services" do
-      ferret_service1 = ferret_service_fixture()
-      _ferret_service2 = ferret_service_fixture()
-
-      assert {:ok, {[ferret_service], _}} = FerretDB.list_ferret_services(%{limit: 1})
-      assert ferret_service.id == ferret_service1.id
+      pagination_test(&ferret_service_fixture/1, &FerretDB.list_ferret_services/1)
     end
 
     test "get_ferret_service!/1 returns the ferret_service with given id" do
