@@ -23,7 +23,7 @@ defmodule ControlServerWeb.Postgres.PostgresBackupsTable do
               variant="minimal"
               icon={:arrow_path}
               id={"restore_" <> to_html_id(backup)}
-              phx-click="restore_backup_modal"
+              phx-click="restore"
               phx-value-backup_name={name(backup)}
             />
             <.tooltip target_id={"restore_" <> to_html_id(backup)}>
@@ -34,37 +34,6 @@ defmodule ControlServerWeb.Postgres.PostgresBackupsTable do
       </.table>
       <.light_text :if={@backups == []}>No backups</.light_text>
     </.panel>
-    """
-  end
-
-  attr :restore_form, :map, default: nil
-
-  def restore_backup_modal(assigns) do
-    ~H"""
-    <.form for={@restore_form} id="restore-form" phx-submit="do_restore">
-      <.modal
-        :if={@restore_form}
-        show
-        id="restore-backup-form-modal"
-        size="lg"
-        on_cancel={JS.push("close_restore_backup_modal")}
-      >
-        <:title>Cluster restore</:title>
-
-        <.fieldset>
-          <.input field={@restore_form[:backup_name]} type="hidden" />
-
-          <.field>
-            <:label>New Cluster Name</:label>
-            <.input field={@restore_form[:new_name]} autocomplete="off" />
-          </.field>
-        </.fieldset>
-
-        <:actions cancel="Cancel">
-          <.button variant="primary" type="submit">Start restoration</.button>
-        </:actions>
-      </.modal>
-    </.form>
     """
   end
 

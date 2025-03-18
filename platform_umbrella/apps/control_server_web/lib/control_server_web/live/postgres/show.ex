@@ -60,32 +60,8 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("close_restore_backup_modal", _, socket) do
-    {:noreply, assign(socket, :restore_form, nil)}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_event("restore_backup_modal", %{"backup_name" => backup_name}, socket) do
-    form = to_form(%{"backup_name" => backup_name, "new_name" => ""})
-
-    {:noreply, assign(socket, :restore_form, form)}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_event(
-        "do_restore",
-        %{"backup_name" => backup_name, "new_name" => new_name},
-        %{assigns: %{cluster: cluster}} = socket
-      ) do
-    {:ok, new_cluster} =
-      cluster
-      |> Map.from_struct()
-      |> Map.delete(:id)
-      |> Map.put(:name, new_name)
-      |> Map.put(:restore_from_backup, backup_name)
-      |> Postgres.create_cluster()
-
-    {:noreply, push_navigate(socket, to: ~p"/postgres/#{new_cluster.id}/show")}
+  def handle_event("restore", %{"backup_name" => backup}, %{assigns: %{cluster: cluster}} = socket) do
+    {:noreply, push_navigate(socket, to: ~p"/postgres/new?#{%{cluster_id: cluster.id, backup_name: backup}}")}
   end
 
   defp assign_timeline_installed(socket) do
@@ -555,7 +531,6 @@ defmodule ControlServerWeb.Live.PostgresShow do
           restore_enabled={@restore_enabled}
         />
     <% end %>
-    <.restore_backup_modal restore_form={@restore_form} />
     """
   end
 end

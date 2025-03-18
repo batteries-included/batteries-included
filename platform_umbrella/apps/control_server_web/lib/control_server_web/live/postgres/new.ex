@@ -2,9 +2,37 @@ defmodule ControlServerWeb.Live.PostgresNew do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  alias CommonCore.Postgres.Cluster
+  alias ControlServer.Postgres
   alias ControlServerWeb.Live.PostgresFormComponent
+  alias Ecto.Changeset
 
   require Logger
+
+  @impl Phoenix.LiveView
+  def mount(%{"cluster_id" => id, "backup_name" => backup_name} = _params, _session, socket) do
+    # get old cluster from db
+    old_cluster = Postgres.get_cluster!(id, preload: [:project])
+
+    # build our params from the existing cluster
+    params =
+      old_cluster
+      |> Map.from_struct()
+      |> Map.delete(:id)
+      |> Map.delete(:name)
+      |> Map.put(:restore_from_backup, backup_name)
+
+    # create new cluster struct from params
+    cluster = %Cluster{} |> Cluster.changeset(params) |> Changeset.apply_changes()
+
+    {:ok,
+     socket
+     |> assign(:action, :recover)
+     |> assign(:cluster, cluster)
+     |> assign(:current_page, :data)
+     |> assign(:project_id, cluster.project_id)
+     |> assign(:title, "Recover Postgres Cluster")}
+  end
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
@@ -13,9 +41,11 @@ defmodule ControlServerWeb.Live.PostgresNew do
 
     {:ok,
      socket
-     |> assign(:project_id, params["project_id"])
+     |> assign(:action, :new)
+     |> assign(:cluster, cluster)
      |> assign(:current_page, :data)
-     |> assign(:cluster, cluster)}
+     |> assign(:project_id, params["project_id"])
+     |> assign(:title, "New Postgres Cluster")}
   end
 
   @impl Phoenix.LiveView
@@ -33,8 +63,8 @@ defmodule ControlServerWeb.Live.PostgresNew do
         module={PostgresFormComponent}
         cluster={@cluster}
         id="new-cluster-form"
-        action={:new}
-        title="New Postgres Cluster"
+        action={@action}
+        title={@title}
         project_id={@project_id}
       />
     </div>
