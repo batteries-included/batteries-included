@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   @moduledoc false
   use ControlServerWeb, :live_component
 
+  import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.PostgresFormSubcomponents
 
   alias CommonCore.Postgres.Cluster
@@ -171,7 +172,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     save_cluster(socket, socket.assigns.action, cluster_params)
   end
 
-  defp save_cluster(socket, :new, cluster_params) do
+  defp save_cluster(socket, action, cluster_params) when action in ~w(new recover)a do
     case Postgres.create_cluster(cluster_params) do
       {:ok, new_cluster} ->
         socket =
@@ -231,10 +232,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         phx-change="validate"
         phx-target={@myself}
       >
-        <.page_header
-          title={@title}
-          back_link={if @action == :new, do: ~p"/postgres", else: ~p"/postgres/#{@cluster}/show"}
-        >
+        <.page_header title={@title} back_link={back_link(@cluster, @action)}>
           <.button variant="dark" type="submit" phx-disable-with="Saving…">
             Save Postgres Cluster
           </.button>
@@ -288,6 +286,9 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
           <.panel title="Advanced Settings" variant="gray">
             <.fieldset>
+              <.input field={@form[:restore_from_backup]} type="hidden" />
+              <.input field={@form[:type]} type="hidden" />
+
               <.field>
                 <:label>Project</:label>
                 <.input
@@ -318,13 +319,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
     |> add_default_storage_class()
   end
 
-  defp possible_storage_classes, do: Enum.map(SummaryStorage.storage_classes(), &get_in(&1, ["metadata", "name"]))
+  defp possible_storage_classes, do: Enum.map(SummaryStorage.storage_classes(), &name/1)
 
-  defp possible_namespaces,
-    do: :namespace |> KubeServices.KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
+  defp possible_namespaces, do: :namespace |> KubeServices.KubeState.get_all() |> Enum.map(&name/1)
 
-  defp possible_nodes,
-    do: :node |> KubeServices.KubeState.get_all() |> Enum.map(fn res -> get_in(res, ~w(metadata name)) end)
+  defp possible_nodes, do: :node |> KubeServices.KubeState.get_all() |> Enum.map(&name/1)
 
   defp add_default_storage_class(params), do: Map.put_new(params, "storage_class", get_default_storage_class())
 
@@ -359,7 +358,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
         nil
 
       storage_class ->
-        get_in(storage_class, ["metadata", "name"])
+        name(storage_class)
     end
   end
 
@@ -369,5 +368,19 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
   defp upsert_by_position(list, item, _) do
     list ++ [item]
+  end
+
+  defp back_link(cluster, action) do
+    case action do
+      :new ->
+        ~p"/postgres"
+
+      # TODO: what's the correct link?
+      :recover ->
+        ~p"/postgres"
+
+      _ ->
+        ~p"/postgres/#{cluster}/show"
+    end
   end
 end

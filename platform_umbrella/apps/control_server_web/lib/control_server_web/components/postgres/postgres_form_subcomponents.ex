@@ -45,6 +45,9 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     }
   ]
 
+  @new_actions ~w(new recover)a
+  defp new_actions, do: @new_actions
+
   attr :phx_target, :any
   attr :users, :list, default: []
 
@@ -194,7 +197,11 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
     <.fieldset responsive class={@class}>
       <.field>
         <:label>Name</:label>
-        <.input field={@form[:name]} autofocus={@action == :new} disabled={@action != :new} />
+        <.input
+          field={@form[:name]}
+          autofocus={@action in new_actions()}
+          disabled={@action not in new_actions()}
+        />
       </.field>
 
       <.field>
