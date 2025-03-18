@@ -695,10 +695,11 @@ func (c *clusterConfig) buildAddons(ctx *pulumi.Context) error {
 		irsaARN pulumi.StringPtrInput
 		config  pulumi.StringPtrInput
 	}{
-		"aws-ebs-csi-driver": {irsaARN: c.roles["ebs-csi"].Arn},
-		"coredns":            {config: pulumi.String(bs)},
-		"kube-proxy":         {},
-		"vpc-cni":            {},
+		"aws-ebs-csi-driver":  {irsaARN: c.roles["ebs-csi"].Arn},
+		"coredns":             {config: pulumi.String(bs)},
+		"kube-proxy":          {},
+		"snapshot-controller": {},
+		"vpc-cni":             {},
 	} {
 		version, err := peks.GetAddonVersion(ctx, &peks.GetAddonVersionArgs{
 			AddonName:         addon,
