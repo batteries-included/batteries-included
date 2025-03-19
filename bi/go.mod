@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.17
 	github.com/aws/smithy-go v1.22.3
 	github.com/dghubble/ipnets v1.0.0
-	github.com/docker/docker v28.0.1+incompatible
+	github.com/docker/docker v28.0.2+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/go-jose/go-jose/v4 v4.0.5
 	github.com/lmittmann/tint v1.0.7
@@ -19,7 +19,7 @@ require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.72.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.11
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.1.1
-	github.com/pulumi/pulumi/sdk/v3 v3.156.0
+	github.com/pulumi/pulumi/sdk/v3 v3.157.0
 	github.com/samber/slog-multi v1.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.0
