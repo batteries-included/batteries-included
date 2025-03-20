@@ -2,10 +2,10 @@ defmodule CommonCore.Resources.IstioIngress do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingressgateway"
 
-  import CommonCore.Resources.MapUtils
   import CommonCore.Resources.ProxyUtils, only: [sanitize: 1]
   import CommonCore.StateSummary.Batteries, only: [hosts_by_battery_type: 1]
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.Util.Map
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F

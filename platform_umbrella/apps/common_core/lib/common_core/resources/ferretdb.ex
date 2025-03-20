@@ -2,8 +2,8 @@ defmodule CommonCore.Resources.FerretDB do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "ferretdb"
 
-  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.Util.Map
 
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Resources.Builder, as: B

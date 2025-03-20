@@ -3,8 +3,8 @@ defmodule CommonCore.Resources.Ollama do
   use CommonCore.Resources.ResourceGenerator, app_name: "ollama"
 
   import CommonCore.Resources.GPU
-  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.Util.Map
 
   alias CommonCore.Resources.Builder, as: B
 

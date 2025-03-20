@@ -1,10 +1,10 @@
 defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
   @moduledoc false
 
-  import CommonCore.Resources.MapUtils
   import CommonCore.Resources.ProxyUtils
   import CommonCore.StateSummary.Batteries, only: [get_battery: 2, batteries_installed?: 2]
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.Util.Map
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.StateSummary

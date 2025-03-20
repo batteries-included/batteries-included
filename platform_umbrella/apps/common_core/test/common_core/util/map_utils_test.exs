@@ -1,9 +1,9 @@
-defmodule CommonCore.Resources.MapUtilsTest do
+defmodule CommonCore.Util.MapTest do
   use ExUnit.Case, async: true
 
-  import CommonCore.Resources.MapUtils
+  import CommonCore.Util.Map
 
-  doctest CommonCore.Resources.MapUtils
+  doctest CommonCore.Util.Map
 
   describe "maybe_put/4" do
     test "updates the map when predicate is `true`" do
