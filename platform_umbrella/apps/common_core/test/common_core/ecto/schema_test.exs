@@ -1,6 +1,9 @@
 defmodule CommonCore.Ecto.SchemaTest do
   use ExUnit.Case
 
+  doctest CommonCore.Ecto.Schema
+  doctest CommonCore.Ecto.PolymorphicType
+
   describe "CommonCore.Ecto.Schema" do
     alias CommonCore.ExampleSchemas.TodoSchema
 
