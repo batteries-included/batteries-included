@@ -3,8 +3,8 @@ defmodule CommonCore.Resources.TraditionalServices do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "traditional-services"
 
-  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
+  import CommonCore.Util.Map
 
   alias CommonCore.Containers.EnvValue
   alias CommonCore.OpenAPI.IstioVirtualService.VirtualService

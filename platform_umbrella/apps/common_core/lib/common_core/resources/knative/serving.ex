@@ -2,9 +2,9 @@ defmodule CommonCore.Resources.KnativeServing do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "knative-serving"
 
-  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.SSL
+  import CommonCore.Util.Map
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.Secret

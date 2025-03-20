@@ -1,6 +1,6 @@
-defmodule CommonCore.Resources.MapUtils do
+defmodule CommonCore.Util.Map do
   @moduledoc """
-  Utility functions
+  Utility functions for working with maps
   """
 
   @doc """
@@ -9,16 +9,16 @@ defmodule CommonCore.Resources.MapUtils do
 
   ### Examples
 
-        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "a", "b")
+        iex> CommonCore.Util.Map.maybe_put(%{}, "a", "b")
         %{"a" => "b"}
 
-        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "a", "")
+        iex> CommonCore.Util.Map.maybe_put(%{}, "a", "")
         %{}
 
-        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "a", %{})
+        iex> CommonCore.Util.Map.maybe_put(%{}, "a", %{})
         %{}
 
-        iex> CommonCore.Resources.MapUtils.maybe_put(%{}, "", "b")
+        iex> CommonCore.Util.Map.maybe_put(%{}, "", "b")
         %{}
   """
 
@@ -45,13 +45,13 @@ defmodule CommonCore.Resources.MapUtils do
 
   ## Examples
 
-      iex> CommonCore.Resources.MapUtils.maybe_put(%{}, true, "a", "b")
+      iex> CommonCore.Util.Map.maybe_put(%{}, true, "a", "b")
       %{"a" => "b"}
 
-      iex> CommonCore.Resources.MapUtils.maybe_put(%{}, false, "a", "b")
+      iex> CommonCore.Util.Map.maybe_put(%{}, false, "a", "b")
       %{}
 
-      iex> CommonCore.Resources.MapUtils.maybe_put(%{}, fn _original_map -> true end, "a", "b")
+      iex> CommonCore.Util.Map.maybe_put(%{}, fn _original_map -> true end, "a", "b")
       %{"a" => "b"}
   """
   @spec maybe_put(map(), boolean(), String.t(), String.t()) :: map()
@@ -76,13 +76,13 @@ defmodule CommonCore.Resources.MapUtils do
 
   ## Examples
 
-      iex> CommonCore.Resources.MapUtils.maybe_put_lazy(%{}, true, "a", fn _ -> "b" end)
+      iex> CommonCore.Util.Map.maybe_put_lazy(%{}, true, "a", fn _ -> "b" end)
       %{"a" => "b"}
 
-      iex> CommonCore.Resources.MapUtils.maybe_put_lazy(%{}, false, "a", fn _ -> "b" end)
+      iex> CommonCore.Util.Map.maybe_put_lazy(%{}, false, "a", fn _ -> "b" end)
       %{}
 
-      iex> CommonCore.Resources.MapUtils.maybe_put_lazy(%{}, fn _original_map -> true end, "a", fn _ -> "b" end)
+      iex> CommonCore.Util.Map.maybe_put_lazy(%{}, fn _original_map -> true end, "a", fn _ -> "b" end)
       %{"a" => "b"}
   """
   @spec maybe_put_lazy(map(), boolean(), String.t(), (map() -> any())) :: map()
@@ -102,19 +102,19 @@ defmodule CommonCore.Resources.MapUtils do
 
   ## Examples
 
-    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, true, :key, "b")
+    iex> CommonCore.Util.Map.maybe_append(%{key: ["a"]}, true, :key, "b")
     %{key: ["a","b"]}
 
-    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, true, :key, ["b", "c"])
+    iex> CommonCore.Util.Map.maybe_append(%{key: ["a"]}, true, :key, ["b", "c"])
     %{key: ["a","b","c"]}
 
-    iex> CommonCore.Resources.MapUtils.maybe_append(%{}, true, :key, "b")
+    iex> CommonCore.Util.Map.maybe_append(%{}, true, :key, "b")
     %{key: ["b"]}
 
-    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, false, :key, "b")
+    iex> CommonCore.Util.Map.maybe_append(%{key: ["a"]}, false, :key, "b")
     %{key: ["a"]}
 
-    iex> CommonCore.Resources.MapUtils.maybe_append(%{key: ["a"]}, fn _original_map -> true end, :key, "b")
+    iex> CommonCore.Util.Map.maybe_append(%{key: ["a"]}, fn _original_map -> true end, :key, "b")
     %{key: ["a", "b"]}
 
   """

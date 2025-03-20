@@ -1,5 +1,8 @@
 defmodule CommonCore.Defaults.GPU do
   @moduledoc false
+
+  import CommonCore.Util.Tuple
+
   @node_types [
     default: "None",
     any_nvidia: "Any Nvidia GPU",
@@ -13,5 +16,5 @@ defmodule CommonCore.Defaults.GPU do
 
   def node_types_with_gpus, do: @node_types |> Keyword.delete(:default) |> Keyword.keys()
 
-  def node_types_for_select, do: Enum.map(@node_types, fn {k, v} -> {v, k} end)
+  def node_types_for_select, do: Enum.map(@node_types, &swap/1)
 end

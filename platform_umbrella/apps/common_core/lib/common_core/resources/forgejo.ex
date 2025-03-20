@@ -8,10 +8,10 @@ defmodule CommonCore.Resources.Forgejo do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "forgejo"
 
-  import CommonCore.Resources.MapUtils
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.URLs
+  import CommonCore.Util.Map
 
   alias CommonCore.Defaults
   alias CommonCore.OpenAPI.IstioVirtualService.VirtualService

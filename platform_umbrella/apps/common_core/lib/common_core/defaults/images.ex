@@ -311,7 +311,7 @@ defmodule CommonCore.Defaults.Images do
   def get_image(name) do
     @registry
     |> Enum.filter(fn {k, _v} -> k == name end)
-    |> Enum.map(fn {_k, v} -> v end)
+    |> Enum.map(&elem(&1, 1))
     |> List.first()
   end
 
