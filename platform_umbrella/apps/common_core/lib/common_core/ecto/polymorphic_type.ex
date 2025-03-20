@@ -2,6 +2,7 @@ defmodule CommonCore.Ecto.PolymorphicType do
   @moduledoc false
   use Ecto.ParameterizedType
 
+  alias CommonCore.Ecto.PolymorphicType
   alias Ecto.ParameterizedType
 
   # for dialyzer
@@ -74,6 +75,51 @@ defmodule CommonCore.Ecto.PolymorphicType do
   defp validate(opts) do
     if !Keyword.has_key?(opts, :mappings) do
       {:error, ["missing type mappings (:mappings)"]}
+    end
+  end
+
+  @doc """
+  Returns the mappings for the polymorphic type.
+
+  ## Examples
+
+  Assuming this schema:
+
+      defmodule MySchema do
+        use CommonCore, :schema
+
+        def my_mappings(), do: [foo: CommonCore.Batteries.BatteryCoreConfig, bar: CommonCore.Batteries.BatteryCAConfig]
+        batt_schema "my_schema" do
+          field :config, PolymorphicType, mappings: my_mappings()
+        end
+      end
+
+  Here are some examples of using `mappings/2` with it:
+
+      CommonCore.Ecto.PolymorphicType.mappings(MySchema, :config)
+      #=> [foo: CommonCore.Batteries.BatteryCoreConfig, bar: CommonCore.Batteries.BatteryCAConfig]
+
+  """
+  @spec mappings(module() | struct() | map(), atom()) :: keyword(String.t() | integer())
+  def mappings(schema_or_struct_or_types, field)
+
+  def mappings(%module{}, field), do: mappings(module, field)
+
+  def mappings(schema, field) when is_atom(schema) do
+    schema.__changeset__()
+  rescue
+    _ in UndefinedFunctionError ->
+      raise ArgumentError, "#{inspect(schema)} is not an Ecto schema or types map"
+  else
+    %{} = types -> mappings(types, field)
+  end
+
+  def mappings(types, field) when is_map(types) do
+    case types do
+      %{^field => {:parameterized, {PolymorphicType, %{mappings: mappings}}}} -> mappings
+      %{^field => {_, {:parameterized, {PolymorphicType, %{mappings: mappings}}}}} -> mappings
+      %{^field => _} -> raise ArgumentError, "#{field} is not an PolymorphicType field"
+      %{} -> raise ArgumentError, "#{field} does not exist"
     end
   end
 end

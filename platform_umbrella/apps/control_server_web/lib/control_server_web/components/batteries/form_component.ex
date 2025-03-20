@@ -84,7 +84,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
 
   def update(assigns, socket) do
     config_module = SystemBattery.for_type(assigns.catalog_battery.type)
-    form_module = SystemBattery.for_type(assigns.catalog_battery.type, @possible_forms)
+    form_module = Keyword.fetch!(@possible_forms, assigns.catalog_battery.type)
 
     config = if assigns[:system_battery], do: assigns.system_battery.config, else: struct(config_module)
     changeset = config_module.changeset(config, %{})

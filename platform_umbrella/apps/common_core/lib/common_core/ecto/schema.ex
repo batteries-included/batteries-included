@@ -165,6 +165,8 @@ defmodule CommonCore.Ecto.Schema do
     quote do
       use TypedEctoSchema
 
+      import CommonCore.Ecto.PolymorphicType, only: [mappings: 2]
+
       import CommonCore.Ecto.Schema,
         only: [
           defaultable_field: 3,
@@ -220,9 +222,9 @@ defmodule CommonCore.Ecto.Schema do
   end
 
   @doc """
-  This before compile macro is adds on extra schema methods to the module that we use as our extenstions.
+  This before compile macro is adds on extra schema methods to the module that we use as our extensions.
 
-  ### Added Introspetion Methods
+  ### Added Introspection Methods
 
   - __schema__(:required_fields) - returns the required fields for the
   schema. These will be validated on changeset
@@ -231,9 +233,9 @@ defmodule CommonCore.Ecto.Schema do
   - __schema__(:defaultable_image_fields) - returns the defaultable image fields for the
   schema. These will have computed values set on them
   - __schema__(:polymorphic_type) - returns the polymorphic type for the
-  schema. This is used to add a type field to the schema if for polymorphic types
+  schema. This is used to add a type field to the schema for polymorphic types
   - __schema__(:generated_secrets) - returns the generated secrets for
-  the schema. These will have random values set on them if theres no value
+  the schema. These will have random values set on them if there's no value
   - __schema__(:slug_fields) - returns the slug fields for the schema. These will have
   a slug generated for them and validate they are valid hostname labels
   """
@@ -292,7 +294,7 @@ defmodule CommonCore.Ecto.Schema do
       # Store the mapping from virtual to override
       # name to default as an accumulated list of lists.
       #
-      # Elixir doesn't like module attibutes being tuples so we store them as lists
+      # Elixir doesn't like module attributes being tuples so we store them as lists
       @__defaultable_fields [virtual_name, stored_name, default]
 
       field(virtual_name, type, virtual_opts)
@@ -335,7 +337,7 @@ defmodule CommonCore.Ecto.Schema do
       # Store the mapping from virtual to override
       # name to default as an accumulated list of lists.
       #
-      # Elixir doesn't like module attibutes being tuples so we store them as lists
+      # Elixir doesn't like module attributes being tuples so we store them as lists
       @__defaultable_image_fields [field, name_default, tag_default]
 
       # virtual field to store full image name

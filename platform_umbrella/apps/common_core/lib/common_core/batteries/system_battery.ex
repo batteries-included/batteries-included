@@ -93,15 +93,6 @@ defmodule CommonCore.Batteries.SystemBattery do
 
   @required_fields ~w(group type config)a
 
-  def possible_types, do: Keyword.keys(@possible_types)
-
-  def for_type(type, possibles \\ @possible_types) do
-    case Enum.find(possibles, fn {key, _} -> key == type end) do
-      {_, config} -> config
-      _ -> nil
-    end
-  end
-
   batt_schema "system_batteries" do
     field :group, Ecto.Enum, values: @possible_groups
 
@@ -111,6 +102,10 @@ defmodule CommonCore.Batteries.SystemBattery do
 
     timestamps()
   end
+
+  def possible_types, do: Keyword.keys(@possible_types)
+
+  def for_type(type), do: Keyword.get(mappings(__MODULE__, :config), type)
 
   def to_fresh_args(%__MODULE__{} = system_battery) do
     system_battery
