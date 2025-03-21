@@ -88,6 +88,7 @@ Available commands:
 
 **Elixir Commands**
 - ex-test-deep      Run all tests with coverage and reset the database
+- ex-test-setup     Setup the test database
 - ex-test           Run all tests
 - ex-lint           Run all linters (dialexir, credo, format)
 - ex-credo          Run credo linter
@@ -554,15 +555,16 @@ tag_push() {
 }
 
 do_ex_test_deep() {
-    local slug=${1:-"dev"}
+    local setup_only=${1:-0}
+    local slug=${2:-"dev"}
     log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
     # Start the port forwarder
     try_portforward "${slug}" &
 
     export MIX_ENV=test
     run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
-    run_mix compile --warnings-as-errors >/dev/null
     run_mix ecto.reset >/dev/null
+    [[ $setup_only -eq 1 ]] && return
     run_mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors --all-warnings
     run_mix test.coverage
     log "Elixir tests ${GREEN}Passed${NOFORMAT}"
@@ -580,7 +582,6 @@ do_ex_test() {
     try_portforward "${slug}" &
 
     export MIX_ENV=test
-
     run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings >$out
     log "Elixir tests ${GREEN}Passed${NOFORMAT}"
 }
@@ -725,7 +726,10 @@ bi-location)
     do_bi_location
     ;;
 ex-test-deep)
-    do_ex_test_deep "${args[@]}"
+    do_ex_test_deep 0 "${args[@]}"
+    ;;
+ex-test-setup)
+    do_ex_test_deep 1 "${args[@]}"
     ;;
 ex-test)
     do_ex_test "${args[@]}"
