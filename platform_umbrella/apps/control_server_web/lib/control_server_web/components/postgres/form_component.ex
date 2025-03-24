@@ -5,8 +5,8 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.PostgresFormSubcomponents
 
-  alias CommonCore.Postgres.BackupConfig
   alias CommonCore.Postgres.Cluster
+  alias CommonCore.Postgres.PGBackupConfig
   alias CommonCore.Postgres.PGUser
   alias ControlServer.Postgres
   alias Ecto.Changeset
@@ -312,7 +312,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   <.input
                     type="select"
                     field={backup_config[:type]}
-                    options={BackupConfig.backup_type_options_for_select()}
+                    options={PGBackupConfig.backup_type_options_for_select()}
                   />
                 </.field>
               </.inputs_for>

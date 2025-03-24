@@ -1,4 +1,4 @@
-defmodule CommonCore.Postgres.BackupConfig do
+defmodule CommonCore.Postgres.PGBackupConfig do
   @moduledoc false
   use CommonCore, :embedded_schema
 

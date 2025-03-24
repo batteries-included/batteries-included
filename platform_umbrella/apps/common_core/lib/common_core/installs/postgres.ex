@@ -4,7 +4,7 @@ defmodule CommonCore.Installs.Postgres do
   alias CommonCore.Defaults.ControlDB
   alias CommonCore.Installation
   alias CommonCore.Installs.TraditionalServices
-  alias CommonCore.Postgres.BackupConfig
+  alias CommonCore.Postgres.PGBackupConfig
 
   # Currently we only include the
   # Control Server db. That's to make onboarding as
@@ -34,7 +34,7 @@ defmodule CommonCore.Installs.Postgres do
         [%{cluster | users: users, password_versions: password_versions}]
 
       :internal_prod ->
-        [Map.put_new(cluster, :backup_config, %BackupConfig{type: :object_store})]
+        [Map.put_new(cluster, :backup_config, %PGBackupConfig{type: :object_store})]
 
       _ ->
         [cluster]
@@ -66,7 +66,7 @@ defmodule CommonCore.Installs.Postgres do
             :users => [%{username: name, roles: ["createdb", "login"], credential_namespaces: [config.namespace]}],
             :password_versions => [],
             :database => %{name: name, owner: name},
-            :backup_config => %BackupConfig{type: :object_store}
+            :backup_config => %PGBackupConfig{type: :object_store}
           }
         end)
 
