@@ -3,7 +3,10 @@ defmodule CommonCore.Postgres.Cluster do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Postgres.PGBackupConfig
+  alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGPasswordVersion
+  alias CommonCore.Postgres.PGUser
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -84,9 +87,10 @@ defmodule CommonCore.Postgres.Cluster do
     # Used in the CRUD form. A range input value that gets converted into the storage size in bytes.
     field :virtual_storage_size_range_value, :integer, virtual: true
 
-    embeds_many :users, CommonCore.Postgres.PGUser, on_replace: :delete
+    embeds_many :users, PGUser, on_replace: :delete
     embeds_many :password_versions, PGPasswordVersion, on_replace: :delete
-    embeds_one :database, CommonCore.Postgres.PGDatabase, on_replace: :delete
+    embeds_one :database, PGDatabase, on_replace: :delete
+    embeds_one :backup_config, PGBackupConfig, on_replace: :delete
 
     belongs_to :project, Project
 

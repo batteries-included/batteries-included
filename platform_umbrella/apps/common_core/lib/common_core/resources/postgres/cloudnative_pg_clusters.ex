@@ -82,7 +82,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       }
       |> maybe_add_certificates(Batteries.batteries_installed?(state, :battery_ca), cluster)
       |> maybe_add_sa_annotations(battery)
-      |> maybe_add_backup(battery)
+      |> maybe_add_backup(cluster, battery)
 
     :cloudnative_pg_cluster
     |> B.build_resource()
@@ -121,7 +121,9 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   defp maybe_add_sa_annotations(spec, _battery), do: spec
 
-  defp maybe_add_backup(spec, %{config: %{bucket_name: bucket}}) when not is_empty(bucket) do
+  defp maybe_add_backup(spec, %{backup_config: %{type: backup_type}}, %{config: %{bucket_name: bucket}})
+       when backup_type == :object_store
+       when not is_empty(bucket) do
     Map.put(spec, :backup, %{
       retentionPolicy: "30d",
       barmanObjectStore: %{
@@ -134,7 +136,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     })
   end
 
-  defp maybe_add_backup(spec, _battery), do: spec
+  defp maybe_add_backup(spec, _cluster, _battery), do: spec
 
   def scheduled_backup(cluster, battery, state) do
     cluster_name = cluster_name(cluster)
@@ -151,6 +153,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.spec(spec)
     |> F.require_non_nil(battery.config.bucket_name)
     |> F.require_non_nil(battery.config.service_role_arn)
+    |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
   end
 
   defp resources(%Cluster{} = cluster) do

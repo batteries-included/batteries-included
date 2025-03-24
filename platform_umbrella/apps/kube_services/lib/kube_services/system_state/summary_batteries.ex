@@ -85,6 +85,11 @@ defmodule KubeServices.SystemState.SummaryBatteries do
   end
 
   @impl GenServer
+  def handle_call(:cluster_type, _from, %{summary: %StateSummary{} = summary} = state) do
+    {:reply, Core.config_field(summary, :cluster_type), state}
+  end
+
+  @impl GenServer
   def handle_call(:ai_namespace, _from, %{summary: %StateSummary{} = summary} = state) do
     {:reply, Namespaces.ai_namespace(summary), state}
   end
@@ -131,6 +136,10 @@ defmodule KubeServices.SystemState.SummaryBatteries do
 
   def default_size(target \\ @me) do
     GenServer.call(target, :default_size)
+  end
+
+  def cluster_type(target \\ @me) do
+    GenServer.call(target, :cluster_type)
   end
 
   def ai_namespace(target \\ @me) do
