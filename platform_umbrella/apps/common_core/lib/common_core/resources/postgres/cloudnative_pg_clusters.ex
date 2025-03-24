@@ -153,7 +153,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.spec(spec)
     |> F.require_non_nil(battery.config.bucket_name)
     |> F.require_non_nil(battery.config.service_role_arn)
-    |> F.require(cluster.backup_config.type == :object_store)
+    |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
   end
 
   defp resources(%Cluster{} = cluster) do
