@@ -1,14 +1,14 @@
 {
-  "id": "batt_019525d64ef07476ab5c9308e0c6087c",
+  "id": "batt_0195c9082c567a49a8acf798adcecaa4",
   "usage": "internal_dev",
-  "team_id": "batt_019525d64eee7bd4bacc1be43e90c2e8",
+  "team_id": "batt_0195c9082c5270f392e4cc3b5879ff71",
   "default_size": "tiny",
   "control_jwk": {
     "crv": "P-256",
-    "d": "WovG8ONe_VyGsoEXrcXJZV1qINf9K4KSMOzr1vNjssY",
+    "d": "cTrlq8RE-Y2soexRi6qEEjWCR9DaRowGnMq83NyjqVc",
     "kty": "EC",
-    "x": "SEMb4QtSqYY1UnMfZRZ_bZtyeZtPBQzwk8tbLAqRD8E",
-    "y": "m6wwWxXN2eSiEBzeLwDnJ--pLaFEkT0QI0hAkEgsF0o"
+    "x": "ZGXEWBDEPApbfFhG8GOK-M8jQaSpnYCOJ95cyrs6BS4",
+    "y": "6RnqZV6w3Sjt58KPjCgXWeyDKvZADypXkHB7fLT2r9s"
   },
   "inserted_at": null,
   "updated_at": null,

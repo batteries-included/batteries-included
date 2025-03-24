@@ -5,10 +5,12 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   import CommonCore.Resources.FieldAccessors
   import ControlServerWeb.PostgresFormSubcomponents
 
+  alias CommonCore.Postgres.BackupConfig
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGUser
   alias ControlServer.Postgres
   alias Ecto.Changeset
+  alias KubeServices.SystemState.SummaryBatteries
   alias KubeServices.SystemState.SummaryStorage
 
   @impl Phoenix.LiveComponent
@@ -299,6 +301,21 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   options={Enum.map(@projects, &{&1.name, &1.id})}
                 />
               </.field>
+            </.fieldset>
+          </.panel>
+
+          <.panel :if={SummaryBatteries.cluster_type() == :aws} title="Backup Settings" variant="gray">
+            <.fieldset>
+              <.inputs_for :let={backup_config} field={@form[:backup_config]}>
+                <.field>
+                  <:label>Type</:label>
+                  <.input
+                    type="select"
+                    field={backup_config[:type]}
+                    options={BackupConfig.backup_type_options_for_select()}
+                  />
+                </.field>
+              </.inputs_for>
             </.fieldset>
           </.panel>
         </.grid>

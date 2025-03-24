@@ -5,11 +5,11 @@
     "provider": "kind"
   },
   "target_summary": {
-    "notebooks": [],
     "knative_services": [],
+    "notebooks": [],
     "batteries": [
       {
-        "id": "batt_019525d64efd74f1b6bbeb03be43b5c7",
+        "id": "batt_0195c9082c717e1aa89d4069e18b9d8b",
         "type": "istio",
         "config": {
           "type": "istio",
@@ -24,7 +24,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_019525d64efd7643a4f5961c4317c5a2",
+        "id": "batt_0195c9082c71794ca66ce04d3e81e2f0",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
@@ -37,7 +37,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_019525d64efd78fcb811ebcd7fbb5e7c",
+        "id": "batt_0195c9082c7173629e9606fd61a69197",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -49,13 +49,13 @@
           "ai_namespace": "battery-ai",
           "default_size": "tiny",
           "cluster_name": "dev",
-          "install_id": "batt_019525d64ef07476ab5c9308e0c6087c",
+          "install_id": "batt_0195c9082c567a49a8acf798adcecaa4",
           "control_jwk": {
             "crv": "P-256",
-            "d": "WovG8ONe_VyGsoEXrcXJZV1qINf9K4KSMOzr1vNjssY",
+            "d": "cTrlq8RE-Y2soexRi6qEEjWCR9DaRowGnMq83NyjqVc",
             "kty": "EC",
-            "x": "SEMb4QtSqYY1UnMfZRZ_bZtyeZtPBQzwk8tbLAqRD8E",
-            "y": "m6wwWxXN2eSiEBzeLwDnJ--pLaFEkT0QI0hAkEgsF0o"
+            "x": "ZGXEWBDEPApbfFhG8GOK-M8jQaSpnYCOJ95cyrs6BS4",
+            "y": "6RnqZV6w3Sjt58KPjCgXWeyDKvZADypXkHB7fLT2r9s"
           },
           "upgrade_days_of_week": [
             true,
@@ -80,7 +80,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_019525d64efd73daa19f983a0b263b32",
+        "id": "batt_0195c9082c71744297ed7c561528522b",
         "type": "metallb",
         "config": {
           "type": "metallb",
@@ -100,7 +100,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_019525d64efd77009f28079295386329",
+        "id": "batt_0195c9082c717bb08664cf30a96f1fdf",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
@@ -108,15 +108,15 @@
           "service_role_arn": null,
           "bucket_name": null,
           "bucket_arn": null,
-          "image_name_override": null,
-          "image_tag_override": null
+          "image_tag_override": null,
+          "image_name_override": null
         },
         "group": "data",
         "inserted_at": null,
         "updated_at": null
       },
       {
-        "id": "batt_019525d64efd73b5a050d4146edde3da",
+        "id": "batt_0195c9082c717b93b29ff09accf8f402",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -172,7 +172,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "EVUOINLBDO55742UXCLVJ6NT"
+            "password": "54KQ535GEOBK6LDKCY6LKU2R"
           },
           {
             "version": 1,
@@ -185,7 +185,11 @@
         "memory_requested": 536870912,
         "memory_limits": 536870912,
         "project_id": null,
+        "backup_config": {
+          "type": "none"
+        },
         "storage_size": 536870912,
+        "restore_from_backup": null,
         "virtual_storage_size_range_value": 5035931120
       }
     ],
@@ -203,7 +207,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "BCFOV7LU4FQKJ6PTIPEENQEWQFD4ZVP6UBH5QPSMVCGGRZYDUWDQ===="
+          "battery/hash": "P5LNN6MID2ZVKFMX3AFLZTXMVL4W6CNW5SCR7QVBQA4WSG6GD3OA===="
         },
         "labels": {
           "app": "battery-core",
@@ -213,7 +217,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019525d64efd78fcb811ebcd7fbb5e7c",
+          "battery/owner": "batt_0195c9082c7173629e9606fd61a69197",
           "istio-injection": "enabled",
           "version": "latest"
         },

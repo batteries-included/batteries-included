@@ -3,7 +3,10 @@ defmodule CommonCore.Postgres.Cluster do
 
   use CommonCore, {:schema, no_encode: [:project]}
 
+  alias CommonCore.Postgres.BackupConfig
+  alias CommonCore.Postgres.PGDatabase
   alias CommonCore.Postgres.PGPasswordVersion
+  alias CommonCore.Postgres.PGUser
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -84,9 +87,10 @@ defmodule CommonCore.Postgres.Cluster do
     # Used in the CRUD form. A range input value that gets converted into the storage size in bytes.
     field :virtual_storage_size_range_value, :integer, virtual: true
 
-    embeds_many :users, CommonCore.Postgres.PGUser, on_replace: :delete
+    embeds_many :users, PGUser, on_replace: :delete
     embeds_many :password_versions, PGPasswordVersion, on_replace: :delete
-    embeds_one :database, CommonCore.Postgres.PGDatabase, on_replace: :delete
+    embeds_one :database, PGDatabase, on_replace: :delete
+    embeds_one :backup_config, BackupConfig, on_replace: :delete
 
     belongs_to :project, Project
 
@@ -100,6 +104,7 @@ defmodule CommonCore.Postgres.Cluster do
     cluster
     |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> maybe_set_virtual_size(@presets)
+    |> maybe_put_backup_config()
     |> validate_password_versions_exits()
     |> put_range_value_from_storage_size(range_ticks)
     |> validate_number(:cpu_requested, greater_than: 0, less_than: 100_000)
@@ -119,6 +124,16 @@ defmodule CommonCore.Postgres.Cluster do
     Enum.reduce(users, changeset, fn user, acc ->
       ensure_user_password_version(acc, user)
     end)
+  end
+
+  defp maybe_put_backup_config(changeset) do
+    case get_field(changeset, :backup_config) do
+      nil ->
+        put_embed(changeset, :backup_config, %BackupConfig{type: :none})
+
+      _ ->
+        changeset
+    end
   end
 
   # For a given user ensure that that the changeset has a password version for that user.
