@@ -312,6 +312,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
                   <.input
                     type="select"
                     field={backup_config[:type]}
+                    placeholder="None"
                     options={PGBackupConfig.backup_type_options_for_select()}
                   />
                 </.field>
