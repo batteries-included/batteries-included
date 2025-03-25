@@ -63,7 +63,9 @@ defmodule CommonCore.Installs.Postgres do
             :num_instances => 1,
             :virtual_size => to_string(default_size),
             :type => :standard,
-            :users => [%{username: name, roles: ["createdb", "login"], credential_namespaces: [config.namespace]}],
+            :users => [
+              %{username: name, roles: ["superuser", "createdb", "login"], credential_namespaces: [config.namespace]}
+            ],
             :password_versions => [],
             :database => %{name: name, owner: name},
             :backup_config => %PGBackupConfig{type: :object_store}
