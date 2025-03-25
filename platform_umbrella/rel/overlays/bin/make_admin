@@ -11,4 +11,5 @@ if [[ -z "${EMAIL}" ]]; then
     exit 1
 fi
 
-"${DIR}/home_base" eval "HomeBase.Release.make_admin\(\"${EMAIL}\"\)"
+MAKE_ADMIN_CMD=$(printf 'HomeBase.Release.make_admin!("%s")' "${EMAIL}")
+"${DIR}/home_base" eval "${MAKE_ADMIN_CMD}"
