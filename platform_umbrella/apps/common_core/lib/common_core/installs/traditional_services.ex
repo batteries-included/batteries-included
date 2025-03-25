@@ -11,13 +11,13 @@ defmodule CommonCore.Installs.TraditionalServices do
   def home_base_name, do: @home_base_name
   def cla_name, do: @cla_name
 
-  def services(%{usage: usage} = installation) when usage in [:internal_int_test, :internal_prod] do
-    Enum.map([&home_base/1, &cla/1], fn func -> func.(installation) end)
+  def services(%{usage: usage} = installation, home_base_init_data) when usage in [:internal_int_test, :internal_prod] do
+    Enum.map([&home_base/2, &cla/2], fn func -> func.(installation, home_base_init_data) end)
   end
 
-  def services(%{usage: _} = _installation), do: []
+  def services(%{usage: _} = _installation, _home_base_init_data), do: []
 
-  defp home_base(installation) do
+  defp home_base(installation, home_base_init_data) do
     Service.new!(%{
       additional_hosts: ["home.batteriesincl.com"],
       name: @home_base_name,
@@ -47,11 +47,11 @@ defmodule CommonCore.Installs.TraditionalServices do
           config: %{type: :secret, name: @jwk_secret, optional: false}
         }
       ],
-      env_values: home_base_env()
+      env_values: home_base_env(home_base_init_data)
     })
   end
 
-  defp cla(installation) do
+  defp cla(installation, _home_base_init_data) do
     Service.new!(%{
       additional_hosts: ["#{@cla_name}.batteriesincl.com"],
       name: @cla_name,
@@ -69,10 +69,15 @@ defmodule CommonCore.Installs.TraditionalServices do
   # The install sizes and service sizes match up but they may? not always
   defp install_size(install), do: Atom.to_string(install.default_size)
 
-  defp home_base_env do
+  defp home_base_env(%{teams: teams} = _home_base_init_data) do
     pg_secret = "cloudnative-pg.pg-#{@home_base_name}.#{@home_base_name}"
 
     [
+      %{
+        name: "BATTERY_TEAM_IDS",
+        value: Enum.map_join(teams, ",", & &1.id),
+        source_type: "value"
+      },
       %{
         name: "SECRET_KEY_BASE",
         value: Defaults.random_key_string(),
