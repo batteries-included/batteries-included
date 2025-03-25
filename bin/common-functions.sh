@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 TRACE=${TRACE-""}
-BI_BUILD_DIR="${BI_BUILD_DIR:-$HOME/.local/share/bi}"
+BI_BUILD_DIR="${BI_BUILD_DIR:-$HOME/.local/share/bi/dev/}"
 KEEP_BUILDS="${KEEP_BUILDS:-10}"
 
 setup_colors() {
