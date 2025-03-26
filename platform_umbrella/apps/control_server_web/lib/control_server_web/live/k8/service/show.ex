@@ -178,7 +178,7 @@ defmodule ControlServerWeb.Live.ServiceShow do
       <.badge>
         <:item label="Namespace">{@namespace}</:item>
         <:item label="Started">
-          <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+          <.relative_display time={creation_timestamp(@resource)} />
         </:item>
       </.badge>
     </.page_header>

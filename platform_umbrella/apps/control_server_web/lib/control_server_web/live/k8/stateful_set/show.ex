@@ -78,7 +78,7 @@ defmodule ControlServerWeb.Live.StatefulSetShow do
             {Map.get(@status, "currentRevision", 0)}
           </:item>
           <:item title="Started">
-            <.relative_display time={get_in(@resource, ~w(metadata creationTimestamp))} />
+            <.relative_display time={creation_timestamp(@resource)} />
           </:item>
         </.data_list>
       </.panel>
