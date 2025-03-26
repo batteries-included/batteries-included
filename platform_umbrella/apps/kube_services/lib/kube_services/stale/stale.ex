@@ -1,9 +1,10 @@
 defmodule KubeServices.Stale do
   @moduledoc false
-  import K8s.Resource.FieldAccessors
+  import CommonCore.Resources.FieldAccessors
 
   alias CommonCore.ApiVersionKind
   alias CommonCore.Resources.Hashing
+  alias CommonCore.Resources.OwnerReference
   alias ControlServer.Repo
   alias ControlServer.SnapshotApply.Kube, as: ControlSnapshot
   alias ControlServer.SnapshotApply.ResourcePath
@@ -76,7 +77,7 @@ defmodule KubeServices.Stale do
 
   defp has_owners?(%{} = res) do
     res
-    |> CommonCore.Resources.OwnerReference.get_all_owners()
+    |> OwnerReference.get_all_owners()
     |> Enum.empty?() == false
   end
 
@@ -90,27 +91,46 @@ defmodule KubeServices.Stale do
     has_direct_label(resource) &&
       !has_indirect_label(resource) &&
       !managed_by_vm_operator(resource) &&
-      !managed_by_knative(resource)
+      !managed_by_knative(resource) &&
+      has_delete_after(resource)
   end
 
   defp good_labels?(nil = _resource), do: false
 
   defp has_direct_label(resource) do
-    K8s.Resource.has_label?(resource, "battery/managed.direct") &&
-      K8s.Resource.label(resource, "battery/managed.direct") == "true"
+    has_label?(resource, "battery/managed.direct") && label(resource, "battery/managed.direct") == "true"
   end
 
   defp has_indirect_label(resource) do
-    K8s.Resource.has_label?(resource, "battery/managed.indirect")
+    has_label?(resource, "battery/managed.indirect")
+  end
+
+  # allow specifying a minimum resource lifetime using ISO 8601 duration format e.g. PT30M, etc
+  defp has_delete_after(resource) do
+    has_label?(resource, "battery/delete-after") && delete_after_now?(resource)
+  end
+
+  defp delete_after_now?(resource) do
+    duration = K8s.Resource.label(resource, "battery/delete-after")
+
+    with {:ok, created_at, _} <- resource |> creation_timestamp() |> DateTime.from_iso8601(),
+         {:ok, offset} <- Duration.from_iso8601(duration),
+         comparison = DateTime.shift(created_at, offset),
+         {:ok, now} <- DateTime.now("Etc/UTC") do
+      :lt == DateTime.compare(comparison, now)
+    else
+      err ->
+        Logger.error("error checking delete after label: #{inspect(err)}")
+        false
+    end
   end
 
   defp managed_by_vm_operator(resource) do
-    K8s.Resource.has_label?(resource, "managed-by") &&
-      K8s.Resource.label(resource, "managed-by") == "vm-operator"
+    has_label?(resource, "managed-by") && label(resource, "managed-by") == "vm-operator"
   end
 
   defp managed_by_knative(resource) do
-    K8s.Resource.has_label?(resource, "serving.knative.dev/service")
+    has_label?(resource, "serving.knative.dev/service")
   end
 
   @spec can_delete_safe? :: boolean

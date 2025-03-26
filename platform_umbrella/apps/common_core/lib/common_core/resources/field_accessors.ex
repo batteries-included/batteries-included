@@ -6,7 +6,9 @@ defmodule CommonCore.Resources.FieldAccessors do
   defdelegate name(resource), to: K8s.Resource
   defdelegate namespace(resource), to: K8s.Resource
   defdelegate kind(resource), to: K8s.Resource
+  defdelegate label(resource, label), to: K8s.Resource
   defdelegate labels(resource), to: K8s.Resource
+  defdelegate has_label?(resource, label), to: K8s.Resource
   defdelegate annotations(resource), to: K8s.Resource
   defdelegate metadata(resource), to: K8s.Resource
   defdelegate api_version(resource), to: K8s.Resource
