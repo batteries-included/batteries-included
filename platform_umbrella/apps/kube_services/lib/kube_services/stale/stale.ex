@@ -28,27 +28,31 @@ defmodule KubeServices.Stale do
   def stale?(resource, nil), do: stale?(resource, recent_resource_map_set())
 
   def stale?(r, seen_res_set) do
-    case {has_owners?(r), good_labels?(r), has_annotation?(r), to_tuple(r)} do
+    case {has_owners?(r), good_labels?(r), has_annotation?(r), in_delete_hold?(r), to_tuple(r)} do
       # If this resource is owned by something then is directly controlled by us
-      {true, _, _, _} ->
+      {true, _, _, _, _} ->
         false
 
       # We need to have the direct label to be potentially stale
-      {_, false, _, _} ->
+      {_, false, _, _, _} ->
         false
 
       # We need to have the annotation since there's no way to push without it
-      {_, _, false, _} ->
+      {_, _, false, _, _} ->
+        false
+
+      # If we're in delete hold, resource isn't stale
+      {_, _, _, true, _} ->
         false
 
       # We need to have been able to make an apiversionkind tuple
-      {_, _, _, {:error, _}} ->
+      {_, _, _, _, {:error, _}} ->
         false
 
       # If all of those things are ok this
       # might be stale if the
       # matching {type, namespace, name} tuple is not in the set.
-      {false, true, true, {:ok, tup}} ->
+      {false, true, true, false, {:ok, tup}} ->
         !MapSet.member?(seen_res_set, tup)
     end
   end
@@ -91,8 +95,7 @@ defmodule KubeServices.Stale do
     has_direct_label(resource) &&
       !has_indirect_label(resource) &&
       !managed_by_vm_operator(resource) &&
-      !managed_by_knative(resource) &&
-      has_delete_after(resource)
+      !managed_by_knative(resource)
   end
 
   defp good_labels?(nil = _resource), do: false
@@ -106,18 +109,19 @@ defmodule KubeServices.Stale do
   end
 
   # allow specifying a minimum resource lifetime using ISO 8601 duration format e.g. PT30M, etc
-  defp has_delete_after(resource) do
-    has_label?(resource, "battery/delete-after") && delete_after_now?(resource)
+  defp in_delete_hold?(resource) do
+    has_label?(resource, "battery/delete-after") && in_delete_hold_window?(resource)
   end
 
-  defp delete_after_now?(resource) do
+  defp in_delete_hold_window?(resource) do
     duration = K8s.Resource.label(resource, "battery/delete-after")
 
     with {:ok, created_at, _} <- resource |> creation_timestamp() |> DateTime.from_iso8601(),
          {:ok, offset} <- Duration.from_iso8601(duration),
          comparison = DateTime.shift(created_at, offset),
          {:ok, now} <- DateTime.now("Etc/UTC") do
-      :lt == DateTime.compare(comparison, now)
+      # now is before the requested delete time
+      :lt == DateTime.compare(now, comparison)
     else
       err ->
         Logger.error("error checking delete after label: #{inspect(err)}")
