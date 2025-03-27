@@ -22,6 +22,8 @@ defmodule CommonCore.Resources.Bootstrap.TraditionalServices do
     |> B.build_resource()
     |> B.name("home-base-seed-data")
     |> B.namespace(battery.config.namespace)
+    # wait 45 minutes to delete
+    |> B.label("battery/delete-after", "PT45M")
     |> B.data(data)
     |> F.require_non_empty(data)
   end
