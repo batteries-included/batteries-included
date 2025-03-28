@@ -8,9 +8,9 @@ draft: false
 ---
 
 Modern development cycles should allow users to move between local and
-production as seamlessly as possible. Batteries Included makes this possible by
-providing a consistent toolset that works across environments—from your laptop
-all the way up to enterprise production.
+production workflows as seamlessly as possible. Batteries Included makes this
+possible by providing a consistent toolset that works across environments—from
+your laptop all the way up to enterprise production.
 
 ## The Development Journey
 
@@ -18,7 +18,7 @@ With Batteries Included, developers can progress through a natural iterative
 journey:
 
 1. **Local Development**: Start with a lightweight environment locally.
-2. **Staging Testing**: Deploy to staging with the same configuration.
+2. **Staging, Testing**: Deploy to staging with the same configuration.
 3. **Production Deployment**: Confidently launch to production using the same
    familiar tools.
 
