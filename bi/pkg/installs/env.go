@@ -98,7 +98,7 @@ func readInstallEnv(slugOrURL string) (string, *InstallEnv, error) {
 
 		spec, err := specs.GetSpecFromURL(p.path)
 		if err != nil {
-			l.Debug("Didn't find install")
+			l.Debug("Didn't find install", slog.Any("err", err))
 			continue
 		}
 		l.Debug("Found install")

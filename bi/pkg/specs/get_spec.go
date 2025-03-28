@@ -103,7 +103,7 @@ func parseSpecResponse(specBytes []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to marshal JWS back into string: %w", err)
 	}
 
-	jws, err := jose.ParseSigned(string(bs), []jose.SignatureAlgorithm{jose.EdDSA})
+	jws, err := jose.ParseSigned(string(bs), []jose.SignatureAlgorithm{jose.ES256})
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse signed payload: %w", err)
 	}
