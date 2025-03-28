@@ -13,6 +13,8 @@ defmodule KubeServices.Stale do
 
   require Logger
 
+  @empty MapSet.new()
+
   @spec find_potential_stale :: list
   def find_potential_stale do
     seen_res_set = recent_resource_map_set(1)
@@ -26,6 +28,7 @@ defmodule KubeServices.Stale do
 
   def stale?(resource, seen_res_set \\ nil)
   def stale?(resource, nil), do: stale?(resource, recent_resource_map_set())
+  def stale?(resource, seen_res_set) when seen_res_set == @empty, do: stale?(resource, recent_resource_map_set())
 
   def stale?(r, seen_res_set) do
     case {has_owners?(r), good_labels?(r), has_annotation?(r), in_delete_hold?(r), to_tuple(r)} do
