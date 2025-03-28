@@ -29,8 +29,8 @@ but also ensuring what works locally works in production as well.
 ## Getting Started Locally
 
 Unlike traditional approaches that require developers to set up a bunch of
-dependencies or write complex Docker Compose files or Kubernetes manifests,
-Batteries Included provides a streamlined setup process:
+dependencies or write complex Docker Compose/Kubernetes manifests, Batteries
+Included provides a streamlined setup process:
 
 1. Visit [home.batteriesincl.com](https://home.batteriesincl.com) and create a
    new installation.
