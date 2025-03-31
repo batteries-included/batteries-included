@@ -65,6 +65,8 @@ defmodule CommonCore.Resources.Keycloak do
     |> B.name("keycloak")
     |> B.namespace(namespace)
     |> B.data(data)
+    |> F.require_non_nil(battery.config.admin_password)
+    |> F.require(battery.config.admin_password != "")
   end
 
   resource(:service_account_main, _battery, state) do
@@ -145,10 +147,7 @@ defmodule CommonCore.Resources.Keycloak do
                   "name" => "KUBERNETES_NAMESPACE",
                   "valueFrom" => %{"fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.namespace"}}
                 },
-                %{
-                  "name" => "KEYCLOAK_ADMIN_PASSWORD",
-                  "valueFrom" => %{"secretKeyRef" => %{"key" => "admin-password", "name" => "keycloak"}}
-                },
+                %{"name" => "KEYCLOAK_ADMIN_PASSWORD", "valueFrom" => B.secret_key_ref("keycloak", "admin-password")},
                 %{"name" => "KC_DB_USERNAME", "valueFrom" => B.secret_key_ref(secret_name, "username")},
                 %{"name" => "KC_DB_PASSWORD", "valueFrom" => B.secret_key_ref(secret_name, "password")}
               ],

@@ -4,8 +4,24 @@ defmodule KubeBootstrap do
   """
   alias CommonCore.StateSummary
 
-  alias CommonCore.Resources.RootResourceGenerator
+  alias CommonCore.Resources.RootResourceGenerator, as: RRG
   require Logger
+
+  # This is the list of batteries that are necessary to get control server running.
+  # It will finish bootstrapping and running remaining resources
+  # See: https://github.com/batteries-included/batteries-included/issues/1790
+  @allowed_bootstrap_batteries ~w(
+    aws_load_balancer_controller
+    battery_ca
+    battery_core
+    cert_manager
+    cloudnative_pg
+    istio
+    istio_csr
+    istio_gateway
+    karpenter
+    metallb
+  )a
 
   @spec bootstrap_from_summary(StateSummary.t()) :: :ok | {:error, :retries_exhausted | list()}
   def bootstrap_from_summary(summary) do
@@ -14,7 +30,7 @@ defmodule KubeBootstrap do
     {resources, with_control_server} =
       summary
       # Use the given summary to generate the resources
-      |> RootResourceGenerator.materialize()
+      |> materialize()
       |> Map.values()
       # Split the resources into two groups
       # One with the control server the other without
@@ -42,6 +58,18 @@ defmodule KubeBootstrap do
     else
       {:error, _} = error -> error
     end
+  end
+
+  # This filters to only bootstrap-able batteries then delegates to the main resource generator.
+  defp materialize(%StateSummary{batteries: batteries} = state) do
+    generators = RRG.default_generators()
+
+    batteries
+    |> Enum.filter(&(&1.type in @allowed_bootstrap_batteries))
+    |> Enum.map(fn %{type: type} = sb ->
+      RRG.materialize_system_battery(sb, state, Keyword.fetch!(generators, type))
+    end)
+    |> Enum.reduce(%{}, &Map.merge/2)
   end
 
   defp split_resources(resources) do
