@@ -15,7 +15,7 @@ defmodule CommonCore.Installs.Batteries do
   @internal_int_test_battery_types ~w(battery_core cloudnative_pg ferretdb istio_gateway metallb traditional_services)a
   @internal_prod_battery_types ~w(ferretdb traditional_services victoria_metrics grafana)a
 
-  @production_battery_types ~w(timeline victoria_metrics grafana)a
+  @production_battery_types ~w(kube_monitoring timeline victoria_metrics grafana)a
   @secure_battery_types ~w(keycloak)a
 
   def default_batteries(%Installation{} = install) do

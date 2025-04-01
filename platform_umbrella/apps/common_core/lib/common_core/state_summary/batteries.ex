@@ -60,7 +60,7 @@ defmodule CommonCore.StateSummary.Batteries do
   @spec batteries_installed?(StateSummary.t(), list()) :: boolean()
   def batteries_installed?(%StateSummary{} = state, battery_types) when is_list(battery_types) do
     installed = MapSet.new(state.batteries, & &1.type)
-    Enum.all?(battery_types, fn bt -> MapSet.member?(installed, bt) end)
+    Enum.all?(battery_types, &MapSet.member?(installed, &1))
   end
 
   def sso_installed?(%StateSummary{} = state), do: batteries_installed?(state, [:sso])
