@@ -91,7 +91,7 @@ defmodule ControlServerWeb.Live.PodShow do
 
   defp assign_grafana_dashboard(%{assigns: %{resource: resource}} = socket) do
     url =
-      if SummaryBatteries.battery_installed(:grafana) do
+      if SummaryBatteries.batteries_installed(~w(grafana kube_monitoring)a) do
         SummaryURLs.pod_dashboard_url(resource)
       end
 
