@@ -381,7 +381,9 @@ defmodule ControlServerWeb.Live.KnativeShow do
           Edit Versions
         </:tab>
       </.tab_bar>
-      <.a variant="bordered" href={service_url(@service)}>Running Service</.a>
+      <.a :if={!@service.kube_internal} variant="bordered" href={service_url(@service)}>
+        Running Service
+      </.a>
     </.panel>
     """
   end
