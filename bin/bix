@@ -13,7 +13,7 @@ PORTFORWARD_ENABLED=1
 
 # If you are changing this also change the
 # version in mix.exs for all the apps in platform_umbrella
-BASE_VERSION="0.60.0"
+BASE_VERSION="0.61.0"
 
 # Make sure everything is build with this binary in the path
 export PATH="${ROOT_DIR}/bin:${PATH}"
