@@ -14,6 +14,8 @@ import (
 )
 
 // rageCmd represents the rage command
+//
+// This command is used to collect debug information when things go wrong.
 var rageCmd = &cobra.Command{
 	Use:   "rage [install-slug|install-spec-url|install-spec-file]",
 	Short: "Collect debug information when things go wrong",
