@@ -9,9 +9,8 @@ on:
       - master
 
 env:
-  GOCACHE: /home/runner/.cache/go-cache
-  GOMODCACHE: /home/runner/.cache/go-mod
-  ASDF_BRANCH: v0.15.0
+  GOCACHE: ${{ vars.GOCACHE }}
+  GOMODCACHE: ${{ vars.GOMODCACHE }}
 
 # No Permissions by default
 permissions: {}
@@ -27,10 +26,10 @@ jobs:
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
-          asdf_branch: ${{ env.ASDF_BRANCH }}
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Cache ASDF
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         id: asdf-cache
         with:
           # https://github.com/asdf-vm/asdf/blob/master/.gitignore
@@ -38,30 +37,29 @@ jobs:
             ~/.asdf/installs
             ~/.asdf/plugins
             ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-tools-${{ hashFiles('.tool-versions') }}
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
 
       - name: Install ASDF Tools
         uses: asdf-vm/actions/install@v3
         # See https://github.com/asdf-vm/actions/issues/445
         if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         with:
-          asdf_branch: ${{ env.ASDF_BRANCH }}
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
 
       - name: Setup Go cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
-            ${{ env.GOCACHE }}
-            ${{ env.GOMODCACHE }}
+            ${{ vars.GOCACHE }}
+            ${{ vars.GOMODCACHE }}
           key:
-            ${{ runner.os }}-go-test-${{ hashFiles('**/go.sum',
-            '.tool-versions') }}
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
           restore-keys: |
-            ${{ runner.os }}-go-test-
+            ${{ runner.os }}-go-
 
       - name: Run go test
         run: bin/bix go-test
@@ -76,10 +74,10 @@ jobs:
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
-          asdf_branch: ${{ env.ASDF_BRANCH }}
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Cache ASDF
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         id: asdf-cache
         with:
           # https://github.com/asdf-vm/asdf/blob/master/.gitignore
@@ -87,14 +85,14 @@ jobs:
             ~/.asdf/installs
             ~/.asdf/plugins
             ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-tools-${{ hashFiles('.tool-versions') }}
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
 
       - name: Install ASDF Tools
         uses: asdf-vm/actions/install@v3
         # See https://github.com/asdf-vm/actions/issues/445
         if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         with:
-          asdf_branch: ${{ env.ASDF_BRANCH }}
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Reshim ASDF
         shell: bash
@@ -104,13 +102,12 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: |
-            ${{ env.GOCACHE }}
-            ${{ env.GOMODCACHE }}
+            ${{ vars.GOCACHE }}
+            ${{ vars.GOMODCACHE }}
           key:
-            ${{ runner.os }}-go-test-${{ hashFiles('**/go.sum',
-            '.tool-versions') }}
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
           restore-keys: |
-            ${{ runner.os }}-go-test-
+            ${{ runner.os }}-go-
 
       - name: Run go integration test
         run: bin/bix go-test-int
@@ -125,10 +122,10 @@ jobs:
       - name: Setup ASDF
         uses: asdf-vm/actions/setup@v3
         with:
-          asdf_branch: ${{ env.ASDF_BRANCH }}
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Cache ASDF
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         id: asdf-cache
         with:
           # https://github.com/asdf-vm/asdf/blob/master/.gitignore
@@ -136,30 +133,29 @@ jobs:
             ~/.asdf/installs
             ~/.asdf/plugins
             ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-tools-${{ hashFiles('.tool-versions') }}
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
 
       - name: Install ASDF Tools
         uses: asdf-vm/actions/install@v3
         # See https://github.com/asdf-vm/actions/issues/445
         if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         with:
-          asdf_branch: ${{ env.ASDF_BRANCH }}
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Reshim ASDF
         shell: bash
         run: asdf reshim
 
       - name: Setup Go cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
-            ${{ env.GOCACHE }}
-            ${{ env.GOMODCACHE }}
+            ${{ vars.GOCACHE }}
+            ${{ vars.GOMODCACHE }}
           key:
-            ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum',
-            '.tool-versions') }}
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
           restore-keys: |
-            ${{ runner.os }}-go-build-
+            ${{ runner.os }}-go-
 
       - name: Build bi
         run: bin/bix go-build-bi

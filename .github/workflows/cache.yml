@@ -1,42 +1,61 @@
-name: BIX Elixir
+name: Manage Caches
 
 on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
-# No Permissions by default
-permissions: {}
+env:
+  GOCACHE: ${{ vars.GOCACHE }}
+  GOMODCACHE: ${{ vars.GOMODCACHE }}
 
 jobs:
-  elixir-test:
+  cache-asdf:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: battery-local-user
-          POSTGRES_PASSWORD: 'batterypasswd'
-        options: >-
-          --health-cmd pg_isready --health-interval 10s --health-timeout 5s
-          --health-retries 5
-        ports: ['5432:5432']
-    env:
-      POSTGRES_HOST: localhost
-      POSTGRES_USER: battery-local-user
-      POSTGRES_PASSWORD: 'batterypasswd'
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-    # Elixir test reports the test results to GitHub
-    # So we need to be able to write to the checks
-    # while reading the results of other actions.
-    permissions:
-      contents: read
-      actions: read
-      checks: write
+      - name: Check existing ASDF cache
+        uses: actions/cache/restore@v4
+        id: asdf-cache
+        with:
+          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
+          path: |
+            ~/.asdf/installs
+            ~/.asdf/plugins
+            ~/.asdf/shims
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          lookup-only: true
+
+      # ASDF tool-versions changed, install and re-cache
+      - name: Install ASDF Tools
+        uses: asdf-vm/actions/install@v3
+        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
+        with:
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
+
+      - name: Reshim ASDF
+        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
+        shell: bash
+        run: asdf reshim
+
+      - name: Save ASDF cache
+        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
+          path: |
+            ~/.asdf/installs
+            ~/.asdf/plugins
+            ~/.asdf/shims
+          key: ${{ runner.os }}-asdf-${{ env.ASDF_HASH }}
+
+  cache-elixir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,131 +88,70 @@ jobs:
         shell: bash
         run: asdf reshim
 
-      - name: Cache Elixir Deps
-        uses: actions/cache/restore@v4
-        id: elixir-cache
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-          key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
-          restore-keys: |
-            ${{ runner.os }}-ex-
-
-      - name: Run deep test
-        run: bin/bix --no-forward ex-test-deep
-
-      - name: Test Report
-        uses: dorny/test-reporter@v2
-        if: ${{github.actor != 'dependabot[bot]' &&  (success() || failure())}}
-        with:
-          name: Mix Test Results
-          path: platform_umbrella/_build/**/test-junit-report.xml
-          reporter: java-junit
-          use-actions-summary: 'false'
-
-  elixir-credo:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Setup ASDF
-        uses: asdf-vm/actions/setup@v3
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Cache ASDF
-        uses: actions/cache/restore@v4
-        id: asdf-cache
-        with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-
-      - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@v3
-        # See https://github.com/asdf-vm/actions/issues/445
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Reshim ASDF
-        shell: bash
-        run: asdf reshim
-
-      - name: Cache Elixir Deps
-        uses: actions/cache/restore@v4
-        id: elixir-cache
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-          key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
-          restore-keys: |
-            ${{ runner.os }}-ex-
-
-      - name: Credo Code Analysis
-        run: bin/bix ex-credo
-
-  elixir-dialyzer:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Setup ASDF
-        uses: asdf-vm/actions/setup@v3
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Cache ASDF
-        uses: actions/cache/restore@v4
-        id: asdf-cache
-        with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-          restore-keys: ${{ runner.os }}-asdf-
-
-      - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@v3
-        # See https://github.com/asdf-vm/actions/issues/445
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Reshim ASDF
-        shell: bash
-        run: asdf reshim
-
-      - name: Cache Elixir Deps
-        uses: actions/cache/restore@v4
-        id: elixir-cache
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-            platform_umbrella/.dialyzer
-          key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
-          restore-keys: |
-            ${{ runner.os }}-ex-
-
-      - name: Dialyzer Type Analysis
+      - name: Run dialyzer for caching
         run: bin/bix ex-dialyzer
+
+      - name: Run tests for caching
+        run: bin/bix ex-test-deep
+
+      - name: Save Elixir cache
+        uses: actions/cache/save@v4
+        id: elixir-cache
+        with:
+          path: |
+            platform_umbrella/deps
+            platform_umbrella/_build
+          key:
+            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
+            }}
+
+  cache-go:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup ASDF
+        uses: asdf-vm/actions/setup@v3
+        with:
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
+
+      - name: Cache ASDF
+        uses: actions/cache/restore@v4
+        id: asdf-cache
+        with:
+          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
+          path: |
+            ~/.asdf/installs
+            ~/.asdf/plugins
+            ~/.asdf/shims
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+
+      - name: Install ASDF Tools
+        uses: asdf-vm/actions/install@v3
+        # See https://github.com/asdf-vm/actions/issues/445
+        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
+        with:
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
+
+      - name: Reshim ASDF
+        shell: bash
+        run: asdf reshim
+
+      - name: Build `bi` for caching
+        run: goreleaser build --snapshot --single-target
+
+      - name: Test for caching
+        run: bin/bix go-test
+
+      - name: Save Go cache
+        uses: actions/cache/save@v4
+        id: go-cache
+        with:
+          path: |
+            ${{ vars.GOCACHE }}
+            ${{ vars.GOMODCACHE }}
+          key:
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
