@@ -75,6 +75,10 @@ jobs:
           pushd platform_umbrella
           mix "do" deps.get, compile --force
 
+      - name: Build bi for caching
+        shell: bash
+        run: bix go-ensure-bi
+
       - name: Save Elixir cache
         uses: actions/cache/save@v4
         id: elixir-cache
@@ -89,7 +93,7 @@ jobs:
 
   cache-go:
     runs-on: ubuntu-latest-m
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
