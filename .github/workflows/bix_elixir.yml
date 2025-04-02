@@ -77,10 +77,10 @@ jobs:
             platform_umbrella/deps
             platform_umbrella/_build
           key:
-            ${{ runner.os }}-test-deep-${{ hashFiles('**/mix.lock',
-            '.tool-versions') }}
+            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
+            }}
           restore-keys: |
-            ${{ runner.os }}-test-deep-
+            ${{ runner.os }}-ex-
 
       - name: Run deep test
         run: bin/bix --no-forward ex-test-deep

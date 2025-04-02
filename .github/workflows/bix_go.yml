@@ -8,6 +8,10 @@ on:
     branches:
       - master
 
+env:
+  GOCACHE: ${{ vars.GOCACHE }}
+  GOMODCACHE: ${{ vars.GOMODCACHE }}
+
 # No Permissions by default
 permissions: {}
 
