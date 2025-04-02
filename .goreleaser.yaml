@@ -27,12 +27,14 @@ builds:
     hooks:
       post: ./bin/clean-tmp
 upx:
-  - enabled: true
+  # only run upx on release, not on snapshot.
+  # This will help keep CI snappy
+  - enabled: '{{ not .IsSnapshot }}'
     goos:
       - linux
     compress: '9'
     lzma: true
-  - enabled: true
+  - enabled: '{{ not .IsSnapshot }}'
     goos:
       - windows
     goarch:

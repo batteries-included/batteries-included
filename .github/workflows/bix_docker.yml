@@ -38,6 +38,13 @@ jobs:
       - name: Expose GitHub Runtime
         uses: crazy-max/ghaction-github-runtime@v3
 
+      - name: Determine whether to push images / tags / cache
+        if:
+          ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref,
+          'refs/tags/')) && github.event_name == 'push' }}
+        run: |
+          echo "PUSH=true" >> "$GITHUB_ENV"
+
       - name: Build control-server image
         run: bin/bix build-image control-server
       - name: Build home-base image
@@ -46,13 +53,6 @@ jobs:
         run: bin/bix build-image kube-bootstrap
       - name: Build pastebin image
         run: bin/bix build-image pastebin
-
-      - name: Determine whether to push images / tags
-        if:
-          ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref,
-          'refs/tags/')) && github.event_name == 'push' }}
-        run: |
-          echo "PUSH=true" >> "$GITHUB_ENV"
 
       # set ADDITIONAL_TAGS to either latest or the current tag
       - if: ${{ fromJSON(env.PUSH) && !startsWith(github.ref, 'refs/tags/') }}
