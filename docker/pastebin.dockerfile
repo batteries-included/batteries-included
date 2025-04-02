@@ -50,7 +50,7 @@ RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci && \
 ###############################################################################
 # Build the Go binary
 
-FROM golang:1.24.1 AS go-build
+FROM golang:1.24.2 AS go-build
 
 WORKDIR /source
 
