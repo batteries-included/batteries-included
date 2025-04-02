@@ -47,5 +47,18 @@ jobs:
         shell: bash
         run: asdf reshim
 
+      - name: Restore elixir cache
+        uses: actions/cache/restore@v4
+        id: elixir-cache
+        with:
+          path: |
+            platform_umbrella/deps
+            platform_umbrella/_build
+          key:
+            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
+            }}
+          restore-keys: |
+            ${{ runner.os }}-ex-
+
       - name: Check FMT via bin/bix
         run: bin/bix check-fmt

@@ -5,14 +5,12 @@ on:
     branches:
       - master
 
-  pull_request:
-
 env:
   GOCACHE: ${{ vars.GOCACHE }}
   GOMODCACHE: ${{ vars.GOMODCACHE }}
 
 jobs:
-  asdf:
+  cache-asdf:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -55,7 +53,7 @@ jobs:
             ~/.asdf/shims
           key: ${{ runner.os }}-asdf-${{ env.ASDF_HASH }}
 
-  elixir:
+  cache-elixir:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -90,8 +88,11 @@ jobs:
         shell: bash
         run: asdf reshim
 
-      - name: Setup elixir for caching
+      - name: Run dialyzer for caching
         run: bin/bix ex-dialyzer
+
+      - name: Run tests for caching
+        run: bin/bix ex-test-deep
 
       - name: Save Elixir cache
         uses: actions/cache/save@v4
@@ -104,7 +105,7 @@ jobs:
             ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
             }}
 
-  go:
+  cache-go:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -141,6 +142,9 @@ jobs:
 
       - name: Build `bi` for caching
         run: goreleaser build --snapshot --single-target
+
+      - name: Test for caching
+        run: bin/bix go-test
 
       - name: Save Go cache
         uses: actions/cache/save@v4
