@@ -1,0 +1,37 @@
+name: 'Setup ASDF'
+description: 'Sets up ASDF'
+inputs:
+  asdf_branch:
+    description: 'ASDF branch to use'
+    required: true
+    default: 'v0.15.0'
+runs:
+  using: 'composite'
+  steps:
+    - name: Install ASDF CLI
+      uses: asdf-vm/actions/setup@v3
+      with:
+        asdf_branch: ${{ inputs.asdf_branch }}
+
+    - name: Restore ASDF cache
+      uses: actions/cache/restore@v4
+      id: asdf-cache
+      with:
+        # https://github.com/asdf-vm/asdf/blob/master/.gitignore
+        path: |
+          ~/.asdf/installs
+          ~/.asdf/plugins
+          ~/.asdf/shims
+        key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+        restore-keys: ${{ runner.os }}-asdf-
+
+    - name: Install ASDF Tools
+      uses: asdf-vm/actions/install@v3
+      # See https://github.com/asdf-vm/actions/issues/445
+      if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
+      with:
+        asdf_branch: ${{ inputs.asdf_branch }}
+
+    - name: Reshim ASDF
+      shell: bash
+      run: asdf reshim

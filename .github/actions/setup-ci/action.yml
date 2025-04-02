@@ -1,0 +1,30 @@
+name: 'Setup CI'
+description: 'Sets up runner for CI'
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup ASDF
+      uses: ./.github/actions/setup-asdf
+
+    - name: Restore elixir cache
+      uses: actions/cache/restore@v4
+      id: elixir-cache
+      with:
+        path: |
+          platform_umbrella/deps
+          platform_umbrella/_build
+          ~/.local/share/bi
+        key:
+          ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions') }}
+        restore-keys: |
+          ${{ runner.os }}-ex-
+
+    - name: Restore Go cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          ~/.cache/go-cache
+          ~/.cache/go-mod-cache
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
