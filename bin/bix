@@ -463,11 +463,18 @@ do_build_image() {
 
     declare -a cache_args
     if [ "${GITHUB_ACTIONS:-""}" = "true" ]; then
-        cache_args+=(--cache-from
-            "type=gha,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
-            --cache-to
-            "type=gha,mode=max,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
-            --builder=container)
+        cache_args+=(
+            --builder=container
+            --cache-from "type=gha,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
+        )
+
+        # only push cache on PUSH
+        if [ "${PUSH:-""}" = "true" ]; then
+            cache_args+=(
+                --cache-to
+                "type=gha,mode=max,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
+            )
+        fi
     fi
 
     case "${image_name}" in

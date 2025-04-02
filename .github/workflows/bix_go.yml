@@ -53,8 +53,7 @@ jobs:
             ${{ vars.GOCACHE }}
             ${{ vars.GOMODCACHE }}
           key:
-            ${{ runner.os }}-go-${{ hashFiles('**/go.sum',
-            '.tool-versions') }}
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -102,8 +101,7 @@ jobs:
             ${{ vars.GOCACHE }}
             ${{ vars.GOMODCACHE }}
           key:
-            ${{ runner.os }}-go-${{ hashFiles('**/go.sum',
-            '.tool-versions') }}
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -151,8 +149,7 @@ jobs:
             ${{ vars.GOCACHE }}
             ${{ vars.GOMODCACHE }}
           key:
-            ${{ runner.os }}-go-${{ hashFiles('**/go.sum',
-            '.tool-versions') }}
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-go-
 

@@ -63,7 +63,7 @@ jobs:
         uses: crazy-max/ghaction-github-runtime@v3
 
       - name: Build control-server image
-        run: bin/bix build-image control-server
+        run: bin/bix -v build-image control-server
       - name: Build home-base image
         run: bin/bix build-image home-base
       - name: Build kube-bootstrap image

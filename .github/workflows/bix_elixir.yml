@@ -137,8 +137,8 @@ jobs:
             platform_umbrella/deps
             platform_umbrella/_build
           key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock',
-            '.tool-versions') }}
+            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
+            }}
           restore-keys: |
             ${{ runner.os }}-ex-
 
@@ -190,8 +190,8 @@ jobs:
             platform_umbrella/_build
             platform_umbrella/.dialyzer
           key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock',
-            '.tool-versions') }}
+            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
+            }}
           restore-keys: |
             ${{ runner.os }}-ex-
 
