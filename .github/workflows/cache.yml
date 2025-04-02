@@ -1,0 +1,74 @@
+name: Manage Caches
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install ASDF Tools
+        uses: asdf-vm/actions/install@v3
+        with:
+          asdf_branch: ${{ vars.ASDF_BRANCH }}
+
+      - name: Reshim ASDF
+        shell: bash
+        run: asdf reshim
+
+      - name: Setup hashes
+        shell: bash
+        env:
+          ASDF_HASH: ${{ hashFiles('.tool-versions') }}
+          GO_HASH: ${{ hashFiles('**/go.sum', '.tool-versions') }}
+          EX_HASH: ${{ hashFiles('**/mix.lock', '.tool-versions') }}
+        run: |
+          { echo "ASDF_HASH=$ASDF_HASH";
+            echo "GO_HASH=$GO_HASH";
+            echo "EX_HASH=$EX_HASH"; } >> "$GITHUB_ENV"
+
+      - name: Build `bi` for caching
+        run: goreleaser build --snapshot --single-target
+
+      - name: Setup elixir for caching
+        run: bin/bix ex-dialyzer
+
+      - name: Save ASDF cache
+        uses: actions/cache/save@v4
+        id: asdf-cache
+        with:
+          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
+          path: |
+            ~/.asdf/installs
+            ~/.asdf/plugins
+            ~/.asdf/shims
+          key: ${{ runner.os }}-asdf-${{ env.ASDF_HASH }}
+
+      - name: Save Go cache
+        uses: actions/cache/save@v4
+        id: go-cache
+        with:
+          path: |
+            ${{ vars.GOCACHE }}
+            ${{ vars.GOMODCACHE }}
+          key:
+            ${{ runner.os }}-go-${{ env.GO_HASH }}
+
+      - name: Save Elixir cache
+        uses: actions/cache/save@v4
+        id: elixir-cache
+        with:
+          path: |
+            platform_umbrella/deps
+            platform_umbrella/_build
+          key:
+            ${{ runner.os }}-ex-${{ env.EX_HASH }}
