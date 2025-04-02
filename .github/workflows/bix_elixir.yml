@@ -42,45 +42,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup ASDF
-        uses: asdf-vm/actions/setup@v3
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Cache ASDF
-        uses: actions/cache/restore@v4
-        id: asdf-cache
-        with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-
-      - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@v3
-        # See https://github.com/asdf-vm/actions/issues/445
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Reshim ASDF
-        shell: bash
-        run: asdf reshim
-
-      - name: Cache Elixir Deps
-        uses: actions/cache/restore@v4
-        id: elixir-cache
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-          key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
-          restore-keys: |
-            ${{ runner.os }}-ex-
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
 
       - name: Run deep test
         run: bin/bix --no-forward ex-test-deep
@@ -102,45 +65,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup ASDF
-        uses: asdf-vm/actions/setup@v3
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Cache ASDF
-        uses: actions/cache/restore@v4
-        id: asdf-cache
-        with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-
-      - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@v3
-        # See https://github.com/asdf-vm/actions/issues/445
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Reshim ASDF
-        shell: bash
-        run: asdf reshim
-
-      - name: Cache Elixir Deps
-        uses: actions/cache/restore@v4
-        id: elixir-cache
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-          key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
-          restore-keys: |
-            ${{ runner.os }}-ex-
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
 
       - name: Credo Code Analysis
         run: bin/bix ex-credo
@@ -153,47 +79,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup ASDF
-        uses: asdf-vm/actions/setup@v3
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Cache ASDF
-        uses: actions/cache/restore@v4
-        id: asdf-cache
-        with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-          restore-keys: ${{ runner.os }}-asdf-
-
-      - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@v3
-        # See https://github.com/asdf-vm/actions/issues/445
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Reshim ASDF
-        shell: bash
-        run: asdf reshim
-
-      - name: Cache Elixir Deps
-        uses: actions/cache/restore@v4
-        id: elixir-cache
-        with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-            platform_umbrella/.dialyzer
-          key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
-          restore-keys: |
-            ${{ runner.os }}-ex-
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
 
       - name: Dialyzer Type Analysis
         run: bin/bix ex-dialyzer
