@@ -77,7 +77,7 @@ jobs:
 
       - name: Build bi for caching
         shell: bash
-        run: bix go-ensure-bi
+        run: bin/bix go-ensure-bi
 
       - name: Save Elixir cache
         uses: actions/cache/save@v4

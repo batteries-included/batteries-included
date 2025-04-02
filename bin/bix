@@ -620,6 +620,10 @@ do_go_build_bi() {
     goreleaser release --clean --snapshot ${TRACE:+--verbose} -p 1
 }
 
+do_go_build_bi_ci() {
+    goreleaser build --clean --snapshot --single-target ${TRACE:+--verbose} -p 1
+}
+
 do_bi_location() {
     bi_bin_location
 }
@@ -728,6 +732,9 @@ go-ensure-bi)
     ;;
 go-build-bi)
     do_go_build_bi
+    ;;
+go-build-bi-ci)
+    do_go_build_bi_ci
     ;;
 bi-location)
     do_bi_location

@@ -23,8 +23,8 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: |
-          ~/.cache/go-cache
-          ~/.cache/go-mod-cache
+          /home/runner/.cache/go-cache
+          /home/runner/.cache/go-mod-cache
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
         restore-keys: |
           ${{ runner.os }}-go-
