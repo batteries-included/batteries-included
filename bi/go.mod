@@ -1,7 +1,6 @@
 module bi
 
 go 1.24.2
-
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/apparentlymart/go-cidr v1.1.0
@@ -16,7 +15,7 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.74.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.75.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.11
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.1.1
 	github.com/pulumi/pulumi/sdk/v3 v3.160.0
