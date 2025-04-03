@@ -10,7 +10,7 @@ defmodule CommonUI.Components.Button do
 
   attr :variant, :string, values: ["primary", "secondary", "dark", "danger", "icon", "icon_bordered", "minimal"]
   attr :tag, :string, default: "button"
-  attr :class, :string, default: nil
+  attr :class, :any, default: nil
   attr :icon, :atom, default: nil
   attr :icon_position, :atom, default: :left, values: [:left, :right]
 
@@ -144,7 +144,7 @@ defmodule CommonUI.Components.Button do
   defp button_class("minimal") do
     [
       button_class(),
-      "text-gray-dark hover:text-gray disabled:text-gray-light",
+      "text-gray-dark hover:-text-gray disabled:text-gray-light",
       "dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark"
     ]
   end

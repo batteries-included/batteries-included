@@ -1,4 +1,4 @@
-<button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" type="button">
+<button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 text-gray-dark hover:-text-gray disabled:text-gray-light dark:text-gray dark:hover:text-gray-light dark:disabled:text-gray-dark" type="button">
   
 
   Button

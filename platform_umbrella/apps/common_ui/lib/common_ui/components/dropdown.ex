@@ -2,6 +2,7 @@ defmodule CommonUI.Components.Dropdown do
   @moduledoc false
   use CommonUI, :component
 
+  import CommonUI.Components.Button, only: [button: 1]
   import CommonUI.Components.Icon
 
   alias CommonUI.IDHelpers
@@ -54,9 +55,29 @@ defmodule CommonUI.Components.Dropdown do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} name={@icon} class="size-5" />
+      <.icon :if={@icon} name={@icon} class="size-5 ml-3" />
       {render_slot(@inner_block)}
     </.link>
+    """
+  end
+
+  attr :selected, :boolean, default: false
+  attr :class, :any, default: nil
+  attr :rest, :global, include: ~w(variant icon link href navigate method)
+
+  slot :inner_block, required: true
+
+  def dropdown_button(assigns) do
+    ~H"""
+    <.button
+      class={[
+        "flex items-center gap-3 px-4 py-3 text-sm font-semibold whitespace-nowrap hover:bg-primary hover:text-white",
+        @class
+      ]}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </.button>
     """
   end
 
