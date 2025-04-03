@@ -8,9 +8,84 @@ on:
 env:
   GOCACHE: ${{ vars.GOCACHE }}
   GOMODCACHE: ${{ vars.GOMODCACHE }}
+  ASDF_PATHS: |
+    ~/.asdf/installs
+    ~/.asdf/plugins
+    ~/.asdf/shims
+  ELIXIR_PATHS: |
+    platform_umbrella/deps
+    platform_umbrella/_build
+    platform_umbrella/.dialyzer
+    ~/.local/share/bi
+
+  GO_PATHS: |
+    ${{ vars.GOCACHE }}
+    ${{ vars.GOMODCACHE }}
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
+  check-caches:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Compute hash keys
+        env:
+          ASDF_HASH_KEY:
+            ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          ELIXIR_HASH_KEY:
+            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
+            }}
+          GO_HASH_KEY:
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
+
+        run: |
+          { echo "ASDF_HASH_KEY=$ASDF_HASH_KEY";
+            echo "ELIXIR_HASH_KEY=$ELIXIR_HASH_KEY";
+            echo "GO_HASH_KEY=$GO_HASH_KEY"; } >> "$GITHUB_ENV"
+
+      - name: Check existing ASDF cache
+        uses: actions/cache/restore@v4
+        id: asdf
+        with:
+          path: ${{ env.ASDF_PATHS }}
+          key: ${{ env.ASDF_HASH_KEY }}
+          lookup-only: true
+
+      - name: Check existing elixir cache
+        uses: actions/cache/restore@v4
+        id: elixir
+        with:
+          path: ${{ env.ELIXIR_PATHS }}
+          key: ${{ env.ELIXIR_HASH_KEY }}
+          lookup-only: true
+
+      - name: Check existing Go cache
+        uses: actions/cache/restore@v4
+        id: go
+        with:
+          path: ${{ env.GO_PATHS }}
+          key: ${{ env.GO_HASH_KEY }}
+          lookup-only: true
+
+    outputs:
+      asdf-cache-hit: ${{ steps.asdf.outputs.cache-hit }}
+      asdf-hash-key: ${{ env.ASDF_HASH_KEY }}
+      elixir-cache-hit: ${{ steps.elixir.outputs.cache-hit }}
+      elixir-hash-key: ${{ env.ELIXIR_HASH_KEY }}
+      go-cache-hit: ${{ steps.go.outputs.cache-hit }}
+      go-hash-key: ${{ env.GO_HASH_KEY }}
+
   cache-asdf:
+    # ASDF tool-versions changed, install and re-cache
+    if: ${{ ! (needs.check-caches.outputs.asdf-cache-hit) }}
+    needs: check-caches
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -18,42 +93,25 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Check existing ASDF cache
-        uses: actions/cache/restore@v4
-        id: asdf-cache
-        with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-          lookup-only: true
-
-      # ASDF tool-versions changed, install and re-cache
       - name: Install ASDF Tools
         uses: asdf-vm/actions/install@v3
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         with:
           asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Reshim ASDF
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         shell: bash
         run: asdf reshim
 
       - name: Save ASDF cache
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v4
         with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+          path: ${{ env.ASDF_PATHS }}
+          key: ${{ needs.check-caches.outputs.asdf-hash-key }}
 
   cache-elixir:
+    # elixir deps changed, re-cache
+    if: ${{ ! (needs.check-caches.outputs.elixir-cache-hit) }}
+    needs: check-caches
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -83,15 +141,13 @@ jobs:
         uses: actions/cache/save@v4
         id: elixir-cache
         with:
-          path: |
-            platform_umbrella/deps
-            platform_umbrella/_build
-            ~/.local/share/bi
-          key:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
+          path: ${{ env.ELIXIR_PATHS }}
+          key: ${{ needs.check-caches.outputs.elixir-hash-key }}
 
   cache-go:
+    # go deps changed, re-cache
+    if: ${{ ! (needs.check-caches.outputs.go-cache-hit) }}
+    needs: check-caches
     runs-on: ubuntu-latest-m
     timeout-minutes: 25
     steps:
@@ -101,28 +157,6 @@ jobs:
 
       - name: Setup ASDF
         uses: ./.github/actions/setup-asdf
-
-      - name: Cache ASDF
-        uses: actions/cache/restore@v4
-        id: asdf-cache
-        with:
-          # https://github.com/asdf-vm/asdf/blob/master/.gitignore
-          path: |
-            ~/.asdf/installs
-            ~/.asdf/plugins
-            ~/.asdf/shims
-          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-
-      - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@v3
-        # See https://github.com/asdf-vm/actions/issues/445
-        if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
-        with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
-
-      - name: Reshim ASDF
-        shell: bash
-        run: asdf reshim
 
       - name: Build `bi` for caching
         run: bin/bix go-build-bi
@@ -134,8 +168,5 @@ jobs:
         uses: actions/cache/save@v4
         id: go-cache
         with:
-          path: |
-            ${{ vars.GOCACHE }}
-            ${{ vars.GOMODCACHE }}
-          key:
-            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
+          path: ${{ env.GO_PATHS }}
+          key: ${{ needs.check-caches.outputs.elixir-hash-key }}
