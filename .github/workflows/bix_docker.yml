@@ -27,8 +27,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup CI
-        uses: ./.github/actions/setup-ci
+      - name: Setup ASDF
+        uses: ./.github/actions/setup-asdf
 
       - name: Configure builder
         run: >-

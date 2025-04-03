@@ -1,5 +1,12 @@
 name: 'Setup CI'
 description: 'Sets up runner for CI'
+inputs:
+  go_cache:
+    description: 'Set up Go cache'
+    default: 'true'
+  elixir_cache:
+    description: 'Set up Elixir cache'
+    default: 'true'
 runs:
   using: 'composite'
   steps:
@@ -7,12 +14,14 @@ runs:
       uses: ./.github/actions/setup-asdf
 
     - name: Restore elixir cache
+      if: ${{ inputs.elixir_cache == 'true' }}
       uses: actions/cache/restore@v4
       id: elixir-cache
       with:
         path: |
           platform_umbrella/deps
           platform_umbrella/_build
+          platform_umbrella/.dialyzer
           ~/.local/share/bi
         key:
           ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions') }}
@@ -20,6 +29,7 @@ runs:
           ${{ runner.os }}-ex-
 
     - name: Restore Go cache
+      if: ${{ inputs.go_cache == 'true' }}
       uses: actions/cache/restore@v4
       with:
         path: |

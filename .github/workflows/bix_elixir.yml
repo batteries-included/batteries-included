@@ -44,6 +44,8 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup-ci
+        with:
+          go_cache: 'false'
 
       - name: Run deep test
         run: bin/bix --no-forward ex-test-deep
@@ -67,6 +69,8 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup-ci
+        with:
+          go_cache: 'false'
 
       - name: Credo Code Analysis
         run: bin/bix ex-credo
@@ -81,6 +85,8 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup-ci
+        with:
+          go_cache: 'false'
 
       - name: Dialyzer Type Analysis
         run: bin/bix ex-dialyzer
