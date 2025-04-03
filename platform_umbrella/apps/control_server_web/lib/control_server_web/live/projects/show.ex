@@ -149,46 +149,6 @@ defmodule ControlServerWeb.Live.ProjectsShow do
       <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
         Grafana Dashboard
       </.a>
-
-      <div class="mt-4 px-2 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md drop-shadow-md">
-        <.dropdown>
-          <:trigger>
-            <.button id="add-tooltip" variant="icon" icon={:plus} /> Add Resources
-          </:trigger>
-
-          <.dropdown_link navigate={
-            add_link(:cloudnative_pg, ~p"/postgres/new?project_id=#{@project.id}")
-          }>
-            Postgres
-          </.dropdown_link>
-
-          <.dropdown_link navigate={add_link(:redis, ~p"/redis/new?project_id=#{@project.id}")}>
-            Redis
-          </.dropdown_link>
-
-          <.dropdown_link navigate={add_link(:ferretdb, ~p"/ferretdb/new?project_id=#{@project.id}")}>
-            FerretDB
-          </.dropdown_link>
-
-          <.dropdown_link navigate={
-            add_link(:notebooks, ~p"/notebooks/new?project_id=#{@project.id}")
-          }>
-            Jupyter Notebook
-          </.dropdown_link>
-
-          <.dropdown_link navigate={
-            add_link(:knative, ~p"/knative/services/new?project_id=#{@project.id}")
-          }>
-            Knative Service
-          </.dropdown_link>
-
-          <.dropdown_link navigate={
-            add_link(:traditional_services, ~p"/traditional_services/new?project_id=#{@project.id}")
-          }>
-            Traditional Service
-          </.dropdown_link>
-        </.dropdown>
-      </div>
     </.panel>
     """
   end
@@ -197,26 +157,60 @@ defmodule ControlServerWeb.Live.ProjectsShow do
     ~H"""
     <.page_header title={@title} back_link={@back_link}>
       <.flex>
-        <.tooltip target_id="add-tooltip">Add Resources</.tooltip>
-        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Project History</.tooltip>
-        <.tooltip target_id="edit-tooltip">Edit Project</.tooltip>
-        <.tooltip target_id="delete-tooltip">Delete Project</.tooltip>
-        <.flex gaps="0">
-          <.button
-            id="edit-tooltip"
-            variant="icon"
-            icon={:pencil}
-            link={~p"/projects/#{@project.id}/edit"}
-          />
+        <.dropdown>
+          <:trigger>
+            <.button icon={:chevron_down} icon_position={:right} variant="secondary">
+              <.icon name={:cog} class="mr-2 size-6 inline-block" /> Actions
+            </.button>
+          </:trigger>
 
-          <.button
-            id="delete-tooltip"
-            variant="icon"
+          <.dropdown_link navigate={~p"/projects/#{@project.id}/edit"} icon={:pencil}>
+            Edit Project
+          </.dropdown_link>
+
+          <.dropdown_button
+            class="w-full"
             icon={:trash}
             phx-click="delete"
             data-confirm={"Are you sure you want to delete the \"#{@project.name}\" project? This will not delete any resources."}
-          />
-        </.flex>
+          >
+            Delete Project
+          </.dropdown_button>
+
+          <.dropdown_hr />
+
+          <.dropdown_link navigate={
+            add_link(:cloudnative_pg, ~p"/postgres/new?project_id=#{@project.id}")
+          }>
+            Add Postgres
+          </.dropdown_link>
+
+          <.dropdown_link navigate={add_link(:redis, ~p"/redis/new?project_id=#{@project.id}")}>
+            Add Redis
+          </.dropdown_link>
+
+          <.dropdown_link navigate={add_link(:ferretdb, ~p"/ferretdb/new?project_id=#{@project.id}")}>
+            Add FerretDB
+          </.dropdown_link>
+
+          <.dropdown_link navigate={
+            add_link(:notebooks, ~p"/notebooks/new?project_id=#{@project.id}")
+          }>
+            Add Jupyter Notebook
+          </.dropdown_link>
+
+          <.dropdown_link navigate={
+            add_link(:knative, ~p"/knative/services/new?project_id=#{@project.id}")
+          }>
+            Add Knative Service
+          </.dropdown_link>
+
+          <.dropdown_link navigate={
+            add_link(:traditional_services, ~p"/traditional_services/new?project_id=#{@project.id}")
+          }>
+            Add Traditional Service
+          </.dropdown_link>
+        </.dropdown>
       </.flex>
     </.page_header>
     """

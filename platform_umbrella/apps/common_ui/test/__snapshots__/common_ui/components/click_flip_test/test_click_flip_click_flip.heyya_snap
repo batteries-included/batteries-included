@@ -11,7 +11,7 @@
     
     This conent will only be shown when clicked
   
-    <button type="button" class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 size-9 p-2 rounded-full text-gray-darker dark:text-gray-lighter hover:text-primary hover:bg-gray-lightest/75 dark:hover:bg-gray-darkest/50 disabled:text-gray" phx-click="[[&quot;toggle_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#edit_id_test1&quot;}],[&quot;toggle_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#content_id_test1&quot;}]]">
+    <button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 size-9 p-2 rounded-full text-gray-darker dark:text-gray-lighter hover:text-primary hover:bg-gray-lightest/75 dark:hover:bg-gray-darkest/50 disabled:text-gray" type="button" phx-click="[[&quot;toggle_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#edit_id_test1&quot;}],[&quot;toggle_class&quot;,{&quot;names&quot;:[&quot;hidden&quot;],&quot;to&quot;:&quot;#content_id_test1&quot;}]]">
   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-current stroke-2 pointer-events-none" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
 </svg>

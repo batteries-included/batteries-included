@@ -24,6 +24,18 @@ defmodule Storybook.Components.Dropdown do
           ~s|<.dropdown_link icon={:beaker} selected>Foo</.dropdown_link>|,
           ~s|<.dropdown_link icon={:bug_ant}>Bar</.dropdown_link>|
         ]
+      },
+      %Variation{
+        id: :icon,
+        slots: [
+          ~s|<:trigger>|,
+          ~s|  <.button icon={:cog} variant="icon" />|,
+          ~s|</:trigger>|,
+          ~s|<.dropdown_link icon={:academic_cap}>Baz</.dropdown_link>|,
+          ~s|<.dropdown_hr />|,
+          ~s|<.dropdown_link icon={:beaker} selected>Foo</.dropdown_link>|,
+          ~s|<.dropdown_link icon={:bug_ant}>Bar</.dropdown_link>|
+        ]
       }
     ]
   end
