@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors, only: [labeled_owner: 1]
+  import ControlServerWeb.ActionsDropdown
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.KnativeServicesTable
   import ControlServerWeb.NotebooksTable
@@ -157,13 +158,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
     ~H"""
     <.page_header title={@title} back_link={@back_link}>
       <.flex>
-        <.dropdown>
-          <:trigger>
-            <.button icon={:chevron_down} icon_position={:right} variant="secondary">
-              <.icon name={:cog} class="mr-2 size-6 inline-block" /> Actions
-            </.button>
-          </:trigger>
-
+        <.actions_dropdown>
           <.dropdown_link navigate={~p"/projects/#{@project.id}/edit"} icon={:pencil}>
             Edit Project
           </.dropdown_link>
@@ -210,7 +205,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
           }>
             Add Traditional Service
           </.dropdown_link>
-        </.dropdown>
+        </.actions_dropdown>
       </.flex>
     </.page_header>
     """

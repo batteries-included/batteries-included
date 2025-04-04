@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import ControlServerWeb.ActionsDropdown
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PgUserTable
   import ControlServerWeb.PodsTable
@@ -274,18 +275,20 @@ defmodule ControlServerWeb.Live.PostgresShow do
       </:menu>
 
       <.flex>
-        <.tooltip target_id="edit-tooltip">Edit Cluster</.tooltip>
-        <.tooltip target_id="delete-tooltip">Delete Cluster</.tooltip>
-        <.flex gaps="0">
-          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@cluster)} />
-          <.button
-            id="delete-tooltip"
-            variant="icon"
+        <.actions_dropdown>
+          <.dropdown_link navigate={edit_url(@cluster)} icon={:pencil}>
+            Edit Postgres Cluster
+          </.dropdown_link>
+
+          <.dropdown_button
+            class="w-full"
             icon={:trash}
             phx-click="delete"
-            data-confirm="Are you sure?"
-          />
-        </.flex>
+            data-confirm={"Are you sure you want to delete the \"#{@cluster.name}\" cluster?"}
+          >
+            Delete Cluster
+          </.dropdown_button>
+        </.actions_dropdown>
       </.flex>
     </.page_header>
     """
