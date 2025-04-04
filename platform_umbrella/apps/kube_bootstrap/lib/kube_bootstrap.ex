@@ -21,6 +21,8 @@ defmodule KubeBootstrap do
     istio_gateway
     karpenter
     metallb
+    vm_agent
+    victoria_metrics
   )a
 
   @spec bootstrap_from_summary(StateSummary.t()) :: :ok | {:error, :retries_exhausted | list()}
