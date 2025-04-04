@@ -17,7 +17,6 @@ env:
     platform_umbrella/_build
     platform_umbrella/.dialyzer
     ~/.local/share/bi
-
   GO_PATHS: |
     ${{ vars.GOCACHE }}
     ${{ vars.GOMODCACHE }}
@@ -169,4 +168,4 @@ jobs:
         id: go-cache
         with:
           path: ${{ env.GO_PATHS }}
-          key: ${{ needs.check-caches.outputs.elixir-hash-key }}
+          key: ${{ needs.check-caches.outputs.go-hash-key }}
