@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import ControlServerWeb.ActionsDropdown
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.PodsTable
@@ -108,18 +109,20 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
       </:menu>
 
       <.flex>
-        <.tooltip target_id="edit-tooltip">Edit Service</.tooltip>
-        <.tooltip target_id="delete-tooltip">Delete Service</.tooltip>
-        <.flex gaps="0">
-          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@service)} />
-          <.button
-            id="delete-tooltip"
-            variant="icon"
+        <.actions_dropdown>
+          <.dropdown_link navigate={edit_url(@service)} icon={:pencil}>
+            Edit Service
+          </.dropdown_link>
+
+          <.dropdown_button
+            class="w-full"
             icon={:trash}
             phx-click="delete"
-            data-confirm="Are you sure?"
-          />
-        </.flex>
+            data-confirm={"Are you sure you want to delete the #{@service.name} model?"}
+          >
+            Delete Service
+          </.dropdown_button>
+        </.actions_dropdown>
       </.flex>
     </.page_header>
     """
@@ -140,7 +143,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
           Edit Versions
         </:tab>
       </.tab_bar>
-      <.a variant="bordered" href={service_url(@service)}>
+      <.a variant="bordered" href={service_url(@service)} class="mt-4 hover:shadow-lg">
         Running Service
       </.a>
     </.panel>

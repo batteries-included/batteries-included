@@ -2,6 +2,7 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.ActionsDropdown
   import ControlServerWeb.Containers.EnvValuePanel
   import KubeServices.SystemState.SummaryHosts
 
@@ -43,18 +44,20 @@ defmodule ControlServerWeb.Live.JupyterLabNotebookShow do
       </:menu>
 
       <.flex>
-        <.tooltip target_id="edit-tooltip">Edit Notebook</.tooltip>
-        <.tooltip target_id="delete-tooltip">Delete Notebook</.tooltip>
-        <.flex gaps="0">
-          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@notebook)} />
-          <.button
-            id="delete-tooltip"
-            variant="icon"
+        <.actions_dropdown>
+          <.dropdown_link navigate={edit_url(@notebook)} icon={:pencil}>
+            Edit Notebook
+          </.dropdown_link>
+
+          <.dropdown_button
+            class="w-full"
             icon={:trash}
             phx-click="delete"
-            data-confirm={"Are you sure you want to delete the #{@notebook.name} notebook?"}
-          />
-        </.flex>
+            data-confirm={"Are you sure you want to delete the #{@notebook.name} name?"}
+          >
+            Delete Notebook
+          </.dropdown_button>
+        </.actions_dropdown>
       </.flex>
     </.page_header>
 
