@@ -7,6 +7,7 @@
 
 @import './loader.css';
 @import './tippy.css';
+@import './pagination.css';
 
 ::selection {
   @apply bg-primary text-white;
