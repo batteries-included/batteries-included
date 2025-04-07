@@ -142,30 +142,29 @@ defmodule CommonCore.Resources.RedisOperator do
     template =
       %{}
       |> Map.put("metadata", %{"labels" => %{"battery/managed" => "true"}})
-      |> Map.put(
-        "spec",
-        %{
-          "automountServiceAccountToken" => true,
-          "containers" => [
-            %{
-              "args" => ["--leader-elect"],
-              "command" => ["/manager"],
-              "env" => [%{"name" => "ENABLE_WEBHOOKS", "value" => "false"}],
-              "image" => battery.config.operator_image,
-              "imagePullPolicy" => "Always",
-              "name" => "redis-operator",
-              "resources" => %{
-                "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
-                "requests" => %{"cpu" => "500m", "memory" => "500Mi"}
-              },
-              "securityContext" => %{}
-            }
-          ],
-          "securityContext" => %{},
-          "serviceAccount" => "redis-operator",
-          "serviceAccountName" => "redis-operator"
-        }
-      )
+      |> Map.put("spec", %{
+        "automountServiceAccountToken" => true,
+        "containers" => [
+          %{
+            "args" => ["--leader-elect"],
+            "command" => ["/operator", "manager"],
+            "env" => [%{"name" => "ENABLE_WEBHOOKS", "value" => "false"}],
+            "image" => battery.config.operator_image,
+            "imagePullPolicy" => "Always",
+            "livenessProbe" => %{"httpGet" => %{"path" => "/healthz", "port" => 8081}},
+            "name" => "redis-operator",
+            "readinessProbe" => %{"httpGet" => %{"path" => "/readyz", "port" => 8081}},
+            "resources" => %{
+              "limits" => %{"cpu" => "500m", "memory" => "500Mi"},
+              "requests" => %{"cpu" => "500m", "memory" => "500Mi"}
+            },
+            "securityContext" => %{}
+          }
+        ],
+        "securityContext" => %{},
+        "serviceAccount" => "redis-operator",
+        "serviceAccountName" => "redis-operator"
+      })
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
 
