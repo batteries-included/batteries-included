@@ -200,8 +200,8 @@ defmodule CommonCore.Defaults.Images do
     redis:
       Image.new!(%{
         name: "quay.io/opstree/redis",
-        tags: ~w(v7.2.3 v7.2.6),
-        default_tag: "v7.2.6"
+        tags: ~w(v7.2.3 v7.2.7),
+        default_tag: "v7.2.7"
       }),
     redis_exporter:
       Image.new!(%{
@@ -212,8 +212,8 @@ defmodule CommonCore.Defaults.Images do
     redis_operator:
       Image.new!(%{
         name: "ghcr.io/ot-container-kit/redis-operator/redis-operator",
-        tags: ~w(v0.18.0 v0.18.1),
-        default_tag: "v0.18.1"
+        tags: ~w(v0.18.0 v0.18.1 v0.20.0),
+        default_tag: "v0.20.0"
       }),
     smtp4dev:
       Image.new!(%{
