@@ -55,7 +55,7 @@ defmodule HomeBaseWeb.MixProject do
       {:flop_phoenix, "~> 0.23"},
 
       # Log to json
-      {:logger_json, "~> 6.0"},
+      {:logger_json, "~> 7.0"},
       # Token/Signing
       {:jose, "~> 1.11"}
     ]
