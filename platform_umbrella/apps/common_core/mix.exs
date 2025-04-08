@@ -52,7 +52,7 @@ defmodule CommonCore.MixProject do
       {:yaml_elixir, "~> 2.6"},
 
       # Log to json
-      {:logger_json, "~> 7.0"},
+      {:logger_json, "~> 6.2.1"},
 
       # Password Hashing
       {:bcrypt_elixir, "~> 3.0"},
