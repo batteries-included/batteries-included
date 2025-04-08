@@ -27,7 +27,7 @@ defmodule KubeBootstrap.MixProject do
     [
       {:common_core, in_umbrella: true},
       # Log to json
-      {:logger_json, "~> 7.0"},
+      {:logger_json, "~> 6.2.1"},
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
       {:k8s, "~> 2.6.2"},
