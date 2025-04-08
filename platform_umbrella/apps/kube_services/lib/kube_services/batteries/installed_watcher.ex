@@ -33,7 +33,15 @@ defmodule KubeServices.Batteries.InstalledWatcher do
     :ok = Database.subscribe(:system_battery)
 
     Logger.debug("Started watching for new batteries. Making sure already installed are running")
-    _ = start_batteries(ControlServer.Batteries.list_system_batteries())
+
+    # This is super important
+    #
+    # The battery_core battery is used by lots of batteries
+    # It's critical to start it first
+    #
+    batteries = Enum.sort(ControlServer.Batteries.list_system_batteries(), fn a, _b -> a.type == :battery_core end)
+
+    _ = start_batteries(batteries)
     {:ok, :initial_state}
   end
 
