@@ -4,6 +4,7 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import ControlServerWeb.ActionsDropdown
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.ServicesTable
@@ -98,18 +99,20 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceShow do
       </:menu>
 
       <.flex>
-        <.tooltip target_id="edit-tooltip">Edit Model</.tooltip>
-        <.tooltip target_id="delete-tooltip">Delete Model</.tooltip>
-        <.flex gaps="0">
-          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@model_instance)} />
-          <.button
-            id="delete-tooltip"
-            variant="icon"
+        <.actions_dropdown>
+          <.dropdown_link navigate={edit_url(@model_instance)} icon={:pencil}>
+            Edit Model
+          </.dropdown_link>
+
+          <.dropdown_button
+            class="w-full"
             icon={:trash}
             phx-click="delete"
             data-confirm={"Are you sure you want to delete the #{@model_instance.name} model?"}
-          />
-        </.flex>
+          >
+            Delete Model
+          </.dropdown_button>
+        </.actions_dropdown>
       </.flex>
     </.page_header>
     """

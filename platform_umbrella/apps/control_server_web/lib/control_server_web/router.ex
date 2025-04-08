@@ -161,6 +161,7 @@ defmodule ControlServerWeb.Router do
     live "/new", Live.FerretServiceNew, :show
 
     live "/:id/show", Live.FerretServiceShow, :show
+    live "/:id/pods", Live.FerretServiceShow, :pods
     live "/:id/edit_versions", Live.FerretServiceShow, :edit_versions
   end
 

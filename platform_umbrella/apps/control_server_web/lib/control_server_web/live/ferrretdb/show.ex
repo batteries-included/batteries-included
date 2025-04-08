@@ -3,6 +3,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
+  import ControlServerWeb.ActionsDropdown
   import ControlServerWeb.Audit.EditVersionsTable
   import ControlServerWeb.PodsTable
 
@@ -47,6 +48,10 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     assign(socket, page_title: "Show FerretDB Service")
   end
 
+  defp assign_page_title(%{assigns: %{live_action: :pods}} = socket) do
+    assign(socket, page_title: "Show FerretDB Pods")
+  end
+
   defp assign_page_title(%{assigns: %{live_action: :edit_versions}} = socket) do
     assign(socket, page_title: "Ferret Service: Edit History")
   end
@@ -85,11 +90,12 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   defp edit_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit"
   defp show_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/show"
+  defp pods_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/pods"
   defp edit_versions_url(ferret_service), do: ~p"/ferretdb/#{ferret_service}/edit_versions"
 
-  defp main_page(assigns) do
+  defp ferret_page_header(assigns) do
     ~H"""
-    <.page_header title={"FerretDB Service: #{@ferret_service.name}"} back_link={~p"/ferretdb"}>
+    <.page_header title={@page_title} back_link={~p"/ferretdb"}>
       <:menu>
         <.badge :if={@ferret_service.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@ferret_service.project_id}/show"}>
@@ -99,31 +105,48 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
       </:menu>
 
       <.flex>
-        <.tooltip :if={@timeline_installed} target_id="history-tooltip">Edit History</.tooltip>
-        <.tooltip target_id="edit-tooltip">Edit Service</.tooltip>
-        <.tooltip target_id="delete-tooltip">Delete Service</.tooltip>
-        <.flex gaps="0">
-          <.button
-            :if={@timeline_installed}
-            id="history-tooltip"
-            variant="icon"
-            icon={:clock}
-            link={edit_versions_url(@ferret_service)}
-          />
-          <.button id="edit-tooltip" variant="icon" icon={:pencil} link={edit_url(@ferret_service)} />
-          <.button
-            id="delete-tooltip"
-            variant="icon"
+        <.actions_dropdown>
+          <.dropdown_link navigate={edit_url(@ferret_service)} icon={:pencil}>
+            Edit FerretDB
+          </.dropdown_link>
+
+          <.dropdown_button
+            class="w-full"
             icon={:trash}
             phx-click="delete"
-            data-confirm="Are you sure?"
-          />
-        </.flex>
+            data-confirm={"Are you sure you want to delete the \"#{@ferret_service.name}\" FerretDB Service?"}
+          >
+            Delete FerretDB
+          </.dropdown_button>
+        </.actions_dropdown>
       </.flex>
     </.page_header>
+    """
+  end
 
-    <.grid columns={%{sm: 1, lg: 2}}>
-      <.panel title="Details" variant="gray">
+  defp links_panel(assigns) do
+    ~H"""
+    <.panel variant="gray">
+      <.tab_bar variant="navigation">
+        <:tab selected={@live_action == :show} patch={show_url(@ferret_service)}>Overview</:tab>
+        <:tab selected={@live_action == :pods} patch={pods_url(@ferret_service)}>Pods</:tab>
+        <:tab
+          :if={@timeline_installed}
+          selected={@live_action == :edit_versions}
+          patch={edit_versions_url(@ferret_service)}
+        >
+          Edit Versions
+        </:tab>
+      </.tab_bar>
+    </.panel>
+    """
+  end
+
+  defp main_page(assigns) do
+    ~H"""
+    <.ferret_page_header ferret_service={@ferret_service} page_title={@page_title} />
+    <.grid columns={%{sm: 1, lg: 4}}>
+      <.panel title="Details" class="lg:col-span-3">
         <.data_list>
           <:item title="Instances">
             {@ferret_service.instances}
@@ -137,23 +160,46 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
         </.data_list>
       </.panel>
 
-      <.flex column class="justify-start">
-        <%!-- TODO: services link and any other relavent links --%>
-      </.flex>
-
-      <.panel title="Pods" class="col-span-2">
-        <.pods_table pods={@pods} />
-      </.panel>
+      <.links_panel
+        ferret_service={@ferret_service}
+        live_action={@live_action}
+        timeline_installed={@timeline_installed}
+      />
     </.grid>
     """
   end
 
   defp edit_versions_page(assigns) do
     ~H"""
-    <.page_header title="Edit History" back_link={show_url(@ferret_service)} />
-    <.panel title="Edit History">
-      <.edit_versions_table rows={@edit_versions} abridged />
-    </.panel>
+    <.ferret_page_header ferret_service={@ferret_service} page_title={@page_title} />
+    <.grid columns={%{sm: 1, lg: 4}}>
+      <.panel title="Edit History" class="lg:col-span-3">
+        <.edit_versions_table rows={@edit_versions} abridged />
+      </.panel>
+
+      <.links_panel
+        ferret_service={@ferret_service}
+        live_action={@live_action}
+        timeline_installed={@timeline_installed}
+      />
+    </.grid>
+    """
+  end
+
+  defp pods_page(assigns) do
+    ~H"""
+    <.ferret_page_header ferret_service={@ferret_service} page_title={@page_title} />
+    <.grid columns={%{sm: 1, lg: 4}}>
+      <.panel title="Pods" class="lg:col-span-3">
+        <.pods_table pods={@pods} />
+      </.panel>
+
+      <.links_panel
+        ferret_service={@ferret_service}
+        live_action={@live_action}
+        timeline_installed={@timeline_installed}
+      />
+    </.grid>
     """
   end
 
@@ -164,12 +210,25 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
       <% :show -> %>
         <.main_page
           ferret_service={@ferret_service}
-          pods={@pods}
+          live_action={@live_action}
           page_title={@page_title}
           timeline_installed={@timeline_installed}
         />
       <% :edit_versions -> %>
-        <.edit_versions_page ferret_service={@ferret_service} edit_versions={@edit_versions} />
+        <.edit_versions_page
+          ferret_service={@ferret_service}
+          live_action={@live_action}
+          page_title={@page_title}
+          timeline_installed={@timeline_installed}
+        />
+      <% :pods -> %>
+        <.pods_page
+          ferret_service={@ferret_service}
+          live_action={@live_action}
+          pods={@pods}
+          page_title={@page_title}
+          timeline_installed={@timeline_installed}
+        />
     <% end %>
     """
   end
