@@ -58,6 +58,21 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
     GenServer.call(@me, {:apply, snap, actions}, 600_000)
   end
 
+  def get_running(target \\ @me) do
+    # the worker might not be started yet
+    GenServer.call(target, :get_running)
+  rescue
+    _ -> false
+  catch
+    _ -> false
+    _e, _r -> false
+  end
+
+  @impl GenServer
+  def handle_call(:get_running, _from, state) do
+    {:reply, true, state}
+  end
+
   @impl GenServer
   def handle_call({:generate, snap, summary}, _from, state) do
     {:reply, do_generate(snap, summary, state), state}

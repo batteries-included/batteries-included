@@ -146,7 +146,12 @@ defmodule KubeServices.SnapshotApply.Worker do
   defp kube_prepare(us, _summary), do: KubeApply.prepare(us)
 
   defp keycloak_prepare(us, summary) do
-    if CommonCore.StateSummary.Batteries.batteries_installed?(summary, :keycloak) do
+    # Make sure the Keycloak battery is installed
+    # and make sure that the GenServer is running
+    # If the genserver is not running, we don't prepare anything so we will skip
+    # apply
+    if CommonCore.StateSummary.Batteries.batteries_installed?(summary, :keycloak) and
+         KubeServices.SnapshotApply.KeycloakApply.get_running() do
       KeycloakApply.prepare(us)
     else
       {:ok, nil}
