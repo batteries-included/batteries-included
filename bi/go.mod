@@ -11,7 +11,7 @@ require (
 	github.com/dghubble/ipnets v1.0.0
 	github.com/docker/docker v28.0.4+incompatible
 	github.com/docker/go-connections v0.5.0
-	github.com/go-jose/go-jose/v4 v4.0.5
+	github.com/go-jose/go-jose/v4 v4.1.0
 	github.com/lmittmann/tint v1.0.7
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
