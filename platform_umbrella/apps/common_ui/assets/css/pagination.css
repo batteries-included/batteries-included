@@ -1,0 +1,13 @@
+/* Pagination classes from the Flop.Phoenix */
+
+.pagination-list {
+    @apply flex gap-4 lg:gap-6 ml-4 mr-2 justify-center align-middle;
+}
+
+.pagination-link {
+    @apply font-medium hover:text-primary dark:hover:text-primary-dark;
+}
+
+.is-current {
+    @apply font-bold;
+}
