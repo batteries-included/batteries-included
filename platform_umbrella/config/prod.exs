@@ -50,4 +50,5 @@ config :logger, :console,
     [library: :k8s]
   ]
 
-config :logger, :default_handler, formatter: {LoggerJSON.Formatters.Basic, []}
+config :logger, :default_handler,
+  formatter: {LoggerJSON.Formatters.Basic, %{metadata: [:mfa, :request_id], redactors: [], encoder_opts: []}}
