@@ -7,7 +7,6 @@ defmodule ControlServerWeb.Postgres.PostgresBackupsTable do
 
   attr :class, :string, default: ""
   attr :backups, :list, required: true
-  attr :restore_enabled, :boolean, default: false
 
   def backups_panel(assigns) do
     ~H"""
@@ -17,7 +16,7 @@ defmodule ControlServerWeb.Postgres.PostgresBackupsTable do
         <:col :let={backup} label="Status">{phase(backup)}</:col>
         <:col :let={backup} label="Started"><.relative_display time={started_at(backup)} /></:col>
         <:col :let={backup} label="Stopped"><.relative_display time={stopped_at(backup)} /></:col>
-        <:action :let={backup} :if={@restore_enabled}>
+        <:action :let={backup}>
           <.flex>
             <.button
               variant="minimal"
