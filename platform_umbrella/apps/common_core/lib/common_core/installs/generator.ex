@@ -67,7 +67,7 @@ defmodule CommonCore.Installs.Generator do
 
   defp do_build(:int_test, team_id) do
     Installation.new!("int_test",
-      default_size: :medium,
+      default_size: :tiny,
       kube_provider: :kind,
       usage: :internal_int_test,
       team_id: team_id,

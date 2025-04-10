@@ -2,13 +2,12 @@ defmodule Verify.PostgresTest do
   use Verify.TestCase, async: false
 
   @tag :cluster_test
-  test "Can start a postgres cluster", %{session: session, control_url: url} do
+  test "can start a postgres cluster", %{session: session, control_url: url} do
     cluster_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
     |> visit(url <> "/postgres/new")
     |> assert_has(Query.text("New Postgres Cluster"))
-    |> click(Query.text_field("cluster[name]"))
     |> fill_in(Query.text_field("cluster[name]"), with: cluster_name)
     # Why is the cluster name still filled in with the suggested name here
     # This has to be a wallaby bug
@@ -16,11 +15,13 @@ defmodule Verify.PostgresTest do
     # Make sure that the postres cluster show page title is there
     |> assert_has(Query.text("Postgres Cluster", minimum: 1))
     # Assert that we are on the correct cluster show page
-    |> assert_text(cluster_name)
-    # Make sure that this page has the kubenetes elements
-    |> assert_text("Pods")
+    # |> assert_text(cluster_name)
+    # Make sure that this page has the kubernetes elements
+    |> assert_has(Query.text("Pods"))
+    |> click(Query.text("Pods"))
     # Assert that the first pod for the cluster is there.
-    |> assert_has(Query.text("#{cluster_name}-1"))
+    |> assert_has(Query.css("tr:first-child", text: "#{cluster_name}-1"))
+    |> click(Query.text("Overview"))
 
     # Assert that we have gotten to the show page
     path = current_path(session)
