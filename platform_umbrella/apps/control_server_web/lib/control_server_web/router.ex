@@ -92,7 +92,7 @@ defmodule ControlServerWeb.Router do
     live "/new", Live.ProjectsNew
     live "/:id/edit", Live.ProjectsEdit
     live "/:id/timeline", Live.ProjectsTimeline
-    live "/:id/export", Live.ProjectsExport
+    live "/:id/snapshot", Live.ProjectsSnapshot
     live "/:id/show", Live.ProjectsShow, :show
     live "/:id/pods", Live.ProjectsShow, :pods
     live "/:id/postgres_clusters", Live.ProjectsShow, :postgres_clusters
