@@ -44,9 +44,9 @@ defmodule Verify.KindInstallWorker do
 
         {:reply, {:ok, extract_url(output)}, %{state | started: [path | state.started]}}
 
-      respone ->
+      response ->
         Logger.warning("Unable to start Kind install from #{path}")
-        {:reply, respone, state}
+        {:reply, response, state}
     end
   end
 
@@ -83,6 +83,8 @@ defmodule Verify.KindInstallWorker do
 
   def extract_url(output) do
     output
+    |> String.split(~r|[\r\n]+|)
+    |> List.first()
     |> String.trim()
     |> String.split(~r|\s+|)
     |> List.last()

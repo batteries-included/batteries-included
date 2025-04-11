@@ -70,15 +70,18 @@ defmodule Verify.TestCase do
                   "--headless",
                   "--fullscreen",
                   # Incognito mode means no caching for real
-                  "--incognito",
+                  # Unfortunately, chrome doesn't allow http requests at all incognito
+                  # "--incognito",
                   # Seems to be better for stability
                   "--no-sandbox",
-                  # Yean this will run in CI
+                  # Yeah this will run in CI
                   "--disable-gpu",
                   # Please google go away
+                  "--disable-extensions",
                   "--disable-login-animations",
                   "--no-default-browser-check",
-                  "--no-first-run"
+                  "--no-first-run",
+                  "--ignore-certificate-errors"
                 ]
               }
             }
