@@ -6,9 +6,9 @@ on:
       - master
     tags:
       - '*'
-  pull_request:
-    branches:
-      - master
+  # pull_request:
+  #   branches:
+  #     - master
 
 permissions:
   id-token: write
