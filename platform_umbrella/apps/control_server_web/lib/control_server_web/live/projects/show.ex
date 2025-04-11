@@ -25,6 +25,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   end
 
   @impl Phoenix.LiveView
+  @spec handle_params(map(), any(), map()) :: {:noreply, map()}
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
@@ -142,10 +143,6 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         <:tab :if={@project.model_instances != []} patch={model_instances_url(@project)}>
           Model Instances
         </:tab>
-
-        <:tab :if={@project_export_installed} navigate={~p"/projects/#{@project.id}/export"}>
-          Export Project
-        </:tab>
       </.tab_bar>
       <.a :if={@grafana_dashboard_url != nil} variant="bordered" href={@grafana_dashboard_url}>
         Grafana Dashboard
@@ -161,6 +158,10 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         <.actions_dropdown>
           <.dropdown_link navigate={~p"/projects/#{@project.id}/edit"} icon={:pencil}>
             Edit Project
+          </.dropdown_link>
+
+          <.dropdown_link navigate={~p"/projects/#{@project.id}/snapshot"} icon={:camera}>
+            Take Project Snapshot
           </.dropdown_link>
 
           <.dropdown_button
