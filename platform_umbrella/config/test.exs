@@ -44,7 +44,7 @@ config :home_base_web, HomeBaseWeb.Endpoint,
 config :kube_services, start_services: false, cluster_type: :dev
 
 # Print only warnings and errors during test
-config :logger, level: "TEST_LOG_LEVEL" |> System.get_env() |> String.to_existing_atom() || :error
+config :logger, level: "TEST_LOG_LEVEL" |> System.get_env("error") |> String.to_existing_atom()
 
 config :wallaby,
   screenshot_on_failure: true,

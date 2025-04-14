@@ -37,3 +37,12 @@ jobs:
           TEST_LOG_LEVEL: debug
         run: |
           bin/bix -v ex-int-test
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: verify-failures
+          path: 'screenshots/'
+          retention-days: 7
+          compression-level: 0
+          overwrite: true

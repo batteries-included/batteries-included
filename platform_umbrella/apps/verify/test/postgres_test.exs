@@ -22,6 +22,7 @@ defmodule Verify.PostgresTest do
     # Assert that the first pod for the cluster is there.
     |> assert_has(Query.css("tr:first-child", text: "#{cluster_name}-1"))
     |> click(Query.text("Overview"))
+    |> assert_has(Query.css("h3", text: "Postgres Cluster"))
 
     # Assert that we have gotten to the show page
     path = current_path(session)
