@@ -1,5 +1,6 @@
 defmodule Verify.TestCase do
   @moduledoc false
+require Logger
 
   use ExUnit.CaseTemplate
 
@@ -12,6 +13,7 @@ defmodule Verify.TestCase do
       require Logger
 
       setup_all do
+        Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
         {:ok, url} = Verify.KindInstallWorker.start(unquote(install_spec))
         Application.put_env(:wallaby, :base_url, url)
 
