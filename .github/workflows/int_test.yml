@@ -26,8 +26,14 @@ jobs:
         with:
           go_cache: 'false'
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          detached: true
+
       - name: Run integration tests
         env:
           VERSION_OVERRIDE: 0.65.0-c420697
           TEST_LOG_LEVEL: debug
-        run: bin/bix -v ex-int-test
+        run: |
+          bin/bix -v ex-int-test
