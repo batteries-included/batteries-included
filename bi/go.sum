@@ -320,8 +320,8 @@ github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
 github.com/pulumi/esc v0.13.0 h1:O2MPR2koScaQ2fXwyer8Q3Dd7z+DCnaDfsgNl5mVNMk=
 github.com/pulumi/esc v0.13.0/go.mod h1:IIQo6W6Uzajt6f1RW4QvNxIRDlbK3TNQysnrwBHNo3U=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.76.0 h1:chUPTWsKTLl0qCAORfsmV1wPfYl85nuRDOAqnDk1Gy8=
-github.com/pulumi/pulumi-aws/sdk/v6 v6.76.0/go.mod h1:xglzyWetVFeJKy0ZlPlIzjKfkm/Aq3n8q/1rANEPVhQ=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.77.0 h1:I2T9kAMuTBWhVX2H3gfxMjjhEEJ2ol+xqulIXKnL2HU=
+github.com/pulumi/pulumi-aws/sdk/v6 v6.77.0/go.mod h1:zhyKkaiAn464Y5bKmeqAMdX1ZFroxYzOX9JlI483nJY=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.11 h1:IxFFOE5SRz2HwGZfV9DS3VWBr6Yh6xlAvQxOg+VmQzw=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.11/go.mod h1:MpllvEZByG9fUtN+JotOFLnXtLQDO0T6y3c+DybSVGo=
 github.com/pulumi/pulumi-tls/sdk/v5 v5.1.1 h1:uR3SAOKOdy7AigiF8tymLk8e0uqdU1NGziltKqG78Zw=
