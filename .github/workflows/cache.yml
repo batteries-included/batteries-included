@@ -35,19 +35,7 @@ jobs:
           persist-credentials: false
 
       - name: Compute hash keys
-        env:
-          ASDF_HASH_KEY:
-            ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-          ELIXIR_HASH_KEY:
-            ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions')
-            }}
-          GO_HASH_KEY:
-            ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
-
-        run: |
-          { echo "ASDF_HASH_KEY=$ASDF_HASH_KEY";
-            echo "ELIXIR_HASH_KEY=$ELIXIR_HASH_KEY";
-            echo "GO_HASH_KEY=$GO_HASH_KEY"; } >> "$GITHUB_ENV"
+        run: bin/bix ci-gen-hashes >> "$GITHUB_ENV"
 
       - name: Check existing ASDF cache
         uses: actions/cache/restore@v4

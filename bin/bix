@@ -102,6 +102,10 @@ Available commands:
 **Static Site Commands**
 - static-dev       Start a development environment with npm
 - static-build     Build the static site
+
+**CI Commands**
+- ci-gen-hashes    Generate hashes
+
 EOF
     exit 1
 }
@@ -632,6 +636,50 @@ do_version_tag() {
     version_tag
 }
 
+do_generate_hashes() {
+    local tmpdir
+    tmpdir=$(mktemp -d)
+    trap 'rm -rf "${tmpdir}"; trap - RETURN;' RETURN
+
+    # named pipe for writing output of bi_revision
+    local bi_rev_file="${tmpdir}/bi-revision"
+    mkfifo -m 600 "${bi_rev_file}"
+    bi_revision >"${bi_rev_file}" &
+
+    # generate sha256s for each file
+    # append it to the correct file(s) in the temp dir
+    while read -r hash file; do
+        case $file in
+        */go.mod)
+            echo "${hash}" | tee -a "${tmpdir}/go" >/dev/null
+            ;;
+        */mix.lock | */bi-revision)
+            echo "${hash}" | tee -a "${tmpdir}/elixir" >/dev/null
+            ;;
+        .tool-versions)
+            echo "${hash}" | tee -a \
+                "${tmpdir}/go" \
+                "${tmpdir}/elixir" \
+                "${tmpdir}/asdf" >/dev/null
+            ;;
+        *)
+            # make sure our pattern matches catch everything
+            log "Failed to match file: ${file}"
+            exit 1
+            ;;
+        esac
+    done < <(sha256sum -- .tool-versions **/go.mod **/mix.lock "${bi_rev_file}")
+
+    # generate the final hash based on the files in the temp dir
+    for type in go elixir asdf; do
+        local sum key
+        sum="$(sha256sum "${tmpdir}/${type}" | cut -d " " -f 1)"
+        key="$(printf "%s-%s-%s" "$(uname)" "${type}" "${sum}")"
+
+        printf '%s=%s\n' "${type^^}_HASH_KEY" "${key}"
+    done
+}
+
 do_ensure_bi() {
     local bin_path
     bin_path=$(bi_bin_location)
@@ -771,6 +819,9 @@ static-dev)
     ;;
 static-build)
     do_static_build
+    ;;
+ci-gen-hashes)
+    do_generate_hashes
     ;;
 root-dir)
     echo "${ROOT_DIR}"

@@ -13,6 +13,10 @@ runs:
       with:
         asdf_branch: ${{ inputs.asdf_branch }}
 
+    - name: Determine hash keys
+      shell: bash
+      run: bin/bix ci-gen-hashes >> "$GITHUB_ENV"
+
     - name: Restore ASDF cache
       uses: actions/cache/restore@v4
       id: asdf-cache
@@ -22,7 +26,7 @@ runs:
           ~/.asdf/installs
           ~/.asdf/plugins
           ~/.asdf/shims
-        key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+        key: ${{ env.ASDF_HASH_KEY }}
         restore-keys: ${{ runner.os }}-asdf-
 
     - name: Install ASDF Tools

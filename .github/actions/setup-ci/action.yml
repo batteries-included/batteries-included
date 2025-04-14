@@ -13,6 +13,10 @@ runs:
     - name: Setup ASDF
       uses: ./.github/actions/setup-asdf
 
+    - name: Determine hash keys
+      shell: bash
+      run: bin/bix ci-gen-hashes >> "$GITHUB_ENV"
+
     - name: Restore elixir cache
       if: ${{ inputs.elixir_cache == 'true' }}
       uses: actions/cache/restore@v4
@@ -23,10 +27,9 @@ runs:
           platform_umbrella/_build
           platform_umbrella/.dialyzer
           ~/.local/share/bi
-        key:
-          ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions') }}
+        key: ${{ env.ELIXIR_HASH_KEY }}
         restore-keys: |
-          ${{ runner.os }}-ex-
+          ${{ runner.os }}-elixir-
 
     - name: Restore Go cache
       if: ${{ inputs.go_cache == 'true' }}
@@ -35,6 +38,9 @@ runs:
         path: |
           /home/runner/.cache/go-cache
           /home/runner/.cache/go-mod-cache
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
+        key: ${{ env.GO_HASH_KEY }}
         restore-keys: |
           ${{ runner.os }}-go-
+
+    - shell: bash
+      run: rm -f bi_revision.txt
