@@ -101,7 +101,14 @@ defmodule CommonUI.Components.Table do
           class={tbody_class()}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
         >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class={@row_click && tbody_tr_class()}>
+          <tr
+            :for={row <- @rows}
+            id={@row_id && @row_id.(row)}
+            {
+            maybe_invoke_callback(Keyword.get(@opts, :tbody_tr_attrs, nil), row)
+            |> Map.merge(if @row_click, do: tbody_tr_class(), else: %{})
+            }
+          >
             <td :for={col <- @col} class={tbody_td_class()} phx-click={@row_click && @row_click.(row)}>
               {render_slot(col, @row_item.(row))}
             </td>
@@ -141,6 +148,12 @@ defmodule CommonUI.Components.Table do
       </Flop.Phoenix.filter_fields>
     </.form>
     """
+  end
+
+  defp maybe_invoke_callback(nil, _item), do: %{}
+
+  defp maybe_invoke_callback(callback, item) do
+    apply(callback, [item])
   end
 
   def paginated_table_opts do
