@@ -42,7 +42,7 @@ jobs:
         if: failure()
         with:
           name: verify-failures
-          path: 'screenshots/'
+          path: '**/screenshots/'
           retention-days: 7
           compression-level: 0
           overwrite: true
