@@ -56,7 +56,6 @@ defmodule Verify.KindInstallWorker do
 
   defp do_start(identifier, state) do
     {spec, path} = build_install_spec(identifier, state)
-    path = build_install_spec(identifier, state)
     Logger.debug("Starting with #{path}")
 
     case System.cmd(state.bi_binary, ["start", path]) do

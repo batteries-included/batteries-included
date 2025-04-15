@@ -1,7 +1,8 @@
 defmodule Verify.KubeTest do
   use Verify.TestCase, async: false
 
-  @tag :cluster_test
+  @moduletag :cluster_test
+
   test "Can show kubernetes state", %{session: session, control_url: url} do
     session
     |> visit(url <> "/kube/pods")
@@ -16,7 +17,6 @@ defmodule Verify.KubeTest do
     |> assert_has(Query.css("table tbody tr", minimum: 6))
   end
 
-  @tag :cluster_test
   test "Can filter to show only one kubernetes pod", %{session: session, control_url: url} do
     session
     |> visit(url <> "/kube/pods")
@@ -25,7 +25,6 @@ defmodule Verify.KubeTest do
     |> assert_has(Query.css("table tbody tr", count: 1))
   end
 
-  @tag :cluster_test
   test "can filter to nothing", %{session: session, control_url: url} do
     session
     |> visit(url <> "/kube/pods")

@@ -574,13 +574,18 @@ do_ex_int_test() {
 do_ex_test_deep() {
     local setup_only=${1:-0}
     local slug=${2:-"dev"}
+    local out=/dev/null
     log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
     # Start the port forwarder
     try_portforward "${slug}" &
 
+    if [[ $TRACE -eq 1 ]]; then
+        out=/dev/stdout
+    fi
+
     export MIX_ENV=test
-    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
-    run_mix ecto.reset >/dev/null
+    run_mix "do" deps.get, compile --warnings-as-errors >$out
+    run_mix ecto.reset >$out
     [[ $setup_only -eq 1 ]] && return
     run_mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors --all-warnings
     run_mix test.coverage

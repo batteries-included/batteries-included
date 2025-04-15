@@ -1,6 +1,5 @@
 defmodule Verify.TestCase do
   @moduledoc false
-require Logger
 
   use ExUnit.CaseTemplate
 

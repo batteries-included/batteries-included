@@ -1,7 +1,8 @@
 defmodule Verify.PostgresTest do
   use Verify.TestCase, async: false
 
-  @tag :cluster_test
+  @moduletag :cluster_test
+
   test "can start a postgres cluster", %{session: session, control_url: url} do
     cluster_name = "int-test-#{:rand.uniform(10_000)}"
 
@@ -29,7 +30,6 @@ defmodule Verify.PostgresTest do
     assert path =~ ~r/\/postgres\/[\d\w-]+\/show$/
   end
 
-  @tag :cluster_test
   test "choosing a different size update display", %{session: session, control_url: url} do
     session
     |> visit(url <> "/postgres/new")
@@ -40,7 +40,6 @@ defmodule Verify.PostgresTest do
     |> assert_has(Query.text("1.0TB"))
   end
 
-  @tag :cluster_test
   test "can add a user", %{session: session, control_url: url} do
     test_username = "testuser-#{:rand.uniform(10_000)}"
 
