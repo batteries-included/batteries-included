@@ -66,8 +66,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
       {new_key, value}
     end)
     |> Enum.sort_by(fn {key, _value} -> key end)
-    |> Enum.map(fn {_key, value} -> value end)
-    |> Enum.map(fn value ->
+    |> Enum.map(fn {_key, value} ->
       case Integer.parse(value) do
         {int, _} -> int
         _ -> String.to_existing_atom(value)

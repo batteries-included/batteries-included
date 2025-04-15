@@ -106,7 +106,7 @@ defmodule CommonUI.Components.Table do
             id={@row_id && @row_id.(row)}
             {
             maybe_invoke_callback(Keyword.get(@opts, :tbody_tr_attrs, nil), row)
-            |> Map.merge(if @row_click, do: tbody_tr_class(), else: %{})
+            |> Map.merge(if @row_click, do: %{class: tbody_tr_class()}, else: %{})
             }
           >
             <td :for={col <- @col} class={tbody_td_class()} phx-click={@row_click && @row_click.(row)}>

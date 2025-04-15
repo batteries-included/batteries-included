@@ -8,7 +8,7 @@
     </thead>
 
     <tbody id="foobar-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
-      <tr class="">
+      <tr>
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
           100
         </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
@@ -16,7 +16,7 @@
         </td>
 
         
-      </tr><tr class="">
+      </tr><tr>
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
           102
         </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
@@ -24,7 +24,7 @@
         </td>
 
         
-      </tr><tr class="">
+      </tr><tr>
         <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
           420
         </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
