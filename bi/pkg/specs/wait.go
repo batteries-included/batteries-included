@@ -5,7 +5,10 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net/http"
 
+	"github.com/avast/retry-go/v4"
+	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -13,6 +16,9 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
+
+// testFn tests a converted object returned from a watch to determine if the watch is done or errored
+type testFn[T any] func(convertedAPIObject *T) (done bool, err error)
 
 func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.KubeClient) error {
 	usage, err := spec.GetBatteryConfigField("battery_core", "usage")
@@ -33,7 +39,7 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 
 	for name, opts := range map[string]*kube.WatchOptions{
 		"bootstrap job":   bootstrapJobWatchOpts(ns),
-		"control server":  controlServerPodWatchOpts(ns),
+		"control server":  controlServerDeployWatchOpts(ns),
 		"host config map": batteryInfoConfigMapWatchOpts(ns),
 	} {
 		l := slog.With(slog.String("watch", name))
@@ -44,7 +50,23 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 		l.Info("Finished waiting")
 	}
 
-	return nil
+	// try to get cs url and connect, 10x
+	err = retry.Do(func() error {
+		// get the access-info configmap (and URL information)
+		info, err := kubeClient.GetAccessInfo(ctx, ns)
+		if err != nil {
+			slog.Debug("Failed to get access info config map", slog.Any("err", err))
+			return err
+		}
+		url := info.GetURL()
+
+		// try to make sure the control server is up before we return
+		slog.Debug("Attempting to connect to control server", slog.String("url", url))
+		_, err = http.Head(url)
+		return err
+	}, retry.Context(ctx))
+
+	return err
 }
 
 func bootstrapJobWatchOpts(ns string) *kube.WatchOptions {
@@ -60,27 +82,15 @@ func bootstrapJobWatchOpts(ns string) *kube.WatchOptions {
 				},
 			},
 		})},
-		Callback: func(u *unstructured.Unstructured) (bool, error) {
-			var job batchv1.Job
-			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &job)
-			if err != nil {
-				slog.Debug(
-					"failed to convert unstructured object into typed resource",
-					slog.String("namespace", u.GetNamespace()),
-					slog.String("name", u.GetName()),
-					slog.Any("err", err),
-				)
-				return false, nil
-			}
-
-			err = nil
+		Callback: buildCallback(func(job *batchv1.Job) (bool, error) {
+			var err error = nil
 			if jobFailed(job.Status.Conditions) {
 				err = fmt.Errorf("bootstrap job failed")
 			}
 
 			// keep watching as long as there is no completion time
 			return job.Status.CompletionTime != nil, err
-		},
+		}),
 	}
 }
 
@@ -93,36 +103,35 @@ func jobFailed(conditions []batchv1.JobCondition) bool {
 	return false
 }
 
-func controlServerPodWatchOpts(ns string) *kube.WatchOptions {
+func controlServerDeployWatchOpts(ns string) *kube.WatchOptions {
 	return &kube.WatchOptions{
-		GVR:       schema.GroupVersionResource{Group: "", Version: "v1", Resource: "pods"},
+		GVR:       schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"},
 		Namespace: ns,
-		ListOpts: metav1.ListOptions{LabelSelector: metav1.FormatLabelSelector(&metav1.LabelSelector{
-			MatchExpressions: []metav1.LabelSelectorRequirement{
-				{
-					Key:      "battery/app",
-					Operator: metav1.LabelSelectorOpIn,
-					Values:   []string{"battery-control-server"},
-				},
-			},
-		})},
-		Callback: func(u *unstructured.Unstructured) (bool, error) {
-			var pod corev1.Pod
-			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &pod)
-			if err != nil {
-				slog.Debug(
-					"failed to convert unstructured object into typed resource",
-					slog.String("namespace", u.GetNamespace()),
-					slog.String("name", u.GetName()),
-					slog.Any("err", err),
-				)
-				return false, nil
-			}
-
-			// keep watching as long as the pod isn't running
-			return pod.Status.Phase == corev1.PodRunning, nil
-		},
+		ListOpts:  controlServerListOpts(),
+		Callback:  buildCallback(deployReady),
 	}
+}
+
+func controlServerListOpts() metav1.ListOptions {
+	return metav1.ListOptions{LabelSelector: metav1.FormatLabelSelector(&metav1.LabelSelector{
+		MatchExpressions: []metav1.LabelSelectorRequirement{
+			{
+				Key:      "battery/app",
+				Operator: metav1.LabelSelectorOpIn,
+				Values:   []string{"battery-control-server"},
+			},
+		},
+	})}
+}
+
+func deployReady(deploy *appsv1.Deployment) (bool, error) {
+	status := deploy.Status
+
+	return status.ObservedGeneration > 1 &&
+			status.AvailableReplicas > 0 &&
+			status.UpdatedReplicas > 0 &&
+			status.ReadyReplicas > 0,
+		nil
 }
 
 func batteryInfoConfigMapWatchOpts(ns string) *kube.WatchOptions {
@@ -138,25 +147,30 @@ func batteryInfoConfigMapWatchOpts(ns string) *kube.WatchOptions {
 				},
 			},
 		})},
-		Callback: func(u *unstructured.Unstructured) (bool, error) {
-			var cm corev1.ConfigMap
-			err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &cm)
-			if err != nil {
-				slog.Debug(
-					"failed to convert unstructured object into typed resource",
-					slog.String("namespace", u.GetNamespace()),
-					slog.String("name", u.GetName()),
-					slog.Any("err", err),
-				)
-				return false, nil
-			}
-
+		Callback: buildCallback(func(cm *corev1.ConfigMap) (bool, error) {
 			// keep watching as long as hostname isn't set
 			if cm.Data["hostname"] != "" {
 				slog.Debug("got control server hostname", slog.String("hostname", cm.Data["hostname"]))
 				return true, nil
 			}
 			return false, nil
-		},
+		}),
+	}
+}
+
+func buildCallback[T any](fn testFn[T]) func(u *unstructured.Unstructured) (bool, error) {
+	return func(u *unstructured.Unstructured) (bool, error) {
+		var obj *T
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &obj)
+		if err != nil {
+			slog.Debug(
+				"failed to convert unstructured object into typed resource",
+				slog.String("namespace", u.GetNamespace()),
+				slog.String("name", u.GetName()),
+				slog.Any("err", err),
+			)
+			return false, nil
+		}
+		return fn(obj)
 	}
 }
