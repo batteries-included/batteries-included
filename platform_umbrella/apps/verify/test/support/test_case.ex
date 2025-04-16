@@ -28,9 +28,7 @@ defmodule Verify.TestCase do
         # conn = CommonCore.ConnectionPool.get!()
         # K8s.Client.wait_until(conn, operation, wait_opts)
 
-        Logger.info("Testing version: #{tested_version} of batteries included")
-
-        unquote(__MODULE__).check_connection(url)
+        Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
         if tested_version == "latest" do
           # Ask me how fucking long it took to figure this out
@@ -48,7 +46,6 @@ defmodule Verify.TestCase do
 
           Logger.info("control server flap required (version=latest). Sleeping for 75 seconds")
           Process.sleep(75_000)
-          unquote(__MODULE__).check_connection(url)
         end
 
         {:ok, [control_url: url]}
