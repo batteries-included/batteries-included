@@ -131,10 +131,6 @@ jobs:
           pushd platform_umbrella
           mix "do" deps.get, compile --force
 
-      - name: Build bi for caching
-        shell: bash
-        run: bin/bix go-ensure-bi
-
       - name: Save Elixir cache
         uses: actions/cache/save@v4
         id: elixir-cache
