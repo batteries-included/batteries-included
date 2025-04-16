@@ -16,7 +16,6 @@ env:
     platform_umbrella/deps
     platform_umbrella/_build
     platform_umbrella/.dialyzer
-    ~/.local/share/bi
   GO_PATHS: |
     ${{ vars.GOCACHE }}
     ${{ vars.GOMODCACHE }}
