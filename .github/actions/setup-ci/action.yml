@@ -22,7 +22,6 @@ runs:
           platform_umbrella/deps
           platform_umbrella/_build
           platform_umbrella/.dialyzer
-          ~/.local/share/bi
         key:
           ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions') }}
         restore-keys: |
