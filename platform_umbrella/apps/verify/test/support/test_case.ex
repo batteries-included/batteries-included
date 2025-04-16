@@ -25,8 +25,6 @@ defmodule Verify.TestCase do
         end)
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
-        # conn = CommonCore.ConnectionPool.get!()
-        # K8s.Client.wait_until(conn, operation, wait_opts)
 
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
@@ -43,7 +41,11 @@ defmodule Verify.TestCase do
           # - Account for that in kube bootstrap
           # - have a kubernetes client here and use that for flap detection
           # - figure out why reconnect sometimes doesn't happen on kind clusters. Though I think it's like timing and resource constraints.
-
+          #
+          # Yes 75 Seconds. Kubernetes will take a while to scale the other revision down
+          # and the new one up. We can't really do anything about that. It takes 60 seconds
+          # usually with a 15 second safety margin.
+          #
           Logger.info("control server flap required (version=latest). Sleeping for 75 seconds")
           Process.sleep(75_000)
         end
@@ -64,7 +66,6 @@ defmodule Verify.TestCase do
 
     session
     |> Wallaby.Browser.visit(url)
-    |> Wallaby.Browser.take_screenshot()
     |> Wallaby.Browser.find(Wallaby.Query.text("Home", minimum: 1), fn _ -> Logger.info("Connected to cluster") end)
 
     Wallaby.end_session(session)
