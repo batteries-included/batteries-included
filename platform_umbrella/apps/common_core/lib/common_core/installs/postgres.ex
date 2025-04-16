@@ -53,7 +53,7 @@ defmodule CommonCore.Installs.Postgres do
        }) do
     case usage do
       # create home-base and CLA assistant clusters
-      usage when usage in [:internal_int_test, :internal_prod] ->
+      usage when usage in [:internal_prod] ->
         home_base = TraditionalServices.home_base_name()
         cla = TraditionalServices.cla_name()
 
