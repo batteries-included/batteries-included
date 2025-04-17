@@ -2,13 +2,12 @@ name: Integration tests
 
 on:
   workflow_run:
-    # branches:
-    #   - master
+    branches:
+      - master
     workflows:
       - BIX Docker
     types:
       - requested
-  pull_request:
 
 jobs:
   elixir-int-test:
@@ -26,23 +25,8 @@ jobs:
         with:
           go_cache: 'false'
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
-
       - name: Run integration tests
         env:
-          VERSION_OVERRIDE: 0.65.0-c420697
           TEST_LOG_LEVEL: debug
         run: |
           bin/bix -v ex-int-test
-
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: verify-failures
-          path: '**/screenshots/'
-          retention-days: 7
-          compression-level: 0
-          overwrite: true

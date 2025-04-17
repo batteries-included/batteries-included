@@ -3,8 +3,6 @@ defmodule Verify.TestCase do
 
   use ExUnit.CaseTemplate
 
-  require Logger
-
   using options do
     install_spec = Keyword.get(options, :install_spec, :int_test)
 
@@ -25,8 +23,6 @@ defmodule Verify.TestCase do
         end)
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
-
-        Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
         if tested_version == "latest" do
           # Ask me how fucking long it took to figure this out
@@ -50,6 +46,8 @@ defmodule Verify.TestCase do
           Process.sleep(75_000)
         end
 
+        Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
+
         {:ok, [control_url: url]}
       end
 
@@ -61,16 +59,7 @@ defmodule Verify.TestCase do
     end
   end
 
-  def check_connection(url) do
-    {:ok, session} = start_session()
-
-    session
-    |> Wallaby.Browser.visit(url)
-    |> Wallaby.Browser.find(Wallaby.Query.text("Home", minimum: 1), fn _ -> Logger.info("Connected to cluster") end)
-
-    Wallaby.end_session(session)
-  end
-
+  @spec start_session() :: {:ok, Wallaby.Session.t()} | {:error, Wallaby.reason()}
   def start_session do
     Wallaby.start_session(
       max_wait_time: 60_000,
