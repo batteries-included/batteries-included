@@ -1,7 +1,8 @@
 defmodule Verify.PostgresTest do
   use Verify.TestCase, async: false
 
-  @tag :cluster_test
+  @moduletag :cluster_test
+
   test "can start a postgres cluster", %{session: session, control_url: url} do
     cluster_name = "int-test-#{:rand.uniform(10_000)}"
 
@@ -22,13 +23,13 @@ defmodule Verify.PostgresTest do
     # Assert that the first pod for the cluster is there.
     |> assert_has(Query.css("tr:first-child", text: "#{cluster_name}-1"))
     |> click(Query.text("Overview"))
+    |> assert_has(Query.css("h3", text: "Postgres Cluster"))
 
     # Assert that we have gotten to the show page
     path = current_path(session)
     assert path =~ ~r/\/postgres\/[\d\w-]+\/show$/
   end
 
-  @tag :cluster_test
   test "choosing a different size update display", %{session: session, control_url: url} do
     session
     |> visit(url <> "/postgres/new")
@@ -39,7 +40,6 @@ defmodule Verify.PostgresTest do
     |> assert_has(Query.text("1.0TB"))
   end
 
-  @tag :cluster_test
   test "can add a user", %{session: session, control_url: url} do
     test_username = "testuser-#{:rand.uniform(10_000)}"
 

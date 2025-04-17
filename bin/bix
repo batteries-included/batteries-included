@@ -87,6 +87,7 @@ Available commands:
 - go-clean-build    Clean the temporary BI build directory
 
 **Elixir Commands**
+- ex-int-test       Run integration tests
 - ex-test-deep      Run all tests with coverage and reset the database
 - ex-test-setup     Setup the test database
 - ex-test           Run all tests
@@ -561,16 +562,30 @@ tag_push() {
     done
 }
 
+do_ex_int_test() {
+    export MIX_ENV=test
+    bi_pushd platform_umbrella/apps/verify
+    mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    mix test --trace --warnings-as-errors --all-warnings --only cluster_test
+    bi_popd
+    log "Elixir integration tests ${GREEN}Passed${NOFORMAT}"
+}
+
 do_ex_test_deep() {
     local setup_only=${1:-0}
     local slug=${2:-"dev"}
+    local out=/dev/null
     log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
     # Start the port forwarder
     try_portforward "${slug}" &
 
+    if [[ $TRACE -eq 1 ]]; then
+        out=/dev/stdout
+    fi
+
     export MIX_ENV=test
-    run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
-    run_mix ecto.reset >/dev/null
+    run_mix "do" deps.get, compile --warnings-as-errors >$out
+    run_mix ecto.reset >$out
     [[ $setup_only -eq 1 ]] && return
     run_mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors --all-warnings
     run_mix test.coverage
@@ -738,6 +753,9 @@ go-build-bi-ci)
     ;;
 bi-location)
     do_bi_location
+    ;;
+ex-int-test)
+    do_ex_int_test "${args[@]}"
     ;;
 ex-test-deep)
     do_ex_test_deep 0 "${args[@]}"

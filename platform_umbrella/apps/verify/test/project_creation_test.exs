@@ -1,7 +1,8 @@
 defmodule Verify.ProjectCreationTest do
   use Verify.TestCase, async: false
 
-  @tag :cluster_test
+  @moduletag :cluster_test
+
   test "can start a demo like project", %{session: session, control_url: url} do
     project_name = "pastebin-#{:rand.uniform(10_000)}"
 
@@ -22,7 +23,6 @@ defmodule Verify.ProjectCreationTest do
     |> assert_has(Query.text(project_name, minimum: 1))
   end
 
-  @tag :cluster_test
   test "can start a bare project", %{session: session, control_url: url} do
     project_name = "bare-#{:rand.uniform(10_000)}"
 

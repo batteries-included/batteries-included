@@ -1,0 +1,32 @@
+name: Integration tests
+
+on:
+  workflow_run:
+    branches:
+      - master
+    workflows:
+      - BIX Docker
+    types:
+      - requested
+
+jobs:
+  elixir-int-test:
+    runs-on: ubuntu-latest-m
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
+        with:
+          go_cache: 'false'
+
+      - name: Run integration tests
+        env:
+          TEST_LOG_LEVEL: debug
+        run: |
+          bin/bix -v ex-int-test
