@@ -7,7 +7,7 @@ on:
     workflows:
       - BIX Docker
     types:
-      - requested
+      - completed
 
 jobs:
   elixir-int-test:
@@ -26,7 +26,5 @@ jobs:
           go_cache: 'false'
 
       - name: Run integration tests
-        env:
-          TEST_LOG_LEVEL: debug
         run: |
-          bin/bix -v ex-int-test
+          bin/bix ex-int-test
