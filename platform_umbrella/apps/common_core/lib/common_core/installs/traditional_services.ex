@@ -11,7 +11,7 @@ defmodule CommonCore.Installs.TraditionalServices do
   def home_base_name, do: @home_base_name
   def cla_name, do: @cla_name
 
-  def services(%{usage: usage} = installation, home_base_init_data) when usage in [:internal_int_test, :internal_prod] do
+  def services(%{usage: usage} = installation, home_base_init_data) when usage in [:internal_prod] do
     Enum.map([&home_base/2, &cla/2], fn func -> func.(installation, home_base_init_data) end)
   end
 
