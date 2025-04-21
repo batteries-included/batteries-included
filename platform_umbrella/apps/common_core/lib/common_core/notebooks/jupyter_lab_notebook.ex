@@ -145,4 +145,6 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   def preset_options_for_select do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name})
   end
+
+  def presets, do: @presets
 end
