@@ -12,7 +12,7 @@ defmodule CommonCore.TraditionalServices.Service do
     filterable: [:name], sortable: [:id, :name, :num_instances]
   }
 
-  @service_size_preset [
+  @presets [
     %{
       name: "tiny",
       cpu_requested: 500,
@@ -90,12 +90,12 @@ defmodule CommonCore.TraditionalServices.Service do
   def changeset(service, attrs, opts) do
     service
     |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
-    |> maybe_set_virtual_size(@service_size_preset)
+    |> maybe_set_virtual_size(@presets)
     |> unique_constraint(:name)
   end
 
   def preset_options_for_select do
-    Enum.map(@service_size_preset, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
+    Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
   end
 
   def cpu_select_options do
@@ -131,4 +131,6 @@ defmodule CommonCore.TraditionalServices.Service do
       Memory.to_bytes(1024, :GB)
     ]
   end
+
+  def presets, do: @presets
 end
