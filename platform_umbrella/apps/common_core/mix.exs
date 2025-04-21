@@ -4,7 +4,7 @@ defmodule CommonCore.MixProject do
   def project do
     [
       app: :common_core,
-      version: "0.66.0",
+      version: "0.67.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
