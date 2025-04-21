@@ -5,8 +5,8 @@ defmodule CommonCore.Defaults.Images do
 
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
 
-  @cert_manager_allowed_tags ~w(v1.15.1 v1.15.4)
-  @cert_manager_default_tag "v1.15.4"
+  @cert_manager_allowed_tags ~w(v1.15.1 v1.15.4 v1.16.4)
+  @cert_manager_default_tag "v1.16.4"
 
   @knative_allowed_tags ~w(v1.15.1 v1.15.2 v1.17.0)
   @knative_default_tag "v1.17.0"
@@ -18,8 +18,8 @@ defmodule CommonCore.Defaults.Images do
     addon_resizer:
       Image.new!(%{
         name: "registry.k8s.io/autoscaling/addon-resizer",
-        tags: ~w(1.8.22),
-        default_tag: "1.8.22"
+        tags: ~w(1.8.23),
+        default_tag: "1.8.23"
       }),
     aws_load_balancer_controller:
       Image.new!(%{
@@ -60,7 +60,7 @@ defmodule CommonCore.Defaults.Images do
     cloudnative_pg:
       Image.new!(%{
         name: "ghcr.io/cloudnative-pg/cloudnative-pg",
-        tags: ~w(1.23.2 1.24.0 1.24.1),
+        tags: ~w(1.23.2 1.24.0 1.24.1 1.25.1),
         default_tag: "1.24.1"
       }),
     ferretdb:
@@ -85,20 +85,20 @@ defmodule CommonCore.Defaults.Images do
     istio_pilot:
       Image.new!(%{
         name: "docker.io/istio/pilot",
-        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless),
-        default_tag: "1.23.3-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless 1.24.5-distroless),
+        default_tag: "1.24.5-distroless"
       }),
     istio_proxy:
       Image.new!(%{
         name: "docker.io/istio/proxyv2",
-        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless),
-        default_tag: "1.23.3-distroless"
+        tags: ~w(1.22.3-distroless 1.23.1-distroless 1.23.2-distroless 1.23.3-distroless 1.24.5-distroless),
+        default_tag: "1.24.5-distroless"
       }),
     jupyter_datascience_lab:
       Image.new!(%{
         name: "quay.io/jupyter/datascience-notebook",
-        tags: ~w(lab-4.3.4),
-        default_tag: "lab-4.3.4"
+        tags: ~w(lab-4.4.0),
+        default_tag: "lab-4.4.0"
       }),
     karpenter:
       Image.new!(%{
@@ -109,27 +109,27 @@ defmodule CommonCore.Defaults.Images do
     keycloak:
       Image.new!(%{
         name: "quay.io/keycloak/keycloak",
-        tags: ~w(25.0.2 25.0.6),
-        default_tag: "25.0.6"
+        tags: ~w(25.0.2 25.0.6 26.2.0),
+        default_tag: "26.2.0"
       }),
     # Be sure to check: https://kiali.io/docs/installation/installation-guide/prerequisites/#version-compatibility
     kiali:
       Image.new!(%{
         name: "quay.io/kiali/kiali",
-        tags: ~w(v1.87.0 v1.89.7),
-        default_tag: "v1.89.7"
+        tags: ~w(v1.87.0 v1.89.7 v2.8.0),
+        default_tag: "v2.8.0"
       }),
     kiwigrid_sidecar:
       Image.new!(%{
         name: "quay.io/kiwigrid/k8s-sidecar",
-        tags: ~w(1.27.4),
-        default_tag: "1.27.4"
+        tags: ~w(1.27.4 1.30.3),
+        default_tag: "1.30.3"
       }),
     kube_state_metrics:
       Image.new!(%{
         name: "registry.k8s.io/kube-state-metrics/kube-state-metrics",
-        tags: ~w(v2.12.0 v2.14.0),
-        default_tag: "v2.14.0"
+        tags: ~w(v2.12.0 v2.14.0 v2.15.0),
+        default_tag: "v2.15.0"
       }),
     loki:
       Image.new!(%{
@@ -164,8 +164,8 @@ defmodule CommonCore.Defaults.Images do
     node_exporter:
       Image.new!(%{
         name: "quay.io/prometheus/node-exporter",
-        tags: ~w(v1.8.1 v1.8.2),
-        default_tag: "v1.8.2"
+        tags: ~w(v1.8.1 v1.8.2 v1.9.1),
+        default_tag: "v1.9.1"
       }),
     node_feature_discovery:
       Image.new!(%{
@@ -176,14 +176,14 @@ defmodule CommonCore.Defaults.Images do
     nvidia_device_plugin:
       Image.new!(%{
         name: "nvcr.io/nvidia/k8s-device-plugin",
-        tags: ~w(v0.16.2),
-        default_tag: "v0.16.2"
+        tags: ~w(v0.16.2 v0.17.1),
+        default_tag: "v0.17.1"
       }),
     ollama:
       Image.new!(%{
         name: "ollama/ollama",
-        tags: ~w(0.3.9 0.3.10 0.5.7),
-        default_tag: "0.5.7"
+        tags: ~w(0.3.9 0.3.10 0.5.7 0.6.6),
+        default_tag: "0.6.6"
       }),
     oauth2_proxy:
       Image.new!(%{
