@@ -72,7 +72,8 @@ spec:
                     - message: builtinLocale is immutable
                       rule: self == oldSelf
                 cluster:
-                  description: The name of the PostgreSQL cluster hosting the database.
+                  description:
+                    The name of the PostgreSQL cluster hosting the database.
                   properties:
                     name:
                       default: ''
@@ -101,7 +102,8 @@ spec:
                   type: integer
                 databaseReclaimPolicy:
                   default: retain
-                  description: The policy for end-of-life maintenance of this database.
+                  description:
+                    The policy for end-of-life maintenance of this database.
                   enum:
                     - delete
                     - retain
@@ -116,7 +118,9 @@ spec:
                       rule: self == oldSelf
                 ensure:
                   default: present
-                  description: Ensure the PostgreSQL database is `present` or `absent` - defaults to "present".
+                  description:
+                    Ensure the PostgreSQL database is `present` or `absent` -
+                    defaults to "present".
                   enum:
                     - present
                     - absent
@@ -182,7 +186,9 @@ spec:
                     - message: localeProvider is immutable
                       rule: self == oldSelf
                 name:
-                  description: The name of the database to create inside PostgreSQL. This setting cannot be changed.
+                  description:
+                    The name of the database to create inside PostgreSQL. This
+                    setting cannot be changed.
                   type: string
                   x-kubernetes-validations:
                     - message: name is immutable
@@ -222,11 +228,19 @@ spec:
                 - owner
               type: object
               x-kubernetes-validations:
-                - message: builtinLocale is only available when localeProvider is set to `builtin`
-                  rule: "!has(self.builtinLocale) || self.localeProvider == 'builtin'"
-                - message: icuLocale is only available when localeProvider is set to `icu`
+                - message:
+                    builtinLocale is only available when localeProvider is set
+                    to `builtin`
+                  rule:
+                    "!has(self.builtinLocale) || self.localeProvider ==
+                    'builtin'"
+                - message:
+                    icuLocale is only available when localeProvider is set to
+                    `icu`
                   rule: "!has(self.icuLocale) || self.localeProvider == 'icu'"
-                - message: icuRules is only available when localeProvider is set to `icu`
+                - message:
+                    icuRules is only available when localeProvider is set to
+                    `icu`
                   rule: "!has(self.icuRules) || self.localeProvider == 'icu'"
             status:
               description: |-
@@ -235,7 +249,8 @@ spec:
                 More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
               properties:
                 applied:
-                  description: Applied is true if the database was reconciled correctly
+                  description:
+                    Applied is true if the database was reconciled correctly
                   type: boolean
                 message:
                   description: Message is the reconciliation output message

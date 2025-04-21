@@ -52,10 +52,13 @@ spec:
             metadata:
               type: object
             spec:
-              description: PublicationSpec defines the desired state of Publication
+              description:
+                PublicationSpec defines the desired state of Publication
               properties:
                 cluster:
-                  description: The name of the PostgreSQL cluster that identifies the "publisher"
+                  description:
+                    The name of the PostgreSQL cluster that identifies the
+                    "publisher"
                   properties:
                     name:
                       default: ''
@@ -91,13 +94,16 @@ spec:
                   type: object
                 publicationReclaimPolicy:
                   default: retain
-                  description: The policy for end-of-life maintenance of this publication
+                  description:
+                    The policy for end-of-life maintenance of this publication
                   enum:
                     - delete
                     - retain
                   type: string
                 target:
-                  description: Target of the publication as expected by PostgreSQL `CREATE PUBLICATION` command
+                  description:
+                    Target of the publication as expected by PostgreSQL `CREATE
+                    PUBLICATION` command
                   properties:
                     allTables:
                       description: |-
@@ -111,7 +117,8 @@ spec:
                     objects:
                       description: Just the following schema objects
                       items:
-                        description: PublicationTargetObject is an object to publish
+                        description:
+                          PublicationTargetObject is an object to publish
                         properties:
                           table:
                             description: |-
@@ -127,7 +134,9 @@ spec:
                                 description: The table name
                                 type: string
                               only:
-                                description: Whether to limit to the table only or include all its descendants
+                                description:
+                                  Whether to limit to the table only or include
+                                  all its descendants
                                 type: boolean
                               schema:
                                 description: The schema name
@@ -143,17 +152,27 @@ spec:
                             type: string
                         type: object
                         x-kubernetes-validations:
-                          - message: tablesInSchema and table are mutually exclusive
-                            rule: (has(self.tablesInSchema) && !has(self.table)) || (!has(self.tablesInSchema) && has(self.table))
+                          - message:
+                              tablesInSchema and table are mutually exclusive
+                            rule:
+                              (has(self.tablesInSchema) && !has(self.table)) ||
+                              (!has(self.tablesInSchema) && has(self.table))
                       maxItems: 100000
                       type: array
                       x-kubernetes-validations:
-                        - message: specifying a column list when the publication also publishes tablesInSchema is not supported
-                          rule: '!(self.exists(o, has(o.table) && has(o.table.columns)) && self.exists(o, has(o.tablesInSchema)))'
+                        - message:
+                            specifying a column list when the publication also
+                            publishes tablesInSchema is not supported
+                          rule:
+                            '!(self.exists(o, has(o.table) &&
+                            has(o.table.columns)) && self.exists(o,
+                            has(o.tablesInSchema)))'
                   type: object
                   x-kubernetes-validations:
                     - message: allTables and objects are mutually exclusive
-                      rule: (has(self.allTables) && !has(self.objects)) || (!has(self.allTables) && has(self.objects))
+                      rule:
+                        (has(self.allTables) && !has(self.objects)) ||
+                        (!has(self.allTables) && has(self.objects))
               required:
                 - cluster
                 - dbname
@@ -161,10 +180,12 @@ spec:
                 - target
               type: object
             status:
-              description: PublicationStatus defines the observed state of Publication
+              description:
+                PublicationStatus defines the observed state of Publication
               properties:
                 applied:
-                  description: Applied is true if the publication was reconciled correctly
+                  description:
+                    Applied is true if the publication was reconciled correctly
                   type: boolean
                 message:
                   description: Message is the reconciliation output message
