@@ -147,4 +147,6 @@ defmodule CommonCore.Ollama.ModelInstance do
     |> Enum.sort(&(&1.memory_requested < &2.memory_requested))
     |> Enum.find(fn %{memory_requested: memory_requested} -> memory_requested >= size end)
   end
+
+  def presets, do: @presets
 end
