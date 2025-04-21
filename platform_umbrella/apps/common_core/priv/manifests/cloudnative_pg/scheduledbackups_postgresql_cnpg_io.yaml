@@ -25,8 +25,7 @@ spec:
       name: v1
       schema:
         openAPIV3Schema:
-          description:
-            ScheduledBackup is the Schema for the scheduledbackups API
+          description: ScheduledBackup is the Schema for the scheduledbackups API
           properties:
             apiVersion:
               description: |-
@@ -72,9 +71,7 @@ spec:
                     - name
                   type: object
                 immediate:
-                  description:
-                    If the first backup has to be immediately start after
-                    creation or not
+                  description: If the first backup has to be immediately start after creation or not
                   type: boolean
                 method:
                   default: barmanObjectStore
@@ -120,13 +117,10 @@ spec:
                       type: boolean
                   type: object
                 pluginConfiguration:
-                  description:
-                    Configuration parameters passed to the plugin managing this
-                    backup
+                  description: Configuration parameters passed to the plugin managing this backup
                   properties:
                     name:
-                      description:
-                        Name is the name of the plugin managing this backup
+                      description: Name is the name of the plugin managing this backup
                       type: string
                     parameters:
                       additionalProperties:
@@ -174,9 +168,7 @@ spec:
                   format: date-time
                   type: string
                 lastScheduleTime:
-                  description:
-                    Information when was the last time that backup was
-                    successfully scheduled.
+                  description: Information when was the last time that backup was successfully scheduled.
                   format: date-time
                   type: string
                 nextScheduleTime:

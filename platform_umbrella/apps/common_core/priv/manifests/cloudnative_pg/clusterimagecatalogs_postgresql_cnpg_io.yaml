@@ -19,8 +19,7 @@ spec:
       name: v1
       schema:
         openAPIV3Schema:
-          description:
-            ClusterImageCatalog is the Schema for the clusterimagecatalogs API
+          description: ClusterImageCatalog is the Schema for the clusterimagecatalogs API
           properties:
             apiVersion:
               description: |-
@@ -47,16 +46,13 @@ spec:
                 images:
                   description: List of CatalogImages available in the catalog
                   items:
-                    description:
-                      CatalogImage defines the image and major version
+                    description: CatalogImage defines the image and major version
                     properties:
                       image:
                         description: The image reference
                         type: string
                       major:
-                        description:
-                          The PostgreSQL major version of the image. Must be
-                          unique within the catalog.
+                        description: The PostgreSQL major version of the image. Must be unique within the catalog.
                         minimum: 10
                         type: integer
                     required:
@@ -68,9 +64,7 @@ spec:
                   type: array
                   x-kubernetes-validations:
                     - message: Images must have unique major versions
-                      rule:
-                        self.all(e, self.filter(f, f.major==e.major).size() ==
-                        1)
+                      rule: self.all(e, self.filter(f, f.major==e.major).size() == 1)
               required:
                 - images
               type: object

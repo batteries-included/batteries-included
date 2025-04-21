@@ -61,7 +61,7 @@ defmodule CommonCore.Defaults.Images do
       Image.new!(%{
         name: "ghcr.io/cloudnative-pg/cloudnative-pg",
         tags: ~w(1.23.2 1.24.0 1.24.1 1.25.1),
-        default_tag: "1.24.1"
+        default_tag: "1.25.1"
       }),
     ferretdb:
       Image.new!(%{

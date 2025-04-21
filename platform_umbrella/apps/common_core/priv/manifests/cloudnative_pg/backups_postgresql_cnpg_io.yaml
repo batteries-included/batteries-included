@@ -108,13 +108,10 @@ spec:
                       type: boolean
                   type: object
                 pluginConfiguration:
-                  description:
-                    Configuration parameters passed to the plugin managing this
-                    backup
+                  description: Configuration parameters passed to the plugin managing this backup
                   properties:
                     name:
-                      description:
-                        Name is the name of the plugin managing this backup
+                      description: Name is the name of the plugin managing this backup
                       type: string
                     parameters:
                       additionalProperties:
@@ -148,8 +145,7 @@ spec:
                 More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
               properties:
                 azureCredentials:
-                  description:
-                    The credentials to use to upload data to Azure Blob Storage
+                  description: The credentials to use to upload data to Azure Blob Storage
                   properties:
                     connectionString:
                       description: The connection string to be used
@@ -165,9 +161,7 @@ spec:
                         - name
                       type: object
                     inheritFromAzureAD:
-                      description:
-                        Use the Azure AD based authentication without providing
-                        explicitly the keys.
+                      description: Use the Azure AD based authentication without providing explicitly the keys.
                       type: boolean
                     storageAccount:
                       description: The storage account where to upload data
@@ -217,9 +211,7 @@ spec:
                   description: The ID of the Barman backup
                   type: string
                 backupLabelFile:
-                  description:
-                    Backup label file content as returned by Postgres in case of
-                    online (hot) backups
+                  description: Backup label file content as returned by Postgres in case of online (hot) backups
                   format: byte
                   type: string
                 backupName:
@@ -235,8 +227,7 @@ spec:
                   description: The backup command output in case of error
                   type: string
                 commandOutput:
-                  description:
-                    Unused. Retained for compatibility with old versions.
+                  description: Unused. Retained for compatibility with old versions.
                   type: string
                 destinationPath:
                   description: |-
@@ -278,14 +269,10 @@ spec:
                   description: The detected error
                   type: string
                 googleCredentials:
-                  description:
-                    The credentials to use to upload data to Google Cloud
-                    Storage
+                  description: The credentials to use to upload data to Google Cloud Storage
                   properties:
                     applicationCredentials:
-                      description:
-                        The secret containing the Google Cloud Storage JSON file
-                        with the credentials
+                      description: The secret containing the Google Cloud Storage JSON file with the credentials
                       properties:
                         key:
                           description: The key to select
@@ -304,9 +291,7 @@ spec:
                       type: boolean
                   type: object
                 instanceID:
-                  description:
-                    Information to identify the instance where the backup has
-                    been taken from
+                  description: Information to identify the instance where the backup has been taken from
                   properties:
                     ContainerID:
                       description: The container ID
@@ -319,13 +304,16 @@ spec:
                   description: The backup method being used
                   type: string
                 online:
-                  description:
-                    Whether the backup was online/hot (`true`) or offline/cold
-                    (`false`)
+                  description: Whether the backup was online/hot (`true`) or offline/cold (`false`)
                   type: boolean
                 phase:
                   description: The last backup status
                   type: string
+                pluginMetadata:
+                  additionalProperties:
+                    type: string
+                  description: A map containing the plugin metadata
+                  type: object
                 s3Credentials:
                   description: The credentials to use to upload data to S3
                   properties:
@@ -343,13 +331,10 @@ spec:
                         - name
                       type: object
                     inheritFromIAMRole:
-                      description:
-                        Use the role based authentication without providing
-                        explicitly the keys.
+                      description: Use the role based authentication without providing explicitly the keys.
                       type: boolean
                     region:
-                      description:
-                        The reference to the secret containing the region name
+                      description: The reference to the secret containing the region name
                       properties:
                         key:
                           description: The key to select
@@ -397,13 +382,9 @@ spec:
                   description: Status of the volumeSnapshot backup
                   properties:
                     elements:
-                      description:
-                        The elements list, populated with the gathered volume
-                        snapshots
+                      description: The elements list, populated with the gathered volume snapshots
                       items:
-                        description:
-                          BackupSnapshotElementStatus is a volume snapshot that
-                          is part of a volume snapshot method backup
+                        description: BackupSnapshotElementStatus is a volume snapshot that is part of a volume snapshot method backup
                         properties:
                           name:
                             description: Name is the snapshot resource name
@@ -414,9 +395,7 @@ spec:
                               when type is PG_TABLESPACE
                             type: string
                           type:
-                            description:
-                              Type is tho role of the snapshot in the cluster,
-                              such as PG_DATA, PG_WAL and PG_TABLESPACE
+                            description: Type is tho role of the snapshot in the cluster, such as PG_DATA, PG_WAL and PG_TABLESPACE
                             type: string
                         required:
                           - name
@@ -433,9 +412,7 @@ spec:
                   format: date-time
                   type: string
                 tablespaceMapFile:
-                  description:
-                    Tablespace map file content as returned by Postgres in case
-                    of online (hot) backups
+                  description: Tablespace map file content as returned by Postgres in case of online (hot) backups
                   format: byte
                   type: string
               type: object
