@@ -14,6 +14,16 @@ defmodule KubeServices.KubeStateCoverageTest do
     {"operator.victoriametrics.com/v1beta1", "VMAuth"},
     {"operator.victoriametrics.com/v1beta1", "VMUser"},
 
+    # Cloudnative PG Ignored for now.
+    # This is for the configuration of logical replication
+    # We don't have that currently.
+    {"postgresql.cnpg.io/v1", "Publication"},
+    {"postgresql.cnpg.io/v1", "Subscription"},
+
+    # This is for images. Since control server handles that we don't use it
+    {"postgresql.cnpg.io/v1", "ClusterImageCatalog"},
+    {"postgresql.cnpg.io/v1", "ImageCatalog"},
+
     # We don't emit or display these
     {"elbv2.k8s.aws/v1beta1", "TargetGroupBinding"},
     {"karpenter.sh/v1beta1", "NodeClaim"},
