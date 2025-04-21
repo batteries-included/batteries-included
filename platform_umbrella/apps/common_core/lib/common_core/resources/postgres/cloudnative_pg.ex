@@ -5,9 +5,12 @@ defmodule CommonCore.Resources.CloudnativePG do
     backups_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/backups_postgresql_cnpg_io.yaml",
     clusterimagecatalogs_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/clusterimagecatalogs_postgresql_cnpg_io.yaml",
     clusters_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/clusters_postgresql_cnpg_io.yaml",
+    databases_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/databases_postgresql_cnpg_io.yaml",
     imagecatalogs_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/imagecatalogs_postgresql_cnpg_io.yaml",
     poolers_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/poolers_postgresql_cnpg_io.yaml",
+    publications_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/publications_postgresql_cnpg_io.yaml",
     scheduledbackups_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/scheduledbackups_postgresql_cnpg_io.yaml",
+    subscriptions_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/subscriptions_postgresql_cnpg_io.yaml",
     queries: "priv/raw_files/cloudnative_pg/queries"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "cloudnative-pg"
@@ -29,6 +32,17 @@ defmodule CommonCore.Resources.CloudnativePG do
 
   resource(:cluster_role_cloudnative_pg) do
     rules = [
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["admissionregistration.k8s.io"],
+        "resources" => ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"],
+        "verbs" => ["get", "patch"]
+      },
+      %{
+        "apiGroups" => ["postgresql.cnpg.io"],
+        "resources" => ["clusterimagecatalogs"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{
         "apiGroups" => [""],
         "resources" => ["configmaps", "secrets", "services"],
@@ -40,7 +54,6 @@ defmodule CommonCore.Resources.CloudnativePG do
         "verbs" => ["get", "patch", "update"]
       },
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
-      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => [""],
         "resources" => ["persistentvolumeclaims", "pods", "pods/exec"],
@@ -53,11 +66,6 @@ defmodule CommonCore.Resources.CloudnativePG do
         "verbs" => ["create", "get", "list", "patch", "update", "watch"]
       },
       %{
-        "apiGroups" => ["admissionregistration.k8s.io"],
-        "resources" => ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"],
-        "verbs" => ["get", "patch"]
-      },
-      %{
         "apiGroups" => ["apps"],
         "resources" => ["deployments"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
@@ -67,7 +75,11 @@ defmodule CommonCore.Resources.CloudnativePG do
         "resources" => ["jobs"],
         "verbs" => ["create", "delete", "get", "list", "patch", "watch"]
       },
-      %{"apiGroups" => ["coordination.k8s.io"], "resources" => ["leases"], "verbs" => ["create", "get", "update"]},
+      %{
+        "apiGroups" => ["coordination.k8s.io"],
+        "resources" => ["leases"],
+        "verbs" => ["create", "get", "update"]
+      },
       %{
         "apiGroups" => ["monitoring.coreos.com"],
         "resources" => ["podmonitors"],
@@ -80,17 +92,31 @@ defmodule CommonCore.Resources.CloudnativePG do
       },
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["backups", "clusters", "poolers", "scheduledbackups"],
+        "resources" => [
+          "backups",
+          "clusters",
+          "databases",
+          "poolers",
+          "publications",
+          "scheduledbackups",
+          "subscriptions"
+        ],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["backups/status", "scheduledbackups/status"],
+        "resources" => [
+          "backups/status",
+          "databases/status",
+          "publications/status",
+          "scheduledbackups/status",
+          "subscriptions/status"
+        ],
         "verbs" => ["get", "patch", "update"]
       },
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["clusterimagecatalogs", "imagecatalogs"],
+        "resources" => ["imagecatalogs"],
         "verbs" => ["get", "list", "watch"]
       },
       %{
@@ -155,6 +181,10 @@ defmodule CommonCore.Resources.CloudnativePG do
     YamlElixir.read_all_from_string!(get_resource(:clusters_postgresql_cnpg_io))
   end
 
+  resource(:crd_databases_postgresql_cnpg_io) do
+    YamlElixir.read_all_from_string!(get_resource(:databases_postgresql_cnpg_io))
+  end
+
   resource(:crd_imagecatalogs_postgresql_cnpg_io) do
     YamlElixir.read_all_from_string!(get_resource(:imagecatalogs_postgresql_cnpg_io))
   end
@@ -163,8 +193,16 @@ defmodule CommonCore.Resources.CloudnativePG do
     YamlElixir.read_all_from_string!(get_resource(:poolers_postgresql_cnpg_io))
   end
 
+  resource(:crd_publications_postgresql_cnpg_io) do
+    YamlElixir.read_all_from_string!(get_resource(:publications_postgresql_cnpg_io))
+  end
+
   resource(:crd_scheduledbackups_postgresql_cnpg_io) do
     YamlElixir.read_all_from_string!(get_resource(:scheduledbackups_postgresql_cnpg_io))
+  end
+
+  resource(:crd_subscriptions_postgresql_cnpg_io) do
+    YamlElixir.read_all_from_string!(get_resource(:subscriptions_postgresql_cnpg_io))
   end
 
   resource(:deployment_cloudnative_pg, battery, state) do
@@ -180,6 +218,7 @@ defmodule CommonCore.Resources.CloudnativePG do
                 "controller",
                 "--log-level=debug",
                 "--leader-elect",
+                "--max-concurrent-reconciles=10",
                 "--config-map-name=cnpg-controller-manager-config",
                 "--secret-name=cnpg-controller-manager-config",
                 "--webhook-port=9443"
@@ -208,13 +247,19 @@ defmodule CommonCore.Resources.CloudnativePG do
                 "httpGet" => %{"path" => "/readyz", "port" => 9443, "scheme" => "HTTPS"},
                 "initialDelaySeconds" => 3
               },
+              "startupProbe" => %{
+                "failureThreshold" => 6,
+                "httpGet" => %{"path" => "/readyz", "port" => 9443, "scheme" => "HTTPS"},
+                "periodSeconds" => 5
+              },
               "resources" => %{},
               "securityContext" => %{
                 "allowPrivilegeEscalation" => false,
                 "capabilities" => %{"drop" => ["ALL"]},
                 "readOnlyRootFilesystem" => true,
                 "runAsGroup" => 10_001,
-                "runAsUser" => 10_001
+                "runAsUser" => 10_001,
+                "seccompProfile" => %{"type" => "RuntimeDefault"}
               },
               "volumeMounts" => [
                 %{"mountPath" => "/controller", "name" => "scratch-data"},
