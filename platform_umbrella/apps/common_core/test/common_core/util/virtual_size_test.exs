@@ -2,6 +2,7 @@ defmodule CommonCore.Util.VirtualSizeTest do
   use ExUnit.Case, async: true
 
   alias CommonCore.Postgres.Cluster
+  alias CommonCore.TraditionalServices.Service
   alias CommonCore.Util.Memory
   alias CommonCore.Util.VirtualSize
 
@@ -32,6 +33,27 @@ defmodule CommonCore.Util.VirtualSizeTest do
     test "returns tiny when there's a preset" do
       notebook = CommonCore.Notebooks.JupyterLabNotebook.new!(virtual_size: "tiny", name: "test")
       assert VirtualSize.get_virtual_size(notebook) == "tiny"
+    end
+  end
+
+  describe "Works with CommonCore.TraditionalServices.Service" do
+    test "returns tiny when there's a tiny preset" do
+      service = Service.new!(virtual_size: "tiny", name: "test")
+      assert VirtualSize.get_virtual_size(service) == "tiny"
+    end
+
+    test "custom sizes work" do
+      service =
+        Service.new!(
+          name: "test",
+          virtual_size: "custom",
+          cpu_requested: 600,
+          cpu_limits: 700,
+          memory_requested: Memory.to_bytes(1, :GB),
+          memory_limits: Memory.to_bytes(4, :GB)
+        )
+
+      assert VirtualSize.get_virtual_size(service) == "custom"
     end
   end
 end
