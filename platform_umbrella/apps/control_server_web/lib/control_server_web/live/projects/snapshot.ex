@@ -83,32 +83,46 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
   defp postgres_list(assigns) do
     ~H"""
     <%= for {pg_cluster, cluster_index} <- Enum.with_index(@snapshot.postgres_clusters) do %>
-      <.panel title={"Postgres Cluster #{pg_cluster.name}"} class="lg:col-span-2">
-        <.pg_users_table
-          id={"pg-users-table-#{cluster_index}"}
-          users={pg_cluster.users}
-          cluster={pg_cluster}
-          opts={[
-            tbody_tr_attrs: fn {_, user_index} ->
-              if has_removal?(@removals, [:postgres_clusters, cluster_index, :users, user_index]),
-                do: %{class: "line-through"},
-                else: %{}
-            end
-          ]}
-        >
-          <:action :let={{_user, user_index}}>
-            <.button
-              phx-click="toggle_remove"
-              phx-value-loc-0="postgres_clusters"
-              phx-value-loc-1={cluster_index}
-              phx-value-loc-2="users"
-              phx-value-loc-3={user_index}
-              icon={:trash}
-            >
-              Toggle Export
-            </.button>
-          </:action>
-        </.pg_users_table>
+      <.panel title="Postgres Cluster" class="lg:col-span-2">
+        <.flex column>
+          <.data_list>
+            <:item title="Cluster Name">
+              {pg_cluster.name}
+            </:item>
+            <:item title="Virtual Size">
+              {CommonCore.Util.VirtualSize.get_virtual_size(pg_cluster)}
+            </:item>
+            <:item title="Num Instances">
+              {pg_cluster.num_instances}
+            </:item>
+          </.data_list>
+
+          <.pg_users_table
+            id={"pg-users-table-#{cluster_index}"}
+            users={pg_cluster.users}
+            cluster={pg_cluster}
+            opts={[
+              tbody_tr_attrs: fn {_, user_index} ->
+                if has_removal?(@removals, [:postgres_clusters, cluster_index, :users, user_index]),
+                  do: %{class: "line-through"},
+                  else: %{}
+              end
+            ]}
+          >
+            <:action :let={{_user, user_index}}>
+              <.button
+                phx-click="toggle_remove"
+                phx-value-loc-0="postgres_clusters"
+                phx-value-loc-1={cluster_index}
+                phx-value-loc-2="users"
+                phx-value-loc-3={user_index}
+                icon={:trash}
+              >
+                Toggle Export
+              </.button>
+            </:action>
+          </.pg_users_table>
+        </.flex>
       </.panel>
     <% end %>
     """
