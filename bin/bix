@@ -632,7 +632,7 @@ do_ex_dialyzer() {
 }
 
 do_go_build_bi() {
-    goreleaser release --clean --snapshot ${TRACE:+--verbose} -p 1
+    goreleaser release --clean --snapshot ${TRACE:+--verbose} -p 1 --skip=archive
 }
 
 do_go_build_bi_ci() {
