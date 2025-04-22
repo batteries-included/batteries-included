@@ -16,21 +16,9 @@ RUN --mount=type=cache,target=/var/cache/apt \
   apt-get update && \
   apt-get install -y \
     --no-install-recommends \
-      apt-transport-https \
-      autoconf \
       build-essential \
       ca-certificates \
-      cmake \
-      curl \
       git \
-      gnupg \
-      libncurses5-dev \
-      libssl-dev \
-      locales \
-      m4 \
       nodejs \
-      npm \
-      pkg-config \
-      software-properties-common \
-      unzip \
-      wget
+      npm
+
