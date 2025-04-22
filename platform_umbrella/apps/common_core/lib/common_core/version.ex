@@ -2,15 +2,29 @@ defmodule CommonCore.Version do
   @moduledoc """
   Module for getting the version and hash of the current build.
 
-  This uses git to get the hash and the version from the mix.exs file.
+  This uses git / the environment to get the hash and the version from the mix.exs file.
   """
+  import CommonCore.Util.String
 
-  @args ["describe", "--match=\"badtagthatnevermatches\"", "--always", "--dirty"]
+  # get the hash. checks `BI_RELEASE_HASH`, then git.
+  # Raises (during compilation) if neither are set/available.
+  defmacrop get_hash do
+    env = System.get_env("BI_RELEASE_HASH")
 
-  @hash "git"
-        |> System.cmd(@args)
-        |> elem(0)
-        |> String.trim()
+    git =
+      System.cmd("git", ["describe", "--match=\"badtagthatnevermatches\"", "--always", "--dirty"], stderr_to_stdout: true)
+
+    case {env, git} do
+      {env, _git} when not is_empty(env) ->
+        env
+
+      {_env, {msg, 0}} ->
+        String.trim(msg)
+
+      _ ->
+        raise("Failed to determine hash")
+    end
+  end
 
   @version Mix.Project.config()[:version]
 
@@ -18,7 +32,7 @@ defmodule CommonCore.Version do
   def version, do: @version
 
   @spec hash() :: String.t()
-  def hash, do: @hash
+  def hash, do: get_hash()
 
   @spec compare(String.t(), String.t()) ::
           {:ok, :equal} | {:ok, :greater} | {:ok, :lesser} | {:error, :incomparable}

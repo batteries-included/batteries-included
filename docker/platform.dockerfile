@@ -1,21 +1,123 @@
-# syntax=docker/dockerfile:1
-#
+# syntax=docker/dockerfile:1.7-labs
 
-ARG ELIXIR_VERSION=1.18.3
-ARG ERLANG_VERSION=27.3.2
-ARG UBUNTU_VERSION=noble-20250127
+ARG BASE_IMAGE_NAME=build-base
+ARG BASE_IMAGE_TAG=latest
 
-ARG BUILD_IMAGE_NAME=hexpm/elixir
-ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-ubuntu-${UBUNTU_VERSION}
+ARG DEPLOY_IMAGE_NAME=deploy-base
+ARG DEPLOY_IMAGE_TAG=latest
 
-ARG DEPLOY_IMAGE_NAME=ubuntu
-ARG DEPLOY_IMAGE_TAG=$UBUNTU_VERSION
-
-# Elixir release env to build
 ARG MIX_ENV=prod
 
-# This should match the mix.exs releases map
-ARG RELEASE=control_server
+##########################################################################
+# Set up base mix / elixir build container
+
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} AS deps
+
+ARG MIX_ENV
+ENV MIX_ENV=${MIX_ENV}
+
+WORKDIR /source/platform_umbrella
+
+# Get Elixir app deps
+COPY platform_umbrella/mix.exs mix.exs
+COPY platform_umbrella/mix.lock mix.lock
+COPY --parents platform_umbrella/apps/*/mix.exs /source/
+
+RUN mix "do" \
+    local.hex --force, \
+    local.rebar --force, \
+    deps.get
+
+##########################################################################
+# Build control server assets
+
+FROM deps AS control-server-assets
+
+ARG MIX_ENV
+ENV MIX_ENV=${MIX_ENV}
+
+COPY --from=deps /source/platform_umbrella/deps  /source/platform_umbrella/deps
+COPY platform_umbrella/apps/common_ui /source/platform_umbrella/apps/common_ui
+COPY platform_umbrella/apps/control_server_web/lib /source/platform_umbrella/apps/control_server_web/lib
+COPY platform_umbrella/apps/control_server_web/assets /source/platform_umbrella/apps/control_server_web/assets
+COPY platform_umbrella/apps/home_base_web/lib /source/platform_umbrella/apps/home_base_web/lib
+COPY platform_umbrella/apps/home_base_web/assets /source/platform_umbrella/apps/home_base_web/assets
+
+WORKDIR /source/platform_umbrella/apps/control_server_web/assets
+
+RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci && \
+  npm run css:deploy && \
+  npm run js:deploy
+
+
+##########################################################################
+# Build home base assets
+
+FROM deps AS home-base-assets
+
+ARG MIX_ENV
+ENV MIX_ENV=${MIX_ENV}
+
+COPY --from=deps /source/platform_umbrella/deps  /source/platform_umbrella/deps
+COPY platform_umbrella/apps/common_ui /source/platform_umbrella/apps/common_ui
+COPY platform_umbrella/apps/control_server_web/lib /source/platform_umbrella/apps/control_server_web/lib
+COPY platform_umbrella/apps/control_server_web/assets /source/platform_umbrella/apps/control_server_web/assets
+COPY platform_umbrella/apps/home_base_web/lib /source/platform_umbrella/apps/home_base_web/lib
+COPY platform_umbrella/apps/home_base_web/assets /source/platform_umbrella/apps/home_base_web/assets
+
+WORKDIR /source/platform_umbrella/apps/home_base_web/assets
+
+RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci && \
+  npm run css:deploy && \
+  npm run js:deploy
+
+
+##########################################################################
+# Compile
+
+FROM deps AS compile
+
+ARG MIX_ENV
+ENV MIX_ENV=${MIX_ENV}
+
+ARG BI_RELEASE_HASH
+ENV BI_RELEASE_HASH=${BI_RELEASE_HASH}
+
+COPY . /source/
+
+COPY --from=home-base-assets \
+    /source/platform_umbrella/apps/home_base_web/priv \
+    /source/platform_umbrella/apps/home_base_web/priv
+
+COPY --from=control-server-assets \
+    /source/platform_umbrella/apps/control_server_web/priv \
+    /source/platform_umbrella/apps/control_server_web/priv
+
+WORKDIR /source/platform_umbrella
+
+# Force a recompile everything
+# Even remove deps that are from this umbrella
+# They shouldn't be there but just in case
+SHELL ["/bin/bash", "-c"]
+RUN <<EOF
+rm -rf _build deps/{common_core,common_ui,control_server,control_server_web,event_center,home_base,home_base_web,kube_bootstrap,kube_services,verify} 
+mix "do" clean, deps.get, phx.digest, compile --force
+EOF
+
+##########################################################################
+# Create release
+
+FROM compile AS release
+
+ARG MIX_ENV
+ENV MIX_ENV=${MIX_ENV}
+
+ARG RELEASE
+
+RUN mix release "${RELEASE}"
+
+##########################################################################
+FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG}
 
 # Name of app, used for directories
 ARG APP_NAME=batteries_included
@@ -29,187 +131,6 @@ ARG APP_GROUP="$APP_USER"
 # Runtime dir
 ARG APP_DIR=/app
 
-ARG LANG=en_US.UTF-8
-
-ARG LANGUAGE=en_US:en
-
-##########################################################################
-# Fetch OS build dependencies
-
-FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS os-deps
-
-ARG LANG
-ARG LANGUAGE
-
-RUN --mount=type=cache,target=/var/cache/apt \
-  --mount=type=cache,target=/var/lib/apt \
-  apt update && \
-  apt install -y \
-  apt-transport-https \
-  autoconf \
-  build-essential \
-  ca-certificates \
-  cmake \
-  curl \
-  git \
-  gnupg \
-  libncurses5-dev \
-  libssl-dev \
-  locales \
-  m4 \
-  nodejs \
-  npm \
-  pkg-config \
-  software-properties-common \
-  unzip \
-  wget && \
-  locale-gen $LANG && \
-  apt clean
-
-# Set the locale
-RUN sed -i '/${LANG}/s/^# //g' /etc/locale.gen && locale-gen ${LANG} && \
-  localedef -i en_US -f UTF-8 ${LANG} && \
-  update-locale LANG=${LANG} LC_ALL=${LANG}
-
-ENV LANGUAGE=${LANGUAGE} \
-  LANG=$LANG \
-  LC_ALL=$LANG
-
-##########################################################################
-# Fetch app library dependencies
-
-FROM os-deps AS deps
-
-ARG MIX_ENV
-
-ENV MIX_ENV=${MIX_ENV}
-
-WORKDIR /source
-
-# Get Elixir app deps
-COPY platform_umbrella/mix.exs platform_umbrella/mix.exs
-COPY platform_umbrella/mix.lock platform_umbrella/mix.lock
-
-COPY platform_umbrella/apps/common_core/mix.exs platform_umbrella/apps/common_core/mix.exs
-COPY platform_umbrella/apps/common_ui/mix.exs platform_umbrella/apps/common_ui/mix.exs
-COPY platform_umbrella/apps/control_server/mix.exs platform_umbrella/apps/control_server/mix.exs
-COPY platform_umbrella/apps/control_server_web/mix.exs platform_umbrella/apps/control_server_web/mix.exs
-COPY platform_umbrella/apps/event_center/mix.exs platform_umbrella/apps/event_center/mix.exs
-COPY platform_umbrella/apps/home_base/mix.exs platform_umbrella/apps/home_base/mix.exs
-COPY platform_umbrella/apps/home_base_web/mix.exs platform_umbrella/apps/home_base_web/mix.exs
-COPY platform_umbrella/apps/kube_bootstrap/mix.exs platform_umbrella/apps/kube_bootstrap/mix.exs
-COPY platform_umbrella/apps/kube_services/mix.exs platform_umbrella/apps/kube_services/mix.exs
-COPY platform_umbrella/apps/verify/mix.exs platform_umbrella/apps/verify/mix.exs
-
-WORKDIR /source/platform_umbrella
-
-RUN mix "do" local.hex --force, local.rebar --force && \
-  mix deps.get && \
-  mix deps.compile --force --skip-umbrella-children
-
-#########################
-## Download and Build the dependencies
-## for the control server docker
-FROM deps AS control-deps
-
-COPY platform_umbrella/apps/control_server_web/assets/package.json /source/platform_umbrella/apps/control_server_web/assets/package.json
-COPY platform_umbrella/apps/control_server_web/assets/package-lock.json /source/platform_umbrella/apps/control_server_web/assets/package-lock.json
-
-WORKDIR /source/platform_umbrella/apps/control_server_web/assets
-
-RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
-
-##########################################################################
-# Build ControlServer assets
-
-FROM control-deps AS control-assets
-
-ARG MIX_ENV
-
-ENV MIX_ENV=${MIX_ENV}
-
-WORKDIR /source
-
-COPY . /source/
-
-WORKDIR /source/platform_umbrella
-
-RUN mix deps.get && \
-  cd apps/control_server_web/assets && \
-  npm run css:deploy && \
-  npm run js:deploy
-
-##########################################################################
-# Build HomeBase assets
-
-FROM deps AS home-base-deps
-
-COPY platform_umbrella/apps/home_base_web/assets/package.json /source/platform_umbrella/apps/home_base_web/assets/package.json
-COPY platform_umbrella/apps/home_base_web/assets/package-lock.json /source/platform_umbrella/apps/home_base_web/assets/package-lock.json
-
-WORKDIR /source/platform_umbrella/apps/home_base_web/assets
-
-RUN npm --prefer-offline --no-audit --progress=false --loglevel=error ci
-
-##########################################################################
-# Build HomeBase assets
-
-FROM home-base-deps AS home-base-assets
-
-ARG MIX_ENV
-
-ENV MIX_ENV=${MIX_ENV}
-
-WORKDIR /source
-
-COPY . /source/
-
-RUN cd platform_umbrella && \
-  mix deps.get && \
-  cd apps/home_base_web/assets && \
-  npm run css:deploy && \
-  npm run js:deploy
-
-##########################################################################
-# Create release
-
-FROM deps AS release
-
-ARG MIX_ENV
-ARG RELEASE
-
-ENV MIX_ENV=${MIX_ENV} \
-  # Before compiling add the bix binary to the path.
-  # It is used in the build process for version info.
-  PATH="$PATH:/source/bin"
-
-WORKDIR /source
-
-COPY . /source/
-
-COPY --from=home-base-assets /source/platform_umbrella/apps/home_base_web/priv /source/platform_umbrella/apps/home_base_web/priv
-COPY --from=control-assets /source/platform_umbrella/apps/control_server_web/priv /source/platform_umbrella/apps/control_server_web/priv
-
-WORKDIR /source/platform_umbrella 
-
-# Force a recompile everything
-# Even remove deps that are from this umbrella
-# They shouldn't be there but just in case
-RUN rm -rf _build deps/{common_core,common_ui,control_server,control_server_web,event_center,home_base,home_base_web,kube_bootstrap,kube_services,verify} 
-
-RUN  mix "do" clean, deps.get, phx.digest, compile --force, release "${RELEASE}"
-
-##########################################################################
-# Create final image that is deployed
-FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS final
-
-ARG LANG
-ARG LANGUAGE
-ARG APP_NAME
-ARG APP_USER
-ARG APP_GROUP
-ARG APP_DIR
-
 ARG MIX_ENV
 ARG RELEASE
 
@@ -222,22 +143,8 @@ ENV HOME=$APP_DIR \
 
 WORKDIR /app
 
-RUN apt update && \
-  apt install -y libssl3 tini ca-certificates locales && \
-  apt clean
-
-# Set the locale
-RUN sed -i '/${LANG}/s/^# //g' /etc/locale.gen && locale-gen ${LANG} && \
-  localedef -i en_US -f UTF-8 ${LANG} && \
-  update-locale LANG=${LANG} LC_ALL=${LANG}
-
-ENV LANGUAGE=${LANGUAGE} \
-  LANG=$LANG \
-  LC_ALL=$LANG
-
-
 # Create user and group to run under with specific uid
-RUN groupadd --gid 10001 --system "$APP_GROUP" && \
+RUN groupadd --gid 10000 --system "$APP_GROUP" && \
   useradd --uid 10000 --system -g "$APP_GROUP" --home "$HOME" "$APP_USER"
 
 # Create app dirs
@@ -246,7 +153,9 @@ RUN mkdir -p "/run/$APP_NAME" && \
 
 USER $APP_USER
 
-COPY --from=release --chown="$APP_USER:$APP_GROUP" "/source/platform_umbrella/_build/$MIX_ENV/rel/${RELEASE}" ./
+COPY --from=release --chown="$APP_USER:$APP_GROUP" \
+    "/source/platform_umbrella/_build/${MIX_ENV}/rel/${RELEASE}" \
+    ./
 
 EXPOSE $PORT
 

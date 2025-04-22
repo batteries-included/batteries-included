@@ -96,8 +96,10 @@ Available commands:
 - ex-dialyzer       Run dialyzer linter
 
 **Docker Commands**
+- build-base        Builds docker base images
 - build-image       Build a docker image
 - push-images       Push all the container images to a registry
+- ensure-base       Ensure base images are present locally
 
 
 **Static Site Commands**
@@ -450,63 +452,94 @@ do_clean_build() {
     clean_bi_build
 }
 
+do_build_base_images() {
+    local tag
+    tag=$(docker_tag)
+
+    declare -a ci_args
+    if [ "${GITHUB_ACTIONS:-""}" = "true" ]; then
+        ci_args+=(--progress=plain)
+    fi
+
+    for base in build deploy; do
+        docker build \
+            --load \
+            -t "${base}-base:${tag}" \
+            -f docker/${base}-base.dockerfile \
+            ${TRACE:+--progress=plain} \
+            "${ci_args[@]}" \
+            .
+    done
+}
+
 do_build_image() {
     local image_name=${1:-"control-server"}
     local version
+    local version_hash
+    local docker_base_tag
 
-    # Pre-create the  version for all docker build
-    version="${BASE_VERSION}-$(version_tag)"
+    # Pre-create the version for all docker builds
+    version_hash=$(version_tag)
+    version="${BASE_VERSION}-${version_hash}"
     if [ -n "${VERSION_OVERRIDE:-""}" ]; then
         version="$VERSION_OVERRIDE"
     fi
 
-    log "${GREEN}Building${NOFORMAT} container image ${image_name} with  version ${version}"
+    log "${GREEN}Building${NOFORMAT} ${image_name} image with version: ${version}"
 
-    declare -a cache_args
+    declare -a common_args platform_args
+
+    # if any docker files changed, make sure we're not using old cache
+    docker_base_tag=$(docker_tag)
+    common_args+=(
+        --load
+        --build-arg "BASE_IMAGE_TAG=${docker_base_tag}"
+        --build-arg "DEPLOY_IMAGE_TAG=${docker_base_tag}"
+        ${TRACE:+--progress=plain}
+    )
+
+    platform_args+=(
+        -f docker/platform.dockerfile
+        --build-arg "BI_RELEASE_HASH=${version_hash}"
+    )
+
     if [ "${GITHUB_ACTIONS:-""}" = "true" ]; then
-        cache_args+=(
-            --builder=container
-            --cache-from "type=gha,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
-        )
-
-        # only push cache on PUSH
-        if [ "${PUSH:-""}" = "true" ]; then
-            cache_args+=(
-                --cache-to
-                "type=gha,mode=max,url=$ACTIONS_CACHE_URL,token=$ACTIONS_RUNTIME_TOKEN,scope=$image_name"
-            )
-        fi
+        common_args+=(--progress=plain)
     fi
 
     case "${image_name}" in
     control-server)
-        docker buildx build . -f docker/platform.dockerfile \
-            --load \
+        docker build \
             -t "control-server:${version}" \
             --build-arg RELEASE=control_server \
-            "${cache_args[@]}"
+            "${common_args[@]}" \
+            "${platform_args[@]}" \
+            .
         ;;
     home-base)
-        docker buildx build . -f docker/platform.dockerfile \
-            --load \
+        docker build \
             -t "home-base:${version}" \
             --build-arg RELEASE=home_base \
-            "${cache_args[@]}"
+            "${common_args[@]}" \
+            "${platform_args[@]}" \
+            .
         ;;
 
     kube-bootstrap)
-        docker buildx build . -f docker/platform.dockerfile \
-            --load \
+        docker build \
             -t "kube-bootstrap:${version}" \
             --build-arg RELEASE=kube_bootstrap \
-            "${cache_args[@]}"
+            "${common_args[@]}" \
+            "${platform_args[@]}" \
+            .
         ;;
 
     pastebin)
-        docker buildx build . -f docker/pastebin.dockerfile \
-            --load \
+        docker build \
+            -f docker/pastebin.dockerfile \
             -t "pastebin:${version}" \
-            "${cache_args[@]}"
+            "${common_args[@]}" \
+            .
         ;;
     *)
         die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
@@ -514,11 +547,48 @@ do_build_image() {
     esac
 }
 
+do_ensure_base_images() {
+    local docker_base_tag=${1}
+
+    for base in build deploy; do
+        local image="${base}-base:${docker_base_tag}"
+        if ! docker images "${image}" --format=json | jq -e '.' &>/dev/null; then
+            log "${YELLOW}Checked${NOFORMAT} base image: ${CYAN}${image}${NOFORMAT}. Not found."
+            try_pull_base_image "${image}"
+        fi
+    done
+}
+
+try_pull_base_image() {
+    local image="${1}"
+    log "${GREEN}Attempting to pull${NOFORMAT}: ${image}"
+    if docker pull "ghcr.io/batteries-included/${image}"; then
+        docker tag "ghcr.io/batteries-included/${image}" "${image}"
+    else
+        log "${YELLOW}Failed${NOFORMAT} to pull image. Building base images instead."
+        do_build_base_images
+    fi
+}
+
 do_push_images() {
-    tag_push "control-server" "$@"
-    tag_push "home-base" "$@"
-    tag_push "kube-bootstrap" "$@"
-    tag_push "pastebin" "$@"
+    local registry=${1:-"localhost:5000"}
+    shift || true
+    local docker_tag
+    local version
+
+    docker_tag=$(docker_tag)
+    for base in build deploy; do
+        tag_push "${base}-base" "${registry}" "${docker_tag}"
+    done
+
+    version="${BASE_VERSION}-$(version_tag)"
+    if [ -n "${VERSION_OVERRIDE:-""}" ]; then
+        version="$VERSION_OVERRIDE"
+    fi
+
+    for img in control-server home-base kube-bootstrap pastebin; do
+        tag_push "${img}" "${registry}" "${version}" "$@"
+    done
 }
 
 do_static_dev() {
@@ -540,15 +610,11 @@ do_static_build() {
 tag_push() {
     local image_name=${1}
     shift
-    local registry=${1:-"localhost:5000"}
+    local registry=${1}
+    shift
+    local version=${1}
     shift
     local additional_tags=("$@")
-
-    local version
-    version="${BASE_VERSION}-$(version_tag)"
-    if [ -n "${VERSION_OVERRIDE:-""}" ]; then
-        version="$VERSION_OVERRIDE"
-    fi
 
     log "${GREEN}Pushing${NOFORMAT} ${image_name}:${version} to ${registry}"
 
@@ -560,6 +626,10 @@ tag_push() {
         docker tag "${image_name}:${version}" "${registry}/${image_name}:${tag}"
         docker push "${registry}/${image_name}:${tag}"
     done
+}
+
+docker_tag() {
+    git rev-parse HEAD:docker
 }
 
 do_ex_int_test() {
@@ -775,11 +845,17 @@ ex-credo)
 ex-dialyzer)
     do_ex_dialyzer
     ;;
+build-base)
+    do_build_base_images
+    ;;
 build-image)
     do_build_image "${args[@]}"
     ;;
 push-images)
     do_push_images "${args[@]}"
+    ;;
+ensure-base)
+    do_ensure_base_images "$(docker_tag)"
     ;;
 version-tag)
     do_version_tag
