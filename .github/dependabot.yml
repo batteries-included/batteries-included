@@ -34,14 +34,6 @@ updates:
         patterns:
           - '*'
   - package-ecosystem: npm
-    directory: '/pastebin-go/assets/'
-    schedule:
-      interval: daily
-    groups:
-      dependencies:
-        patterns:
-          - '*'
-  - package-ecosystem: npm
     directory: '/static/'
     schedule:
       interval: daily
@@ -61,10 +53,18 @@ updates:
       dependencies:
         patterns:
           - '*'
+  - package-ecosystem: npm
+    directory: '/pastebin-go/assets/'
+    schedule:
+      interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - '*'
   - package-ecosystem: 'gomod'
     directory: '/pastebin-go/'
     schedule:
-      interval: daily
+      interval: weekly
     groups:
       dependencies:
         patterns:
