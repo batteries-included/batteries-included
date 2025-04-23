@@ -25,7 +25,7 @@ defmodule ControlServerWeb.Live.RedisEdit do
   end
 
   defp assign_page_title(socket) do
-    assign(socket, :page_title, "Edit Redis Cluster")
+    assign(socket, :page_title, "Edit Redis Instance")
   end
 
   @impl Phoenix.LiveView

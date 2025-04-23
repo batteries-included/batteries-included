@@ -48,7 +48,7 @@ defmodule ControlServerWeb.RedisTable do
             class="sm:hidden"
           />
           <.tooltip target_id={"redis_show_link_" <> redis.id}>
-            Show Redis Cluster
+            Show Redis Instance
           </.tooltip>
         </.flex>
       </:action>

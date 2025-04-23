@@ -19,7 +19,7 @@ defmodule HomeBaseWeb.Admin.UsageReportsTable do
       <:col :let={report} label="Postgres Clusters">
         {map_size(report.report.postgres_report.instance_counts)}
       </:col>
-      <:col :let={report} label="Redis Clusters">
+      <:col :let={report} label="Redis Instances">
         {map_size(report.report.redis_report.instance_counts)}
       </:col>
       <:col :let={report} label="Knative Services">

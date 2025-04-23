@@ -13,8 +13,8 @@ defmodule ControlServerWeb.DataHomeTest do
     %{pg: pg_report, redis: redis_report}
   end
 
-  defp redis_cluster(_) do
-    %{redis_cluster: insert(:redis_cluster)}
+  defp redis_instance(_) do
+    %{redis_cluster: insert(:redis_instance)}
   end
 
   defp postgres_cluster(_) do
@@ -26,7 +26,7 @@ defmodule ControlServerWeb.DataHomeTest do
   end
 
   describe "data home page with everything" do
-    setup [:install_batteries, :redis_cluster, :postgres_cluster, :summary]
+    setup [:install_batteries, :redis_instance, :postgres_cluster, :summary]
 
     test "show", %{conn: conn, postgres_cluster: postgres_cluster, redis_cluster: redis_cluster} do
       # Test while everything is turned on

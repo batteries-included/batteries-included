@@ -26,7 +26,7 @@ defmodule ControlServerWeb.Live.RedisNew do
   end
 
   defp assign_page_title(socket) do
-    assign(socket, :page_title, "New Redis Cluster")
+    assign(socket, :page_title, "New Redis Instance")
   end
 
   def update(%{redis_instance: _redis_instance} = assigns, socket) do
