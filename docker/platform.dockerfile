@@ -26,7 +26,7 @@ COPY --parents platform_umbrella/apps/*/mix.exs /source/
 RUN mix "do" \
     local.hex --force, \
     local.rebar --force, \
-    deps.get
+    deps.get --only "${MIX_ENV}"
 
 ##########################################################################
 # Build control server assets
@@ -101,7 +101,7 @@ WORKDIR /source/platform_umbrella
 SHELL ["/bin/bash", "-c"]
 RUN <<EOF
 rm -rf _build deps/{common_core,common_ui,control_server,control_server_web,event_center,home_base,home_base_web,kube_bootstrap,kube_services,verify} 
-mix "do" clean, deps.get, phx.digest, compile --force
+mix "do" clean, deps.get --only "${MIX_ENV}", phx.digest, compile --force
 EOF
 
 ##########################################################################

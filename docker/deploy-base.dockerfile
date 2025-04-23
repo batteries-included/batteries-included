@@ -17,11 +17,12 @@ ARG LANG
 RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt \
   apt-get update && \
-  apt-get install -y --no-install-recommends \
-    ca-certificates \
-    libssl3 \
-    locales \
-    tini
+  apt-get install -y \
+    --no-install-recommends \
+      ca-certificates \
+      libssl3 \
+      locales \
+      tini
 
 # Set the locale
 RUN sed -i "/${LANG}/s/^# //g" /etc/locale.gen && \
