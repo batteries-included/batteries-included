@@ -5,6 +5,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
 
   import ControlServerWeb.PgUserTable
 
+  alias CommonCore.Util.Memory
   alias ControlServer.Projects
   alias ControlServer.Projects.Snapshoter
 
@@ -83,11 +84,11 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
   defp postgres_list(assigns) do
     ~H"""
     <%= for {pg_cluster, cluster_index} <- Enum.with_index(@snapshot.postgres_clusters) do %>
-      <.panel title="Postgres Cluster" class="lg:col-span-2">
+      <.panel title={"Postgres: #{pg_cluster.name}"}>
         <.flex column>
           <.data_list>
-            <:item title="Cluster Name">
-              {pg_cluster.name}
+            <:item title="Memory Limits">
+              {Memory.humanize(pg_cluster.memory_limits)}
             </:item>
             <:item title="Virtual Size">
               {CommonCore.Util.VirtualSize.get_virtual_size(pg_cluster)}
@@ -128,6 +129,27 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     """
   end
 
+  defp redis_list(assigns) do
+    ~H"""
+    <%= for {redis_instance, instance_index} <- Enum.with_index(@snapshot.redis_instances) do %>
+      <.panel title={"Redis: #{redis_instance.name}"}>
+        <.flex column></.flex>
+        <.data_list>
+          <:item title="Memory Limits">
+            {Memory.humanize(redis_instance.memory_limits)}
+          </:item>
+          <:item title="Virtual Size">
+            {CommonCore.Util.VirtualSize.get_virtual_size(redis_instance)}
+          </:item>
+          <:item title="Num Instances">
+            {redis_instance.num_instances}
+          </:item>
+        </.data_list>
+      </.panel>
+    <% end %>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -138,6 +160,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     </.page_header>
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <.postgres_list snapshot={@snapshot} removals={@removals} />
+      <.redis_list snapshot={@snapshot} removals={@removals} />
     </.grid>
     """
   end
