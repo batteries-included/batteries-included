@@ -491,6 +491,8 @@ do_build_image() {
 
     # if any docker files changed, make sure we're not using old cache
     docker_base_tag=$(docker_tag)
+    do_ensure_base_images "${docker_base_tag}"
+
     common_args+=(
         --load
         --build-arg "BASE_IMAGE_TAG=${docker_base_tag}"
