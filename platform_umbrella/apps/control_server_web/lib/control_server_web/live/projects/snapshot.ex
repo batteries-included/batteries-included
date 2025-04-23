@@ -81,6 +81,28 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     end)
   end
 
+  defp toggle_button(assigns) do
+    loc = Map.get(assigns, :location)
+
+    phx_loc =
+      loc
+      |> Enum.with_index()
+      |> Enum.map(fn {loc, i} -> {"phx-value-loc-#{i}", to_string(loc)} end)
+
+    icon = if has_removal?(assigns[:removals], loc), do: :archive_box, else: :archive_box_x_mark
+
+    assigns =
+      assigns
+      |> Map.put(:phx_value_loc, phx_loc)
+      |> Map.put(:icon, icon)
+
+    ~H"""
+    <.button phx-click="toggle_remove" {@phx_value_loc} icon={@icon}>
+      Toggle Export
+    </.button>
+    """
+  end
+
   defp postgres_list(assigns) do
     ~H"""
     <%= for {pg_cluster, cluster_index} <- Enum.with_index(@snapshot.postgres_clusters) do %>
@@ -111,16 +133,10 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
             ]}
           >
             <:action :let={{_user, user_index}}>
-              <.button
-                phx-click="toggle_remove"
-                phx-value-loc-0="postgres_clusters"
-                phx-value-loc-1={cluster_index}
-                phx-value-loc-2="users"
-                phx-value-loc-3={user_index}
-                icon={:trash}
-              >
-                Toggle Export
-              </.button>
+              <.toggle_button
+                location={[:postgres_clusters, cluster_index, :users, user_index]}
+                removals={@removals}
+              />
             </:action>
           </.pg_users_table>
         </.flex>
@@ -131,7 +147,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
 
   defp redis_list(assigns) do
     ~H"""
-    <%= for {redis_instance, instance_index} <- Enum.with_index(@snapshot.redis_instances) do %>
+    <%= for redis_instance <- @snapshot.redis_instances do %>
       <.panel title={"Redis: #{redis_instance.name}"}>
         <.flex column></.flex>
         <.data_list>
