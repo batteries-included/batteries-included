@@ -12,7 +12,7 @@ updates:
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/common_ui/assets/'
     schedule:
-      interval: daily
+      interval: weekly
     groups:
       dependencies:
         patterns:
@@ -20,7 +20,7 @@ updates:
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/control_server_web/assets/'
     schedule:
-      interval: daily
+      interval: weekly
     groups:
       dependencies:
         patterns:
@@ -28,7 +28,7 @@ updates:
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/home_base_web/assets/'
     schedule:
-      interval: daily
+      interval: weekly
     groups:
       dependencies:
         patterns:
@@ -36,7 +36,7 @@ updates:
   - package-ecosystem: npm
     directory: '/static/'
     schedule:
-      interval: daily
+      interval: weekly
     groups:
       dependencies:
         patterns:
@@ -56,7 +56,7 @@ updates:
   - package-ecosystem: npm
     directory: '/pastebin-go/assets/'
     schedule:
-      interval: weekly
+      interval: monthly
     groups:
       dependencies:
         patterns:
@@ -64,7 +64,7 @@ updates:
   - package-ecosystem: 'gomod'
     directory: '/pastebin-go/'
     schedule:
-      interval: weekly
+      interval: monthly
     groups:
       dependencies:
         patterns:
