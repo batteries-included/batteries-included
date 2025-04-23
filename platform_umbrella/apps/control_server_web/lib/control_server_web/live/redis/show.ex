@@ -24,7 +24,7 @@ defmodule ControlServerWeb.Live.RedisShow do
     {:ok,
      socket
      |> assign(:current_page, :data)
-     |> assign(:page_title, "Redis Cluster")}
+     |> assign(:page_title, "Redis Instance")}
   end
 
   @impl Phoenix.LiveView
@@ -63,7 +63,7 @@ defmodule ControlServerWeb.Live.RedisShow do
   @impl Phoenix.LiveView
   def render(%{live_action: :show} = assigns) do
     ~H"""
-    <.page_header title={"Redis Cluster: #{@redis_instance.name}"} back_link={~p"/redis"}>
+    <.page_header title={"Redis Instance: #{@redis_instance.name}"} back_link={~p"/redis"}>
       <:menu>
         <.badge :if={@redis_instance.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@redis_instance.project_id}/show"}>
@@ -74,7 +74,7 @@ defmodule ControlServerWeb.Live.RedisShow do
 
       <.flex>
         <.actions_dropdown>
-          <.dropdown_link navigate={edit_url(@cluster)} icon={:pencil}>
+          <.dropdown_link navigate={edit_url(@redis_instance)} icon={:pencil}>
             Edit Redis
           </.dropdown_link>
 
@@ -82,7 +82,7 @@ defmodule ControlServerWeb.Live.RedisShow do
             class="w-full"
             icon={:trash}
             phx-click="delete"
-            data-confirm={"Are you sure you want to delete the \"#{@cluster.name}\" cluster?"}
+            data-confirm={"Are you sure you want to delete the \"#{@redis_instance.name}\" cluster?"}
           >
             Delete Redis
           </.dropdown_button>
@@ -127,8 +127,8 @@ defmodule ControlServerWeb.Live.RedisShow do
     """
   end
 
-  defp page_title(:show), do: "Redis Cluster"
-  defp page_title(:services), do: "Redis Cluster Services"
+  defp page_title(:show), do: "Redis Instance"
+  defp page_title(:services), do: "Redis Instance Services"
 
   defp edit_url(redis_instance), do: ~p"/redis/#{redis_instance}/edit"
   defp show_url(redis_instance), do: ~p"/redis/#{redis_instance}/show"

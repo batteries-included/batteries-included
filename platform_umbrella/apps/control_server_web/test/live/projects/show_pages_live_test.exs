@@ -8,7 +8,7 @@ defmodule ControlServerWeb.Projects.ShowPagesLiveTest do
     project = insert(:project)
 
     postgres_cluster = insert(:postgres_cluster, project_id: project.id)
-    redis_instance = insert(:redis_cluster, project_id: project.id)
+    redis_instance = insert(:redis_instance, project_id: project.id)
     jupyter_notebook = insert(:jupyter_lab_notebook, project_id: project.id)
     knative_service = insert(:knative_service, project_id: project.id)
     traditional_service = insert(:traditional_service, project_id: project.id)

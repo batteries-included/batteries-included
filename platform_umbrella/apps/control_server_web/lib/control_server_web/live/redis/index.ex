@@ -11,7 +11,7 @@ defmodule ControlServerWeb.Live.RedisIndex do
     {:ok,
      socket
      |> assign(:current_page, :data)
-     |> assign(:page_title, "Redis Clusters")}
+     |> assign(:page_title, "Redis Instances")}
   end
 
   @impl Phoenix.LiveView
@@ -36,7 +36,7 @@ defmodule ControlServerWeb.Live.RedisIndex do
     ~H"""
     <.page_header title={@page_title} back_link={~p"/data"}>
       <.button variant="dark" icon={:plus} link={new_url()}>
-        New Redis Cluster
+        New Redis Instance
       </.button>
     </.page_header>
 

@@ -122,7 +122,7 @@ defmodule ControlServer.Factory do
     |> evaluate_lazy_attributes()
   end
 
-  def redis_cluster_factory do
+  def redis_instance_factory do
     %RedisInstance{
       name: sequence("redis-cluster-"),
       num_instances: sequence(:num_instances, [1, 2, 3, 4, 5, 9]),
