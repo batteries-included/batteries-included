@@ -19,7 +19,7 @@ func (spec *InstallSpec) WriteToPath(filePath string) error {
 		return fmt.Errorf("unable to write install spec: %w", err)
 	}
 
-	if err := os.MkdirAll(path.Base(filePath), 0o700); err != nil {
+	if err := os.MkdirAll(path.Dir(filePath), 0o700); err != nil {
 		return fmt.Errorf("unable to create install spec directory: %w", err)
 	}
 
