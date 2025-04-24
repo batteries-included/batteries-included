@@ -112,7 +112,7 @@ func readInstallEnv(slugOrURL string) (string, *InstallEnv, error) {
 func (env *InstallEnv) NeedsKubeCleanup() bool {
 	// Returns true if the cluster provider is in [provided, aws]
 	provider := env.Spec.KubeCluster.Provider
-	if !(provider == "provided" || provider == "aws") {
+	if provider != "provided" && provider != "aws" {
 		return false
 	}
 
