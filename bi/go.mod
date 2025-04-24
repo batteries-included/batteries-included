@@ -19,7 +19,7 @@ require (
 	github.com/noisysockets/noisysockets v0.28.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.77.1
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.12
-	github.com/pulumi/pulumi-tls/sdk/v5 v5.1.1
+	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.0
 	github.com/pulumi/pulumi/sdk/v3 v3.163.0
 	github.com/samber/slog-multi v1.4.0
 	github.com/spf13/cobra v1.9.1
@@ -30,10 +30,10 @@ require (
 	golang.org/x/sync v0.13.0
 	golang.org/x/term v0.31.0
 	gopkg.in/ini.v1 v1.67.0
-	k8s.io/api v0.32.4
-	k8s.io/apiextensions-apiserver v0.32.4
-	k8s.io/apimachinery v0.32.4
-	k8s.io/client-go v0.32.4
+	k8s.io/api v0.33.0
+	k8s.io/apiextensions-apiserver v0.33.0
+	k8s.io/apimachinery v0.33.0
+	k8s.io/client-go v0.33.0
 	sigs.k8s.io/kind v0.27.0
 )
 
@@ -95,14 +95,12 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/glog v1.2.4 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic-models v0.6.9 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/safetext v0.0.0-20240722112252-5a72de7e7962 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/gorilla/websocket v1.5.3 // indirect
+	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
