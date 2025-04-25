@@ -166,6 +166,24 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     """
   end
 
+  def ferretdb_list(assigns) do
+    ~H"""
+    <%= for ferret_service <- @snapshot.ferret_services do %>
+      <.panel title={"Ferret: #{ferret_service.name}"}>
+        <.flex column></.flex>
+        <.data_list>
+          <:item title="Memory Limits">
+            {Memory.humanize(ferret_service.memory_limits)}
+          </:item>
+          <:item title="Virtual Size">
+            {CommonCore.Util.VirtualSize.get_virtual_size(ferret_service)}
+          </:item>
+        </.data_list>
+      </.panel>
+    <% end %>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -177,6 +195,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <.postgres_list snapshot={@snapshot} removals={@removals} />
       <.redis_list snapshot={@snapshot} removals={@removals} />
+      <.ferretdb_list snapshot={@snapshot} removals={@removals} />
     </.grid>
     """
   end
