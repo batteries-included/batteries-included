@@ -19,7 +19,7 @@ const POSTGRES_PORT = 5432
 
 var portForwardCmd = &cobra.Command{
 	Use:   "port-forward [install-slug|install-spec-url|install-spec-file] postgres-cluster-name",
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 	Short: "A brief description of your command",
 	Long:  `Port forward to a postgres database on a local kube cluster.`,
 	RunE: func(cmd *cobra.Command, args []string) error {

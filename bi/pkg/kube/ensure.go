@@ -33,11 +33,12 @@ func (batteryKube *batteryKubeClient) exists(ctx context.Context, unstructuredRe
 
 	logger := slog.With("name", name, "namespace", ns, "kind", unstructuredResource.GetKind())
 
-	if ns == "" {
-		_, err = batteryKube.dynamicClient.Resource(gvr).Get(ctx, name, metav1.GetOptions{})
-	} else {
-		_, err = batteryKube.dynamicClient.Resource(gvr).Namespace(ns).Get(ctx, name, metav1.GetOptions{})
+	getter := batteryKube.dynamicClient.Resource(gvr).Get
+	if ns != "" {
+		getter = batteryKube.dynamicClient.Resource(gvr).Namespace(ns).Get
 	}
+
+	_, err = getter(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		logger.Debug("Resource does not exist or other error", slog.Any("error", err))
 		return fmt.Errorf("failed to get resource: %w", err)
@@ -56,11 +57,12 @@ func (batteryKube *batteryKubeClient) create(ctx context.Context, unstructuredRe
 
 	logger := slog.With("namespace", ns, "kind", unstructuredResource.GetKind())
 
-	if ns == "" {
-		_, err = batteryKube.dynamicClient.Resource(gvr).Create(ctx, unstructuredResource, metav1.CreateOptions{})
-	} else {
-		_, err = batteryKube.dynamicClient.Resource(gvr).Namespace(ns).Create(ctx, unstructuredResource, metav1.CreateOptions{})
+	creator := batteryKube.dynamicClient.Resource(gvr).Create
+	if ns != "" {
+		creator = batteryKube.dynamicClient.Resource(gvr).Namespace(ns).Create
 	}
+
+	_, err = creator(ctx, unstructuredResource, metav1.CreateOptions{})
 	if err != nil {
 		logger.Debug("Failed to create resource", slog.Any("error", err))
 		return fmt.Errorf("failed to create resource: %w", err)

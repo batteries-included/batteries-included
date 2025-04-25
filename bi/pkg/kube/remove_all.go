@@ -336,12 +336,16 @@ func (kubeClient *batteryKubeClient) getClusterScopedGVRs() ([]schema.GroupVersi
 				groupVersion := strings.Split(apiResourceList.GroupVersion, "/")
 
 				var group, version string
-				if len(groupVersion) == 1 {
+				switch len(groupVersion) {
+				case 1:
 					version = groupVersion[0]
-				} else if len(groupVersion) == 2 {
+					slog.Error("got version", slog.Any("gv", groupVersion))
+				case 2:
 					group = groupVersion[0]
 					version = groupVersion[1]
-				} else {
+					slog.Error("got group version", slog.Any("gv", groupVersion))
+
+				default:
 					return nil, fmt.Errorf("unexpected group/version format: %s", apiResourceList.GroupVersion)
 				}
 
@@ -372,21 +376,21 @@ func (kubeClient *batteryKubeClient) getClusterScopedGVRs() ([]schema.GroupVersi
 
 // deleteAndWait schedules a resource for deletion and waits for it to be deleted.
 func (kubeClient *batteryKubeClient) deleteAndWait(ctx context.Context, gvr schema.GroupVersionResource, namespace, name string) error {
-	logger := slog.With(slog.String("gvr", gvr.String()), slog.String("name", name))
+	l := slog.With(slog.String("gvr", gvr.String()), slog.String("name", name))
 
-	var err error
+	// Cluster scoped
+	deletor := kubeClient.dynamicClient.Resource(gvr).Delete
+	msg := "Deleting cluster scoped resource"
+
+	// Namespace scoped.
 	if namespace != "" {
-		// Namespace scoped.
-		logger := logger.With(slog.String("namespace", namespace))
-		logger.Debug("Deleting namespace scoped resource")
-
-		err = kubeClient.dynamicClient.Resource(gvr).Namespace(namespace).Delete(ctx, name, metav1.DeleteOptions{})
-	} else {
-		// Cluster scoped.
-		logger.Debug("Deleting cluster scoped resource")
-
-		err = kubeClient.dynamicClient.Resource(gvr).Delete(ctx, name, metav1.DeleteOptions{})
+		l = l.With(slog.String("namespace", namespace))
+		msg = "Deleting namespace scoped resource"
+		deletor = kubeClient.dynamicClient.Resource(gvr).Namespace(namespace).Delete
 	}
+
+	l.Debug(msg)
+	err := deletor(ctx, name, metav1.DeleteOptions{})
 	if err != nil {
 		// If the resource is not found, it's already been deleted.
 		if kerrs.IsNotFound(err) {
@@ -408,18 +412,17 @@ func (kubeClient *batteryKubeClient) deleteAndWait(ctx context.Context, gvr sche
 		case <-t.C:
 		}
 
-		logger.Debug("Polling for deletion")
+		l.Debug("Polling for deletion")
 
-		var err error
+		getter := kubeClient.dynamicClient.Resource(gvr).Get
 		if namespace != "" {
-			_, err = kubeClient.dynamicClient.Resource(gvr).Namespace(namespace).Get(ctx, name, metav1.GetOptions{})
-		} else {
-			_, err = kubeClient.dynamicClient.Resource(gvr).Get(ctx, name, metav1.GetOptions{})
+			getter = kubeClient.dynamicClient.Resource(gvr).Namespace(namespace).Get
 		}
+
+		_, err := getter(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			if kerrs.IsNotFound(err) {
-				logger.Debug("Resource deleted")
-
+				l.Debug("Resource deleted")
 				return nil
 			}
 

@@ -17,6 +17,7 @@ import (
 var rageCmd = &cobra.Command{
 	Use:   "rage [install-slug|install-spec-url|install-spec-file]",
 	Short: "Collect debug information when things go wrong",
+	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		installURL := args[0]
 

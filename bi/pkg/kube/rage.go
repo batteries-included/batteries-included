@@ -30,11 +30,12 @@ func (client *batteryKubeClient) ListPodsRage(ctx context.Context) ([]rage.PodRa
 		for _, pod := range pods.Items {
 			slog.Debug("Getting pod rage info", "namespace", namespace.Name, "pod", pod.Name)
 			podRageInfo, err := client.GetPodRageInfo(ctx, namespace.Name, pod.Name)
-			if err == nil {
-				results = append(results, *podRageInfo)
-			} else {
-				slog.Warn("unable to get pod rage info", "namespace", namespace.Name, "pod", pod.Name, "err", err)
+			if err != nil {
+				slog.Warn("unable to get pod rage info", "namespace", namespace.Name, "pod", pod.Name, "error", err)
+				continue
 			}
+
+			results = append(results, *podRageInfo)
 		}
 	}
 	slog.Debug("Listed pods", "count", len(results))
@@ -55,7 +56,12 @@ func (client *batteryKubeClient) GetPodRageInfo(ctx context.Context, namespace, 
 			logs, err = client.GetLogs(ctx, namespace, podName, container.Name)
 
 			if err != nil {
-				slog.Warn("unable to get logs", slog.String("namespace", namespace), slog.String("pod", podName), slog.String("container", container.Name), slog.Any("err", err))
+				slog.Warn("unable to get logs",
+					slog.String("namespace", namespace),
+					slog.String("pod", podName),
+					slog.String("container", container.Name),
+					slog.Any("error", err),
+				)
 			}
 		}
 		info := rage.ContainerRageInfo{

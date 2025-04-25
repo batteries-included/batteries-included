@@ -13,9 +13,10 @@ import (
 )
 
 var verifySpecCmd = &cobra.Command{
-	Use:   "verify-spec",
+	Use:   "verify-spec [install-slug|install-spec-url|install-spec-file]",
 	Short: "Verify an install spec file",
 	Long:  `Reads in an install spec file and verifies that it is valid.`,
+	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		for _, pathName := range args {
 			if err := verifyFile(pathName); err != nil {

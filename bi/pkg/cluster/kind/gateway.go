@@ -41,7 +41,7 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 	_ = c.destroyWireGuardGateway(ctx)
 
 	// Check if the NoisySockets image is already available.
-	_, _, err := c.dockerClient.ImageInspectWithRaw(ctx, NoisySocketsImage)
+	_, err := c.dockerClient.ImageInspect(ctx, NoisySocketsImage)
 	if err != nil {
 		slog.Debug("NoisySockets image not found, pulling it")
 

@@ -13,6 +13,7 @@ import (
 var accessInfoCmd = &cobra.Command{
 	Use:   "access-info [install-slug|install-spec-url|install-spec-file] postgres-cluster-name user-name",
 	Short: "Print the information to access a Postgres database",
+	Args:  cobra.MatchAll(cobra.ExactArgs(3), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		installUrl := args[0]
 
@@ -61,16 +62,17 @@ var accessInfoCmd = &cobra.Command{
 			postgresAccessSpec.DSN = u.String()
 		}
 
+		output := postgresAccessSpec.DSN
+
 		if cmd.Flag("json").Value.String() == "true" {
 			value, err := json.Marshal(postgresAccessSpec)
 			if err != nil {
 				return fmt.Errorf("failed to marshal postgres access spec: %v", err)
 			}
-			fmt.Println(string(value))
-		} else {
-			fmt.Println(postgresAccessSpec.DSN)
+			output = string(value)
 		}
 
+		fmt.Println(output)
 		return nil
 	},
 }
