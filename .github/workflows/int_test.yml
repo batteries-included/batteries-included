@@ -9,10 +9,15 @@ on:
     types:
       - completed
 
+env:
+  GOCACHE: ${{ vars.GOCACHE }}
+  GOMODCACHE: ${{ vars.GOMODCACHE }}
+
 jobs:
   elixir-int-test:
-    runs-on: ubuntu-latest-m
-    timeout-minutes: 45
+    runs-on: ubuntu-latest-l
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
@@ -22,8 +27,6 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup-ci
-        with:
-          go_cache: 'false'
 
       - name: Run integration tests
         run: |
