@@ -23,6 +23,7 @@ type InstallEnv struct {
 	Slug            string
 	clusterProvider cluster.Provider
 	Spec            *specs.InstallSpec
+	source          string
 }
 
 // Init Function generate all needed
@@ -71,24 +72,15 @@ func (env *InstallEnv) init(ctx context.Context) error {
 }
 
 func NewEnv(ctx context.Context, slugOrURL string) (*InstallEnv, error) {
-	source, installEnv, err := readInstallEnv(slugOrURL)
+	installEnv, err := readInstallEnv(slugOrURL)
 	if err != nil {
 		return nil, fmt.Errorf("error reading install env: %w", err)
-	}
-
-	if source == "url" {
-		// We got from the url so we should remove everything
-		_ = installEnv.Remove()
-	}
-
-	if err := installEnv.init(ctx); err != nil {
-		return nil, fmt.Errorf("error initializing install: %w", err)
 	}
 
 	return installEnv, nil
 }
 
-func readInstallEnv(slugOrURL string) (string, *InstallEnv, error) {
+func readInstallEnv(slugOrURL string) (*InstallEnv, error) {
 	type potentialPath struct{ source, path string }
 	for _, p := range []potentialPath{
 		{source: "file", path: filepath.Join(xdg.StateHome, "bi", "installs", slugOrURL, "spec.json")},
@@ -102,10 +94,10 @@ func readInstallEnv(slugOrURL string) (string, *InstallEnv, error) {
 			continue
 		}
 		l.Debug("Found install")
-		return p.source, &InstallEnv{Slug: spec.Slug, Spec: spec}, nil
+		return &InstallEnv{Slug: spec.Slug, Spec: spec, source: p.source}, nil
 	}
 
-	return "", nil, errors.New("no spec found")
+	return nil, errors.New("no spec found")
 }
 
 // NeedsKubeCleanup returns true if we should remove all resources in an install
@@ -119,4 +111,16 @@ func (env *InstallEnv) NeedsKubeCleanup() bool {
 	// Do we have a kube config? Eg. we finished bootstrapping.
 	_, err := os.Stat(env.KubeConfigPath())
 	return err == nil
+}
+
+func (env *InstallEnv) Init(ctx context.Context) error {
+	if env.source == "url" {
+		// We got from the url so we should remove everything
+		_ = env.Remove()
+	}
+
+	if err := env.init(ctx); err != nil {
+		return fmt.Errorf("error initializing install: %w", err)
+	}
+	return nil
 }

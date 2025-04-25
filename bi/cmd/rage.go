@@ -6,6 +6,8 @@ package cmd
 import (
 	"bi/pkg/installs"
 	"fmt"
+	"io"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -31,19 +33,60 @@ var rageCmd = &cobra.Command{
 			return err
 		}
 
-		logFilename := fmt.Sprintf("%d.json", time.Now().Unix())
-
-		path := filepath.Join(xdg.StateHome, "bi", "rage", logFilename)
-		err = rageReport.Write(path)
+		output, err := cmd.Flags().GetString("output")
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(path)
+		var w io.Writer
+
+		switch output {
+		case "-":
+			w = os.Stdout
+		case "":
+			logFilename := fmt.Sprintf("%d.json", time.Now().Unix())
+			output = filepath.Join(xdg.StateHome, "bi", "rage", logFilename)
+			fallthrough
+
+		default:
+			output, err = filepath.Abs(output)
+			if err != nil {
+				return err
+			}
+
+			wc, err := setupOutputFile(output)
+			if err != nil {
+				return err
+			}
+			defer wc.Close()
+			w = wc
+		}
+
+		err = rageReport.Write(w)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(output)
 		return nil
 	},
 }
 
+func setupOutputFile(path string) (io.WriteCloser, error) {
+	// Make the rage directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return nil, fmt.Errorf("unable to create rage directory: %w", err)
+	}
+
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create rage file: %w", err)
+	}
+
+	return f, nil
+}
+
 func init() {
+	rageCmd.Flags().StringP("output", "o", "", "Path to write the rage output to. Use - for stdout.")
 	RootCmd.AddCommand(rageCmd)
 }
