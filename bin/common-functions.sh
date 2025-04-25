@@ -61,12 +61,14 @@ build_bi() {
     bin_path=$(bi_bin_location)
 
     if [[ ! -f "${bin_path}" ]]; then
-        log "Building bi ${BLUE}${revision}${NOFORMAT}"
+        log "Building bi: ${BLUE}${revision}${NOFORMAT}"
         bi_pushd "${ROOT_DIR}/bi"
+        SECONDS=0
         CGO_ENABLED=0 go build \
             -tags "netgo osusergo static_build" \
             -o "${bin_path}" bi
         bi_popd
+        log "Built bi in ${RED}${SECONDS}${NOFORMAT} seconds"
     fi
 
 }
