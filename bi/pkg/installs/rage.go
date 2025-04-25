@@ -16,38 +16,45 @@ import (
 )
 
 func (env *InstallEnv) NewRage(ctx context.Context) (*rage.RageReport, error) {
-	report := rage.RageReport{InstallSlug: env.Slug, KubeExists: false, PodsInfo: []rage.PodRageInfo{}}
+	report := &rage.RageReport{InstallSlug: env.Slug, KubeExists: false, PodsInfo: []rage.PodRageInfo{}}
 	// Add the logs from the local command line invocations
-	env.addBILogs(&report)
+	err := env.addBILogs(report)
+	if err != nil {
+		slog.Error("unable to add local bi logs", "error", err)
+	}
 
 	// Get any kube provider specific info
 	if env.Spec.KubeCluster.Provider == "kind" {
-		env.addKindRageInfo(ctx, &report)
-	}
-
-	// Get info about all of the pods
-	kubeClient, err := env.NewBatteryKubeClient()
-	if err != nil {
-		slog.Error("unable to create kube client", "error", err)
-	} else {
-		defer kubeClient.Close()
-		err = env.addKubeRageInfo(ctx, kubeClient, &report)
+		err := env.addKindRageInfo(ctx, report)
 		if err != nil {
-			slog.Error("unable to add kube info to the rage report", "error", err)
-			return nil, err
+			slog.Error("unable to add kind info", "error", err)
 		}
 	}
 
-	return &report, nil
+	// Get info about all the pods
+	kubeClient, err := env.NewBatteryKubeClient()
+	if err != nil {
+		slog.Error("unable to create kube client", "error", err)
+		return nil, err
+	}
+	defer kubeClient.Close()
+	err = env.addKubeRageInfo(ctx, kubeClient, report)
+	if err != nil {
+		slog.Error("unable to add kube info to the rage report", "error", err)
+		return nil, err
+	}
+
+	return report, nil
 }
 
 func (env *InstallEnv) addKindRageInfo(ctx context.Context, report *rage.RageReport) error {
 	ips, err := kind.GetMetalLBIPs(ctx)
 	if err != nil {
 		slog.Warn("unable to get kind ips", "error", err)
-	} else {
-		report.KindIPs = &ips
+		return err
 	}
+
+	report.KindIPs = &ips
 	return nil
 }
 
@@ -58,7 +65,6 @@ func (env *InstallEnv) addKubeRageInfo(ctx context.Context, kubeClient kube.Kube
 	}
 
 	if err := kubeClient.WaitForConnection(3 * time.Minute); err != nil {
-		slog.Error("cluster did not become ready", "error", err)
 		return fmt.Errorf("cluster did not become ready for rage: %w", err)
 	}
 
@@ -77,6 +83,7 @@ func (env *InstallEnv) addKubeRageInfo(ctx context.Context, kubeClient kube.Kube
 	} else {
 		report.AccessSpec = accessInfo
 	}
+
 	return nil
 }
 

@@ -44,11 +44,11 @@ type slogInfoLogger struct {
 }
 
 func (l *slogInfoLogger) Info(msg string) {
-	l.Logger.Debug(stripLogMessage(msg))
+	l.Debug(stripLogMessage(msg))
 }
 
 func (l *slogInfoLogger) Infof(format string, args ...any) {
-	l.Logger.Debug(stripLogMessage(fmt.Sprintf(format, args...)))
+	l.Debug(stripLogMessage(fmt.Sprintf(format, args...)))
 }
 
 func (l *slogInfoLogger) Enabled() bool {

@@ -69,22 +69,18 @@ func (gw *Gateway) NewClient(name string) (*Client, error) {
 		return nil, fmt.Errorf("failed to generate private key: %w", err)
 	}
 
-	var address netip.Addr
-	if len(gw.Clients) == 0 {
-		nextAddress := cidr.Inc(net.IP(gw.Address.AsSlice()))
-		if !gw.Subnet.Contains(nextAddress) {
-			return nil, fmt.Errorf("no more addresses available in subnet")
-		}
-
-		address, _ = netip.AddrFromSlice(nextAddress)
-	} else {
-		nextAddress := cidr.Inc(net.IP(gw.Clients[len(gw.Clients)-1].Address.AsSlice()))
-		if !gw.Subnet.Contains(nextAddress) {
-			return nil, fmt.Errorf("no more addresses available in subnet")
-		}
-
-		address, _ = netip.AddrFromSlice(nextAddress)
+	// by default, the first address after gw address
+	nextAddress := cidr.Inc(net.IP(gw.Address.AsSlice()))
+	// if there are clients, use the next address after the last client
+	if len(gw.Clients) > 0 {
+		nextAddress = cidr.Inc(net.IP(gw.Clients[len(gw.Clients)-1].Address.AsSlice()))
 	}
+
+	if !gw.Subnet.Contains(nextAddress) {
+		return nil, fmt.Errorf("no more addresses available in subnet")
+	}
+
+	address, _ := netip.AddrFromSlice(nextAddress)
 
 	c := Client{
 		Gateway:    gw,

@@ -14,27 +14,24 @@ import (
 )
 
 func GetSpecFromURL(specURL string) (*InstallSpec, error) {
-	// Parse the url
 	parsedURL, err := url.Parse(specURL)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing spec url: %w", err)
 	}
 
-	// If the url is a local file then read the
-	// file and unmarshal the json using UnmarshalJSON
-	// If the url is a remote file then download the
-	// file and unmarshal the json using UnmarshalJSON
-	if parsedURL.Scheme == "" {
-		// Read the file
+	switch parsedURL.Scheme {
+	case "":
 		return readLocalFile(parsedURL)
-		// Only download on http for urls that string contrain 127.0.0.1
-	} else if parsedURL.Scheme == "http" && (strings.Contains(parsedURL.Host, "127.0.0.1") || strings.Contains(parsedURL.Host, "127-0-0-1.batrsinc.co")) {
-		// Download the file
+	case "https":
 		return readRemoteFile(parsedURL)
-	} else if parsedURL.Scheme == "https" {
-		// Download the file
-		return readRemoteFile(parsedURL)
-	} else {
+		// Only download on HTTP for URLs that string contain 127.0.0.1
+	case "http":
+		if strings.Contains(parsedURL.Host, "127.0.0.1") || strings.Contains(parsedURL.Host, "127-0-0-1.batrsinc.co") {
+			return readRemoteFile(parsedURL)
+		}
+		fallthrough
+
+	default:
 		return nil, fmt.Errorf("unsupported scheme: %s", parsedURL.Scheme)
 	}
 }

@@ -3,7 +3,6 @@ package vpn
 import (
 	"bi/pkg/installs"
 	"bi/pkg/log"
-	"io"
 	"log/slog"
 	"os"
 
@@ -14,7 +13,7 @@ import (
 var vpnConfigCmd = &cobra.Command{
 	Use:   "config [install-slug|install-spec-url|install-spec-file]",
 	Short: "Get the wireguard config for a batteries included environment",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := args[0]
 
@@ -45,10 +44,8 @@ var vpnConfigCmd = &cobra.Command{
 
 		slog.Info("Writing wireguard config", slog.String("outputFilePath", outputPath))
 
-		var w io.Writer
-		if outputPath == "-" {
-			w = os.Stdout
-		} else {
+		w := os.Stdout
+		if outputPath != "-" {
 			outputFile, err := os.OpenFile(outputPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
 			if err != nil {
 				return err

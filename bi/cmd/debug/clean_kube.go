@@ -13,7 +13,7 @@ import (
 var cleanKubeCmd = &cobra.Command{
 	Use:   "clean-kube [install-slug|install-spec-url|install-spec-file]",
 	Short: "clean all resources off of a batteries included kubernetes cluster",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		url := args[0]
 		ctx := cmd.Context()
