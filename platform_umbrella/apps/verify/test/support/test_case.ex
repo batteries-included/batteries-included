@@ -18,37 +18,13 @@ defmodule Verify.TestCase do
 
         # Make sure to clean up after ourselves
         # Stopping will also remove specs
-        on_exit(fn ->
-          Verify.KindInstallWorker.stop_all()
-        end)
+        on_exit(&Verify.KindInstallWorker.stop_all/0)
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
 
-        if tested_version == "latest" do
-          # Ask me how fucking long it took to figure this out
-          #
-          # When we are testing the latest tag it's a moving target
-          # So the control server will deploy a
-          # snapshot with its own version as the image tag
-          # during that time its possible to get a websocket
-          # that leaves the browser unable to make progress.
-          #
-          # In the future we should:
-          # - Account for that in kube bootstrap
-          # - have a kubernetes client here and use that for flap detection
-          # - figure out why reconnect sometimes doesn't happen on kind clusters. Though I think it's like timing and resource constraints.
-          #
-          # Yes 75 Seconds. Kubernetes will take a while to scale the other revision down
-          # and the new one up. We can't really do anything about that. It takes 60 seconds
-          # usually with a 15 second safety margin.
-          #
-          Logger.info("control server flap required (version=latest). Sleeping for 75 seconds")
-          Process.sleep(75_000)
-        end
-
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
-        {:ok, [control_url: url]}
+        {:ok, [control_url: url, tested_version: tested_version]}
       end
 
       setup do

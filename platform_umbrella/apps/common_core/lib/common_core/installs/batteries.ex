@@ -12,7 +12,15 @@ defmodule CommonCore.Installs.Batteries do
   @aws_only_battery_types ~w(aws_load_balancer_controller karpenter)a
   @aws_battery_types ~w(battery_ca)a ++ @aws_only_battery_types
 
-  @internal_int_test_battery_types ~w(battery_core cloudnative_pg ferretdb istio_gateway metallb traditional_services)a
+  @internal_int_test_battery_types ~w(
+    battery_core
+    cloudnative_pg
+    ferretdb
+    istio_gateway
+    metallb
+    redis
+    traditional_services
+  )a
   @internal_prod_battery_types ~w(ferretdb traditional_services victoria_metrics grafana)a
 
   @production_battery_types ~w(kube_monitoring timeline victoria_metrics grafana)a
