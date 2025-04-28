@@ -3,7 +3,7 @@ defmodule Verify.KubeTest do
 
   @moduletag :cluster_test
 
-  test "Can show kubernetes state", %{session: session, control_url: url} do
+  verify "Can show kubernetes state", %{session: session, control_url: url} do
     session
     |> visit(url <> "/kube/pods")
     |> assert_has(Query.css("table tbody tr", minimum: 6))
@@ -17,7 +17,7 @@ defmodule Verify.KubeTest do
     |> assert_has(Query.css("table tbody tr", minimum: 6))
   end
 
-  test "Can filter to show only one kubernetes pod", %{session: session, control_url: url} do
+  verify "Can filter to show only one kubernetes pod", %{session: session, control_url: url} do
     session
     |> visit(url <> "/kube/pods")
     |> assert_has(Query.css("table tbody tr", minimum: 6))
@@ -25,7 +25,7 @@ defmodule Verify.KubeTest do
     |> assert_has(Query.css("table tbody tr", count: 1))
   end
 
-  test "can filter to nothing", %{session: session, control_url: url} do
+  verify "can filter to nothing", %{session: session, control_url: url} do
     session
     |> visit(url <> "/kube/pods")
     |> assert_has(Query.css("table tbody tr", minimum: 6))

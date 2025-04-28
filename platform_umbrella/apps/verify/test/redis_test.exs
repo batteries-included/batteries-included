@@ -12,7 +12,7 @@ defmodule Verify.RedisTest do
 
   defp show_page_header(instance_name), do: Query.css("h3", text: instance_name)
 
-  test "can start a standalone redis instance", %{session: session} do
+  verify "can start a standalone redis instance", %{session: session} do
     instance_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
@@ -31,7 +31,7 @@ defmodule Verify.RedisTest do
     assert path =~ ~r/\/redis\/[\d\w-]+\/show$/
   end
 
-  test "choosing a different size update display", %{session: session} do
+  verify "choosing a different size update display", %{session: session} do
     session
     |> visit(@new_path)
     |> assert_has(@new_redis_header)
@@ -41,7 +41,7 @@ defmodule Verify.RedisTest do
     |> assert_has(Query.text("1GB"))
   end
 
-  test "can start a replication redis instance", %{session: session} do
+  verify "can start a replication redis instance", %{session: session} do
     instance_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
@@ -64,7 +64,7 @@ defmodule Verify.RedisTest do
     assert path =~ ~r/\/redis\/[\d\w-]+\/show$/
   end
 
-  test "can start a redis cluster", %{session: session} do
+  verify "can start a redis cluster", %{session: session} do
     instance_name = "int-test-#{:rand.uniform(10_000)}"
 
     session

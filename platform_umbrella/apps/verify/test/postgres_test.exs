@@ -3,7 +3,7 @@ defmodule Verify.PostgresTest do
 
   @moduletag :cluster_test
 
-  test "can start a postgres cluster", %{session: session, control_url: url} do
+  verify "can start a postgres cluster", %{session: session, control_url: url} do
     cluster_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
@@ -30,7 +30,7 @@ defmodule Verify.PostgresTest do
     assert path =~ ~r/\/postgres\/[\d\w-]+\/show$/
   end
 
-  test "choosing a different size update display", %{session: session, control_url: url} do
+  verify "choosing a different size update display", %{session: session, control_url: url} do
     session
     |> visit(url <> "/postgres/new")
     |> assert_has(Query.text("New Postgres Cluster"))
@@ -40,7 +40,7 @@ defmodule Verify.PostgresTest do
     |> assert_has(Query.text("1.0TB"))
   end
 
-  test "can add a user", %{session: session, control_url: url} do
+  verify "can add a user", %{session: session, control_url: url} do
     test_username = "testuser-#{:rand.uniform(10_000)}"
 
     session

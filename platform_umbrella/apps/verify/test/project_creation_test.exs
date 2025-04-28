@@ -3,7 +3,7 @@ defmodule Verify.ProjectCreationTest do
 
   @moduletag :cluster_test
 
-  test "can start a demo like project", %{session: session, control_url: url} do
+  verify "can start a demo like project", %{session: session, control_url: url} do
     project_name = "pastebin-#{:rand.uniform(10_000)}"
 
     session
@@ -23,7 +23,7 @@ defmodule Verify.ProjectCreationTest do
     |> assert_has(Query.text(project_name, minimum: 1))
   end
 
-  test "can start a bare project", %{session: session, control_url: url} do
+  verify "can start a bare project", %{session: session, control_url: url} do
     project_name = "bare-#{:rand.uniform(10_000)}"
 
     session

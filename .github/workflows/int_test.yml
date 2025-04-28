@@ -31,3 +31,12 @@ jobs:
       - name: Run integration tests
         run: |
           bin/bix ex-int-test
+
+      - name: Upload results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: int-test-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 5
+          path: |
+            /tmp/bi-int-test/
