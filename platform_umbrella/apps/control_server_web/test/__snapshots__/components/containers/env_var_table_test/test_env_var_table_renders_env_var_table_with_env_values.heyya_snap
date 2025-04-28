@@ -1,0 +1,32 @@
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table id="test-env-var-table" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
+      <tr>
+        <th class="pb-4">Name</th><th class="pb-4">Value</th>
+        
+      </tr>
+    </thead>
+
+    <tbody id="test-env-var-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      <tr>
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          TEST_ENV
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          test**alue
+        </td>
+
+        
+      </tr><tr>
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          TEST_ENV_2
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          <div class="">
+  From test_config
+</div>
+        </td>
+
+        
+      </tr>
+    </tbody>
+  </table>
+</div>

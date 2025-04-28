@@ -19,9 +19,9 @@ defmodule ControlServerWeb.PgUserTable do
       <:col :let={{user, _user_index}} label="Roles">{Enum.join(user.roles, ", ")}</:col>
       <:col :let={{user, _user_index}} label="Secret">{secret_name(@cluster, user)}</:col>
       <:col :let={{user, _user_index}} label="Namespace">{namespaces(user, @cluster)}</:col>
-      <:col :let={{user, user_index}} :if={@action} label="action">
+      <:action :let={{user, user_index}} :if={@action}>
         {render_slot(@action, {user, user_index})}
-      </:col>
+      </:action>
     </.table>
     """
   end

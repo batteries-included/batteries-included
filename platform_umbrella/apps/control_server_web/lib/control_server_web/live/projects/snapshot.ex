@@ -3,7 +3,9 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
 
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.Containers.EnvValueTable
   import ControlServerWeb.PgUserTable
+  import ControlServerWeb.Projects.ExportToggleButton
 
   alias CommonCore.Util.Memory
   alias ControlServer.Projects
@@ -38,6 +40,12 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     assign(socket, :removals, removals)
   end
 
+  defp has_removal?(removals, loc) do
+    Enum.any?(removals, fn removal ->
+      removal == loc
+    end)
+  end
+
   defp toggle_removal(socket, removal) do
     new =
       if has_removal?(socket.assigns.removals, removal) do
@@ -55,52 +63,6 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
   def handle_event("toggle_remove", params, socket) do
     location = location_from_params(params)
     {:noreply, toggle_removal(socket, location)}
-  end
-
-  defp location_from_params(params) do
-    params
-    |> Enum.filter(fn {key, _value} ->
-      String.starts_with?(key, "loc-")
-    end)
-    |> Enum.map(fn {key, value} ->
-      new_key = key |> String.replace("loc-", "") |> String.to_integer()
-      {new_key, value}
-    end)
-    |> Enum.sort_by(fn {key, _value} -> key end)
-    |> Enum.map(fn {_key, value} ->
-      case Integer.parse(value) do
-        {int, _} -> int
-        _ -> String.to_existing_atom(value)
-      end
-    end)
-  end
-
-  defp has_removal?(removals, loc) do
-    Enum.any?(removals, fn removal ->
-      removal == loc
-    end)
-  end
-
-  defp toggle_button(assigns) do
-    loc = Map.get(assigns, :location)
-
-    phx_loc =
-      loc
-      |> Enum.with_index()
-      |> Enum.map(fn {loc, i} -> {"phx-value-loc-#{i}", to_string(loc)} end)
-
-    icon = if has_removal?(assigns[:removals], loc), do: :archive_box, else: :archive_box_x_mark
-
-    assigns =
-      assigns
-      |> Map.put(:phx_value_loc, phx_loc)
-      |> Map.put(:icon, icon)
-
-    ~H"""
-    <.button phx-click="toggle_remove" {@phx_value_loc} icon={@icon}>
-      Toggle Export
-    </.button>
-    """
   end
 
   defp postgres_list(assigns) do
@@ -133,7 +95,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
             ]}
           >
             <:action :let={{_user, user_index}}>
-              <.toggle_button
+              <.export_toggle_button
                 location={[:postgres_clusters, cluster_index, :users, user_index]}
                 removals={@removals}
               />
@@ -184,6 +146,49 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     """
   end
 
+  def jupyter_notebook_list(assigns) do
+    ~H"""
+    <%= for {jupyter_notebook, jupyter_notebook_idx} <- Enum.with_index(@snapshot.jupyter_notebooks) do %>
+      <.panel title={"Jupyter Notebook: #{jupyter_notebook.name}"}>
+        <.flex column></.flex>
+        <.data_list>
+          <:item title="Memory Limits">
+            {Memory.humanize(jupyter_notebook.memory_limits)}
+          </:item>
+          <:item title="Virtual Size">
+            {CommonCore.Util.VirtualSize.get_virtual_size(jupyter_notebook)}
+          </:item>
+        </.data_list>
+
+        <.env_var_table
+          :if={jupyter_notebook.env_values != []}
+          id={"jupyter-env-var-table-#{jupyter_notebook_idx}"}
+          env_values={jupyter_notebook.env_values}
+          opts={[
+            tbody_tr_attrs: fn {_, env_value_index} ->
+              if has_removal?(@removals, [
+                   :jupyter_notebooks,
+                   jupyter_notebook_idx,
+                   :env_values,
+                   env_value_index
+                 ]),
+                 do: %{class: "line-through"},
+                 else: %{}
+            end
+          ]}
+        >
+          <:action :let={{_env_value, env_value_index}}>
+            <.export_toggle_button
+              location={[:jupyter_notebooks, jupyter_notebook_idx, :env_values, env_value_index]}
+              removals={@removals}
+            />
+          </:action>
+        </.env_var_table>
+      </.panel>
+    <% end %>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -195,6 +200,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     <.grid columns={%{sm: 1, lg: 2}} class="w-full">
       <.postgres_list snapshot={@snapshot} removals={@removals} />
       <.redis_list snapshot={@snapshot} removals={@removals} />
+      <.jupyter_notebook_list snapshot={@snapshot} removals={@removals} />
       <.ferretdb_list snapshot={@snapshot} removals={@removals} />
     </.grid>
     """
