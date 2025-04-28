@@ -9,11 +9,17 @@ defmodule Verify.TestCase do
     quote do
       use Wallaby.DSL
 
+      import Verify.TestCase, only: [verify: 3, get_tmp_dir: 1]
+
       require Logger
 
       setup_all do
         Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
-        {:ok, url} = Verify.KindInstallWorker.start(unquote(install_spec))
+        tmp_dir = get_tmp_dir(__MODULE__)
+        File.mkdir_p!(tmp_dir)
+
+        {:ok, url} = Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
+        Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
         Application.put_env(:wallaby, :base_url, url)
 
         # Make sure to clean up after ourselves
@@ -24,7 +30,7 @@ defmodule Verify.TestCase do
 
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
-        {:ok, [control_url: url, tested_version: tested_version]}
+        {:ok, [control_url: url, tested_version: tested_version, tmp_dir: tmp_dir]}
       end
 
       setup do
@@ -33,6 +39,11 @@ defmodule Verify.TestCase do
         {:ok, [session: session]}
       end
     end
+  end
+
+  @spec get_tmp_dir(module()) :: String.t()
+  def get_tmp_dir(mod) do
+    Path.join([Verify.PathHelper.tmp_dir!(), "bi-int-test", Atom.to_string(mod)])
   end
 
   @spec start_session() :: {:ok, Wallaby.Session.t()} | {:error, Wallaby.reason()}
@@ -70,5 +81,53 @@ defmodule Verify.TestCase do
         }
       }
     )
+  end
+
+  # Adapted from Wallaby.Feature.feature/3
+  defmacro verify(message, context \\ quote(do: _), contents) do
+    %{module: mod, file: file, line: line} = __CALLER__
+
+    contents =
+      quote do
+        try do
+          unquote(contents)
+          :ok
+        rescue
+          e ->
+            out = unquote(__MODULE__).rage_output_for_test(unquote(mod), unquote(message))
+
+            Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), unquote(message))
+            # taking a screenshot writes the paths without a final newline so add it here
+            IO.write("\n")
+            Verify.KindInstallWorker.rage(unquote(mod), out)
+
+            reraise(e, __STACKTRACE__)
+        end
+      end
+
+    context = Macro.escape(context)
+    contents = Macro.escape(contents, unquote: true)
+
+    quote bind_quoted: [
+            mod: mod,
+            file: file,
+            line: line,
+            context: context,
+            contents: contents,
+            message: message
+          ] do
+      name = ExUnit.Case.register_test(mod, file, line, :integration, message, [:verify])
+
+      def unquote(name)(unquote(context)), do: unquote(contents)
+    end
+  end
+
+  @spec rage_output_for_test(module(), binary()) :: String.t()
+  def rage_output_for_test(mod, message) do
+    tmp_dir = get_tmp_dir(mod)
+    name = String.replace(message, " ", "_")
+
+    time = :second |> :erlang.system_time() |> to_string()
+    Path.join([tmp_dir, "#{time}_#{name}.json"])
   end
 end
