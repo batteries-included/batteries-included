@@ -189,6 +189,89 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     """
   end
 
+  defp traditional_services_list(assigns) do
+    ~H"""
+    <%= for {service, service_index} <- Enum.with_index(@snapshot.traditional_services) do %>
+      <.panel title={"Traditional Service: #{service.name}"}>
+        <.flex column></.flex>
+        <.data_list>
+          <:item title="Memory Limits">
+            {Memory.humanize(service.memory_limits)}
+          </:item>
+          <:item title="Virtual Size">
+            {CommonCore.Util.VirtualSize.get_virtual_size(service)}
+          </:item>
+        </.data_list>
+
+        <.env_var_table
+          :if={service.env_values != []}
+          id={"traditional_env-var-table-#{service_index}"}
+          env_values={service.env_values}
+          opts={[
+            tbody_tr_attrs: fn {_, env_value_index} ->
+              if has_removal?(@removals, [
+                   :traditional_services,
+                   service_index,
+                   :env_values,
+                   env_value_index
+                 ]),
+                 do: %{class: "line-through"},
+                 else: %{}
+            end
+          ]}
+        >
+          <:action :let={{_env_value, env_value_index}}>
+            <.export_toggle_button
+              location={[:traditional_services, service_index, :env_values, env_value_index]}
+              removals={@removals}
+            />
+          </:action>
+        </.env_var_table>
+      </.panel>
+    <% end %>
+    """
+  end
+
+  defp knative_services_list(assigns) do
+    ~H"""
+    <%= for {service, service_index} <- Enum.with_index(@snapshot.knative_services) do %>
+      <.panel title={"Knative Service: #{service.name}"}>
+        <.flex column></.flex>
+        <.data_list>
+          <:item title="Virtual Size">
+            {CommonCore.Util.VirtualSize.get_virtual_size(service)}
+          </:item>
+        </.data_list>
+
+        <.env_var_table
+          :if={service.env_values != []}
+          id={"knative_env-var-table-#{service_index}"}
+          env_values={service.env_values}
+          opts={[
+            tbody_tr_attrs: fn {_, env_value_index} ->
+              if has_removal?(@removals, [
+                   :knative_services,
+                   service_index,
+                   :env_values,
+                   env_value_index
+                 ]),
+                 do: %{class: "line-through"},
+                 else: %{}
+            end
+          ]}
+        >
+          <:action :let={{_env_value, env_value_index}}>
+            <.export_toggle_button
+              location={[:knative_services, service_index, :env_values, env_value_index]}
+              removals={@removals}
+            />
+          </:action>
+        </.env_var_table>
+      </.panel>
+    <% end %>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -201,6 +284,8 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
       <.postgres_list snapshot={@snapshot} removals={@removals} />
       <.redis_list snapshot={@snapshot} removals={@removals} />
       <.jupyter_notebook_list snapshot={@snapshot} removals={@removals} />
+      <.traditional_services_list snapshot={@snapshot} removals={@removals} />
+      <.knative_services_list snapshot={@snapshot} removals={@removals} />
       <.ferretdb_list snapshot={@snapshot} removals={@removals} />
     </.grid>
     """
