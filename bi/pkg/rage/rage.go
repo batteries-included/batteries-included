@@ -4,8 +4,7 @@ import (
 	"bi/pkg/access"
 	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
+	"io"
 )
 
 type RageReport struct {
@@ -32,20 +31,17 @@ type PodRageInfo struct {
 	ContainerInfo map[string]ContainerRageInfo
 }
 
-func (report *RageReport) Write(path string) error {
+func (report *RageReport) Write(w io.Writer) error {
 	// json serialize the report and write it to the path
 	contents, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
 		return fmt.Errorf("unable to marshal rage report: %w", err)
 	}
 
-	// Make the rage directory if it doesn't exist
-	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
-		return fmt.Errorf("unable to create rage directory: %w", err)
+	_, err = w.Write(contents)
+	if err != nil {
+		return fmt.Errorf("unable to write rage contents: %w", err)
 	}
 
-	if err := os.WriteFile(path, contents, 0644); err != nil {
-		return fmt.Errorf("unable to write rage report: %w", err)
-	}
 	return nil
 }

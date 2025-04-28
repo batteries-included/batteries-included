@@ -339,11 +339,9 @@ func (kubeClient *batteryKubeClient) getClusterScopedGVRs() ([]schema.GroupVersi
 				switch len(groupVersion) {
 				case 1:
 					version = groupVersion[0]
-					slog.Error("got version", slog.Any("gv", groupVersion))
 				case 2:
 					group = groupVersion[0]
 					version = groupVersion[1]
-					slog.Error("got group version", slog.Any("gv", groupVersion))
 
 				default:
 					return nil, fmt.Errorf("unexpected group/version format: %s", apiResourceList.GroupVersion)

@@ -49,6 +49,11 @@ complete displaying a url for running control server.`,
 			return err
 		}
 
+		err = env.Init(ctx)
+		if err != nil {
+			return err
+		}
+
 		if err := log.CollectDebugLogs(env.DebugLogPath(cmd.CommandPath())); err != nil {
 			return err
 		}
