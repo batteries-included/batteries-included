@@ -199,7 +199,7 @@ defmodule ControlServerWeb.Live.PodShow do
     <.panel title="Containers" class="col-span-2">
       <.table id="container-status-table" rows={@container_statuses}>
         <:col :let={cs} label="Name">{Map.get(cs, "name", "")}</:col>
-        <:col :let={cs} label="Image">{Map.get(cs, "image", "")}</:col>
+        <:col :let={cs} label="Image"><pre>{Map.get(cs, "image", "")}</pre></:col>
         <:col :let={cs} label="Started"><.status_icon status={Map.get(cs, "started", false)} /></:col>
         <:col :let={cs} label="Ready"><.status_icon status={Map.get(cs, "ready", false)} /></:col>
         <:col :let={cs} label="Restart Count">
