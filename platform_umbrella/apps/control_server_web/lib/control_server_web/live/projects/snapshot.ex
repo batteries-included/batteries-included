@@ -86,13 +86,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
             id={"pg-users-table-#{cluster_index}"}
             users={pg_cluster.users}
             cluster={pg_cluster}
-            opts={[
-              tbody_tr_attrs: fn {_, user_index} ->
-                if has_removal?(@removals, [:postgres_clusters, cluster_index, :users, user_index]),
-                  do: %{class: "line-through"},
-                  else: %{}
-              end
-            ]}
+            opts={table_opts(@removals, [:postgres_clusters, cluster_index, :users])}
           >
             <:action :let={{_user, user_index}}>
               <.export_toggle_button
@@ -164,18 +158,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
           :if={jupyter_notebook.env_values != []}
           id={"jupyter-env-var-table-#{jupyter_notebook_idx}"}
           env_values={jupyter_notebook.env_values}
-          opts={[
-            tbody_tr_attrs: fn {_, env_value_index} ->
-              if has_removal?(@removals, [
-                   :jupyter_notebooks,
-                   jupyter_notebook_idx,
-                   :env_values,
-                   env_value_index
-                 ]),
-                 do: %{class: "line-through"},
-                 else: %{}
-            end
-          ]}
+          opts={table_opts(@removals, [:jupyter_notebooks, jupyter_notebook_idx, :env_values])}
         >
           <:action :let={{_env_value, env_value_index}}>
             <.export_toggle_button
@@ -207,18 +190,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
           :if={service.env_values != []}
           id={"traditional_env-var-table-#{service_index}"}
           env_values={service.env_values}
-          opts={[
-            tbody_tr_attrs: fn {_, env_value_index} ->
-              if has_removal?(@removals, [
-                   :traditional_services,
-                   service_index,
-                   :env_values,
-                   env_value_index
-                 ]),
-                 do: %{class: "line-through"},
-                 else: %{}
-            end
-          ]}
+          opts={table_opts(@removals, [:traditional_services, service_index, :env_values])}
         >
           <:action :let={{_env_value, env_value_index}}>
             <.export_toggle_button
@@ -247,18 +219,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
           :if={service.env_values != []}
           id={"knative_env-var-table-#{service_index}"}
           env_values={service.env_values}
-          opts={[
-            tbody_tr_attrs: fn {_, env_value_index} ->
-              if has_removal?(@removals, [
-                   :knative_services,
-                   service_index,
-                   :env_values,
-                   env_value_index
-                 ]),
-                 do: %{class: "line-through"},
-                 else: %{}
-            end
-          ]}
+          opts={table_opts(@removals, [:knative_services, service_index, :env_values])}
         >
           <:action :let={{_env_value, env_value_index}}>
             <.export_toggle_button
@@ -270,6 +231,16 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
       </.panel>
     <% end %>
     """
+  end
+
+  defp table_opts(removals, location) do
+    [
+      tbody_tr_attrs: fn {_, index} ->
+        if has_removal?(removals, location ++ [index]),
+          do: %{class: "line-through"},
+          else: %{}
+      end
+    ]
   end
 
   @impl Phoenix.LiveView
