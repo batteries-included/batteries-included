@@ -1,55 +1,55 @@
 defmodule Verify.PostgresTest do
   use Verify.TestCase, async: false
 
-  @moduletag :cluster_test
+  @new_postgres_path "/postgres/new"
+  @new_postgres_header h3("New Postgres Cluster")
+  @save_button Query.button("Save")
 
-  verify "can start a postgres cluster", %{session: session, control_url: url} do
+  verify "can start a postgres cluster", %{session: session} do
     cluster_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
-    |> visit(url <> "/postgres/new")
-    |> assert_has(Query.text("New Postgres Cluster"))
+    # create new cluster
+    |> visit(@new_postgres_path)
+    |> assert_has(@new_postgres_header)
     |> fill_in(Query.text_field("cluster[name]"), with: cluster_name)
-    # Why is the cluster name still filled in with the suggested name here
-    # This has to be a wallaby bug
-    |> click(Query.button("Save"))
-    # Make sure that the postres cluster show page title is there
-    |> assert_has(Query.text("Postgres Cluster", minimum: 1))
-    # Assert that we are on the correct cluster show page
-    # |> assert_text(cluster_name)
+    |> click(@save_button)
+    # verify show page
+    |> assert_has(h3("Postgres Cluster", minimum: 1))
+    |> assert_has(h3(cluster_name))
     # Make sure that this page has the kubernetes elements
     |> assert_has(Query.text("Pods"))
     |> click(Query.text("Pods"))
     # Assert that the first pod for the cluster is there.
-    |> assert_has(Query.css("tr:first-child", text: "#{cluster_name}-1"))
+    |> assert_has(table_row(text: "#{cluster_name}-1", count: 1))
     |> click(Query.text("Overview"))
-    |> assert_has(Query.css("h3", text: "Postgres Cluster"))
+    |> assert_has(h3("Postgres Cluster"))
 
     # Assert that we have gotten to the show page
     path = current_path(session)
     assert path =~ ~r/\/postgres\/[\d\w-]+\/show$/
   end
 
-  verify "choosing a different size update display", %{session: session, control_url: url} do
+  verify "choosing a different size update display", %{session: session} do
     session
-    |> visit(url <> "/postgres/new")
-    |> assert_has(Query.text("New Postgres Cluster"))
+    |> visit(@new_postgres_path)
+    |> assert_has(@new_postgres_header)
     |> find(Query.select("Size"), fn select ->
       click(select, Query.option("Huge"))
     end)
     |> assert_has(Query.text("1.0TB"))
   end
 
-  verify "can add a user", %{session: session, control_url: url} do
+  verify "can add a user", %{session: session} do
     test_username = "testuser-#{:rand.uniform(10_000)}"
 
     session
-    |> visit(url <> "/postgres/new")
-    |> assert_has(Query.text("New Postgres Cluster"))
+    |> visit(@new_postgres_path)
+    |> assert_has(@new_postgres_header)
     |> click(Query.button("New User"))
     |> fill_in(Query.text_field("pg_user[username]"), with: test_username)
     |> click(Query.button("Add User"))
-    |> assert_has(Query.css("table tbody tr", count: 2))
+    |> assert_has(table_row(count: 2))
     |> assert_has(Query.text(test_username, minimum: 1))
     |> find(Query.select("Owner"), fn select ->
       # We can select the user we just created as the database owner

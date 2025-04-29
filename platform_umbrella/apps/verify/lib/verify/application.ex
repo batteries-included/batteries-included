@@ -9,7 +9,9 @@ defmodule Verify.Application do
   def start(_type, _args) do
     children = [
       {CommonCore.Installs.Generator, [name: Verify.Installs.Generator]},
-      {Verify.KindInstallWorker, [name: Verify.KindInstallWorker]}
+      {Verify.KindInstallWorker, [name: Verify.KindInstallWorker]},
+      # for BatteryInstallWorker
+      {Registry, keys: :unique, name: Verify.Registry}
     ]
 
     opts = [strategy: :one_for_one, name: Verify.Supervisor]

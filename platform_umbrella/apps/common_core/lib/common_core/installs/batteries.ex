@@ -15,11 +15,8 @@ defmodule CommonCore.Installs.Batteries do
   @internal_int_test_battery_types ~w(
     battery_core
     cloudnative_pg
-    ferretdb
     istio_gateway
     metallb
-    redis
-    traditional_services
   )a
   @internal_prod_battery_types ~w(ferretdb traditional_services victoria_metrics grafana)a
 

@@ -1,16 +1,12 @@
 defmodule Verify.RedisTest do
-  use Verify.TestCase, async: false
-
-  @moduletag :cluster_test
+  use Verify.TestCase, async: false, batteries: ~w(redis)a
 
   @new_path "/redis/new"
-  @new_redis_header Query.css("h3", text: "New Redis Instance")
+  @new_redis_header h3("New Redis Instance")
   @name_field Query.text_field("redis_instance[name]")
   @save_button Query.button("Save Redis")
   @size_select Query.select("Size")
   @type_select Query.select("Type")
-
-  defp show_page_header(instance_name), do: Query.css("h3", text: instance_name)
 
   verify "can start a standalone redis instance", %{session: session} do
     instance_name = "int-test-#{:rand.uniform(10_000)}"
@@ -22,7 +18,7 @@ defmodule Verify.RedisTest do
     |> fill_in(@name_field, with: instance_name)
     |> click(@save_button)
     # verify show page
-    |> assert_has(show_page_header(instance_name))
+    |> assert_has(h3(instance_name))
     # Assert that the first pod for the cluster is shown
     |> assert_has(Query.css("tr:first-child", text: "#{instance_name}-0"))
 
@@ -54,10 +50,10 @@ defmodule Verify.RedisTest do
     end)
     |> click(@save_button)
     # verify
-    |> assert_has(show_page_header(instance_name))
+    |> assert_has(h3(instance_name))
     # check that we have both a leader and follower
-    |> assert_has(Query.css("tr", text: "#{instance_name}-leader-0"))
-    |> assert_has(Query.css("tr", text: "#{instance_name}-follower-0"))
+    |> assert_has(table_row(text: "#{instance_name}-leader-0"))
+    |> assert_has(table_row(text: "#{instance_name}-follower-0"))
 
     # Assert that we have gotten to the show page
     path = current_path(session)
@@ -79,9 +75,9 @@ defmodule Verify.RedisTest do
     # |> set_value(Query.css(~s|input[type="range"]|), "2")
     |> click(@save_button)
     # verify
-    |> assert_has(show_page_header(instance_name))
+    |> assert_has(h3(instance_name))
     # check that we have ~2~ 1 pods
-    |> assert_has(Query.css("tr", text: "#{instance_name}", count: 1))
+    |> assert_has(table_row(text: "#{instance_name}", count: 1))
 
     # Assert that we have gotten to the show page
     path = current_path(session)
