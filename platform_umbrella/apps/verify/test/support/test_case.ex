@@ -1,17 +1,26 @@
 defmodule Verify.TestCase do
   @moduledoc false
-
   use ExUnit.CaseTemplate
+
+  alias CommonCore.Batteries.Catalog
+  alias Verify.BatteryInstallWorker
+
+  require Logger
 
   using options do
     install_spec = Keyword.get(options, :install_spec, :int_test)
+    batteries = Keyword.get(options, :batteries, [])
 
     quote do
       use Wallaby.DSL
 
-      import Verify.TestCase, only: [verify: 3, get_tmp_dir: 1]
+      import Verify.TestCase.Helpers
 
       require Logger
+
+      ExUnit.Case.register_module_attribute(__MODULE__, :batteries)
+
+      @moduletag :cluster_test
 
       setup_all do
         Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
@@ -26,14 +35,33 @@ defmodule Verify.TestCase do
         # Stopping will also remove specs
         on_exit(&Verify.KindInstallWorker.stop_all/0)
 
-        tested_version = CommonCore.Defaults.Images.batteries_included_version()
+        # install any requested batteries
+        {:ok, session} = unquote(__MODULE__).start_session()
 
+        worker_pid =
+          ExUnit.Callbacks.start_supervised!({
+            Verify.BatteryInstallWorker,
+            [
+              name: {:via, Registry, {Verify.Registry, __MODULE__}},
+              session: session
+            ]
+          })
+
+        unquote(__MODULE__).install_batteries(worker_pid, unquote(batteries))
+
+        tested_version = CommonCore.Defaults.Images.batteries_included_version()
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
-        {:ok, [control_url: url, tested_version: tested_version, tmp_dir: tmp_dir]}
+        {:ok,
+         [
+           control_url: url,
+           tested_version: tested_version,
+           tmp_dir: tmp_dir,
+           battery_install_worker: worker_pid
+         ]}
       end
 
-      setup do
+      setup context do
         {:ok, session} = unquote(__MODULE__).start_session()
 
         {:ok, [session: session]}
@@ -41,9 +69,20 @@ defmodule Verify.TestCase do
     end
   end
 
-  @spec get_tmp_dir(module()) :: String.t()
-  def get_tmp_dir(mod) do
-    Path.join([Verify.PathHelper.tmp_dir!(), "bi-int-test", Atom.to_string(mod)])
+  def install_batteries(worker_pid, batteries \\ [])
+
+  def install_batteries(_worker_pid, []), do: :ok
+
+  def install_batteries(worker_pid, batteries) do
+    Enum.map(batteries, fn type ->
+      case Catalog.get(type) do
+        nil ->
+          raise "Couldn't find battery: #{inspect(type)}"
+
+        battery ->
+          BatteryInstallWorker.install_battery(worker_pid, battery)
+      end
+    end)
   end
 
   @spec start_session() :: {:ok, Wallaby.Session.t()} | {:error, Wallaby.reason()}
@@ -60,7 +99,7 @@ defmodule Verify.TestCase do
             # all of sillion valley uses
             #
             # Fix this at some point
-            "window-size=1280,720",
+            "window-size=1920,1080",
             # We don't want to see the browser
             "--headless",
             "--fullscreen",
@@ -81,53 +120,5 @@ defmodule Verify.TestCase do
         }
       }
     )
-  end
-
-  # Adapted from Wallaby.Feature.feature/3
-  defmacro verify(message, context \\ quote(do: _), contents) do
-    %{module: mod, file: file, line: line} = __CALLER__
-
-    contents =
-      quote do
-        try do
-          unquote(contents)
-          :ok
-        rescue
-          e ->
-            out = unquote(__MODULE__).rage_output_for_test(unquote(mod), unquote(message))
-
-            Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), unquote(message))
-            # taking a screenshot writes the paths without a final newline so add it here
-            IO.write("\n")
-            Verify.KindInstallWorker.rage(unquote(mod), out)
-
-            reraise(e, __STACKTRACE__)
-        end
-      end
-
-    context = Macro.escape(context)
-    contents = Macro.escape(contents, unquote: true)
-
-    quote bind_quoted: [
-            mod: mod,
-            file: file,
-            line: line,
-            context: context,
-            contents: contents,
-            message: message
-          ] do
-      name = ExUnit.Case.register_test(mod, file, line, :integration, message, [:verify])
-
-      def unquote(name)(unquote(context)), do: unquote(contents)
-    end
-  end
-
-  @spec rage_output_for_test(module(), binary()) :: String.t()
-  def rage_output_for_test(mod, message) do
-    tmp_dir = get_tmp_dir(mod)
-    name = String.replace(message, " ", "_")
-
-    time = :second |> :erlang.system_time() |> to_string()
-    Path.join([tmp_dir, "#{time}_#{name}.json"])
   end
 end

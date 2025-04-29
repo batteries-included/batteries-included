@@ -1,41 +1,47 @@
 defmodule Verify.ProjectCreationTest do
   use Verify.TestCase, async: false
 
-  @moduletag :cluster_test
+  @home_path "/"
+  @home_header h3("Home", minimum: 1)
+  @new_project_link Query.link("New Project")
+  @project_name_field Query.text_field("project[name]")
+  @type_select Query.select("Project Type")
+  @next_step_button Query.button("Next Step")
+  @create_project_button Query.button("Create Project")
 
-  verify "can start a demo like project", %{session: session, control_url: url} do
+  verify "can start a demo like project", %{session: session} do
     project_name = "pastebin-#{:rand.uniform(10_000)}"
 
     session
-    |> visit(url)
-    |> assert_has(Query.text("Home", minimum: 1))
-    |> click(Query.link("New Project"))
-    |> fill_in(Query.text_field("project[name]"), with: project_name)
-    |> find(Query.select("Project Type"), fn select ->
+    |> visit(@home_path)
+    |> assert_has(@home_header)
+    |> click(@new_project_link)
+    |> fill_in(@project_name_field, with: project_name)
+    |> find(@type_select, fn select ->
       click(select, Query.option("Web"))
     end)
-    |> click(Query.button("Next Step"))
+    |> click(@next_step_button)
     |> click(Query.text("I need a database"))
     |> touch_scroll(Query.text("Next Step"), 0, 0)
-    |> click(Query.button("Next Step"))
+    |> click(@next_step_button)
     |> assert_has(Query.text("Turn On Additional Batteries"))
-    |> click(Query.button("Create Project"))
-    |> assert_has(Query.text(project_name, minimum: 1))
+    |> click(@create_project_button)
+    |> assert_has(h3(project_name, minimum: 1))
   end
 
-  verify "can start a bare project", %{session: session, control_url: url} do
+  verify "can start a bare project", %{session: session} do
     project_name = "bare-#{:rand.uniform(10_000)}"
 
     session
-    |> visit(url)
-    |> assert_has(Query.text("Home", minimum: 1))
-    |> click(Query.link("New Project"))
-    |> fill_in(Query.text_field("project[name]"), with: project_name)
-    |> find(Query.select("Project Type"), fn select ->
+    |> visit(@home_path)
+    |> assert_has(@home_header)
+    |> click(@new_project_link)
+    |> fill_in(@project_name_field, with: project_name)
+    |> find(@type_select, fn select ->
       click(select, Query.option("Bare Project"))
     end)
-    |> click(Query.button("Next Step"))
-    |> click(Query.button("Create Project"))
-    |> assert_has(Query.text(project_name, minimum: 1))
+    |> click(@next_step_button)
+    |> click(@create_project_button)
+    |> assert_has(h3(project_name, minimum: 1))
   end
 end
