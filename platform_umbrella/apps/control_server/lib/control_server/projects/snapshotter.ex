@@ -20,7 +20,7 @@ defmodule ControlServer.Projects.Snapshoter do
   def take_snapshot(%Project{} = project) do
     # We will create a snapshot of the project
     with {:ok, res} <- run_take_snap_transaction(project) do
-      {:ok, struct!(ProjectSnapshot, post_snapshot_proccessing(res, project))}
+      ProjectSnapshot.new(post_snapshot_proccessing(res, project))
     end
   end
 
