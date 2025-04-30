@@ -78,7 +78,7 @@ func (env *InstallEnv) startAWS(ctx context.Context, progressReporter *util.Prog
 	}
 
 	var buf bytes.Buffer
-	if err := env.clusterProvider.Outputs(ctx, &buf); err != nil {
+	if err := env.clusterProvider.WriteOutputs(ctx, &buf); err != nil {
 		return fmt.Errorf("error getting cluster outputs: %w", err)
 	}
 

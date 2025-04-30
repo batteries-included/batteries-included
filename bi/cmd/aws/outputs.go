@@ -39,7 +39,7 @@ var outputsCmd = &cobra.Command{
 			return err
 		}
 
-		if err := p.Outputs(ctx, w); err != nil {
+		if err := p.WriteOutputs(ctx, w); err != nil {
 			return err
 		}
 

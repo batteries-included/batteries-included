@@ -155,12 +155,12 @@ func (c *KindClusterProvider) Destroy(ctx context.Context, _ *util.ProgressRepor
 	return nil
 }
 
-func (c *KindClusterProvider) Outputs(ctx context.Context, w io.Writer) error {
+func (c *KindClusterProvider) WriteOutputs(ctx context.Context, w io.Writer) error {
 	// Kind clusters do not have outputs.
 	return nil
 }
 
-func (c *KindClusterProvider) KubeConfig(ctx context.Context, w io.Writer) error {
+func (c *KindClusterProvider) WriteKubeConfig(ctx context.Context, w io.Writer) error {
 	kindProvider := cluster.NewProvider(c.nodeProvider,
 		cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
 
@@ -176,7 +176,7 @@ func (c *KindClusterProvider) KubeConfig(ctx context.Context, w io.Writer) error
 	return nil
 }
 
-func (c *KindClusterProvider) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
+func (c *KindClusterProvider) WriteWireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
 	if !c.gatewayEnabled {
 		return false, nil
 	}
