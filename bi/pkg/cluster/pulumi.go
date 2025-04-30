@@ -176,7 +176,7 @@ func (p *pulumiProvider) Destroy(ctx context.Context, progressReporter *util.Pro
 	return eks.Destroy(ctx, progressReporter)
 }
 
-func (p *pulumiProvider) Outputs(ctx context.Context, out io.Writer) error {
+func (p *pulumiProvider) WriteOutputs(ctx context.Context, out io.Writer) error {
 	if !p.initSuccessful {
 		return fmt.Errorf("attempted to destroy with uninitialized provider")
 	}
@@ -185,7 +185,7 @@ func (p *pulumiProvider) Outputs(ctx context.Context, out io.Writer) error {
 	return eks.Outputs(ctx, out)
 }
 
-func (p *pulumiProvider) KubeConfig(ctx context.Context, w io.Writer) error {
+func (p *pulumiProvider) WriteKubeConfig(ctx context.Context, w io.Writer) error {
 	if !p.initSuccessful {
 		return fmt.Errorf("attempted to export kubeconfig with uninitialized provider")
 	}
@@ -195,7 +195,7 @@ func (p *pulumiProvider) KubeConfig(ctx context.Context, w io.Writer) error {
 	return eks.KubeConfig(ctx, w)
 }
 
-func (p *pulumiProvider) WireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
+func (p *pulumiProvider) WriteWireGuardConfig(ctx context.Context, w io.Writer) (bool, error) {
 	if !p.initSuccessful {
 		return false, fmt.Errorf("attempted to export wireguard config with uninitialized provider")
 	}

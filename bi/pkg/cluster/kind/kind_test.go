@@ -37,14 +37,14 @@ func TestKindClusterProvider(t *testing.T) {
 	kubeConfigFile, err := os.Create(kubeConfigPath)
 	require.NoError(t, err)
 
-	require.NoError(t, clusterProvider.KubeConfig(ctx, kubeConfigFile))
+	require.NoError(t, clusterProvider.WriteKubeConfig(ctx, kubeConfigFile))
 	require.NoError(t, kubeConfigFile.Close())
 
 	clientConfPath := filepath.Join(outputDir, "client.yaml")
 	clientConfFile, err := os.OpenFile(clientConfPath, os.O_CREATE|os.O_WRONLY, 0o400)
 	require.NoError(t, err)
 
-	_, err = clusterProvider.WireGuardConfig(ctx, clientConfFile)
+	_, err = clusterProvider.WriteWireGuardConfig(ctx, clientConfFile)
 	require.NoError(t, err)
 
 	require.NoError(t, clientConfFile.Close())

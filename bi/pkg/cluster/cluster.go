@@ -17,12 +17,12 @@ type Provider interface {
 	// The progress argument can be used to add a progress bar to the operation.
 	// If nil, no progress bar will be shown.
 	Destroy(context.Context, *util.ProgressReporter) error
-	// Outputs writes the cluster outputs to the provided writer.
+	// WriteOutputs writes the cluster outputs to the provided writer.
 	// This is typically a loosely structured set of key-values encoded in JSON.
-	Outputs(context.Context, io.Writer) error
-	// KubeConfig returns the kubeconfig for the cluster.
-	KubeConfig(ctx context.Context, w io.Writer) error
-	// WireGuardConfig returns the WireGuard configuration for the cluster.
+	WriteOutputs(context.Context, io.Writer) error
+	// WriteKubeConfig returns the kubeconfig for the cluster.
+	WriteKubeConfig(ctx context.Context, w io.Writer) error
+	// WriteWireGuardConfig returns the WireGuard configuration for the cluster.
 	// The return value indicates if the cluster has WireGuard enabled.
-	WireGuardConfig(ctx context.Context, w io.Writer) (hasConfig bool, err error)
+	WriteWireGuardConfig(ctx context.Context, w io.Writer) (hasConfig bool, err error)
 }
