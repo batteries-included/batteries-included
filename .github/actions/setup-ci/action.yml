@@ -32,8 +32,8 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: |
-          /home/runner/.cache/go-cache
-          /home/runner/.cache/go-mod-cache
+          ${{ env.GOCACHE }}
+          ${{ env.GOMODCACHE }}
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
         restore-keys: |
           ${{ runner.os }}-go-
