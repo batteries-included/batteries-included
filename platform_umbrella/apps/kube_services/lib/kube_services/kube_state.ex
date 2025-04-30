@@ -46,12 +46,12 @@ defmodule KubeServices.KubeState do
 
   def default_state_table, do: @default_table
 
-  @spec snapshot(atom | :ets.tid()) :: map()
+  @spec snapshot(:ets.table()) :: map()
   def snapshot(t \\ @default_table) do
     Runner.snapshot(t)
   end
 
-  @spec get!(atom() | :ets.tid(), map()) :: map()
+  @spec get!(:ets.table(), map()) :: map()
   def get!(t \\ @default_table, resource) do
     get!(
       t,
@@ -61,7 +61,7 @@ defmodule KubeServices.KubeState do
     )
   end
 
-  @spec get!(atom() | :ets.tid(), atom(), binary(), binary()) :: map()
+  @spec get!(:ets.table(), atom(), binary(), binary()) :: map()
   def get!(t \\ @default_table, resource_type, namespace, name) do
     case get(t, resource_type, namespace, name) do
       {:ok, %{} = res} ->
@@ -75,23 +75,23 @@ defmodule KubeServices.KubeState do
     end
   end
 
-  @spec get(atom() | :ets.tid(), map()) :: :missing | {:ok, map()}
+  @spec get(:ets.table(), map()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource),
     do: get(t, ApiVersionKind.resource_type(resource), Resource.namespace(resource), Resource.name(resource))
 
-  @spec get(atom() | :ets.tid(), atom(), binary(), binary()) :: :missing | {:ok, map()}
+  @spec get(:ets.table(), atom(), binary(), binary()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource_type, namespace, name) do
     Runner.get(t, resource_type, namespace, name)
   end
 
-  @spec get_all(atom() | :ets.tid(), atom()) :: list(map)
+  @spec get_all(:ets.table(), atom()) :: list(map)
   def get_all(t \\ @default_table, res_type) do
     t
     |> Runner.get_all(res_type)
     |> Enum.sort_by(&ResourceVersion.sortable_resource_version/1)
   end
 
-  @spec get_owned_resources(atom() | :ets.tid(), atom(), list(String.t()) | map) :: list(map)
+  @spec get_owned_resources(:ets.table(), atom(), list(String.t()) | map) :: list(map)
   def get_owned_resources(table \\ @default_table, resource_type, owner_uuids_or_resource)
 
   def get_owned_resources(table, resource_type, %{"metadata" => %{"uid" => uid}}) do
@@ -108,7 +108,7 @@ defmodule KubeServices.KubeState do
 
   def get_owned_resources(_, _, _), do: []
 
-  @spec get_events(atom() | :ets.tid(), String.t() | map) :: list(map)
+  @spec get_events(:ets.table(), String.t() | map) :: list(map)
   def get_events(table \\ @default_table, involved_uid_or_resource)
 
   def get_events(table, %{"metadata" => %{"uid" => uid}}), do: get_events(table, uid)
