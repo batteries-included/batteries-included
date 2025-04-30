@@ -14,6 +14,7 @@ defmodule Verify.TestCase.Helpers do
   - The tested version: `tested_version`
   - The URL of the control server: `control_url`
   - The name/pid of the BatteryInstallWorker: `battery_install_worker`
+  - The path to the kube config file for the cluster: `kube_config_path`
   """
   defmacro verify(message, context \\ quote(do: _), contents) do
     %{module: mod, file: file, line: line} = __CALLER__
@@ -47,7 +48,7 @@ defmodule Verify.TestCase.Helpers do
             contents: contents,
             message: message
           ] do
-      name = ExUnit.Case.register_test(mod, file, line, :integration, message, [:verify])
+      name = ExUnit.Case.register_test(mod, file, line, :verification, message, [:verify])
 
       def unquote(name)(unquote(context)), do: unquote(contents)
     end

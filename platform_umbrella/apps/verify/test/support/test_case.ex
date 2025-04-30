@@ -27,7 +27,7 @@ defmodule Verify.TestCase do
         tmp_dir = get_tmp_dir(__MODULE__)
         File.mkdir_p!(tmp_dir)
 
-        {:ok, url} = Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
+        {:ok, url, kube_config_path} = Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
         Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
         Application.put_env(:wallaby, :base_url, url)
 
@@ -39,10 +39,10 @@ defmodule Verify.TestCase do
         {:ok, session} = unquote(__MODULE__).start_session()
 
         worker_pid =
-          ExUnit.Callbacks.start_supervised!({
+          start_supervised!({
             Verify.BatteryInstallWorker,
             [
-              name: {:via, Registry, {Verify.Registry, __MODULE__}},
+              name: {:via, Registry, {Verify.Registry, __MODULE__, Verify.BatteryInstallWorker}},
               session: session
             ]
           })
@@ -54,10 +54,11 @@ defmodule Verify.TestCase do
 
         {:ok,
          [
+           battery_install_worker: worker_pid,
            control_url: url,
+           kube_config_path: kube_config_path,
            tested_version: tested_version,
-           tmp_dir: tmp_dir,
-           battery_install_worker: worker_pid
+           tmp_dir: tmp_dir
          ]}
       end
 

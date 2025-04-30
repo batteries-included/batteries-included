@@ -66,15 +66,16 @@ defmodule Verify.KindInstallWorker do
     {spec, path} = build_install_spec(identifier, state)
     Logger.debug("Starting with #{path}")
 
-    case System.cmd(state.bi_binary, ["start", path]) do
-      {_output, 0} ->
-        Logger.debug("Kind install started from #{path}")
-
-        {:reply, {:ok, get_url(spec)}, %{state | started: Map.put(state.started, mod, path)}}
-
-      response ->
+    with {_output, 0} <- System.cmd(state.bi_binary, ["start", path]),
+         {kube_config_path, 0} <- System.cmd(state.bi_binary, ["debug", "kube-config-path", path]),
+         {:ok, url} <- get_url(spec, kube_config_path) do
+      Logger.debug("Kind install started from #{path}")
+      Logger.debug("Kubeconfig found at #{kube_config_path}")
+      {:reply, {:ok, url, kube_config_path}, %{state | started: Map.put(state.started, mod, path)}}
+    else
+      error ->
         Logger.warning("Unable to start Kind install from #{path}")
-        {:reply, response, state}
+        {:reply, error, state}
     end
   end
 
@@ -123,18 +124,21 @@ defmodule Verify.KindInstallWorker do
     {spec, path}
   end
 
-  def get_url(%{target_summary: summary} = _spec) do
-    # TODO: use bi to get kubeconfig path from spec instead of defaulting to ~/.kube/config
+  def get_url(%{target_summary: summary} = _spec, kube_config_path) do
     # don't use the connection pool
-    {:ok, conn} = K8s.Conn.from_file("~/.kube/config", insecure_skip_tls_verify: true)
+    {:ok, conn} = K8s.Conn.from_file(kube_config_path, insecure_skip_tls_verify: true)
 
     {api_version, kind} = ApiVersionKind.from_resource_type!(:config_map)
     core_namespace = Namespaces.core_namespace(summary)
     op = K8s.Client.get(api_version, kind, name: "access-info", namespace: core_namespace)
 
-    {:ok, %{"data" => %{"hostname" => hostname, "ssl" => ssl}}} = K8s.Client.run(conn, op)
+    case K8s.Client.run(conn, op) do
+      {:ok, %{"data" => %{"hostname" => hostname, "ssl" => ssl}}} ->
+        {:ok, "#{if ssl == "true", do: "https", else: "http"}://#{hostname}"}
 
-    "#{if ssl == "true", do: "https", else: "http"}://#{hostname}"
+      error ->
+        error
+    end
   end
 
   def start(mod, identifier) do
