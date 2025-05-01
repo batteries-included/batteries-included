@@ -1,6 +1,7 @@
+---
 name: BIX Elixir
 
-on:
+'on':
   push:
     branches:
       - master

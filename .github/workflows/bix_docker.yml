@@ -1,6 +1,7 @@
+---
 name: BIX Docker
 
-on:
+'on':
   push:
     branches:
       - master

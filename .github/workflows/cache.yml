@@ -1,6 +1,7 @@
+---
 name: Manage Caches
 
-on:
+'on':
   push:
     branches:
       - master
