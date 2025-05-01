@@ -18,7 +18,8 @@ defmodule KubeServices.Batteries.BatteryCore do
          usage_report_path: URLs.usage_report_path(battery.config),
          host_report_path: URLs.host_reports_path(battery.config),
          status_path: URLs.status_path(battery.config),
-         stable_versions_path: URLs.stable_versions_path(battery.config)
+         stable_versions_path: URLs.stable_versions_path(battery.config),
+         project_snapshot_path: URLs.project_snapshot_path(battery.config)
        ]},
       {KubeServices.ET.Usage, [home_client_pid: HomeBaseClient]},
       {KubeServices.ET.Hosts, [home_client_pid: HomeBaseClient]},

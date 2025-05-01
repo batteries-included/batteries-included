@@ -16,7 +16,8 @@ config :common_core, CommonCore.Defaults, version_override: System.get_env("VERS
 
 config :common_core, CommonCore.JWK,
   sign_key: :test,
-  verify_keys: [:test_pub, :home_a_pub, :home_b_pub]
+  verify_keys: [:test_pub, :home_a_pub, :home_b_pub],
+  encrypt_key: :test_pub
 
 config :common_core, CommonCore.Resources.Hashing, key: "/AVk+4bbv7B1Mnh2Rta4U/hvtF7Z3jwFkYny1RqkyiM="
 

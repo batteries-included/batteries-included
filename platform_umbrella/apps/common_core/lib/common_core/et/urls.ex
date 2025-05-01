@@ -28,4 +28,8 @@ defmodule CommonCore.ET.URLs do
   def status_path(%BatteryCoreConfig{} = config) do
     "/installations/#{config.install_id}/status"
   end
+
+  def project_snapshot_path(%BatteryCoreConfig{} = config) do
+    "/installations/#{config.install_id}/project_snapshots"
+  end
 end

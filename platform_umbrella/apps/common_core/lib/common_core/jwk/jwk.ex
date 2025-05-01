@@ -72,11 +72,11 @@ defmodule CommonCore.JWK do
     result |> JOSE.JWT.sign(%{"alg" => @sign_algo}, payload) |> elem(1)
   end
 
-  def encrypt(for_key, payload) do
+  def encrypt(from_key, payload) do
     jwk_name = sign_key()
     sign_jwk = jwk_name |> Cache.get() |> to_jwk()
 
-    for_key = to_jwk(for_key)
+    from_key = to_jwk(from_key)
 
     signed =
       sign_jwk
@@ -84,7 +84,7 @@ defmodule CommonCore.JWK do
       |> JOSE.JWS.compact()
       |> elem(1)
 
-    {for_key, sign_jwk}
+    {sign_jwk, from_key}
     |> JOSE.JWE.block_encrypt(
       signed,
       %{
@@ -95,11 +95,11 @@ defmodule CommonCore.JWK do
     |> elem(1)
   end
 
-  def decrypt(jwk, token) do
+  def decrypt(from_jwk, token) do
     jwk_name = sign_key()
     sign_jwk = jwk_name |> Cache.get() |> to_jwk()
 
-    jwk = to_jwk(jwk)
+    from_jwk = to_jwk(from_jwk)
 
     # This line make dialyzer very upset.
     # block_encrypt accepts a tuple with two elements
@@ -107,13 +107,13 @@ defmodule CommonCore.JWK do
     #
     # However that fact is not in the dialyzer spec
     # and so it gets upset.
-    case JOSE.JWE.block_decrypt({to_jwk(sign_jwk), to_jwk(jwk)}, token) do
+    case JOSE.JWE.block_decrypt({to_jwk(from_jwk), to_jwk(sign_jwk)}, token) do
       {:error, _} ->
         nil
 
       {value, _jwe} ->
         sign_jwk
-        |> JOSE.JWS.verify_strict(["ES512"], value)
+        |> JOSE.JWS.verify_strict([@sign_algo], value)
         |> elem(1)
         |> JSON.decode!()
     end

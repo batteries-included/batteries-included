@@ -15,6 +15,7 @@ defmodule CommonCore.Installation do
   alias CommonCore.Teams.Team
 
   @required_fields ~w(usage kube_provider slug)a
+  @dialyzer {:nowarn_function, decrypt_message!: 2}
 
   batt_schema "installations" do
     slug_field :slug
@@ -127,6 +128,7 @@ defmodule CommonCore.Installation do
 
   def verify_message!(%__MODULE__{control_jwk: control_jwk}, message) do
     case JOSE.JWT.verify(control_jwk, message) do
+      # end
       {true, jwt, _} ->
         {_, map} = JOSE.JWT.to_map(jwt)
         map
@@ -134,5 +136,9 @@ defmodule CommonCore.Installation do
       {false, _, _} ->
         raise CommonCore.JWK.BadKeyError.exception()
     end
+  end
+
+  def decrypt_message!(%__MODULE__{control_jwk: control_jwk}, message) do
+    CommonCore.JWK.decrypt(control_jwk, message)
   end
 end

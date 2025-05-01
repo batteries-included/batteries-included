@@ -26,18 +26,10 @@ defmodule CommonCore.JwkTest do
 
       input = %{"test" => 100}
 
-      enc = CommonCore.JWK.encrypt(alice_pub, input)
-      out = CommonCore.JWK.decrypt(alice, enc)
+      enc = CommonCore.JWK.encrypt(alice, input)
+      out = CommonCore.JWK.decrypt(alice_pub, enc)
 
       assert out == input
     end
-
-    # test "can encrypt with common core" do
-    #   alice = JOSE.JWK.generate_key({:okp, :X448})
-    #   alice_pub = JOSE.JWK.to_public(alice)
-
-    #   enc = CommonCore.JWK.encrypt(alice_pub, %{test: 100})
-    #   assert is_binary(enc)
-    # end
   end
 end
