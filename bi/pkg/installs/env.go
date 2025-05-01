@@ -113,8 +113,9 @@ func (env *InstallEnv) NeedsKubeCleanup() bool {
 	return err == nil
 }
 
-func (env *InstallEnv) Init(ctx context.Context) error {
-	if env.source == "url" {
+func (env *InstallEnv) Init(ctx context.Context, remove bool) error {
+	// since NeedsKubeCleanup is predicated on their being a kube config, allow skipping removal
+	if env.source == "url" && remove {
 		// We got from the url so we should remove everything
 		_ = env.Remove()
 	}

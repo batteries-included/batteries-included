@@ -49,7 +49,7 @@ complete displaying a url for running control server.`,
 			return err
 		}
 
-		err = env.Init(ctx)
+		err = env.Init(ctx, true)
 		if err != nil {
 			return err
 		}
