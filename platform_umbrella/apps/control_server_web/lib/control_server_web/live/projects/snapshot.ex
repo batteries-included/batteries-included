@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
      socket
      |> assign_project(id)
      |> assign_snapshot()
-     |> assign_form(%{})
+     |> assign_form()
      |> assign_page_title()
      |> assign_removals([])}
   end
