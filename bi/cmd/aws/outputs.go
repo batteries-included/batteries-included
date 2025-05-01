@@ -31,7 +31,7 @@ var outputsCmd = &cobra.Command{
 			return err
 		}
 
-		p := cluster.NewPulumiProvider(env.Spec.Slug)
+		p := cluster.NewPulumiProvider(env.Spec)
 
 		ctx := cmd.Context()
 

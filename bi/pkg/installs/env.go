@@ -58,7 +58,7 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman)
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
-		env.clusterProvider = cluster.NewPulumiProvider(env.Slug)
+		env.clusterProvider = cluster.NewPulumiProvider(env.Spec)
 	case "provided":
 	default:
 		return fmt.Errorf("unknown provider: %s", provider)

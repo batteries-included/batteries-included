@@ -21,13 +21,13 @@ import (
 type testFn[T any] func(convertedAPIObject *T) (done bool, err error)
 
 func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.KubeClient) error {
-	usage, err := spec.GetBatteryConfigField("battery_core", "usage")
+	usage, err := spec.GetCoreUsage()
 	if err != nil {
 		return fmt.Errorf("failed to determine if control server is running in cluster: %w", err)
 	}
 
 	// no need to wait for anything else if the control server isn't running in cluster
-	if usage.(string) == "internal_dev" {
+	if usage == "internal_dev" {
 		slog.Debug("control server not running in cluster, skipping wait")
 		return nil
 	}
