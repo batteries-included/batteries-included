@@ -7,6 +7,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
   import ControlServerWeb.PgUserTable
   import ControlServerWeb.Projects.ExportToggleButton
 
+  alias CommonCore.Projects.ProjectSnapshot
   alias CommonCore.Util.Memory
   alias ControlServer.Projects
   alias ControlServer.Projects.Snapshoter
@@ -17,6 +18,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
      socket
      |> assign_project(id)
      |> assign_snapshot()
+     |> assign_form(%{})
      |> assign_page_title()
      |> assign_removals([])}
   end
@@ -29,7 +31,19 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
 
   defp assign_snapshot(%{assigns: %{project: project}} = socket) do
     {:ok, snapshot} = Snapshoter.take_snapshot(project)
+
     assign(socket, :snapshot, snapshot)
+  end
+
+  defp assign_form(%{assigns: %{snapshot: snapshot}} = socket, params \\ %{}) do
+    changeset = ProjectSnapshot.changeset(snapshot, params)
+    form = to_form(changeset, as: :snapshot)
+    new_snapshot = Ecto.Changeset.apply_changes(changeset)
+
+    socket
+    |> assign(:changeset, changeset)
+    |> assign(:form, form)
+    |> assign(:snapshot, new_snapshot)
   end
 
   defp assign_page_title(socket) do
@@ -63,6 +77,10 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
   def handle_event("toggle_remove", params, socket) do
     location = location_from_params(params)
     {:noreply, toggle_removal(socket, location)}
+  end
+
+  def handle_event("validate", %{"snapshot" => snapshot_params}, socket) do
+    {:noreply, assign_form(socket, snapshot_params)}
   end
 
   defp postgres_list(assigns) do
@@ -178,9 +196,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
       <.panel title={"Traditional Service: #{service.name}"}>
         <.flex column></.flex>
         <.data_list>
-          <:item title="Memory Limits">
-            {Memory.humanize(service.memory_limits)}
-          </:item>
+          <:item title="Memory Limits">> {Memory.humanize(service.memory_limits)}</:item>
           <:item title="Virtual Size">
             {CommonCore.Util.VirtualSize.get_virtual_size(service)}
           </:item>
@@ -243,22 +259,42 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     ]
   end
 
+  defp snapshot_form_panel(assigns) do
+    ~H"""
+    <.panel title={"Snapshot: #{@snapshot.name}"}>
+      <.flex>
+        <.field>
+          <:label>Snapshot Name</:label>
+          <.input field={@form[:name]} />
+        </.field>
+        <.field>
+          <:label>Description</:label>
+          <.input type="textarea" field={@form[:description]} rows="15" />
+        </.field>
+      </.flex>
+    </.panel>
+    """
+  end
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.page_header back_link={~p"/projects"} title={@page_title}>
-      <.button variant="dark" phx-click="export_snapshot" icon={:arrow_up_on_square_stack}>
-        Export
-      </.button>
-    </.page_header>
-    <.grid columns={%{sm: 1, lg: 2}} class="w-full">
-      <.postgres_list snapshot={@snapshot} removals={@removals} />
-      <.redis_list snapshot={@snapshot} removals={@removals} />
-      <.jupyter_notebook_list snapshot={@snapshot} removals={@removals} />
-      <.traditional_services_list snapshot={@snapshot} removals={@removals} />
-      <.knative_services_list snapshot={@snapshot} removals={@removals} />
-      <.ferretdb_list snapshot={@snapshot} removals={@removals} />
-    </.grid>
+    <.form id="snapshot-form" for={@form} novalidate phx-submit="export" phx-change="validate">
+      <.page_header back_link={~p"/projects"} title={@page_title}>
+        <.button variant="dark" type="submit" icon={:arrow_up_on_square_stack}>
+          Export
+        </.button>
+      </.page_header>
+      <.grid columns={%{sm: 1, lg: 2}} class="w-full">
+        <.snapshot_form_panel snapshot={@snapshot} form={@form} />
+        <.postgres_list snapshot={@snapshot} removals={@removals} />
+        <.redis_list snapshot={@snapshot} removals={@removals} />
+        <.jupyter_notebook_list snapshot={@snapshot} removals={@removals} />
+        <.traditional_services_list snapshot={@snapshot} removals={@removals} />
+        <.knative_services_list snapshot={@snapshot} removals={@removals} />
+        <.ferretdb_list snapshot={@snapshot} removals={@removals} />
+      </.grid>
+    </.form>
     """
   end
 end
