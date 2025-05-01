@@ -8,6 +8,7 @@ import (
 
 	"bi/pkg/cluster/eks"
 	"bi/pkg/cluster/util"
+	"bi/pkg/specs"
 
 	"github.com/adrg/xdg"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
@@ -23,10 +24,10 @@ const (
 
 type pulumiProvider struct {
 	initSuccessful bool
+	spec           *specs.InstallSpec
 
 	cfg auto.ConfigMap
 	projectName,
-	slug,
 	workDirRoot string
 
 	pulumiHome auto.LocalWorkspaceOption
@@ -34,27 +35,17 @@ type pulumiProvider struct {
 	envVars    auto.LocalWorkspaceOption
 }
 
-func NewPulumiProvider(slug string) Provider {
+func NewPulumiProvider(spec *specs.InstallSpec) Provider {
 	return &pulumiProvider{
 		projectName: "bi",
-		slug:        slug,
+		spec:        spec,
 	}
 }
 
 func (p *pulumiProvider) Init(ctx context.Context) error {
-	ws, err := p.configure(ctx)
+	_, err := p.configure(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to configure pulumi provider: %w", err)
-	}
-
-	// add plugins that need to be installed here
-	plugins := map[string]string{
-		"aws":       "v6.54.2",
-		"cloudinit": "v1.4.7",
-		"tls":       "v5.0.7",
-	}
-	if err := p.installPlugins(ctx, ws, plugins); err != nil {
-		return fmt.Errorf("failed to install necessary pulumi plugins: %w", err)
 	}
 
 	p.initSuccessful = true
@@ -62,13 +53,18 @@ func (p *pulumiProvider) Init(ctx context.Context) error {
 	return nil
 }
 
-// configure sets up configuration common to all substacks and handles installing the plugins necessary
+// configure sets up configuration common to all substacks
 func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) {
-	stackName := auto.FullyQualifiedStackName("organization", p.projectName, p.slug)
+	stackName := auto.FullyQualifiedStackName("organization", p.projectName, p.spec.Slug)
 
 	tags, err := newTags(stackName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create tags for %s: %w", stackName, err)
+	}
+
+	baseNS, err := p.spec.GetBatteryConfigField("battery_core", "base_namespace")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get base namespace: %w", err)
 	}
 
 	p.cfg = auto.ConfigMap{
@@ -80,7 +76,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"cluster:instanceType":   {Value: "t3a.medium"},
 		"cluster:maxSize":        {Value: "4"},
 		"cluster:minSize":        {Value: "2"},
-		"cluster:name":           {Value: p.slug},
+		"cluster:name":           {Value: p.spec.Slug},
 		"cluster:version":        {Value: "1.32"},
 		"cluster:volumeSize":     {Value: "20"},
 		"cluster:volumeType":     {Value: "gp3"},
@@ -90,8 +86,8 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		"gateway:port":           {Value: "51820"},
 		"gateway:volumeSize":     {Value: "12"},
 		"gateway:volumeType":     {Value: "gp3"},
-		"karpenter:namespace":    {Value: "battery-base"}, // TODO(jdt): get from install spec
-		"lbcontroller:namespace": {Value: "battery-base"}, // TODO(jdt): get from install spec
+		"karpenter:namespace":    {Value: baseNS.(string)},
+		"lbcontroller:namespace": {Value: baseNS.(string)},
 		"vpc:cidrBlock":          {Value: "100.64.0.0/16"},
 	}
 
@@ -147,17 +143,6 @@ func (p *pulumiProvider) createWorkspace(ctx context.Context) (auto.Workspace, e
 	)
 }
 
-// installPlugins installs the provided plugins
-func (p *pulumiProvider) installPlugins(ctx context.Context, ws auto.Workspace, plugins map[string]string) error {
-	for plugin, version := range plugins {
-		if err := ws.InstallPlugin(ctx, plugin, version); err != nil {
-			return fmt.Errorf("failed to install necessary plugin: %s: %w", plugin, err)
-		}
-	}
-
-	return nil
-}
-
 func (p *pulumiProvider) Create(ctx context.Context, progressReporter *util.ProgressReporter) error {
 	if !p.initSuccessful {
 		return fmt.Errorf("attempted to create with uninitialized provider")
@@ -209,7 +194,7 @@ func (p *pulumiProvider) WriteWireGuardConfig(ctx context.Context, w io.Writer) 
 func (p *pulumiProvider) toEKSConfig() *eks.Config {
 	return &eks.Config{
 		ProjectBaseName: p.projectName,
-		Slug:            p.slug,
+		Slug:            p.spec.Slug,
 		WorkDirRoot:     p.workDirRoot,
 
 		Config:     p.cfg,

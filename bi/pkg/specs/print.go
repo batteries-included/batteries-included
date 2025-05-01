@@ -11,13 +11,13 @@ import (
 func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.KubeClient, slug string) error {
 	// Print the control server URL
 	// This should only be called after `WaitForBootstrap`
-	usage, err := spec.GetBatteryConfigField("battery_core", "usage")
+	usage, err := spec.GetCoreUsage()
 	if err != nil {
 		return fmt.Errorf("failed to determine if control server is running in cluster: %w", err)
 	}
 
 	// If we're running in dev mode then assume the control server will be run via `bix dev`
-	if usage.(string) == "internal_dev" {
+	if usage == "internal_dev" {
 		slog.Debug("Control server is not running in cluster")
 		return nil
 	}
