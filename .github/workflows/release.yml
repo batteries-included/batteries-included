@@ -1,6 +1,7 @@
+---
 name: Release
 
-on:
+'on':
   push:
     # Only release on tags that look like a semantic version
     # 1.0.0 of 0.50.0
@@ -19,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         # See: https://goreleaser.com/errors/no-history/
-        # Leading to: https://goreleaser.com/ci/ |  https://goreleaser.com/ci/actions/#workflow
+        # Leading to: https://goreleaser.com/ci/actions/#workflow
         with:
           fetch-depth: 0
           persist-credentials: false

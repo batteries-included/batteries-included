@@ -1,6 +1,7 @@
+---
 name: BIX General
 
-on:
+'on':
   push:
     branches:
       - master
@@ -14,7 +15,7 @@ permissions: {}
 jobs:
   check-fmt:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,3 +28,24 @@ jobs:
 
       - name: Check FMT via bin/bix
         run: bin/bix check-fmt
+
+  misc-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup ASDF
+        uses: ./.github/actions/setup-asdf
+
+      - name: Run actionlint
+        if: always()
+        run: |
+          echo "::add-matcher::.github/actionlint-matcher.json"
+          actionlint -color
+
+      - name: Run yamllint
+        if: always()
+        run: yamllint -f github .github

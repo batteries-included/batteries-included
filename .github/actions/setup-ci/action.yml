@@ -1,3 +1,4 @@
+---
 name: 'Setup CI'
 description: 'Sets up runner for CI'
 inputs:

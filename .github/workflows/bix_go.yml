@@ -1,6 +1,7 @@
+---
 name: BIX Golang
 
-on:
+'on':
   push:
     branches:
       - master
