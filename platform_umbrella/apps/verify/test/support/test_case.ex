@@ -25,7 +25,6 @@ defmodule Verify.TestCase do
       setup_all do
         Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
         tmp_dir = get_tmp_dir(__MODULE__)
-        File.mkdir_p!(tmp_dir)
 
         {:ok, url, kube_config_path} = Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
         Application.put_env(:wallaby, :screenshot_dir, tmp_dir)

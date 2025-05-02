@@ -18,11 +18,7 @@ defmodule Verify.KubeTest do
   end
 
   verify "can filter to show only one kubernetes pod", %{session: session} do
-    session
-    |> visit(@pod_path)
-    |> assert_has(table_row(minimum: 6))
-    |> fill_in(Query.text_field("filter_value"), with: "pg-controlserver-1")
-    |> assert_has(table_row(count: 1))
+    assert_pod_running(session, "pg-controlserver-1")
   end
 
   verify "can filter to nothing", %{session: session} do

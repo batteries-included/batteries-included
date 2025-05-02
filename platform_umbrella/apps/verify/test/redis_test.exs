@@ -25,6 +25,8 @@ defmodule Verify.RedisTest do
     # Assert that we have gotten to the show page
     path = current_path(session)
     assert path =~ ~r/\/redis\/[\d\w-]+\/show$/
+
+    assert_pod_running(session, instance_name)
   end
 
   verify "choosing a different size update display", %{session: session} do
@@ -39,6 +41,8 @@ defmodule Verify.RedisTest do
 
   verify "can start a replication redis instance", %{session: session} do
     instance_name = "int-test-#{:rand.uniform(10_000)}"
+    leader_name = "#{instance_name}-leader-0"
+    follower_name = "#{instance_name}-follower-0"
 
     session
     # create new
@@ -52,12 +56,14 @@ defmodule Verify.RedisTest do
     # verify
     |> assert_has(h3(instance_name))
     # check that we have both a leader and follower
-    |> assert_has(table_row(text: "#{instance_name}-leader-0"))
-    |> assert_has(table_row(text: "#{instance_name}-follower-0"))
+    |> assert_has(table_row(text: leader_name))
+    |> assert_has(table_row(text: follower_name))
 
     # Assert that we have gotten to the show page
     path = current_path(session)
     assert path =~ ~r/\/redis\/[\d\w-]+\/show$/
+
+    assert_pods_running(session, [leader_name, follower_name])
   end
 
   verify "can start a redis cluster", %{session: session} do
@@ -82,5 +88,7 @@ defmodule Verify.RedisTest do
     # Assert that we have gotten to the show page
     path = current_path(session)
     assert path =~ ~r/\/redis\/[\d\w-]+\/show$/
+
+    assert_pod_running(session, instance_name)
   end
 end

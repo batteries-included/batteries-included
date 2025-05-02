@@ -1,6 +1,8 @@
 defmodule Verify.TestCase.Helpers do
   @moduledoc false
 
+  import Wallaby.Browser
+
   alias Verify.PathHelper
   alias Wallaby.Query
 
@@ -70,4 +72,26 @@ defmodule Verify.TestCase.Helpers do
 
   def table_row(opts \\ []), do: Query.css("table tbody tr", opts)
   def h3(text, opts \\ []), do: Query.css("h3", Keyword.put(opts, :text, text))
+
+  def assert_pod(session, name_fragment) do
+    session
+    |> visit("/kube/pods")
+    |> assert_has(table_row(minimum: 6))
+    |> fill_in(Query.text_field("filter_value"), with: name_fragment)
+    |> assert_has(table_row(text: name_fragment, count: 1))
+  end
+
+  def assert_pod_running(session, name_fragment), do: assert_pods_running(session, [name_fragment])
+
+  def assert_pods_running(session, name_fragments) do
+    session
+    |> visit("/kube/pods")
+    |> assert_has(table_row(minimum: 6))
+
+    Enum.each(name_fragments, fn frag ->
+      session
+      |> fill_in(Query.text_field("filter_value"), with: frag)
+      |> assert_has(table_row(text: "Running", count: 1))
+    end)
+  end
 end
