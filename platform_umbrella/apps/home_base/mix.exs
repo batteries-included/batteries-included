@@ -4,7 +4,7 @@ defmodule HomeBase.MixProject do
   def project do
     [
       app: :home_base,
-      version: "0.67.0",
+      version: "0.68.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
