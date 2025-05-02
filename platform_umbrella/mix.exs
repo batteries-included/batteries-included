@@ -44,8 +44,8 @@ defmodule ControlServer.Umbrella.MixProject do
           control_server_web: :permanent
         ],
         include_executables_for: [:unix],
-        steps: [:assemble],
-        runtime_config_path: "apps/control_server_web/config/runtime.exs"
+        steps: [:assemble, build_config_mover("control_server_web")],
+        config_providers: [{Config.Reader, {:system, "RELEASE_ROOT", "/app_config.exs"}}]
       ],
       kube_bootstrap: [
         applications: [
@@ -53,8 +53,8 @@ defmodule ControlServer.Umbrella.MixProject do
           kube_bootstrap: :permanent
         ],
         include_executables_for: [:unix],
-        steps: [:assemble],
-        runtime_config_path: "apps/kube_bootstrap/config/runtime.exs"
+        steps: [:assemble, build_config_mover("kube_bootstrap")],
+        config_providers: [{Config.Reader, {:system, "RELEASE_ROOT", "/app_config.exs"}}]
       ],
       home_base: [
         applications: [
@@ -63,8 +63,8 @@ defmodule ControlServer.Umbrella.MixProject do
           home_base_web: :permanent
         ],
         include_executables_for: [:unix],
-        steps: [:assemble],
-        runtime_config_path: "apps/home_base_web/config/runtime.exs"
+        steps: [:assemble, build_config_mover("home_base_web")],
+        config_providers: [{Config.Reader, {:system, "RELEASE_ROOT", "/app_config.exs"}}]
       ]
     ]
   end
@@ -74,5 +74,12 @@ defmodule ControlServer.Umbrella.MixProject do
       setup: ["cmd mix setup"],
       "ecto.reset": ["cmd mix ecto.reset"]
     ]
+  end
+
+  defp build_config_mover(proj) do
+    fn %Mix.Release{path: release_path} = release ->
+      File.cp!("apps/#{proj}/config/runtime.exs", Path.join(release_path, "app_config.exs"))
+      release
+    end
   end
 end
