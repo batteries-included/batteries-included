@@ -25,7 +25,7 @@ var stopCmd = &cobra.Command{
 			return err
 		}
 
-		err = env.Init(ctx)
+		err = env.Init(ctx, false)
 		if err != nil {
 			return err
 		}
