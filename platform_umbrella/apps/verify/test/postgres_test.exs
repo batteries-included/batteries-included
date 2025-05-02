@@ -28,6 +28,8 @@ defmodule Verify.PostgresTest do
     # Assert that we have gotten to the show page
     path = current_path(session)
     assert path =~ ~r/\/postgres\/[\d\w-]+\/show$/
+
+    assert_pod_running(session, "#{cluster_name}-1")
   end
 
   verify "choosing a different size update display", %{session: session} do
