@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
+
+export PORTFORWARD_ENABLED=1
+trap cleanup SIGINT SIGTERM ERR EXIT
+
+## From an install spec file get the slug
+get_slug() {
+    local input=${1:-"bootstrap/dev.spec.json"}
+    if [[ -f ${input} ]]; then
+        input=$(realpath "${input}")
+        run_bi debug spec-slug "${input}"
+    else
+        echo "${input}"
+    fi
+}
+
+get_summary_path() {
+    local slug=${1}
+    log "Getting summary path for ${BLUE}${slug}${NOFORMAT}"
+    run_bi debug install-summary-path "$slug"
+}
+
+## Start a new installation
+do_start() {
+    local spec_path=${1:-"bootstrap/dev.spec.json"}
+    # If spec path isn't a file fail out
+    if [[ ! -f ${spec_path} ]]; then
+        die "Spec file not found: ${spec_path}"
+    fi
+
+    spec_path=$(realpath "${spec_path}")
+    log "${GREEN}Starting${NOFORMAT} ${CYAN}${spec_path}${NOFORMAT}"
+    run_bi start ${TRACE:+-v=debug} "${spec_path}"
+}
+
+## Stop a running installation
+# Will take in either a spec file or a slug
+do_stop() {
+    local input=${1:-"bootstrap/dev.spec.json"}
+    local slug
+    # If install path is a file then we need to get the slug
+    # from the file
+    if [[ -f ${input} ]]; then
+        input=$(realpath "${input}")
+        slug=$(get_slug "${input}")
+    else
+        # Otherwise we can just stop the install path assuming it's a slug already
+        slug=${input}
+    fi
+    log "${YELLOW}Stopping${NOFORMAT} $slug"
+    run_bi stop ${TRACE:+-v=debug} "$slug"
+}
+
+do_bootstrap() {
+    local spec_path=${1:-"bootstrap/dev.spec.json"}
+    local summary_path slug
+    local out=/dev/null
+    if [[ $TRACE -eq 1 ]]; then
+        out=/dev/stdout
+    fi
+    spec_path=$(realpath "${spec_path}")
+
+    do_start "${spec_path}" >/dev/null
+    slug=$(get_slug "${spec_path}")
+    log "${GREEN}Started Successfully${NOFORMAT} ${CYAN}${spec_path}${CYAN} is ${BLUE}${slug}${NOFORMAT}"
+
+    # Here we reach into the internals of `bi`. When we start an installation
+    # there are resources that are calcuated. We need to know what those are
+    # So rather than use the install spec we use the spec from the installation.
+    #
+    # Usually this would be handled by reading the configmap in the kube bootstrap container.
+    summary_path=$(get_summary_path "${slug}")
+
+    # bootstrap_path is the full absolute path to the folder containing the spec file
+    bootstrap_path=$(dirname "${spec_path}")
+
+    # make sure we're always pointing at the correct cluster
+    KUBE_CONFIG_FILE="$(run_bi debug kube-config-path "${slug}")"
+    export KUBE_CONFIG_FILE
+
+    log "${GREEN}Running Kube Bootstrap${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
+
+    run_mix "do" deps.get, compile, kube.bootstrap "${summary_path}" >"$out"
+    # Start the port forwarder
+    try_portforward "${slug}" &
+
+    portforward_pid=$!
+    log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}${slug}${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
+
+    # Postgres should be up create the database and run the migrations
+    log "${GREEN}Running migrations${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
+    run_mix "do" \
+        setup, \
+        seed.control "${summary_path}", \
+        seed.home "${bootstrap_path}" >"$out"
+
+    log "${GREEN}Bootstrap Exited Successfully${NOFORMAT}"
+    exit 0
+}
+
+do_dev() {
+    log "${GREEN}Starting Development Environment${NOFORMAT}"
+    try_portforward dev &
+
+    portforward_pid=$!
+    log "${GREEN}Port Forwarding${NOFORMAT} for ${BLUE}dev${NOFORMAT} with pid ${ORANGE}${portforward_pid}${NOFORMAT}"
+    bi_pushd "${ROOT_DIR}/platform_umbrella"
+
+    KUBE_CONFIG_FILE=$(run_bi debug kube-config-path dev) iex -S mix phx.server
+    bi_popd
+}
+
+do_phx_server() {
+    log "${GREEN}Starting Phoenix Server${NOFORMAT}"
+    run_mix "phx.server"
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+
+Available commands:
+
+- start             Start a new installation
+- stop              Stop a running installation
+- bootstrap         Bootstrap a new installation
+- dev               Start a development environment with iex
+- phx-server        Start a phoenix server
+EOF
+    exit 1
+}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) export TRACE=1 ;;
+        --no-color) export NO_COLOR=1 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    if [[ $# -lt 1 ]]; then
+        log "Missing script arguments"
+        usage
+    fi
+
+    command="$1"
+    shift
+    args=("$@")
+
+    return 0
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+
+case "$command" in
+start)
+    do_start "${args[@]}"
+    ;;
+stop)
+    do_stop "${args[@]}"
+    ;;
+bootstrap)
+    do_bootstrap "${args[@]}"
+    ;;
+dev)
+    do_dev "${args[@]}"
+    ;;
+phx-server)
+    do_phx_server
+    ;;
+*)
+    usage
+    ;;
+esac

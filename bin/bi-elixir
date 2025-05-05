@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
+
+export PORTFORWARD_ENABLED=1
+trap cleanup SIGINT SIGTERM ERR EXIT
+
+do_int_test() {
+    export MIX_ENV=test
+    bi_pushd platform_umbrella/apps/verify
+    mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    mix test --trace --warnings-as-errors --all-warnings --only cluster_test
+    bi_popd
+    log "Elixir integration tests ${GREEN}Passed${NOFORMAT}"
+}
+
+do_test_deep() {
+    local setup_only=${1:-0}
+    local slug=${2:-"dev"}
+    local out=/dev/null
+    log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
+    # Start the port forwarder
+    try_portforward "${slug}" &
+
+    if [[ $TRACE -eq 1 ]]; then
+        out=/dev/stdout
+    fi
+
+    export MIX_ENV=test
+    __run_mix "do" deps.get, compile --warnings-as-errors >$out
+    __run_mix ecto.reset >$out
+    [[ $setup_only -eq 1 ]] && return
+    __run_mix test --trace --slowest 10 --cover --export-coverage default --warnings-as-errors --all-warnings
+    __run_mix test.coverage
+    log "Elixir tests ${GREEN}Passed${NOFORMAT}"
+}
+
+do_test() {
+    local slug=${1:-"dev"}
+    local out=/dev/null
+    if [[ $TRACE -eq 1 ]]; then
+        out=/dev/stdout
+    fi
+
+    log "${GREEN}Running${NOFORMAT} elixir tests"
+    # Start the port forwarder
+    try_portforward "${slug}" &
+
+    export MIX_ENV=test
+    __run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings >$out
+    log "Elixir tests ${GREEN}Passed${NOFORMAT}"
+}
+
+do_lint() {
+    log "${GREEN}Running${NOFORMAT} elixir linters"
+    __run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    __run_mix credo
+    __run_mix dialyzer
+    __run_mix format --check-formatted
+    log "Elixir lint ${GREEN}Passed${NOFORMAT}"
+}
+
+do_credo() {
+    log "${GREEN}Running${NOFORMAT} credo linter"
+    __run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    __run_mix credo
+    log "Credo lint ${GREEN}Passed${NOFORMAT}"
+}
+
+do_dialyzer() {
+    log "${GREEN}Running${NOFORMAT} dialyzer linter"
+    __run_mix "do" deps.get, compile --warnings-as-errors >/dev/null
+    __run_mix dialyzer
+    log "Dialyzer lint ${GREEN}Passed${NOFORMAT}"
+}
+
+__run_mix() {
+    bi_pushd "${ROOT_DIR}/platform_umbrella"
+    mix "$@"
+    bi_popd
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+--no-forward    Disable port-forwarding
+
+Available commands:
+
+- test          Run all tests
+- test-deep     Run all tests with coverage and reset the database
+- test-setup    Setup the test database
+- int-test      Run integration tests
+- lint          Run all linters (dialyzir, credo, format)
+- credo         Run credo linter
+- dialyzer      Run dialyzer linter
+- run           Run mix task
+EOF
+    exit 1
+}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) export TRACE=1 ;;
+        --no-color) export NO_COLOR=1 ;;
+        --no-forward) export PORTFORWARD_ENABLED=0 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    if [[ $# -lt 1 ]]; then
+        log "Missing script arguments"
+        usage
+    fi
+
+    command="$1"
+    shift
+    args=("$@")
+
+    return 0
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+
+case "$command" in
+int-test)
+    do_int_test "${args[@]}"
+    ;;
+test-deep)
+    do_test_deep 0 "${args[@]}"
+    ;;
+test-setup)
+    do_test_deep 1 "${args[@]}"
+    ;;
+test)
+    do_test "${args[@]}"
+    ;;
+lint)
+    do_lint
+    ;;
+credo)
+    do_credo
+    ;;
+dialyzer)
+    do_dialyzer
+    ;;
+run)
+    __run_mix "${args[@]}"
+    ;;
+*)
+    usage
+    ;;
+esac

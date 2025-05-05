@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
+
+version_tag() {
+    git describe --match="badtagthatnevermatches" --always --dirty
+}
+
+docker_hash() {
+    git rev-parse HEAD:docker
+}
+
+do_build_base_images() {
+    local tag
+    tag=$(docker_hash)
+
+    declare -a ci_args
+    if in_github_action; then
+        ci_args+=(--progress=plain)
+    fi
+
+    for base in build deploy; do
+        docker build \
+            --load \
+            -t "${base}-base:${tag}" \
+            -f docker/${base}-base.dockerfile \
+            ${TRACE:+--progress=plain} \
+            "${ci_args[@]}" \
+            .
+    done
+}
+
+do_build_image() {
+    local image_name=${1:-"control-server"}
+    local version
+    local version_hash
+    local docker_base_tag
+
+    # Pre-create the version for all docker builds
+    version_hash=$(version_tag)
+    version="${BASE_VERSION}-${version_hash}"
+    if [ -n "${VERSION_OVERRIDE:-""}" ]; then
+        version="$VERSION_OVERRIDE"
+    fi
+
+    log "${GREEN}Building${NOFORMAT} ${image_name} image with version: ${version}"
+
+    declare -a platform_args build_args
+
+    # if any docker files changed, make sure we're not using old cache
+    docker_base_tag=$(docker_hash)
+    do_ensure_base_images "${docker_base_tag}"
+
+    build_args+=(
+        --load
+        --build-arg "BASE_IMAGE_TAG=${docker_base_tag}"
+        --build-arg "DEPLOY_IMAGE_TAG=${docker_base_tag}"
+    )
+
+    platform_args+=(
+        -f docker/platform.dockerfile
+        --build-arg "BI_RELEASE_HASH=${version_hash}"
+    )
+
+    case "${image_name}" in
+    control-server)
+        build_args+=(-t "control-server:${version}" --build-arg RELEASE=control_server "${platform_args[@]}")
+        ;;
+    home-base)
+        build_args+=(-t "home-base:${version}" --build-arg RELEASE=home_base "${platform_args[@]}")
+        ;;
+    kube-bootstrap)
+        build_args+=(-t "kube-bootstrap:${version}" --build-arg RELEASE=kube_bootstrap "${platform_args[@]}")
+        ;;
+    pastebin)
+        build_args+=(-f docker/pastebin.dockerfile -t "pastebin:${version}")
+        ;;
+    *)
+        die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
+        ;;
+    esac
+
+    if in_github_action; then
+        build_args+=(--progress=plain)
+    fi
+
+    docker build \
+        ${TRACE:+--progress=plain} \
+        "${build_args[@]}" \
+        .
+}
+
+do_ensure_base_images() {
+    local docker_base_tag=${1}
+
+    for base in build deploy; do
+        local image="${base}-base:${docker_base_tag}"
+        if ! docker images "${image}" --format=json | jq -e '.' &>/dev/null; then
+            log "${YELLOW}Checked${NOFORMAT} base image: ${CYAN}${image}${NOFORMAT}. Not found."
+            try_pull_base_image "${image}"
+        fi
+    done
+}
+
+try_pull_base_image() {
+    local image="${1}"
+    log "${GREEN}Attempting to pull${NOFORMAT}: ${image}"
+    if docker pull "ghcr.io/batteries-included/${image}"; then
+        docker tag "ghcr.io/batteries-included/${image}" "${image}"
+    else
+        log "${YELLOW}Failed${NOFORMAT} to pull image. Building base images instead."
+        do_build_base_images
+    fi
+}
+
+do_push_images() {
+    local registry=${1:-"localhost:5000"}
+    shift || true
+    local docker_tag
+    local version
+
+    docker_tag=$(docker_hash)
+    for base in build deploy; do
+        tag_push "${base}-base" "${registry}" "${docker_tag}"
+    done
+
+    version="${BASE_VERSION}-$(version_tag)"
+    if [ -n "${VERSION_OVERRIDE:-""}" ]; then
+        version="$VERSION_OVERRIDE"
+    fi
+
+    for img in control-server home-base kube-bootstrap pastebin; do
+        tag_push "${img}" "${registry}" "${version}" "$@"
+    done
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+
+Available commands:
+
+- ensure-base-images    Ensure base images are present locally
+- build-base-images     Builds docker base images
+- build-image           Build a docker image
+- push-images           Push all the container images to a registry
+- get-docker-tag        Get the current tag of the docker base images
+EOF
+    exit 1
+}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) export TRACE=1 ;;
+        --no-color) export NO_COLOR=1 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    if [[ $# -lt 1 ]]; then
+        log "Missing script arguments"
+        usage
+    fi
+
+    command="$1"
+    shift
+    args=("$@")
+
+    return 0
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+
+case "$command" in
+ensure-base-images)
+    do_ensure_base_images "$(docker_hash)"
+    ;;
+build-base-images)
+    do_build_base_images
+    ;;
+build-image)
+    do_build_image "${args[@]}"
+    ;;
+push-images)
+    do_push_images "${args[@]}"
+    ;;
+get-docker-tag)
+    docker_hash
+    ;;
+*)
+    usage
+    ;;
+esac

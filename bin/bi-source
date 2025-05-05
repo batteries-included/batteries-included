@@ -1,0 +1,332 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
+
+format_mix_code() {
+    local path=${1}
+    bi_pushd "${path}"
+    log "Formatting elixir code in ${BLUE}${path}${NOFORMAT}"
+    run_mix "do" deps.get, format >/dev/null
+    bi_popd
+
+}
+
+check_format_mix_code() {
+    local path=${1}
+    bi_pushd "${path}"
+    log "Checking elixir code in ${BLUE}${path}${NOFORMAT}"
+    run_mix "do" deps.get, format --check-formatted >/dev/null
+    bi_popd
+}
+
+# Some code needs prettier so we use static's install
+format_prettier_code() {
+    log "Formatting all ${BLUE}yml|yaml|ts|js|md${NOFORMAT} files with prettier"
+    # Run prettier on all the files from inside of static.
+    # This seems to keep prettier happy and not complain about astro-plugin
+    bi_pushd "${ROOT_DIR}/static"
+    npm ci >/dev/null
+
+    # we have to do this
+    FILES=()
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md' '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'); do
+        FILES+=("${file}")
+    done
+
+    npx prettier --write "${FILES[@]}" >/dev/null
+
+    bi_popd
+}
+
+check_format_prettier_code() {
+    log "Checking all ${BLUE}yml|yaml|ts|js|md${NOFORMAT} files with prettier"
+    bi_pushd "${ROOT_DIR}/static"
+    npm ci >/dev/null
+    FILES=()
+    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md' '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'); do
+        FILES+=("${file}")
+    done
+    npx prettier --check "${FILES[@]}" >/dev/null
+    bi_popd
+}
+
+format_sh_code() {
+    log "Formatting all ${BLUE}sh${NOFORMAT} files with shfmt"
+    shfmt -w -i 4 "${ROOT_DIR}/bin" "${ROOT_DIR}/platform_umbrella/rel/overlays/bin/"
+    FILES=()
+    for file in $(git ls-files '*.sh'); do
+        FILES+=("${file}")
+    done
+
+    shfmt -w -i 4 "${FILES[@]}"
+}
+
+check_format_sh_code() {
+    log "Checking all ${BLUE}sh${NOFORMAT} files with shfmt"
+    shfmt -d -i 4 "${ROOT_DIR}/bin" "${ROOT_DIR}/platform_umbrella/rel/overlays/bin/"
+    FILES=()
+    for file in $(git ls-files '*.sh'); do
+        FILES+=("${file}")
+    done
+    shfmt -d -i 4 "${FILES[@]}"
+}
+
+format_go_code() {
+    local path=${1}
+    bi_pushd "${path}"
+    log "Formatting golang code in ${BLUE}${path}${NOFORMAT}"
+    gofmt -s -w . >/dev/null
+    bi_popd
+}
+
+check_format_go_code() {
+    local path=${1}
+    bi_pushd "${path}"
+    log "Checking golang code in ${BLUE}${path}${NOFORMAT}"
+    gofmt -l -d .
+    bi_popd
+}
+
+format_npm_code() {
+    local path=${1}
+    bi_pushd "${path}"
+    log "Formatting npm code in ${BLUE}${path}${NOFORMAT}"
+    npm ci >/dev/null
+    npx prettier --write . >/dev/null
+    bi_popd
+}
+
+check_format_npm_code() {
+    local path=${1}
+    bi_pushd "${path}"
+    log "Checking npm code in ${BLUE}${path}${NOFORMAT}"
+    npm ci >/dev/null
+    npx prettier --check . >/dev/null
+    bi_popd
+}
+
+do_fmt() {
+    local type="${1:-""}"
+    case "$type" in
+    mix | elixir)
+        log "Formatting ${YELLOW}mix${NOFORMAT}"
+        format_mix_code "platform_umbrella"
+        ;;
+    bi)
+        log "Formatting ${YELLOW}bi${NOFORMAT}"
+        format_go_code "bi"
+        ;;
+    go)
+        log "Formatting ${YELLOW}go${NOFORMAT}"
+        format_go_code "bi"
+        format_go_code "pastebin-go"
+        ;;
+    npm | node | js)
+        log "Formatting ${YELLOW}node${NOFORMAT}"
+        format_npm_code "static"
+        format_prettier_code
+        ;;
+    yaml | md | ts)
+        log "Formatting using ${YELLOW}prettier${NOFORMAT}"
+        format_prettier_code
+        ;;
+    sh | bash)
+        log "Formatting ${YELLOW}sh${NOFORMAT}"
+        format_sh_code
+        ;;
+    *)
+        log "Formatting ${YELLOW}everything${NOFORMAT}"
+        format_mix_code "platform_umbrella"
+        format_go_code "bi"
+        format_go_code "pastebin-go"
+        format_npm_code "static"
+        format_prettier_code
+        format_sh_code
+        ;;
+    esac
+}
+
+do_check_fmt() {
+    local type="${1:-""}"
+    case "$type" in
+    mix | elixir)
+        log "Checking format ${YELLOW}mix${NOFORMAT}"
+        check_format_mix_code "platform_umbrella"
+        ;;
+    bi)
+        log "Checking format ${YELLOW}bi${NOFORMAT}"
+        check_format_go_code "bi"
+        ;;
+    go)
+        log "Checking format ${YELLOW}go${NOFORMAT}"
+        check_format_go_code "bi"
+        check_format_go_code "pastebin-go"
+        ;;
+    npm | node | js)
+        log "Checking format ${YELLOW}node${NOFORMAT}"
+        check_format_npm_code "static"
+        check_format_prettier_code
+        ;;
+    yaml | md | ts)
+        log "Checking format using ${YELLOW}prettier${NOFORMAT}"
+        check_format_prettier_code
+        ;;
+    sh | bash)
+        log "Checking format ${YELLOW}sh${NOFORMAT}"
+        check_format_sh_code
+        ;;
+    *)
+        log "Checking format ${YELLOW}everything${NOFORMAT}"
+        check_format_mix_code "platform_umbrella"
+        check_format_go_code "bi"
+        check_format_go_code "pastebin-go"
+        check_format_npm_code "static"
+        check_format_prettier_code
+        check_format_sh_code
+        ;;
+    esac
+}
+
+do_gen_static_specs() {
+    rm -rf "${ROOT_DIR}/bootstrap/*.{spec,install}.json"
+    # VERSION_OVERRIDE generates different bytecode for
+    # the current version. We don't want that to be left
+    # around for developers. It makes tests fail.
+    VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} run_mix \
+        "do" \
+        clean, \
+        deps.get, \
+        compile --force, \
+        gen.static.installations "${ROOT_DIR}/bootstrap"
+
+    # Done
+    log "Generated static specs in ${BLUE}${ROOT_DIR}/bootstrap${NOFORMAT}"
+    run_mix clean
+}
+
+do_print_jwk_json() {
+    local path=${1}
+    local absolute_path
+
+    # bix jumps to the root of the project on startup
+    #
+    # If the file doesn't exist then assume that
+    # the user passed in a relative path and try to find it
+    # relative to where the user was when they called bix.
+    #
+    if [ ! -f "${path}" ]; then
+        path="${CURRENT_DIR}/${path}"
+    fi
+
+    # If we still can't find the file then fail out
+    if [ ! -f "${path}" ]; then
+        die "File not found: ${path}"
+    fi
+
+    absolute_path=$(readlink -f "${path}")
+
+    log "${GREEN}Printing JWK key${NOFORMAT} from ${absolute_path}"
+    run_mix jwk.pem.json "${absolute_path}"
+}
+
+do_set_version() {
+    local new_version=${1}
+    local old_version="${BASE_VERSION}"
+
+    log "Changing version from ${old_version} to ${new_version}"
+    #
+    # Change the version in the mix.exs files
+    while read -r mix_file; do
+        sed -i.bak "s/${old_version}/${new_version}/g" "${mix_file}"
+        rm "${mix_file}.bak"
+    done < <(find "${ROOT_DIR}/platform_umbrella" \
+        -path "${ROOT_DIR}/platform_umbrella/deps" \
+        -prune \
+        -o \
+        -name mix.exs \
+        -print)
+
+    # Change the base version in the bin/lib/common-functions.sh
+    sed -i.bak "s/BASE_VERSION=\"${old_version}\"/BASE_VERSION=\"${new_version}\"/g" "${ROOT_DIR}/bin/lib/common-functions.sh"
+    rm "${ROOT_DIR}/bin/lib/common-functions.sh.bak"
+
+    run_mix clean
+    log "Version changed to ${GREEN}${new_version}${NOFORMAT}"
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+
+Available commands:
+
+- fmt               Format code in the project [default: all]
+- check-fmt         Check if all code in the project is formatted  [default: all]
+- gen-static-specs  Generate static installation specs
+- print-jwk-json    Print the JWK key given a path as JSON for use in a secret
+- set-version       Change the version of the project in mix.exs and bin/bix
+EOF
+    exit 1
+}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) export TRACE=1 ;;
+        --no-color) export NO_COLOR=1 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    if [[ $# -lt 1 ]]; then
+        log "Missing script arguments"
+        usage
+    fi
+
+    command="$1"
+    shift
+    args=("$@")
+
+    return 0
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+
+case "$command" in
+fmt)
+    do_fmt "${args[@]}"
+    ;;
+check-fmt)
+    do_check_fmt "${args[@]}"
+    ;;
+gen-static-specs)
+    do_gen_static_specs
+    ;;
+print-jwk-json)
+    do_print_jwk_json "${args[@]}"
+    ;;
+set-version)
+    do_set_version "${args[@]}"
+    ;;
+*)
+    usage
+    ;;
+esac

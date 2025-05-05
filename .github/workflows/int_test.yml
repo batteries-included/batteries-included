@@ -29,8 +29,8 @@ jobs:
 
       - name: Run integration tests
         run: |
-          bin/bix go-ensure-bi
-          bin/bix ex-int-test
+          bin/bix go ensure-bi
+          bin/bix elixir int-test
 
       - name: Upload results on failure
         if: failure()

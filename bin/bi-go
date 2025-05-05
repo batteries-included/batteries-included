@@ -1,0 +1,234 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
+
+BI_BUILD_DIR="${BI_BUILD_DIR:-$HOME/.local/share/bi/dev}"
+KEEP_BUILDS="${KEEP_BUILDS:-10}"
+
+build_bi() {
+    local revision
+    revision=$(bi_revision)
+
+    # This is the directory where we will put the binary
+    local bin_dir="${BI_BUILD_DIR}/${revision}"
+    mkdir -p "${bin_dir}"
+
+    # This is the path to the binary
+    # We still want it to be called bi so help works
+    local bin_path
+    bin_path=$(bi_bin_location)
+
+    if [[ ! -f "${bin_path}" ]]; then
+        log "Building bi: ${BLUE}${revision}${NOFORMAT}"
+        bi_pushd "${ROOT_DIR}/bi"
+        SECONDS=0
+        CGO_ENABLED=0 go build \
+            -tags "netgo osusergo static_build" \
+            -o "${bin_path}" bi
+        bi_popd
+        log "Built bi in ${RED}${SECONDS}${NOFORMAT} seconds"
+    fi
+
+}
+
+clean_bi_build() {
+    if [[ ! -d "${BI_BUILD_DIR}" ]]; then
+        # No build directory, nothing to clean
+        return
+    fi
+
+    bi_pushd "${BI_BUILD_DIR}"
+
+    # shellcheck disable=SC2012
+    ls -t1 | tail -n "+${KEEP_BUILDS}" | xargs -I {} rm -rf {}
+    bi_popd
+}
+
+__run_bi() {
+    local bin_path
+    bin_path=$(bi_bin_location)
+
+    # go run on mac is really slow sometimes
+    # probably because we are linking in every go
+    # file that google engineers got promoted to write
+    #
+    # So instead we build the binary once per git commit
+    # and assume that it is good enough for the duration of the
+    # git commit.
+    #
+    # In addition our AWS kubernetes needs to go through a VPN
+    # and get aws credentials that all is piped through bi
+    # and referenced in the yaml file for kube. So we want the
+    # path to be stable and reliable.
+    build_bi
+
+    "${bin_path}" "$@"
+
+    # Cleanup the bi build directory
+    clean_bi_build
+}
+
+bi_bin_location() {
+    local revision
+    revision=$(bi_revision)
+    echo "${BI_BUILD_DIR}/${revision}/bi"
+}
+
+bi_revision() {
+    git rev-parse HEAD:bi
+}
+
+update_go_deps() {
+    local go_path=${1}
+    bi_pushd "${go_path}"
+    log "${GREEN}Updating go dependencies${NOFORMAT} in ${go_path}"
+    go get -u ./... >/dev/null
+    go mod tidy >/dev/null
+    popd
+}
+
+run_go_test() {
+    local go_path=${1}
+    bi_pushd "${go_path}"
+    log "${BLUE}Running go tests${NOFORMAT} in ${go_path}"
+    gofmt -s -l -e .
+    go vet ${TRACE:+-v} ./...
+    # If trace run tests with --race -v
+    # Otherwise just run the tests
+    go test ${TRACE:+--race -v} ./...
+    bi_popd
+}
+
+do_update_deps() {
+    update_go_deps "${ROOT_DIR}/bi"
+    update_go_deps "${ROOT_DIR}/pastebin-go"
+}
+
+do_test() {
+    run_go_test "${ROOT_DIR}/bi"
+    run_go_test "${ROOT_DIR}/pastebin-go"
+}
+
+do_test_int() {
+    export INTEGRATION=true
+    run_go_test "${ROOT_DIR}/bi"
+    run_go_test "${ROOT_DIR}/pastebin-go"
+}
+
+do_clean_build() {
+    log "${GREEN}Cleaning${NOFORMAT} the temporary BI build directory"
+    clean_bi_build
+}
+
+do_ensure_bi() {
+    local bin_path
+    bin_path=$(bi_bin_location)
+
+    if [ ! -f "${bin_path}" ]; then
+        log "bi binary not found at ${bin_path} building..."
+        build_bi
+    else
+        log "bi binary found at ${bin_path}"
+    fi
+}
+
+do_bi_release_snapshot() {
+    goreleaser release --clean --snapshot ${TRACE:+--verbose} -p 1 --skip=archive
+}
+
+do_bi_build_snapshot() {
+    goreleaser build --clean --snapshot --single-target ${TRACE:+--verbose} -p 1
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+
+Available commands:
+
+- test                  Run go tests
+- int-test              Run go integration tests
+- bi-snapshot-build     Build a snapshot build (For CI)
+- bi-snapshot-release   Build a snapshot release binary
+- update-deps           Update go dependencies
+- clean-build           Clean the temporary BI build directory
+- ensure-bi             Ensure that the BI binary is built
+- bi-location           Get the location of the BI binary
+- run                   Run bi task
+EOF
+    exit 1
+}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) export TRACE=1 ;;
+        --no-color) export NO_COLOR=1 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    if [[ $# -lt 1 ]]; then
+        log "Missing script arguments"
+        usage
+    fi
+
+    command="$1"
+    shift
+    args=("$@")
+
+    return 0
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+
+case "$command" in
+update-deps)
+    do_update_deps
+    ;;
+test)
+    do_test
+    ;;
+int-test)
+    do_test_int
+    ;;
+clean-build)
+    do_clean_build
+    ;;
+ensure-bi)
+    do_ensure_bi
+    ;;
+bi-snapshot-release)
+    do_bi_release_snapshot
+    ;;
+bi-snapshot-build)
+    do_bi_build_snapshot
+    ;;
+bi-location)
+    bi_bin_location
+    ;;
+run)
+    __run_bi "${args[@]}"
+    ;;
+*)
+    usage
+    ;;
+esac

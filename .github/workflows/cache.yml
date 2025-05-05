@@ -121,16 +121,14 @@ jobs:
       - name: Setup ASDF
         uses: ./.github/actions/setup-asdf
 
-      - name: Run dialyzer for caching
-        run: bin/bix ex-dialyzer
-
-      - name: Run tests for caching
+      - name: Compile with dependencies
         shell: bash
         env:
           MIX_ENV: test
-        run: |
-          pushd platform_umbrella
-          mix "do" deps.get, compile --force
+        run: bin/bix mix "do" deps.get, compile --force
+
+      - name: Build PLTs
+        run: bin/bix mix dialyzer --plt
 
       - name: Save Elixir cache
         uses: actions/cache/save@v4
@@ -154,10 +152,10 @@ jobs:
         uses: ./.github/actions/setup-asdf
 
       - name: Build `bi` for caching
-        run: bin/bix go-build-bi
+        run: bin/bix go bi-snapshot-release
 
       - name: Test for caching
-        run: bin/bix go-test
+        run: bin/bix go test
 
       - name: Save Go cache
         uses: actions/cache/save@v4

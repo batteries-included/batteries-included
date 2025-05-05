@@ -49,7 +49,7 @@ jobs:
           go_cache: 'false'
 
       - name: Run deep test
-        run: bin/bix --no-forward ex-test-deep
+        run: bin/bix elixir --no-forward test-deep
 
       - name: Test Report
         uses: dorny/test-reporter@v2
@@ -74,7 +74,7 @@ jobs:
           go_cache: 'false'
 
       - name: Credo Code Analysis
-        run: bin/bix ex-credo
+        run: bin/bix elixir credo
 
   elixir-dialyzer:
     runs-on: ubuntu-latest
@@ -90,4 +90,4 @@ jobs:
           go_cache: 'false'
 
       - name: Dialyzer Type Analysis
-        run: bin/bix ex-dialyzer
+        run: bin/bix elixir dialyzer

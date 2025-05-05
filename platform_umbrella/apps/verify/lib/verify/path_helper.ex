@@ -15,8 +15,8 @@ defmodule Verify.PathHelper do
         Logger.info("Using internal BI binary at #{internal}")
         internal
       else
-        Logger.info("BI binary not found at #{internal}, building BI via bix go-ensure-bi")
-        {_, 0} = System.cmd("bix", ["go-ensure-bi"])
+        Logger.info("BI binary not found at #{internal}, building BI via bix go ensure-bi")
+        {_, 0} = System.cmd("bix", ["go", "ensure-bi"])
         internal
       end
     else
@@ -32,7 +32,7 @@ defmodule Verify.PathHelper do
   defp bi_bin_override, do: Application.get_env(:verify, :bi_bin_override, nil)
 
   defp internal_location do
-    {location, 0} = System.cmd("bix", ["bi-location"])
+    {location, 0} = System.cmd("bix", ["go", "bi-location"])
     String.trim(location)
   end
 end
