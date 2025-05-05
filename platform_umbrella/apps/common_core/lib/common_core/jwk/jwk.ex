@@ -72,11 +72,12 @@ defmodule CommonCore.JWK do
     result |> JOSE.JWT.sign(%{"alg" => @sign_algo}, payload) |> elem(1)
   end
 
-  def encrypt(from_key, payload) do
+  def encrypt(from_jwk, payload) do
     jwk_name = sign_key()
     sign_jwk = jwk_name |> Cache.get() |> to_jwk()
 
-    from_key = to_jwk(from_key)
+    from_jwk =
+      to_jwk(from_jwk)
 
     signed =
       sign_jwk
@@ -84,7 +85,7 @@ defmodule CommonCore.JWK do
       |> JOSE.JWS.compact()
       |> elem(1)
 
-    {sign_jwk, from_key}
+    {sign_jwk, from_jwk}
     |> JOSE.JWE.block_encrypt(
       signed,
       %{

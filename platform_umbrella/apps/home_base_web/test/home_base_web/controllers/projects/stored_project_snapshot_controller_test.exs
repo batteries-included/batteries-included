@@ -7,8 +7,8 @@ defmodule HomeBaseWeb.StoredProjectSnapshotControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json"), installation: insert(:installation)}
   end
 
-  defp sign(jwk, data) do
-    jwk |> JOSE.JWT.sign(JOSE.JWT.from(data)) |> elem(1)
+  defp encrypt(jwk, data) do
+    CommonCore.JWK.encrypt(jwk, data)
   end
 
   describe "stored project snapshot api" do
@@ -17,7 +17,7 @@ defmodule HomeBaseWeb.StoredProjectSnapshotControllerTest do
 
       conn =
         post(conn, ~p"/api/v1/installations/#{install.id}/project_snapshots",
-          jwt: sign(install.control_jwk, snapshot_args)
+          jwt: encrypt(install.control_jwk, snapshot_args)
         )
 
       assert %{"id" => _id} = json_response(conn, 201)["data"]
@@ -28,7 +28,9 @@ defmodule HomeBaseWeb.StoredProjectSnapshotControllerTest do
     snapshot_args = params_for(:project)
 
     conn =
-      post(conn, ~p"/api/v1/installations/#{install.id}/project_snapshots", jwt: sign(install.control_jwk, snapshot_args))
+      post(conn, ~p"/api/v1/installations/#{install.id}/project_snapshots",
+        jwt: encrypt(install.control_jwk, snapshot_args)
+      )
 
     conn = get(conn, ~p"/api/v1/installations/#{install.id}/project_snapshots")
 
