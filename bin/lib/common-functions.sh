@@ -37,6 +37,13 @@ log() {
     echo >&2 -e "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*"
 }
 
+maybe_add_to_path() {
+    local path="${1}"
+    if ! echo "$PATH" | /usr/bin/grep -Eq "(^|:)$path($|:)"; then
+        PATH=$path:$PATH
+    fi
+}
+
 die() {
     local msg=$1
     local code=${2-1}
