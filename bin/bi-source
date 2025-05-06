@@ -309,6 +309,8 @@ parse_params "$@"
 setup_colors
 setup_trace
 setup_root
+maybe_add_to_path "${ROOT_DIR}/bin"
+export PATH
 
 case "$command" in
 fmt)
