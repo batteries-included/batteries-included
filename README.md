@@ -190,7 +190,7 @@ This monorepo contains multiple parts that come together to build the _Batteries
 Included_ platform. `bix` is our development tool that helps manage the
 different parts of the project.
 
-TLDR: `bix bootstrap && bix dev`
+TLDR: `bix local bootstrap && bix local dev`
 
 ### Static
 
@@ -245,13 +245,13 @@ To start the development environment:
    databases:
 
 ```bash
-bix bootstrap
+bix local bootstrap
 ```
 
 2. Launch the web servers and background processes:
 
 ```bash
-bix dev
+bix local dev
 ```
 
 This will start three web servers:
@@ -263,7 +263,7 @@ This will start three web servers:
 - [http://common.127-0-0-1.batrsinc.co:4200](http://common.127-0-0-1.batrsinc.co:4200) -
   Common UI server
 
-The `bix dev` command also opens an IEx console where you can explore the
+The `bix local dev` command also opens an IEx console where you can explore the
 process status.
 
 ### VSCode

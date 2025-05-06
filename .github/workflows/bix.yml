@@ -27,7 +27,7 @@ jobs:
           go_cache: 'false'
 
       - name: Check FMT via bin/bix
-        run: bin/bix check-fmt
+        run: bin/bix source check-fmt
 
   misc-lint:
     runs-on: ubuntu-latest

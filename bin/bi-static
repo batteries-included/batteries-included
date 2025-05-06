@@ -9,6 +9,22 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
+do_static_dev() {
+    log "${GREEN}Starting Development Environment${NOFORMAT}"
+    bi_pushd "${ROOT_DIR}/static"
+    npm install >/dev/null
+    npm run dev
+    bi_popd
+}
+
+do_static_build() {
+    log "${GREEN}Building Static Site${NOFORMAT}"
+    bi_pushd "${ROOT_DIR}/static"
+    npm clean-install >/dev/null
+    npm run build
+    bi_popd
+}
+
 usage() {
     cat <<EOF
 Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
@@ -20,15 +36,8 @@ Available options:
 
 Available commands:
 
-- docker            Tools for container images
-- elixir            Tools specific to the elixir source
-- go                Tools specific to the go source
-- local             Local development tooling
-- source            Tools for manipulating the repository
-- static            Tools for working with the static site
-
-- mix               Run an arbitrary mix command
-- bi                Run an arbitrary bi command
+- dev               Start a development environment with npm
+- build             Build the static site
 EOF
     exit 1
 }
@@ -52,7 +61,6 @@ parse_params() {
 
     command="$1"
     shift
-    args=("$@")
 
     return 0
 }
@@ -63,33 +71,11 @@ setup_trace
 setup_root
 
 case "$command" in
-docker)
-    exec -- "${ROOT_DIR}/bin/bi-docker" "${args[@]}"
+dev)
+    do_static_dev
     ;;
-elixir)
-    exec -- "${ROOT_DIR}/bin/bi-elixir" "${args[@]}"
-    ;;
-go)
-    exec -- "${ROOT_DIR}/bin/bi-go" "${args[@]}"
-    ;;
-local)
-    exec -- "${ROOT_DIR}/bin/bi-local" "${args[@]}"
-    ;;
-source)
-    exec -- "${ROOT_DIR}/bin/bi-source" "${args[@]}"
-    ;;
-static)
-    exec -- "${ROOT_DIR}/bin/bi-static" "${args[@]}"
-    ;;
-
-mix)
-    exec -- "${ROOT_DIR}/bin/bi-elixir" run "${args[@]}"
-    ;;
-bi)
-    exec -- "${ROOT_DIR}/bin/bi-go" run "${args[@]}"
-    ;;
-root-dir)
-    echo "${ROOT_DIR}"
+build)
+    do_static_build
     ;;
 *)
     usage

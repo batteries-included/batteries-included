@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/actions/setup-ci
 
       - name: Run go test
-        run: bin/bix go-test
+        run: bin/bix go test
 
   go-int-test:
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
         uses: ./.github/actions/setup-ci
 
       - name: Run go integration test
-        run: bin/bix go-test-int
+        run: bin/bix go int-test
 
   bi-build:
     runs-on: ubuntu-latest-m
@@ -56,8 +56,8 @@ jobs:
 
       - name: Build bi (quick)
         if: ${{ github.ref != 'refs/heads/master' }}
-        run: bin/bix go-build-bi-ci
+        run: bin/bix go bi-snapshot-build
 
       - name: Build bi
         if: ${{ github.ref == 'refs/heads/master' }}
-        run: bin/bix go-build-bi
+        run: bin/bix go bi-snapshot-release

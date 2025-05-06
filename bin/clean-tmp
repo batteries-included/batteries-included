@@ -7,7 +7,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 # Get the root directory of the project
 ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
-source "${ROOT_DIR}/bin/common-functions.sh"
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
 setup_colors
 setup_trace
@@ -32,7 +32,7 @@ tryDelete() {
 # fill up the meager Github Actions runner disk space.
 #
 # However I don't want this to be single threaded at home.
-if [[ -n "${GITHUB_JOB:-}" ]]; then
+if in_github_action; then
     log "Cleaning /tmp/go-build* directories"
     tryDelete "/tmp"
 

@@ -50,16 +50,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Ensure base images are present
-        run: bin/bix ensure-base
+        run: bin/bix docker ensure-base-images
 
       - name: Build control-server image
-        run: bin/bix build-image control-server
+        run: bin/bix docker build-image control-server
       - name: Build home-base image
-        run: bin/bix build-image home-base
+        run: bin/bix docker build-image home-base
       - name: Build kube-bootstrap image
-        run: bin/bix build-image kube-bootstrap
+        run: bin/bix docker build-image kube-bootstrap
       - name: Build pastebin image
-        run: bin/bix build-image pastebin
+        run: bin/bix docker build-image pastebin
 
       # set ADDITIONAL_TAGS to either latest or the current tag
       - if: ${{ fromJSON(env.PUSH) && !startsWith(github.ref, 'refs/tags/') }}
@@ -78,5 +78,5 @@ jobs:
       - name: Push to GHCR
         if: ${{ fromJSON(env.PUSH) }}
         run:
-          bin/bix push-images "ghcr.io/batteries-included" ${{
+          bin/bix docker push-images "ghcr.io/batteries-included" ${{
           env.ADDITIONAL_TAGS }}
