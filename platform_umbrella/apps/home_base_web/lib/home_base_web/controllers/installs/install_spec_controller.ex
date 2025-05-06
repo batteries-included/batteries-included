@@ -14,7 +14,7 @@ defmodule HomeBaseWeb.InstallSpecController do
       conn
       |> put_status(:ok)
       |> put_view(json: HomeBaseWeb.JwtJSON)
-      |> render(:show, jwt: CommonCore.JWK.sign(report))
+      |> render(:show, jwt: CommonCore.JWK.sign_to_control_server(report))
     else
       conn
       |> put_status(:bad_request)

@@ -154,7 +154,7 @@ defmodule KubeServices.ET.HomeBaseClient do
     Logger.debug("Getting stable versions")
 
     with {:ok, %{body: %{"jwt" => jwt}} = _env} <- Tesla.get(client, stable_versions_path),
-         {:ok, verified_resp} <- CommonCore.JWK.verify(jwt),
+         {:ok, verified_resp} <- CommonCore.JWK.verify_from_home_base(jwt),
          {:ok, %{} = stable_versions} <- StableVersionsReport.new(verified_resp) do
       {:ok, stable_versions}
     else
@@ -172,7 +172,7 @@ defmodule KubeServices.ET.HomeBaseClient do
     Logger.debug("Getting status")
 
     with {:ok, %{body: %{"jwt" => jwt}} = _env} <- Tesla.get(client, status_path),
-         {:ok, verified_resp} <- CommonCore.JWK.verify(jwt),
+         {:ok, verified_resp} <- CommonCore.JWK.verify_from_home_base(jwt),
          {:ok, %{} = status} <- InstallStatus.new(verified_resp) do
       {:ok, status}
     else
@@ -219,11 +219,11 @@ defmodule KubeServices.ET.HomeBaseClient do
     end
   end
 
-  def sign(%State{control_jwk: jwk}, data) do
+  defp sign(%State{control_jwk: jwk}, data) do
     jwk |> JOSE.JWT.sign(data) |> elem(1)
   end
 
-  def encrypt(%State{control_jwk: jwk}, data) do
-    CommonCore.JWK.encrypt(jwk, data)
+  defp encrypt(%State{control_jwk: jwk}, data) do
+    CommonCore.JWK.encrypt_to_home_base(jwk, data)
   end
 end

@@ -34,7 +34,7 @@ secret_key_base =
     """
 
 config :common_core, CommonCore.JWK,
-  sign_key: :environment,
+  primary_home_base_key: :environment,
   verify_keys: [:home_a_pub, :home_b_pub]
 
 config :home_base, HomeBase.Mailer,

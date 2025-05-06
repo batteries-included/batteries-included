@@ -128,7 +128,6 @@ defmodule CommonCore.Installation do
 
   def verify_message!(%__MODULE__{control_jwk: control_jwk}, message) do
     case JOSE.JWT.verify(control_jwk, message) do
-      # end
       {true, jwt, _} ->
         {_, map} = JOSE.JWT.to_map(jwt)
         map
@@ -139,6 +138,6 @@ defmodule CommonCore.Installation do
   end
 
   def decrypt_message!(%__MODULE__{control_jwk: control_jwk}, message) do
-    CommonCore.JWK.decrypt(control_jwk, message)
+    CommonCore.JWK.decrypt_from_control_server!(control_jwk, message)
   end
 end
