@@ -2,20 +2,20 @@
 name: Integration tests
 
 'on':
-  workflow_run:
-    branches:
-      - master
-    workflows:
-      - BIX Docker
-    types:
-      - completed
+  # workflow_run:
+  #   branches:
+  #     - master
+  #   workflows:
+  #     - BIX Docker
+  #   types:
+  #     - completed
+  pull_request:
 
 env: ${{ vars }}
 
 jobs:
   elixir-int-test:
     runs-on: ubuntu-latest-l
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     timeout-minutes: 20
     permissions:
       contents: read
@@ -27,7 +27,12 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup-ci
 
+      - name: Set path
+        run: echo "PATH=$(pwd -P)/bin:$PATH" >> "$GITHUB_ENV"
+
       - name: Run integration tests
+        env:
+          TEST_LOG_LEVEL: debug
         run: |
           bin/bix go ensure-bi
           bin/bix elixir int-test
