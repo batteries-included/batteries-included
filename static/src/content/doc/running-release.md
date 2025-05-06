@@ -6,12 +6,12 @@ category: development
 draft: false
 ---
 
-This shit should be automted but for now this is not too hard. Since it was only
-in my head this is a better place.
+This shit should be automated but for now this is not too hard. Since it was
+only in my head this is a better place.
 
 - Take note of the current version in the repo. That is the version that we're
   going to release
-- run `bix set-version <YOUVERSION+1>`
+- run `bix source set-version <YOUVERSION+1>`
 - Send the resulting code change as a pull request. Title it
   `chore: prepare for <YOURVERSION+1>` or something like that. This will be the
   first commit in the next release/changelog.

@@ -12,7 +12,6 @@ draft: false
 Example:
 
 ```sh
-[2024-08-22T13:08:14-0500]: Missing script arguments
 Usage: bix [-h] [-v] [-f] command [arg1...]
 
 Available options:
@@ -22,46 +21,25 @@ Available options:
 
 Available commands:
 
-**Install Related Commands**
-- start             Start a new installation
-- stop              Stop a running installation
-- bootstrap         Bootstrap a new installation
+- docker            Tools for container images
+- elixir            Tools specific to the elixir source
+- go                Tools specific to the go source
+- local             Local development tooling
+- source            Tools for manipulating the repository
+- static            Tools for working with the static site
 
-**Phoenix Related Commands**
-- dev               Start a development environment with iex
-- phx-server        Start a phoenix server
-
-**Source Commands**
-- fmt               Format all code in the project
-- check-fmt         Check if all code in the project is formatted
-- gen-static-specs  Generate static installation specs
-
-**Go Commands**
-- go-build-bi       Build the bi binary
-- go-test           Run go tests
-- go-test-int       Run go integration tests
-- go-update-deps    Update go dependencies
-- go-clean-build    Clean the temporary BI build directory
-
-**Elixir Commands**
-- ex-test-deep      Run all tests with coverage and reset the database
-- ex-test           Run all tests
-- ex-lint           Run all linters (dialexir, credo, format)
-- ex-credo          Run credo linter
-- ex-dialyzer       Run dialyzer linter
-
-**Docker Commands**
-- build-image       Build a docker image
-- push-images       Push all the container images to a registry
+- mix               Run an arbitrary mix command
+- bi                Run an arbitrary bi command
 ```
 
 Most of the scripts will `set -x` if `$TRACE` is set for additional debugging
-assistance.
+assistance. Alternatively, passing `-v` will put the scripts into the same mode.
 
 Example:
 
 ```sh
-TRACE=1 bin/bix go-test
+TRACE=1 bin/bix go test
+bin/bix -v go test
 ```
 
 ## Bootstrap
@@ -69,7 +47,7 @@ TRACE=1 bin/bix go-test
 Example:
 
 ```sh
-bix bootstrap
+bix local bootstrap
 ```
 
 This script calls into the go `bi` binary with auto-discovered paths and command
@@ -96,14 +74,10 @@ line arguments. The end result is calling `bi start` that will:
     spec. This mimics how installs will happen without needing to package any
     docker.
 
-## Deep clean (f.k.a Nuke Platform)
-
-Example:
-
 ## Gen Static Specs
 
 ```sh
-bix gen-static-specs
+bix source gen-static-specs
 ```
 
 While developing, we want the bootstrapping process to be stable and free from
@@ -119,7 +93,7 @@ has it wired together
 Example:
 
 ```sh
-bix fmt
+bix source fmt
 ```
 
 This command will format all source code in the directory. It uses `treefmt` for
@@ -132,21 +106,10 @@ If you only want to format the elixir code, there's a command for that.
 Example:
 
 ```sh
-bix ex-fmt
+bix source fmt elixir
 ```
 
 ## Run Mix Tests
-
-### Stale
-
-This runs "stale" tests - tests that have changed or where the output could have
-changed based on your code changes. This is nice for a fast, inner-loop.
-
-Example
-
-```sh
-bix ex-test
-```
 
 ### Quick
 
@@ -158,7 +121,7 @@ of time.
 Example
 
 ```sh
-bix ex-test-quick
+bix elixir test
 ```
 
 ### Deep
@@ -173,7 +136,7 @@ This is also the command that is used in CI.
 Example
 
 ```sh
-bix ex-test-deep
+bix elixir test-deep
 ```
 
 ## Mix Server w/ REPL
@@ -188,7 +151,7 @@ and database connections.
 Example:
 
 ```sh
-bix dev       # essentially, iex -S mix phx.server
+bix local dev       # essentially, iex -S mix phx.server
 ```
 
 ## Mix Server Without REPL
@@ -196,7 +159,7 @@ bix dev       # essentially, iex -S mix phx.server
 Example:
 
 ```sh
-bix dev-no-iex  # essentially, mix phx.server
+bix local phx-server  # essentially, mix phx.server
 ```
 
 ## Mix
@@ -207,7 +170,7 @@ any directory in the repo.
 Example:
 
 ```sh
-cd bi && bix m help test
+cd bi && bix mix help test
 ```
 
 ## Dashboard

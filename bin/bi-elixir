@@ -54,7 +54,7 @@ do_test() {
     try_portforward "${slug}" &
 
     export MIX_ENV=test
-    __run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings >$out
+    __run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings --exclude slow >$out
     log "Elixir tests ${GREEN}Passed${NOFORMAT}"
 }
 
