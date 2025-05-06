@@ -27,9 +27,6 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup-ci
 
-      - name: Set path
-        run: echo "PATH=$(pwd -P)/bin:$PATH" >> "$GITHUB_ENV"
-
       - name: Run integration tests
         env:
           TEST_LOG_LEVEL: debug
