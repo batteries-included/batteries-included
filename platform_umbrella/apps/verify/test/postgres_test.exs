@@ -3,17 +3,13 @@ defmodule Verify.PostgresTest do
 
   @new_postgres_path "/postgres/new"
   @new_postgres_header h3("New Postgres Cluster")
-  @save_button Query.button("Save")
 
   verify "can start a postgres cluster", %{session: session} do
-    cluster_name = "int-test-#{:rand.uniform(10_000)}"
+    cluster_name =
+      "int-test-#{:rand.uniform(10_000)}"
 
     session
-    # create new cluster
-    |> visit(@new_postgres_path)
-    |> assert_has(@new_postgres_header)
-    |> fill_in(Query.text_field("cluster[name]"), with: cluster_name)
-    |> click(@save_button)
+    |> create_pg_cluster(cluster_name)
     # verify show page
     |> assert_has(h3("Postgres Cluster", minimum: 1))
     |> assert_has(h3(cluster_name))

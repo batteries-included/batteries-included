@@ -3,7 +3,7 @@ defmodule Verify.RedisTest do
 
   @new_path "/redis/new"
   @new_redis_header h3("New Redis Instance")
-  @name_field Query.text_field("redis_instance[name]")
+  @name_field "redis_instance[name]"
   @save_button Query.button("Save Redis")
   @size_select Query.select("Size")
   @type_select Query.select("Type")
@@ -15,7 +15,7 @@ defmodule Verify.RedisTest do
     # create new instance
     |> visit(@new_path)
     |> assert_has(@new_redis_header)
-    |> fill_in(@name_field, with: instance_name)
+    |> fill_in_name(@name_field, instance_name)
     |> click(@save_button)
     # verify show page
     |> assert_has(h3(instance_name))
@@ -48,7 +48,7 @@ defmodule Verify.RedisTest do
     # create new
     |> visit(@new_path)
     |> assert_has(@new_redis_header)
-    |> fill_in(@name_field, with: instance_name)
+    |> fill_in_name(@name_field, instance_name)
     |> find(@type_select, fn select ->
       click(select, Query.option("Cluster"))
     end)
@@ -73,7 +73,7 @@ defmodule Verify.RedisTest do
     # create new
     |> visit(@new_path)
     |> assert_has(@new_redis_header)
-    |> fill_in(@name_field, with: instance_name)
+    |> fill_in_name(@name_field, instance_name)
     |> find(@type_select, fn select ->
       click(select, Query.option("Replication"))
     end)
