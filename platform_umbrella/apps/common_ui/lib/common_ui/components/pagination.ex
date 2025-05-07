@@ -24,8 +24,17 @@ defmodule CommonUI.Components.Pagination do
         :if={@path}
         meta={@meta}
         path={@path}
+        class="pagination"
+        current_page_link_attrs={[class: "is-current"]}
         on_paginate={@scroll_to_id && JS.dispatch("scroll_to", to: "##{@scroll_to_id}")}
-      />
+      >
+        <:previous attrs={[class: "previous"]}>
+          <.icon name={:chevron_left} class="size-4" />
+        </:previous>
+        <:next attrs={[class: "next"]}>
+          <.icon name={:chevron_right} class="size-4" />
+        </:next>
+      </Flop.Phoenix.pagination>
     </div>
     """
   end
