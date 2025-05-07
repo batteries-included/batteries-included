@@ -16,7 +16,7 @@ jobs:
   elixir-int-test:
     runs-on: ubuntu-latest-l
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    timeout-minutes: 20
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:

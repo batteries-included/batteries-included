@@ -1,6 +1,7 @@
 defmodule Verify.TestCase.Helpers do
   @moduledoc false
 
+  import ExUnit.Assertions
   import Wallaby.Browser
 
   alias Verify.PathHelper
@@ -93,6 +94,24 @@ defmodule Verify.TestCase.Helpers do
       |> fill_in(Query.text_field("filter_value"), with: frag)
       |> assert_has(table_row(text: "Running", count: 1))
     end)
+
+    session
+  end
+
+  def assert_pods_in_deployment_running(session, namespace, deployment) do
+    session =
+      session
+      |> visit("/kube/deployment/#{namespace}/#{deployment}/show")
+      # check we're on the pods page for the deployment
+      |> assert_has(h3(deployment))
+
+    # get all of the pod rows
+    pods = all(session, Query.css("table#pods_table"))
+
+    # make sure all pods are Running
+    assert_has(session, table_row(text: "Running", count: length(pods)))
+
+    session
   end
 
   def create_pg_cluster(session, cluster_name) do
@@ -108,5 +127,25 @@ defmodule Verify.TestCase.Helpers do
     find(session, Query.text_field(field_name), fn e ->
       Wallaby.Element.send_keys(e, Enum.map(0..100, fn _ -> :backspace end) ++ [text_to_fill])
     end)
+  end
+
+  def assert_path(session, %Regex{} = match) do
+    path = current_path(session)
+    assert path =~ match
+
+    session
+  end
+
+  def assert_path(session, match) do
+    path = current_path(session)
+    assert path === match
+
+    session
+  end
+
+  def trigger_k8s_deploy(session) do
+    session
+    |> visit("/magic")
+    |> click(Query.button("Start Deploy"))
   end
 end
