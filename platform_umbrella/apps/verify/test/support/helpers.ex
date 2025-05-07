@@ -94,4 +94,19 @@ defmodule Verify.TestCase.Helpers do
       |> assert_has(table_row(text: "Running", count: 1))
     end)
   end
+
+  def create_pg_cluster(session, cluster_name) do
+    session
+    # create new cluster
+    |> visit("/postgres/new")
+    |> assert_has(h3("New Postgres Cluster"))
+    |> fill_in_name("cluster[name]", cluster_name)
+    |> click(Query.button("Save"))
+  end
+
+  def fill_in_name(session, field_name, text_to_fill) do
+    find(session, Query.text_field(field_name), fn e ->
+      Wallaby.Element.send_keys(e, Enum.map(0..100, fn _ -> :backspace end) ++ [text_to_fill])
+    end)
+  end
 end
