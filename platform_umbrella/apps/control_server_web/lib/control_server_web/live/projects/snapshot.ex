@@ -11,6 +11,7 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
   alias CommonCore.Util.Memory
   alias ControlServer.Projects
   alias ControlServer.Projects.Snapshoter
+  alias KubeServices.ET.HomeBaseClient
 
   @impl Phoenix.LiveView
   def mount(%{"id" => id}, _session, socket) do
@@ -81,6 +82,25 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
 
   def handle_event("validate", %{"snapshot" => snapshot_params}, socket) do
     {:noreply, assign_form(socket, snapshot_params)}
+  end
+
+  def handle_event("export", %{"snapshot" => snapshot_params}, socket) do
+    changeset = ProjectSnapshot.changeset(socket.assigns.snapshot, snapshot_params)
+    snapshot = Ecto.Changeset.apply_changes(changeset)
+
+    # TODO: Handle removals
+    # removals = socket.assigns.removals
+
+    case HomeBaseClient.export_snapshot(snapshot) do
+      :ok ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Snapshot updated successfully.")
+         |> push_navigate(to: ~p"/projects/#{socket.assigns.project.id}/show")}
+
+      {:error, _} ->
+        {:noreply, assign_form(socket, snapshot_params)}
+    end
   end
 
   defp postgres_list(assigns) do
