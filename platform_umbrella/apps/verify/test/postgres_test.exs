@@ -13,19 +13,13 @@ defmodule Verify.PostgresTest do
     # verify show page
     |> assert_has(h3("Postgres Cluster", minimum: 1))
     |> assert_has(h3(cluster_name))
+    |> assert_path(~r/\/postgres\/[\d\w-]+\/show$/)
     # Make sure that this page has the kubernetes elements
     |> assert_has(Query.text("Pods"))
     |> click(Query.text("Pods"))
     # Assert that the first pod for the cluster is there.
     |> assert_has(table_row(text: "#{cluster_name}-1", count: 1))
-    |> click(Query.text("Overview"))
-    |> assert_has(h3("Postgres Cluster"))
-
-    # Assert that we have gotten to the show page
-    path = current_path(session)
-    assert path =~ ~r/\/postgres\/[\d\w-]+\/show$/
-
-    assert_pod_running(session, "#{cluster_name}-1")
+    |> assert_pod_running("#{cluster_name}-1")
   end
 
   verify "choosing a different size update display", %{session: session} do
