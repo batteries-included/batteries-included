@@ -20,4 +20,5 @@ platform_umbrella/apps/*/priv/static/assets
 platform_umbrella/**/.formatter.exs
 platform_umbrella/**/.gitignore
 
-
+# ignore generated image json file
+platform_umbrella/apps/common_core/priv/images.json

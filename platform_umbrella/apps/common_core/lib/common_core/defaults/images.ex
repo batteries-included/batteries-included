@@ -3,6 +3,8 @@ defmodule CommonCore.Defaults.Images do
 
   alias CommonCore.Defaults.Image
 
+  @after_compile CommonCore.Defaults.Images
+
   @batteries_included_base "#{CommonCore.Version.version()}-#{CommonCore.Version.hash()}"
 
   @cert_manager_allowed_tags ~w(v1.15.1 v1.15.4 v1.16.4)
@@ -362,5 +364,18 @@ defmodule CommonCore.Defaults.Images do
   def home_base_image do
     ver = batteries_included_version()
     "ghcr.io/batteries-included/home-base:#{ver}"
+  end
+
+  def __after_compile__(_env, _bytecode) do
+    path = Path.relative_to_cwd("priv/images.json")
+
+    @registry
+    |> Enum.reject(fn {name, _} -> name == :__schema_test end)
+    |> Enum.sort(:asc)
+    |> Enum.map(fn {name, img} ->
+      img |> Map.from_struct() |> Map.put(:default_image, Image.default_image(img)) |> Map.put(:name, name)
+    end)
+    |> Jason.encode_to_iodata!(pretty: true)
+    |> then(&File.write!(path, &1))
   end
 end
