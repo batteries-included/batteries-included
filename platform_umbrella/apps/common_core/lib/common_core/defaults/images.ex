@@ -66,8 +66,8 @@ defmodule CommonCore.Defaults.Images do
     ferretdb:
       Image.new!(%{
         name: "ghcr.io/ferretdb/ferretdb",
-        tags: ~w(1.23.0 1.24.0),
-        default_tag: "1.24.0"
+        tags: ~w(1.23.0 1.24.0 1.24.1),
+        default_tag: "1.24.1"
       }),
     forgejo:
       Image.new!(%{
