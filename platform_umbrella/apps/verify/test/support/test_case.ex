@@ -47,6 +47,7 @@ defmodule Verify.TestCase do
           })
 
         unquote(__MODULE__).install_batteries(worker_pid, unquote(batteries))
+        on_exit(fn -> Wallaby.end_session(session) end)
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
@@ -63,6 +64,7 @@ defmodule Verify.TestCase do
 
       setup context do
         {:ok, session} = unquote(__MODULE__).start_session()
+        on_exit(fn -> Wallaby.end_session(session) end)
 
         {:ok, [session: session]}
       end
