@@ -151,7 +151,7 @@ defmodule CommonCore.JWK do
     # for public keys
     #
     # However that fact is not in the dialyzer spec
-    # and soit gets upset.
+    # and so it gets upset.
     case JOSE.JWE.block_decrypt({to_jwk(from_jwk), to_jwk(to_jwk)}, message) do
       {:error, e} ->
         Logger.error("Failed to decrypt message")

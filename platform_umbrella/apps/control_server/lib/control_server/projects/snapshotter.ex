@@ -20,7 +20,7 @@ defmodule ControlServer.Projects.Snapshoter do
   def take_snapshot(%Project{} = project) do
     # We will create a snapshot of the project
     with {:ok, res} <- run_take_snap_transaction(project),
-         {:ok, snapshot} <- ProjectSnapshot.new(post_transaction_proccessing(res, project)) do
+         {:ok, snapshot} <- ProjectSnapshot.new(post_transaction_processing(res, project)) do
       {:ok, remove_postgres_cluster_passwords(snapshot)}
     else
       {:error, _} = error ->
@@ -71,7 +71,7 @@ defmodule ControlServer.Projects.Snapshoter do
     |> Repo.transaction()
   end
 
-  defp post_transaction_proccessing(input, project) do
+  defp post_transaction_processing(input, project) do
     input
     |> Map.put(:description, project.description)
     |> Map.put(:name, "Generated snapshot for project #{project.name}")

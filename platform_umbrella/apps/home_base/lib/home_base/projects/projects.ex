@@ -2,7 +2,10 @@ defmodule HomeBase.Projects do
   @moduledoc false
   import Ecto.Query, warn: false
 
+  alias CommonCore.Accounts.User
+  alias CommonCore.Ecto.BatteryUUID
   alias CommonCore.Installation
+  alias CommonCore.Teams.Team
   alias HomeBase.Projects.StoredProjectSnapshot
   alias HomeBase.Repo
 
@@ -12,7 +15,7 @@ defmodule HomeBase.Projects do
     |> Repo.insert()
   end
 
-  def snapshots_for(installation) do
+  def snapshots_for(%{} = installation) do
     owning_ids = owning_installations(installation)
 
     query =
@@ -25,30 +28,42 @@ defmodule HomeBase.Projects do
     |> Enum.map(& &1.snapshot)
   end
 
-  defp owning_installations(%{team_id: nil, user_id: nil, id: id} = _installation) do
+  defp owning_installations(%Installation{team_id: nil, user_id: nil, id: id} = _installation) do
     values = [%{id: id}]
-    types = %{id: CommonCore.Ecto.BatteryUUID}
+    types = %{id: BatteryUUID}
 
     from v in values(values, types),
       select: v.id
   end
 
-  defp owning_installations(%{team_id: nil, user_id: user_id} = _installation) when user_id != nil do
+  defp owning_installations(%Installation{team_id: nil, user_id: user_id} = _installation) when user_id != nil do
     from i in Installation,
       where: i.user_id == ^user_id,
       select: i.id
   end
 
-  defp owning_installations(%{team_id: team_id, user_id: nil} = _installation) when team_id != nil do
+  defp owning_installations(%Installation{team_id: team_id, user_id: nil} = _installation) when team_id != nil do
     from i in Installation,
       where: i.team_id == ^team_id,
       select: i.id
   end
 
-  defp owning_installations(%{team_id: team_id, user_id: user_id} = _installation)
+  defp owning_installations(%Installation{team_id: team_id, user_id: user_id} = _installation)
        when team_id != nil and user_id != nil do
     from i in Installation,
       where: i.user_id == ^user_id or i.team_id == ^team_id,
+      select: i.id
+  end
+
+  defp owning_installations(%Team{} = team) do
+    from i in Installation,
+      where: i.team_id == ^team.id,
+      select: i.id
+  end
+
+  defp owning_installations(%User{} = user) do
+    from i in Installation,
+      where: i.user_id == ^user.id,
       select: i.id
   end
 end

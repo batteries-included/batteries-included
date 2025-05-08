@@ -114,6 +114,15 @@ defmodule HomeBaseWeb.Layouts do
             Installations
           </.button>
 
+          <.button
+            variant={@page != :project_snapshots && "minimal"}
+            icon={:camera}
+            link={~p"/project_snapshots"}
+            class="hidden lg:flex"
+          >
+            Project Snapshots
+          </.button>
+
           <div>
             <.dropdown id="main-dropdown" class="mt-4 lg:mt-6">
               <:trigger>
