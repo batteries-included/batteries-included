@@ -65,29 +65,29 @@ maybe_add_to_path "${ROOT_DIR}/bin"
 export PATH
 
 case "$command" in
-docker)
+docker | d)
     exec -- "${ROOT_DIR}/bin/bi-docker" "${args[@]}"
     ;;
-elixir)
+elixir | ex)
     exec -- "${ROOT_DIR}/bin/bi-elixir" "${args[@]}"
     ;;
 go)
     exec -- "${ROOT_DIR}/bin/bi-go" "${args[@]}"
     ;;
-local)
+local | l)
     exec -- "${ROOT_DIR}/bin/bi-local" "${args[@]}"
     ;;
-source)
+source | s)
     exec -- "${ROOT_DIR}/bin/bi-source" "${args[@]}"
     ;;
 static)
     exec -- "${ROOT_DIR}/bin/bi-static" "${args[@]}"
     ;;
 
-mix)
+mix | m)
     exec -- "${ROOT_DIR}/bin/bi-elixir" run "${args[@]}"
     ;;
-bi)
+bi | b)
     exec -- "${ROOT_DIR}/bin/bi-go" run "${args[@]}"
     ;;
 root-dir)

@@ -53,7 +53,7 @@ die() {
 
 term_kill() {
     local pid=${1}
-    pkill -TERM -P "$pid" >/dev/null 2>&1 || true
+    pkill -TERM -P "$pid" &>/dev/null || true
 }
 
 bi_pushd() {
@@ -92,31 +92,15 @@ try_portforward() {
 }
 
 cleanup() {
-    trap - SIGINT SIGTERM ERR EXIT
+    trap - ERR EXIT
 
-    # We can end up in cleaup from a few different places and colors might not be set
+    # We can end up in cleanup from a few different places and colors might not be set
     safe_colors
 
-    local jobs
-    jobs=$(jobs -pr)
+    log "Cleaning up all subprocesses and jobs"
 
-    for job in $jobs; do
-        for child in $(pgrep -P "${job}"); do
-            for grandchild in $(pgrep -P "${child}"); do
-                for great in $(pgrep -P "${grandchild}"); do
-                    log "Killing greatgrandchild ${ORANGE}$great${NOFORMAT}"
-                    term_kill "$great"
-                    kill -9 "$great" || true
-                done
-                log "Killing grandchild ${ORANGE}$grandchild${NOFORMAT}"
-                term_kill "$grandchild"
-            done
-            log "Killing child ${ORANGE}$child${NOFORMAT}"
-            term_kill "$child"
-        done
-        log "Killing job ${ORANGE}$job${NOFORMAT}"
-        term_kill "$job"
-    done
+    # send TERM to all of the processes in the current shell's group
+    pkill -15 -g $$ &>/dev/null || true
 }
 
 in_github_action() {

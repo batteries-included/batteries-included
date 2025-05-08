@@ -10,7 +10,7 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
 cleanup() {
-    trap - SIGINT SIGTERM ERR EXIT
+    trap - ERR EXIT
     local self_pid=$$
 
     safe_colors
@@ -19,9 +19,7 @@ cleanup() {
     term_kill ${self_pid}
     pkill -9 -g ${self_pid} || true
 }
-trap cleanup SIGINT SIGTERM ERR EXIT
-
-SLUG=${SLUG-}
+trap cleanup ERR EXIT
 
 parse_params() {
     while :; do
@@ -57,4 +55,4 @@ setup_root
 log "${GREEN}Forwarding postgres port${NOFORMAT} for installation ${BLUE}${INSTALLATION_SLUG}${NOFORMAT}"
 bi_pushd "${ROOT_DIR}/bi"
 run_bi postgres port-forward "${INSTALLATION_SLUG}" controlserver -n battery-base >/dev/null
-popd
+bi_popd
