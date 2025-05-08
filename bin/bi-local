@@ -10,7 +10,7 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
 export PORTFORWARD_ENABLED=1
-trap cleanup SIGINT SIGTERM ERR EXIT
+trap cleanup ERR EXIT
 
 ## From an install spec file get the slug
 get_slug() {
