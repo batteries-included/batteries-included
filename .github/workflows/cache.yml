@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           persist-credentials: false
 
@@ -50,7 +50,7 @@ jobs:
             echo "GO_HASH_KEY=$GO_HASH_KEY"; } >> "$GITHUB_ENV"
 
       - name: Check existing ASDF cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         id: asdf
         with:
           path: ${{ env.ASDF_PATHS }}
@@ -58,7 +58,7 @@ jobs:
           lookup-only: true
 
       - name: Check existing elixir cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         id: elixir
         with:
           path: ${{ env.ELIXIR_PATHS }}
@@ -66,7 +66,7 @@ jobs:
           lookup-only: true
 
       - name: Check existing Go cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         id: go
         with:
           path: ${{ env.GO_PATHS }}
@@ -88,12 +88,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           persist-credentials: false
 
       - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@v3
+        uses: asdf-vm/actions/install@05e0d2ed97b598bfce82fd30daf324ae0c4570e6 # v3
         with:
           asdf_branch: ${{ vars.ASDF_BRANCH }}
 
@@ -102,7 +102,7 @@ jobs:
         run: asdf reshim
 
       - name: Save ASDF cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           path: ${{ env.ASDF_PATHS }}
           key: ${{ needs.check-caches.outputs.asdf-hash-key }}
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           persist-credentials: false
 
@@ -131,7 +131,7 @@ jobs:
         run: bin/bix mix dialyzer --plt
 
       - name: Save Elixir cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         id: elixir-cache
         with:
           path: ${{ env.ELIXIR_PATHS }}
@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest-m
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           persist-credentials: false
 
@@ -158,7 +158,7 @@ jobs:
         run: bin/bix go test
 
       - name: Save Go cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         id: go-cache
         with:
           path: ${{ env.GO_PATHS }}
