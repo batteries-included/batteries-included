@@ -92,7 +92,11 @@ try_portforward() {
 }
 
 cleanup() {
+    local code="$?"
     trap - ERR EXIT
+    # We're going to be sending SIGTERM to ourselves
+    # Handle it gracefully
+    trap 'exit "$code"' SIGINT SIGTERM
 
     # We can end up in cleanup from a few different places and colors might not be set
     safe_colors
