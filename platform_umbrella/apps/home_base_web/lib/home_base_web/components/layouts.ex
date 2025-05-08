@@ -117,7 +117,7 @@ defmodule HomeBaseWeb.Layouts do
           <.button
             variant={@page != :project_snapshots && "minimal"}
             icon={:camera}
-            link={~p"/project_snapshots"}
+            link={~p"/projects/snapshots"}
             class="hidden lg:flex"
           >
             Project Snapshots

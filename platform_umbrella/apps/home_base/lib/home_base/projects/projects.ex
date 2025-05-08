@@ -23,9 +23,7 @@ defmodule HomeBase.Projects do
         where: s.installation_id in subquery(owning_ids),
         select: s
 
-    query
-    |> Repo.all()
-    |> Enum.map(& &1.snapshot)
+    Repo.all(query)
   end
 
   defp owning_installations(%Installation{team_id: nil, user_id: nil, id: id} = _installation) do

@@ -42,7 +42,7 @@ defmodule HomeBase.ProjectsTest do
 
       possible_snaps = Projects.snapshots_for(install_three)
 
-      assert [stored_snapshot.snapshot] == possible_snaps
+      assert [stored_snapshot] == possible_snaps
     end
 
     test "gets snapshots for same team", %{install_zero: install_zero, install_one: install_one} do
@@ -58,7 +58,7 @@ defmodule HomeBase.ProjectsTest do
 
       possible_snaps = Projects.snapshots_for(install_one)
 
-      assert [stored_snapshot.snapshot] == possible_snaps
+      assert [stored_snapshot] == possible_snaps
     end
 
     test "doesn't fail for un-owned installs" do

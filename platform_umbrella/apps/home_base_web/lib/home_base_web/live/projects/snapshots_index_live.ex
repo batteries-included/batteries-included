@@ -23,24 +23,25 @@ defmodule HomeBaseWeb.Projects.SnapshotsIndexLive do
     <.h2>{@page_title}</.h2>
 
     <.table id="snapshots" rows={@snapshots}>
-      <:col :let={snapshot} label="Name">{snapshot.name}</:col>
-      <:col :let={snapshot} label="Postgres Count">
-        {length(snapshot.postgres_clusters || [])}
+      <:col :let={stored_snap} label="ID">{stored_snap.id}</:col>
+      <:col :let={stored_snap} label="Name">{stored_snap.snapshot.name}</:col>
+      <:col :let={stored_snap} label="Postgres Count">
+        {length(stored_snap.snapshot.postgres_clusters || [])}
       </:col>
-      <:col :let={snapshot} label="Redis Count">
-        {length(snapshot.redis_instances || [])}
+      <:col :let={stored_snap} label="Redis Count">
+        {length(stored_snap.snapshot.redis_instances || [])}
       </:col>
-      <:col :let={snapshot} label="Jupyter Notebook Count">
-        {length(snapshot.jupyter_notebooks || [])}
+      <:col :let={stored_snap} label="Jupyter Notebook Count">
+        {length(stored_snap.snapshot.jupyter_notebooks || [])}
       </:col>
-      <:col :let={snapshot} label="Knative Service Count">
-        {length(snapshot.knative_services || [])}
+      <:col :let={stored_snap} label="Knative Service Count">
+        {length(stored_snap.snapshot.knative_services || [])}
       </:col>
-      <:col :let={snapshot} label="Traditional Service Count">
-        {length(snapshot.traditional_services || [])}
+      <:col :let={stored_snap} label="Traditional Service Count">
+        {length(stored_snap.snapshot.traditional_services || [])}
       </:col>
-      <:col :let={snapshot} label="Model Instance Count">
-        {length(snapshot.model_instances || [])}
+      <:col :let={stored_snap} label="Model Instance Count">
+        {length(stored_snap.snapshot.model_instances || [])}
       </:col>
     </.table>
     """
