@@ -115,7 +115,7 @@ check_format_npm_code() {
 do_fmt() {
     local type="${1:-""}"
     case "$type" in
-    mix | elixir)
+    mix | elixir | ex)
         log "Formatting ${YELLOW}mix${NOFORMAT}"
         format_mix_code "platform_umbrella"
         ;;
@@ -156,7 +156,7 @@ do_fmt() {
 do_check_fmt() {
     local type="${1:-""}"
     case "$type" in
-    mix | elixir)
+    mix | elixir | ex)
         log "Checking format ${YELLOW}mix${NOFORMAT}"
         check_format_mix_code "platform_umbrella"
         ;;
