@@ -1,0 +1,294 @@
+---
+__schema_test:
+  default_tag: 1.2.3
+  name: ecto/schema/test
+  tags:
+    - 1.2.3
+    - 1.2.4
+    - latest
+addon_resizer:
+  default_tag: 1.8.23
+  name: registry.k8s.io/autoscaling/addon-resizer
+  tags:
+    - 1.8.23
+aqua_node_collector:
+  default_tag: 0.3.1
+  name: ghcr.io/aquasecurity/node-collector
+  tags:
+    - 0.3.1
+aqua_trivy_checks:
+  default_tag: 0.13.0
+  name: ghcr.io/aquasecurity/trivy-checks
+  tags:
+    - 0.13.0
+aws_load_balancer_controller:
+  default_tag: v2.11.0
+  name: public.ecr.aws/eks/aws-load-balancer-controller
+  tags:
+    - v2.8.1
+    - v2.8.2
+    - v2.11.0
+cert_manager_acmesolver:
+  default_tag: v1.16.4
+  name: quay.io/jetstack/cert-manager-acmesolver
+  tags:
+    - v1.15.1
+    - v1.15.4
+    - v1.16.4
+cert_manager_cainjector:
+  default_tag: v1.16.4
+  name: quay.io/jetstack/cert-manager-cainjector
+  tags:
+    - v1.15.1
+    - v1.15.4
+    - v1.16.4
+cert_manager_controller:
+  default_tag: v1.16.4
+  name: quay.io/jetstack/cert-manager-controller
+  tags:
+    - v1.15.1
+    - v1.15.4
+    - v1.16.4
+cert_manager_ctl:
+  default_tag: v1.16.4
+  name: quay.io/jetstack/cert-manager-ctl
+  tags:
+    - v1.15.1
+    - v1.15.4
+    - v1.16.4
+cert_manager_webhook:
+  default_tag: v1.16.4
+  name: quay.io/jetstack/cert-manager-webhook
+  tags:
+    - v1.15.1
+    - v1.15.4
+    - v1.16.4
+cloudnative_pg:
+  default_tag: 1.25.1
+  name: ghcr.io/cloudnative-pg/cloudnative-pg
+  tags:
+    - 1.23.2
+    - 1.24.0
+    - 1.24.1
+    - 1.25.1
+ferretdb:
+  default_tag: 1.24.1
+  name: ghcr.io/ferretdb/ferretdb
+  tags:
+    - 1.23.0
+    - 1.24.0
+    - 1.24.1
+forgejo:
+  default_tag: 1.21.11-2
+  name: codeberg.org/forgejo/forgejo
+  tags:
+    - 1.21.11-2
+frrouting_frr:
+  default_tag: 9.1.0
+  name: quay.io/frrouting/frr
+  tags:
+    - 9.1.0
+grafana:
+  default_tag: 11.3.1
+  name: grafana/grafana
+  tags:
+    - 10.4.5
+    - 11.2.0
+    - 11.3.1
+istio_pilot:
+  default_tag: 1.24.5-distroless
+  name: docker.io/istio/pilot
+  tags:
+    - 1.22.3-distroless
+    - 1.23.1-distroless
+    - 1.23.2-distroless
+    - 1.23.3-distroless
+    - 1.24.5-distroless
+istio_proxy:
+  default_tag: 1.24.5-distroless
+  name: docker.io/istio/proxyv2
+  tags:
+    - 1.22.3-distroless
+    - 1.23.1-distroless
+    - 1.23.2-distroless
+    - 1.23.3-distroless
+    - 1.24.5-distroless
+jupyter_datascience_lab:
+  default_tag: lab-4.4.0
+  name: quay.io/jupyter/datascience-notebook
+  tags:
+    - lab-4.4.0
+karpenter:
+  default_tag: 1.2.0
+  name: public.ecr.aws/karpenter/controller
+  tags:
+    - 0.37.0
+    - 1.0.8
+    - 1.2.0
+keycloak:
+  default_tag: 26.2.0
+  name: quay.io/keycloak/keycloak
+  tags:
+    - 25.0.2
+    - 25.0.6
+    - 26.2.0
+# Be sure to check:
+# https://kiali.io/docs/installation/installation-guide/prerequisites/#version-compatibility
+kiali:
+  default_tag: v2.8.0
+  name: quay.io/kiali/kiali
+  tags:
+    - v1.87.0
+    - v1.89.7
+    - v2.8.0
+kiwigrid_sidecar:
+  default_tag: 1.30.3
+  name: quay.io/kiwigrid/k8s-sidecar
+  tags:
+    - 1.27.4
+    - 1.30.3
+knative_istio_controller:
+  default_tag: &knative_istio_default_tag v1.17.0
+  name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
+  tags: &knative_istio_allowed_tags
+    - v1.15.1
+    - v1.17.0
+knative_istio_webhook:
+  default_tag: *knative_istio_default_tag
+  name: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook
+  tags: *knative_istio_allowed_tags
+knative_serving_activator:
+  default_tag: &knative_default_tag v1.17.0
+  name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
+  tags: &knative_allowed_tags
+    - v1.15.1
+    - v1.15.2
+    - v1.17.0
+knative_serving_autoscaler:
+  default_tag: *knative_default_tag
+  name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
+  tags: *knative_allowed_tags
+knative_serving_controller:
+  default_tag: *knative_default_tag
+  name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
+  tags: *knative_allowed_tags
+knative_serving_queue:
+  default_tag: *knative_default_tag
+  name: gcr.io/knative-releases/knative.dev/serving/cmd/queue
+  tags: *knative_allowed_tags
+knative_serving_webhook:
+  default_tag: *knative_default_tag
+  name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
+  tags: *knative_allowed_tags
+kube_state_metrics:
+  default_tag: v2.15.0
+  name: registry.k8s.io/kube-state-metrics/kube-state-metrics
+  tags:
+    - v2.12.0
+    - v2.14.0
+    - v2.15.0
+loki:
+  default_tag: 2.9.10
+  name: grafana/loki
+  tags:
+    - 2.9.8
+    - 2.9.10
+metallb_controller:
+  default_tag: v0.14.8
+  name: quay.io/metallb/controller
+  tags:
+    - v0.14.8
+metallb_speaker:
+  default_tag: v0.14.8
+  name: quay.io/metallb/speaker
+  tags:
+    - v0.14.8
+metrics_server:
+  default_tag: v0.7.2
+  name: registry.k8s.io/metrics-server/metrics-server
+  tags:
+    - v0.7.1
+    - v0.7.2
+node_exporter:
+  default_tag: v1.9.1
+  name: quay.io/prometheus/node-exporter
+  tags:
+    - v1.8.1
+    - v1.8.2
+    - v1.9.1
+node_feature_discovery:
+  default_tag: v0.17.2
+  name: registry.k8s.io/nfd/node-feature-discovery
+  tags:
+    - v0.17.2
+nvidia_device_plugin:
+  default_tag: v0.17.1
+  name: nvcr.io/nvidia/k8s-device-plugin
+  tags:
+    - v0.16.2
+    - v0.17.1
+oauth2_proxy:
+  default_tag: v7.6.0
+  name: quay.io/oauth2-proxy/oauth2-proxy
+  tags:
+    - v7.6.0
+ollama:
+  default_tag: 0.6.6
+  name: ollama/ollama
+  tags:
+    - 0.3.9
+    - 0.3.10
+    - 0.5.7
+    - 0.6.6
+promtail:
+  default_tag: 2.9.8
+  name: grafana/promtail
+  tags:
+    - 2.9.8
+    - 3.3.0
+redis:
+  default_tag: v7.2.7
+  name: quay.io/opstree/redis
+  tags:
+    - v7.2.3
+    - v7.2.7
+redis_exporter:
+  default_tag: v1.48.0
+  name: quay.io/opstree/redis-exporter
+  tags:
+    - v1.45.0
+    - v1.48.0
+redis_operator:
+  default_tag: v0.20.0
+  name: ghcr.io/ot-container-kit/redis-operator/redis-operator
+  tags:
+    - v0.18.0
+    - v0.18.1
+    - v0.20.0
+smtp4dev:
+  default_tag: 3.5.1
+  name: rnwood/smtp4dev
+  tags:
+    - 3.1.4
+    - 3.5.1
+trivy_operator:
+  default_tag: 0.22.0
+  name: ghcr.io/aquasecurity/trivy-operator
+  tags:
+    - 0.22.0
+trust_manager:
+  default_tag: v0.11.0
+  name: quay.io/jetstack/trust-manager
+  tags:
+    - v0.11.0
+    - v0.12.0
+trust_manager_init:
+  default_tag: '20210119.0'
+  name: quay.io/jetstack/cert-manager-package-debian
+  tags:
+    - '20210119.0'
+vm_operator:
+  default_tag: v0.44.0
+  name: victoriametrics/operator
+  tags:
+    - v0.44.0

@@ -4,6 +4,7 @@
 ### un-ignore the necessary directories
 
 # we read the teams and such from the bootstrap dir
+!image_registry.yaml
 !bootstrap/
 !platform_umbrella/apps
 !platform_umbrella/config
@@ -19,5 +20,3 @@ platform_umbrella/apps/*/priv/static/assets
 # ignore configs anywhere in the platform_umbrella dir
 platform_umbrella/**/.formatter.exs
 platform_umbrella/**/.gitignore
-
-
