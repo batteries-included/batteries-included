@@ -88,8 +88,11 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     changeset = ProjectSnapshot.changeset(socket.assigns.snapshot, snapshot_params)
     snapshot = Ecto.Changeset.apply_changes(changeset)
 
-    # TODO: Handle removals
-    # removals = socket.assigns.removals
+    # remove any parts of the snapshot that are marked for removal
+    # This allows users to remove environment variables, pg users, etc.
+    # from the snapshot before exporting it.
+    removals = socket.assigns.removals
+    snapshot = CommonCore.Projects.RemovalTool.remove(snapshot, removals)
 
     case HomeBaseClient.export_snapshot(snapshot) do
       :ok ->
