@@ -1,18 +1,19 @@
 defmodule HomeBaseWeb.StoredProjectSnapshotController do
   use HomeBaseWeb, :controller
 
-  alias CommonCore.Installation
   alias HomeBase.CustomerInstalls
   alias HomeBase.Projects
   alias HomeBase.Projects.StoredProjectSnapshot
 
   require Logger
 
+  @dialyzer {:nowarn_function, create: 2}
+
   action_fallback HomeBaseWeb.FallbackController
 
   def create(conn, %{"installation_id" => install_id, "jwt" => jwt}) do
     installation = CustomerInstalls.get_installation!(install_id)
-    snapshot = Installation.verify_message!(installation, jwt)
+    snapshot = CommonCore.JWK.decrypt_from_control_server!(installation.control_jwk, jwt)
 
     with {:ok, %StoredProjectSnapshot{} = stored_project_snapshot} <-
            Projects.create_stored_project_snapshot(%{snapshot: snapshot, installation_id: install_id}) do
@@ -29,6 +30,6 @@ defmodule HomeBaseWeb.StoredProjectSnapshotController do
 
     conn
     |> put_status(:ok)
-    |> render(:index, payload: CommonCore.JWK.encrypt(installation.control_jwk, payload))
+    |> render(:index, payload: CommonCore.JWK.encrypt_to_control_server(installation.control_jwk, payload))
   end
 end

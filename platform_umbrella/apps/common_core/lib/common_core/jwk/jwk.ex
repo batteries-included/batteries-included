@@ -10,7 +10,12 @@ defmodule CommonCore.JWK do
   @default_curve {:ec, "P-256"}
   @sign_algo "ES256"
 
-  @dialyzer {:nowarn_function, decrypt: 2}
+  # Jose JWK decrypt functions take a tuple with two elements
+  # for public keys. Dialyzer does not know this and
+  # gets upset. So we need to tell it to ignore this.
+  @dialyzer {:nowarn_function, decrypt!: 3}
+  @dialyzer {:nowarn_function, decrypt_from_control_server!: 2}
+  @dialyzer {:nowarn_function, decrypt_from_home_base!: 2}
 
   @doc """
   Generate a new JWK in a form usable for embedding into ecto rows in a map field
@@ -50,11 +55,11 @@ defmodule CommonCore.JWK do
     Map.has_key?(result, "d")
   end
 
-  @spec sign_key() :: atom()
-  def sign_key do
+  @spec primary_home_base_key() :: atom()
+  def primary_home_base_key do
     :common_core
     |> Application.get_env(CommonCore.JWK, [])
-    |> Keyword.get(:sign_key, :test)
+    |> Keyword.get(:primary_home_base_key, :test)
   end
 
   @spec verify_keys() :: list(atom)
@@ -64,96 +69,99 @@ defmodule CommonCore.JWK do
     |> Keyword.get(:verify_keys, [:test_pub, :home_a_pub, :home_b_pub])
   end
 
-  def sign(payload) do
-    jwk_name = sign_key()
+  def sign_to_control_server(payload) do
+    jwk_name = primary_home_base_key()
     jwk = Cache.get(jwk_name)
 
     {%{kty: _}, result} = JOSE.JWK.to_map(jwk)
     result |> JOSE.JWT.sign(%{"alg" => @sign_algo}, payload) |> elem(1)
   end
 
-  def encrypt(for_key, payload) do
-    jwk_name = sign_key()
-    sign_jwk = jwk_name |> Cache.get() |> to_jwk()
+  def encrypt_to_home_base(from_jwk, payload) do
+    sign_jwk = primary_home_base_key() |> Cache.get() |> to_jwk()
+    from_jwk = to_jwk(from_jwk)
 
-    for_key = to_jwk(for_key)
-
-    signed =
-      sign_jwk
-      |> JOSE.JWT.sign(%{"alg" => @sign_algo}, payload)
-      |> JOSE.JWS.compact()
-      |> elem(1)
-
-    {for_key, sign_jwk}
-    |> JOSE.JWE.block_encrypt(
-      signed,
-      %{
-        "alg" => "ECDH-ES",
-        "enc" => "A256GCM"
-      }
-    )
-    |> elem(1)
+    encrypt(sign_jwk, from_jwk, payload)
   end
 
-  def decrypt(jwk, token) do
-    jwk_name = sign_key()
-    sign_jwk = jwk_name |> Cache.get() |> to_jwk()
-
-    jwk = to_jwk(jwk)
-
-    # This line make dialyzer very upset.
-    # block_encrypt accepts a tuple with two elements
-    # for public keys
-    #
-    # However that fact is not in the dialyzer spec
-    # and so it gets upset.
-    case JOSE.JWE.block_decrypt({to_jwk(sign_jwk), to_jwk(jwk)}, token) do
-      {:error, _} ->
-        nil
-
-      {value, _jwe} ->
-        sign_jwk
-        |> JOSE.JWS.verify_strict(["ES512"], value)
-        |> elem(1)
-        |> JSON.decode!()
-    end
+  def encrypt_to_control_server(to_jwk, payload) do
+    sign_jwk = primary_home_base_key() |> Cache.get() |> to_jwk()
+    to_jwk = to_jwk(to_jwk)
+    encrypt(to_jwk, sign_jwk, payload)
   end
 
-  def verify!(nil), do: raise(BadKeyError.exception())
+  def decrypt_from_control_server!(from_jwk, message) do
+    sign_jwk = primary_home_base_key() |> Cache.get() |> to_jwk()
+    from_jwk = to_jwk(from_jwk)
 
-  def verify!(token) do
-    case first_verified(token) do
-      nil -> raise BadKeyError.exception()
-      value -> value
-    end
+    decrypt!(sign_jwk, from_jwk, message)
   end
 
-  def verify(nil), do: {:error, BadKeyError.exception()}
+  def decrypt_from_home_base!(from_jwk, message) do
+    sign_jwk = primary_home_base_key() |> Cache.get() |> to_jwk()
+    from_jwk = to_jwk(from_jwk)
 
-  def verify(token) do
-    case first_verified(token) do
+    decrypt!(from_jwk, sign_jwk, message)
+  end
+
+  def verify_from_home_base(nil), do: {:error, BadKeyError.exception()}
+
+  def verify_from_home_base(message) do
+    case first_verified(message) do
       nil -> {:error, BadKeyError.exception()}
       value -> {:ok, value}
     end
   end
 
-  defp first_verified(token) do
+  defp first_verified(message) do
     Enum.find_value(verify_keys(), nil, fn key_name ->
       jwk = Cache.get(key_name)
-      try_verify_single(jwk, token)
+      try_verify_single(jwk, message)
     end)
   end
 
   # Get can return nil for private keys that are not present
   defp try_verify_single(nil, _token), do: nil
 
-  defp try_verify_single(jwk, token) do
-    case JOSE.JWT.verify(jwk, token) do
+  defp try_verify_single(jwk, message) do
+    case JOSE.JWT.verify(jwk, message) do
       {true, value, _} -> value |> JOSE.JWT.to_map() |> elem(1)
       # - This is a backup key and we are not expecting it to be used
       # - The keys are being rotated
       # - The key is not present
       _ -> nil
+    end
+  end
+
+  defp encrypt(to_jwk, from_jwk, payload) do
+    signed =
+      from_jwk
+      |> JOSE.JWT.sign(%{"alg" => @sign_algo}, payload)
+      |> JOSE.JWS.compact()
+      |> elem(1)
+
+    {to_jwk, from_jwk}
+    |> JOSE.JWE.block_encrypt(signed, %{"alg" => "ECDH-ES", "enc" => "A256GCM"})
+    |> elem(1)
+  end
+
+  defp decrypt!(to_jwk, from_jwk, message) do
+    # This line make dialyzer very upset.
+    # block_encrypt accepts a tuple with two elements
+    # for public keys
+    #
+    # However that fact is not in the dialyzer spec
+    # and so it gets upset.
+    case JOSE.JWE.block_decrypt({to_jwk(from_jwk), to_jwk(to_jwk)}, message) do
+      {:error, e} ->
+        Logger.error("Failed to decrypt message")
+        raise BadKeyError.exception(exception: e)
+
+      {value, _jwe} ->
+        from_jwk
+        |> JOSE.JWS.verify_strict([@sign_algo], value)
+        |> elem(1)
+        |> JSON.decode!()
     end
   end
 

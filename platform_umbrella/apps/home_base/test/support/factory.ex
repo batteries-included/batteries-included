@@ -8,6 +8,7 @@ defmodule HomeBase.Factory do
   alias HomeBase.Accounts
   alias HomeBase.ET.StoredHostReport
   alias HomeBase.ET.StoredUsageReport
+  alias HomeBase.Projects.StoredProjectSnapshot
 
   defdelegate usage_report_factory(), to: CommonCore.Factory
   defdelegate host_report_factory(), to: CommonCore.Factory
@@ -22,12 +23,17 @@ defmodule HomeBase.Factory do
     %StoredHostReport{report: build(:host_report), installation: build(:installation)}
   end
 
+  @spec user_factory() :: CommonCore.Accounts.User.t()
   def user_factory do
     %User{
       email: sequence("user-") <> "@example.com",
       password: "qwer1234",
       hashed_password: "$2b$12$Cx0OPVZ5xwCuHVvQdH1TouyCov581bTNPBQNaJMSJehRH8MrkZgGu"
     }
+  end
+
+  def stored_project_snapshot_factory do
+    %StoredProjectSnapshot{}
   end
 
   def team_factory do

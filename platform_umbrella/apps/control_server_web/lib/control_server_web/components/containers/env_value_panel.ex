@@ -2,17 +2,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
   @moduledoc false
   use ControlServerWeb, :html
 
-  defp env_value_value(%{env_value: %{source_type: :value}} = assigns) do
-    ~H"""
-    {CommonUI.TextHelpers.obfuscate(@env_value.value)}
-    """
-  end
-
-  defp env_value_value(%{env_value: %{source_type: _}} = assigns) do
-    ~H"""
-    <.truncate_tooltip value={"From #{@env_value.source_name}"} />
-    """
-  end
+  import ControlServerWeb.Containers.EnvValueTable
 
   attr :class, :any, default: nil
   attr :editable, :boolean, default: false
@@ -23,10 +13,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
   def env_var_panel(%{editable: false} = assigns) do
     ~H"""
     <.panel title="Environment Variables" class={@class} variant={@variant}>
-      <.table id="env-var-table" rows={@env_values}>
-        <:col :let={ev} label="Name">{ev.name}</:col>
-        <:col :let={ev} label="Value"><.env_value_value env_value={ev} /></:col>
-      </.table>
+      <.env_var_table env_values={@env_values} />
     </.panel>
     """
   end
@@ -40,9 +27,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
         </.button>
       </:menu>
 
-      <.table id="env-var-table" rows={Enum.with_index(@env_values)}>
-        <:col :let={{ev, _idx}} label="Name">{ev.name}</:col>
-        <:col :let={{ev, _idx}} label="Value"><.env_value_value env_value={ev} /></:col>
+      <.env_var_table env_values={@env_values}>
         <:action :let={{ev, idx}}>
           <.button
             variant="minimal"
@@ -70,7 +55,7 @@ defmodule ControlServerWeb.Containers.EnvValuePanel do
             Edit
           </.tooltip>
         </:action>
-      </.table>
+      </.env_var_table>
     </.panel>
     """
   end

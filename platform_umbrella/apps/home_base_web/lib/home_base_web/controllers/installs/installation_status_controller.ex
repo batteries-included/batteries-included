@@ -32,7 +32,7 @@ defmodule HomeBaseWeb.InstallationStatusContoller do
     conn
     |> put_status(:ok)
     |> put_view(json: HomeBaseWeb.JwtJSON)
-    |> render(:show, jwt: CommonCore.JWK.sign(install_status))
+    |> render(:show, jwt: CommonCore.JWK.sign_to_control_server(install_status))
   end
 
   # Like the status says we're ok, not great, not bad, just ok.

@@ -8,14 +8,20 @@ defmodule ControlServerWeb.PgUserTable do
   attr :users, :list, required: true
   attr :cluster, :any, required: true
   attr :id, :string, default: "pg-users-table"
+  attr :opts, :list, default: []
+
+  slot :action
 
   def pg_users_table(assigns) do
     ~H"""
-    <.table id={@id} rows={@users}>
-      <:col :let={user} label="User Name">{user.username}</:col>
-      <:col :let={user} label="Roles">{Enum.join(user.roles, ", ")}</:col>
-      <:col :let={user} label="Secret">{secret_name(@cluster, user)}</:col>
-      <:col :let={user} label="Namespace">{namespaces(user, @cluster)}</:col>
+    <.table id={@id} rows={Enum.with_index(@users)} opts={@opts}>
+      <:col :let={{user, _user_index}} label="User Name">{user.username}</:col>
+      <:col :let={{user, _user_index}} label="Roles">{Enum.join(user.roles, ", ")}</:col>
+      <:col :let={{user, _user_index}} label="Secret">{secret_name(@cluster, user)}</:col>
+      <:col :let={{user, _user_index}} label="Namespace">{namespaces(user, @cluster)}</:col>
+      <:action :let={{user, user_index}} :if={@action}>
+        {render_slot(@action, {user, user_index})}
+      </:action>
     </.table>
     """
   end

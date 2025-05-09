@@ -17,7 +17,7 @@ defmodule HomeBaseWeb.InstallationStatusControllerTest do
       conn = get(conn, ~p"/api/v1/installations/#{install.id}/status")
       jwt = json_response(conn, 200)["jwt"]
 
-      assert {:ok, payload} = CommonCore.JWK.verify(jwt)
+      assert {:ok, payload} = CommonCore.JWK.verify_from_home_base(jwt)
       assert payload["status"] == "ok"
     end
   end

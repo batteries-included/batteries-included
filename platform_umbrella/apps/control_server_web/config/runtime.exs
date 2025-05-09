@@ -34,8 +34,16 @@ secret_key_base =
     """
 
 config :common_core, CommonCore.JWK,
-  sign_key: nil,
-  verify_keys: [:home_a_pub, :home_b_pub]
+  # Allow both home_a and home_b to verify
+  # the JWTs that are signed. This allows us to transition
+  # from one home to another, since stable versions
+  # is what determines the control server version.
+  verify_keys: [:home_a_pub, :home_b_pub],
+
+  # When we encrypt to home base, we use the home_a key
+  # to encrypt the payload. This means that rotating the key
+  # will require an upgrade of the control server.
+  primary_home_base_key: :home_a_pub
 
 config :common_core, :clusters, default: :service_account
 
