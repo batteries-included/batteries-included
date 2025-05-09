@@ -83,7 +83,7 @@ frrouting_frr:
     - 9.1.0
 grafana:
   default_tag: 11.3.1
-  name: grafana/grafana
+  name: docker.io/grafana/grafana
   tags:
     - 10.4.5
     - 11.2.0
@@ -182,7 +182,7 @@ kube_state_metrics:
     - v2.15.0
 loki:
   default_tag: 2.9.10
-  name: grafana/loki
+  name: docker.io/grafana/loki
   tags:
     - 2.9.8
     - 2.9.10
@@ -227,7 +227,7 @@ oauth2_proxy:
     - v7.6.0
 ollama:
   default_tag: 0.6.6
-  name: ollama/ollama
+  name: docker.io/ollama/ollama
   tags:
     - 0.3.9
     - 0.3.10
@@ -235,7 +235,7 @@ ollama:
     - 0.6.6
 promtail:
   default_tag: 2.9.8
-  name: grafana/promtail
+  name: docker.io/grafana/promtail
   tags:
     - 2.9.8
     - 3.3.0
@@ -260,7 +260,7 @@ redis_operator:
     - v0.20.0
 smtp4dev:
   default_tag: 3.5.1
-  name: rnwood/smtp4dev
+  name: docker.io/rnwood/smtp4dev
   tags:
     - 3.1.4
     - 3.5.1
@@ -282,6 +282,6 @@ trust_manager_init:
     - '20210119.0'
 vm_operator:
   default_tag: v0.44.0
-  name: victoriametrics/operator
+  name: docker.io/victoriametrics/operator
   tags:
     - v0.44.0

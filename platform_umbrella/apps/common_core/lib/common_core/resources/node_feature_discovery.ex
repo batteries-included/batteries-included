@@ -162,7 +162,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
               }
             ],
             "image" => battery.config.image,
-            "imagePullPolicy" => "Always",
+            "imagePullPolicy" => "IfNotPresent",
             "livenessProbe" => %{
               "grpc" => %{"port" => 8082},
               "initialDelaySeconds" => 10,
@@ -276,7 +276,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
               }
             ],
             "image" => battery.config.image,
-            "imagePullPolicy" => "Always",
+            "imagePullPolicy" => "IfNotPresent",
             "name" => "nfd-gc",
             "ports" => [%{"containerPort" => 8081, "name" => "metrics"}],
             "resources" => %{

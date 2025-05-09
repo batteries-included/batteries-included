@@ -25,7 +25,7 @@ defmodule CommonCore.Resources.Istio.KialiConfigGenerator do
         "hpa" => %{"api_version" => "autoscaling/v2", "spec" => %{}},
         "image_digest" => "",
         "image_name" => "quay.io/kiali/kiali",
-        "image_pull_policy" => "Always",
+        "image_pull_policy" => "IfNotPresent",
         "image_pull_secrets" => [],
         "image_version" => KialiConfig.image_version(battery.config),
         "ingress" => %{
