@@ -150,7 +150,7 @@ defmodule CommonCore.Resources.RedisOperator do
             "command" => ["/operator", "manager"],
             "env" => [%{"name" => "ENABLE_WEBHOOKS", "value" => "false"}],
             "image" => battery.config.operator_image,
-            "imagePullPolicy" => "Always",
+            "imagePullPolicy" => "IfNotPresent",
             "livenessProbe" => %{"httpGet" => %{"path" => "/healthz", "port" => 8081}},
             "name" => "redis-operator",
             "readinessProbe" => %{"httpGet" => %{"path" => "/readyz", "port" => 8081}},
