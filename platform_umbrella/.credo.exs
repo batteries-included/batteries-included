@@ -174,6 +174,8 @@
                  "apps/common_core/lib/common_core/seed_args_converter.ex",
                  # Connection Pools are per cluster.
                  "apps/common_core/lib/common_core/connection_pool.ex",
+                 # This is during compilation and they are creating the atoms
+                 "apps/common_core/lib/common_core/defaults/registry.ex",
                  # It's a test.
                  "apps/common_core/test/common_core/keycloak/admin_client_test.exs"
                ]

@@ -1,5 +1,4 @@
-bi/go.sum linguist-generated=true
 bootstrap/*.json linguist-generated=true
-platform_umbrella/**/*.heyya_snap linguist-generated=true
-platform_umbrella/apps/common_core/priv/images.json linguist-generated=true
 platform_umbrella/mix.lock linguist-generated=true
+platform_umbrella/**/*.heyya_snap linguist-generated=true
+bi/go.sum linguist-generated=true

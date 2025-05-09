@@ -4,6 +4,7 @@ defmodule CommonCore.Defaults.Image do
 
   @required_fields ~w(name tags default_tag)a
 
+  @derive Ymlr.Encoder
   batt_embedded_schema do
     field :name, :string
     field :tags, {:array, :string}
