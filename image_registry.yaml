@@ -49,13 +49,6 @@ cert_manager_controller:
     - v1.15.1
     - v1.15.4
     - v1.16.4
-cert_manager_ctl:
-  default_tag: v1.16.4
-  name: quay.io/jetstack/cert-manager-ctl
-  tags:
-    - v1.15.1
-    - v1.15.4
-    - v1.16.4
 cert_manager_webhook:
   default_tag: v1.16.4
   name: quay.io/jetstack/cert-manager-webhook

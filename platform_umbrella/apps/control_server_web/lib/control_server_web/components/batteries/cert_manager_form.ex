@@ -27,7 +27,6 @@ defmodule ControlServerWeb.Batteries.CertManagerForm do
             {@form[:acmesolver_image].value}<br />
             {@form[:cainjector_image].value}<br />
             {@form[:controller_image].value}<br />
-            {@form[:ctl_image].value}<br />
             {@form[:webhook_image].value}
           </.image>
 
@@ -47,12 +46,6 @@ defmodule ControlServerWeb.Batteries.CertManagerForm do
             field={@form[:controller_image_tag_override]}
             image_id={:cert_manager_controller}
             label="Controller Version"
-          />
-
-          <.image_version
-            field={@form[:ctl_image_tag_override]}
-            image_id={:cert_manager_ctl}
-            label="CTL Version"
           />
 
           <.image_version
