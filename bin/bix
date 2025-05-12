@@ -66,29 +66,29 @@ export PATH
 
 case "$command" in
 docker | d)
-    exec -- "${ROOT_DIR}/bin/bi-docker" "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-docker" "${args[@]}"
     ;;
 elixir | ex)
-    exec -- "${ROOT_DIR}/bin/bi-elixir" "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-elixir" "${args[@]}"
     ;;
 go)
-    exec -- "${ROOT_DIR}/bin/bi-go" "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-go" "${args[@]}"
     ;;
 local | l)
-    exec -- "${ROOT_DIR}/bin/bi-local" "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-local" "${args[@]}"
     ;;
 source | s)
-    exec -- "${ROOT_DIR}/bin/bi-source" "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-source" "${args[@]}"
     ;;
 static)
-    exec -- "${ROOT_DIR}/bin/bi-static" "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-static" "${args[@]}"
     ;;
 
 mix | m)
-    exec -- "${ROOT_DIR}/bin/bi-elixir" run "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-elixir" run "${args[@]}"
     ;;
 bi | b)
-    exec -- "${ROOT_DIR}/bin/bi-go" run "${args[@]}"
+    exec -- "${SCRIPT_DIR}/bi-go" run "${args[@]}"
     ;;
 root-dir)
     echo "${ROOT_DIR}"

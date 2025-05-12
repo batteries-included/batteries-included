@@ -10,7 +10,6 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
 export PORTFORWARD_ENABLED=1
-trap cleanup ERR EXIT
 
 do_int_test() {
     export MIX_ENV=test
@@ -25,6 +24,8 @@ do_test_deep() {
     local setup_only=${1:-0}
     local slug=${2:-"dev"}
     local out=/dev/null
+
+    trap cleanup ERR EXIT
     log "${GREEN}Running${NOFORMAT} elixir tests with coverage and resetting the database"
     # Start the port forwarder
     try_portforward "${slug}" &
@@ -49,6 +50,7 @@ do_test() {
         out=/dev/stdout
     fi
 
+    trap cleanup ERR EXIT
     log "${GREEN}Running${NOFORMAT} elixir tests"
     # Start the port forwarder
     try_portforward "${slug}" &
