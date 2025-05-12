@@ -29,7 +29,7 @@ defmodule CommonUI.Components.Script do
     >
       <div class="relative flex-1 h-full">
         <div class="flex items-center absolute inset-0 whitespace-nowrap overflow-auto px-5">
-          <span id={@id}>{String.replace(@template, "@src", @src)}</span>
+          <pre id={@id}>{String.replace(@template, "@src", @src)}</pre>
         </div>
       </div>
 
