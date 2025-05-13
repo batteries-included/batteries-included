@@ -6,6 +6,7 @@ defmodule CommonCore.Resources.Istiod do
 
   use CommonCore.Resources.ResourceGenerator, app_name: "istiod"
 
+  alias CommonCore.Defaults.Image
   alias CommonCore.Resources.Builder, as: B
 
   resource(:cluster_role_binding_istiod_clusterrole_battery, battery, _state) do
@@ -269,7 +270,7 @@ defmodule CommonCore.Resources.Istiod do
   # That json needs just a little updating.
   defp values(battery, _state) do
     namespace = battery.config.namespace
-    tag = CommonCore.Defaults.Images.get_image!(:istio_proxy).default_tag
+    proxy_img = CommonCore.Defaults.Images.get_image!(:istio_proxy)
 
     :values
     |> get_resource()
@@ -282,8 +283,10 @@ defmodule CommonCore.Resources.Istiod do
       val
       |> Map.put("namespace", namespace)
       |> Map.put("istioNamespace", namespace)
-      |> Map.put("tag", tag)
+      |> Map.put("tag", proxy_img.default_tag)
       |> Map.put("logAsJson", true)
+      |> put_in(~w(proxy image), Image.default_image(proxy_img))
+      |> put_in(~w(proxy_init image), Image.default_image(proxy_img))
     end)
     |> Jason.encode!()
   end
