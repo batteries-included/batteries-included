@@ -22,6 +22,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   alias ControlServerWeb.Projects.AIForm
   alias ControlServerWeb.Projects.BatteriesForm
   alias ControlServerWeb.Projects.DatabaseForm
+  alias ControlServerWeb.Projects.ImportForm
   alias ControlServerWeb.Projects.ProjectForm
   alias ControlServerWeb.Projects.WebForm
   alias KubeServices.SystemState.SummaryStorage
@@ -366,6 +367,12 @@ defmodule ControlServerWeb.Live.ProjectsNew do
         />
 
         <.live_component
+          id="project-import-form"
+          module={ImportForm}
+          class={subform_class(@current_step, ImportForm)}
+        />
+
+        <.live_component
           id="project-batteries-form"
           module={BatteriesForm}
           class={subform_class(@current_step, BatteriesForm)}
@@ -398,6 +405,6 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   defp steps(:web), do: [ProjectForm, WebForm, BatteriesForm]
   defp steps(:ai), do: [ProjectForm, AIForm, BatteriesForm]
   defp steps(:db), do: [ProjectForm, DatabaseForm, BatteriesForm]
-  defp steps(:bare), do: [ProjectForm, BatteriesForm]
+  defp steps(:bare), do: [ProjectForm, ImportForm, BatteriesForm]
   defp steps, do: steps(:bare)
 end
