@@ -1,4 +1,4 @@
-<div phx-feedback-for="foo" class="contents">
+<label phx-feedback-for="foo" class="contents">
   <div class="justify-self-end cursor-pointer ">
     
 
@@ -22,4 +22,4 @@
     
   
 </div>
-</div>
+</label>
