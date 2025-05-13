@@ -234,7 +234,12 @@ defmodule KubeServices.ET.HomeBaseClient do
   defp do_list_snapshots(%State{http_client: client, project_snapshot_path: project_snapshot_path} = state) do
     case Tesla.get(client, project_snapshot_path) do
       {:ok, %{body: %{"jwt" => jwt}} = _env} ->
-        %{"snapshots" => snapshots} = decrypt(state, jwt)
+        snapshots =
+          state
+          |> decrypt(jwt)
+          |> Map.get("snapshots", [])
+          |> Enum.map(&CommonCore.Projects.ProjectSnapshotSummary.new!/1)
+
         {:ok, snapshots}
 
       {:error, reason} ->
