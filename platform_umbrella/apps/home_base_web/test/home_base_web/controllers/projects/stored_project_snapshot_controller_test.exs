@@ -30,6 +30,6 @@ defmodule HomeBaseWeb.StoredProjectSnapshotControllerTest do
 
     conn = get(conn, ~p"/api/v1/installations/#{install.id}/project_snapshots")
 
-    assert %{} = json_response(conn, 200)["data"]
+    assert %{} = json_response(conn, 200)["jwt"]
   end
 end
