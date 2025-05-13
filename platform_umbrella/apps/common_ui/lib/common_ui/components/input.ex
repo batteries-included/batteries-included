@@ -523,7 +523,7 @@ defmodule CommonUI.Components.Input do
 
   def input(%{type: "switch"} = assigns) do
     ~H"""
-    <div phx-feedback-for={if !@force_feedback, do: @name} class="contents">
+    <label phx-feedback-for={if !@force_feedback, do: @name} class="contents">
       <div class={["justify-self-end cursor-pointer", @class]}>
         <input
           :if={boolean?(@value)}
@@ -556,7 +556,7 @@ defmodule CommonUI.Components.Input do
       </div>
 
       <.error id={@id} errors={@errors} class="mt-0" />
-    </div>
+    </label>
     """
   end
 

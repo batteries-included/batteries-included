@@ -12,7 +12,7 @@ defmodule Storybook.Components.Input.Switch do
         attributes: %{
           type: "switch",
           name: "foo",
-          value: "bar",
+          value: "false",
           checked: false
         }
       },

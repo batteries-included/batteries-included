@@ -194,6 +194,14 @@ defmodule CommonUI.Components.InputTest do
       <.input type="switch" id="foo" name="foo" value="true" checked disabled />
       """
     end
+
+    component_snapshot_test "with label" do
+      assigns = %{}
+
+      ~H"""
+      <.input type="switch" id="foo" name="foo" value="bar" label="foo" checked />
+      """
+    end
   end
 
   describe "range input component" do
