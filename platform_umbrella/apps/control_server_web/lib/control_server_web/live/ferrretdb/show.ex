@@ -69,8 +69,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
     assign(socket, ferret_service: ferret_service)
   end
 
-  defp maybe_assign_edit_versions(%{assigns: %{ferret_service: ferret_service, live_action: live_action}} = socket)
-       when live_action == :edit_versions do
+  defp maybe_assign_edit_versions(%{assigns: %{ferret_service: ferret_service, live_action: :edit_versions}} = socket) do
     assign(socket, :edit_versions, ControlServer.Audit.history(ferret_service))
   end
 
@@ -95,7 +94,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
 
   defp ferret_page_header(assigns) do
     ~H"""
-    <.page_header title={@page_title} back_link={~p"/ferretdb"}>
+    <.page_header title={"#{@page_title}: #{@ferret_service.name}"} back_link={~p"/ferretdb"}>
       <:menu>
         <.badge :if={@ferret_service.project_id}>
           <:item label="Project" navigate={~p"/projects/#{@ferret_service.project_id}/show"}>
@@ -220,6 +219,7 @@ defmodule ControlServerWeb.Live.FerretServiceShow do
           live_action={@live_action}
           page_title={@page_title}
           timeline_installed={@timeline_installed}
+          edit_versions={@edit_versions}
         />
       <% :pods -> %>
         <.pods_page
