@@ -9,11 +9,13 @@ defmodule ControlServerWeb.Projects.ImportForm do
   end
 
   def update(assigns, socket) do
-    search_form = assigns |> Map.get(:data, %{}) |> to_form()
+    search_form = to_form(%{})
+    snapshot_select_form = to_form(%{})
 
     {:ok,
      socket
      |> assign(:search_form, search_form)
+     |> assign(:snapshot_select_form, snapshot_select_form)
      |> assign_snapshots()
      |> assign(assigns)}
   end
@@ -28,12 +30,26 @@ defmodule ControlServerWeb.Projects.ImportForm do
     {:noreply, socket |> assign(:search_form, search_form) |> assign_snapshots()}
   end
 
-  defp assign_snapshots(%{assigns: %{search_form: search_form}} = socket) do
+  def handle_event("snapshot_select_validate", snapshot_select_params, socket) do
+    snapshot_select_form = to_form(snapshot_select_params)
+    {:noreply, socket |> assign(:snapshot_select_form, snapshot_select_form) |> assign_snapshots()}
+  end
+
+  defp assign_snapshots(%{assigns: %{search_form: search_form, snapshot_select_form: snapshot_select_form}} = socket) do
     search = Map.get(search_form.params, "search", "")
 
     snapshots = get_snapshots(search)
 
-    assign(socket, :snapshots, snapshots)
+    snapshot_select_form =
+      snapshots
+      |> Map.new(fn snapshot ->
+        {snapshot.id, Map.get(snapshot_select_form.params, snapshot.id, false)}
+      end)
+      |> to_form()
+
+    socket
+    |> assign(:snapshots, snapshots)
+    |> assign(:snapshot_select_form, snapshot_select_form)
   end
 
   defp get_snapshots(search) do
@@ -53,7 +69,7 @@ defmodule ControlServerWeb.Projects.ImportForm do
 
   def render(assigns) do
     ~H"""
-    <div class={["contents", @class]} id={"contents_import_#{@id}"}>
+    <div class={["flex", "flex-col", "gap-4", "lg:gap-6", @class]} id={"contents_import_#{@id}"}>
       <.form
         id={"search_form_#{@id}"}
         for={@search_form}
@@ -69,12 +85,18 @@ defmodule ControlServerWeb.Projects.ImportForm do
         />
       </.form>
 
-      <.flex column>
-        <%= for snapshot <- @snapshots do %>
-          <.button phx-click="import_snapshot" phx-value-snapshot={snapshot.id} phx-target={@myself}>
-            {snapshot.name}
-          </.button>
-        <% end %>
+      <.flex column class="min-h-96 max-h-128">
+        <.form
+          id={"snapshot_select_form_#{@id}"}
+          for={@snapshot_select_form}
+          phx-target={@myself}
+          phx-change="snapshot_select_validate"
+          phx-submit="snapshot_select_submit"
+        >
+          <%= for snapshot <- @snapshots do %>
+            <.input field={@snapshot_select_form[snapshot.id]} type="switch" label={snapshot.name} />
+          <% end %>
+        </.form>
       </.flex>
     </div>
     """
