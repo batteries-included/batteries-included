@@ -15,15 +15,38 @@ defmodule HomeBase.Projects do
     |> Repo.insert()
   end
 
-  def snapshots_for(%{} = installation) do
+  def snapshots_for(%{} = owner) do
+    owning_ids = owning_installations(owner)
+
+    query =
+      from s in StoredProjectSnapshot,
+        where: s.installation_id in subquery(owning_ids) or is_nil(s.installation_id),
+        order_by: [desc: s.inserted_at],
+        select: %{
+          id: s.id,
+          name: s.snapshot["name"],
+          description: s.snapshot["description"],
+          num_postgres_clusters: fragment("jsonb_array_length(?)", s.snapshot["postgres_clusters"]),
+          num_redis_instances: fragment("jsonb_array_length(?)", s.snapshot["redis_instances"]),
+          num_jupyter_notebooks: fragment("jsonb_array_length(?)", s.snapshot["jupyter_notebooks"]),
+          num_knative_services: fragment("jsonb_array_length(?)", s.snapshot["knative_services"]),
+          num_traditional_services: fragment("jsonb_array_length(?)", s.snapshot["traditional_services"]),
+          num_model_instances: fragment("jsonb_array_length(?)", s.snapshot["model_instances"])
+        }
+
+    Repo.all(query)
+  end
+
+  def get_stored_project_snapshot(%Installation{} = installation, id) do
     owning_ids = owning_installations(installation)
 
     query =
       from s in StoredProjectSnapshot,
         where: s.installation_id in subquery(owning_ids),
+        where: s.id == ^id,
         select: s
 
-    Repo.all(query)
+    Repo.one(query)
   end
 
   defp owning_installations(%Installation{team_id: nil, user_id: nil, id: id} = _installation) do

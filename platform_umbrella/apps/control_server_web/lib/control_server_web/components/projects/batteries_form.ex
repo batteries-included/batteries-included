@@ -104,7 +104,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
     assigns = assign(assigns, :description, @description)
 
     ~H"""
-    <div class="contents">
+    <div class="contents" id={"contents_batteries_#{@id}"}>
       <.form
         id={@id}
         for={@form}
