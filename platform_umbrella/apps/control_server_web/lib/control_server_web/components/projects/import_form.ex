@@ -9,31 +9,73 @@ defmodule ControlServerWeb.Projects.ImportForm do
   end
 
   def update(assigns, socket) do
-    form = assigns |> Map.get(:data, %{}) |> to_form()
+    search_form = assigns |> Map.get(:data, %{}) |> to_form()
 
-    snapshots = HomeBaseClient.list_snapshots()
+    {:ok,
+     socket
+     |> assign(:search_form, search_form)
+     |> assign_snapshots()
+     |> assign(assigns)}
+  end
 
-    {:ok, socket |> assign(:form, form) |> assign(:snapshots, snapshots) |> assign(assigns)}
+  def handle_event("search_validate", search_params, socket) do
+    search_form = to_form(search_params)
+    {:noreply, socket |> assign(:search_form, search_form) |> assign_snapshots()}
+  end
+
+  def handle_event("search_submit", search_params, socket) do
+    search_form = to_form(search_params)
+    {:noreply, socket |> assign(:search_form, search_form) |> assign_snapshots()}
+  end
+
+  defp assign_snapshots(%{assigns: %{search_form: search_form}} = socket) do
+    search = Map.get(search_form.params, "search", "")
+
+    snapshots = get_snapshots(search)
+
+    assign(socket, :snapshots, snapshots)
+  end
+
+  defp get_snapshots(search) do
+    snapshots =
+      case HomeBaseClient.list_snapshots() do
+        {:ok, snapshots} -> snapshots
+        {:error, _} -> []
+      end
+
+    snapshots =
+      Enum.filter(snapshots, fn snapshot ->
+        String.contains?(snapshot.name, search)
+      end)
+
+    snapshots
   end
 
   def render(assigns) do
     ~H"""
-    <div class="contents" id={"contents_import_#{@id}"}>
+    <div class={["contents", @class]} id={"contents_import_#{@id}"}>
       <.form
-        id={@id}
-        for={@form}
-        class={@class}
+        id={"search_form_#{@id}"}
+        for={@search_form}
         phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
+        phx-change="search_validate"
+        phx-submit="search_submit"
       >
         <.input
-          field={@form[:search]}
+          field={@search_form[:search]}
           icon={:magnifying_glass}
           placeholder="Type to search..."
           debounce="10"
-        /> Test
+        />
       </.form>
+
+      <.flex column>
+        <%= for snapshot <- @snapshots do %>
+          <.button phx-click="import_snapshot" phx-value-snapshot={snapshot.id} phx-target={@myself}>
+            {snapshot.name}
+          </.button>
+        <% end %>
+      </.flex>
     </div>
     """
   end
