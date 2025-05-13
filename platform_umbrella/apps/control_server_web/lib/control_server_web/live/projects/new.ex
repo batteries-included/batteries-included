@@ -405,6 +405,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   defp steps(:web), do: [ProjectForm, WebForm, BatteriesForm]
   defp steps(:ai), do: [ProjectForm, AIForm, BatteriesForm]
   defp steps(:db), do: [ProjectForm, DatabaseForm, BatteriesForm]
-  defp steps(:bare), do: [ProjectForm, ImportForm, BatteriesForm]
+  defp steps(:import), do: [ProjectForm, ImportForm, BatteriesForm]
+  defp steps(:bare), do: [ProjectForm, BatteriesForm]
   defp steps, do: steps(:bare)
 end
