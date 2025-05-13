@@ -226,6 +226,7 @@ defmodule CommonCore.Resources.CloudnativePG do
               "command" => ["/manager"],
               "env" => [
                 %{"name" => "OPERATOR_IMAGE_NAME", "value" => battery.config.image},
+                %{"name" => "POSTGRES_IMAGE_NAME", "value" => battery.config.default_postgres_image},
                 %{
                   "name" => "OPERATOR_NAMESPACE",
                   "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}

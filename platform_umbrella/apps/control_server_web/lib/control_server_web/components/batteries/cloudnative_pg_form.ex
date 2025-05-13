@@ -12,7 +12,7 @@ defmodule ControlServerWeb.Batteries.CloudnativePGForm do
         {@battery.description}
       </.panel>
 
-      <.panel title="Image">
+      <.panel title="Images">
         <.fieldset>
           <.image>{@form[:image].value}</.image>
 
@@ -20,6 +20,13 @@ defmodule ControlServerWeb.Batteries.CloudnativePGForm do
             field={@form[:image_tag_override]}
             image_id={:cloudnative_pg}
             label="Version"
+          />
+          <.image>{@form[:default_postgres_image].value}</.image>
+
+          <.image_version
+            field={@form[:default_postgres_image_tag_override]}
+            image_id={:postgresql}
+            label="Default Postgres Version"
           />
         </.fieldset>
       </.panel>

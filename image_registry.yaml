@@ -64,6 +64,11 @@ cloudnative_pg:
     - 1.24.0
     - 1.24.1
     - 1.25.1
+postgresql:
+  default_tag: '17.4'
+  name: ghcr.io/cloudnative-pg/postgresql
+  tags:
+    - '17.4'
 ferretdb:
   default_tag: 1.24.1
   name: ghcr.io/ferretdb/ferretdb
