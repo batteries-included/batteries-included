@@ -39,15 +39,20 @@ defmodule ControlServerWeb.Projects.ImportForm do
     # we need to set it to true in the new snapshot_select_form and all others to false
     # otherwise we simply keep the params as they are
 
-    newly_selected_id =
+    newly_selected_ids =
       snapshot_select_params
       |> Map.keys()
-      |> Enum.filter(fn id ->
-        Map.get(snapshot_select_params, id) == "true" && Map.get(old_snapshot_select_form.params, id) != true
+      |> Enum.filter(fn {id, value} ->
+        # params are strings
+        # while the form params are parsed into booleans
+        # so to notice a new selection we need the params
+        # to be "true" while the old form params are not true
+        value == "true" && Map.get(old_snapshot_select_form.params, id) != true
       end)
+      |> Enum.map(fn {id, _value} -> id end)
 
     snapshot_select_form =
-      case newly_selected_id do
+      case newly_selected_ids do
         [] = _empty ->
           to_form(snapshot_select_params)
 
