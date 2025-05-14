@@ -30,8 +30,39 @@ defmodule ControlServerWeb.Projects.ImportForm do
     {:noreply, socket |> assign(:search_form, search_form) |> assign_snapshots()}
   end
 
-  def handle_event("snapshot_select_validate", snapshot_select_params, socket) do
-    snapshot_select_form = to_form(snapshot_select_params)
+  def handle_event(
+        "snapshot_select_validate",
+        snapshot_select_params,
+        %{assigns: %{snapshot_select_form: old_snapshot_select_form}} = socket
+      ) do
+    # If there's a new selected id in the snapshot_select_params that wasn't true in the old_snapshot_select_form,
+    # we need to set it to true in the new snapshot_select_form and all others to false
+    # otherwise we simply keep the params as they are
+
+    newly_selected_id =
+      snapshot_select_params
+      |> Map.keys()
+      |> Enum.filter(fn id ->
+        Map.get(snapshot_select_params, id) == "true" && Map.get(old_snapshot_select_form.params, id) != true
+      end)
+
+    snapshot_select_form =
+      case newly_selected_id do
+        [] = _empty ->
+          to_form(snapshot_select_params)
+
+        newly_selected_ids ->
+          snapshot_select_params
+          |> Map.new(fn {id, _} ->
+            if id in newly_selected_ids do
+              {id, true}
+            else
+              {id, false}
+            end
+          end)
+          |> to_form()
+      end
+
     {:noreply, socket |> assign(:snapshot_select_form, snapshot_select_form) |> assign_snapshots()}
   end
 
@@ -59,12 +90,9 @@ defmodule ControlServerWeb.Projects.ImportForm do
         {:error, _} -> []
       end
 
-    snapshots =
-      Enum.filter(snapshots, fn snapshot ->
-        String.contains?(snapshot.name, search)
-      end)
-
-    snapshots
+    Enum.filter(snapshots, fn snapshot ->
+      String.contains?(snapshot.name, search)
+    end)
   end
 
   def render(assigns) do
@@ -85,13 +113,15 @@ defmodule ControlServerWeb.Projects.ImportForm do
         />
       </.form>
 
-      <.flex column class="min-h-96 max-h-128">
+      <.flex column class="min-h-96 max-h-128 overflow-y-auto">
+        <.h3>Choose Snapshot For Import</.h3>
         <.form
           id={"snapshot_select_form_#{@id}"}
           for={@snapshot_select_form}
           phx-target={@myself}
           phx-change="snapshot_select_validate"
           phx-submit="snapshot_select_submit"
+          class="contents"
         >
           <%= for snapshot <- @snapshots do %>
             <.input field={@snapshot_select_form[snapshot.id]} type="switch" label={snapshot.name} />
