@@ -35,7 +35,7 @@ defmodule HomeBaseWeb.StoredProjectSnapshotController do
 
   def show(conn, %{"installation_id" => install_id, "id" => id}) do
     with %{} = installation <- CustomerInstalls.get_installation!(install_id),
-         {:ok, %StoredProjectSnapshot{} = stored_project_snapshot} <-
+         %StoredProjectSnapshot{} = stored_project_snapshot <-
            Projects.get_stored_project_snapshot(installation, id) do
       conn
       |> put_status(:ok)

@@ -83,6 +83,12 @@ defmodule KubeServices.ET.HomeBaseClient do
     :exit, {:noproc, _} -> {:error, :not_started}
   end
 
+  def get_snapshot(client \\ @me, snapshot_id) do
+    GenServer.call(client, {:get_snapshot, snapshot_id})
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
+  end
+
   def start_link(opts \\ []) do
     {state_opts, opts} =
       opts
@@ -148,6 +154,10 @@ defmodule KubeServices.ET.HomeBaseClient do
 
   def handle_call(:list_snapshots, _from, state) do
     {:reply, do_list_snapshots(state), state}
+  end
+
+  def handle_call({:get_snapshot, snapshot_id}, _from, state) do
+    {:reply, do_get_snapshot(state, snapshot_id), state}
   end
 
   defp build_client(%State{home_url: home_url, http_client: nil} = state) do
@@ -244,6 +254,23 @@ defmodule KubeServices.ET.HomeBaseClient do
 
       {:error, reason} ->
         Logger.error("Failed to get snapshots: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
+  defp do_get_snapshot(%State{http_client: client, project_snapshot_path: project_snapshot_path} = state, snapshot_id) do
+    case Tesla.get(client, "#{project_snapshot_path}/#{snapshot_id}") do
+      {:ok, %{body: %{"jwt" => jwt}} = _env} ->
+        snapshot =
+          state
+          |> decrypt(jwt)
+          |> Map.get("snapshot")
+          |> CommonCore.Projects.ProjectSnapshot.new!()
+
+        {:ok, snapshot}
+
+      {:error, reason} ->
+        Logger.error("Failed to get snapshot: #{inspect(reason)}")
         {:error, reason}
     end
   end
