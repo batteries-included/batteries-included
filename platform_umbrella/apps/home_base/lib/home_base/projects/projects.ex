@@ -42,7 +42,8 @@ defmodule HomeBase.Projects do
 
     query =
       from s in StoredProjectSnapshot,
-        where: s.installation_id in subquery(owning_ids),
+        # This where clause is to ensure that this installation key's has access to the snapshot
+        where: s.installation_id in subquery(owning_ids) or is_nil(s.installation_id),
         where: s.id == ^id,
         select: s
 
@@ -57,22 +58,22 @@ defmodule HomeBase.Projects do
       select: v.id
   end
 
-  defp owning_installations(%Installation{team_id: nil, user_id: user_id} = _installation) when user_id != nil do
+  defp owning_installations(%Installation{team_id: nil, user_id: user_id} = installation) when user_id != nil do
     from i in Installation,
-      where: i.user_id == ^user_id,
+      where: i.user_id == ^user_id or i.id == ^installation.id,
       select: i.id
   end
 
-  defp owning_installations(%Installation{team_id: team_id, user_id: nil} = _installation) when team_id != nil do
+  defp owning_installations(%Installation{team_id: team_id, user_id: nil} = installation) when team_id != nil do
     from i in Installation,
-      where: i.team_id == ^team_id,
+      where: i.team_id == ^team_id or i.id == ^installation.id,
       select: i.id
   end
 
-  defp owning_installations(%Installation{team_id: team_id, user_id: user_id} = _installation)
+  defp owning_installations(%Installation{team_id: team_id, user_id: user_id} = installation)
        when team_id != nil and user_id != nil do
     from i in Installation,
-      where: i.user_id == ^user_id or i.team_id == ^team_id,
+      where: i.user_id == ^user_id or i.team_id == ^team_id or i.id == ^installation.id,
       select: i.id
   end
 
