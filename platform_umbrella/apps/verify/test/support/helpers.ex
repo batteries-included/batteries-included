@@ -125,7 +125,12 @@ defmodule Verify.TestCase.Helpers do
 
   def fill_in_name(session, field_name, text_to_fill) do
     find(session, Query.text_field(field_name), fn e ->
-      Wallaby.Element.send_keys(e, Enum.map(0..100, fn _ -> :backspace end) ++ [text_to_fill])
+      Wallaby.Element.send_keys(
+        e,
+        Enum.map(0..100, fn _ -> :backspace end) ++
+          Enum.map(0..100, fn _ -> :delete end) ++
+          [text_to_fill]
+      )
     end)
   end
 
