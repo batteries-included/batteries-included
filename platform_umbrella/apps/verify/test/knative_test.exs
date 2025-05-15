@@ -1,8 +1,6 @@
 defmodule Verify.KnativeTest do
   use Verify.TestCase, async: false, batteries: ~w(knative)a
 
-  require Logger
-
   @new_knative_path "/knative/services/new"
   @knative_ns "battery-knative"
   @show_knative_path ~r(/knative/services/[\d\w-]+/show$)
