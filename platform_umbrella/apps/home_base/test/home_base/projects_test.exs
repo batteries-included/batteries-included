@@ -33,7 +33,7 @@ defmodule HomeBase.ProjectsTest do
   end
 
   describe "snapshots for" do
-    test "gets snapshots for same user", %{install_two: install_two, install_three: install_three} do
+    test "gets snapshot list for same user", %{install_two: install_two, install_three: install_three} do
       {:ok, stored_snapshot} =
         Projects.create_stored_project_snapshot(%{
           installation_id: install_two.id,
@@ -42,10 +42,23 @@ defmodule HomeBase.ProjectsTest do
 
       possible_snaps = Projects.snapshots_for(install_three)
 
-      assert [stored_snapshot] == possible_snaps
+      expected = %{
+        id: stored_snapshot.id,
+        name: stored_snapshot.snapshot.name,
+        description: stored_snapshot.snapshot.description,
+        num_postgres_clusters: 0,
+        num_redis_instances: 0,
+        num_jupyter_notebooks: 0,
+        num_knative_services: 0,
+        num_traditional_services: 0,
+        num_model_instances: 0
+      }
+
+      assert [expected] == possible_snaps
+      assert stored_snapshot.installation_id == install_two.id
     end
 
-    test "gets snapshots for same team", %{install_zero: install_zero, install_one: install_one} do
+    test "gets snapshot list for same team", %{install_zero: install_zero, install_one: install_one} do
       {:ok, stored_snapshot} =
         Projects.create_stored_project_snapshot(%{
           installation_id: install_zero.id,
@@ -58,7 +71,19 @@ defmodule HomeBase.ProjectsTest do
 
       possible_snaps = Projects.snapshots_for(install_one)
 
-      assert [stored_snapshot] == possible_snaps
+      expected = %{
+        id: stored_snapshot.id,
+        name: stored_snapshot.snapshot.name,
+        description: stored_snapshot.snapshot.description,
+        num_postgres_clusters: 0,
+        num_redis_instances: 0,
+        num_jupyter_notebooks: 0,
+        num_knative_services: 0,
+        num_traditional_services: 0,
+        num_model_instances: 0
+      }
+
+      assert [expected] == possible_snaps
     end
 
     test "doesn't fail for un-owned installs" do
