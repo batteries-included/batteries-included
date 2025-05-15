@@ -14,10 +14,16 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
   alias CommonCore.TraditionalServices.Service
   alias CommonCore.Util.Memory
   alias ControlServer.TraditionalServices
+  alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
 
+  @impl Phoenix.LiveView
   def mount(%{"id" => id}, _session, socket) do
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(:pod)
+    end
+
     {:ok,
      socket
      |> assign(:current_page, :devtools)
@@ -25,8 +31,14 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
      |> assign_all(id)}
   end
 
+  @impl Phoenix.LiveView
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply, assign_all(socket, id)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, maybe_assign_k8_pods(socket)}
   end
 
   defp assign_all(socket, id) do
@@ -88,6 +100,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
     |> Enum.filter(fn pg -> id == labeled_owner(pg) end)
   end
 
+  @impl Phoenix.LiveView
   def handle_event("delete", _params, socket) do
     {:ok, _} = TraditionalServices.delete_service(socket.assigns.service)
 
@@ -240,6 +253,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
     """
   end
 
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <%= case @live_action do %>
