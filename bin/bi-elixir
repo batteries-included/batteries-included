@@ -15,7 +15,7 @@ do_int_test() {
     export MIX_ENV=test
     bi_pushd platform_umbrella/apps/verify
     mix "do" deps.get, compile --warnings-as-errors >/dev/null
-    mix test --trace --warnings-as-errors --all-warnings --only cluster_test
+    mix test --trace --warnings-as-errors --all-warnings --only cluster_test "$@"
     bi_popd
     log "Elixir integration tests ${GREEN}Passed${NOFORMAT}"
 }
