@@ -20,11 +20,10 @@ defmodule Verify.TraditionalTest do
     |> find(@container_panel, fn e -> click(e, Query.button("Add Container")) end)
     |> fill_in(Query.text_field("container[name]"), with: "echo")
     |> fill_in(Query.text_field("container[image]"), with: "ealen/echo-server:latest")
-    |> fill_in(Query.text_field("container[path]"), with: "")
     |> click(Query.css(~s/#container-form-modal-modal-container button[type="submit"]/))
     # add port
     |> click(Query.button("Add Port"))
-    |> fill_in(Query.text_field("port[name]"), with: "echo")
+    |> fill_in(Query.text_field("port[name]"), with: service_name)
     |> fill_in(Query.text_field("port[number]"), with: 80)
     |> click(Query.css(~s/#port-form-modal-modal-container button[type="submit"]/))
     # save service
@@ -38,5 +37,14 @@ defmodule Verify.TraditionalTest do
     # Assert that the first pod for the cluster is there.
     |> assert_has(table_row(text: service_name, count: 1))
     |> assert_pod_running(service_name)
+    # make sure we can access the running service
+    |> visit_running_service()
+    # get json text
+    |> text()
+    |> Jason.decode!()
+    |> then(fn json ->
+      assert ^service_name <> _rest = get_in(json, ["host", "hostname"])
+      assert ^service_name <> _rest = get_in(json, ["environment", "HOSTNAME"])
+    end)
   end
 end
