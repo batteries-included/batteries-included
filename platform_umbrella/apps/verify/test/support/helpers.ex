@@ -85,6 +85,8 @@ defmodule Verify.TestCase.Helpers do
   def assert_pod_running(session, name_fragment), do: assert_pods_running(session, [name_fragment])
 
   def assert_pods_running(session, name_fragments) do
+    path = current_path(session)
+
     session
     |> visit("/kube/pods")
     |> assert_has(table_row(minimum: 6))
@@ -95,7 +97,8 @@ defmodule Verify.TestCase.Helpers do
       |> assert_has(table_row(text: "Running", count: 1))
     end)
 
-    session
+    # "reset" the session back to the original location
+    visit(session, path)
   end
 
   def assert_pods_in_deployment_running(session, namespace, deployment) do
@@ -123,12 +126,25 @@ defmodule Verify.TestCase.Helpers do
     |> click(Query.button("Save"))
   end
 
+  @doc """
+  fill in the name field where we are auto-populating a random name
+  based on Ecto validation. The normal `Wallaby.Browser.fill_in/3`
+  triggers the name to be re-generated between clearing out the field
+  and filling in the new value so that we get e.g. `a-b-cint-test-123`
+  or `int-test-123a-b-c`
+  """
   def fill_in_name(session, field_name, text_to_fill) do
     find(session, Query.text_field(field_name), fn e ->
       Wallaby.Element.send_keys(
         e,
-        Enum.map(0..100, fn _ -> :backspace end) ++
-          Enum.map(0..100, fn _ -> :delete end) ++
+        Enum.map(0..100, fn _ ->
+          # if we focus on the end of the field
+          :backspace
+        end) ++
+          Enum.map(0..100, fn _ ->
+            # if we focus on the beginning of the field
+            :delete
+          end) ++
           [text_to_fill]
       )
     end)
@@ -152,5 +168,44 @@ defmodule Verify.TestCase.Helpers do
     session
     |> visit("/magic")
     |> click(Query.button("Start Deploy"))
+  end
+
+  @doc """
+  Clicks a link to an "external" site first checking that site is available
+  Then clicking the element returned by the passed in query
+  And finally focusing on the newly opened window/tab
+  """
+  def click_external(session, query) do
+    # get the URL that we will be visiting
+    url = attr(session, query, "href")
+    assert url != nil
+
+    # retry until success or timeout
+    {:ok, _} = url |> build_retryable_get() |> retry()
+
+    initial_window_handle = window_handle(session)
+
+    # click
+    session = click(session, query)
+    new_handle = session |> window_handles() |> Enum.find(fn handle -> handle != initial_window_handle end)
+    focus_window(session, new_handle)
+  end
+
+  def visit_running_service(session) do
+    click_external(session, Query.css("a", text: "Running Service"))
+  end
+
+  defp build_retryable_get(url) do
+    fn ->
+      case Tesla.get(url) do
+        {:ok, %{status: 200} = resp} ->
+          {:ok, resp}
+
+        # retry after sleep on non-200 resp
+        {_, resp} ->
+          Process.sleep(500)
+          {:error, resp}
+      end
+    end
   end
 end
