@@ -227,6 +227,9 @@ bi-snapshot-build)
 bi-location)
     bi_bin_location
     ;;
+revision)
+    bi_revision
+    ;;
 run)
     __run_bi "${args[@]}"
     ;;
