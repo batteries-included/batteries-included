@@ -28,10 +28,6 @@ var rageCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		rageReport, err := env.NewRage(ctx)
-		if err != nil {
-			return err
-		}
 
 		output, err := cmd.Flags().GetString("output")
 		if err != nil {
@@ -62,12 +58,21 @@ var rageCmd = &cobra.Command{
 			w = wc
 		}
 
+		rageReport, err := env.NewRage(ctx)
+		if err != nil {
+			return err
+		}
+
 		err = rageReport.Write(w)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(output)
+		// print the output file if we're outputting to a file
+		if output != "-" {
+			fmt.Println(output)
+		}
+
 		return nil
 	},
 }
