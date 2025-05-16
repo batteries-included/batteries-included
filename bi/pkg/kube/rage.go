@@ -74,7 +74,7 @@ func (client *batteryKubeClient) GetPodRageInfo(ctx context.Context, namespace, 
 	}
 	return &rage.PodRageInfo{
 		Namespace:     pod.Namespace,
-		Name:          pod.Namespace,
+		Name:          pod.Name,
 		Phase:         string(pod.Status.Phase),
 		Message:       pod.Status.Message,
 		ContainerInfo: containerInfos,
