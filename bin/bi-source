@@ -9,6 +9,16 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
+PRETTIER_GLOBS+=(
+    '../*.yaml'
+    '../*.yml'
+    '../*.ts'
+    '../*.js'
+    '../README.md'
+    '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'
+    '../static/src/content/**/*.md'
+)
+
 format_mix_code() {
     local path=${1}
     bi_pushd "${path}"
@@ -36,7 +46,7 @@ format_prettier_code() {
 
     # we have to do this
     FILES=()
-    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md' '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'); do
+    for file in $(git ls-files "${PRETTIER_GLOBS[@]}"); do
         FILES+=("${file}")
     done
 
@@ -50,7 +60,7 @@ check_format_prettier_code() {
     bi_pushd "${ROOT_DIR}/static"
     npm ci >/dev/null
     FILES=()
-    for file in $(git ls-files '../*.yaml' '../*.yml' '../*.ts' '../*.js' '../README.md' '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'); do
+    for file in $(git ls-files "${PRETTIER_GLOBS[@]}"); do
         FILES+=("${file}")
     done
     npx prettier --check "${FILES[@]}" >/dev/null
