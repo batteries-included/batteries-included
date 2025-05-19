@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	KindImage         = "kindest/node:v1.32.2"
+	KindImage         = "kindest/node:v1.33.1"
 	NoisySocketsImage = "ghcr.io/noisysockets/nsh:v0.9.3"
 )
 
