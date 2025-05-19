@@ -2,17 +2,36 @@
 name: 'Setup CI'
 description: 'Sets up runner for CI'
 inputs:
-  go_cache:
-    description: 'Set up Go cache'
-    default: 'true'
+  bi_cache:
+    description: 'Pull cached bi binary'
+    default: 'false'
   elixir_cache:
     description: 'Set up Elixir cache'
+    default: 'true'
+  go_cache:
+    description: 'Set up Go cache'
     default: 'true'
 runs:
   using: 'composite'
   steps:
     - name: Setup ASDF
       uses: ./.github/actions/setup-asdf
+
+    - name: Determine bi cache key
+      shell: bash
+      if: ${{ inputs.bi_cache == 'true' }}
+      run: |
+        echo "BI_REVISION=$(bin/bix go revision)" >> "$GITHUB_ENV"
+
+    - name: Restore BI cache
+      if: ${{ inputs.bi_cache == 'true' }}
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          /home/runner/.local/state/bi/dev
+        key: ${{ runner.os }}-bi-${{ env.BI_REVISION }}
+        restore-keys: |
+          ${{ runner.os }}-bi-
 
     - name: Restore elixir cache
       if: ${{ inputs.elixir_cache == 'true' }}
