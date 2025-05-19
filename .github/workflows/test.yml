@@ -1,0 +1,43 @@
+---
+name: Testing
+
+'on':
+  pull_request:
+
+env: ${{ vars }}
+
+jobs:
+  elixir-int-test:
+    strategy:
+      fail-fast: true
+      matrix:
+        partition: [1, 2, 3]
+        num_partitions: [3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - shell: bash
+        run: |
+          echo "${{ toJSON(matrix) }}"
+          echo "${{ toJSON(matrix.partition) }}"
+          echo "${{ toJSON(matrix.num_partitions) }}"
+      # - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      #   with:
+      #     persist-credentials: false
+      #
+      # - name: Setup CI
+      #   uses: ./.github/actions/setup-ci
+      #   with:
+      #     bi_cache: true
+      #     go_cache: false
+      #     elixir_cache: false
+      #
+      # - shell: bash
+      #   run: |
+      #     set -x
+      #     ls -lahR /home/runner/.local/share/bi/dev/
+      #     du -d 1 -k ~/.asdf/installs | sort -nr
+      #     du -d 1 -k ~/.asdf/plugins | sort -nr
+      #     du -d 1 -k ~/.asdf/shims | sort -nr

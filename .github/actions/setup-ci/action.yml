@@ -28,7 +28,7 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: |
-          /home/runner/.local/state/bi/dev
+          /home/runner/.local/share/bi/dev/
         key: ${{ runner.os }}-bi-${{ env.BI_REVISION }}
         restore-keys: |
           ${{ runner.os }}-bi-
