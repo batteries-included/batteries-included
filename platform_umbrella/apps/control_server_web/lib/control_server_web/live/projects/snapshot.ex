@@ -146,7 +146,6 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     ~H"""
     <%= for redis_instance <- @snapshot.redis_instances do %>
       <.panel title={"Redis: #{redis_instance.name}"}>
-        <.flex column></.flex>
         <.data_list>
           <:item title="Memory Limits">
             {Memory.humanize(redis_instance.memory_limits)}
@@ -167,7 +166,6 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     ~H"""
     <%= for ferret_service <- @snapshot.ferret_services do %>
       <.panel title={"Ferret: #{ferret_service.name}"}>
-        <.flex column></.flex>
         <.data_list>
           <:item title="Memory Limits">
             {Memory.humanize(ferret_service.memory_limits)}
@@ -185,7 +183,6 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     ~H"""
     <%= for {jupyter_notebook, jupyter_notebook_idx} <- Enum.with_index(@snapshot.jupyter_notebooks) do %>
       <.panel title={"Jupyter Notebook: #{jupyter_notebook.name}"}>
-        <.flex column></.flex>
         <.data_list>
           <:item title="Memory Limits">
             {Memory.humanize(jupyter_notebook.memory_limits)}
@@ -217,7 +214,6 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     ~H"""
     <%= for {service, service_index} <- Enum.with_index(@snapshot.traditional_services) do %>
       <.panel title={"Traditional Service: #{service.name}"}>
-        <.flex column></.flex>
         <.data_list>
           <:item title="Memory Limits">> {Memory.humanize(service.memory_limits)}</:item>
           <:item title="Virtual Size">
@@ -247,7 +243,6 @@ defmodule ControlServerWeb.Live.ProjectsSnapshot do
     ~H"""
     <%= for {service, service_index} <- Enum.with_index(@snapshot.knative_services) do %>
       <.panel title={"Knative Service: #{service.name}"}>
-        <.flex column></.flex>
         <.data_list>
           <:item title="Virtual Size">
             {CommonCore.Util.VirtualSize.get_virtual_size(service)}

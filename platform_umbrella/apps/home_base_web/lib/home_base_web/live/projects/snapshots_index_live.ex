@@ -24,24 +24,24 @@ defmodule HomeBaseWeb.Projects.SnapshotsIndexLive do
 
     <.table id="snapshots" rows={@snapshots}>
       <:col :let={stored_snap} label="ID">{stored_snap.id}</:col>
-      <:col :let={stored_snap} label="Name">{stored_snap.snapshot.name}</:col>
+      <:col :let={stored_snap} label="Name">{stored_snap.name}</:col>
       <:col :let={stored_snap} label="Postgres Count">
-        {length(stored_snap.snapshot.postgres_clusters || [])}
+        {stored_snap.num_postgres_clusters}
       </:col>
       <:col :let={stored_snap} label="Redis Count">
-        {length(stored_snap.snapshot.redis_instances || [])}
+        {stored_snap.num_redis_instances}
       </:col>
       <:col :let={stored_snap} label="Jupyter Notebook Count">
-        {length(stored_snap.snapshot.jupyter_notebooks || [])}
+        {stored_snap.num_jupyter_notebooks}
       </:col>
       <:col :let={stored_snap} label="Knative Service Count">
-        {length(stored_snap.snapshot.knative_services || [])}
+        {stored_snap.num_knative_services}
       </:col>
       <:col :let={stored_snap} label="Traditional Service Count">
-        {length(stored_snap.snapshot.traditional_services || [])}
+        {stored_snap.num_traditional_services}
       </:col>
       <:col :let={stored_snap} label="Model Instance Count">
-        {length(stored_snap.snapshot.model_instances || [])}
+        {stored_snap.num_model_instances}
       </:col>
     </.table>
     """
