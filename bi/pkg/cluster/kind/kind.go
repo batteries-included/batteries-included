@@ -16,7 +16,9 @@ import (
 )
 
 const (
-	KindImage         = "kindest/node:v1.33.1"
+	// This ideally will be a pre-built image for the kind release we're using
+	// But should match the minor version of k8s that we're running in AWS
+	KindImage         = "kindest/node:v1.32.5"
 	NoisySocketsImage = "ghcr.io/noisysockets/nsh:v0.9.3"
 )
 
