@@ -8,6 +8,6 @@ defmodule CommonCore.Batteries.TrivyOperatorConfig do
     defaultable_image_field :node_collector_image, image_id: :aqua_node_collector
     defaultable_image_field :trivy_checks_image, image_id: :aqua_trivy_checks
 
-    defaultable_field :version_tag, :string, default: "0.52.0"
+    defaultable_field :version_tag, :string, default: "0.62.1"
   end
 end
