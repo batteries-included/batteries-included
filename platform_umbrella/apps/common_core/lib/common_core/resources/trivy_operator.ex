@@ -1,6 +1,7 @@
 defmodule CommonCore.Resources.TrivyOperator do
   @moduledoc false
   use CommonCore.IncludeResource,
+    # CRDs
     clustercompliancereports_aquasecurity_github_io:
       "priv/manifests/trivy_operator/clustercompliancereports_aquasecurity_github_io.yaml",
     clusterconfigauditreports_aquasecurity_github_io:
@@ -24,8 +25,14 @@ defmodule CommonCore.Resources.TrivyOperator do
     sbomreports_aquasecurity_github_io: "priv/manifests/trivy_operator/sbomreports_aquasecurity_github_io.yaml",
     vulnerabilityreports_aquasecurity_github_io:
       "priv/manifests/trivy_operator/vulnerabilityreports_aquasecurity_github_io.yaml",
+
+    # raw files
     nodecollector_volumemounts: "priv/raw_files/trivy_operator/nodeCollector.volumeMounts",
-    nodecollector_volumes: "priv/raw_files/trivy_operator/nodeCollector.volumes"
+    nodecollector_volumes: "priv/raw_files/trivy_operator/nodeCollector.volumes",
+    cluster_compliance_cis_1_23: "priv/raw_files/trivy_operator/k8s-cis-1.23.yaml",
+    cluster_compliance_nsa_1_0: "priv/raw_files/trivy_operator/k8s-nsa-1.0.yaml",
+    cluster_compliance_pss_baseline_0_1: "priv/raw_files/trivy_operator/k8s-pss-baseline-0.1.yaml",
+    cluster_compliance_pss_restricted_0_1: "priv/raw_files/trivy_operator/k8s-pss-restricted-0.1.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "trivy-operator"
 

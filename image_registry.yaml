@@ -17,10 +17,11 @@ aqua_node_collector:
   tags:
     - 0.3.1
 aqua_trivy_checks:
-  default_tag: 0.13.0
+  default_tag: 1.10.0
   name: ghcr.io/aquasecurity/trivy-checks
   tags:
     - 0.13.0
+    - 1.10.0
 aws_load_balancer_controller:
   default_tag: v2.11.0
   name: public.ecr.aws/eks/aws-load-balancer-controller
@@ -270,10 +271,11 @@ smtp4dev:
     - 3.1.4
     - 3.5.1
 trivy_operator:
-  default_tag: 0.22.0
+  default_tag: 0.23.1
   name: ghcr.io/aquasecurity/trivy-operator
   tags:
     - 0.22.0
+    - 0.23.1
 trust_manager:
   default_tag: v0.11.0
   name: quay.io/jetstack/trust-manager
