@@ -48,6 +48,8 @@ defmodule Verify.BatteryInstallWorker do
     session
     |> visit("batteries/#{battery.group}/new/#{battery.type}")
     |> click(Query.text("Install Battery"))
+    # click the only link - Done - in the modal
+    |> find(Query.css("#install-modal-container"), &click(&1, Query.link("")))
     |> take_screenshot(name: "post_install_#{battery.type}")
 
     {:reply, :ok, state}
