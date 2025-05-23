@@ -21,8 +21,8 @@ jobs:
       contents: read
     strategy:
       matrix:
-        partition: [1, 2, 3]
-        num_partitions: [3]
+        partition: [1, 2, 3, 4]
+        num_partitions: [4]
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
