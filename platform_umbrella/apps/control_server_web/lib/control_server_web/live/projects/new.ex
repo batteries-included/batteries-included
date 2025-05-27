@@ -105,6 +105,7 @@ defmodule ControlServerWeb.Live.ProjectsNew do
     form_data = socket.assigns.form_data
 
     with {:ok, project} <- Projects.create_project(form_data[ProjectForm]),
+         {:ok, _} <- import_snapshot(project, form_data[ImportSnapshotForm]),
          {:ok, db_pg} <- create_postgres(project, form_data[DatabaseForm]),
          {:ok, _db_redis} <- create_redis(project, form_data[DatabaseForm]),
          {:ok, _db_ferret} <- create_ferret(project, form_data[DatabaseForm], db_pg),
@@ -229,6 +230,12 @@ defmodule ControlServerWeb.Live.ProjectsNew do
   end
 
   defp create_traditional(_project, _traditional_data, _pg, _redis), do: {:ok, nil}
+
+  defp import_snapshot(project, %{snapshot: snapshot}) do
+    ControlServer.Projects.Snapshoter.apply_snapshot(project, snapshot)
+  end
+
+  defp import_snapshot(_project, _data), do: {:ok, nil}
 
   defp database_env_values(clusters, username) when is_list(clusters) do
     clusters

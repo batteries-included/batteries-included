@@ -44,7 +44,9 @@ defmodule ControlServerWeb.Projects.ImportSnapshotForm do
   end
 
   defp assign_snapshot(socket) do
-    socket |> assign(:snapshot, nil) |> assign(:form, nil)
+    socket
+    |> assign(:snapshot, nil)
+    |> assign(:form, nil)
   end
 
   defp title(nil), do: "No snapshot selected"
