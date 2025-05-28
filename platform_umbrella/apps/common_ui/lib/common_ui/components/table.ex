@@ -153,7 +153,7 @@ defmodule CommonUI.Components.Table do
   defp maybe_invoke_callback(nil, _item), do: %{}
 
   defp maybe_invoke_callback(callback, item) do
-    apply(callback, [item])
+    callback.(item)
   end
 
   def paginated_table_opts do

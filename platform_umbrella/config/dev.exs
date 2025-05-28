@@ -95,7 +95,8 @@ config :kube_services, cluster_type: :dev
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   level: :debug,
-  metadata: [:mfa, :request_id],
+  metadata:
+    ~w(mfa request_id name namespace fail_cnt cluster retries_left type reason error errors realm action kind result pid id status pool)a,
   handle_otp_reports: true,
   handle_sasl_reports: true,
   compile_time_purge_matching: [

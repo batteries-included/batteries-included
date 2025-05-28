@@ -178,7 +178,10 @@ defmodule KubeServices.Keycloak.UserManager do
 
   def handle_call({:reset_password, realm, user_id}, _from, %{admin_client_target: act} = state) do
     # Create an easy to read and write password that is secure
-    temp_creds = @temp_creds_length |> MnemonicSlugs.Wordlist.get_words() |> Enum.join(" ")
+    temp_creds =
+      @temp_creds_length
+      |> MnemonicSlugs.Wordlist.get_words()
+      |> Enum.join(" ")
 
     # It's always a temporary password
     cred = %CredentialRepresentation{temporary: true, value: temp_creds}

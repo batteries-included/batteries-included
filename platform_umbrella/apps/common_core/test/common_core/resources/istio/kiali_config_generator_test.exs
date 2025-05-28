@@ -1,5 +1,5 @@
 defmodule CommonCore.Resources.Istio.KialiConfigGeneratorTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   import CommonCore.Factory
 

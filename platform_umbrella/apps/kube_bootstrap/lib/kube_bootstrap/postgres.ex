@@ -1,9 +1,14 @@
 defmodule KubeBootstrap.Postgres do
-  require Logger
+  @moduledoc """
+  Module to handle the waiting for Postgres clusters to be ready in a Kubernetes environment.
+  It checks the status of the Postgres clusters and their associated pods, ensuring they are ready before proceeding.
+  """
 
+  alias CommonCore.Postgres.Cluster
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.PostgresState
-  alias CommonCore.Postgres.Cluster
+
+  require Logger
 
   @spec wait_for_postgres(K8s.Conn.t(), CommonCore.StateSummary.t()) :: :ok | {:error, list()}
   def wait_for_postgres(%K8s.Conn{} = conn, %StateSummary{postgres_clusters: clusters} = summary) do

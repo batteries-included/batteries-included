@@ -12,7 +12,10 @@ defmodule CommonCore.Version do
     env = System.get_env("BI_RELEASE_HASH")
 
     git =
-      System.cmd("git", ["describe", "--match=\"badtagthatnevermatches\"", "--always", "--dirty"], stderr_to_stdout: true)
+      System.cmd("git", ["describe", "--match=\"badtagthatnevermatches\"", "--always", "--dirty"],
+        stderr_to_stdout: true,
+        env: []
+      )
 
     case {env, git} do
       {env, _git} when not is_empty(env) ->

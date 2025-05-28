@@ -1,4 +1,5 @@
 defmodule KubeBootstrap.Tasks do
+  @moduledoc false
   @app :kube_bootstrap
   @start_apps [:common_core, :logger, :k8s, @app]
 

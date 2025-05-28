@@ -328,7 +328,10 @@ defmodule Mix.Tasks.Gen.Resource do
   end
 
   defp secret_method(resource, method_name, app_name, small_data, large_data) do
-    data_pipeline = small_data |> data_pipeline(large_data) |> add_encode()
+    data_pipeline =
+      small_data
+      |> data_pipeline(large_data)
+      |> add_encode()
 
     normal_pipeline =
       resource
@@ -341,7 +344,13 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp templated_spec_method(resource, method_name, resource_type, app_name, spec, template) do
     template_pipeline = template_pipeline(template)
-    spec_pipeline = spec |> clean_spec(app_name) |> Map.delete("template") |> spec_pipeline() |> add_template_from_var()
+
+    spec_pipeline =
+      spec
+      |> clean_spec(app_name)
+      |> Map.delete("template")
+      |> spec_pipeline()
+      |> add_template_from_var()
 
     normal_pipeline =
       resource
@@ -353,7 +362,10 @@ defmodule Mix.Tasks.Gen.Resource do
   end
 
   defp spec_method(resource, method_name, resource_type, app_name, spec) do
-    spec_pipeline = spec |> clean_spec(app_name) |> spec_pipeline()
+    spec_pipeline =
+      spec
+      |> clean_spec(app_name)
+      |> spec_pipeline()
 
     normal_pipeline =
       resource

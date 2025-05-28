@@ -2,9 +2,9 @@ defmodule KubeBootstrap do
   @moduledoc """
   Documentation for `KubeBootstrap`.
   """
+  alias CommonCore.Resources.RootResourceGenerator, as: RRG
   alias CommonCore.StateSummary
 
-  alias CommonCore.Resources.RootResourceGenerator, as: RRG
   require Logger
 
   # This is the list of batteries that are necessary to get control server running.

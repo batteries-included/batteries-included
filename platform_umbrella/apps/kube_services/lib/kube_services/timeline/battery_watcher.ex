@@ -45,7 +45,7 @@ defmodule KubeServices.Timeline.BatteryWatcher do
   defp to_event(action, object) do
     Logger.warning("Not Going to persist timeline event for battery action #{action}",
       action: action,
-      object: object
+      id: Map.get(object, :id, nil)
     )
 
     {:ok, nil}

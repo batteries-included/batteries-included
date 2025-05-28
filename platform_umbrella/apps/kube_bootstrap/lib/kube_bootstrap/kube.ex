@@ -1,4 +1,5 @@
 defmodule KubeBootstrap.Kube do
+  @moduledoc false
   require Logger
 
   @max_retries 20

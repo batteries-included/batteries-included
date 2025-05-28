@@ -10,7 +10,10 @@ defmodule ControlServerWeb.Live.StateSummary do
       :ok = SummaryEventCenter.subscribe()
     end
 
-    {:ok, socket |> assign_state_summary() |> assign_page_title()}
+    {:ok,
+     socket
+     |> assign_state_summary()
+     |> assign_page_title()}
   end
 
   defp assign_state_summary(socket) do
