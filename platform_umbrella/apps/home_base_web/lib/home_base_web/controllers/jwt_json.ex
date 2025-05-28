@@ -6,10 +6,17 @@ defmodule HomeBaseWeb.JwtJSON do
   end
 
   defp data(jwt) do
-    %{
-      payload: Map.get(jwt, "payload"),
-      protected: Map.get(jwt, "protected"),
-      signature: Map.get(jwt, "signature")
-    }
+    # for the keys "payload", "protected", "signature", "ciphertext", "iv", "tag"
+    # add them to a map if they exist
+
+    jwt
+    |> Map.take(~w[payload protected signature ciphertext iv tag encrypted_key])
+    |> Enum.reduce(%{}, fn {key, value}, acc ->
+      if value do
+        Map.put(acc, key, value)
+      else
+        acc
+      end
+    end)
   end
 end

@@ -10,6 +10,8 @@ defmodule KubeServices.ET.HomeBaseClient do
 
   require Logger
 
+  @dialyzer {:nowarn_function, decrypt: 2}
+
   defmodule State do
     @moduledoc false
     use CommonCore, :embedded_schema
@@ -75,6 +77,18 @@ defmodule KubeServices.ET.HomeBaseClient do
     :exit, {:noproc, _} -> {:error, :not_started}
   end
 
+  def list_snapshots(client \\ @me) do
+    GenServer.call(client, :list_snapshots)
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
+  end
+
+  def get_snapshot(client \\ @me, snapshot_id) do
+    GenServer.call(client, {:get_snapshot, snapshot_id})
+  catch
+    :exit, {:noproc, _} -> {:error, :not_started}
+  end
+
   def start_link(opts \\ []) do
     {state_opts, opts} =
       opts
@@ -136,6 +150,14 @@ defmodule KubeServices.ET.HomeBaseClient do
       do_export_snapshot(state, snapshot),
       state
     }
+  end
+
+  def handle_call(:list_snapshots, _from, state) do
+    {:reply, do_list_snapshots(state), state}
+  end
+
+  def handle_call({:get_snapshot, snapshot_id}, _from, state) do
+    {:reply, do_get_snapshot(state, snapshot_id), state}
   end
 
   defp build_client(%State{home_url: home_url, http_client: nil} = state) do
@@ -219,11 +241,49 @@ defmodule KubeServices.ET.HomeBaseClient do
     end
   end
 
+  defp do_list_snapshots(%State{http_client: client, project_snapshot_path: project_snapshot_path} = state) do
+    case Tesla.get(client, project_snapshot_path) do
+      {:ok, %{body: %{"jwt" => jwt}} = _env} ->
+        snapshots =
+          state
+          |> decrypt(jwt)
+          |> Map.get("snapshots", [])
+          |> Enum.map(&CommonCore.Projects.ProjectSnapshotSummary.new!/1)
+
+        {:ok, snapshots}
+
+      {:error, reason} ->
+        Logger.error("Failed to get snapshots: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
+  defp do_get_snapshot(%State{http_client: client, project_snapshot_path: project_snapshot_path} = state, snapshot_id) do
+    case Tesla.get(client, "#{project_snapshot_path}/#{snapshot_id}") do
+      {:ok, %{body: %{"jwt" => jwt}} = _env} ->
+        snapshot =
+          state
+          |> decrypt(jwt)
+          |> Map.get("snapshot")
+          |> CommonCore.Projects.ProjectSnapshot.new!()
+
+        {:ok, snapshot}
+
+      {:error, reason} ->
+        Logger.error("Failed to get snapshot: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
   defp sign(%State{control_jwk: jwk}, data) do
     jwk |> JOSE.JWT.sign(data) |> elem(1)
   end
 
   defp encrypt(%State{control_jwk: jwk}, data) do
     CommonCore.JWK.encrypt_to_home_base(jwk, data)
+  end
+
+  defp decrypt(%State{control_jwk: jwk}, data) do
+    CommonCore.JWK.decrypt_from_home_base!(jwk, data)
   end
 end

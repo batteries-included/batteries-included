@@ -24,6 +24,8 @@ defmodule ControlServerWeb.ProjectLiveTest do
   describe "/projects/new" do
     @tag :slow
     test "should go through the new project flow", %{conn: conn} do
+      # TODO: This is  fucking janky as hell. We shouldn't install the battery just to get a mock Summarizer up for a test.
+      # We should have a way to do better without changing global database state.
       Installer.install!(:battery_core)
       Summarizer.new()
       {:ok, view, _html} = live(conn, ~p"/projects/new")

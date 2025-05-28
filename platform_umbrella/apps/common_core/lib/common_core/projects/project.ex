@@ -15,7 +15,7 @@ defmodule CommonCore.Projects.Project do
     field :description, :string
 
     # this is used for creation to show the user a multistep form
-    field :type, Ecto.Enum, values: [:ai, :web, :db, :bare], virtual: true
+    field :type, Ecto.Enum, values: [:ai, :web, :db, :import, :bare], virtual: true
 
     has_many :postgres_clusters, CommonCore.Postgres.Cluster
     has_many :redis_instances, CommonCore.Redis.RedisInstance
@@ -51,6 +51,7 @@ defmodule CommonCore.Projects.Project do
   def type_name(:web), do: "Web"
   def type_name(:db), do: "Database Only"
   def type_name(:bare), do: "Bare Project"
+  def type_name(:import), do: "Import From Snapshot"
   def type_name(type), do: Atom.to_string(type)
 
   def resource_types do

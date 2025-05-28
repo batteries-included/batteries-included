@@ -97,11 +97,11 @@ defmodule CommonCore.JWK do
     decrypt!(sign_jwk, from_jwk, message)
   end
 
-  def decrypt_from_home_base!(from_jwk, message) do
+  def decrypt_from_home_base!(to_jwk, message) do
     sign_jwk = primary_home_base_key() |> Cache.get() |> to_jwk()
-    from_jwk = to_jwk(from_jwk)
+    to_jwk = to_jwk(to_jwk)
 
-    decrypt!(from_jwk, sign_jwk, message)
+    decrypt!(to_jwk, sign_jwk, message)
   end
 
   def verify_from_home_base(nil), do: {:error, BadKeyError.exception()}
