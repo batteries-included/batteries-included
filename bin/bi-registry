@@ -43,7 +43,7 @@ do_save_int_images() {
     done
 
     for img in "${imgs[@]}"; do
-        docker pull --platform linux/amd64 "$img"
+        docker pull --quiet --platform linux/amd64 "$img"
     done
     log "Finished pulling images in ${SECONDS} seconds"
 

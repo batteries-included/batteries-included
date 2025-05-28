@@ -13,9 +13,41 @@ name: Integration tests
 env: ${{ vars }}
 
 jobs:
+  save-images:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: false
+
+      - name: Setup ASDF
+        uses: ./.github/actions/setup-asdf
+
+      - name: Save images to archive
+        run: bin/bix registry save-int-images "${{ runner.temp }}/images.tar"
+
+      - name: Upload image archive
+        id: upload-archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: img-tar-${{ github.run_id }}
+          overwrite: true
+          retention-days: 1
+          if-no-files-found: error
+          path: '${{ runner.temp }}/images.tar'
+
+    outputs:
+      artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
+      artifact-name: img-tar-${{ github.run_id }}
+
   elixir-int-test:
     runs-on: ubuntu-latest-l
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: save-images
     timeout-minutes: 15
     permissions:
       contents: read
@@ -23,10 +55,16 @@ jobs:
       matrix:
         partition: [1, 2, 3, 4]
         num_partitions: [4]
+
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           persist-credentials: false
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          artifact-ids: ${{ needs.save-images.outputs.artifact-id }}
+          path: ${{ runner.temp }}
 
       - name: Setup CI
         uses: ./.github/actions/setup-ci
@@ -38,6 +76,8 @@ jobs:
       - name: Run integration tests
         env:
           MIX_TEST_PARTITION: ${{ matrix.partition }}
+          BI_IMAGE_TAR: |-
+            ${{ runner.temp }}/${{ needs.save-images.outputs.artifact-name }}/images.tar
         run: |
           bin/bix go ensure-bi
           bin/bix elixir int-test --partitions=${{ matrix.num_partitions }}
