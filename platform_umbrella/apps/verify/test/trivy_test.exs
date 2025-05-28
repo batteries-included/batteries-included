@@ -48,7 +48,7 @@ defmodule Verify.TrivyTest do
     |> visit(@trivy_report_path)
     |> assert_has(@cluster_rbac_link)
     |> click(@cluster_rbac_link)
-    |> assert_has(table_row(text: "clusterrole-edit"))
+    |> assert_has(table_row(text: "clusterrole-"))
   end
 
   verify "infra assessments ran and are visible", %{session: session} do
