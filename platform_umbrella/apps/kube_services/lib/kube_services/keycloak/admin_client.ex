@@ -200,7 +200,7 @@ defmodule KubeServices.Keycloak.AdminClient do
   end
 
   #
-  # Realm authentication 
+  # Realm authentication
   #
 
   @spec required_actions(GenServer.server(), String.t()) :: result(list(RequiredActionProviderRepresentation.t()))

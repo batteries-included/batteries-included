@@ -33,7 +33,7 @@ defmodule KubeServices.SnapshotApply.EventLauncher do
 
   @impl GenServer
   def handle_info({_action, _object}, %State{timer_reference: ref} = state) do
-    Logger.debug("Database event received, scheduling creation", state: state)
+    Logger.debug("Database event received, scheduling creation")
     {:noreply, %{state | timer_reference: schedule_start(ref)}}
   end
 

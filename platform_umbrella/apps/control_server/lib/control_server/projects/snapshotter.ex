@@ -271,8 +271,8 @@ defmodule ControlServer.Projects.Snapshoter do
   def get_associations(nil), do: []
 
   def get_associations(module) do
-    module
-    |> apply(:__schema__, [:associations])
+    :associations
+    |> module.__schema__()
     |> Enum.filter(fn a -> a != :project end)
   end
 
@@ -338,7 +338,7 @@ defmodule ControlServer.Projects.Snapshoter do
   # if it does then we add a virtual_size field to the attrs
   # and set it to the size that we are using.
   defp try_set_virtual_size(attrs, module, size) do
-    case apply(module, :__schema__, [:virtual_type, :virtual_size]) do
+    case module.__schema__(:virtual_type, :virtual_size) do
       # If there's no field then we can't set it
       # so we just return the attrs
       #

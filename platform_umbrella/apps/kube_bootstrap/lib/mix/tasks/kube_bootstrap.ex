@@ -1,6 +1,13 @@
 defmodule Mix.Tasks.Kube.Bootstrap do
   @shortdoc "Bootstrap resources into a kubernetes cluster"
 
+  @moduledoc """
+  Mix task to bootstrap resources into a Kubernetes cluster.
+  This task reads a summary file and applies the
+  resources defined within it to the Kubernetes cluster
+  much like the bootstrap command in the docker image.
+  """
+
   use Mix.Task
 
   require Logger

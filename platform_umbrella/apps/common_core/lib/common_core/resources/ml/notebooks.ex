@@ -46,7 +46,7 @@ defmodule CommonCore.Resources.Notebooks do
     |> F.require_non_empty(state.notebooks)
   end
 
-  # we can share a single configmap for now as none of the settings are configurable 
+  # we can share a single configmap for now as none of the settings are configurable
   # or would be different between notebooks and it's super easy to change when needed
   resource(:override_configmap, _battery, state) do
     name = "#{@app_name}-settings-override"

@@ -1,5 +1,5 @@
 defmodule CommonCore.JwkTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   import CommonCore.JWK.Assertions
 

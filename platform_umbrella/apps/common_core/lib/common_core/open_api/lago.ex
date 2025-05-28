@@ -1676,6 +1676,7 @@ defmodule CommonCore.OpenAPI.Lago do
   end
 
   defmodule WebhookEndpoint do
+    @moduledoc false
     use CommonCore, :embedded_schema
 
     batt_embedded_schema do

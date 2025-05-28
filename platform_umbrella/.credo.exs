@@ -68,7 +68,7 @@
         enabled: [
           #
           ## Consistency Checks
-
+          #
           {Credo.Check.Consistency.ExceptionNames, []},
           {Credo.Check.Consistency.LineEndings, []},
           {Credo.Check.Consistency.ParameterPatternMatching, []},
@@ -83,17 +83,22 @@
           # Priority values are: `low, normal, high, higher`
           #
           {Credo.Check.Design.AliasUsage, [priority: :low, if_nested_deeper_than: 2, if_called_more_often_than: 0]},
-          {Credo.Check.Design.TagFIXME, []},
+          {Credo.Check.Design.SkipTestWithoutComment, []},
 
           #
           ## Readability Checks
           #
           {Credo.Check.Readability.AliasOrder, []},
+          {Credo.Check.Readability.BlockPipe, []},
           {Credo.Check.Readability.FunctionNames, []},
+          {Credo.Check.Readability.ImplTrue, []},
           {Credo.Check.Readability.LargeNumbers, []},
           {Credo.Check.Readability.MaxLineLength, [priority: :low, max_length: 120]},
           {Credo.Check.Readability.ModuleAttributeNames, []},
+          {Credo.Check.Readability.ModuleDoc, []},
           {Credo.Check.Readability.ModuleNames, []},
+          {Credo.Check.Readability.MultiAlias, []},
+          {Credo.Check.Readability.OneArityFunctionInPipe, []},
           {Credo.Check.Readability.ParenthesesInCondition, []},
           {Credo.Check.Readability.ParenthesesOnZeroArityDefs, []},
           {Credo.Check.Readability.PipeIntoAnonymousFunctions, []},
@@ -101,12 +106,17 @@
           {Credo.Check.Readability.PreferImplicitTry, []},
           {Credo.Check.Readability.RedundantBlankLines, []},
           {Credo.Check.Readability.Semicolons, []},
+          {Credo.Check.Readability.SeparateAliasRequire, []},
+          {Credo.Check.Readability.SingleFunctionToBlockPipe, []},
+          {Credo.Check.Readability.SinglePipe, [files: %{excluded: ["apps/common_core/lib/mix/tasks/gen_resource.ex"]}]},
           {Credo.Check.Readability.SpaceAfterCommas, []},
+          {Credo.Check.Readability.StrictModuleLayout, []},
           {Credo.Check.Readability.StringSigils, []},
           {Credo.Check.Readability.TrailingBlankLine, []},
           {Credo.Check.Readability.TrailingWhiteSpace, []},
           {Credo.Check.Readability.UnnecessaryAliasExpansion, []},
           {Credo.Check.Readability.VariableNames, []},
+          {Credo.Check.Readability.WithCustomTaggedTuple, []},
           {Credo.Check.Readability.WithSingleClause, []},
 
           #
@@ -115,32 +125,43 @@
           {Credo.Check.Refactor.Apply, []},
           {Credo.Check.Refactor.CondStatements, []},
           {Credo.Check.Refactor.CyclomaticComplexity, []},
+          {Credo.Check.Refactor.DoubleBooleanNegation, []},
+          {Credo.Check.Refactor.FilterCount, []},
+          {Credo.Check.Refactor.FilterFilter, []},
+          {Credo.Check.Refactor.FilterReject, []},
           {Credo.Check.Refactor.FunctionArity, []},
+          {Credo.Check.Refactor.IoPuts, [files: %{excluded: ["apps/common_core/lib/mix/tasks/jwk_pem_json.ex"]}]},
           {Credo.Check.Refactor.LongQuoteBlocks, []},
-          {Credo.Check.Refactor.MatchInCondition, []},
           {Credo.Check.Refactor.MapJoin, []},
+          {Credo.Check.Refactor.MapMap, []},
+          {Credo.Check.Refactor.MatchInCondition, []},
           {Credo.Check.Refactor.NegatedConditionsInUnless, []},
           {Credo.Check.Refactor.NegatedConditionsWithElse, []},
           {Credo.Check.Refactor.Nesting, [max_nesting: 3]},
+          {Credo.Check.Refactor.RedundantWithClauseResult, []},
+          {Credo.Check.Refactor.RejectFilter, []},
+          {Credo.Check.Refactor.UtcNowTruncate, []},
+          {Credo.Check.Refactor.RejectReject, []},
           {Credo.Check.Refactor.UnlessWithElse, []},
           {Credo.Check.Refactor.WithClauses, []},
-          {Credo.Check.Refactor.FilterFilter, []},
-          {Credo.Check.Refactor.RejectReject, []},
-          {Credo.Check.Refactor.RedundantWithClauseResult, []},
 
           #
           ## Warnings
           #
           {Credo.Check.Warning.ApplicationConfigInModuleAttribute, []},
           {Credo.Check.Warning.BoolOperationOnSameValues, []},
+          {Credo.Check.Warning.Dbg, [files: %{excluded: ["apps/common_core/lib/common_core/et/jwk.ex"]}]},
           {Credo.Check.Warning.ExpensiveEmptyEnumCheck, []},
           {Credo.Check.Warning.IExPry, []},
           {Credo.Check.Warning.IoInspect, []},
+          {Credo.Check.Warning.LeakyEnvironment, [files: %{excluded: ["apps/verify/**/*.{ex,exs}"]}]},
+          {Credo.Check.Warning.MissedMetadataKeyInLoggerConfig, []},
           {Credo.Check.Warning.OperationOnSameValues, []},
           {Credo.Check.Warning.OperationWithConstantResult, []},
           {Credo.Check.Warning.RaiseInsideRescue, []},
           {Credo.Check.Warning.SpecWithStruct, []},
-          {Credo.Check.Warning.WrongTestFileExtension, []},
+          {Credo.Check.Warning.UnsafeExec, []},
+          {Credo.Check.Warning.UnsafeToAtom, []},
           {Credo.Check.Warning.UnusedEnumOperation, []},
           {Credo.Check.Warning.UnusedFileOperation, []},
           {Credo.Check.Warning.UnusedKeywordOperation, []},
@@ -149,80 +170,13 @@
           {Credo.Check.Warning.UnusedRegexOperation, []},
           {Credo.Check.Warning.UnusedStringOperation, []},
           {Credo.Check.Warning.UnusedTupleOperation, []},
-          {Credo.Check.Refactor.NegatedIsNil, []},
-          {Credo.Check.Refactor.IoPuts,
-           [
-             files: %{
-               excluded: [
-                 # We can print to console in mix tasks
-                 "apps/common_core/lib/mix/tasks/jwk_pem_json.ex"
-               ]
-             }
-           ]},
-          {Credo.Check.Refactor.DoubleBooleanNegation, []},
-          {Credo.Check.Refactor.AppendSingleItem, []},
-          {Credo.Check.Readability.WithCustomTaggedTuple, []},
-          {Credo.Check.Readability.StrictModuleLayout, []},
-          {Credo.Check.Warning.UnsafeToAtom,
-           [
-             files: %{
-               excluded: [
-                 # Gen Resource creates a new file in a short lived VM there's no danger here.
-                 "apps/common_core/lib/mix/tasks/gen_resource.ex",
-                 # Gen Openapi Struct creates a new file in a short lived vm.
-                 "apps/common_core/lib/mix/tasks/gen_openapi_schema.ex",
-                 "apps/common_core/lib/common_core/seed_args_converter.ex",
-                 # Connection Pools are per cluster.
-                 "apps/common_core/lib/common_core/connection_pool.ex",
-                 # This is during compilation and they are creating the atoms
-                 "apps/common_core/lib/common_core/defaults/registry.ex",
-                 # It's a test.
-                 "apps/common_core/test/common_core/keycloak/admin_client_test.exs"
-               ]
-             }
-           ]},
-          {Credo.Check.Readability.ImplTrue, []},
-          {Credo.Check.Readability.SeparateAliasRequire, []},
-          {Credo.Check.Readability.BlockPipe, []},
-          {Credo.Check.Readability.SingleFunctionToBlockPipe, []},
-          {Credo.Check.Design.SkipTestWithoutComment, []},
-          {Credo.Check.Readability.SinglePipe,
-           [
-             files: %{
-               excluded: [
-                 # Gen Resource is weird since it's all macros creating code.
-                 # allow it here.
-                 "apps/common_core/lib/mix/tasks/gen_resource.ex"
-               ]
-             }
-           ]},
-          {Credo.Check.Refactor.MapMap, []},
-          {Credo.Check.Refactor.RejectFilter, []},
-          {Credo.Check.Refactor.FilterReject, []},
-          {Credo.Check.Warning.UnsafeExec, []}
+          {Credo.Check.Warning.WrongTestFileExtension, []}
         ],
         disabled: [
-          # To try at some point
-          {Credo.Check.Readability.ModuleDoc, []},
-          {Credo.Check.Readability.Specs, []},
-          {Credo.Check.Consistency.UnusedVariableNames, []},
-          {Credo.Check.Readability.NestedFunctionCalls, []},
-          {Credo.Check.Refactor.PipeChainStart, []},
+          # To Try:
+          {Credo.Check.Design.DuplicatedCode, []},
           {Credo.Check.Refactor.ABCSize, []},
-
-          # Not useful for us
-          {Credo.Check.Consistency.MultiAliasImportRequireUse, []},
-          {Credo.Check.Readability.AliasAs, []},
-          {Credo.Check.Readability.MultiAlias, []},
-          {Credo.Check.Refactor.ModuleDependencies, []},
-          {Credo.Check.Refactor.VariableRebinding, []},
-          {Credo.Check.Warning.LazyLogging, []},
-          {Credo.Check.Warning.LeakyEnvironment, []},
-          {Credo.Check.Warning.MapGetUnsafePass, []},
-          {Credo.Check.Warning.MixEnv, []},
-
-          # Creates unnecessary complexity
-          {Credo.Check.Design.DuplicatedCode, []}
+          {Credo.Check.Warning.UnsafeToAtom, []}
         ]
       }
     }
