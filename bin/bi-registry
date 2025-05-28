@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
+
+do_save_int_images() {
+    local out="$1"
+
+    declare -a imgs
+    SECONDS=0
+    while read -r img tag; do
+        case "$img" in
+        docker.io/istio/*)
+            imgs+=("${img}:${tag}")
+            ;;
+        ghcr.io/cloudnative-pg/*)
+            imgs+=("${img}:${tag}")
+            ;;
+        quay.io/frrouting/*)
+            imgs+=("${img}:${tag}")
+            ;;
+        quay.io/metallb/*)
+            imgs+=("${img}:${tag}")
+            ;;
+        *)
+            continue
+            ;;
+        esac
+    done < <(do_list)
+
+    # add our images
+    local version
+    version=$(bi-docker get-image-tag)
+
+    for img in kube-bootstrap control-server; do
+        imgs+=("ghcr.io/batteries-included/${img}:${version}")
+    done
+
+    for img in "${imgs[@]}"; do
+        docker pull --platform linux/amd64 "$img"
+    done
+    log "Finished pulling images in ${SECONDS} seconds"
+
+    SECONDS=0
+    docker save -o "${out}" "${imgs[@]}"
+    log "Finished saving images to tar file in ${SECONDS} seconds"
+}
+
+do_list() {
+    yq \
+        '. | explode(.) | map_values([.name, .default_tag]) | to_entries | .[].value' \
+        -o tsv "${ROOT_DIR}/image_registry.yaml" |
+        column -t
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+
+Available commands:
+
+- list,ls           List the images in the registry
+- save-int-images   Save the images necessary for integration testing
+EOF
+    exit 1
+}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) export TRACE=1 ;;
+        --no-color) export NO_COLOR=1 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    if [[ $# -lt 1 ]]; then
+        log "Missing script arguments"
+        usage
+    fi
+
+    command="$1"
+    shift
+    args=("$@")
+
+    return 0
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+maybe_add_to_path "${ROOT_DIR}/bin"
+export PATH
+
+case "$command" in
+list | ls)
+    do_list
+    ;;
+
+save-int-images)
+    do_save_int_images "${args[@]}"
+    ;;
+
+*)
+    usage
+    ;;
+esac

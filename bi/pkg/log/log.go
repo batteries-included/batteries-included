@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/lmittmann/tint"
 	slogmulti "github.com/samber/slog-multi"
@@ -25,7 +24,7 @@ func SetupLogging(verbosity string, color bool) error {
 		Level:      Level,
 		AddSource:  Level == slog.LevelDebug,
 		NoColor:    !color,
-		TimeFormat: time.Kitchen,
+		TimeFormat: "15:04:05.000",
 	})))
 
 	return nil

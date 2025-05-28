@@ -25,7 +25,7 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv, skipBootstrap b
 	}
 
 	if skipBootstrap {
-		slog.Info("skipping bootstrap")
+		slog.Info("Skipping bootstrap")
 		return nil
 	}
 
