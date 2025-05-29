@@ -127,9 +127,9 @@ jobs:
           persist-credentials: false
 
       - name: Install ASDF Tools
-        uses: asdf-vm/actions/install@1902764435ca0dd2f3388eea723a4f92a4eb8302 # v3
+        uses: asdf-vm/actions/install@1902764435ca0dd2f3388eea723a4f92a4eb8302 # v4
         with:
-          asdf_branch: ${{ vars.ASDF_BRANCH }}
+          asdf_version: '0.18.0'
 
       - name: Reshim ASDF
         run: asdf reshim
