@@ -1,18 +1,13 @@
 ---
 name: 'Setup ASDF'
 description: 'Sets up ASDF'
-inputs:
-  asdf_branch:
-    description: 'ASDF branch to use'
-    required: true
-    default: 'v0.15.0'
 runs:
   using: 'composite'
   steps:
     - name: Install ASDF CLI
-      uses: asdf-vm/actions/setup@v3
+      uses: asdf-vm/actions/install@1902764435ca0dd2f3388eea723a4f92a4eb8302 # v4
       with:
-        asdf_branch: ${{ inputs.asdf_branch }}
+        skip_install: true
 
     - name: Restore ASDF cache
       uses: actions/cache/restore@v4
@@ -27,11 +22,9 @@ runs:
         restore-keys: ${{ runner.os }}-asdf-
 
     - name: Install ASDF Tools
-      uses: asdf-vm/actions/install@v3
+      uses: asdf-vm/actions/install@1902764435ca0dd2f3388eea723a4f92a4eb8302 # v4
       # See https://github.com/asdf-vm/actions/issues/445
       if: ${{ steps.asdf-cache.outputs.cache-hit != 'true' }}
-      with:
-        asdf_branch: ${{ inputs.asdf_branch }}
 
     - name: Reshim ASDF
       shell: bash
