@@ -45,12 +45,20 @@ defmodule Verify.BatteryInstallWorker do
   def handle_call({:install_battery, battery}, _from, %{session: session} = state) do
     Logger.info("Installing battery: #{battery.name}")
 
-    session
-    |> visit("batteries/#{battery.group}/new/#{battery.type}")
-    |> click(Query.text("Install Battery"))
-    # click the only link - Done - in the modal
-    |> find(Query.css("#install-modal-container"), &click(&1, Query.link("")))
-    |> take_screenshot(name: "post_install_#{battery.type}")
+    try do
+      session
+      |> visit("batteries/#{battery.group}/new/#{battery.type}")
+      |> click(Query.text("Install Battery"))
+      # click the only link - Done - in the modal
+      |> find(Query.css("#install-modal-container"), &click(&1, Query.link("")))
+      |> take_screenshot(name: "post_install_#{battery.type}")
+    rescue
+      e ->
+        # grab a screenshot if we've failed to install the battery
+        take_screenshot(session, name: "battery-install-worker-failure-#{battery.type}")
+
+        reraise(e, __STACKTRACE__)
+    end
 
     {:reply, :ok, state}
   end
