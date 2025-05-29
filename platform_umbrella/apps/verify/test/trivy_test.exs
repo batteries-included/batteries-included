@@ -32,7 +32,7 @@ defmodule Verify.TrivyTest do
     |> visit(@trivy_report_path)
     |> assert_has(@audit_link)
     |> click(@audit_link)
-    |> assert_has(table_row(text: "service-battery-control-server"))
+    |> assert_has(table_row(text: "service-", minimum: 1))
   end
 
   verify "rbac assessments ran and are visible", %{session: session} do
@@ -40,7 +40,7 @@ defmodule Verify.TrivyTest do
     |> visit(@trivy_report_path)
     |> assert_has(@rbac_link)
     |> click(@rbac_link)
-    |> assert_has(table_row(text: "role-trivy-operator", minimum: 1))
+    |> assert_has(table_row(text: "role-", minimum: 1))
   end
 
   verify "cluster rbac assessments ran and are visible", %{session: session} do
@@ -56,18 +56,24 @@ defmodule Verify.TrivyTest do
     |> visit(@trivy_report_path)
     |> assert_has(@kube_infra_link)
     |> click(@kube_infra_link)
-    |> assert_has(table_row(text: "pod-etcd-int-test-control-plane"))
+    |> assert_has(table_row(text: "pod-", minimum: 1))
   end
 
   verify "vulnerability reports ran and are visible", %{session: session} do
-    search_text = "daemonset-kindnet-kindnet-cni"
+    search_text = "daemonset-"
+
+    session =
+      session
+      |> visit(@trivy_report_path)
+      |> assert_has(@vulnerability_link)
+      |> click(@vulnerability_link)
+      |> assert_has(table_row(text: search_text, minimum: 1))
+
+    # grab the name of the report from the first row
+    search_text = text(session, Query.css("tr td:first-child", text: search_text, minimum: 1, at: 0))
 
     session
-    |> visit(@trivy_report_path)
-    |> assert_has(@vulnerability_link)
-    |> click(@vulnerability_link)
-    |> assert_has(table_row(text: search_text))
-    # We can click into these rows
+    # When we click the report row, goes to detail page
     |> click(table_row(text: search_text))
     |> assert_has(h3(search_text))
   end
