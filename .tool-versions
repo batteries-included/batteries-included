@@ -11,3 +11,4 @@ python 3.12.9
 shfmt 3.11.0
 upx 5.0.0
 yamllint 1.37.0
+yq 4.45.4

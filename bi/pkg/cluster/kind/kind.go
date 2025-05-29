@@ -9,10 +9,13 @@ import (
 	"log/slog"
 	"net"
 	"net/netip"
+	"os"
 
 	dockerclient "github.com/docker/docker/client"
 	slogmulti "github.com/samber/slog-multi"
 	"sigs.k8s.io/kind/pkg/cluster"
+	"sigs.k8s.io/kind/pkg/cluster/nodes"
+	"sigs.k8s.io/kind/pkg/cluster/nodeutils"
 )
 
 const (
@@ -51,26 +54,33 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 	}
 
 	if c.gatewayEnabled {
-		c.dockerClient, err = dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
-		if err != nil {
-			return fmt.Errorf("failed to create docker client: %w", err)
-		}
+		return c.initForGateway()
+	}
 
-		// Use the same CIDR block as AWS.
-		_, gatewayCIDRBlock, err := net.ParseCIDR("100.64.250.0/24")
-		if err != nil {
-			return fmt.Errorf("failed to parse gateway CIDR block: %w", err)
-		}
+	return nil
+}
 
-		c.wgGateway, err = wireguard.NewGateway(51820, gatewayCIDRBlock)
-		if err != nil {
-			return fmt.Errorf("failed to create wireguard gateway: %w", err)
-		}
+func (c *KindClusterProvider) initForGateway() error {
+	var err error
+	c.dockerClient, err = dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
+	if err != nil {
+		return fmt.Errorf("failed to create docker client: %w", err)
+	}
 
-		c.wgClient, err = c.wgGateway.NewClient("installer")
-		if err != nil {
-			return fmt.Errorf("failed to create wireguard client for installer: %w", err)
-		}
+	// Use the same CIDR block as AWS.
+	_, gatewayCIDRBlock, err := net.ParseCIDR("100.64.250.0/24")
+	if err != nil {
+		return fmt.Errorf("failed to parse gateway CIDR block: %w", err)
+	}
+
+	c.wgGateway, err = wireguard.NewGateway(51820, gatewayCIDRBlock)
+	if err != nil {
+		return fmt.Errorf("failed to create wireguard gateway: %w", err)
+	}
+
+	c.wgClient, err = c.wgGateway.NewClient("installer")
+	if err != nil {
+		return fmt.Errorf("failed to create wireguard client for installer: %w", err)
 	}
 
 	return nil
@@ -82,25 +92,18 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 		return fmt.Errorf("failed to check if kind cluster is running: %w", err)
 	}
 
+	logger := c.logger
+	if progressReporter != nil {
+		logInterceptor := progressReporter.ForKindCreateLogs()
+		defer logInterceptor.(io.Closer).Close()
+
+		logger = slog.New(slogmulti.Fanout(
+			c.logger.Handler(),
+			logInterceptor,
+		))
+	}
+
 	if !isRunning {
-		logger := c.logger
-		if progressReporter != nil {
-			logInterceptor := progressReporter.ForKindCreateLogs()
-			defer logInterceptor.(io.Closer).Close()
-
-			logger = slog.New(slogmulti.Fanout(
-				c.logger.Handler(),
-				logInterceptor,
-			))
-		}
-
-		providerOpts := []cluster.ProviderOption{
-			c.nodeProvider,
-			cluster.ProviderWithLogger(&slogAdapter{Logger: logger}),
-		}
-
-		kindProvider := cluster.NewProvider(providerOpts...)
-
 		createOpts := []cluster.CreateOption{
 			// We'll need to configure the cluster here
 			// if customers need to access the docker images.
@@ -109,11 +112,15 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 			cluster.CreateWithDisplaySalutation(false),
 		}
 
-		if err := kindProvider.Create(c.name, createOpts...); err != nil {
+		if err := c.kindProviderWithLogger(logger).Create(c.name, createOpts...); err != nil {
 			return fmt.Errorf("failed to create kind cluster: %w", err)
 		}
 	} else {
 		c.logger.Debug("Kind cluster already running", slog.String("name", c.name))
+	}
+
+	if err := c.maybeLoadImages(); err != nil {
+		return fmt.Errorf("failed to load images: %w", err)
 	}
 
 	// Create the wireguard gateway container.
@@ -133,14 +140,7 @@ func (c *KindClusterProvider) Destroy(ctx context.Context, _ *util.ProgressRepor
 	}
 
 	if isRunning {
-		providerOpts := []cluster.ProviderOption{
-			c.nodeProvider,
-			cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}),
-		}
-
-		kindProvider := cluster.NewProvider(providerOpts...)
-
-		if err := kindProvider.Delete(c.name, ""); err != nil {
+		if err := c.kindProvider().Delete(c.name, ""); err != nil {
 			return fmt.Errorf("failed to delete existing kind cluster: %w", err)
 		}
 	} else {
@@ -163,10 +163,7 @@ func (c *KindClusterProvider) WriteOutputs(ctx context.Context, w io.Writer) err
 }
 
 func (c *KindClusterProvider) WriteKubeConfig(ctx context.Context, w io.Writer) error {
-	kindProvider := cluster.NewProvider(c.nodeProvider,
-		cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
-
-	kubeConfigBytes, err := kindProvider.KubeConfig(c.name, c.gatewayEnabled)
+	kubeConfigBytes, err := c.kindProvider().KubeConfig(c.name, c.gatewayEnabled)
 	if err != nil {
 		return fmt.Errorf("failed to get kubeconfig: %w", err)
 	}
@@ -210,10 +207,7 @@ func (c *KindClusterProvider) WriteWireGuardConfig(ctx context.Context, w io.Wri
 }
 
 func (c *KindClusterProvider) isRunning() (bool, error) {
-	kindProvider := cluster.NewProvider(c.nodeProvider,
-		cluster.ProviderWithLogger(&slogAdapter{Logger: c.logger}))
-
-	clusters, err := kindProvider.List()
+	clusters, err := c.kindProvider().List()
 	if err != nil {
 		return false, fmt.Errorf("failed to list kind clusters: %w", err)
 	}
@@ -225,4 +219,55 @@ func (c *KindClusterProvider) isRunning() (bool, error) {
 	}
 
 	return false, nil
+}
+
+func (c *KindClusterProvider) maybeLoadImages() error {
+	imageTarPath := os.Getenv("BI_IMAGE_TAR")
+	if imageTarPath == "" {
+		return nil
+	}
+	logger := c.logger.With(slog.String("BI_IMAGE_TAR", imageTarPath))
+	logger.Debug("loading images")
+
+	if _, err := os.Stat(imageTarPath); err != nil {
+		return err
+	}
+
+	nodelist, err := c.kindProvider().ListInternalNodes(c.name)
+	if err != nil {
+		return err
+	}
+
+	for _, node := range nodelist {
+		if err := c.loadImages(imageTarPath, node); err != nil {
+			return err
+		}
+	}
+	logger.Debug("finished loading images")
+
+	return nil
+}
+
+func (c *KindClusterProvider) kindProvider() *cluster.Provider {
+	return c.kindProviderWithLogger(c.logger)
+}
+
+func (c *KindClusterProvider) kindProviderWithLogger(logger *slog.Logger) *cluster.Provider {
+	return cluster.NewProvider(
+		c.nodeProvider,
+		cluster.ProviderWithLogger(&slogAdapter{Logger: logger}),
+	)
+}
+
+// loadImage loads tar image(s) to a node
+// borrowed from:
+// https://github.com/kubernetes-sigs/kind/blob/07574072a34/pkg/cmd/kind/load/image-archive/image-archive.go#L145C1-L153C2
+func (c *KindClusterProvider) loadImages(imageTarName string, node nodes.Node) error {
+	c.logger.Debug("loading images to node", slog.String("node", node.String()), slog.String("path", imageTarName))
+	f, err := os.Open(imageTarName)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	return nodeutils.LoadImageArchive(node, f)
 }

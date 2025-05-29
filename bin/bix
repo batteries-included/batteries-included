@@ -26,6 +26,7 @@ Available commands:
 - local             Local development tooling
 - source            Tools for manipulating the repository
 - static            Tools for working with the static site
+- registry          Tools for working with the image registry
 
 - mix               Run an arbitrary mix command
 - bi                Run an arbitrary bi command
@@ -82,6 +83,9 @@ source | s)
     ;;
 static)
     exec -- "${SCRIPT_DIR}/bi-static" "${args[@]}"
+    ;;
+registry | reg | r)
+    exec -- "${SCRIPT_DIR}/bi-registry" "${args[@]}"
     ;;
 
 mix | m)
