@@ -52,6 +52,7 @@ jobs:
     permissions:
       contents: read
     strategy:
+      fail-fast: false
       matrix:
         partition: [1, 2, 3, 4]
         num_partitions: [4]
