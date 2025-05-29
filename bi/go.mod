@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.19
 	github.com/aws/smithy-go v1.22.3
 	github.com/dghubble/ipnets v1.0.0
-	github.com/docker/docker v28.1.1+incompatible
+	github.com/docker/docker v28.2.1+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/go-jose/go-jose/v4 v4.1.0
 	github.com/lmittmann/tint v1.1.1
@@ -20,7 +20,7 @@ require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.81.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.12
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.0
-	github.com/pulumi/pulumi/sdk/v3 v3.171.0
+	github.com/pulumi/pulumi/sdk/v3 v3.172.0
 	github.com/samber/slog-multi v1.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
@@ -70,6 +70,8 @@ require (
 	github.com/charmbracelet/x/term v0.2.1 // indirect
 	github.com/cheggaaa/pb v1.0.29 // indirect
 	github.com/cloudflare/circl v1.6.0 // indirect
+	github.com/containerd/errdefs v1.0.0 // indirect
+	github.com/containerd/errdefs/pkg v0.3.0 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
