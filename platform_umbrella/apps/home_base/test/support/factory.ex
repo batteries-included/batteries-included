@@ -33,7 +33,7 @@ defmodule HomeBase.Factory do
   end
 
   def stored_project_snapshot_factory do
-    %StoredProjectSnapshot{}
+    %StoredProjectSnapshot{visibility: :private}
   end
 
   def team_factory do
