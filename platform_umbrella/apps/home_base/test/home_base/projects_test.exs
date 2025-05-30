@@ -91,5 +91,39 @@ defmodule HomeBase.ProjectsTest do
 
       assert [] == Projects.snapshots_for(install)
     end
+
+    test "gets public snapshots from other installations",
+         %{install_zero: install_zero, install_two: install_two} do
+      {:ok, stored_snapshot} =
+        Projects.create_stored_project_snapshot(%{
+          installation_id: install_zero.id,
+          snapshot: %ProjectSnapshot{name: "snap", description: "test"},
+          visibility: :public
+        })
+
+      # This should be not visible to install_two
+      {:ok, _stored_snapshot_two} =
+        Projects.create_stored_project_snapshot(%{
+          installation_id: install_zero.id,
+          snapshot: %ProjectSnapshot{name: "snap2", description: "test2"},
+          visibility: :private
+        })
+
+      possible_snaps = Projects.snapshots_for(install_two)
+
+      expected = %{
+        id: stored_snapshot.id,
+        name: stored_snapshot.snapshot.name,
+        description: stored_snapshot.snapshot.description,
+        num_postgres_clusters: 0,
+        num_redis_instances: 0,
+        num_jupyter_notebooks: 0,
+        num_knative_services: 0,
+        num_traditional_services: 0,
+        num_model_instances: 0
+      }
+
+      assert [expected] == possible_snaps
+    end
   end
 end

@@ -9,6 +9,9 @@ defmodule HomeBase.Projects.StoredProjectSnapshot do
   batt_schema "stored_project_snapshots" do
     belongs_to :installation, CommonCore.Installation
 
+    # The visibility of the snapshot
+    field :visibility, Ecto.Enum, default: :private, values: [:private, :public]
+
     embeds_one :snapshot, CommonCore.Projects.ProjectSnapshot, on_replace: :delete
 
     # This is when they told us

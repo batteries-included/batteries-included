@@ -20,7 +20,7 @@ defmodule HomeBase.Projects do
 
     query =
       from s in StoredProjectSnapshot,
-        where: s.installation_id in subquery(owning_ids) or is_nil(s.installation_id),
+        where: s.installation_id in subquery(owning_ids) or s.visibility == :public,
         order_by: [desc: s.inserted_at],
         select: %{
           id: s.id,
