@@ -10,7 +10,12 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
 do_save_int_images() {
-    local out="$1"
+    local out="${1:-""}"
+
+    [[ -z "$out" ]] && {
+        log "${RED}Must pass an argument for the output tarball location${NOFORMAT}"
+        exit 1
+    }
 
     declare -a imgs
     SECONDS=0
