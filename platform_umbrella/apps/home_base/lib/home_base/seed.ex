@@ -41,6 +41,12 @@ defmodule HomeBase.Seed do
     :ok
   end
 
+  def seed_static_projects do
+    :ok = load_app()
+
+    Logger.info("Seeding static projects")
+  end
+
   @start_apps [:postgrex, :ecto, :ecto_sql, :home_base]
   defp load_app do
     Enum.each(@start_apps, fn app ->
