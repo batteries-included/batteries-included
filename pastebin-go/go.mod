@@ -4,10 +4,10 @@ go 1.24.2
 
 require (
 	github.com/gorilla/mux v1.8.1
-	github.com/lmittmann/tint v1.0.7
+	github.com/lmittmann/tint v1.1.1
 	github.com/satori/go.uuid v1.2.0
-	gorm.io/driver/postgres v1.5.11
-	gorm.io/gorm v1.26.0
+	gorm.io/driver/postgres v1.6.0
+	gorm.io/gorm v1.30.0
 )
 
 require github.com/felixge/httpsnoop v1.0.4 // indirect
