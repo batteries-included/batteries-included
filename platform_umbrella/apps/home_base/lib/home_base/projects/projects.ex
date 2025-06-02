@@ -9,10 +9,10 @@ defmodule HomeBase.Projects do
   alias HomeBase.Projects.StoredProjectSnapshot
   alias HomeBase.Repo
 
-  def create_stored_project_snapshot(attrs \\ %{}) do
+  def create_stored_project_snapshot(attrs \\ %{}, repo \\ Repo) do
     %StoredProjectSnapshot{}
     |> StoredProjectSnapshot.changeset(attrs)
-    |> Repo.insert()
+    |> repo.insert()
   end
 
   def snapshots_for(%{} = owner) do
@@ -54,6 +54,20 @@ defmodule HomeBase.Projects do
   # of the snapshot. Use with caution.
   def get_stored_project_snapshot!(id) do
     Repo.get!(StoredProjectSnapshot, id)
+  end
+
+  def create_or_get_stored_project_snapshot(attrs) do
+    Repo.transaction(fn repo ->
+      id = Map.get(attrs, :id)
+
+      case repo.get(StoredProjectSnapshot, id) do
+        nil ->
+          create_stored_project_snapshot(attrs, repo)
+
+        snapshot ->
+          {:ok, snapshot}
+      end
+    end)
   end
 
   defp owning_installations(%Installation{team_id: nil, user_id: nil, id: id} = _installation) do
