@@ -118,12 +118,42 @@ do_dev() {
     bi_pushd "${ROOT_DIR}/platform_umbrella"
 
     KUBE_CONFIG_FILE=$(run_bi debug kube-config-path dev) iex -S mix phx.server
-    bi_popd
 }
 
-do_phx_server() {
-    log "${GREEN}Starting Phoenix Server${NOFORMAT}"
-    run_mix "phx.server"
+do_int_test() {
+    local tag
+    tag=$(bix d get-image-tag)
+    log "${GREEN}Running Integration Tests${NOFORMAT} for tag ${BLUE}${tag}${NOFORMAT}"
+
+    log "${GREEN}Building base images${NOFORMAT}"
+    bix docker ensure-base-images
+    log "${GREEN}Building images${NOFORMAT}"
+
+    for image_name in kube-bootstrap control-server; do
+        bix docker build-image "${image_name}"
+        docker image tag "${image_name}:${tag}" "ghcr.io/batteries-included/${image_name}:${tag}"
+    done
+
+    # Create a temporary directory to store the tarball
+    export TAR_DIR=$(mktemp -d)
+
+    # Clean up after ourself
+    trap 'rm -rf "${TAR_DIR}"' EXIT
+
+    log "${GREEN}Creating tarball for images at ${BLUE}${TAR_DIR}/images.tar${NOFORMAT}"
+    # Save the images to a tar file that we side load into the kind cluster
+    bix registry save-int-images "${TAR_DIR}/images.tar"
+
+    # Make sure that the bi binary is already built
+    log "${GREEN}Building bi binary${NOFORMAT}"
+    bix go ensure-bi
+
+    log "${GREEN}Running integration tests for ${BLUE}${tag}${NOFORMAT} with images at ${BLUE}${TAR_DIR}/images.tar${NOFORMAT}"
+    export BI_IMAGE_TAR="${TAR_DIR}/images.tar"
+
+    # Run the integration tests with one partition
+    # since this is just our local dev machine
+    bix elixir int-test --partitions=1
 }
 
 usage() {
@@ -142,6 +172,7 @@ Available commands:
 - bootstrap         Bootstrap a new installation
 - dev               Start a development environment with iex
 - phx-server        Start a phoenix server
+- int-test          Run integration tests
 EOF
     exit 1
 }
@@ -192,6 +223,9 @@ dev)
     ;;
 phx-server)
     do_phx_server
+    ;;
+int-test)
+    do_int_test
     ;;
 *)
     usage
