@@ -33,8 +33,9 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
 
   attr :class, :any, default: nil
   attr :form, :any, required: true
+  attr :projects, :list, default: []
 
-  def size_form(assigns) do
+  def details_form(assigns) do
     ~H"""
     <.fieldset class={@class}>
       <.field>
@@ -67,10 +68,22 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
         <:label>GPU Count</:label>
         <.input field={@form[:gpu_count]} type="number" placeholder="0" />
       </.field>
+
+      <.field>
+        <:label>Project</:label>
+        <.input
+          type="select"
+          field={@form[:project_id]}
+          placeholder="No Project"
+          placeholder_selectable={true}
+          options={Enum.map(@projects, &{&1.name, &1.id})}
+        />
+      </.field>
     </.fieldset>
     """
   end
 
   defp gpu_node_type?(node_type) when is_binary(node_type), do: node_type |> String.to_existing_atom() |> gpu_node_type?()
+
   defp gpu_node_type?(node_type), do: node_type in GPU.node_types_with_gpus()
 end

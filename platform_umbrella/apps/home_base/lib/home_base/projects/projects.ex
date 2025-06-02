@@ -50,6 +50,12 @@ defmodule HomeBase.Projects do
     Repo.one(query)
   end
 
+  # This should only be used for internal purposes, since it doesn't check ownership
+  # of the snapshot. Use with caution.
+  def get_stored_project_snapshot!(id) do
+    Repo.get!(StoredProjectSnapshot, id)
+  end
+
   defp owning_installations(%Installation{team_id: nil, user_id: nil, id: id} = _installation) do
     values = [%{id: id}]
     types = %{id: BatteryUUID}

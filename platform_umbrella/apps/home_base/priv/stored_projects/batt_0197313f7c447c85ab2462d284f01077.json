@@ -1,0 +1,132 @@
+{
+  "name": "BI.Example: Local RAG + GPT Notebook",
+  "description": "## Project Info\n\nSpin up a local hosted RAG stack with one click. This will start the following:\n\n- A Postgres cluster with PGVector\n- An embedding model\n- A GPT llm\n- A notebook",
+  "knative_services": [],
+  "traditional_services": [],
+  "model_instances": [
+    {
+      "id": "batt_0197312d6c2a72199e36344537f8d6d8",
+      "name": "example-rag-gpt-embed",
+      "node_type": "default",
+      "inserted_at": "2025-06-02T15:05:49.866469Z",
+      "updated_at": "2025-06-02T15:05:49.866469Z",
+      "virtual_size": null,
+      "num_instances": 1,
+      "model": "nomic-embed-text",
+      "cpu_requested": 500,
+      "cpu_limits": null,
+      "memory_requested": 536870912,
+      "memory_limits": 536870912,
+      "project_id": "batt_0197312bd33c7d42a1445661db88e1fe",
+      "gpu_count": 0
+    },
+    {
+      "id": "batt_0197312e0910741fbfb9ca6eaea342a4",
+      "name": "example-rag-gpt-llm",
+      "node_type": "default",
+      "inserted_at": "2025-06-02T15:06:30.032755Z",
+      "updated_at": "2025-06-02T15:06:30.032755Z",
+      "virtual_size": null,
+      "num_instances": 1,
+      "model": "llama3.1:8b",
+      "cpu_requested": 4000,
+      "cpu_limits": null,
+      "memory_requested": 8589934592,
+      "memory_limits": 8589934592,
+      "project_id": "batt_0197312bd33c7d42a1445661db88e1fe",
+      "gpu_count": 0
+    }
+  ],
+  "postgres_clusters": [
+    {
+      "id": "batt_0197312cbdb673a484a9468c93587a0d",
+      "name": "example-rag-gpt",
+      "type": "standard",
+      "database": {
+        "name": "app",
+        "owner": "root"
+      },
+      "storage_class": "standard",
+      "inserted_at": "2025-06-02T15:05:05.206804Z",
+      "updated_at": "2025-06-02T15:05:05.206804Z",
+      "virtual_size": null,
+      "num_instances": 1,
+      "users": [
+        {
+          "position": null,
+          "username": "root",
+          "roles": [
+            "login",
+            "superuser"
+          ],
+          "credential_namespaces": [
+            "battery-core"
+          ]
+        },
+        {
+          "position": null,
+          "username": "notebook",
+          "roles": [
+            "superuser",
+            "login"
+          ],
+          "credential_namespaces": [
+            "battery-data",
+            "battery-ai"
+          ]
+        }
+      ],
+      "password_versions": [
+        {
+          "version": 2,
+          "username": "notebook",
+          "password": "Z4AWD5TQM3GA34CYCT3FBPJJ"
+        },
+        {
+          "version": 1,
+          "username": "root",
+          "password": "GCPQC3SC54DWHDGW5Z3B7FOX"
+        }
+      ],
+      "cpu_requested": 500,
+      "cpu_limits": 500,
+      "memory_requested": 536870912,
+      "memory_limits": 536870912,
+      "project_id": "batt_0197312bd33c7d42a1445661db88e1fe",
+      "backup_config": null,
+      "storage_size": 536870912,
+      "restore_from_backup": null,
+      "virtual_storage_size_range_value": null
+    }
+  ],
+  "redis_instances": [],
+  "ferret_services": [],
+  "jupyter_notebooks": [
+    {
+      "id": "batt_019731322cd47cd38e61db8b4919cf6b",
+      "name": "example-rag-gpt",
+      "node_type": "default",
+      "image": "quay.io/jupyter/datascience-notebook:lab-4.4.3",
+      "storage_class": null,
+      "inserted_at": "2025-06-02T15:11:01.332194Z",
+      "updated_at": "2025-06-02T15:11:01.332194Z",
+      "virtual_size": null,
+      "env_values": [
+        {
+          "name": "DATABASE_URL",
+          "value": null,
+          "source_name": "cloudnative-pg.pg-example-rag-gpt.notebook",
+          "source_type": "secret",
+          "source_key": "dsn",
+          "source_optional": false
+        }
+      ],
+      "cpu_requested": 500,
+      "cpu_limits": 500,
+      "memory_requested": 536870912,
+      "memory_limits": 536870912,
+      "project_id": "batt_0197312bd33c7d42a1445661db88e1fe",
+      "storage_size": 536870912
+    }
+  ]
+}

@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   import ControlServerWeb.ActionsDropdown
   import ControlServerWeb.FerretServicesTable
   import ControlServerWeb.KnativeServicesTable
+  import ControlServerWeb.ModelInstancesTable
   import ControlServerWeb.NotebooksTable
   import ControlServerWeb.PodsTable
   import ControlServerWeb.PostgresClusterTable
@@ -60,7 +61,10 @@ defmodule ControlServerWeb.Live.ProjectsShow do
       |> Enum.flat_map(fn type -> Map.get(project, type, []) end)
       |> MapSet.new(& &1.id)
 
-    pods = Enum.filter(KubeState.get_all(:pod), fn pod -> MapSet.member?(allowed_ids, labeled_owner(pod)) end)
+    pods =
+      Enum.filter(KubeState.get_all(:pod), fn pod ->
+        MapSet.member?(allowed_ids, labeled_owner(pod))
+      end)
 
     socket
     |> assign(:k8_pods, pods)
@@ -123,24 +127,60 @@ defmodule ControlServerWeb.Live.ProjectsShow do
       <.tab_bar variant="navigation">
         <:tab selected={@live_action == :show} patch={show_url(@project)}>Overview</:tab>
         <:tab selected={@live_action == :pods} patch={pods_url(@project)}>Pods</:tab>
-        <:tab :if={@timeline_installed} navigate={timeline_url(@project)}>Timeline</:tab>
-        <:tab :if={@project.postgres_clusters != []} patch={postgres_clusters_url(@project)}>
+        <:tab
+          :if={@timeline_installed}
+          selected={@live_action == :timeline}
+          navigate={timeline_url(@project)}
+        >
+          Timeline
+        </:tab>
+        <:tab
+          :if={@project.postgres_clusters != []}
+          selected={@live_action == :postgres_clusters}
+          patch={postgres_clusters_url(@project)}
+        >
           Postgres Clusters
         </:tab>
-        <:tab :if={@project.redis_instances != []} patch={redis_instances_url(@project)}>Redis</:tab>
-        <:tab :if={@project.ferret_services != []} patch={ferret_services_url(@project)}>
+        <:tab
+          :if={@project.redis_instances != []}
+          selected={@live_action == :redis}
+          patch={redis_instances_url(@project)}
+        >
+          Redis
+        </:tab>
+        <:tab
+          :if={@project.ferret_services != []}
+          selected={@live_action == :ferret_services}
+          patch={ferret_services_url(@project)}
+        >
           FerretDB
         </:tab>
-        <:tab :if={@project.jupyter_notebooks != []} patch={jupyter_notebooks_url(@project)}>
+        <:tab
+          :if={@project.jupyter_notebooks != []}
+          selected={@live_action == :jupyter_notebooks}
+          patch={jupyter_notebooks_url(@project)}
+        >
           Notebooks
         </:tab>
-        <:tab :if={@project.knative_services != []} patch={knative_services_url(@project)}>
+        <:tab
+          :if={@project.knative_services != []}
+          selected={@live_action == :knative_services}
+          patch={knative_services_url(@project)}
+        >
           Knative Services
         </:tab>
-        <:tab :if={@project.traditional_services != []} patch={traditional_services_url(@project)}>
+        <:tab
+          :if={@project.traditional_services != []}
+          selected={@live_action == :traditional_services}
+          patch={traditional_services_url(@project)}
+        >
           Traditional Services
         </:tab>
-        <:tab :if={@project.model_instances != []} patch={model_instances_url(@project)}>
+        <:tab
+          :if={@project.model_instances != []}
+          selected={@live_action == :model_instances}
+          patch={model_instances_url(@project)}
+        >
           Model Instances
         </:tab>
       </.tab_bar>
@@ -403,6 +443,33 @@ defmodule ControlServerWeb.Live.ProjectsShow do
     """
   end
 
+  def model_instances_page(assigns) do
+    ~H"""
+    <.header
+      back_link={show_url(@project)}
+      title={@page_title}
+      project={@project}
+      resource_count={@resource_count}
+      timeline_installed={@timeline_installed}
+      project_export_installed={@project_export_installed}
+    />
+
+    <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
+      <.panel title="Model Instances" class="lg:col-span-3 lg:row-span-2">
+        <.model_instances_table rows={@project.model_instances} />
+      </.panel>
+
+      <.links_panel
+        live_action={@live_action}
+        project={@project}
+        timeline_installed={@timeline_installed}
+        project_export_installed={@project_export_installed}
+        grafana_dashboard_url={@grafana_dashboard_url}
+      />
+    </.grid>
+    """
+  end
+
   def main_page(assigns) do
     ~H"""
     <.header
@@ -500,6 +567,16 @@ defmodule ControlServerWeb.Live.ProjectsShow do
         />
       <% :jupyter_notebooks -> %>
         <.notebooks_page
+          live_action={@live_action}
+          page_title={@page_title}
+          project={@project}
+          timeline_installed={@timeline_installed}
+          project_export_installed={@project_export_installed}
+          grafana_dashboard_url={@grafana_dashboard_url}
+          resource_count={@resource_count}
+        />
+      <% :model_instances -> %>
+        <.model_instances_page
           live_action={@live_action}
           page_title={@page_title}
           project={@project}

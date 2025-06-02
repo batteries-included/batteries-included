@@ -128,7 +128,7 @@ defmodule ControlServerWeb.Live.OllamaFormComponent do
             <.model_form form={@form} action={@action} />
           </.panel>
           <.panel variant="gray">
-            <.size_form form={@form} />
+            <.details_form form={@form} projects={@projects} />
           </.panel>
         </.grid>
       </.form>

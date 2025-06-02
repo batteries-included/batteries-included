@@ -7,7 +7,7 @@ defmodule Mix.Tasks.HomeBase.MakeAdmin do
   use Mix.Task
 
   @start_apps [:postgrex, :ecto, :ecto_sql, :home_base]
-  @shutdown_adnormal {:shutdown, 1}
+  @shutdown_abnormal {:shutdown, 1}
   @shutdown_normal {:shutdown, 0}
 
   # Run is always going to exit.
@@ -23,7 +23,7 @@ defmodule Mix.Tasks.HomeBase.MakeAdmin do
 
       _ ->
         Mix.shell().error("Error: Please pass a user email as the first argument")
-        exit(@shutdown_adnormal)
+        exit(@shutdown_abnormal)
     end
   end
 end
