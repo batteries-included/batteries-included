@@ -180,7 +180,8 @@ Available commands:
 - build-base-images     Builds docker base images
 - build-image           Build a docker image
 - push-images           Push all the container images to a registry
-- get-docker-tag        Get the current tag of the docker base images
+- get-base-tag          Get the current tag of the docker base images
+- get-image-tag         Get the current tag of the publishable images
 EOF
     exit 1
 }

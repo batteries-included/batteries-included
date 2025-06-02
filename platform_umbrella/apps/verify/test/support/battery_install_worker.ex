@@ -49,9 +49,13 @@ defmodule Verify.BatteryInstallWorker do
       session
       |> visit("batteries/#{battery.group}/new/#{battery.type}")
       |> click(Query.text("Install Battery"))
-      # click the only link - Done - in the modal
-      |> find(Query.css("#install-modal-container"), &click(&1, Query.link("")))
-      |> take_screenshot(name: "post_install_#{battery.type}")
+      # we have to pause a bit here for the install to actually take
+      |> then(fn session ->
+        Process.sleep(1_000)
+        session
+      end)
+      |> visit("batteries/#{battery.group}")
+      |> assert_has(Query.css("##{battery.type}", text: "ACTIVE"))
     rescue
       e ->
         # grab a screenshot if we've failed to install the battery

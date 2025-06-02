@@ -37,7 +37,7 @@ defmodule ControlServerWeb.Live.GroupBatteriesIndex do
     <.page_header title={@page_title} back_link={"/#{@group.type}"} />
 
     <.grid columns={%{sm: 1, md: 2, xl: 3}}>
-      <.panel :for={battery <- @catalog_batteries} title={battery.name}>
+      <.panel :for={battery <- @catalog_batteries} title={battery.name} id={battery.type}>
         <:menu>
           <%= if system_battery = Map.get(@system_batteries, battery.type) do %>
             <div class="flex items-center justify-between flex-1">
