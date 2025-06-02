@@ -2,20 +2,15 @@
 name: Integration tests
 
 'on':
-  workflow_run:
-    branches:
-      - master
-    workflows:
-      - BIX Docker
-    types:
-      - completed
+  pull_request:
 
 env: ${{ vars }}
 
 jobs:
   save-images:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      VERSION_OVERRIDE: latest
     timeout-minutes: 5
     permissions:
       contents: read
@@ -46,7 +41,9 @@ jobs:
 
   elixir-int-test:
     runs-on: ubuntu-latest-l
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      VERSION_OVERRIDE: latest
+      TEST_LOG_LEVEL: info
     needs: save-images
     timeout-minutes: 15
     permissions:
