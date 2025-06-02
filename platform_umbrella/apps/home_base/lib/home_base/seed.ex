@@ -43,8 +43,19 @@ defmodule HomeBase.Seed do
 
   def seed_static_projects do
     :ok = load_app()
+    [prod_install | _] = HomeBase.BatteriesInstalls.list_internal_prod_installations()
 
-    Logger.info("Seeding static projects")
+    prod_install.id
+    |> HomeBase.Projects.StaticProjects.static_projects()
+    |> Enum.each(fn {id, stored_project} ->
+      case HomeBase.Projects.create_or_get_stored_project_snapshot(stored_project) do
+        {:ok, _} ->
+          Logger.info("Seeded static project #{id}")
+
+        {:error, reason} ->
+          Logger.error("Failed to seed static project #{id}: #{inspect(reason)}")
+      end
+    end)
   end
 
   @start_apps [:postgrex, :ecto, :ecto_sql, :home_base]

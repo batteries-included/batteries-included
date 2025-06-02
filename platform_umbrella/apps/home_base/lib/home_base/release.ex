@@ -53,6 +53,8 @@ defmodule HomeBase.Release do
       Logger.warning("File does not exist: #{path}. Skipping seed.")
     end
 
+    :ok = do_seed_static_projects()
+
     Logger.debug("Seed task done!")
     :ok
   end
@@ -107,6 +109,13 @@ defmodule HomeBase.Release do
       end
     end)
     |> HomeBase.Seed.seed_files()
+  end
+
+  defp do_seed_static_projects do
+    Logger.info("Seeding static projects...")
+
+    HomeBase.Seed.seed_static_projects()
+    :ok
   end
 
   def rollback(repo, version) do
