@@ -48,7 +48,9 @@ do_save_int_images() {
     done
 
     for img in "${imgs[@]}"; do
-        docker pull --quiet --platform linux/amd64 "$img"
+        if ! docker images "${img}" --format=json | jq -e '.' &>/dev/null; then
+            docker pull --quiet --platform linux/amd64 "$img"
+        fi
     done
     log "Finished pulling images in ${SECONDS} seconds"
 
