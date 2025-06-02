@@ -65,12 +65,16 @@ defmodule Verify.KindInstallWorker do
   defp do_start({mod, identifier}, state) do
     {spec, path} = build_install_spec(identifier, state)
     Logger.debug("Starting with #{path}")
+    env = [{"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")}]
 
-    with {_output, 0} <- System.cmd(state.bi_binary, ["start", path]),
-         {kube_config_path, 0} <- System.cmd(state.bi_binary, ["debug", "kube-config-path", path]),
+    with {_output, 0} <-
+           System.cmd(state.bi_binary, ["start", path], env: env),
+         {kube_config_path, 0} <-
+           System.cmd(state.bi_binary, ["debug", "kube-config-path", path]),
          {:ok, url} <- get_url(spec, kube_config_path) do
       Logger.debug("Kind install started from #{path}")
       Logger.debug("Kubeconfig found at #{kube_config_path}")
+
       {:reply, {:ok, url, kube_config_path}, %{state | started: Map.put(state.started, mod, path)}}
     else
       error ->

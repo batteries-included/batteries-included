@@ -227,7 +227,7 @@ func (c *KindClusterProvider) maybeLoadImages() error {
 		return nil
 	}
 	logger := c.logger.With(slog.String("BI_IMAGE_TAR", imageTarPath))
-	logger.Debug("loading images")
+	logger.Info("Loading images")
 
 	if _, err := os.Stat(imageTarPath); err != nil {
 		return err
@@ -243,7 +243,7 @@ func (c *KindClusterProvider) maybeLoadImages() error {
 			return err
 		}
 	}
-	logger.Debug("finished loading images")
+	logger.Info("Finished loading images")
 
 	return nil
 }
