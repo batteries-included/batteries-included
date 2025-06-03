@@ -29,21 +29,18 @@ image_tag() {
 tag_push() {
     local image_name=${1}
     shift
-    local registry=${1}
-    shift
     local version=${1}
     shift
     local additional_tags=("$@")
 
-    log "${GREEN}Pushing${NOFORMAT} ${image_name}:${version} to ${registry}"
+    log "${GREEN}Pushing${NOFORMAT} ${image_name}:${version}"
 
-    docker tag "${image_name}:${version}" "${registry}/${image_name}:${version}"
-    docker push "${registry}/${image_name}:${version}"
+    docker push "${image_name}:${version}"
 
     for tag in "${additional_tags[@]}"; do
         log "${GREEN}Tagging${NOFORMAT} ${image_name}:${version} as ${tag}"
-        docker tag "${image_name}:${version}" "${registry}/${image_name}:${tag}"
-        docker push "${registry}/${image_name}:${tag}"
+        docker tag "${image_name}:${version}" "${image_name}:${tag}"
+        docker push "${image_name}:${tag}"
     done
 }
 
@@ -59,7 +56,7 @@ do_build_base_images() {
     for base in build deploy; do
         docker build \
             --load \
-            -t "${base}-base:${tag}" \
+            -t "${REGISTRY}/${base}-base:${tag}" \
             -f docker/${base}-base.dockerfile \
             ${TRACE:+--progress=plain} \
             "${ci_args[@]}" \
@@ -98,16 +95,16 @@ do_build_image() {
 
     case "${image_name}" in
     control-server)
-        build_args+=(-t "control-server:${version}" --build-arg RELEASE=control_server "${platform_args[@]}")
+        build_args+=(-t "${REGISTRY}/control-server:${version}" --build-arg RELEASE=control_server "${platform_args[@]}")
         ;;
     home-base)
-        build_args+=(-t "home-base:${version}" --build-arg RELEASE=home_base "${platform_args[@]}")
+        build_args+=(-t "${REGISTRY}/home-base:${version}" --build-arg RELEASE=home_base "${platform_args[@]}")
         ;;
     kube-bootstrap)
-        build_args+=(-t "kube-bootstrap:${version}" --build-arg RELEASE=kube_bootstrap "${platform_args[@]}")
+        build_args+=(-t "${REGISTRY}/kube-bootstrap:${version}" --build-arg RELEASE=kube_bootstrap "${platform_args[@]}")
         ;;
     pastebin)
-        build_args+=(-f docker/pastebin.dockerfile -t "pastebin:${version}")
+        build_args+=(-f docker/pastebin.dockerfile -t "${REGISTRY}/pastebin:${version}")
         ;;
     *)
         die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
@@ -128,7 +125,7 @@ do_ensure_base_images() {
     local docker_base_tag=${1}
 
     for base in build deploy; do
-        local image="${base}-base:${docker_base_tag}"
+        local image="${REGISTRY}/${base}-base:${docker_base_tag}"
         if ! docker images "${image}" --format=json | jq -e '.' &>/dev/null; then
             log "${YELLOW}Checked${NOFORMAT} base image: ${CYAN}${image}${NOFORMAT}. Not found."
             try_pull_base_image "${image}"
@@ -139,29 +136,25 @@ do_ensure_base_images() {
 try_pull_base_image() {
     local image="${1}"
     log "${GREEN}Attempting to pull${NOFORMAT}: ${image}"
-    if docker pull "ghcr.io/batteries-included/${image}"; then
-        docker tag "ghcr.io/batteries-included/${image}" "${image}"
-    else
+    if ! docker pull "${image}"; then
         log "${YELLOW}Failed${NOFORMAT} to pull image. Building base images instead."
         do_build_base_images
     fi
 }
 
 do_push_images() {
-    local registry=${1:-"localhost:5000"}
-    shift || true
     local docker_tag
     local version
 
     docker_tag=$(docker_hash)
     for base in build deploy; do
-        tag_push "${base}-base" "${registry}" "${docker_tag}"
+        tag_push "${REGISTRY}/${base}-base" "${docker_tag}"
     done
 
     version=$(image_tag)
 
     for img in control-server home-base kube-bootstrap pastebin; do
-        tag_push "${img}" "${registry}" "${version}" "$@"
+        tag_push "${REGISTRY}/${img}" "${version}" "$@"
     done
 }
 

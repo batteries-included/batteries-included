@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 
-ARG BASE_IMAGE_NAME=build-base
+ARG BASE_IMAGE_NAME=ghcr.io/batteries-included/build-base
 ARG BASE_IMAGE_TAG=latest
 
-ARG DEPLOY_IMAGE_NAME=deploy-base
+ARG DEPLOY_IMAGE_NAME=ghcr.io/batteries-included/deploy-base
 ARG DEPLOY_IMAGE_TAG=latest
 
 ARG LANG=C.UTF-8
