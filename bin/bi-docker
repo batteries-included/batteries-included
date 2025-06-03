@@ -165,6 +165,17 @@ do_push_images() {
     done
 }
 
+do_retag_images_for_ghcr() {
+    for image_name in kube-bootstrap control-server home-base pastebin; do
+        for tag in $(docker images "${image_name}" --format=json | jq -r '.Tag'); do
+            log "${GREEN}Tagging image ${BLUE}ghcr.io/batteries-included/${image_name}:${tag}${NOFORMAT}"
+            docker tag "${image_name}:${tag}" "ghcr.io/batteries-included/${image_name}:${tag}"
+        done
+    done
+
+    log "${GREEN}Finished retagging images${NOFORMAT}"
+}
+
 usage() {
     cat <<EOF
 Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
@@ -235,6 +246,9 @@ get-base-tag)
     ;;
 get-image-tag)
     image_tag
+    ;;
+retag-images-for-ghcr)
+    do_retag_images_for_ghcr
     ;;
 *)
     usage

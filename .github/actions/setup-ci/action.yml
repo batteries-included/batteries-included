@@ -8,6 +8,9 @@ inputs:
   elixir_cache:
     description: 'Set up Elixir cache'
     default: 'true'
+  image_cache:
+    description: 'Pull int test image cache'
+    default: 'false'
   go_cache:
     description: 'Set up Go cache'
     default: 'true'
@@ -46,6 +49,19 @@ runs:
           ${{ runner.os }}-ex-${{ hashFiles('**/mix.lock', '.tool-versions') }}
         restore-keys: |
           ${{ runner.os }}-ex-
+
+    - name: Restore image cache
+      if: ${{ inputs.image_cache == 'true' }}
+      uses: actions/cache/restore@v4
+      id: image-cache
+      with:
+        path: |
+          /home/runner/work/_temp/base_images.tar
+        key:
+          ${{ runner.os }}-images-${{ hashFiles('image_registry.yaml',
+          'docker/*.dockerfile')}}
+        restore-keys: |
+          ${{ runner.os }}-images-
 
     - name: Restore Go cache
       if: ${{ inputs.go_cache == 'true' }}

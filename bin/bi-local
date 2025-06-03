@@ -134,9 +134,10 @@ do_int_test() {
         docker rmi -f "ghcr.io/batteries-included/${image_name}:${tag}" || true
 
         bi-docker build-image "${image_name}"
-        log "${GREEN}Tagging image ${BLUE}ghcr.io/batteries-included/${image_name}:${tag}${NOFORMAT}"
-        docker image tag "${image_name}:${tag}" "ghcr.io/batteries-included/${image_name}:${tag}"
     done
+
+    log "${GREEN}Retagging bi images${NOFORMAT}"
+    bi-docker retag-images-for-ghcr
 
     # Create a temporary directory to store the tarball
     export TAR_DIR=$(mktemp -d)

@@ -16,7 +16,6 @@ PRETTIER_GLOBS+=(
     '../*.js'
     '../README.md'
     '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'
-    '../static/src/content/**/*.md'
 )
 
 format_mix_code() {
