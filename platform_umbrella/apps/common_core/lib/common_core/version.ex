@@ -4,6 +4,8 @@ defmodule CommonCore.Version do
 
   This uses git / the environment to get the hash and the version from the mix.exs file.
   """
+  use CommonCore.Git
+
   import CommonCore.Util.String
 
   # get the hash. checks `BI_RELEASE_HASH`, then git.
@@ -11,18 +13,12 @@ defmodule CommonCore.Version do
   defmacrop get_hash do
     env = System.get_env("BI_RELEASE_HASH")
 
-    git =
-      System.cmd("git", ["describe", "--match=\"badtagthatnevermatches\"", "--always", "--dirty"],
-        stderr_to_stdout: true,
-        env: []
-      )
-
-    case {env, git} do
+    case {env, @git_hash} do
       {env, _git} when not is_empty(env) ->
         env
 
-      {_env, {msg, 0}} ->
-        String.trim(msg)
+      {_env, hash} when not is_empty(hash) ->
+        hash
 
       _ ->
         raise("Failed to determine hash")
