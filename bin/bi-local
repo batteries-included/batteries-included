@@ -122,18 +122,18 @@ do_dev() {
 
 do_int_test() {
     local tag
-    tag=$(bix d get-image-tag)
+    tag=$(bi-docker get-image-tag)
     log "${GREEN}Running Integration Tests${NOFORMAT} for tag ${BLUE}${tag}${NOFORMAT}"
 
     log "${GREEN}Building base images${NOFORMAT}"
-    bix docker ensure-base-images
+    bi-docker ensure-base-images
     log "${GREEN}Building images${NOFORMAT}"
 
     for image_name in kube-bootstrap control-server; do
         docker rmi -f "${image_name}:${tag}" || true
         docker rmi -f "ghcr.io/batteries-included/${image_name}:${tag}" || true
 
-        bix docker build-image "${image_name}"
+        bi-docker build-image "${image_name}"
         log "${GREEN}Tagging image ${BLUE}ghcr.io/batteries-included/${image_name}:${tag}${NOFORMAT}"
         docker image tag "${image_name}:${tag}" "ghcr.io/batteries-included/${image_name}:${tag}"
     done
@@ -146,18 +146,18 @@ do_int_test() {
 
     log "${GREEN}Creating tarball for images at ${BLUE}${TAR_DIR}/images.tar${NOFORMAT}"
     # Save the images to a tar file that we side load into the kind cluster
-    bix registry save-int-images "${TAR_DIR}/images.tar"
+    bi-registry save-int-images "${TAR_DIR}/images.tar"
 
     # Make sure that the bi binary is already built
     log "${GREEN}Building bi binary${NOFORMAT}"
-    bix go ensure-bi
+    bi-go ensure-bi
 
     log "${GREEN}Running integration tests for ${BLUE}${tag}${NOFORMAT} with images at ${BLUE}${TAR_DIR}/images.tar${NOFORMAT}"
     export BI_IMAGE_TAR="${TAR_DIR}/images.tar"
 
     # Run the integration tests with one partition
     # since this is just our local dev machine
-    bix elixir int-test --partitions=1
+    bi-elixir int-test --partitions=1 "$@"
 }
 
 usage() {
@@ -229,7 +229,7 @@ phx-server)
     do_phx_server
     ;;
 int-test)
-    do_int_test
+    do_int_test "${args[@]}"
     ;;
 *)
     usage
