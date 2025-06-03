@@ -123,6 +123,7 @@ do_dev() {
 do_int_test() {
     local tag
     tag=$(bix d get-image-tag)
+    export VERSION_OVERRIDE="${tag}"
     log "${GREEN}Running Integration Tests${NOFORMAT} for tag ${BLUE}${tag}${NOFORMAT}"
 
     log "${GREEN}Building base images${NOFORMAT}"
