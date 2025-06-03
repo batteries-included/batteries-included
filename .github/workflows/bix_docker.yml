@@ -77,6 +77,4 @@ jobs:
 
       - name: Push to GHCR
         if: ${{ fromJSON(env.PUSH) }}
-        run:
-          bin/bix docker push-images "ghcr.io/batteries-included" ${{
-          env.ADDITIONAL_TAGS }}
+        run: bin/bix docker push-images ${{ env.ADDITIONAL_TAGS }}
