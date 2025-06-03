@@ -46,13 +46,18 @@ do_save_int_images() {
     for img in kube-bootstrap control-server; do
         imgs+=("ghcr.io/batteries-included/${img}:${version}")
     done
+    log "Found ${#imgs[@]} images to save"
 
+    local pull_count
+    pull_count=0
     for img in "${imgs[@]}"; do
         if ! docker images "${img}" --format=json | jq -e '.' &>/dev/null; then
             docker pull --quiet --platform linux/amd64 "$img"
+        else
+            log "Image ${img} already exists, skipping pull"
         fi
     done
-    log "Finished pulling images in ${SECONDS} seconds"
+    log "Finished pulling ${BLUE}${pull_count}${NOFORMAT} images in ${SECONDS} seconds"
 
     SECONDS=0
     docker save -o "${out}" "${imgs[@]}"
