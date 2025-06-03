@@ -44,7 +44,7 @@ do_save_int_images() {
     version=$(bi-docker get-image-tag)
 
     for img in kube-bootstrap control-server; do
-        imgs+=("ghcr.io/batteries-included/${img}:${version}")
+        imgs+=("${REGISTRY}/${img}:${version}")
     done
     log "Found ${#imgs[@]} images to save"
 
@@ -56,6 +56,7 @@ do_save_int_images() {
     for img in "${imgs[@]}"; do
         if ! docker images "${img/$dockerio/}" --format=json | jq -e '.' &>/dev/null; then
             docker pull --quiet --platform linux/amd64 "$img"
+            ((pull_count += 1))
         else
             log "Image ${img} already exists, skipping pull"
         fi

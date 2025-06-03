@@ -130,12 +130,9 @@ do_int_test() {
     log "${GREEN}Building images${NOFORMAT}"
 
     for image_name in kube-bootstrap control-server; do
-        docker rmi -f "${image_name}:${tag}" || true
-        docker rmi -f "ghcr.io/batteries-included/${image_name}:${tag}" || true
+        docker rmi -f "${REGISTRY}/${image_name}:${tag}" || true
 
         bi-docker build-image "${image_name}"
-        log "${GREEN}Tagging image ${BLUE}ghcr.io/batteries-included/${image_name}:${tag}${NOFORMAT}"
-        docker image tag "${image_name}:${tag}" "ghcr.io/batteries-included/${image_name}:${tag}"
     done
 
     # Create a temporary directory to store the tarball
