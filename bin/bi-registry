@@ -48,10 +48,13 @@ do_save_int_images() {
     done
     log "Found ${#imgs[@]} images to save"
 
+    # docker removes registry portion from dockerhub hosted images
+    # so we won't find it and will try to re-pull below if we don't remove this
+    local dockerio='docker.io/'
     local pull_count
     pull_count=0
     for img in "${imgs[@]}"; do
-        if ! docker images "${img}" --format=json | jq -e '.' &>/dev/null; then
+        if ! docker images "${img/$dockerio/}" --format=json | jq -e '.' &>/dev/null; then
             docker pull --quiet --platform linux/amd64 "$img"
         else
             log "Image ${img} already exists, skipping pull"
