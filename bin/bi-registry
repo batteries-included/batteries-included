@@ -9,45 +9,9 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
-do_save_int_images() {
-    local out="${1:-""}"
-
-    [[ -z "$out" ]] && {
-        log "${RED}Must pass an argument for the output tarball location${NOFORMAT}"
-        exit 1
-    }
-
-    declare -a imgs
+pull_images() {
     SECONDS=0
-    while read -r img tag; do
-        case "$img" in
-        docker.io/istio/*)
-            imgs+=("${img}:${tag}")
-            ;;
-        ghcr.io/cloudnative-pg/*)
-            imgs+=("${img}:${tag}")
-            ;;
-        quay.io/frrouting/*)
-            imgs+=("${img}:${tag}")
-            ;;
-        quay.io/metallb/*)
-            imgs+=("${img}:${tag}")
-            ;;
-        *)
-            continue
-            ;;
-        esac
-    done < <(do_list)
-
-    # add our images
-    local version
-    version=$(bi-docker get-image-tag)
-
-    for img in kube-bootstrap control-server; do
-        imgs+=("${REGISTRY}/${img}:${version}")
-    done
-    log "Found ${#imgs[@]} images to save"
-
+    local imgs=("$@")
     # docker removes registry portion from dockerhub hosted images
     # so we won't find it and will try to re-pull below if we don't remove this
     local dockerio='docker.io/'
@@ -61,7 +25,52 @@ do_save_int_images() {
             log "Image ${img} already exists, skipping pull"
         fi
     done
-    log "Finished pulling ${BLUE}${pull_count}${NOFORMAT} images in ${SECONDS} seconds"
+    log "Finished pulling ${BLUE}${pull_count} / ${#imgs[@]}${NOFORMAT} images in ${SECONDS} seconds"
+}
+
+do_save_images() {
+    local type="$1"
+    local out="${2:-""}"
+    [[ -z "${out:-""}" ]] && {
+        log "${RED}Must pass an argument for the output tarball location${NOFORMAT}"
+        exit 1
+    }
+
+    imgs=()
+    if [[ "$type" == all || "$type" == registry_bootstrap ]]; then
+        while read -r img tag; do
+            case "$img" in
+            docker.io/istio/*)
+                imgs+=("${img}:${tag}")
+                ;;
+            ghcr.io/cloudnative-pg/*)
+                imgs+=("${img}:${tag}")
+                ;;
+            quay.io/frrouting/*)
+                imgs+=("${img}:${tag}")
+                ;;
+            quay.io/metallb/*)
+                imgs+=("${img}:${tag}")
+                ;;
+            *)
+                continue
+                ;;
+            esac
+        done < <(do_list)
+    fi
+
+    if [[ "$type" == all || "$type" == bi ]]; then
+        # add our images
+        local version
+        version=$(bi-docker get-image-tag)
+        for img in kube-bootstrap control-server; do
+            imgs+=("${REGISTRY}/${img}:${version}")
+        done
+    fi
+
+    log "Found ${#imgs[@]} images to save"
+
+    pull_images "${imgs[@]}"
 
     SECONDS=0
     docker save -o "${out}" "${imgs[@]}"
@@ -86,8 +95,9 @@ Available options:
 
 Available commands:
 
-- list,ls           List the images in the registry
-- save-int-images   Save the images necessary for integration testing
+- list,ls                               List the images in the registry
+- save-int-images                       Save the images necessary for integration testing
+- save-bootstrap-images-from-registry   Save only the bootstrap images from the registry
 EOF
     exit 1
 }
@@ -127,11 +137,12 @@ case "$command" in
 list | ls)
     do_list
     ;;
-
 save-int-images)
-    do_save_int_images "${args[@]}"
+    do_save_images all "${args[@]}"
     ;;
-
+save-bootstrap-images-from-registry)
+    do_save_images registry_bootstrap "${args[@]}"
+    ;;
 *)
     usage
     ;;

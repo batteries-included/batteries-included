@@ -24,8 +24,19 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup ASDF
-        uses: ./.github/actions/setup-asdf
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
+        with:
+          elixir_cache: false
+          go_cache: false
+          image_cache: true
+
+      - name: Load images from cache
+        env:
+          BASE_IMAGES_TAR: ${{ runner.temp }}/base_images.tar
+        run: |
+          docker load -i "${BASE_IMAGES_TAR}"
+          rm -rf "${BASE_IMAGES_TAR}"
 
       - name: Save images to archive
         run: bin/bix registry save-int-images "${{ runner.temp }}/images.tar"
