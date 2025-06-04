@@ -157,6 +157,22 @@ defmodule ControlServerWeb.Projects.ImportSnapshotForm do
     """
   end
 
+  def model_instances_list(assigns) do
+    ~H"""
+    <%= for {model_instance, _index} <- Enum.with_index(@snapshot.model_instances) do %>
+      <.h5>Model Instance: {model_instance.name}</.h5>
+      <.data_list>
+        <:item title="Model Name">
+          {model_instance.model}
+        </:item>
+        <:item title="Virtual Size">
+          {CommonCore.Util.VirtualSize.get_virtual_size(model_instance)}
+        </:item>
+      </.data_list>
+    <% end %>
+    """
+  end
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
@@ -177,6 +193,7 @@ defmodule ControlServerWeb.Projects.ImportSnapshotForm do
           <.jupyter_notebooks_list snapshot={@snapshot} />
           <.traditional_services_list snapshot={@snapshot} />
           <.knative_services_list snapshot={@snapshot} />
+          <.model_instances_list snapshot={@snapshot} />
         </.subform>
       </.form>
     </div>
