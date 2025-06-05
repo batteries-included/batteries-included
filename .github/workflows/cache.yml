@@ -22,6 +22,8 @@ env:
     ${{ vars.GOMODCACHE }}
   BI_PATHS: |
     /home/runner/.local/share/bi/dev/
+  IMAGE_PATHS: |
+    /home/runner/work/_temp/base_images.tar
 
 defaults:
   run:
@@ -45,6 +47,8 @@ jobs:
             }}
           GO_HASH_KEY:
             ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
+          IMAGE_HASH_KEY:
+            ${{ runner.os }}-images-${{ hashFiles('image_registry.yaml')}}
 
         run: |
           bi_rev="$(bin/bix go revision)"
@@ -56,6 +60,7 @@ jobs:
             # shellcheck disable=SC2153
             echo "GO_HASH_KEY=$GO_HASH_KEY";
             echo "BI_HASH_KEY=$BI_HASH_KEY" ;
+            echo "IMAGE_HASH_KEY=$IMAGE_HASH_KEY" ;
           } >> "$GITHUB_ENV"
 
       - name: Check existing ASDF cache
@@ -90,6 +95,14 @@ jobs:
           key: ${{ env.BI_HASH_KEY }}
           lookup-only: true
 
+      - name: Check existing image cache
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        id: images
+        with:
+          path: ${{ env.IMAGE_PATHS }}
+          key: ${{ env.IMAGE_HASH_KEY }}
+          lookup-only: true
+
     outputs:
       asdf-cache-hit: ${{ steps.asdf.outputs.cache-hit }}
       asdf-hash-key: ${{ env.ASDF_HASH_KEY }}
@@ -99,6 +112,8 @@ jobs:
       go-hash-key: ${{ env.GO_HASH_KEY }}
       bi-cache-hit: ${{ steps.bi.outputs.cache-hit }}
       bi-hash-key: ${{ env.BI_HASH_KEY }}
+      image-cache-hit: ${{ steps.images.outputs.cache-hit }}
+      image-hash-key: ${{ env.IMAGE_HASH_KEY }}
 
   cache-asdf:
     # ASDF tool-versions changed, install and re-cache
@@ -117,7 +132,6 @@ jobs:
           asdf_branch: ${{ vars.ASDF_BRANCH }}
 
       - name: Reshim ASDF
-        shell: bash
         run: asdf reshim
 
       - name: Save ASDF cache
@@ -141,7 +155,6 @@ jobs:
         uses: ./.github/actions/setup-asdf
 
       - name: Compile with dependencies
-        shell: bash
         env:
           MIX_ENV: test
         run: bin/bix mix "do" deps.get, compile --force
@@ -209,3 +222,42 @@ jobs:
           path: |
             /home/runner/.local/share/bi/dev/
           key: ${{ needs.check-caches.outputs.bi-hash-key }}
+
+  cache-images:
+    if: ${{ ! (needs.check-caches.outputs.image-cache-hit) }}
+    needs: check-caches
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # we'll want to pull existing base images if possible
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: false
+
+      - name: Setup ASDF
+        uses: ./.github/actions/setup-asdf
+
+      - name: Login to GHCR
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create image archive
+        run: |
+          bin/bix \
+            registry \
+            save-bootstrap-images-from-registry \
+            /home/runner/work/_temp/base_images.tar
+
+      - name: Save images cache
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        id: images-cache
+        with:
+          path: ${{ env.IMAGE_PATHS }}
+          key: ${{ needs.check-caches.outputs.image-hash-key }}
