@@ -102,9 +102,19 @@ defmodule Verify.TestCase.Helpers do
   end
 
   def assert_pods_in_deployment_running(session, namespace, deployment) do
+    deployment_url = "/kube/deployment/#{namespace}/#{deployment}/show"
+
+    # make sure the deployment page is available
+    {:ok, _} =
+      :wallaby
+      |> Application.get_env(:base_url)
+      |> Path.join(deployment_url)
+      |> build_retryable_get()
+      |> retry()
+
     session =
       session
-      |> visit("/kube/deployment/#{namespace}/#{deployment}/show")
+      |> visit(deployment_url)
       # check we're on the pods page for the deployment
       |> assert_has(h3(deployment))
 
