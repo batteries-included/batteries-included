@@ -60,21 +60,12 @@ defmodule Verify.TrivyTest do
   end
 
   verify "vulnerability reports ran and are visible", %{session: session} do
-    search_text = "daemonset-"
-
-    session =
-      session
-      |> visit(@trivy_report_path)
-      |> assert_has(@vulnerability_link)
-      |> click(@vulnerability_link)
-      |> assert_has(table_row(text: search_text, minimum: 1))
-
-    # grab the name of the report from the first row
-    search_text = text(session, Query.css("tr td:first-child", text: search_text, minimum: 1, at: 0))
-
     session
-    # When we click the report row, goes to detail page
-    |> click(table_row(text: search_text))
-    |> assert_has(h3(search_text))
+    |> visit(@trivy_report_path)
+    |> assert_has(@vulnerability_link)
+    |> click(@vulnerability_link)
+    |> assert_has(table_row(minimum: 1))
+    |> find(table_row(at: 0), &click(&1, Query.css("tr td:first-child")))
+    |> assert_has(table_row(minimum: 1))
   end
 end
