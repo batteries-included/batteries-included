@@ -95,7 +95,7 @@ defmodule Verify.KindInstallWorker do
     spec = path |> File.read!() |> Jason.decode!()
     slug = Map.fetch!(spec, "slug")
 
-    Logger.info("Stopping Kind install with path = #{path} slug #{slug}")
+    Logger.info("Stopping Kind install with path: #{path}, slug: #{slug}, bi: #{bi}")
 
     {_, 0} = System.cmd(bi, ["stop", slug])
 
