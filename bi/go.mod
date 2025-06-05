@@ -17,17 +17,17 @@ require (
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
-	github.com/pulumi/pulumi-aws/sdk/v6 v6.81.0
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.82.1
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.12
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.0
-	github.com/pulumi/pulumi/sdk/v3 v3.173.0
+	github.com/pulumi/pulumi/sdk/v3 v3.174.0
 	github.com/samber/slog-multi v1.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
-	github.com/vbauerster/mpb/v8 v8.10.1
+	github.com/vbauerster/mpb/v8 v8.10.2
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394
-	golang.org/x/sync v0.14.0
+	golang.org/x/sync v0.15.0
 	golang.org/x/term v0.32.0
 	gopkg.in/ini.v1 v1.67.0
 	k8s.io/api v0.33.1
