@@ -1,0 +1,115 @@
+{
+  "name": "BI.Example: Serverless Web With DB",
+  "description": "## Project Info\n\nAn example serverless web application backed by a PostgreSQL database.\n",
+  "traditional_services": [],
+  "ferret_services": [],
+  "knative_services": [
+    {
+      "id": "batt_0197419b8ec478cfac9559b24c6f8af1",
+      "name": "example-serverless-web",
+      "oauth2_proxy": false,
+      "inserted_at": "2025-06-05T19:40:03.140251Z",
+      "updated_at": "2025-06-05T19:46:46.612705Z",
+      "project_id": "batt_0197419b8eb67544a62256fcf585dee4",
+      "env_values": [
+        {
+          "name": "MOTD",
+          "value": "Hello, everyone!",
+          "source_name": null,
+          "source_key": null,
+          "source_optional": false,
+          "source_type": "value"
+        },
+        {
+          "name": "DATABASE_URL",
+          "value": null,
+          "source_name": "cloudnative-pg.pg-example-serverless-db.knative",
+          "source_key": "dsn",
+          "source_optional": false,
+          "source_type": "secret"
+        }
+      ],
+      "containers": [
+        {
+          "args": null,
+          "command": null,
+          "name": "main",
+          "path": null,
+          "image": "ghcr.io/batteries-included/pastebin:0.68.0",
+          "env_values": [],
+          "mounts": []
+        }
+      ],
+      "init_containers": [],
+      "keycloak_realm": null,
+      "kube_internal": false,
+      "rollout_duration": "10m"
+    }
+  ],
+  "model_instances": [],
+  "postgres_clusters": [
+    {
+      "id": "batt_0197419b8ebe7c9c9918805cd4cb0240",
+      "name": "example-serverless-db",
+      "type": "standard",
+      "users": [
+        {
+          "position": null,
+          "username": "knative",
+          "credential_namespaces": [
+            "battery-knative"
+          ],
+          "roles": [
+            "superuser",
+            "createdb",
+            "createrole",
+            "login"
+          ]
+        },
+        {
+          "position": null,
+          "username": "root",
+          "credential_namespaces": [
+            "battery-core"
+          ],
+          "roles": [
+            "login",
+            "superuser"
+          ]
+        }
+      ],
+      "database": {
+        "name": "app",
+        "owner": "root"
+      },
+      "storage_class": "standard",
+      "inserted_at": "2025-06-05T19:40:03.134923Z",
+      "updated_at": "2025-06-05T19:45:33.505001Z",
+      "virtual_size": null,
+      "virtual_storage_size_range_value": null,
+      "backup_config": null,
+      "cpu_limits": 500,
+      "cpu_requested": 500,
+      "memory_limits": 536870912,
+      "memory_requested": 536870912,
+      "num_instances": 1,
+      "password_versions": [
+        {
+          "version": 2,
+          "username": "root",
+          "password": "DZ3NDXHS4SAEXMHJRGCQ3KYG"
+        },
+        {
+          "version": 1,
+          "username": "knative",
+          "password": "Y7PJJKZGXAYDHN7VHDF5R326"
+        }
+      ],
+      "project_id": "batt_0197419b8eb67544a62256fcf585dee4",
+      "restore_from_backup": null,
+      "storage_size": 536870912
+    }
+  ],
+  "redis_instances": [],
+  "jupyter_notebooks": []
+}
