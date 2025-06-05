@@ -1,7 +1,7 @@
 actionlint 1.7.7
 awscli 2.25.8
-elixir 1.18.3-otp-27
-erlang 27.3.2
+elixir 1.18.4-otp-27
+erlang 27.3.4
 golang 1.24.2
 goreleaser 2.8.2
 kind 0.29.0
