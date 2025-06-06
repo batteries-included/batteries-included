@@ -1,0 +1,112 @@
+{
+  "name": "BI.Example: Traditional Web With DB",
+  "description": "## Project Info\n\nAn example traditional web application backed by a PostgreSQL database. This will start the following:\n\n- Tradtional Service\n- PostgreSQL cluster",
+  "postgres_clusters": [
+    {
+      "id": "batt_019745dac1037e25a5e96f4d53e86eaf",
+      "name": "example-traditional-web-db",
+      "type": "standard",
+      "database": {
+        "name": "app",
+        "owner": "root"
+      },
+      "users": [
+        {
+          "position": null,
+          "username": "root",
+          "roles": [
+            "login",
+            "superuser"
+          ],
+          "credential_namespaces": [
+            "battery-core"
+          ]
+        },
+        {
+          "position": null,
+          "username": "traditional",
+          "roles": [
+            "superuser",
+            "login"
+          ],
+          "credential_namespaces": [
+            "battery-traditional"
+          ]
+        }
+      ],
+      "inserted_at": "2025-06-06T15:27:33.635297Z",
+      "updated_at": "2025-06-06T15:28:04.421143Z",
+      "virtual_size": null,
+      "project_id": "batt_019745dac0fb757db8c3ff4101e688af",
+      "num_instances": 1,
+      "cpu_requested": 500,
+      "cpu_limits": 500,
+      "memory_requested": 536870912,
+      "memory_limits": 536870912,
+      "storage_size": 536870912,
+      "storage_class": "standard",
+      "restore_from_backup": null,
+      "virtual_storage_size_range_value": null,
+      "password_versions": [
+        {
+          "version": 2,
+          "username": "traditional",
+          "password": "K6IQQDG6U4AV3425PZGPZC5P"
+        },
+        {
+          "version": 1,
+          "username": "root",
+          "password": "5IQSBBRLHQ4R44ITLZZTQNOO"
+        }
+      ],
+      "backup_config": null
+    }
+  ],
+  "redis_instances": [],
+  "ferret_services": [],
+  "jupyter_notebooks": [],
+  "knative_services": [],
+  "traditional_services": [
+    {
+      "id": "batt_019745dac10b7e89ada91b5241fd03af",
+      "name": "example-traditional-web",
+      "ports": [],
+      "inserted_at": "2025-06-06T15:27:33.643970Z",
+      "updated_at": "2025-06-06T15:27:55.005635Z",
+      "virtual_size": null,
+      "project_id": "batt_019745dac0fb757db8c3ff4101e688af",
+      "env_values": [
+        {
+          "name": "DATABASE_URL",
+          "value": null,
+          "source_name": "cloudnative-pg.pg-example-traditional-web-db.traditional",
+          "source_type": "secret",
+          "source_key": "dsn",
+          "source_optional": false
+        }
+      ],
+      "num_instances": 1,
+      "cpu_requested": 500,
+      "cpu_limits": 500,
+      "memory_requested": 536870912,
+      "memory_limits": 536870912,
+      "kube_internal": false,
+      "containers": [
+        {
+          "args": null,
+          "command": null,
+          "name": "main",
+          "path": null,
+          "image": "ghcr.io/batteries-included/pastebin:0.68.0",
+          "env_values": [],
+          "mounts": []
+        }
+      ],
+      "init_containers": [],
+      "kube_deployment_type": "deployment",
+      "additional_hosts": [],
+      "volumes": []
+    }
+  ],
+  "model_instances": []
+}
