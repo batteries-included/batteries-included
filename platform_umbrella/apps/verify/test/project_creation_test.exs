@@ -17,9 +17,7 @@ defmodule Verify.ProjectCreationTest do
     |> assert_has(@home_header)
     |> click(@new_project_link)
     |> fill_in(@project_name_field, with: project_name)
-    |> find(@type_select, fn select ->
-      click(select, Query.option("Web"))
-    end)
+    |> find(@type_select, &click(&1, Query.option("Web")))
     |> click(@next_step_button)
     |> click(Query.text("I need a database"))
     |> touch_scroll(Query.text("Next Step"), 0, 0)
@@ -37,9 +35,7 @@ defmodule Verify.ProjectCreationTest do
     |> assert_has(@home_header)
     |> click(@new_project_link)
     |> fill_in(@project_name_field, with: project_name)
-    |> find(@type_select, fn select ->
-      click(select, Query.option("Bare Project"))
-    end)
+    |> find(@type_select, &click(&1, Query.option("Bare Project")))
     |> click(@next_step_button)
     |> click(@create_project_button)
     |> assert_has(h3(project_name, minimum: 1))
