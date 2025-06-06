@@ -112,6 +112,13 @@ defmodule Verify.TestCase do
             "--no-sandbox",
             # Yeah this will run in CI
             "--disable-gpu",
+            # Disable dev shm usage
+            # This is needed for CI environments like GitHub Actions
+            # where /dev/shm is super small
+            #
+            # See
+            # https://github.com/elixir-wallaby/wallaby/issues/468#issuecomment-1113520767
+            "--disable-dev-shm-usage",
             # Please google go away
             "--disable-extensions",
             "--disable-login-animations",
