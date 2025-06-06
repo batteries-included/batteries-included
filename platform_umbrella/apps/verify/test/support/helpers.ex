@@ -7,6 +7,9 @@ defmodule Verify.TestCase.Helpers do
   alias Verify.PathHelper
   alias Wallaby.Query
 
+  @backspaces Enum.map(0..100, fn _ -> :backspace end)
+  @deletes Enum.map(0..100, fn _ -> :delete end)
+
   # Adapted from Wallaby.Feature.feature/3
   @doc """
   `verify` wraps ExUnit.test so that test failures take a screenshot and runs `bi rage`.
@@ -145,18 +148,7 @@ defmodule Verify.TestCase.Helpers do
   """
   def fill_in_name(session, field_name, text_to_fill) do
     find(session, Query.text_field(field_name), fn e ->
-      Wallaby.Element.send_keys(
-        e,
-        Enum.map(0..100, fn _ ->
-          # if we focus on the end of the field
-          :backspace
-        end) ++
-          Enum.map(0..100, fn _ ->
-            # if we focus on the beginning of the field
-            :delete
-          end) ++
-          [text_to_fill]
-      )
+      Wallaby.Element.send_keys(e, @backspaces ++ @deletes ++ [text_to_fill])
     end)
   end
 
@@ -203,6 +195,11 @@ defmodule Verify.TestCase.Helpers do
 
   def visit_running_service(session) do
     click_external(session, Query.css("a", text: "Running Service"))
+  end
+
+  def sleep(session, timeout) do
+    Process.sleep(timeout)
+    session
   end
 
   defp build_retryable_get(url) do

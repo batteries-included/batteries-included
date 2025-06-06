@@ -9,18 +9,12 @@ defmodule Verify.KnativeTest do
   setup_all do
     {:ok, session} = Verify.TestCase.start_session()
 
-    # TODO(jdt): try to get rid of this!
-    # wait a sec for knative to "install"
-    Process.sleep(5_000)
-
     session
+    # wait a sec for knative to "install"
+    # it's actually quicker to pause here then to wait for future syncs
+    |> sleep(5_000)
     # trigger a new summary
     |> trigger_k8s_deploy()
-    # wait for a sec for it to complete
-    |> then(fn session ->
-      Process.sleep(1_000)
-      session
-    end)
     |> assert_pods_in_deployment_running(@knative_ns, "activator")
     |> assert_pods_in_deployment_running(@knative_ns, "autoscaler")
     |> assert_pods_in_deployment_running(@knative_ns, "controller")
