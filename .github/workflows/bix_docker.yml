@@ -126,6 +126,8 @@ jobs:
           file: bi_images.tar
           artifact-id:
             ${{ needs.build-images.outputs.bi-image-tar-artifact-id }}
+          artifact-name:
+            ${{ needs.build-images.outputs.bi-image-tar-artifact-name }}
 
       # set ADDITIONAL_TAGS to either latest or the current tag
       - if: ${{ !startsWith(github.ref, 'refs/tags/') }}
