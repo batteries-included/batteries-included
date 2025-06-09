@@ -158,6 +158,26 @@ do_push_images() {
     done
 }
 
+do_save_images() {
+    local out="${1:-""}"
+    [[ -z "${out:-""}" ]] && {
+        log "${RED}Must pass an argument for the output tarball location${NOFORMAT}"
+        exit 1
+    }
+
+    local version
+    version=$(image_tag)
+
+    declare -a imgs
+    for img in control-server home-base kube-bootstrap pastebin; do
+        imgs+=("${REGISTRY}/${img}:${version}")
+    done
+
+    SECONDS=0
+    docker save -o "${out}" "${imgs[@]}"
+    log "Finished saving images to tar file in ${SECONDS} seconds"
+}
+
 usage() {
     cat <<EOF
 Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
@@ -173,6 +193,7 @@ Available commands:
 - build-base-images     Builds docker base images
 - build-image           Build a docker image
 - push-images           Push all the container images to a registry
+- save-images           Archive all the container images to an output tar
 - get-base-tag          Get the current tag of the docker base images
 - get-image-tag         Get the current tag of the publishable images
 EOF
@@ -222,6 +243,9 @@ build-image)
     ;;
 push-images)
     do_push_images "${args[@]}"
+    ;;
+save-images)
+    do_save_images "${args[@]}"
     ;;
 get-base-tag)
     docker_hash
