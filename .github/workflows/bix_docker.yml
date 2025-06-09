@@ -7,17 +7,20 @@ name: BIX Docker
       - master
     tags:
       - '*'
+
   pull_request:
     branches:
       - master
+    types:
+      - opened
+      - synchronize
+      - labeled
+      - reopened
 
 permissions:
   id-token: write
   contents: read
   packages: write
-
-env:
-  PUSH: 'false'
 
 defaults:
   run:
@@ -26,7 +29,7 @@ defaults:
 jobs:
   build-images:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
@@ -35,12 +38,10 @@ jobs:
       - name: Setup ASDF
         uses: ./.github/actions/setup-asdf
 
-      - name: Determine whether to push images / tags / cache
-        if:
-          ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref,
-          'refs/tags/')) && github.event_name == 'push' }}
+      - id: additional-setup
         run: |
-          echo "PUSH=true" >> "$GITHUB_ENV"
+          echo "version=$(bin/bix docker get-image-tag)" >> "$GITHUB_OUTPUT"
+          echo "image_tar=${{ runner.temp }}/bi_images.tar" >> "$GITHUB_ENV"
 
       - name: Login to GHCR
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
@@ -61,20 +62,80 @@ jobs:
       - name: Build pastebin image
         run: bin/bix docker build-image pastebin
 
+      - name: Save images
+        run: bin/bix docker save-images "${{ env.image_tar }}"
+
+      - name: Upload image archive
+        id: upload-archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bi-image-tar-${{ github.run_id }}
+          overwrite: true
+          retention-days: 1
+          if-no-files-found: error
+          path: ${{ env.image_tar }}
+
+    outputs:
+      bi-image-tar-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
+      bi-image-tar-artifact-name: bi-image-tar-${{ github.run_id }}
+      version: ${{ steps.additional-setup.outputs.version }}
+
+  integration-tests:
+    needs: build-images
+    # run on PRs if labeled
+    # always run on push to master or tag
+    if:
+      ${{ (github.event_name == 'pull_request' &&
+      contains(github.event.pull_request.labels.*.name, 'int-test')) ||
+      (github.ref == 'refs/heads/master') || startsWith(github.ref,
+      'refs/tags/') }}
+    uses: ./.github/workflows/int_test.yml
+    secrets: inherit
+    with:
+      bi-image-artifact-id:
+        ${{ needs.build-images.outputs.bi-image-tar-artifact-id }}
+      bi-image-artifact-name:
+        ${{ needs.build-images.outputs.bi-image-tar-artifact-name }}
+      version: ${{ needs.build-images.outputs.version }}
+
+  push-images:
+    needs:
+      - build-images
+      - integration-tests
+    # push images on tag or push to master
+    if:
+      ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref,
+      'refs/tags/')) && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Load pre-built images
+        uses: ./.github/actions/restore-images
+        with:
+          file: bi_images.tar
+          artifact-id:
+            ${{ needs.build-images.outputs.bi-image-tar-artifact-id }}
+
       # set ADDITIONAL_TAGS to either latest or the current tag
-      - if: ${{ fromJSON(env.PUSH) && !startsWith(github.ref, 'refs/tags/') }}
+      - if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         run: |
           echo "ADDITIONAL_TAGS=latest" >> "$GITHUB_ENV"
 
       - if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        run: |
-          echo "ADDITIONAL_TAGS=${GH_REF_NAME}" >> "$GITHUB_ENV"
         env:
           # Copy the refname into a env var
           # Github will sanitize the input to make sure that it
           # isn't malicious
           GH_REF_NAME: ${{ github.ref_name }}
+        run: |
+          echo "ADDITIONAL_TAGS=${GH_REF_NAME}" >> "$GITHUB_ENV"
 
       - name: Push to GHCR
-        if: ${{ fromJSON(env.PUSH) }}
         run: bin/bix docker push-images ${{ env.ADDITIONAL_TAGS }}

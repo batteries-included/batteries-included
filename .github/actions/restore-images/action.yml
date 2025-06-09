@@ -1,0 +1,50 @@
+---
+name: 'Restore Images'
+description: 'Restore container images from cache or artifact'
+inputs:
+  file:
+    description: 'The name of the archive'
+  artifact-id:
+    description: 'If restoring from artifact, the ID to restore from'
+    default: ''
+  artifact-name:
+    description: 'If restoring from artifact, the name of the artifact'
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - name: Restore image cache
+      if: ${{ inputs.artifact-id == '' }}
+      uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+      id: image-cache
+      with:
+        path: |
+          /home/runner/work/_temp/base_images.tar
+        key: ${{ runner.os }}-images-${{ hashFiles('image_registry.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-images-
+
+    - shell: bash
+      if: ${{ inputs.artifact-id == '' }}
+      run:
+        echo "output_loc=${{ runner.temp }}/${{ inputs.file }}" >> "$GITHUB_ENV"
+
+    - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      id: download-artifact
+      if: ${{ inputs.artifact-id != '' }}
+      with:
+        artifact-ids: ${{ inputs.artifact-id }}
+        path: ${{ runner.temp }}
+
+    - shell: bash
+      if: ${{ inputs.artifact-id != '' }}
+      env:
+        OUTLOC:
+          ${{ runner.temp }}/${{ inputs.artifact-name }}/${{ inputs.file }}
+      run: echo "output_loc=${OUTLOC}" >> "${GITHUB_ENV}"
+
+    - name: Load images
+      shell: bash
+      run: |
+        docker load -i "${{ env.output_loc }}"
+        rm -rf "${{ env.output_loc }}"

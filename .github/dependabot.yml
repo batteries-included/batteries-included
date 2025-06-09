@@ -25,6 +25,10 @@ updates:
       dependencies:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - javascript
+      - int-test
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/home_base_web/assets/'
     schedule:
@@ -45,6 +49,10 @@ updates:
     directory: '/platform_umbrella/'
     schedule:
       interval: daily
+    labels:
+      - dependencies
+      - elixir
+      - int-test
   - package-ecosystem: 'gomod'
     directory: '/bi/'
     schedule:
