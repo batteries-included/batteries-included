@@ -90,5 +90,11 @@ func (u *RegistryUpdater) updateImageTags(key string, record ImageRecord) error 
 
 	// Update the record
 	record.Tags = newTags
-	return u.registry.Set(key, record)
+	err = u.registry.Set(key, record)
+	if err != nil {
+		return fmt.Errorf("failed to update record for %q: %w", record.Name, err)
+	}
+	u.changed = true
+	slog.Info("tags updated", "image", record.Name, "tags", newTags)
+	return nil
 }
