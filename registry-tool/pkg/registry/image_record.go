@@ -81,9 +81,11 @@ func (r *ImageRecord) FilterTags(tags []string) ([]string, error) {
 
 	var filtered []string
 	for _, tag := range tags {
-		if re.MatchString(tag) && versions.Compare(tag, r.MaxTag()) >= 0 {
+		if re.MatchString(tag) && versions.Compare(tag, r.DefaultTag) >= 0 {
 			filtered = append(filtered, tag)
 		}
 	}
+	versions.Sort(filtered)
+
 	return filtered, nil
 }

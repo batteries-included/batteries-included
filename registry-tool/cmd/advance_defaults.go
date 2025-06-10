@@ -13,6 +13,28 @@ import (
 
 var advanceDefaultsCmdFlags SharedRegistryFlags
 
+var advanceIgnoredImages = []string{
+	// This isn't a real image
+	"ecto/schema/test",
+	// Metallb images fail to bootstrap with our config
+	"quay.io/metallb/speaker", "quay.io/metallb/controller", "quay.io/frrouting/frr",
+	// AWS things aren't integration tested yet
+	"public.ecr.aws/karpenter/controller",
+	// AWS isn't integration tested yet
+	"public.ecr.aws/eks/aws-load-balancer-controller",
+	// Grafana JS is broken
+	//
+	// https://github.com/grafana/grafana/issues/105582
+	//
+	// Error:
+	// ```
+	//  Uncaught TypeError: Cannot read properties of undefined (reading 'keys')
+	// ```
+	"docker.io/grafana/grafana",
+	// Victoria Metrics is needs CRDS and a refresh
+	"docker.io/victoriametrics/operator",
+}
+
 var advanceDefaultsCmd = &cobra.Command{
 	Use:     "advance-defaults",
 	Example: "registry-tool advance-defaults <registry-file>",
@@ -51,7 +73,7 @@ This is useful for ensuring that the default tag always points to the latest ver
 }
 
 func init() {
-	advanceDefaultsCmd.Flags().StringSliceVarP(&advanceDefaultsCmdFlags.ignoredImages, "ignored-images", "I", []string{"ecto/schema/test"}, "List of images to ignore")
+	advanceDefaultsCmd.Flags().StringSliceVarP(&advanceDefaultsCmdFlags.ignoredImages, "ignored-images", "I", advanceIgnoredImages, "List of images to ignore")
 	advanceDefaultsCmd.Flags().BoolVarP(&advanceDefaultsCmdFlags.dryRun, "dry-run", "D", false, "Perform a dry run without making changes")
 	RootCmd.AddCommand(advanceDefaultsCmd)
 }

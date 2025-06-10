@@ -1,6 +1,7 @@
 package versions
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -16,19 +17,24 @@ func Compare(a, b string) int {
 	bParts := splitVersion(b)
 
 	// Compare each part of the version
-	for i := 0; i < len(aParts) && i < len(bParts); i++ {
-		if aParts[i] < bParts[i] {
-			return -1
-		} else if aParts[i] > bParts[i] {
-			return 1
+	for i := 0; i < max(len(aParts), len(bParts)); i++ {
+		var aPart, bPart int
+		if i < len(aParts) {
+			aPart = aParts[i]
+		} else {
+			aPart = 0 // If a has no more parts, treat as 0
 		}
-	}
+		if i < len(bParts) {
+			bPart = bParts[i]
+		} else {
+			bPart = 0 // If b has no more parts, treat as 0
+		}
 
-	// If one version has more parts, it is considered greater
-	if len(aParts) < len(bParts) {
-		return -1
-	} else if len(aParts) > len(bParts) {
-		return 1
+		if aPart < bPart {
+			return -1 // a is less than b
+		} else if aPart > bPart {
+			return 1 // a is greater than b
+		}
 	}
 
 	return 0 // Versions are equal
@@ -37,9 +43,13 @@ func Compare(a, b string) int {
 // splitVersion splits a version string into its components
 // removing any leading or trailing alphabetic characters and ensuring all parts are numeric.
 // . and - are treated as delimiters.
+var nonNumericRegex = regexp.MustCompile(`[^0-9.-]+`)
+
 func splitVersion(version string) []int {
 	// Replace '-' with '.' to treat them as the same delimiter
 	version = strings.ReplaceAll(version, "-", ".")
+	// Remove any alphabetic characters using a regex
+	version = nonNumericRegex.ReplaceAllString(version, "")
 
 	// Split the version by '.' and convert to integers
 	parts := strings.Split(version, ".")
