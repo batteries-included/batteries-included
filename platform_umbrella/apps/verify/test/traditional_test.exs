@@ -7,6 +7,7 @@ defmodule Verify.TraditionalTest do
   @show_traditional_path ~r(/traditional_services/[\d\w-]+/show$)
 
   @container_panel Query.css("#containers_panel-containers")
+  @port_panel Query.css("#ports_panel")
 
   verify "can create traditional service", %{session: session} do
     service_name = "int-test-#{:rand.uniform(10_000)}"
@@ -21,11 +22,17 @@ defmodule Verify.TraditionalTest do
     |> fill_in(Query.text_field("container[name]"), with: "echo")
     |> fill_in(Query.text_field("container[image]"), with: "ealen/echo-server:latest")
     |> click(Query.css(~s/#container-form-modal-modal-container button[type="submit"]/))
+    # make sure the modal is gone
+    |> refute_has(Query.css("#container-form-modal"))
+    |> sleep(100)
     # add port
-    |> click(Query.button("Add Port"))
+    |> find(@port_panel, fn e -> click(e, Query.button("Add Port")) end)
     |> fill_in(Query.text_field("port[name]"), with: service_name)
     |> fill_in(Query.text_field("port[number]"), with: 80)
     |> click(Query.css(~s/#port-form-modal-modal-container button[type="submit"]/))
+    # make sure the modal is gone
+    |> refute_has(Query.css("#port-form-modal"))
+    |> sleep(100)
     # save service
     |> click(Query.button("Save Traditional Service"))
     # verify we're on the show page
