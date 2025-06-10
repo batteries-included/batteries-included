@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+Copyright © 2025 Elliott Clark
 */
 package cmd
 
@@ -12,8 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var ignoredImages []string
-var dryRun bool
+var updateFlags SharedRegistryFlags
 
 var updateTagsCmd = &cobra.Command{
 	Use:   "update-tags [registry-file]",
@@ -32,13 +31,13 @@ latest versions that match each image's configured tag pattern.`,
 			return fmt.Errorf("failed to read registry file: %w", err)
 		}
 
-		updater := registry.NewRegistryUpdater(reg, ignoredImages)
+		updater := registry.NewRegistryUpdater(reg, updateFlags.ignoredImages)
 
 		if err := updater.UpdateTags(); err != nil {
 			return fmt.Errorf("failed to update image tags: %w", err)
 		}
 
-		if !dryRun {
+		if !updateFlags.dryRun {
 			err = updater.Write(registryPath)
 			if err != nil {
 				slog.Error("failed to write registry file", "file", registryPath, "error", err)
@@ -52,8 +51,7 @@ latest versions that match each image's configured tag pattern.`,
 }
 
 func init() {
-	updateTagsCmd.Flags().StringSliceVarP(&ignoredImages, "ignored-images", "I", []string{"ecto/schema/test"}, "List of images to ignore")
-	// Add Dry Run flag to the command
-	updateTagsCmd.Flags().BoolVarP(&dryRun, "dry-run", "D", false, "Perform a dry run without making changes")
+	updateTagsCmd.Flags().StringSliceVarP(&updateFlags.ignoredImages, "ignored-images", "I", []string{"ecto/schema/test"}, "List of images to ignore")
+	updateTagsCmd.Flags().BoolVarP(&updateFlags.dryRun, "dry-run", "D", false, "Perform a dry run without making changes")
 	RootCmd.AddCommand(updateTagsCmd)
 }
