@@ -10,6 +10,9 @@
       "path": "../bi"
     },
     {
+      "path": "../registry-tool"
+    },
+    {
       "path": "../pastebin-go"
     },
     {

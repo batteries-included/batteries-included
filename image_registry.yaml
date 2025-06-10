@@ -2,6 +2,7 @@
 __schema_test:
   default_tag: 1.2.3
   name: ecto/schema/test
+  tag_regex: '^\d+\.\d+\.\d+|latest$'
   tags:
     - 1.2.3
     - 1.2.4
@@ -9,22 +10,26 @@ __schema_test:
 addon_resizer:
   default_tag: 1.8.23
   name: registry.k8s.io/autoscaling/addon-resizer
+  tag_regex: '^\d+\.\d+\.\d+$'
   tags:
     - 1.8.23
 aqua_node_collector:
   default_tag: 0.3.1
   name: ghcr.io/aquasecurity/node-collector
+  tag_regex: '^\d+\.\d+\.\d+$'
   tags:
     - 0.3.1
 aqua_trivy_checks:
   default_tag: 1.10.0
   name: ghcr.io/aquasecurity/trivy-checks
+  tag_regex: '^\d+\.\d+\.\d+$'
   tags:
     - 0.13.0
     - 1.10.0
 aws_load_balancer_controller:
   default_tag: v2.11.0
   name: public.ecr.aws/eks/aws-load-balancer-controller
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v2.8.1
     - v2.8.2
@@ -32,6 +37,7 @@ aws_load_balancer_controller:
 cert_manager_acmesolver:
   default_tag: v1.16.4
   name: quay.io/jetstack/cert-manager-acmesolver
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v1.15.1
     - v1.15.4
@@ -39,6 +45,7 @@ cert_manager_acmesolver:
 cert_manager_cainjector:
   default_tag: v1.16.4
   name: quay.io/jetstack/cert-manager-cainjector
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v1.15.1
     - v1.15.4
@@ -46,6 +53,7 @@ cert_manager_cainjector:
 cert_manager_controller:
   default_tag: v1.16.4
   name: quay.io/jetstack/cert-manager-controller
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v1.15.1
     - v1.15.4
@@ -53,6 +61,7 @@ cert_manager_controller:
 cert_manager_webhook:
   default_tag: v1.16.4
   name: quay.io/jetstack/cert-manager-webhook
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v1.15.1
     - v1.15.4
@@ -60,6 +69,7 @@ cert_manager_webhook:
 cloudnative_pg:
   default_tag: 1.25.1
   name: ghcr.io/cloudnative-pg/cloudnative-pg
+  tag_regex: '^\d+\.\d+\.\d+$'
   tags:
     - 1.23.2
     - 1.24.0
@@ -68,11 +78,13 @@ cloudnative_pg:
 postgresql:
   default_tag: '17.4'
   name: ghcr.io/cloudnative-pg/postgresql
+  tag_regex: '^\d+\.\d+(?:-\d+)?$'
   tags:
     - '17.4'
 ferretdb:
   default_tag: 1.24.1
   name: ghcr.io/ferretdb/ferretdb
+  tag_regex: '^1\.\d+\.\d+$'
   tags:
     - 1.23.0
     - 1.24.0
@@ -80,16 +92,19 @@ ferretdb:
 forgejo:
   default_tag: 1.21.11-2
   name: codeberg.org/forgejo/forgejo
+  tag_regex: '^\d+\.\d+\.\d+-\d+$'
   tags:
     - 1.21.11-2
 frrouting_frr:
   default_tag: 9.1.0
   name: quay.io/frrouting/frr
+  tag_regex: '^\d+\.\d+\.\d+$'
   tags:
     - 9.1.0
 grafana:
   default_tag: 11.3.1
   name: docker.io/grafana/grafana
+  tag_regex: '^\d+\.\d+\.\d+$'
   tags:
     - 10.4.5
     - 11.2.0
@@ -97,6 +112,7 @@ grafana:
 istio_pilot:
   default_tag: 1.24.5-distroless
   name: docker.io/istio/pilot
+  tag_regex: '^\d+\.\d+\.\d+-distroless$'
   tags:
     - 1.22.3-distroless
     - 1.23.1-distroless
@@ -106,6 +122,7 @@ istio_pilot:
 istio_proxy:
   default_tag: 1.24.5-distroless
   name: docker.io/istio/proxyv2
+  tag_regex: '^\d+\.\d+\.\d+-distroless$'
   tags:
     - 1.22.3-distroless
     - 1.23.1-distroless
@@ -117,6 +134,7 @@ jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
   tags:
     - lab-4.4.0
+  tag_regex: '^lab-\d+\.\d+\.\d+$'
 karpenter:
   default_tag: 1.2.0
   name: public.ecr.aws/karpenter/controller
@@ -124,6 +142,7 @@ karpenter:
     - 0.37.0
     - 1.0.8
     - 1.2.0
+  tag_regex: '^\d+\.\d+\.\d+$'
 keycloak:
   default_tag: 26.2.0
   name: quay.io/keycloak/keycloak
@@ -131,6 +150,7 @@ keycloak:
     - 25.0.2
     - 25.0.6
     - 26.2.0
+  tag_regex: '^\d+\.\d+\.\d+$'
 # Be sure to check:
 # https://kiali.io/docs/installation/installation-guide/prerequisites/#version-compatibility
 kiali:
@@ -140,25 +160,30 @@ kiali:
     - v1.87.0
     - v1.89.7
     - v2.8.0
+  tag_regex: '^v\d+\.\d+\.\d+$'
 kiwigrid_sidecar:
   default_tag: 1.30.3
   name: quay.io/kiwigrid/k8s-sidecar
   tags:
     - 1.27.4
     - 1.30.3
+  tag_regex: '^\d+\.\d+\.\d+$'
 knative_istio_controller:
   default_tag: &knative_istio_default_tag v1.17.0
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags: &knative_istio_allowed_tags
     - v1.15.1
     - v1.17.0
 knative_istio_webhook:
   default_tag: *knative_istio_default_tag
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags: *knative_istio_allowed_tags
 knative_serving_activator:
   default_tag: &knative_default_tag v1.17.0
   name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags: &knative_allowed_tags
     - v1.15.1
     - v1.15.2
@@ -166,22 +191,27 @@ knative_serving_activator:
 knative_serving_autoscaler:
   default_tag: *knative_default_tag
   name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags: *knative_allowed_tags
 knative_serving_controller:
   default_tag: *knative_default_tag
   name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags: *knative_allowed_tags
 knative_serving_queue:
   default_tag: *knative_default_tag
   name: gcr.io/knative-releases/knative.dev/serving/cmd/queue
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags: *knative_allowed_tags
 knative_serving_webhook:
   default_tag: *knative_default_tag
   name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags: *knative_allowed_tags
 kube_state_metrics:
   default_tag: v2.15.0
   name: registry.k8s.io/kube-state-metrics/kube-state-metrics
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v2.12.0
     - v2.14.0
@@ -192,19 +222,23 @@ loki:
   tags:
     - 2.9.8
     - 2.9.10
+  tag_regex: '^\d+\.\d+\.\d+$'
 metallb_controller:
   default_tag: v0.14.8
   name: quay.io/metallb/controller
   tags:
     - v0.14.8
+  tag_regex: '^v\d+\.\d+\.\d+$'
 metallb_speaker:
   default_tag: v0.14.8
   name: quay.io/metallb/speaker
   tags:
     - v0.14.8
+  tag_regex: '^v\d+\.\d+\.\d+$'
 metrics_server:
   default_tag: v0.7.2
   name: registry.k8s.io/metrics-server/metrics-server
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v0.7.1
     - v0.7.2
@@ -215,22 +249,26 @@ node_exporter:
     - v1.8.1
     - v1.8.2
     - v1.9.1
+  tag_regex: '^v\d+\.\d+\.\d+$'
 node_feature_discovery:
   default_tag: v0.17.2
   name: registry.k8s.io/nfd/node-feature-discovery
   tags:
     - v0.17.2
+  tag_regex: '^v\d+\.\d+\.\d+$'
 nvidia_device_plugin:
   default_tag: v0.17.1
   name: nvcr.io/nvidia/k8s-device-plugin
   tags:
     - v0.16.2
     - v0.17.1
+  tag_regex: '^v\d+\.\d+\.\d+$'
 oauth2_proxy:
   default_tag: v7.6.0
   name: quay.io/oauth2-proxy/oauth2-proxy
   tags:
     - v7.6.0
+  tag_regex: '^v\d+\.\d+\.\d+$'
 ollama:
   default_tag: 0.6.6
   name: docker.io/ollama/ollama
@@ -239,24 +277,28 @@ ollama:
     - 0.3.10
     - 0.5.7
     - 0.6.6
+  tag_regex: '^\d+\.\d+\.\d+$'
 promtail:
   default_tag: 2.9.8
   name: docker.io/grafana/promtail
   tags:
     - 2.9.8
     - 3.3.0
+  tag_regex: '^\d+\.\d+\.\d+$'
 redis:
   default_tag: v7.2.7
   name: quay.io/opstree/redis
   tags:
     - v7.2.3
     - v7.2.7
+  tag_regex: '^v\d+\.\d+\.\d+$'
 redis_exporter:
   default_tag: v1.48.0
   name: quay.io/opstree/redis-exporter
   tags:
     - v1.45.0
     - v1.48.0
+  tag_regex: '^v\d+\.\d+\.\d+$'
 redis_operator:
   default_tag: v0.20.0
   name: ghcr.io/ot-container-kit/redis-operator/redis-operator
@@ -264,31 +306,37 @@ redis_operator:
     - v0.18.0
     - v0.18.1
     - v0.20.0
+  tag_regex: '^v\d+\.\d+\.\d+$'
 smtp4dev:
   default_tag: 3.5.1
   name: docker.io/rnwood/smtp4dev
   tags:
     - 3.1.4
     - 3.5.1
+  tag_regex: '^\d+\.\d+\.\d+$'
 trivy_operator:
   default_tag: 0.23.1
   name: ghcr.io/aquasecurity/trivy-operator
   tags:
     - 0.22.0
     - 0.23.1
+  tag_regex: '^\d+\.\d+\.\d+$'
 trust_manager:
   default_tag: v0.11.0
   name: quay.io/jetstack/trust-manager
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v0.11.0
     - v0.12.0
 trust_manager_init:
   default_tag: '20210119.0'
   name: quay.io/jetstack/cert-manager-package-debian
+  tag_regex: '^\d{8}\.\d+$'
   tags:
     - '20210119.0'
 vm_operator:
   default_tag: v0.44.0
   name: docker.io/victoriametrics/operator
+  tag_regex: '^v\d+\.\d+\.\d+$'
   tags:
     - v0.44.0

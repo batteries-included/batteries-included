@@ -108,11 +108,13 @@ run_go_test() {
 
 do_update_deps() {
     update_go_deps "${ROOT_DIR}/bi"
+    update_go_deps "${ROOT_DIR}/registry-tool"
     update_go_deps "${ROOT_DIR}/pastebin-go"
 }
 
 do_test() {
     run_go_test "${ROOT_DIR}/bi"
+    run_go_test "${ROOT_DIR}/registry-tool"
     run_go_test "${ROOT_DIR}/pastebin-go"
 }
 
