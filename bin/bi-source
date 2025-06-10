@@ -156,6 +156,7 @@ do_fmt() {
         format_mix_code "platform_umbrella"
         format_go_code "bi"
         format_go_code "pastebin-go"
+        format_go_code "registry-tool"
         format_npm_code "static"
         format_prettier_code
         format_sh_code
@@ -174,10 +175,15 @@ do_check_fmt() {
         log "Checking format ${YELLOW}bi${NOFORMAT}"
         check_format_go_code "bi"
         ;;
+    registry-tool)
+        log "Checking format ${YELLOW}registry-tool${NOFORMAT}"
+        check_format_go_code "registry-tool"
+        ;;
     go)
         log "Checking format ${YELLOW}go${NOFORMAT}"
         check_format_go_code "bi"
         check_format_go_code "pastebin-go"
+        check_format_go_code "registry-tool"
         ;;
     npm | node | js)
         log "Checking format ${YELLOW}node${NOFORMAT}"
@@ -197,6 +203,7 @@ do_check_fmt() {
         check_format_mix_code "platform_umbrella"
         check_format_go_code "bi"
         check_format_go_code "pastebin-go"
+        check_format_go_code "registry-tool"
         check_format_npm_code "static"
         check_format_prettier_code
         check_format_sh_code
