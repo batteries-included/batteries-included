@@ -51,6 +51,35 @@ func (u *RegistryUpdater) UpdateTags() error {
 	return nil
 }
 
+func (u *RegistryUpdater) UpdateDefaultTags() error {
+	for name, record := range u.registry.Records() {
+		if slices.Contains(u.ignoredList, record.Name) {
+			slog.Info("ignoring image", "name", record.Name)
+			continue
+		}
+
+		maxTag := record.MaxTag()
+		if maxTag == "" {
+			slog.Warn("no tags found for image", "name", record.Name)
+			continue
+		}
+
+		if maxTag == record.DefaultTag {
+			slog.Debug("default tag already up to date", "image", record.Name, "tag", maxTag)
+			continue
+		}
+
+		slog.Info("updating default tag for image", "name", record.Name, "old_tag", record.DefaultTag, "new_tag", maxTag)
+		record.DefaultTag = maxTag
+
+		if err := u.registry.Set(name, record); err != nil {
+			return fmt.Errorf("failed to update default tag for %q: %w", name, err)
+		}
+		u.changed = true
+	}
+	return nil
+}
+
 // updateImageTags fetches and updates tags for a single image
 func (u *RegistryUpdater) updateImageTags(key string, record ImageRecord) error {
 	if slices.Contains(u.ignoredList, record.Name) {
