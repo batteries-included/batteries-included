@@ -18,10 +18,11 @@ defmodule ControlServerWeb.PortPanel do
   attr :editable, :boolean, default: false
   attr :ports, :list, default: []
   attr :target, :any, default: nil
+  attr :id, :string, default: "ports_panel"
 
   def port_panel(%{editable: false} = assigns) do
     ~H"""
-    <.panel title="Ports" class={@class}>
+    <.panel title="Ports" class={@class} id={@id}>
       <.table id="ports-table" rows={@ports}>
         <:col :let={p} label="Name">{p.name}</:col>
         <:col :let={p} label="Port">{p.number}</:col>
@@ -33,7 +34,7 @@ defmodule ControlServerWeb.PortPanel do
 
   def port_panel(%{editable: true} = assigns) do
     ~H"""
-    <.panel title="Ports" class={@class}>
+    <.panel title="Ports" class={@class} id={@id}>
       <:menu>
         <.button icon={:plus} phx-click="new_port" phx-target={@target}>
           Add Port
