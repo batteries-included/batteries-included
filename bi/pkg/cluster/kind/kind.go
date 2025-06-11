@@ -269,5 +269,9 @@ func (c *KindClusterProvider) loadImages(imageTarName string, node nodes.Node) e
 		return err
 	}
 	defer f.Close()
-	return nodeutils.LoadImageArchive(node, f)
+	if err := nodeutils.LoadImageArchive(node, f); err != nil {
+		c.logger.Warn("failed to load images. retrying...", slog.Any("error", err))
+		return nodeutils.LoadImageArchive(node, f)
+	}
+	return nil
 }
