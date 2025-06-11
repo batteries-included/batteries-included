@@ -5,7 +5,7 @@ updates:
     directory: '/'
     schedule:
       interval: daily
-      time: 00:01
+      time: '00:01'
       timezone: America/Chicago
     groups:
       actions-deps:
@@ -16,7 +16,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: 00:01
+      time: '00:01'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -27,7 +27,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: 00:01
+      time: '00:05'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -42,7 +42,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: 00:01
+      time: '00:01'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -53,7 +53,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: 00:01
+      time: '00:01'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -63,7 +63,7 @@ updates:
     directory: '/platform_umbrella/'
     schedule:
       interval: daily
-      time: 00:01
+      time: '00:25'
       timezone: America/Chicago
     labels:
       - dependencies
@@ -73,7 +73,7 @@ updates:
     directory: '/bi/'
     schedule:
       interval: daily
-      time: 00:01
+      time: '00:01'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -83,7 +83,7 @@ updates:
     directory: '/pastebin-go/assets/'
     schedule:
       interval: monthly
-      time: 00:01
+      time: '00:01'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -93,7 +93,7 @@ updates:
     directory: '/pastebin-go/'
     schedule:
       interval: monthly
-      time: 00:01
+      time: '00:01'
       timezone: America/Chicago
     groups:
       dependencies:
