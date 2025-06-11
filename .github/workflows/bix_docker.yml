@@ -30,6 +30,9 @@ jobs:
   build-images:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      needs-archive: 'false'
+      artifact-id: 0
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
@@ -62,10 +65,20 @@ jobs:
       - name: Build pastebin image
         run: bin/bix docker build-image pastebin
 
+      - name: Determine if we need to save / upload
+        if:
+          ${{ (github.event_name == 'pull_request' &&
+          contains(github.event.pull_request.labels.*.name, 'int-test')) ||
+          (github.ref == 'refs/heads/master') || startsWith(github.ref,
+          'refs/tags/') }}
+        run: echo "needs-archive=true" >> "$GITHUB_ENV"
+
       - name: Save images
+        if: ${{ fromJSON(env.needs-archive) }}
         run: bin/bix docker save-images "${{ env.image_tar }}"
 
       - name: Upload image archive
+        if: ${{ fromJSON(env.needs-archive) }}
         id: upload-archive
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -75,8 +88,13 @@ jobs:
           if-no-files-found: error
           path: ${{ env.image_tar }}
 
+      - name: Set artifact ID
+        if: ${{ fromJSON(env.needs-archive) }}
+        env:
+          new-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
+        run: echo "artifact-id=${new-artifact-id}" >> "$GITHUB_ENV"
     outputs:
-      bi-image-tar-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
+      bi-image-tar-artifact-id: ${{ env.artifact-id }}
       bi-image-tar-artifact-name: bi-image-tar-${{ github.run_id }}
       version: ${{ steps.additional-setup.outputs.version }}
 
