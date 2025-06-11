@@ -193,8 +193,8 @@ defmodule Verify.TestCase.Helpers do
     focus_window(session, new_handle)
   end
 
-  def visit_running_service(session) do
-    click_external(session, Query.css("a", text: "Running Service"))
+  def visit_running_service(session, text \\ "Running Service") do
+    click_external(session, Query.css("a", text: text))
   end
 
   def sleep(session, timeout) do
