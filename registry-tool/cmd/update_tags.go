@@ -51,6 +51,8 @@ latest versions that match each image's configured tag pattern.`,
 }
 
 func init() {
+	// Notice that we don't use the DefaultIgnoredImages here,
+	// as we want to keep updating even while we can't upgrade some images.
 	updateTagsCmd.Flags().StringSliceVarP(&updateFlags.ignoredImages, "ignored-images", "I", []string{"ecto/schema/test"}, "List of images to ignore")
 	updateTagsCmd.Flags().BoolVarP(&updateFlags.dryRun, "dry-run", "D", false, "Perform a dry run without making changes")
 	RootCmd.AddCommand(updateTagsCmd)
