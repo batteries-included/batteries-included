@@ -112,6 +112,7 @@ func (u *RegistryUpdater) updateImageTags(key string, record ImageRecord) error 
 	newTags := versions.MergeSortedUnique(record.Tags, validTags)
 	// If the new tags are the same as the existing ones, skip updating
 	if slices.Equal(newTags, record.Tags) {
+		slog.Debug("no new tags to update", "image", record.Name, "tags", newTags)
 		return nil
 	}
 
