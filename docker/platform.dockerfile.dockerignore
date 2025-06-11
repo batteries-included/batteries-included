@@ -14,6 +14,9 @@
 
 ### re-ignore anything within the above dirs
 
+# ignore verify. it's not containerized.
+platform_umbrella/apps/verify
+
 # ignore pre-compiled assets
 platform_umbrella/apps/*/priv/static/assets
 
