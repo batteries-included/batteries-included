@@ -11,11 +11,17 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceShow do
 
   alias CommonCore.Util.Memory
   alias ControlServer.Ollama
+  alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
 
   @impl Phoenix.LiveView
   def mount(_, _session, socket) do
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(:pod)
+      :ok = KubeEventCenter.subscribe(:service)
+    end
+
     {:ok,
      socket
      |> assign(:current_page, :ai)
@@ -30,6 +36,11 @@ defmodule ControlServerWeb.Live.OllamaModelInstanceShow do
      |> assign_main_k8s()
      |> assign_timeline_installed()
      |> maybe_assign_edit_versions()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, assign_main_k8s(socket)}
   end
 
   defp assign_model_instance(socket, id) do
