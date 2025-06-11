@@ -92,7 +92,7 @@ jobs:
         if: ${{ fromJSON(env.needs-archive) }}
         env:
           new-artifact-id: ${{ steps.upload-archive.outputs.artifact-id }}
-        run: echo "artifact-id=${new-artifact-id}" >> "$GITHUB_ENV"
+        run: echo "artifact-id=${{ env.new-artifact-id }}" >> "$GITHUB_ENV"
     outputs:
       bi-image-tar-artifact-id: ${{ env.artifact-id }}
       bi-image-tar-artifact-name: bi-image-tar-${{ github.run_id }}
