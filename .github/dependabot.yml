@@ -5,6 +5,8 @@ updates:
     directory: '/'
     schedule:
       interval: daily
+      time: 00:01
+      timezone: America/Chicago
     groups:
       actions-deps:
         patterns:
@@ -13,6 +15,9 @@ updates:
     directory: '/platform_umbrella/apps/common_ui/assets/'
     schedule:
       interval: weekly
+      day: monday
+      time: 00:01
+      timezone: America/Chicago
     groups:
       dependencies:
         patterns:
@@ -21,6 +26,9 @@ updates:
     directory: '/platform_umbrella/apps/control_server_web/assets/'
     schedule:
       interval: weekly
+      day: monday
+      time: 00:01
+      timezone: America/Chicago
     groups:
       dependencies:
         patterns:
@@ -33,6 +41,9 @@ updates:
     directory: '/platform_umbrella/apps/home_base_web/assets/'
     schedule:
       interval: weekly
+      day: monday
+      time: 00:01
+      timezone: America/Chicago
     groups:
       dependencies:
         patterns:
@@ -41,6 +52,9 @@ updates:
     directory: '/static/'
     schedule:
       interval: weekly
+      day: monday
+      time: 00:01
+      timezone: America/Chicago
     groups:
       dependencies:
         patterns:
@@ -49,6 +63,8 @@ updates:
     directory: '/platform_umbrella/'
     schedule:
       interval: daily
+      time: 00:01
+      timezone: America/Chicago
     labels:
       - dependencies
       - elixir
@@ -57,6 +73,8 @@ updates:
     directory: '/bi/'
     schedule:
       interval: daily
+      time: 00:01
+      timezone: America/Chicago
     groups:
       dependencies:
         patterns:
@@ -65,6 +83,8 @@ updates:
     directory: '/pastebin-go/assets/'
     schedule:
       interval: monthly
+      time: 00:01
+      timezone: America/Chicago
     groups:
       dependencies:
         patterns:
@@ -73,6 +93,8 @@ updates:
     directory: '/pastebin-go/'
     schedule:
       interval: monthly
+      time: 00:01
+      timezone: America/Chicago
     groups:
       dependencies:
         patterns:
