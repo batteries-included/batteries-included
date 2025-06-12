@@ -1,20 +1,8 @@
 defmodule Verify.NotebookTest do
-  use Verify.TestCase, async: false, batteries: ~w(notebooks)a
+  use Verify.TestCase, async: false, batteries: ~w(notebooks)a, images: ~w(jupyter_datascience_lab)a
 
   @new_notebook_path "/notebooks/new"
   @show_notebook_path ~r(/notebooks/[\d\w-]+$)
-
-  setup_all do
-    image =
-      :jupyter_datascience_lab
-      |> CommonCore.Defaults.Images.get_image!()
-      |> CommonCore.Defaults.Image.default_image()
-
-    # this is maybe a little brittle but it helps the tests pass by pre-pulling the notebook image
-    Logger.debug("Pre-pulling notebook image: #{image}")
-    {_, 0} = System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [image])
-    :ok
-  end
 
   verify "can create notebook", %{session: session} do
     notebook_name = "int-test-#{:rand.uniform(10_000)}"

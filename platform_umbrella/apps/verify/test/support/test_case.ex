@@ -10,6 +10,7 @@ defmodule Verify.TestCase do
   using options do
     install_spec = Keyword.get(options, :install_spec, :int_test)
     batteries = Keyword.get(options, :batteries, [])
+    images = Keyword.get(options, :images, [])
 
     quote do
       use Wallaby.DSL
@@ -49,6 +50,8 @@ defmodule Verify.TestCase do
         unquote(__MODULE__).install_batteries(worker_pid, unquote(batteries))
         on_exit(fn -> Wallaby.end_session(session) end)
 
+        unquote(__MODULE__).prepull_images(unquote(images))
+
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
@@ -69,6 +72,21 @@ defmodule Verify.TestCase do
         {:ok, [session: session]}
       end
     end
+  end
+
+  def prepull_images([]), do: :ok
+
+  def prepull_images(images) do
+    Enum.each(images, fn image ->
+      pullable =
+        image
+        |> CommonCore.Defaults.Images.get_image!()
+        |> CommonCore.Defaults.Image.default_image()
+
+      Logger.info("Trying to pre-pull image: #{pullable}")
+      {_, 0} = System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [pullable])
+      :ok
+    end)
   end
 
   def install_batteries(worker_pid, batteries \\ [])
