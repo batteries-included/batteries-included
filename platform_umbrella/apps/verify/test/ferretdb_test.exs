@@ -9,7 +9,40 @@ defmodule Verify.FerretDBTest do
 
   verify "can start a ferretdb cluster", %{session: session} do
     instance_name = "int-test-#{:rand.uniform(10_000)}"
+    start_cluster(session, instance_name)
+  end
 
+  verify "choosing a different size update display", %{session: session} do
+    session
+    |> visit(@new_path)
+    |> assert_has(@new_ferretdb_header)
+    |> find(@size_select, fn select ->
+      click(select, Query.option("Large"))
+    end)
+    |> assert_has(Query.text("2GB"))
+  end
+
+  describe "with timeline installed" do
+    setup %{battery_install_worker: worker} do
+      install_batteries(worker, :timeline)
+
+      on_exit(fn -> uninstall_batteries(worker, :timeline) end)
+      :ok
+    end
+
+    verify "installed cluster has timeline", %{session: session} do
+      instance_name = "int-test-#{:rand.uniform(10_000)}"
+
+      session
+      |> start_cluster(instance_name)
+      # Assert that the first pod for the cluster is shown
+      |> assert_has(Query.text("Edit Versions"))
+      |> click(Query.text("Edit Versions"))
+      |> assert_has(table_row(text: "created", count: 1))
+    end
+  end
+
+  defp start_cluster(session, instance_name) do
     session
     |> create_pg_cluster(instance_name)
     # create new instance
@@ -29,15 +62,5 @@ defmodule Verify.FerretDBTest do
     |> click(Query.text("Pods"))
     |> assert_has(table_row(text: instance_name, count: 1))
     |> assert_pod_running(instance_name)
-  end
-
-  verify "choosing a different size update display", %{session: session} do
-    session
-    |> visit(@new_path)
-    |> assert_has(@new_ferretdb_header)
-    |> find(@size_select, fn select ->
-      click(select, Query.option("Large"))
-    end)
-    |> assert_has(Query.text("2GB"))
   end
 end

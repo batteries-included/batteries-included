@@ -12,7 +12,7 @@ defmodule Verify.TrivyTest do
   # TODO: use this module to assert that there are no vulnerabilities?
 
   setup_all do
-    {:ok, session} = Verify.TestCase.start_session()
+    {:ok, session} = start_session()
 
     {:ok, _} =
       session
