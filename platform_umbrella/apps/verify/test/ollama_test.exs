@@ -1,20 +1,8 @@
 defmodule Verify.OllamaTest do
-  use Verify.TestCase, async: false, batteries: ~w(ollama)a
+  use Verify.TestCase, async: false, batteries: ~w(ollama)a, images: ~w(ollama)a
 
   @new_model_path "/model_instances/new"
   @show_model_path ~r(/model_instances/[\d\w-]+/show$)
-
-  setup_all do
-    image =
-      :ollama
-      |> CommonCore.Defaults.Images.get_image!()
-      |> CommonCore.Defaults.Image.default_image()
-
-    # this is maybe a little brittle but it helps the tests pass by pre-pulling the ollama image
-    Logger.debug("Pre-pulling ollama image: #{image}")
-    {_, 0} = System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [image])
-    :ok
-  end
 
   verify "can create model", %{session: session} do
     model_name = "int-test-#{:rand.uniform(10_000)}"
