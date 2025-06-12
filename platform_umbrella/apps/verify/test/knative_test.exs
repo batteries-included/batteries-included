@@ -7,7 +7,7 @@ defmodule Verify.KnativeTest do
 
   # make sure knative is fully running before tests start
   setup_all do
-    {:ok, session} = Verify.TestCase.start_session()
+    {:ok, session} = start_session()
 
     session
     # wait a sec for knative to "install"
@@ -30,6 +30,41 @@ defmodule Verify.KnativeTest do
     service_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
+    |> start_service(service_name)
+    # make sure we can access the running service
+    |> visit_running_service()
+    # get json text
+    |> text()
+    |> Jason.decode!()
+    |> then(fn json ->
+      assert ^service_name <> _rest = get_in(json, ["host", "hostname"])
+      assert ^service_name <> _rest = get_in(json, ["environment", "HOSTNAME"])
+    end)
+  end
+
+  describe "with timeline installed" do
+    setup %{battery_install_worker: worker} do
+      install_batteries(worker, :timeline)
+
+      on_exit(fn -> uninstall_batteries(worker, :timeline) end)
+      :ok
+    end
+
+    verify "created service has timeline", %{session: session} do
+      service_name = "int-test-#{:rand.uniform(10_000)}"
+
+      session
+      |> start_service(service_name)
+      |> sleep(5_000)
+      # Assert that the first pod for the cluster is shown
+      |> assert_has(Query.text("Edit Versions"))
+      |> click(Query.text("Edit Versions"))
+      |> assert_has(table_row(text: "created", count: 1))
+    end
+  end
+
+  defp start_service(session, service_name) do
+    session
     # create service
     |> visit(@new_knative_path)
     |> assert_has(h3("New Knative Service"))
@@ -50,14 +85,5 @@ defmodule Verify.KnativeTest do
     |> assert_has(table_row(text: service_name, count: 1))
     # this may be flakey with the way knative scales down to 0 /shrug
     |> assert_pod_running(service_name)
-    # make sure we can access the running service
-    |> visit_running_service()
-    # get json text
-    |> text()
-    |> Jason.decode!()
-    |> then(fn json ->
-      assert ^service_name <> _rest = get_in(json, ["host", "hostname"])
-      assert ^service_name <> _rest = get_in(json, ["environment", "HOSTNAME"])
-    end)
   end
 end

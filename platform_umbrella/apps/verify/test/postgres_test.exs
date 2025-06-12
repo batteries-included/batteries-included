@@ -3,10 +3,11 @@ defmodule Verify.PostgresTest do
 
   @new_postgres_path "/postgres/new"
   @new_postgres_header h3("New Postgres Cluster")
+  @pod_query Query.text("Pods")
+  @edit_version_query Query.text("Edit Versions")
 
   verify "can start a postgres cluster", %{session: session} do
-    cluster_name =
-      "int-test-#{:rand.uniform(10_000)}"
+    cluster_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
     |> create_pg_cluster(cluster_name)
@@ -15,8 +16,8 @@ defmodule Verify.PostgresTest do
     |> assert_has(h3(cluster_name))
     |> assert_path(~r/\/postgres\/[\d\w-]+\/show$/)
     # Make sure that this page has the kubernetes elements
-    |> assert_has(Query.text("Pods"))
-    |> click(Query.text("Pods"))
+    |> assert_has(@pod_query)
+    |> click(@pod_query)
     # Assert that the first pod for the cluster is there.
     |> assert_has(table_row(text: "#{cluster_name}-1", count: 1))
     |> assert_pod_running("#{cluster_name}-1")
@@ -47,5 +48,26 @@ defmodule Verify.PostgresTest do
       # We can select the user we just created as the database owner
       click(select, Query.option(test_username))
     end)
+  end
+
+  describe "with timeline installed" do
+    setup %{battery_install_worker: worker} do
+      install_batteries(worker, :timeline)
+
+      on_exit(fn -> uninstall_batteries(worker, :timeline) end)
+      :ok
+    end
+
+    verify "cluster has timeline", %{session: session} do
+      cluster_name = "int-test-#{:rand.uniform(10_000)}"
+
+      session
+      |> trigger_k8s_deploy()
+      |> sleep(1_000)
+      |> create_pg_cluster(cluster_name)
+      |> assert_has(@edit_version_query)
+      |> click(@edit_version_query)
+      |> assert_has(table_row(text: "created", count: 1))
+    end
   end
 end
