@@ -170,6 +170,7 @@ defmodule Verify.TestCase.Helpers do
     session
     |> visit("/magic")
     |> click(Query.button("Start Deploy"))
+    |> sleep(1_000)
   end
 
   @doc """

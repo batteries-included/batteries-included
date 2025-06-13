@@ -12,7 +12,7 @@ defmodule Verify.KnativeTest do
     session
     # wait a sec for knative to "install"
     # it's actually quicker to pause here then to wait for future syncs
-    |> sleep(5_000)
+    |> sleep(1_000)
     # trigger a new summary
     |> trigger_k8s_deploy()
     |> assert_pods_in_deployment_running(@knative_ns, "activator")
