@@ -3,7 +3,7 @@
     "astro-build.astro-vscode",
     "bradlc.vscode-tailwindcss",
     "JakeBecker.elixir-ls",
-    "phoenixframework.phoenix",
+    "phoenixframework.phoenix"
   ],
   "unwantedRecommendations": []
 }

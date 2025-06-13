@@ -55,25 +55,14 @@
         {
           "position": null,
           "username": "root",
-          "roles": [
-            "login",
-            "superuser"
-          ],
-          "credential_namespaces": [
-            "battery-core"
-          ]
+          "roles": ["login", "superuser"],
+          "credential_namespaces": ["battery-core"]
         },
         {
           "position": null,
           "username": "notebook",
-          "roles": [
-            "superuser",
-            "login"
-          ],
-          "credential_namespaces": [
-            "battery-data",
-            "battery-ai"
-          ]
+          "roles": ["superuser", "login"],
+          "credential_namespaces": ["battery-data", "battery-ai"]
         }
       ],
       "password_versions": [

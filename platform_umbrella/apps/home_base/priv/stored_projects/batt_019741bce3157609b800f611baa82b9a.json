@@ -56,26 +56,14 @@
         {
           "position": null,
           "username": "knative",
-          "credential_namespaces": [
-            "battery-knative"
-          ],
-          "roles": [
-            "superuser",
-            "createdb",
-            "createrole",
-            "login"
-          ]
+          "credential_namespaces": ["battery-knative"],
+          "roles": ["superuser", "createdb", "createrole", "login"]
         },
         {
           "position": null,
           "username": "root",
-          "credential_namespaces": [
-            "battery-core"
-          ],
-          "roles": [
-            "login",
-            "superuser"
-          ]
+          "credential_namespaces": ["battery-core"],
+          "roles": ["login", "superuser"]
         }
       ],
       "database": {

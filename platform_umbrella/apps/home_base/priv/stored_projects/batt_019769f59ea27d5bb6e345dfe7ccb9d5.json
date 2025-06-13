@@ -31,6 +31,22 @@
           "source_optional": false
         },
         {
+          "name": "ENABLE_WEB_SEARCH",
+          "value": "true",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        },
+        {
+          "name": "WEB_SEARCH_ENGINE",
+          "value": "duckduckgo",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        },
+        {
           "name": "OLLAMA_BASE_URL",
           "value": "http://ollama-example-webui-llama.battery-ai.svc.cluster.local:11434",
           "source_name": null,

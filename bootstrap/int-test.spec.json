@@ -29,15 +29,7 @@
             "x": "8OCYF417PLvJGQ9DPpOunJ7L3B-vaYi8mvgu3U_b01Q",
             "y": "78InLdamSkewJ_aX6lSlU0ovWvZr77lAb_MEtMnhSyQ"
           },
-          "upgrade_days_of_week": [
-            true,
-            true,
-            true,
-            true,
-            false,
-            false,
-            false
-          ],
+          "upgrade_days_of_week": [true, true, true, true, false, false, false],
           "virtual_upgrade_days_of_week": [
             "Monday",
             "Tuesday",
@@ -134,24 +126,14 @@
           {
             "position": null,
             "username": "battery-local-user",
-            "roles": [
-              "superuser",
-              "createrole",
-              "createdb",
-              "login"
-            ],
+            "roles": ["superuser", "createrole", "createdb", "login"],
             "credential_namespaces": []
           },
           {
             "position": null,
             "username": "battery-control-user",
-            "roles": [
-              "createdb",
-              "login"
-            ],
-            "credential_namespaces": [
-              "battery-core"
-            ]
+            "roles": ["createdb", "login"],
+            "credential_namespaces": ["battery-core"]
           }
         ],
         "storage_class": null,
