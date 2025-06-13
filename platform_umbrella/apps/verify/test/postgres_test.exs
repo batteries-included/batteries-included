@@ -63,7 +63,6 @@ defmodule Verify.PostgresTest do
 
       session
       |> trigger_k8s_deploy()
-      |> sleep(1_000)
       |> create_pg_cluster(cluster_name)
       |> assert_has(@edit_version_query)
       |> click(@edit_version_query)

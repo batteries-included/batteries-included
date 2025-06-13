@@ -43,12 +43,13 @@ defmodule Verify.BatteryInstallWorker do
     {:reply, :error, state}
   end
 
-  def handle_call({:install_battery, battery}, _from, %{session: session} = state) do
+  def handle_call({:install_battery, battery, config}, _from, %{session: session} = state) do
     Logger.info("Installing battery: #{battery.name}")
 
     try do
       session
       |> visit("batteries/#{battery.group}/new/#{battery.type}")
+      |> maybe_add_config(config)
       |> click(Query.text("Install Battery"))
       # we have to pause a bit here for the install to actually take
       |> sleep(1_000)
@@ -91,14 +92,22 @@ defmodule Verify.BatteryInstallWorker do
 
   defp type_id_query(battery, opts \\ []), do: Query.css("##{battery.type}", opts)
 
+  defp maybe_add_config(session, config) do
+    Enum.each(config, fn {key, val} ->
+      fill_in_name(session, "battery_config[#{Atom.to_string(key)}]", val)
+    end)
+
+    session
+  end
+
   @spec set_session(GenServer.name(), Wallaby.Session.t()) :: term()
   def set_session(name, session) do
     GenServer.call(name, {:set_session, session})
   end
 
-  @spec install_battery(GenServer.name(), CatalogBattery.t()) :: term()
-  def install_battery(name, battery) do
-    GenServer.call(name, {:install_battery, battery}, 5 * 60 * 1000)
+  @spec install_battery(GenServer.name(), CatalogBattery.t(), map()) :: term()
+  def install_battery(name, battery, config \\ %{}) do
+    GenServer.call(name, {:install_battery, battery, config}, 5 * 60 * 1000)
   end
 
   @spec uninstall_battery(GenServer.name(), CatalogBattery.t()) :: term()

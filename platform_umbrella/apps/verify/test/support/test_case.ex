@@ -98,20 +98,24 @@ defmodule Verify.TestCase do
 
   def install_batteries(worker_pid, batteries \\ [])
 
-  def install_batteries(worker_pid, battery) when is_atom(battery), do: install_batteries(worker_pid, [battery])
+  def install_batteries(worker_pid, battery) when is_atom(battery), do: install_battery(worker_pid, {battery, %{}})
 
   def install_batteries(_worker_pid, []), do: :ok
 
   def install_batteries(worker_pid, batteries) do
-    Enum.map(batteries, fn type ->
-      case Catalog.get(type) do
-        nil ->
-          raise "Couldn't find battery: #{inspect(type)}"
+    Enum.map(batteries, &install_battery(worker_pid, &1))
+  end
 
-        battery ->
-          BatteryInstallWorker.install_battery(worker_pid, battery)
-      end
-    end)
+  defp install_battery(pid, type) when is_atom(type), do: install_battery(pid, {type, %{}})
+
+  defp install_battery(pid, {type, config}) do
+    case Catalog.get(type) do
+      nil ->
+        raise "Couldn't find battery: #{inspect(type)}"
+
+      battery ->
+        BatteryInstallWorker.install_battery(pid, battery, config)
+    end
   end
 
   def uninstall_batteries(worker_pid, battery) when is_atom(battery), do: uninstall_batteries(worker_pid, [battery])
