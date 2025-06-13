@@ -1,0 +1,83 @@
+{
+  "name": "BI.Example: AI with OpenWeb UI and Ollama",
+  "description": "## Project Info\nThis is an example project that brings up a medium-sized ollama-hosted LLM, and a configured open web UI.",
+  "postgres_clusters": [],
+  "redis_instances": [],
+  "ferret_services": [],
+  "jupyter_notebooks": [],
+  "knative_services": [],
+  "traditional_services": [
+    {
+      "id": "batt_019769e3b03377119a3abbe88fe75736",
+      "name": "example-webui",
+      "ports": [
+        {
+          "name": "http",
+          "protocol": "http",
+          "number": 8080
+        }
+      ],
+      "updated_at": "2025-06-13T15:29:25.916662Z",
+      "inserted_at": "2025-06-13T15:23:38.931820Z",
+      "virtual_size": null,
+      "project_id": "batt_019769ddc0f07df48924f1203c8bd2e5",
+      "env_values": [
+        {
+          "name": "WEBUI_AUTH",
+          "value": "false",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        },
+        {
+          "name": "OLLAMA_BASE_URL",
+          "value": "http://ollama-example-webui-llama.battery-ai.svc.cluster.local:11434",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        }
+      ],
+      "num_instances": 1,
+      "cpu_requested": 500,
+      "cpu_limits": 2000,
+      "memory_requested": 1073741824,
+      "memory_limits": 4294967296,
+      "kube_internal": false,
+      "containers": [
+        {
+          "args": null,
+          "command": null,
+          "name": "open-webui",
+          "path": null,
+          "image": "ghcr.io/open-webui/open-webui:main",
+          "env_values": [],
+          "mounts": []
+        }
+      ],
+      "init_containers": [],
+      "kube_deployment_type": "deployment",
+      "additional_hosts": [],
+      "volumes": []
+    }
+  ],
+  "model_instances": [
+    {
+      "id": "batt_019769e14523767db539aa71d13fed36",
+      "name": "example-webui-llama",
+      "node_type": "default",
+      "updated_at": "2025-06-13T15:41:50.168817Z",
+      "inserted_at": "2025-06-13T15:21:00.451274Z",
+      "virtual_size": null,
+      "project_id": "batt_019769ddc0f07df48924f1203c8bd2e5",
+      "model": "llama3.1:8b",
+      "num_instances": 1,
+      "cpu_requested": 4000,
+      "cpu_limits": null,
+      "memory_requested": 8589934592,
+      "memory_limits": 8589934592,
+      "gpu_count": 0
+    }
+  ]
+}
