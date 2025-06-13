@@ -4,7 +4,8 @@ defmodule Verify.ForegejoTest do
     batteries: [
       # the override config is just for testing that we can override during testing
       forgejo: %{admin_username: "user", admin_password: "pass"}
-    ]
+    ],
+    images: ~w(forgejo)a
 
   verify "forgejo is running", %{session: session} do
     session

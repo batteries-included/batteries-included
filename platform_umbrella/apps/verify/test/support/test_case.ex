@@ -26,45 +26,67 @@ defmodule Verify.TestCase do
 
       require Logger
 
-      ExUnit.Case.register_module_attribute(__MODULE__, :batteries)
+      ExUnit.Case.register_module_attribute(__MODULE__, :batteries, accumulate: true)
+      ExUnit.Case.register_module_attribute(__MODULE__, :images, accumulate: true)
+
+      Enum.each(unquote(batteries), &Module.put_attribute(__MODULE__, :batteries, &1))
+      Enum.each(unquote(images), &Module.put_attribute(__MODULE__, :images, &1))
 
       @moduletag :cluster_test
 
       setup_all do
+        batteries = unquote(batteries)
+        images = unquote(images)
         Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
         tmp_dir = get_tmp_dir(__MODULE__)
 
-        {:ok, url, kube_config_path} = Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
-        Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
-        Application.put_env(:wallaby, :base_url, url)
+        {:ok, url, kube_config_path} =
+          Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
 
         # Make sure to clean up after ourselves
         # Stopping will also remove specs
         on_exit(&Verify.KindInstallWorker.stop_all/0)
 
-        # install any requested batteries
-        {:ok, session} = unquote(__MODULE__).start_session()
+        image_pid =
+          start_supervised!({
+            Verify.ImagePullWorker,
+            [
+              name: {:via, Registry, {Verify.Registry, __MODULE__.ImagePullWorker, Verify.ImagePullWorker}}
+            ]
+          })
 
-        worker_pid =
+        # kick off image pull as early as possible
+        unquote(__MODULE__).prepull_images(image_pid, images)
+
+        Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
+        Application.put_env(:wallaby, :base_url, url)
+
+        # install any requested batteries
+        {:ok, session} = start_session()
+
+        install_pid =
           start_supervised!({
             Verify.BatteryInstallWorker,
             [
-              name: {:via, Registry, {Verify.Registry, __MODULE__, Verify.BatteryInstallWorker}},
+              name: {:via, Registry, {Verify.Registry, __MODULE__.BatteryInstallWorker, Verify.BatteryInstallWorker}},
               session: session
             ]
           })
 
-        unquote(__MODULE__).install_batteries(worker_pid, unquote(batteries))
+        install_batteries(install_pid, batteries)
         on_exit(fn -> Wallaby.end_session(session) end)
-
-        unquote(__MODULE__).prepull_images(unquote(images))
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
 
+        :ok = wait_for_images(images, image_pid)
+
         {:ok,
          [
-           battery_install_worker: worker_pid,
+           requested_batteries: batteries,
+           requested_images: images,
+           image_pull_worker: image_pid,
+           battery_install_worker: install_pid,
            control_url: url,
            kube_config_path: kube_config_path,
            tested_version: tested_version,
@@ -72,8 +94,8 @@ defmodule Verify.TestCase do
          ]}
       end
 
-      setup context do
-        {:ok, session} = unquote(__MODULE__).start_session()
+      setup do
+        {:ok, session} = start_session()
         on_exit(fn -> Wallaby.end_session(session) end)
 
         {:ok, [session: session]}
@@ -81,19 +103,10 @@ defmodule Verify.TestCase do
     end
   end
 
-  def prepull_images([]), do: :ok
+  def prepull_images(_pid, []), do: :ok
 
-  def prepull_images(images) do
-    Enum.each(images, fn image ->
-      pullable =
-        image
-        |> CommonCore.Defaults.Images.get_image!()
-        |> CommonCore.Defaults.Image.default_image()
-
-      Logger.info("Trying to pre-pull image: #{pullable}")
-      {_, 0} = System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [pullable])
-      :ok
-    end)
+  def prepull_images(pid, images) do
+    Enum.each(images, &Verify.ImagePullWorker.pull_image(pid, &1))
   end
 
   def install_batteries(worker_pid, batteries \\ [])

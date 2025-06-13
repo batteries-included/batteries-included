@@ -1,5 +1,14 @@
 defmodule Verify.KubeMonitoringTest do
-  use Verify.TestCase, async: false, batteries: ~w(kube_monitoring)a
+  use Verify.TestCase,
+    async: false,
+    batteries: ~w(kube_monitoring)a,
+    images: ~w(
+      vm_operator 
+      kube_state_metrics
+      node_exporter
+      metrics_server
+      addon_resizer
+    )a
 
   verify "kube_monitoring is running", %{session: session} do
     session

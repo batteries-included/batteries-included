@@ -1,5 +1,5 @@
 defmodule Verify.FerretDBTest do
-  use Verify.TestCase, async: false, batteries: ~w(ferretdb)a
+  use Verify.TestCase, async: false, batteries: ~w(ferretdb)a, images: ~w(ferretdb)a
 
   @new_path "/ferretdb/new"
   @new_ferretdb_header h3("New FerretDB/MongoDB Compatible Service")
