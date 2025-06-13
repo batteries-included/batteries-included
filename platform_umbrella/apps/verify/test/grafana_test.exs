@@ -1,5 +1,5 @@
 defmodule Verify.GrafanaTest do
-  use Verify.TestCase, async: false, batteries: ~w(grafana)a
+  use Verify.TestCase, async: false, batteries: ~w(grafana)a, images: ~w(grafana)a
 
   verify "grafana is running", %{session: session} do
     session

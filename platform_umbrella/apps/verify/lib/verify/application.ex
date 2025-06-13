@@ -8,6 +8,7 @@ defmodule Verify.Application do
   @impl Application
   def start(_type, _args) do
     children = [
+      {Task.Supervisor, [name: Verify.TaskSupervisor]},
       {CommonCore.Installs.Generator, [name: Verify.Installs.Generator]},
       {Verify.KindInstallWorker, [name: Verify.KindInstallWorker]},
       # for BatteryInstallWorker
