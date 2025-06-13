@@ -2,6 +2,7 @@ defmodule HomeBase.Projects.StaticProjects do
   @moduledoc false
   use CommonCore.IncludeResource,
     rag_v0: "priv/stored_projects/batt_0197313f7c447c85ab2462d284f01077.json",
+    ai_open_web_ui_v0: "priv/stored_projects/batt_019769f59ea27d5bb6e345dfe7ccb9d5.json",
     serverless_web_v0: "priv/stored_projects/batt_019741bce3157609b800f611baa82b9a.json",
     traditional_web_v0: "priv/stored_projects/batt_019745dfea447de6ae4b47b7bb7834e4.json"
 
@@ -9,6 +10,7 @@ defmodule HomeBase.Projects.StaticProjects do
     Map.new(
       [
         {"batt_0197313f7c447c85ab2462d284f01077", :rag_v0},
+        {"batt_019769f59ea27d5bb6e345dfe7ccb9d5", :ai_open_web_ui_v0},
         {"batt_019741bce3157609b800f611baa82b9a", :serverless_web_v0},
         {"batt_019745dfea447de6ae4b47b7bb7834e4", :traditional_web_v0}
       ],
