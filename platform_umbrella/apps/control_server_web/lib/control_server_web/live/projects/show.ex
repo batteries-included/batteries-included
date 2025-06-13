@@ -16,13 +16,27 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Projects.Project
   alias ControlServer.Projects
+  alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
   alias KubeServices.SystemState.SummaryBatteries
   alias KubeServices.SystemState.SummaryURLs
 
+  # This is what kube resouces we will watch for changes to
+  # and update the pods list in this LiveView.
+  @resource_type :pod
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      :ok = KubeEventCenter.subscribe(@resource_type)
+    end
+
     {:ok, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, assign_pods(socket)}
   end
 
   @impl Phoenix.LiveView
