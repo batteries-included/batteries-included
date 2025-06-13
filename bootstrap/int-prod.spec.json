@@ -29,15 +29,7 @@
             "x": "dSyQsmwxDRwl4ER1LRiB20GNcyYrVEBrKSlr_If1saQ",
             "y": "8uh4sRhd2TMA8GgjfdJa8h5SAUS80-qF_u6dcUdhFhs"
           },
-          "upgrade_days_of_week": [
-            true,
-            true,
-            true,
-            true,
-            false,
-            false,
-            false
-          ],
+          "upgrade_days_of_week": [true, true, true, true, false, false, false],
           "virtual_upgrade_days_of_week": [
             "Monday",
             "Tuesday",
@@ -335,17 +327,11 @@
         "memory_requested": 8589934592,
         "memory_limits": 8589934592,
         "project_id": null,
-        "additional_hosts": [
-          "home.batteriesincl.com"
-        ],
+        "additional_hosts": ["home.batteriesincl.com"],
         "init_containers": [
           {
-            "args": [
-              "home_base_init"
-            ],
-            "command": [
-              "/app/bin/start"
-            ],
+            "args": ["home_base_init"],
+            "command": ["/app/bin/start"],
             "name": "init",
             "path": "/app/bin/start",
             "image": "ghcr.io/batteries-included/home-base:latest",
@@ -528,9 +514,7 @@
         "memory_requested": 8589934592,
         "memory_limits": 8589934592,
         "project_id": null,
-        "additional_hosts": [
-          "cla.batteriesincl.com"
-        ],
+        "additional_hosts": ["cla.batteriesincl.com"],
         "init_containers": [],
         "containers": [
           {
@@ -562,13 +546,8 @@
           {
             "position": null,
             "username": "battery-control-user",
-            "roles": [
-              "createdb",
-              "login"
-            ],
-            "credential_namespaces": [
-              "battery-core"
-            ]
+            "roles": ["createdb", "login"],
+            "credential_namespaces": ["battery-core"]
           }
         ],
         "storage_class": null,
@@ -607,14 +586,8 @@
           {
             "position": null,
             "username": "home-base",
-            "roles": [
-              "superuser",
-              "createdb",
-              "login"
-            ],
-            "credential_namespaces": [
-              "battery-traditional"
-            ]
+            "roles": ["superuser", "createdb", "login"],
+            "credential_namespaces": ["battery-traditional"]
           }
         ],
         "storage_class": null,
@@ -653,14 +626,8 @@
           {
             "position": null,
             "username": "cla",
-            "roles": [
-              "superuser",
-              "createdb",
-              "login"
-            ],
-            "credential_namespaces": [
-              "battery-traditional"
-            ]
+            "roles": ["superuser", "createdb", "login"],
+            "credential_namespaces": ["battery-traditional"]
           }
         ],
         "storage_class": null,
