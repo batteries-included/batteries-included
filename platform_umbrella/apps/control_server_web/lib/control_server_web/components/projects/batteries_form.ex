@@ -6,6 +6,7 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
 
   alias CommonCore.Batteries.Catalog
   alias CommonCore.Batteries.CatalogBattery
+  alias ControlServerWeb.Projects.ImportSnapshotForm
 
   @description """
   All of the required batteries for this project are already toggled and will be installed in the next step.
@@ -258,6 +259,10 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
     |> Enum.uniq()
   end
 
+  defp required_from_step({ImportSnapshotForm, %{snapshot: snapshot}}) do
+    CommonCore.Projects.ProjectSnapshot.required_batteries(snapshot)
+  end
+
   # This takes a single step form and figured out the batteries needed for that step.
   defp required_from_step({_, v}) do
     Enum.map(Map.keys(v), &required_batteries_from_form_name/1)
@@ -274,5 +279,5 @@ defmodule ControlServerWeb.Projects.BatteriesForm do
   defp required_batteries_from_form_name("knative"), do: [:knative]
   defp required_batteries_from_form_name("ollama"), do: [:ollama]
   defp required_batteries_from_form_name("traditional"), do: [:traditional_services]
-  defp required_batteries_from_form_name(_), do: nil
+  defp required_batteries_from_form_name(_), do: []
 end
