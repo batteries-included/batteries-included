@@ -42,10 +42,21 @@ defmodule ControlServerWeb.Projects.ShowPagesLiveTest do
       |> assert_html(redis.name)
     end
 
-    test "jupyter_notebooks page renders", %{conn: conn, project: project, jupyter_notebook: notebook} do
+    test "jupyter_notebooks page renders", %{
+      conn: conn,
+      project: project,
+      jupyter_notebook: notebook
+    } do
       conn
       |> start(~p|/projects/#{project.id}/jupyter_notebooks|)
       |> assert_html(notebook.name)
+    end
+
+    test "show page has a link to add a new model instance", %{conn: conn, project: project} do
+      conn
+      |> start(~p|/projects/#{project.id}/show|)
+      |> assert_html("Add Model Instance")
+      |> click("a", "Add Model Instance")
     end
   end
 end

@@ -244,6 +244,12 @@ defmodule ControlServerWeb.Live.ProjectsShow do
           </.dropdown_link>
 
           <.dropdown_link navigate={
+            add_link(:ollama, ~p"/model_instances/new?project_id=#{@project.id}")
+          }>
+            Add Model Instance
+          </.dropdown_link>
+
+          <.dropdown_link navigate={
             add_link(:notebooks, ~p"/notebooks/new?project_id=#{@project.id}")
           }>
             Add Jupyter Notebook
