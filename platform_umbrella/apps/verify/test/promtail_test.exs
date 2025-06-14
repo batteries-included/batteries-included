@@ -1,5 +1,5 @@
 defmodule Verify.PromtailTest do
-  use Verify.TestCase, async: false, batteries: ~w(promtail)a
+  use Verify.TestCase, async: false, batteries: ~w(grafana loki promtail)a
 
   verify "promtail is running", %{session: session} do
     assert_pod_running(session, "promtail")

@@ -1,5 +1,12 @@
 defmodule Verify.KialiTest do
-  use Verify.TestCase, async: false, batteries: ~w(kiali)a
+  use Verify.TestCase,
+    async: false,
+    batteries: ~w(kiali)a,
+    images: ~w(
+      grafana
+      kiali
+      vm_operator
+    )a
 
   verify "kiali is running", %{session: session} do
     session

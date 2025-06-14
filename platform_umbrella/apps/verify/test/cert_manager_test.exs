@@ -1,5 +1,17 @@
 defmodule Verify.CertManagerTest do
-  use Verify.TestCase, async: false, batteries: ~w(cert_manager trust_manager istio_csr battery_ca)a
+  use Verify.TestCase,
+    async: false,
+    batteries: ~w(cert_manager trust_manager istio_csr battery_ca)a,
+    images: ~w(
+      cert_manager_controller
+      cert_manager_webhook
+      cert_manager_cainjector
+      cert_manager_acmesolver
+    )a
+
+  setup_all %{image_pull_worker: pid, requested_images: images} do
+    wait_for_images(images, pid)
+  end
 
   verify "cert_manager is running", %{session: session} do
     session
