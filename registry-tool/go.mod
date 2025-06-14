@@ -3,7 +3,7 @@ module registry-tool
 go 1.24.4
 
 require (
-	github.com/google/go-containerregistry v0.20.5
+	github.com/google/go-containerregistry v0.20.6
 	github.com/lmittmann/tint v1.1.2
 	github.com/spf13/cobra v1.9.1
 	gopkg.in/yaml.v3 v3.0.1
