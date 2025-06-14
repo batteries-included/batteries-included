@@ -20,7 +20,7 @@ require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.82.2
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.12
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.0
-	github.com/pulumi/pulumi/sdk/v3 v3.176.0
+	github.com/pulumi/pulumi/sdk/v3 v3.177.0
 	github.com/samber/slog-multi v1.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
@@ -156,7 +156,7 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
 	github.com/sagikazarmark/locafero v0.9.0 // indirect
-	github.com/samber/lo v1.50.0 // indirect
+	github.com/samber/lo v1.51.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/skeema/knownhosts v1.3.1 // indirect
@@ -198,7 +198,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools/v3 v3.5.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
+	k8s.io/kube-openapi v0.0.0-20250610211856-8b98d1ed966a // indirect
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397 // indirect
 	lukechampine.com/frand v1.5.1 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
