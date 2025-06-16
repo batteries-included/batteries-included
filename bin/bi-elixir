@@ -45,6 +45,8 @@ do_test_deep() {
 
 do_test() {
     local slug=${1:-"dev"}
+    [[ $# -gt 0 ]] && shift
+
     local out=/dev/null
     if [[ $TRACE -eq 1 ]]; then
         out=/dev/stdout
@@ -56,7 +58,7 @@ do_test() {
     try_portforward "${slug}" &
 
     export MIX_ENV=test
-    __run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings --exclude slow >$out
+    __run_mix test ${TRACE:+--trace} --warnings-as-errors --all-warnings --exclude slow "$@" >$out
     log "Elixir tests ${GREEN}Passed${NOFORMAT}"
 }
 
