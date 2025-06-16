@@ -7,6 +7,8 @@ defmodule Verify.TestCase.Helpers do
   alias Verify.PathHelper
   alias Wallaby.Query
 
+  require Logger
+
   @backspaces Enum.map(0..100, fn _ -> :backspace end)
   @deletes Enum.map(0..100, fn _ -> :delete end)
 
@@ -217,5 +219,49 @@ defmodule Verify.TestCase.Helpers do
           {:error, resp}
       end
     end
+  end
+
+  def wait_for_images(images, pid, timeout \\ 60_000)
+
+  def wait_for_images([] = _images, _pid, _timeout), do: :ok
+
+  def wait_for_images(images, pid, timeout) do
+    start_time = DateTime.utc_now()
+    end_time = DateTime.add(start_time, timeout, :millisecond)
+
+    :ok = do_wait_on_images(images, pid, end_time, remaining(end_time))
+
+    diff = DateTime.diff(DateTime.utc_now(), start_time, :millisecond)
+    Logger.debug("Finished checking in #{diff} milliseconds")
+    :ok
+  end
+
+  # there's no more images to check
+  defp do_wait_on_images([] = _images, _pid, _end_time, _remaining), do: :ok
+
+  # we're out of time
+  defp do_wait_on_images(_images, _pid, _end_time, remaining) when remaining < 0, do: :ok
+
+  # still have images to check
+  defp do_wait_on_images(images, pid, end_time, _remaining) do
+    waiting =
+      Enum.filter(images, fn image ->
+        case Verify.ImagePullWorker.image_status(pid, image) do
+          # if we're still pulling, keep the image
+          :running ->
+            Process.sleep(500)
+            true
+
+          # else remove it
+          _ ->
+            false
+        end
+      end)
+
+    do_wait_on_images(waiting, pid, end_time, remaining(end_time))
+  end
+
+  defp remaining(end_time) do
+    DateTime.diff(end_time, DateTime.utc_now(), :millisecond)
   end
 end

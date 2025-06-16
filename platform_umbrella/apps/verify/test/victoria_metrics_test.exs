@@ -1,5 +1,5 @@
 defmodule Verify.VictoriaMetricsTest do
-  use Verify.TestCase, async: false, batteries: ~w(victoria_metrics)a
+  use Verify.TestCase, async: false, batteries: ~w(victoria_metrics)a, images: ~w(grafana vm_operator)a
 
   verify "victoria metrics is running", %{session: session} do
     session =

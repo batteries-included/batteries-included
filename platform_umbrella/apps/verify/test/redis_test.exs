@@ -1,5 +1,8 @@
 defmodule Verify.RedisTest do
-  use Verify.TestCase, async: false, batteries: ~w(redis)a
+  use Verify.TestCase,
+    async: false,
+    batteries: ~w(redis)a,
+    images: ~w(redis redis_operator redis_exporter)a
 
   @new_path "/redis/new"
   @new_redis_header h3("New Redis Instance")
