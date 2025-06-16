@@ -446,6 +446,7 @@ ollama:
   name: docker.io/ollama/ollama
   default_tag: 0.9.0
   tags:
+    - 0.9.1
     - 0.9.0
     - 0.8.0
     - 0.7.1
@@ -461,6 +462,7 @@ postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
   default_tag: 17.5-6
   tags:
+    - 17.5-7
     - 17.5-6
     - 17.5-5
     - 17.5-4
