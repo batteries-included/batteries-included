@@ -41,7 +41,6 @@ defmodule HomeBaseWeb.MixProject do
       {:bandit, "~> 1.4"},
       {:websock_adapter, "~> 0.5"},
       {:gettext, "~> 0.20"},
-      {:floki, "~> 0.36"},
       {:jason, "~> 1.4"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.6"},

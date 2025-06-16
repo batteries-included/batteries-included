@@ -56,8 +56,7 @@ defmodule ControlServer.MixProject do
       {:typed_ecto_schema, "~> 0.4"},
       {:yaml_elixir, "~> 2.6"},
       {:ymlr, "~> 5.0"},
-      {:ex_machina, "~> 2.7", only: [:dev, :test]},
-      {:floki, "~> 0.36", only: [:dev, :test]}
+      {:ex_machina, "~> 2.7", only: [:dev, :test]}
     ]
   end
 
