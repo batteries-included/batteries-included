@@ -2,7 +2,8 @@ defmodule Verify.ForegejoTest do
   use Verify.TestCase,
     async: false,
     batteries: [
-      :forgejo
+      # the override config is just for testing that we can override during testing
+      forgejo: %{admin_username: "user", admin_password: "pass"}
     ]
 
   verify "forgejo is running", %{session: session} do

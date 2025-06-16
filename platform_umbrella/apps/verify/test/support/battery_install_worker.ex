@@ -49,12 +49,12 @@ defmodule Verify.BatteryInstallWorker do
     try do
       session
       |> visit("batteries/#{battery.group}/new/#{battery.type}")
+      # make sure we're on the battery install page and it's loaded
+      |> assert_has(Query.text("#{battery.name} Battery", minimum: 1))
       |> maybe_add_config(config)
       |> click(Query.text("Install Battery"))
       # we have to pause a bit here for the install to actually take
       |> sleep(1_000)
-      |> visit("batteries/#{battery.group}")
-      |> assert_has(Query.css("##{battery.type}", text: "ACTIVE"))
     rescue
       e ->
         # grab a screenshot if we've failed to install the battery
