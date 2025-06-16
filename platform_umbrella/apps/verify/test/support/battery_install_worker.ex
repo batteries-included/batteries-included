@@ -93,11 +93,9 @@ defmodule Verify.BatteryInstallWorker do
   defp type_id_query(battery, opts \\ []), do: Query.css("##{battery.type}", opts)
 
   defp maybe_add_config(session, config) do
-    Enum.each(config, fn {key, val} ->
-      fill_in_name(session, "battery_config[#{Atom.to_string(key)}]", val)
+    Enum.reduce(config, session, fn {key, val}, acc ->
+      fill_in_name(acc, "battery_config[#{Atom.to_string(key)}]", val)
     end)
-
-    session
   end
 
   @spec set_session(GenServer.name(), Wallaby.Session.t()) :: term()
