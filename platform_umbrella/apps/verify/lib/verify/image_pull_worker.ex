@@ -63,18 +63,18 @@ defmodule Verify.ImagePullWorker do
     # The task succeed so we can demonitor its reference
     Process.demonitor(ref, [:flush])
 
-    {image, _task} = get_task_for_ref(state, ref)
-    Logger.debug("Got #{inspect(result)} for image #{image}")
-    state = put_in(state.tasks[key(image)], result)
+    {key, _task} = get_task_for_ref(state, ref)
+    Logger.debug("Got #{inspect(result)} for key #{key}")
+    state = put_in(state.tasks[key], result)
     {:noreply, state}
   end
 
   # If the task fails...
   @impl GenServer
   def handle_info({:DOWN, ref, _, _, reason}, state) do
-    {image, _task} = get_task_for_ref(state, ref)
-    Logger.debug("Image #{image} failed with reason #{inspect(reason)}")
-    state = put_in(state.images[key(image)], reason)
+    {key, _task} = get_task_for_ref(state, ref)
+    Logger.debug("Image key: #{key} failed with reason: #{inspect(reason)}")
+    state = put_in(state.images[key], reason)
     {:noreply, state}
   end
 
@@ -93,7 +93,7 @@ defmodule Verify.ImagePullWorker do
   defp build_docker_pull_cmd(image) do
     fn ->
       Logger.info("Trying to pre-pull image: #{image}")
-      {_, 0} = System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [image])
+      System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [image])
     end
   end
 
