@@ -100,6 +100,16 @@ defmodule HomeBase.CustomerInstalls do
     |> Repo.insert()
   end
 
+  @spec create_local_installation!() :: Installation.t()
+  def create_local_installation! do
+    # This local only development installation isn't owned
+    # by any user or team.
+    # It can only bootstrap into kind with a small size
+    args = %{usage: :development, kube_provider: :kind, default_size: :tiny, user_id: nil, team_id: nil}
+    {:ok, installation} = create_installation(args)
+    installation
+  end
+
   @spec update_installation(CommonCore.Installation.t(), any()) :: {:ok, CommonCore.Installation.t()} | {:error, any()}
   @doc """
   Updates a installation.
