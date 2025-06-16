@@ -74,7 +74,10 @@ defmodule ControlServerWeb.MixProject do
       # Testing
       {:ex_machina, "~> 2.7", only: [:dev, :test]},
       {:heyya, "~> 1.0", only: [:dev, :test]},
-      {:floki, "~> 0.36", only: :test}
+      # While floki isn't used in prod here
+      # it is used in common_ui via premailex
+      # so we include it here in all environments
+      {:floki, "~> 0.36"}
     ]
   end
 
