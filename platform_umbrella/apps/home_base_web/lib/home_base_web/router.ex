@@ -105,6 +105,8 @@ defmodule HomeBaseWeb.Router do
 
     get "/stable_versions", StableVersionsController, :show
 
+    put "/installations/new_local", LocalInstallationController, :create
+
     scope "/installations/:installation_id" do
       resources "/usage_reports", StoredUsageReportController, only: [:create]
       resources "/host_reports", StoredHostReportController, only: [:create]
