@@ -46,7 +46,7 @@ defmodule ControlServerWeb.Projects.ImportSnapshotForm do
   defp assign_snapshot(socket) do
     socket
     |> assign(:snapshot, nil)
-    |> assign(:form, nil)
+    |> assign(:form, to_form(%{}))
   end
 
   defp title(nil), do: "No snapshot selected"
@@ -173,12 +173,31 @@ defmodule ControlServerWeb.Projects.ImportSnapshotForm do
     """
   end
 
+  defp empty_state(assigns) do
+    ~H"""
+    <.form
+      id={"form_#{@id}"}
+      class={@class}
+      for={@form}
+      phx-target={@myself}
+      phx-change="validate"
+      phx-submit="submit"
+    >
+      <.subform title="No snapshot selected">
+        <p>
+          No snapshot selected to import, skipping import step.
+        </p>
+      </.subform>
+    </.form>
+    """
+  end
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
     <div class="contents">
       <.form
-        :if={@form != nil && @snapshot != nil}
+        :if={@snapshot != nil}
         for={@form}
         id={"form_#{@id}"}
         class={@class}
@@ -196,6 +215,14 @@ defmodule ControlServerWeb.Projects.ImportSnapshotForm do
           <.model_instances_list snapshot={@snapshot} />
         </.subform>
       </.form>
+
+      <.empty_state
+        :if={@snapshot == nil}
+        id={"empty_state_#{@id}"}
+        class={@class}
+        myself={@myself}
+        form={@form}
+      />
     </div>
     """
   end

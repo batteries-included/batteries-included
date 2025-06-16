@@ -26,6 +26,8 @@ defmodule CommonCore.Projects.ProjectSnapshot do
     model_instances: :ollama
   }
 
+  def required_batteries(nil), do: []
+
   def required_batteries(snapshot) do
     # For each embed list in the project snapshot
     # return the needed battery if the list of embeds isn't empty.
