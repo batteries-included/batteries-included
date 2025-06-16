@@ -26,13 +26,14 @@ defmodule CommonUI.EmailHelpersTest do
   test "render/1" do
     email = __MODULE__.render(%{name: "Jane"})
 
+    floki_doc = Floki.parse_document!(email.html_body)
     assert email.from == {"Test", "test@test.com"}
     assert email.text_body =~ "*Hey Jane*"
     assert email.text_body =~ "123 Easy St"
-    assert email.html_body |> Floki.find("title") |> Floki.text() == "This is a subject"
-    assert email.html_body |> Floki.find("p") |> Floki.text() == "Hey Jane"
-    assert ["http://127.0.0.1:4321"] = Floki.attribute(email.html_body, ".logo a", "href")
-    assert ["http://127.0.0.1:4321/images/emails/logo.png"] = Floki.attribute(email.html_body, ".logo a img", "src")
-    assert ["font-family: Helvetica" <> _] = Floki.attribute(email.html_body, "p", "style")
+    assert floki_doc |> Floki.find("title") |> Floki.text() == "This is a subject"
+    assert floki_doc |> Floki.find("p") |> Floki.text() == "Hey Jane"
+    assert ["http://127.0.0.1:4321"] = Floki.attribute(floki_doc, ".logo a", "href")
+    assert ["http://127.0.0.1:4321/images/emails/logo.png"] = Floki.attribute(floki_doc, ".logo a img", "src")
+    assert ["font-family: Helvetica" <> _] = Floki.attribute(floki_doc, "p", "style")
   end
 end
