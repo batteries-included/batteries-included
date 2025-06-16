@@ -444,7 +444,7 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.9.0
+  default_tag: 0.9.1
   tags:
     - 0.9.1
     - 0.9.0
@@ -460,7 +460,7 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-6
+  default_tag: 17.5-7
   tags:
     - 17.5-7
     - 17.5-6
