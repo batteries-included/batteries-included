@@ -1,0 +1,170 @@
+{
+  "name": "BI.Example: AI with OpenWeb UI, Ollama, and PGVector",
+  "description": "## Project Info\n\nThis is an example AI project with OpenWebUI and Ollama. It includes a postgres database with PGVector, allowing a full rag stack.",
+  "knative_services": [],
+  "traditional_services": [
+    {
+      "id": "batt_01977a64dfe879d7a700de843cdc7ca0",
+      "name": "example-webui-rag-webui",
+      "ports": [
+        {
+          "name": "http",
+          "protocol": "http",
+          "number": 8080
+        }
+      ],
+      "inserted_at": "2025-06-16T20:18:40.744441Z",
+      "updated_at": "2025-06-16T20:48:56.190695Z",
+      "virtual_size": null,
+      "env_values": [
+        {
+          "name": "DATABASE_URL",
+          "value": null,
+          "source_name": "cloudnative-pg.pg-example-webui-rag-db.rag-user",
+          "source_type": "secret",
+          "source_key": "dsn",
+          "source_optional": false
+        },
+        {
+          "name": "OLLAMA_BASE_URL",
+          "value": "http://ollama-example-webui-rag-llama.battery-ai.svc.cluster.local:11434",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        },
+        {
+          "name": "WEB_SEARCH_ENGINE",
+          "value": "duckduckgo",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        },
+        {
+          "name": "ENABLE_WEB_SEARCH",
+          "value": "true",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        },
+        {
+          "name": "WEBUI_AUTH",
+          "value": "false",
+          "source_name": null,
+          "source_type": "value",
+          "source_key": null,
+          "source_optional": false
+        }
+      ],
+      "num_instances": 1,
+      "cpu_requested": 500,
+      "cpu_limits": 2000,
+      "memory_requested": 1073741824,
+      "memory_limits": 4294967296,
+      "project_id": "batt_01977a6073f57d4398a47869f42b9367",
+      "additional_hosts": [],
+      "init_containers": [],
+      "containers": [
+        {
+          "args": null,
+          "command": null,
+          "name": "open-webui",
+          "path": null,
+          "image": "ghcr.io/open-webui/open-webui:main",
+          "env_values": [],
+          "mounts": []
+        }
+      ],
+      "volumes": [],
+      "kube_internal": false,
+      "kube_deployment_type": "deployment"
+    }
+  ],
+  "model_instances": [
+    {
+      "id": "batt_01977a62218f785bae54c619a5c30f23",
+      "name": "example-webui-rag-llama",
+      "node_type": "default",
+      "inserted_at": "2025-06-16T20:15:40.943104Z",
+      "updated_at": "2025-06-16T20:15:40.943104Z",
+      "virtual_size": null,
+      "num_instances": 1,
+      "model": "llama3.1:8b",
+      "cpu_requested": 4000,
+      "cpu_limits": null,
+      "memory_requested": 8589934592,
+      "memory_limits": 8589934592,
+      "project_id": "batt_01977a6073f57d4398a47869f42b9367",
+      "gpu_count": 0
+    }
+  ],
+  "postgres_clusters": [
+    {
+      "id": "batt_01977a619b4a782e81f52d09a8362547",
+      "name": "example-webui-rag-db",
+      "type": "standard",
+      "database": {
+        "name": "documents",
+        "owner": "rag-user"
+      },
+      "storage_class": "standard",
+      "inserted_at": "2025-06-16T20:15:06.570664Z",
+      "updated_at": "2025-06-16T20:18:55.117602Z",
+      "virtual_size": null,
+      "num_instances": 1,
+      "users": [
+        {
+          "position": null,
+          "username": "root",
+          "roles": [
+            "login",
+            "superuser"
+          ],
+          "credential_namespaces": [
+            "battery-core"
+          ]
+        },
+        {
+          "position": null,
+          "username": "rag-user",
+          "roles": [
+            "superuser",
+            "createdb",
+            "createrole",
+            "login"
+          ],
+          "credential_namespaces": [
+            "battery-traditional",
+            "battery-data"
+          ]
+        }
+      ],
+      "password_versions": [
+        {
+          "version": 2,
+          "username": "rag-user",
+          "password": "J7FFVARKFEA2VMR2QQMOVHVO"
+        },
+        {
+          "version": 1,
+          "username": "root",
+          "password": "AHSA4S6SN7IHPZ4ZTK5FPKKI"
+        }
+      ],
+      "cpu_requested": 500,
+      "cpu_limits": 500,
+      "memory_requested": 536870912,
+      "memory_limits": 536870912,
+      "project_id": "batt_01977a6073f57d4398a47869f42b9367",
+      "backup_config": null,
+      "storage_size": 536870912,
+      "restore_from_backup": null,
+      "virtual_storage_size_range_value": null
+    }
+  ],
+  "redis_instances": [],
+  "ferret_services": [],
+  "jupyter_notebooks": []
+}
