@@ -231,6 +231,9 @@ defmodule ControlServerWeb.Live.ProjectsNew do
 
   defp create_traditional(_project, _traditional_data, _pg, _redis), do: {:ok, nil}
 
+  defp import_snapshot(_project, %{snapshot: nil}), do: {:ok, nil}
+  defp import_snapshot(_project, nil), do: {:ok, nil}
+
   defp import_snapshot(project, %{snapshot: snapshot}) do
     ControlServer.Projects.Snapshoter.apply_snapshot(project, snapshot)
   end
