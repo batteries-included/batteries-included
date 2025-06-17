@@ -26,6 +26,11 @@ defaults:
   run:
     shell: bash
 
+# only allow 1 run for PRs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'master') }}
+
 jobs:
   build-images:
     runs-on: ubuntu-latest
