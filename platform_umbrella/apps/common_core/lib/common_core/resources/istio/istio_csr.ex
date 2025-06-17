@@ -69,7 +69,7 @@ defmodule CommonCore.Resources.IstioCsr do
     |> B.rules(rules)
   end
 
-  resource(:deployment_cert_manager_istio_csr, _battery, state) do
+  resource(:deployment_cert_manager_istio_csr, battery, state) do
     namespace = base_namespace(state)
 
     volumes = [
@@ -102,7 +102,7 @@ defmodule CommonCore.Resources.IstioCsr do
           "--leader-election-namespace=#{namespace}"
         ],
         "command" => ["cert-manager-istio-csr"],
-        "image" => "quay.io/jetstack/cert-manager-istio-csr:v0.5.0",
+        "image" => battery.config.image,
         "imagePullPolicy" => "IfNotPresent",
         "name" => "cert-manager-istio-csr",
         "volumeMounts" => [

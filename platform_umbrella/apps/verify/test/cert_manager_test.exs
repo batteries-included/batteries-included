@@ -3,10 +3,13 @@ defmodule Verify.CertManagerTest do
     async: false,
     batteries: ~w(cert_manager trust_manager istio_csr battery_ca)a,
     images: ~w(
-      cert_manager_controller
-      cert_manager_webhook
-      cert_manager_cainjector
       cert_manager_acmesolver
+      cert_manager_cainjector
+      cert_manager_controller
+      cert_manager_istio_csr
+      cert_manager_webhook
+      trust_manager
+      trust_manager_init
     )a
 
   verify "cert_manager is running", %{session: session} do
