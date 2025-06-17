@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 
@@ -50,10 +51,13 @@ func (r *registryImpl) Write(filePath string) error {
 		}
 	}
 
-	data, err := yaml.Marshal(r.records)
-	if err != nil {
+	buf := bytes.Buffer{}
+	enc := yaml.NewEncoder(&buf)
+	enc.SetIndent(2) // Match the formatter config
+	if err := enc.Encode(&r.records); err != nil {
 		return fmt.Errorf("failed to marshal registry to YAML: %w", err)
 	}
+	data := buf.Bytes()
 
 	if err := os.WriteFile(filePath, data, 0644); err != nil {
 		return fmt.Errorf("failed to write registry file: %w", err)
