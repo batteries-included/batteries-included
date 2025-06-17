@@ -15,8 +15,12 @@ defmodule ControlServerWeb.Batteries.TrivyOperatorForm do
       <.panel title="Configuration">
         <.fieldset>
           <.field>
-            <:label>Version Tag</:label>
-            <.input field={@form[:version_tag]} />
+            <:label>Trivy Repo</:label>
+            <.input field={@form[:trivy_repo]} />
+          </.field>
+          <.field>
+            <:label>Trivy Version Tag</:label>
+            <.input field={@form[:trivy_version_tag]} />
           </.field>
         </.fieldset>
       </.panel>

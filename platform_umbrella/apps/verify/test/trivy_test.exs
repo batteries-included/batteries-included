@@ -2,7 +2,7 @@ defmodule Verify.TrivyTest do
   use Verify.TestCase,
     async: false,
     batteries: ~w(trivy_operator)a,
-    images: ~w(trivy_operator aqua_node_collector)a
+    images: ~w(trivy_operator aqua_trivy aqua_node_collector)a
 
   @trivy_report_path "/trivy_reports/vulnerability_report"
   @audit_link Query.link("Audit")

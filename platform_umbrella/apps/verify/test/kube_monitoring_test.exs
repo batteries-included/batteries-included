@@ -8,6 +8,10 @@ defmodule Verify.KubeMonitoringTest do
       node_exporter
       metrics_server
       addon_resizer
+      vm_insert
+      vm_select
+      vm_storage
+      vm_agent
     )a
 
   verify "kube_monitoring is running", %{session: session} do

@@ -73,7 +73,7 @@ defmodule Verify.ImagePullWorker do
   @impl GenServer
   def handle_info({:DOWN, ref, _, _, reason}, state) do
     {key, _task} = get_task_for_ref(state, ref)
-    Logger.debug("Image key: #{key} failed with reason: #{inspect(reason)}")
+    Logger.error("Image key: #{key} failed to pull with reason: #{inspect(reason)}")
     state = put_in(state.images[key], reason)
     {:noreply, state}
   end
