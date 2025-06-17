@@ -128,9 +128,10 @@ do_ensure_base_images() {
         local image="${REGISTRY}/${base}-base:${docker_base_tag}"
         if ! docker images "${image}" --format=json | jq -e '.' &>/dev/null; then
             log "${YELLOW}Checked${NOFORMAT} base image: ${CYAN}${image}${NOFORMAT}. Not found."
-            try_pull_base_image "${image}"
+            try_pull_base_image "${image}" &
         fi
     done
+    wait
 }
 
 try_pull_base_image() {
