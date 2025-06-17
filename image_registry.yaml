@@ -18,6 +18,13 @@ aqua_node_collector:
   tags:
     - 0.3.1
   tag_regex: ^\d+\.\d+\.\d+$
+aqua_trivy:
+  name: ghcr.io/aquasecurity/trivy
+  default_tag: 0.63.0
+  tags:
+    - 0.63.0
+    - 0.62.1
+  tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy_checks:
   name: ghcr.io/aquasecurity/trivy-checks
   default_tag: 1.11.2
@@ -31,6 +38,7 @@ aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.11.0
   tags:
+    - v2.13.3
     - v2.13.2
     - v2.13.1
     - v2.13.0
@@ -146,15 +154,18 @@ grafana:
   tags:
     - 12.0.1
     - 12.0.0
+    - 11.6.3
     - 11.6.2
     - 11.6.1
     - 11.6.0
+    - 11.5.6
     - 11.5.5
     - 11.5.4
     - 11.5.3
     - 11.5.2
     - 11.5.1
     - 11.5.0
+    - 11.4.6
     - 11.4.5
     - 11.4.4
     - 11.4.3
@@ -588,6 +599,53 @@ trust_manager_init:
   tags:
     - '20210119.0'
   tag_regex: ^\d{8}\.\d+$
+vm_agent:
+  name: docker.io/victoriametrics/vmagent
+  default_tag: v1.119.0
+  tags:
+    - v1.119.0
+    - v1.118.0
+    - v1.117.1
+    - v1.117.0
+    - v1.116.0
+    - v1.115.0
+    - v1.114.0
+    - v1.113.0
+    - v1.112.0
+    - v1.111.0
+    - v1.110.0
+    - v1.109.1
+    - v1.109.0
+    - v1.108.1
+    - v1.108.0
+    - v1.107.0
+    - v1.106.1
+    - v1.106.0
+    - v1.105.0
+    - v1.104.0
+    - v1.103.0
+    - v1.102.1
+    - v1.102.0
+    - v1.101.0
+    - v1.100.1
+    - v1.100.0
+    - v1.99.0
+    - v1.98.0
+    - v1.97.1
+    - v1.97.0
+    - v1.96.0
+    - v1.95.1
+    - v1.95.0
+    - v1.94.0
+    - v1.93.16
+    - v1.93.15
+    - v1.93.14
+    - v1.93.13
+    - v1.93.12
+    - v1.93.11
+    - v1.93.10
+    - v1.93.9
+  tag_regex: ^v\d+\.\d+\.\d+$
 vm_operator:
   name: docker.io/victoriametrics/operator
   default_tag: v0.44.0
@@ -628,3 +686,87 @@ vm_operator:
     - v0.45.0
     - v0.44.0
   tag_regex: ^v\d+\.\d+\.\d+$
+vm_insert:
+  name: docker.io/victoriametrics/vminsert
+  default_tag: v1.119.0-cluster
+  tags:
+    - v1.119.0-cluster
+    - v1.118.0-cluster
+    - v1.117.1-cluster
+    - v1.117.0-cluster
+    - v1.116.0-cluster
+    - v1.115.0-cluster
+    - v1.114.0-cluster
+    - v1.113.0-cluster
+    - v1.112.0-cluster
+    - v1.111.0-cluster
+    - v1.110.0-cluster
+    - v1.109.1-cluster
+    - v1.109.0-cluster
+    - v1.108.1-cluster
+    - v1.108.0-cluster
+    - v1.107.0-cluster
+    - v1.106.1-cluster
+    - v1.106.0-cluster
+    - v1.105.0-cluster
+    - v1.104.0-cluster
+    - v1.103.0-cluster
+    - v1.102.1-cluster
+    - v1.102.0-cluster
+  tag_regex: ^v\d+\.\d+\.\d+-cluster$
+vm_select:
+  name: docker.io/victoriametrics/vmselect
+  default_tag: v1.119.0-cluster
+  tags:
+    - v1.119.0-cluster
+    - v1.118.0-cluster
+    - v1.117.1-cluster
+    - v1.117.0-cluster
+    - v1.116.0-cluster
+    - v1.115.0-cluster
+    - v1.114.0-cluster
+    - v1.113.0-cluster
+    - v1.112.0-cluster
+    - v1.111.0-cluster
+    - v1.110.0-cluster
+    - v1.109.1-cluster
+    - v1.109.0-cluster
+    - v1.108.1-cluster
+    - v1.108.0-cluster
+    - v1.107.0-cluster
+    - v1.106.1-cluster
+    - v1.106.0-cluster
+    - v1.105.0-cluster
+    - v1.104.0-cluster
+    - v1.103.0-cluster
+    - v1.102.1-cluster
+    - v1.102.0-cluster
+  tag_regex: ^v\d+\.\d+\.\d+-cluster$
+vm_storage:
+  name: docker.io/victoriametrics/vmstorage
+  default_tag: v1.119.0-cluster
+  tags:
+    - v1.119.0-cluster
+    - v1.118.0-cluster
+    - v1.117.1-cluster
+    - v1.117.0-cluster
+    - v1.116.0-cluster
+    - v1.115.0-cluster
+    - v1.114.0-cluster
+    - v1.113.0-cluster
+    - v1.112.0-cluster
+    - v1.111.0-cluster
+    - v1.110.0-cluster
+    - v1.109.1-cluster
+    - v1.109.0-cluster
+    - v1.108.1-cluster
+    - v1.108.0-cluster
+    - v1.107.0-cluster
+    - v1.106.1-cluster
+    - v1.106.0-cluster
+    - v1.105.0-cluster
+    - v1.104.0-cluster
+    - v1.103.0-cluster
+    - v1.102.1-cluster
+    - v1.102.0-cluster
+  tag_regex: ^v\d+\.\d+\.\d+-cluster$

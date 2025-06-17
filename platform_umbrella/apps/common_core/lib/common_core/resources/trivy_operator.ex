@@ -274,7 +274,8 @@ defmodule CommonCore.Resources.TrivyOperator do
 
     data =
       %{}
-      |> Map.put("trivy.tag", battery.config.version_tag)
+      |> Map.put("trivy.repo", battery.config.trivy_repo)
+      |> Map.put("trivy.tag", battery.config.trivy_version_tag)
       |> Map.put("trivy.additionalVulnerabilityReportFields", "")
       |> Map.put("trivy.command", "image")
       |> Map.put("trivy.dbRepository", "ghcr.io/aquasecurity/trivy-db")

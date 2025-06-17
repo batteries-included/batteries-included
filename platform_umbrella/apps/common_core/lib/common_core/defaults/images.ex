@@ -23,12 +23,6 @@ defmodule CommonCore.Defaults.Images do
     end
   end
 
-  @spec vm_cluster_tag() :: String.t()
-  def vm_cluster_tag, do: "v1.102.0-cluster"
-
-  @spec vm_tag() :: String.t()
-  def vm_tag, do: "v1.93.9"
-
   @spec batteries_included_version() :: String.t()
   def batteries_included_version do
     override =
