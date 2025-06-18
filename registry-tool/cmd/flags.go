@@ -28,4 +28,7 @@ var DefaultIgnoredImages = []string{
 
 	// needs a refresh
 	"quay.io/jetstack/cert-manager-istio-csr",
+
+	// Major Redis version bump breaks things
+	"quay.io/opstree/redis",
 }

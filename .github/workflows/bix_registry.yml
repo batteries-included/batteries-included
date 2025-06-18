@@ -1,0 +1,39 @@
+---
+name: BIX Registry Update
+
+'on':
+  # Run every night at 1 AM UTC
+  schedule:
+    - cron: '0 1 * * *'
+  # Allow manual triggering
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  update-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          # Need full history and token for creating PRs
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
+        with:
+          go_cache: 'true'
+          elixir_cache: 'false'
+
+      - name: Update registry and create PR
+        run: bin/bix registry create-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
