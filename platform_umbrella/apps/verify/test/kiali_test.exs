@@ -1,8 +1,10 @@
 defmodule Verify.KialiTest do
+  use Verify.Images
+
   use Verify.TestCase,
     async: false,
     batteries: ~w(kiali)a,
-    images: ~w(grafana kiali vm_operator vm_insert vm_select vm_storage vm_agent)a
+    images: ~w(grafana kiali)a ++ @victoria_metrics
 
   verify "kiali is running", %{session: session} do
     session

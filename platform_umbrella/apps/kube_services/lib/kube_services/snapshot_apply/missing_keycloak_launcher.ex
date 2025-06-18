@@ -13,8 +13,8 @@ defmodule KubeServices.SnapshotApply.MissingKeycloakLauncher do
   @state_opts ~w(delay initial_delay)a
 
   typedstruct module: State do
-    field :delay, non_neg_integer(), default: 500
-    field :initial_delay, non_neg_integer(), default: 15_000
+    field :delay, non_neg_integer(), default: 1_000
+    field :initial_delay, non_neg_integer(), default: 1_000
     field :max_delay, non_neg_integer(), default: 60_000
     field :timer_reference, reference() | nil, default: nil
   end
@@ -70,7 +70,7 @@ defmodule KubeServices.SnapshotApply.MissingKeycloakLauncher do
   end
 
   defp schedule_start(%State{timer_reference: nil, max_delay: max_delay, delay: delay} = state) do
-    new_delay = min(max_delay, delay * 2)
+    new_delay = min(max_delay, trunc(delay * 1.5))
     Logger.debug("After missing keycloak snapshot or realm scheduling the next retry in #{new_delay}")
 
     %{

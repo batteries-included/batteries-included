@@ -1,8 +1,10 @@
 defmodule Verify.VictoriaMetricsTest do
+  use Verify.Images
+
   use Verify.TestCase,
     async: false,
     batteries: ~w(victoria_metrics)a,
-    images: ~w(grafana vm_operator vm_insert vm_select vm_storage vm_agent)a
+    images: ~w(grafana)a ++ @victoria_metrics
 
   verify "victoria metrics is running", %{session: session} do
     session =

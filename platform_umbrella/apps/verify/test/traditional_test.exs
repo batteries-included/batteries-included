@@ -1,5 +1,6 @@
 defmodule Verify.TraditionalTest do
-  use Verify.TestCase, async: false, batteries: ~w(traditional_services)a, images: ~w(ealen/echo-server:latest)
+  use Verify.Images
+  use Verify.TestCase, async: false, batteries: ~w(traditional_services)a, images: [@echo_server]
 
   require Logger
 
@@ -20,7 +21,7 @@ defmodule Verify.TraditionalTest do
     # add container
     |> find(@container_panel, fn e -> click(e, Query.button("Add Container")) end)
     |> fill_in(Query.text_field("container[name]"), with: "echo")
-    |> fill_in(Query.text_field("container[image]"), with: List.first(@images))
+    |> fill_in(Query.text_field("container[image]"), with: @echo_server)
     |> click(Query.css(~s/#container-form-modal-modal-container button[type="submit"]/))
     # make sure the modal is gone
     |> refute_has(Query.css("#container-form-modal"))
