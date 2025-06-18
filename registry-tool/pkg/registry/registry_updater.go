@@ -30,7 +30,9 @@ func NewRegistryUpdater(registry Registry, ignoredImages []string) *RegistryUpda
 func (u *RegistryUpdater) Write(path string) error {
 	if !u.changed {
 		slog.Info("no changes to write")
-		return nil
+		// Return an error when there's no changes to
+		// show that the pr process should be skipped.
+		return fmt.Errorf("no changes to write")
 	}
 
 	if err := u.registry.Write(path); err != nil {
