@@ -4,21 +4,32 @@ defmodule ControlServerWeb.Live.KeycloakRealmsList do
 
   import ControlServerWeb.Keycloak.RealmsTable
 
+  alias EventCenter.KeycloakSnapshot, as: SnapshotEventCenter
   alias KubeServices.Keycloak.AdminClient
   alias KubeServices.SystemState.SummaryURLs
 
   @impl Phoenix.LiveView
   def mount(%{} = _params, _session, socket) do
-    socket
-    |> assign(:current_page, :net_sec)
-    |> assign(:keycloak_url, SummaryURLs.url_for_battery(:keycloak))
-    |> assign_realms()
+    if connected?(socket) do
+      :ok = SnapshotEventCenter.subscribe()
+    end
+
+    {:ok,
+     socket
+     |> assign(:current_page, :net_sec)
+     |> assign(:keycloak_url, SummaryURLs.url_for_battery(:keycloak))
+     |> assign_realms()}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_info(_unused, socket) do
+    {:noreply, assign_realms(socket)}
   end
 
   def assign_realms(socket) do
     case AdminClient.realms() do
-      {:ok, realms} -> {:ok, assign(socket, :realms, realms)}
-      _ -> {:ok, assign(socket, :realms, [])}
+      {:ok, realms} -> assign(socket, :realms, realms)
+      _ -> assign(socket, :realms, [])
     end
   end
 

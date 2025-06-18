@@ -27,6 +27,7 @@ defmodule Verify.TrivyTest do
       # this will retry until there are rows (i.e we have results) or we time out
       |> execute_query(table_row(minimum: 1))
 
+    Wallaby.end_session(session)
     :ok
   end
 

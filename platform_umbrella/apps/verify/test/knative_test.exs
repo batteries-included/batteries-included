@@ -1,4 +1,6 @@
 defmodule Verify.KnativeTest do
+  use Verify.Images
+
   use Verify.TestCase,
     async: false,
     batteries: ~w(knative)a,
@@ -11,7 +13,7 @@ defmodule Verify.KnativeTest do
       knative_serving_activator 
       knative_serving_webhook
       knative_serving_queue 
-    )a ++ ["ealen/echo-server:latest"]
+    )a ++ [@echo_server]
 
   @new_knative_path "/knative/services/new"
   @knative_ns "battery-knative"
@@ -84,7 +86,7 @@ defmodule Verify.KnativeTest do
     # add container
     |> find(@container_panel, fn e -> click(e, Query.button("Add Container")) end)
     |> fill_in(Query.text_field("container[name]"), with: "echo")
-    |> fill_in(Query.text_field("container[image]"), with: List.first(@images))
+    |> fill_in(Query.text_field("container[image]"), with: @echo_server)
     |> click(Query.css(~s/#container-form-modal-modal-container button[type="submit"]/))
     |> click(Query.button("Save Knative Service"))
     # verify we're on the show page

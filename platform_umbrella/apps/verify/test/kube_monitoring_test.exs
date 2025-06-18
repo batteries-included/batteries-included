@@ -1,18 +1,10 @@
 defmodule Verify.KubeMonitoringTest do
+  use Verify.Images
+
   use Verify.TestCase,
     async: false,
     batteries: ~w(kube_monitoring)a,
-    images: ~w(
-      vm_operator 
-      kube_state_metrics
-      node_exporter
-      metrics_server
-      addon_resizer
-      vm_insert
-      vm_select
-      vm_storage
-      vm_agent
-    )a
+    images: ~w(kube_state_metrics node_exporter metrics_server addon_resizer)a ++ @victoria_metrics
 
   verify "kube_monitoring is running", %{session: session} do
     session

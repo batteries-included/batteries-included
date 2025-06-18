@@ -106,30 +106,12 @@ defmodule Verify.TestCase.Helpers do
     visit(session, path)
   end
 
+  def assert_pods_in_sts_running(session, namespace, sts) do
+    assert_workflow_pods_running(session, sts, "/kube/stateful_set/#{namespace}/#{sts}/show")
+  end
+
   def assert_pods_in_deployment_running(session, namespace, deployment) do
-    deployment_url = "/kube/deployment/#{namespace}/#{deployment}/show"
-
-    # make sure the deployment page is available
-    {:ok, _} =
-      :wallaby
-      |> Application.get_env(:base_url)
-      |> Path.join(deployment_url)
-      |> build_retryable_get()
-      |> retry()
-
-    session =
-      session
-      |> visit(deployment_url)
-      # check we're on the pods page for the deployment
-      |> assert_has(h3(deployment))
-
-    # get all of the pod rows
-    pods = all(session, Query.css("table#pods_table"))
-
-    # make sure all pods are Running
-    assert_has(session, table_row(text: "Running", count: length(pods)))
-
-    session
+    assert_workflow_pods_running(session, deployment, "/kube/deployment/#{namespace}/#{deployment}/show")
   end
 
   def create_pg_cluster(session, cluster_name) do
@@ -263,5 +245,29 @@ defmodule Verify.TestCase.Helpers do
 
   defp remaining(end_time) do
     DateTime.diff(end_time, DateTime.utc_now(), :millisecond)
+  end
+
+  defp assert_workflow_pods_running(session, workload, path) do
+    # make sure the page is available
+    {:ok, _} =
+      :wallaby
+      |> Application.get_env(:base_url)
+      |> Path.join(path)
+      |> build_retryable_get()
+      |> retry()
+
+    session =
+      session
+      |> visit(path)
+      # check we're on the pods page for the deployment
+      |> assert_has(h3(workload))
+
+    # get all of the pod rows
+    pods = all(session, Query.css("table#pods_table"))
+
+    # make sure all pods are Running
+    assert_has(session, table_row(text: "Running", count: length(pods)))
+
+    session
   end
 end
