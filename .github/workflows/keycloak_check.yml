@@ -23,6 +23,8 @@ jobs:
         uses: ./.github/actions/setup-asdf
 
       - name: Kick off keycloak workflow for missing tags
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           for tag in $(echo \
             "$(yq '.keycloak_upstream.tags[]' image_registry.yaml)" \
