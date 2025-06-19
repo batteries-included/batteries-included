@@ -270,14 +270,15 @@ defmodule Verify.TestCase.Helpers do
     # get all of the pod rows
     pods = all(session, Query.css("table#pods_table"))
 
-    session
-    # make sure all pods are Running
-    |> assert_has(table_row(text: "Running", count: length(pods)))
-    # trigger a deploy
-    |> trigger_k8s_deploy()
-    # and double check all pods are running
-    |> visit(path)
-    |> assert_has(table_row(text: "Running", count: length(pods)))
+    session =
+      session
+      # make sure all pods are Running
+      |> assert_has(table_row(text: "Running", count: length(pods)))
+      # trigger a deploy
+      |> trigger_k8s_deploy()
+      # and double check all pods are running
+      |> visit(path)
+      |> assert_has(table_row(text: "Running", count: length(pods)))
 
     session
   end
