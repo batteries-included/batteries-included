@@ -12,6 +12,9 @@ defmodule Verify.TestCase.Helpers do
   @backspaces Enum.map(0..100, fn _ -> :backspace end)
   @deletes Enum.map(0..100, fn _ -> :delete end)
 
+  @container_panel Query.css("#containers_panel-containers")
+  @port_panel Query.css("#ports_panel")
+
   # Adapted from Wallaby.Feature.feature/3
   @doc """
   `verify` wraps ExUnit.test so that test failures take a screenshot and runs `bi rage`.
@@ -23,6 +26,8 @@ defmodule Verify.TestCase.Helpers do
   - The URL of the control server: `control_url`
   - The name/pid of the BatteryInstallWorker: `battery_install_worker`
   - The path to the kube config file for the cluster: `kube_config_path`
+  - The name/pid of the ImagePullWorker: `image_pull_worker`
+  - The list of requested images and batteries: `requested_{batteries,images}`
   """
   defmacro verify(message, context \\ quote(do: _), contents) do
     %{module: mod, file: file, line: line} = __CALLER__
@@ -265,9 +270,39 @@ defmodule Verify.TestCase.Helpers do
     # get all of the pod rows
     pods = all(session, Query.css("table#pods_table"))
 
+    session
     # make sure all pods are Running
-    assert_has(session, table_row(text: "Running", count: length(pods)))
+    |> assert_has(table_row(text: "Running", count: length(pods)))
+    # trigger a deploy
+    |> trigger_k8s_deploy()
+    # and double check all pods are running
+    |> visit(path)
+    |> assert_has(table_row(text: "Running", count: length(pods)))
 
     session
+  end
+
+  def create_traditional_service(session, image, service_name) do
+    session
+    # create service
+    |> visit("/traditional_services/new")
+    |> assert_has(h3("New Traditional Service"))
+    |> fill_in_name("service[name]", service_name)
+    # add container
+    |> find(@container_panel, fn e -> click(e, Query.button("Add Container")) end)
+    |> fill_in(Query.text_field("container[name]"), with: "workload")
+    |> fill_in(Query.text_field("container[image]"), with: image)
+    |> click(Query.css(~s/#container-form-modal-modal-container button[type="submit"]/))
+    # make sure the modal is gone
+    |> sleep(100)
+    # add port
+    |> find(@port_panel, fn e -> click(e, Query.button("Add Port")) end)
+    |> fill_in(Query.text_field("port[name]"), with: service_name)
+    |> fill_in(Query.text_field("port[number]"), with: "80")
+    |> click(Query.css(~s/#port-form-modal-modal-container button[type="submit"]/))
+    # make sure the modal is gone
+    |> sleep(100)
+    # save service
+    |> click(Query.button("Save Traditional Service"))
   end
 end
