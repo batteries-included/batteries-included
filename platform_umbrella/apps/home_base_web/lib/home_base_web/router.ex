@@ -105,6 +105,9 @@ defmodule HomeBaseWeb.Router do
 
     get "/stable_versions", StableVersionsController, :show
 
+    get "/scripts/install_bi", StartScriptController, :install_bi
+    get "/scripts/start_local", StartScriptController, :start_local
+
     put "/installations/new_local", LocalInstallationController, :create
 
     scope "/installations/:installation_id" do
