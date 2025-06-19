@@ -28,7 +28,7 @@ defaults:
 
 # only allow 1 run per commit concurrently
 concurrency:
-  group: ${{ github.workflow }}-${{ github.sha }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
 jobs:
