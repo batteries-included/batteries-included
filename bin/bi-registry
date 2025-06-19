@@ -115,7 +115,7 @@ do_create_pr() {
 
     bi-source fmt yaml
 
-    local title="[bi-registry-bot] Automated registry update"
+    local title="chore(deps): Automated registry update [bi-registry-bot]"
     local message="This is an automated update of the image registry.
     Changes:
     "
