@@ -173,7 +173,8 @@ Available commands:
 - list,ls                               List the images in the registry
 - save-int-images                       Save the images necessary for integration testing
 - save-bootstrap-images-from-registry   Save only the bootstrap images from the registry
-- create-pr                             Create a pull request after updating the registry.
+- create-pr                             Create a pull request after updating the registry
+- build-new-keycloak-images             Kick off workflow for any new upstream keycloak tags
 EOF
     exit 1
 }
@@ -202,6 +203,78 @@ parse_params() {
     return 0
 }
 
+get_tags_for_image() {
+    local image="${1}"
+    local last=""
+    local all_tags
+    local registry
+    local repo
+    registry=$(echo "$image" | cut -d'/' -f1)
+    repo=$(echo "$image" | cut -d'/' -f2-3)
+
+    while :; do
+        local tags=()
+        # query api and add tags to local array
+        while IFS='' read -r tag; do
+            tags+=("$tag")
+        done < <(
+            curl --silent "https://${registry}/v2/${repo}/tags/list?n=100&last=${last}" |
+                jq -r '.tags[]'
+        )
+
+        # if array is empty, we've got all the tags
+        [[ "${#tags[@]}" -eq 0 ]] && break
+
+        # otherwise add the local tags to the outer array
+        all_tags+=("${tags[@]}")
+        # and update the "last" parameter
+        last="${tags[-1]}"
+    done
+
+    echo "${all_tags[@]}"
+}
+
+do_build_keycloak_images() {
+    local tags=()
+    local keycloak_repo="batteries-included/keycloak"
+
+    log "getting upstream image tags"
+    for tag in $(get_tags_for_image "quay.io/keycloak/keycloak"); do
+        tags+=("$tag")
+    done
+
+    log "getting ghcr token"
+    local token
+    token=$(
+        curl --silent "https://ghcr.io/token?scope=repository:${keycloak_repo}:pull" |
+            awk -F'"' '$0=$4'
+    )
+
+    log "checking what upstream images we need"
+    for tag in "${tags[@]}"; do
+        # filter out tags we don't care about e.g. nightly / latest
+        if ! echo "$tag" | grep -q -P '^\d+.\d+.\d+$'; then
+            continue
+        fi
+
+        # we don't need old versions so skip em
+        # we should periodically update this to limit the number of requests below
+        major=$(echo "$tag" | cut -d'.' -f1)
+        [[ "$major" -lt 24 ]] && continue
+
+        # we need the version if we don't already have it
+        curl --fail --silent -o /dev/null \
+            -H "Authorization: Bearer ${token}" \
+            -H "Accept: application/vnd.oci.image.index.v1+json" \
+            -I "https://ghcr.io/v2/${keycloak_repo}/manifests/${tag}" ||
+            {
+                log "kicking off workflow to build needed tag: ${tag}"
+                gh workflow run keycloak.yml -f "version=${tag}"
+            }
+    done
+
+}
+
 parse_params "$@"
 setup_colors
 setup_trace
@@ -221,6 +294,9 @@ save-bootstrap-images-from-registry)
     ;;
 create-pr)
     do_create_pr "${args[@]}"
+    ;;
+build-new-keycloak-images)
+    do_build_keycloak_images
     ;;
 *)
     usage

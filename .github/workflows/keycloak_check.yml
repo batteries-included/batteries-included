@@ -1,0 +1,22 @@
+---
+name: 'Check keycloak versions'
+
+'on':
+  schedule:
+    - cron: '15 8 * * *'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check_upstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: false
+
+      - run: bin/bix registry build-new-keycloak-images
