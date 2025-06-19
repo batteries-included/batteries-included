@@ -6,7 +6,8 @@ defmodule HomeBase.Application do
   def start(_type, _args) do
     children = [
       HomeBase.Repo,
-      {Phoenix.PubSub, name: HomeBase.PubSub}
+      {Phoenix.PubSub, name: HomeBase.PubSub},
+      HomeBase.StaleInstallWorker
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: HomeBase.Supervisor)
