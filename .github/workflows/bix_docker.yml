@@ -26,10 +26,11 @@ defaults:
   run:
     shell: bash
 
-# only allow 1 run for PRs
+# only allow 1 run per commit concurrently
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ !contains(github.ref, 'master') }}
+  group:
+    ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
 
 jobs:
   build-images:
