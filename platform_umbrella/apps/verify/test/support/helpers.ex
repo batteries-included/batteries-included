@@ -14,6 +14,8 @@ defmodule Verify.TestCase.Helpers do
   @container_panel Query.css("#containers_panel-containers")
   @port_panel Query.css("#ports_panel")
 
+  @keycloak_realm_path "/keycloak/realms"
+
   def table_row(opts \\ []), do: Query.css("table tbody tr", opts)
   def h3(text, opts \\ []), do: Query.css("h3", Keyword.put(opts, :text, text))
 
@@ -241,31 +243,38 @@ defmodule Verify.TestCase.Helpers do
       {:error, :stale_reference}
   end
 
-  def login_keycloak(session, username, password) do
-    session =
-      session
-      |> assert_has(h3("Keycloak"))
-      |> click(Query.link("Admin Console"))
-
+  def check_keycloak_running(session) do
     session
-    |> window_handles()
-    |> List.last()
-    |> then(&focus_window(session, &1))
-    |> assert_has(Query.css("div.kc-logo-text"))
+    |> assert_pods_in_sts_running("battery-core", "keycloak")
+    |> visit(@keycloak_realm_path)
+    # wait for the admin realm
+    |> assert_has(table_row(minimum: 1))
+    # wait for the default realm
+    |> assert_has(table_row(minimum: 2))
+  end
+
+  # need to already be on realm page. see `navigate_to_keycloak_realm/2`
+  def login_keycloak(session, username, password) do
+    session
+    |> assert_has(Query.css("h1", text: "Sign in to your account"))
     |> fill_in(Query.text_field("username"), with: username)
     |> fill_in(Query.text_field("password"), with: password)
     |> click(Query.button("Sign In"))
   end
 
-  def create_keycloak_user(session, email, user, password) do
+  def navigate_to_keycloak_realm(session, name) do
+    session
+    # from the net_sec page
+    |> visit("/net_sec")
+    |> assert_has(h3("Realms"))
+    # go to the admin realm view page
+    |> click(Query.css("td", text: name))
+    |> assert_has(h3(name))
+  end
+
+  def create_keycloak_user(session, email, user, password, first, last) do
     session =
       session
-      # from the net_sec page
-      |> visit("/net_sec")
-      |> assert_has(h3("Realms"))
-      # go to the admin realm view page
-      |> click(Query.css("td", text: "Keycloak"))
-      |> assert_has(h3("Keycloak"))
       # create the new user
       |> click(Query.button("New User"))
       |> assert_has(Query.css("h2", text: "New User"))
@@ -281,10 +290,15 @@ defmodule Verify.TestCase.Helpers do
     # exit the modal
     |> click(Query.css("#temp-password-modal-container button"))
     # login to keycloak
+    |> click(Query.link("Admin Console"))
+    |> last_tab()
     |> login_keycloak(user, temp_password)
     |> assert_has(Query.css("h1", text: "Update password"))
     |> fill_in(Query.text_field("password-new"), with: password)
     |> fill_in(Query.text_field("password-confirm"), with: password)
+    |> click(Query.button("Submit"))
+    |> fill_in(Query.text_field("firstName"), with: first)
+    |> fill_in(Query.text_field("lastName"), with: last)
     |> click(Query.button("Submit"))
     |> assert_has(Query.css("#kc-main-content-page-container"))
   end
@@ -296,5 +310,20 @@ defmodule Verify.TestCase.Helpers do
     parent
     |> Wallaby.Browser.visit(path)
     |> sleep(100)
+  end
+
+  def close_tab(session) do
+    session
+    |> close_window()
+    |> window_handles()
+    |> List.first()
+    |> then(&focus_window(session, &1))
+  end
+
+  def last_tab(session) do
+    session
+    |> window_handles()
+    |> List.last()
+    |> then(&focus_window(session, &1))
   end
 end
