@@ -54,7 +54,10 @@ defmodule Verify.BatteryInstallWorker do
       |> maybe_add_config(config)
       |> click(Query.text("Install Battery"))
       # we have to pause a bit here for the install to actually take
+      # less than 1 second seems to make it fail to install
+      # probably do to the async nature of the battery form component
       |> sleep(1_000)
+      |> trigger_k8s_deploy()
     rescue
       e ->
         # grab a screenshot if we've failed to install the battery
@@ -73,12 +76,11 @@ defmodule Verify.BatteryInstallWorker do
       session
       |> visit("batteries/#{battery.group}")
       |> find(type_id_query(battery), &click(&1, Query.link("Edit")))
-      |> accept_confirm(&click(&1, Query.button("Uninstall")))
-
-      session
+      |> assert_confirmation(&click(&1, Query.button("Uninstall")), "Are you sure you want to uninstall")
+      |> sleep(100)
+      |> trigger_k8s_deploy()
       |> visit("batteries/#{battery.group}")
       |> assert_has(type_id_query(battery, text: "Install"))
-      |> trigger_k8s_deploy()
     rescue
       e ->
         # grab a screenshot if we've failed to install the battery
