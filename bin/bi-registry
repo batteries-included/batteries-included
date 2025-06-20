@@ -134,7 +134,10 @@ do_create_pr() {
     git checkout -b "$branch"
 
     git add ../image_registry.yaml
-    git commit -m "${title}" -m "${message}" --author "bi-registry-bot <elliott+registrybot@batteriesincl.com>"
+    git -c user.name="bi-registry-bot" \
+        -c user.email="elliott+registrybot@batteriesincl.com" \
+        commit -m "${title}" -m "${message}" \
+        --author "bi-registry-bot <elliott+registrybot@batteriesincl.com>"
 
     # If we are on Github actions then close all pull requests with label automation and registry
     if [[ -n "${GITHUB_JOB:-}" ]]; then
