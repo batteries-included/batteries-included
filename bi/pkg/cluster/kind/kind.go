@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/netip"
 	"os"
+	"time"
 
 	dockerclient "github.com/docker/docker/client"
 	slogmulti "github.com/samber/slog-multi"
@@ -270,7 +271,10 @@ func (c *KindClusterProvider) loadImages(imageTarName string, node nodes.Node) e
 	}
 	defer f.Close()
 	if err := nodeutils.LoadImageArchive(node, f); err != nil {
-		c.logger.Warn("failed to load images. retrying...", slog.Any("error", err))
+		// we've failed to load the images the first time
+		// let's retry after a short delay
+		c.logger.Warn("failed to load images. retrying shortly...", slog.Any("error", err))
+		time.Sleep(5 * time.Second)
 		return nodeutils.LoadImageArchive(node, f)
 	}
 	return nil
