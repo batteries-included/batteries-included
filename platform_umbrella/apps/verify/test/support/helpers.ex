@@ -30,15 +30,18 @@ defmodule Verify.TestCase.Helpers do
   def assert_pods_running(session, name_fragments) do
     path = current_path(session)
 
-    session
-    |> visit("/kube/pods")
-    |> assert_has(table_row(minimum: 6))
-
-    Enum.each(name_fragments, fn frag ->
+    session =
       session
-      |> fill_in(Query.text_field("filter_value"), with: frag)
-      |> assert_has(table_row(text: "Running", count: 1))
-    end)
+      |> visit("/kube/pods")
+      |> assert_has(table_row(minimum: 6))
+
+    session =
+      Enum.reduce(name_fragments, session, fn frag, acc ->
+        acc
+        |> fill_in(Query.text_field("filter_value"), with: frag)
+        |> sleep(100)
+        |> assert_has(table_row(text: "Running", count: 1))
+      end)
 
     # "reset" the session back to the original location
     visit(session, path)
@@ -96,10 +99,13 @@ defmodule Verify.TestCase.Helpers do
   end
 
   def trigger_k8s_deploy(session) do
+    path = current_path(session)
+
     session
     |> visit("/magic")
     |> click(Query.button("Start Deploy"))
     |> sleep(500)
+    |> visit(path)
   end
 
   @doc """
