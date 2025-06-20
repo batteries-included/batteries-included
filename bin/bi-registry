@@ -131,6 +131,7 @@ do_create_pr() {
     fi
 
     local branch="bi-registry-bot/update-registry-$(date +%Y%m%d%H%M%S)"
+    log "Committing changes to ${BLUE}image_registry.yaml${NOFORMAT} on branch ${branch}"
     git checkout -b "$branch"
 
     git add ../image_registry.yaml
