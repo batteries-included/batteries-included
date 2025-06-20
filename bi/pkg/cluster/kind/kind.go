@@ -12,6 +12,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/avast/retry-go/v4"
 	dockerclient "github.com/docker/docker/client"
 	slogmulti "github.com/samber/slog-multi"
 	"sigs.k8s.io/kind/pkg/cluster"
@@ -120,7 +121,7 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 		c.logger.Debug("Kind cluster already running", slog.String("name", c.name))
 	}
 
-	if err := c.maybeLoadImages(); err != nil {
+	if err := c.maybeLoadImages(ctx); err != nil {
 		return fmt.Errorf("failed to load images: %w", err)
 	}
 
@@ -222,7 +223,7 @@ func (c *KindClusterProvider) isRunning() (bool, error) {
 	return false, nil
 }
 
-func (c *KindClusterProvider) maybeLoadImages() error {
+func (c *KindClusterProvider) maybeLoadImages(ctx context.Context) error {
 	imageTarPath := os.Getenv("BI_IMAGE_TAR")
 	if imageTarPath == "" {
 		return nil
@@ -240,9 +241,7 @@ func (c *KindClusterProvider) maybeLoadImages() error {
 	}
 
 	for _, node := range nodelist {
-		if err := c.loadImages(imageTarPath, node); err != nil {
-			return err
-		}
+		_ = c.loadImages(ctx, imageTarPath, node)
 	}
 	logger.Info("Finished loading images")
 
@@ -263,19 +262,17 @@ func (c *KindClusterProvider) kindProviderWithLogger(logger *slog.Logger) *clust
 // loadImage loads tar image(s) to a node
 // borrowed from:
 // https://github.com/kubernetes-sigs/kind/blob/07574072a34/pkg/cmd/kind/load/image-archive/image-archive.go#L145C1-L153C2
-func (c *KindClusterProvider) loadImages(imageTarName string, node nodes.Node) error {
-	c.logger.Debug("loading images to node", slog.String("node", node.String()), slog.String("path", imageTarName))
-	f, err := os.Open(imageTarName)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	if err := nodeutils.LoadImageArchive(node, f); err != nil {
-		// we've failed to load the images the first time
-		// let's retry after a short delay
-		c.logger.Warn("failed to load images. retrying shortly...", slog.Any("error", err))
-		time.Sleep(5 * time.Second)
+func (c *KindClusterProvider) loadImages(ctx context.Context, imageTarName string, node nodes.Node) error {
+	return retry.Do(func() error {
+		c.logger.Debug("loading images to node", slog.String("node", node.String()), slog.String("path", imageTarName))
+		f, err := os.Open(imageTarName)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
 		return nodeutils.LoadImageArchive(node, f)
-	}
-	return nil
+	},
+		retry.Context(ctx),
+		retry.MaxDelay(5*time.Second),
+	)
 }
