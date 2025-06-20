@@ -123,12 +123,12 @@ defmodule Verify.TestCase.Util do
     Path.join([tmp_dir, "#{time}_#{name}.json"])
   end
 
-  @spec wait_for_images(list(), GenServer.name(), non_neg_integer()) :: :ok
-  def wait_for_images(images, pid, timeout \\ 60_000)
+  @spec wait_for_images(GenServer.name(), list(), non_neg_integer()) :: :ok
+  def wait_for_images(pid, images, timeout \\ 60_000)
 
-  def wait_for_images([] = _images, _pid, _timeout), do: :ok
+  def wait_for_images(_pid, [] = _images, _timeout), do: :ok
 
-  def wait_for_images(images, pid, timeout) do
+  def wait_for_images(pid, images, timeout) do
     start_time = DateTime.utc_now()
     end_time = DateTime.add(start_time, timeout, :millisecond)
 

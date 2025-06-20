@@ -69,7 +69,7 @@ defmodule Verify.TestCase do
         # Stopping will also remove specs
         on_exit(&Verify.KindInstallWorker.stop_all/0)
 
-        :ok = wait_for_images(images, image_pid)
+        :ok = wait_for_images(image_pid, images)
 
         Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
         Application.put_env(:wallaby, :base_url, url)
