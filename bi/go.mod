@@ -30,10 +30,10 @@ require (
 	golang.org/x/sync v0.15.0
 	golang.org/x/term v0.32.0
 	gopkg.in/ini.v1 v1.67.0
-	k8s.io/api v0.33.1
-	k8s.io/apiextensions-apiserver v0.33.1
-	k8s.io/apimachinery v0.33.1
-	k8s.io/client-go v0.33.1
+	k8s.io/api v0.33.2
+	k8s.io/apiextensions-apiserver v0.33.2
+	k8s.io/apimachinery v0.33.2
+	k8s.io/client-go v0.33.2
 	sigs.k8s.io/kind v0.29.0
 )
 
