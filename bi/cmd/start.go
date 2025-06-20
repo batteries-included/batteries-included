@@ -7,6 +7,7 @@ import (
 	"bi/pkg/installs"
 	"bi/pkg/log"
 	"bi/pkg/start"
+	"context"
 
 	"log/slog"
 
@@ -43,7 +44,9 @@ complete displaying a url for running control server.`,
 		slog.Debug("Starting Batteries Included Installation",
 			slog.String("installSpec", installURL))
 
-		ctx := cmd.Context()
+		ctx, cancel := context.WithCancel(cmd.Context())
+		defer cancel()
+
 		env, err := installs.NewEnv(ctx, installURL)
 		if err != nil {
 			return err
