@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           # Need full history and token for creating PRs
+          token: ${{ secrets.REGISTRY_BOT_PAT }}
           fetch-depth: 0
 
       - name: Setup CI
@@ -36,4 +37,4 @@ jobs:
       - name: Update registry and create PR
         run: bin/bix registry create-pr
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REGISTRY_BOT_PAT }}
