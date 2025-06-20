@@ -21,21 +21,11 @@ defmodule Verify.KeycloakTest do
   end
 
   verify "can access keycloak console", %{session: session, requested_batteries: batteries} do
-    config = Keyword.fetch!(batteries, :keycloak)
-
-    session =
-      session
-      |> visit("/keycloak/realm/master")
-      |> assert_has(h3("Keycloak"))
-      |> click(Query.link("Admin Console"))
+    %{admin_username: username, admin_password: password} = Keyword.fetch!(batteries, :keycloak)
 
     session
-    |> window_handles()
-    |> List.last()
-    |> then(&focus_window(session, &1))
-    |> assert_has(Query.css("div.kc-logo-text"))
-    |> fill_in(Query.text_field("username"), with: config.admin_username)
-    |> fill_in(Query.text_field("password"), with: config.admin_password)
-    |> click(Query.button("Sign In"))
+    |> visit("/keycloak/realm/master")
+    |> login_keycloak(username, password)
+    |> assert_has(Query.css("#kc-main-content-page-container"))
   end
 end
