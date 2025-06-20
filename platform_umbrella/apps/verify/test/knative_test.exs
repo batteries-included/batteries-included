@@ -58,7 +58,7 @@ defmodule Verify.KnativeTest do
 
   describe "with timeline installed" do
     setup %{battery_install_worker: worker} do
-      install_batteries(worker, :timeline)
+      :ok = install_batteries(worker, :timeline)
 
       on_exit(fn -> uninstall_batteries(worker, :timeline) end)
       :ok

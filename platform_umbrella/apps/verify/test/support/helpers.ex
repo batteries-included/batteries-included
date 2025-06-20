@@ -88,11 +88,18 @@ defmodule Verify.TestCase.Helpers do
     session
   end
 
+  def assert_confirmation(session, fun, search_text) do
+    msg = accept_confirm(session, fun)
+
+    assert String.contains?(msg, search_text)
+    session
+  end
+
   def trigger_k8s_deploy(session) do
     session
     |> visit("/magic")
     |> click(Query.button("Start Deploy"))
-    |> sleep(1_000)
+    |> sleep(500)
   end
 
   @doc """
