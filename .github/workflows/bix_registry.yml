@@ -25,13 +25,9 @@ jobs:
         with:
           # Need full history and token for creating PRs
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup CI
         uses: ./.github/actions/setup-ci
-        with:
-          go_cache: 'true'
-          elixir_cache: 'false'
 
       - name: Update registry and create PR
         run: bin/bix registry create-pr
