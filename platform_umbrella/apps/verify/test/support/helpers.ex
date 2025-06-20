@@ -235,7 +235,7 @@ defmodule Verify.TestCase.Helpers do
       Enum.filter(images, fn image ->
         case Verify.ImagePullWorker.image_status(pid, image) do
           # if we're still pulling, keep the image
-          :running ->
+          status when status in ~w(running retrying)a ->
             Process.sleep(500)
             true
 
@@ -296,6 +296,7 @@ defmodule Verify.TestCase.Helpers do
     |> click(Query.css(~s/#container-form-modal-modal-container button[type="submit"]/))
     # make sure the modal is gone
     |> sleep(100)
+    |> immediately_refute_has(Query.css("#container-form-modal"))
     # add port
     |> find(@port_panel, fn e -> click(e, Query.button("Add Port")) end)
     |> fill_in(Query.text_field("port[name]"), with: service_name)
@@ -303,7 +304,38 @@ defmodule Verify.TestCase.Helpers do
     |> click(Query.css(~s/#port-form-modal-modal-container button[type="submit"]/))
     # make sure the modal is gone
     |> sleep(100)
+    |> immediately_refute_has(Query.css("#port-form-modal"))
     # save service
     |> click(Query.button("Save Traditional Service"))
+  end
+
+  def immediately_refute_has(parent, query) do
+    case execute_query_without_retry(parent, query) do
+      {:error, :invalid_selector} ->
+        raise Wallaby.QueryError,
+              Query.ErrorMessage.message(query, :invalid_selector)
+
+      {:error, _not_found} ->
+        parent
+
+      # no results means not found
+      {:ok, %{result: []}} ->
+        parent
+
+      {:ok, query} ->
+        raise Wallaby.ExpectationNotMetError,
+              Query.ErrorMessage.message(query, :found)
+    end
+  end
+
+  defp execute_query_without_retry(%{driver: driver} = parent, query) do
+    with {:ok, query} <- Query.validate(query),
+         compiled_query = Query.compile(query),
+         {:ok, elements} <- driver.find_elements(parent, compiled_query) do
+      {:ok, %{query | result: elements}}
+    end
+  rescue
+    Wallaby.StaleReferenceError ->
+      {:error, :stale_reference}
   end
 end

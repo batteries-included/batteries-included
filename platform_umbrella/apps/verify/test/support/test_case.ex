@@ -37,15 +37,6 @@ defmodule Verify.TestCase do
       setup_all do
         batteries = unquote(batteries)
         images = unquote(images)
-        Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
-        tmp_dir = get_tmp_dir(__MODULE__)
-
-        {:ok, url, kube_config_path} =
-          Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
-
-        # Make sure to clean up after ourselves
-        # Stopping will also remove specs
-        on_exit(&Verify.KindInstallWorker.stop_all/0)
 
         image_pid =
           start_supervised!({
@@ -57,6 +48,18 @@ defmodule Verify.TestCase do
 
         # kick off image pull as early as possible
         unquote(__MODULE__).prepull_images(image_pid, images)
+
+        Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
+        tmp_dir = get_tmp_dir(__MODULE__)
+
+        {:ok, url, kube_config_path} =
+          Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
+
+        # Make sure to clean up after ourselves
+        # Stopping will also remove specs
+        on_exit(&Verify.KindInstallWorker.stop_all/0)
+
+        :ok = wait_for_images(images, image_pid)
 
         Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
         Application.put_env(:wallaby, :base_url, url)
@@ -78,8 +81,6 @@ defmodule Verify.TestCase do
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
         Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
-
-        :ok = wait_for_images(images, image_pid)
 
         {:ok,
          [
