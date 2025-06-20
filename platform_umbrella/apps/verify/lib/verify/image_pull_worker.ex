@@ -30,51 +30,63 @@ defmodule Verify.ImagePullWorker do
   end
 
   @impl GenServer
-  def handle_cast({:pull, image}, state) do
-    task_fn = build_docker_pull_cmd(image)
-    task = Task.Supervisor.async_nolink(Verify.TaskSupervisor, task_fn)
-
-    state = put_in(state.tasks[key(image)], task)
-
-    {:noreply, state}
-  end
-
-  @impl GenServer
   def handle_call({:status, image}, _from, state) do
     Logger.debug("Looking up status of image: #{image}")
 
     status =
       case state.tasks[key(image)] do
-        %Task{} ->
+        {^image, %Task{}} ->
           :running
 
-        {_, 0} ->
+        {^image, {_, 0}} ->
           :complete
 
+        {^image, :retrying} ->
+          :retrying
+
         _ ->
-          :failed
+          :unknown
       end
 
     {:reply, status, state}
   end
 
   @impl GenServer
+  def handle_cast({:pull, image}, state), do: pull(image, state)
+
+  @impl GenServer
+  def handle_info({:pull, image}, state), do: pull(image, state)
+
+  @impl GenServer
   def handle_info({ref, result}, state) do
-    # The task succeed so we can demonitor its reference
+    # The task finished so we can demonitor its reference
     Process.demonitor(ref, [:flush])
 
-    {key, _task} = get_task_for_ref(state, ref)
-    Logger.debug("Got #{inspect(result)} for key #{key}")
-    state = put_in(state.tasks[key], result)
+    {key, {image, _task}} = get_task_for_ref(state, ref)
+    Logger.debug("Got #{inspect(result)} for image #{image}")
+
+    update =
+      case result do
+        {_stdout, 0} ->
+          {image, result}
+
+        _ ->
+          Process.send_after(self(), {:pull, image}, 5_000)
+          {image, :retrying}
+      end
+
+    state = put_in(state.tasks[key], update)
+
     {:noreply, state}
   end
 
-  # If the task fails...
   @impl GenServer
   def handle_info({:DOWN, ref, _, _, reason}, state) do
-    {key, _task} = get_task_for_ref(state, ref)
+    {key, {image, _task}} = get_task_for_ref(state, ref)
     Logger.error("Image key: #{key} failed to pull with reason: #{inspect(reason)}")
-    state = put_in(state.images[key], reason)
+
+    # retry after delay
+    Process.send_after(self(), {:pull, image}, 5_000)
     {:noreply, state}
   end
 
@@ -93,7 +105,7 @@ defmodule Verify.ImagePullWorker do
   defp build_docker_pull_cmd(image) do
     fn ->
       Logger.info("Trying to pre-pull image: #{image}")
-      System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [image])
+      System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [image], stderr_to_stdout: true)
     end
   end
 
@@ -101,7 +113,7 @@ defmodule Verify.ImagePullWorker do
 
   defp get_task_for_ref(state, find_ref) do
     Enum.find(state.tasks, fn
-      {_, %Task{ref: ^find_ref}} -> true
+      {_, {_, %Task{ref: ^find_ref}}} -> true
       _ -> false
     end)
   end
@@ -110,4 +122,13 @@ defmodule Verify.ImagePullWorker do
 
   defp key(image) when is_binary(image),
     do: image |> String.replace("/", "_") |> String.replace(":", "_") |> String.replace("-", "_") |> String.to_atom()
+
+  defp pull(image, state) do
+    task_fn = build_docker_pull_cmd(image)
+    task = Task.Supervisor.async_nolink(Verify.TaskSupervisor, task_fn)
+
+    state = put_in(state.tasks[key(image)], {image, task})
+
+    {:noreply, state}
+  end
 end

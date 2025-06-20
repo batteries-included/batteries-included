@@ -1,85 +1,18 @@
 defmodule Verify.TestCase.Helpers do
-  @moduledoc false
+  @moduledoc """
+  Contains test helpers (i.e. assertions and repeated actions)
+  """
 
   import ExUnit.Assertions
-  import Wallaby.Browser
+  import Wallaby.Browser, except: [visit: 2]
 
-  alias Verify.PathHelper
   alias Wallaby.Query
-
-  require Logger
 
   @backspaces Enum.map(0..100, fn _ -> :backspace end)
   @deletes Enum.map(0..100, fn _ -> :delete end)
 
   @container_panel Query.css("#containers_panel-containers")
   @port_panel Query.css("#ports_panel")
-
-  # Adapted from Wallaby.Feature.feature/3
-  @doc """
-  `verify` wraps ExUnit.test so that test failures take a screenshot and runs `bi rage`.
-
-  The context will automatically be populated with:
-  - A wallaby session set to the correct URL: `session`
-  - A module specific temp directory. This directory is automatically uploaded on failure in CI: `tmp_dir`
-  - The tested version: `tested_version`
-  - The URL of the control server: `control_url`
-  - The name/pid of the BatteryInstallWorker: `battery_install_worker`
-  - The path to the kube config file for the cluster: `kube_config_path`
-  - The name/pid of the ImagePullWorker: `image_pull_worker`
-  - The list of requested images and batteries: `requested_{batteries,images}`
-  """
-  defmacro verify(message, context \\ quote(do: _), contents) do
-    %{module: mod, file: file, line: line} = __CALLER__
-
-    contents =
-      quote do
-        try do
-          unquote(contents)
-          :ok
-        rescue
-          e ->
-            out = unquote(__MODULE__).rage_output_for_test(unquote(mod), unquote(message))
-
-            Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), unquote(message))
-            # taking a screenshot writes the paths without a final newline so add it here
-            IO.write("\n")
-            Verify.KindInstallWorker.rage(unquote(mod), out)
-
-            reraise(e, __STACKTRACE__)
-        end
-      end
-
-    context = Macro.escape(context)
-    contents = Macro.escape(contents, unquote: true)
-
-    quote bind_quoted: [
-            mod: mod,
-            file: file,
-            line: line,
-            context: context,
-            contents: contents,
-            message: message
-          ] do
-      name = ExUnit.Case.register_test(mod, file, line, :verification, message, [:verify])
-
-      def unquote(name)(unquote(context)), do: unquote(contents)
-    end
-  end
-
-  @spec get_tmp_dir(module()) :: String.t()
-  def get_tmp_dir(mod) do
-    Path.join([PathHelper.tmp_dir!(), "bi-int-test", Atom.to_string(mod)])
-  end
-
-  @spec rage_output_for_test(module(), binary()) :: String.t()
-  def rage_output_for_test(mod, message) do
-    tmp_dir = get_tmp_dir(mod)
-    name = String.replace(message, " ", "_")
-
-    time = :second |> :erlang.system_time() |> to_string()
-    Path.join([tmp_dir, "#{time}_#{name}.json"])
-  end
 
   def table_row(opts \\ []), do: Query.css("table tbody tr", opts)
   def h3(text, opts \\ []), do: Query.css("h3", Keyword.put(opts, :text, text))
@@ -208,50 +141,6 @@ defmodule Verify.TestCase.Helpers do
     end
   end
 
-  def wait_for_images(images, pid, timeout \\ 60_000)
-
-  def wait_for_images([] = _images, _pid, _timeout), do: :ok
-
-  def wait_for_images(images, pid, timeout) do
-    start_time = DateTime.utc_now()
-    end_time = DateTime.add(start_time, timeout, :millisecond)
-
-    :ok = do_wait_on_images(images, pid, end_time, remaining(end_time))
-
-    diff = DateTime.diff(DateTime.utc_now(), start_time, :millisecond)
-    Logger.debug("Finished checking in #{diff} milliseconds")
-    :ok
-  end
-
-  # there's no more images to check
-  defp do_wait_on_images([] = _images, _pid, _end_time, _remaining), do: :ok
-
-  # we're out of time
-  defp do_wait_on_images(_images, _pid, _end_time, remaining) when remaining < 0, do: :ok
-
-  # still have images to check
-  defp do_wait_on_images(images, pid, end_time, _remaining) do
-    waiting =
-      Enum.filter(images, fn image ->
-        case Verify.ImagePullWorker.image_status(pid, image) do
-          # if we're still pulling, keep the image
-          :running ->
-            Process.sleep(500)
-            true
-
-          # else remove it
-          _ ->
-            false
-        end
-      end)
-
-    do_wait_on_images(waiting, pid, end_time, remaining(end_time))
-  end
-
-  defp remaining(end_time) do
-    DateTime.diff(end_time, DateTime.utc_now(), :millisecond)
-  end
-
   defp assert_workflow_pods_running(session, workload, path) do
     # make sure the page is available
     {:ok, _} =
@@ -296,6 +185,7 @@ defmodule Verify.TestCase.Helpers do
     |> click(Query.css(~s/#container-form-modal-modal-container button[type="submit"]/))
     # make sure the modal is gone
     |> sleep(100)
+    |> immediately_refute_has(Query.css("#container-form-modal"))
     # add port
     |> find(@port_panel, fn e -> click(e, Query.button("Add Port")) end)
     |> fill_in(Query.text_field("port[name]"), with: service_name)
@@ -303,7 +193,95 @@ defmodule Verify.TestCase.Helpers do
     |> click(Query.css(~s/#port-form-modal-modal-container button[type="submit"]/))
     # make sure the modal is gone
     |> sleep(100)
+    |> immediately_refute_has(Query.css("#port-form-modal"))
     # save service
     |> click(Query.button("Save Traditional Service"))
+  end
+
+  def immediately_refute_has(parent, query) do
+    case execute_query_without_retry(parent, query) do
+      {:error, :invalid_selector} ->
+        raise Wallaby.QueryError,
+              Query.ErrorMessage.message(query, :invalid_selector)
+
+      {:error, _not_found} ->
+        parent
+
+      # no results means not found
+      {:ok, %{result: []}} ->
+        parent
+
+      {:ok, query} ->
+        raise Wallaby.ExpectationNotMetError,
+              Query.ErrorMessage.message(query, :found)
+    end
+  end
+
+  defp execute_query_without_retry(%{driver: driver} = parent, query) do
+    with {:ok, query} <- Query.validate(query),
+         compiled_query = Query.compile(query),
+         {:ok, elements} <- driver.find_elements(parent, compiled_query) do
+      {:ok, %{query | result: elements}}
+    end
+  rescue
+    Wallaby.StaleReferenceError ->
+      {:error, :stale_reference}
+  end
+
+  def login_keycloak(session, username, password) do
+    session =
+      session
+      |> assert_has(h3("Keycloak"))
+      |> click(Query.link("Admin Console"))
+
+    session
+    |> window_handles()
+    |> List.last()
+    |> then(&focus_window(session, &1))
+    |> assert_has(Query.css("div.kc-logo-text"))
+    |> fill_in(Query.text_field("username"), with: username)
+    |> fill_in(Query.text_field("password"), with: password)
+    |> click(Query.button("Sign In"))
+  end
+
+  def create_keycloak_user(session, email, user, password) do
+    session =
+      session
+      # from the net_sec page
+      |> visit("/net_sec")
+      |> assert_has(h3("Realms"))
+      # go to the admin realm view page
+      |> click(Query.css("td", text: "Keycloak"))
+      |> assert_has(h3("Keycloak"))
+      # create the new user
+      |> click(Query.button("New User"))
+      |> assert_has(Query.css("h2", text: "New User"))
+      |> fill_in(Query.text_field("user_representation[email]"), with: email)
+      |> fill_in(Query.text_field("user_representation[username]"), with: user)
+      |> click(Query.button("Create User"))
+      |> assert_has(Query.css("p", text: "User has been created!"))
+
+    # get the temp password
+    temp_password = text(session, Query.css("pre"))
+
+    session
+    # exit the modal
+    |> click(Query.css("#temp-password-modal-container button"))
+    # login to keycloak
+    |> login_keycloak(user, temp_password)
+    |> assert_has(Query.css("h1", text: "Update password"))
+    |> fill_in(Query.text_field("password-new"), with: password)
+    |> fill_in(Query.text_field("password-confirm"), with: password)
+    |> click(Query.button("Submit"))
+    |> assert_has(Query.css("#kc-main-content-page-container"))
+  end
+
+  @doc """
+  Overrides `Wallaby.Browser.visit/2` with a small delay to reduce flakiness
+  """
+  def visit(parent, path) do
+    parent
+    |> Wallaby.Browser.visit(path)
+    |> sleep(100)
   end
 end

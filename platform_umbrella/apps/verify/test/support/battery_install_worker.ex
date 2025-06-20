@@ -4,7 +4,7 @@ defmodule Verify.BatteryInstallWorker do
   use TypedStruct
 
   import Verify.TestCase.Helpers
-  import Wallaby.Browser
+  import Wallaby.Browser, except: [visit: 2]
 
   alias CommonCore.Batteries.CatalogBattery
   alias Wallaby.Query
