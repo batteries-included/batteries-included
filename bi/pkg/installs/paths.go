@@ -40,6 +40,10 @@ func (env *InstallEnv) WireGuardConfigPath() string {
 	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug, "wireguard.yaml")
 }
 
-func (env *InstallEnv) installStateHome() string {
+func (env *InstallEnv) InstallStateHome() string {
 	return filepath.Join(xdg.StateHome, "bi", "installs", env.Slug)
+}
+
+func baseInstallPath() string {
+	return filepath.Join(xdg.StateHome, "bi", "installs")
 }
