@@ -171,7 +171,12 @@ defmodule Verify.TestCase.Util do
   @spec start_session() :: {:ok, Wallaby.Session.t()} | {:error, Wallaby.reason()}
   def start_session do
     Wallaby.start_session(
-      max_wait_time: 60_000,
+      # Indirectly this is the max time that an image can take to pull
+      # because most of our tests end up asseting that there's a row in the
+      # pods table. That assestion waits for the max_wait_time
+      # before failing.
+      # So if the image takes longer than this to pull, the test will fail
+      max_wait_time: 300_000,
       capabilities: %{
         headless: true,
         javascriptEnabled: true,

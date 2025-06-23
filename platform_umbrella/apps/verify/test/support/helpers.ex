@@ -249,6 +249,8 @@ defmodule Verify.TestCase.Helpers do
     |> visit(@keycloak_realm_path)
     # wait for the admin realm
     |> assert_has(table_row(minimum: 1))
+    |> trigger_k8s_deploy()
+    |> visit(@keycloak_realm_path)
     # wait for the default realm
     |> assert_has(table_row(minimum: 2))
   end
