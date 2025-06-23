@@ -29,7 +29,7 @@ func (env *InstallEnv) WriteAll(ctx context.Context) error {
 
 func (env *InstallEnv) Remove() error {
 	// Remove all files in the install directory
-	installHome := env.installStateHome()
+	installHome := env.InstallStateHome()
 
 	slog.Debug("Removing install directory", slog.String("path", installHome))
 	if err := os.RemoveAll(installHome); err != nil {

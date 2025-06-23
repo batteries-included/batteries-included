@@ -30,7 +30,7 @@ type InstallEnv struct {
 func (env *InstallEnv) init(ctx context.Context) error {
 	slog.Debug("Initializing install", slog.String("slug", env.Slug))
 	// Create the install directory in the xdg state home
-	if err := os.MkdirAll(env.installStateHome(), 0o700); err != nil {
+	if err := os.MkdirAll(env.InstallStateHome(), 0o700); err != nil {
 		return fmt.Errorf("error creating install directory: %w", err)
 	}
 
