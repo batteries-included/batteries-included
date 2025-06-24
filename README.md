@@ -15,20 +15,17 @@ intuitive and easy-to-use interface.
 ## Why Batteries Included?
 
 - 🚀 **Launch Production-Ready Infrastructure in Minutes**
-
   - Deploy databases, monitoring, and web services with just a few clicks
   - Automatic scaling, high availability, and security out of the box
   - Built on battle-tested open source technologies like Kubernetes
 
 - 💻 **Focus on Building, Not Infrastructure**
-
   - No more wrestling with YAML or complex configurations
   - Automated setup of best practices for security, monitoring, and operations
   - Unified interface for managing all your services
   - Runs wherever you want it to!
 
 - 🏢 **Enterprise-Grade Features, Developer-Friendly Interface**
-
   - AI/ML capabilities with integrated Jupyter notebooks and vector databases
   - Automated PostgreSQL, Redis, and MongoDB deployment and management
   - Built-in monitoring with Grafana dashboards and VictoriaMetrics

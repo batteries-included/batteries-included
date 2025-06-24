@@ -28,7 +28,6 @@ To set up monitoring for your environment:
 1. Navigate to the `Monitoring` tab in the control server.
 2. Click on `Install Batteries` or `Manage Batteries`. You'll see a list of
    available monitoring batteries, including:
-
    - Grafana
    - Victoria Metrics
    - Kube Monitoring

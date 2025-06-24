@@ -106,7 +106,6 @@ Lastly, we need to create the Jupyter Notebook itself:
 2. There should be a `Jupyter Notebooks` section available now. Click on
    `New Notebook` to begin creation.
 3. We're going to go ahead and add two environment variables:
-
    - `OPENAI_KEY`: We'll be using OpenAI to generate embeddings, so we need an
      API key to authenticate.
    - `DATABASE_URL`: Navigate to the `Secret` tab, and point this to the `DSN`
