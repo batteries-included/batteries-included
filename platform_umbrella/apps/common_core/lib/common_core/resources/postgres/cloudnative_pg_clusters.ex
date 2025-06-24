@@ -333,6 +333,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.name(name)
     |> B.namespace(namespace)
     |> B.label("cnpg.io/reload", "")
+    |> Map.put("type", "kubernetes.io/tls")
     |> F.require_battery(state, :battery_ca)
   end
 
