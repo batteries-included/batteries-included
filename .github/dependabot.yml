@@ -11,6 +11,9 @@ updates:
       actions-deps:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - automation
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/common_ui/assets/'
     schedule:
@@ -22,6 +25,10 @@ updates:
       dependencies:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - automation
+      - javascript
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/control_server_web/assets/'
     schedule:
@@ -37,6 +44,7 @@ updates:
       - dependencies
       - javascript
       - int-test
+      - automation
   - package-ecosystem: npm
     directory: '/platform_umbrella/apps/home_base_web/assets/'
     schedule:
@@ -48,6 +56,10 @@ updates:
       dependencies:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - automation
+      - javascript
   - package-ecosystem: npm
     directory: '/static/'
     schedule:
@@ -59,6 +71,10 @@ updates:
       dependencies:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - automation
+      - javascript
   - package-ecosystem: 'mix'
     directory: '/platform_umbrella/'
     schedule:
@@ -69,6 +85,7 @@ updates:
       - dependencies
       - elixir
       - int-test
+      - automation
   - package-ecosystem: 'gomod'
     directory: '/bi/'
     schedule:
@@ -79,6 +96,9 @@ updates:
       dependencies:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - automation
   - package-ecosystem: npm
     directory: '/pastebin-go/assets/'
     schedule:
@@ -89,6 +109,10 @@ updates:
       dependencies:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - automation
+      - javascript
   - package-ecosystem: 'gomod'
     directory: '/pastebin-go/'
     schedule:
@@ -99,3 +123,6 @@ updates:
       dependencies:
         patterns:
           - '*'
+    labels:
+      - dependencies
+      - automation

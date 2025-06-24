@@ -7,15 +7,13 @@ name: BIX Docker
       - master
     tags:
       - '*'
-
   pull_request:
     branches:
       - master
-    types:
-      - opened
-      - synchronize
-      - labeled
-      - reopened
+  # Allow manual dispatch for the times
+  # when we want to run int-tests after
+  # opening a PR
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -25,12 +23,6 @@ permissions:
 defaults:
   run:
     shell: bash
-
-# only allow 1 run per commit concurrently
-concurrency:
-  group:
-    ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: true
 
 jobs:
   build-images:
