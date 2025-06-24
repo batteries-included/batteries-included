@@ -12,8 +12,7 @@ import Image from '~/components/common/Image.astro';
 export const prerender = true;
 
 const metadata = {
-  title:
-    'Batteries Included: The ultimate platform for modern service development',
+  title: 'Batteries Included: Infrastructure for the AI age',
   ignoreTitleTemplate: true,
 };
 ---
@@ -21,10 +20,13 @@ const metadata = {
 <Layout metadata={metadata}>
   <!-- Hero Widget ******************* -->
   <Hero>
-    <Fragment slot="subtitle">The ultimate platform</Fragment>
-    <Fragment slot="title">for modern service development.</Fragment>
+    <Fragment slot="subtitle">Infrastructure for the AI age</Fragment>
+    <Fragment slot="title">The easiest to use self-hosted AI platform.</Fragment
+    >
     <Fragment slot="content">
-      Launch your cloud infrastructure in seconds, no YAML required
+      Deploy large language models, vector databases, and Jupyter notebooks in
+      seconds. All the tools that hyperscalers rely on to build LLMs, now
+      available for your self-hosted infrastructure. No YAML required.
     </Fragment>
     <div class="mt-12 mx-auto max-w-screen-md">
       <div class="flex justify-center">
@@ -75,13 +77,13 @@ const metadata = {
 
   <Features
     id="features"
-    title="One-click deployments with security, scale, and monitoring out of the box"
+    title="Automated state-of-the-art AI models and tools with security, scale, and monitoring out of the box"
     items={[
       {
-        title: 'Spin up a relational database system on any cloud or hardware',
+        title: 'Deploy production-ready LLMs and vector databases instantly',
         description:
-          'Production-ready PostgreSQL that works with your existing stack. No config required.',
-        icon: 'postgresql',
+          'Launch Ollama, OpenWebUI, PGVector and other AI infrastructure components. Production-ready setups that work with your existing stack. No config required.',
+        icon: 'aistack',
       },
       {
         title:
@@ -91,10 +93,10 @@ const metadata = {
         icon: 'kubernetes',
       },
       {
-        title: 'Launch a self-hosted RAG stack for your next AI product',
+        title: 'Enterprise-grade PostgreSQL with vector extensions',
         description:
-          'Accelerate development cycles with intelligent automation. Focus on your core product while our platform handles repetitive tasks and integrations.',
-        icon: 'aistack',
+          'Purpose-built database infrastructure for AI applications with pgvector support. Store embeddings, manage model metadata, and handle high-throughput AI workloads seamlessly.',
+        icon: 'postgresql',
       },
     ]}>
     <Fragment slot="bg">
@@ -105,9 +107,19 @@ const metadata = {
   <!-- Content Widget **************** -->
 
   <Content2
-    title="Spend less time on infra ops and more time on your product"
+    title="All the infrastructure you need to build and deploy AI applications"
     classes={{ headline: 'mt-20 lg:mt-24 xl:mt-28 max-w-3xl' }}
     items={[
+      {
+        title: 'Complete MLOps and AI development stack',
+        description:
+          'Deploy Jupyter notebooks, MLflow, model registries, and inference servers with enterprise-grade monitoring. Build, train, and deploy AI models with the same tools used by leading AI companies, all self-hosted and under your control.',
+        link: '/solutions/ai',
+        image: {
+          src: '~/assets/images/solutions/operational-tools/demo.png',
+          alt: 'MLOps and AI development tools',
+        },
+      },
       {
         title: 'Advanced operational tools',
         description:
@@ -146,8 +158,8 @@ const metadata = {
   </Content2>
 
   <InfoWidget
-    title="Access best-in-class open source technologies, expertise not required"
-    description="Batteries Included is built on a fully open-sourced stack, offering unmatched portability and the best-in-class technology without compromises. Our solutions adhere to industry standards out of the box, ensuring you can work and build the way you want, without being limited by your infrastructure."
+    title="Access the same AI infrastructure that powers the world's leading LLMs"
+    description="Batteries Included brings you the complete AI infrastructure stack used by hyperscalers and AI companies. Deploy Ollama, vector databases, Jupyter notebooks, and more. All fully open-sourced, production-ready, and designed for self-hosting. No vendor lock-in, no compromises - just the tools you need to build world-class AI applications on your own infrastructure."
     link="/posts/open-source-payoff"
   />
 
