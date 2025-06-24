@@ -23,16 +23,16 @@ defmodule CommonCore.Resources.Keycloak do
 
     data =
       %{}
-      |> Map.put("KC_HEALTH_ENABLED", "true")
       |> Map.put("KC_CACHE", "ispn")
+      # migrate to hostname:v2 https://www.keycloak.org/server/hostname
+      |> Map.put("KC_HOSTNAME_BACKCHANNEL_DYNAMIC", "false")
       |> Map.put("KC_HOSTNAME_STRICT", "false")
-      |> Map.put("KC_HOSTNAME_STRICT_BACKCHANNEL", "false")
+      |> Map.put("KC_PROXY_HEADERS", "xforwarded")
       # Batteries are mounted at the root of a host
       |> Map.put("KEYCLOAK_HTTP_RELATIVE_PATH", "/")
       |> Map.put("KC_HTTP_RELATIVE_PATH", "/")
       |> Map.put("KC_HTTP_ENABLED", "true")
       |> Map.put("KC_HTTP_PORT", "#{@web_listen_port}")
-      |> Map.put("KC_PROXY", "edge")
       |> Map.put("KC_DB", "postgres")
       |> Map.put("KC_DB_URL_HOST", hostname)
       |> Map.put("KC_LOG_LEVEL", battery.config.log_level)
