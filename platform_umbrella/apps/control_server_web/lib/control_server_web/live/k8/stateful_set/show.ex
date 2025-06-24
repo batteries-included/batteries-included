@@ -62,11 +62,12 @@ defmodule ControlServerWeb.Live.StatefulSetShow do
     <.page_header title={@name} back_link={~p"/kube/stateful_sets"} />
 
     <div class="flex flex-col gap-8 mb-10">
-      <div class="flex flex-wrap gap-4 mt-6">
+      <div id="badges" class="flex flex-wrap gap-4 mt-6">
         <.badge>
           <:item label="Total Replicas">{Map.get(@status, "replicas", 0)}</:item>
           <:item label="Available Replicas">{Map.get(@status, "availableReplicas", 0)}</:item>
           <:item label="Updated Replicas">{Map.get(@status, "updatedReplicas", 0)}</:item>
+          <:item label="Ready Replicas">{Map.get(@status, "readyReplicas", 0)}</:item>
           <:item label="Generations">{Map.get(@status, "observedGeneration", 0)}</:item>
         </.badge>
       </div>

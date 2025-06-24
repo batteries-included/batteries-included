@@ -9,12 +9,9 @@ defmodule Verify.ForegejoTest do
 
   verify "forgejo is running", %{session: session} do
     session
-    # this also asserts on e.g. pg-forgejo-1-initdb, unfortunately
+    |> assert_pod_succeeded("pg-forgejo-1-initdb")
     |> assert_pod_running("pg-forgejo-1")
-    # so check it again?
-    |> assert_pod_running("pg-forgejo-1")
-    # the actual pod won't come up until the DB is available
-    |> assert_pod_running("forgejo-0")
+    |> assert_pods_in_sts_running("battery-core", "forgejo")
     # now let's make sure we can access the running service
     |> visit("/devtools")
     |> click_external(Query.css("a", text: "Forgejo"))

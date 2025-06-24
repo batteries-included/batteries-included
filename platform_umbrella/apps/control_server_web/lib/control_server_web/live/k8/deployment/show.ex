@@ -80,10 +80,11 @@ defmodule ControlServerWeb.Live.DeploymentShow do
     </.page_header>
 
     <div class="flex flex-col gap-8 mb-10">
-      <div class="flex flex-wrap gap-4 mt-6">
+      <div id="badges" class="flex flex-wrap gap-4 mt-6">
         <.badge>
           <:item label="Total Replicas">{Map.get(@status, "replicas", 0)}</:item>
           <:item label="Available Replicas">{Map.get(@status, "availableReplicas", 0)}</:item>
+          <:item label="Ready Replicas">{Map.get(@status, "readyReplicas", 0)}</:item>
           <:item label="Generations">{Map.get(@status, "observedGeneration", 0)}</:item>
         </.badge>
       </div>

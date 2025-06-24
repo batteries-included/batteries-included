@@ -7,12 +7,17 @@ defmodule Verify.VictoriaMetricsTest do
     images: ~w(grafana)a ++ @victoria_metrics
 
   verify "victoria metrics is running", %{session: session} do
+    ns = "battery-core"
+
     session
-    |> assert_pod_running("vm-operator")
-    |> assert_pod_running("vmagent-main-agent")
-    |> assert_pod_running("vmstorage-main-cluster-0")
-    |> assert_pod_running("vmselect-main-cluster-0")
-    |> assert_pod_running("vminsert-main-cluster-")
+    # these are roughly the order that these are created
+    # so check each in turn
+    |> assert_pods_in_deployment_running(ns, "vm-operator")
+    |> assert_pods_in_deployment_running(ns, "vmagent-main-agent")
+    |> assert_pods_in_sts_running(ns, "vmstorage-main-cluster")
+    |> assert_pods_in_sts_running(ns, "vmselect-main-cluster")
+    |> assert_pods_in_deployment_running(ns, "vminsert-main-cluster")
+    # now try to access the running services
     |> visit("/monitoring")
     |> click_external(Query.css("a", text: "VM Agent"))
     |> assert_has(Query.css("h2", text: "vmagent"))
