@@ -14,8 +14,6 @@ defmodule Verify.TestCase.Helpers do
   @container_panel Query.css("#containers_panel-containers")
   @port_panel Query.css("#ports_panel")
 
-  @keycloak_realm_path "/keycloak/realms"
-
   def table_row(opts \\ []), do: Query.css("table tbody tr", opts)
   def h3(text, opts \\ []), do: Query.css("h3", Keyword.put(opts, :text, text))
 
@@ -25,6 +23,20 @@ defmodule Verify.TestCase.Helpers do
     |> assert_has(table_row(minimum: 6))
     |> fill_in(Query.text_field("filter_value"), with: name_fragment)
     |> assert_has(table_row(text: name_fragment, count: 1))
+  end
+
+  def assert_pod_succeeded(session, name_fragment) do
+    path = current_path(session)
+
+    session =
+      session
+      |> visit("/kube/pods")
+      |> assert_has(table_row(minimum: 6))
+      |> fill_in(Query.text_field("filter_value"), with: name_fragment)
+      |> sleep(100)
+      |> assert_has(table_row(text: "Succeeded", minimum: 1))
+
+    visit(session, path)
   end
 
   def assert_pod_running(session, name_fragment), do: assert_pods_running(session, [name_fragment])
@@ -50,11 +62,11 @@ defmodule Verify.TestCase.Helpers do
   end
 
   def assert_pods_in_sts_running(session, namespace, sts) do
-    assert_workflow_pods_running(session, sts, "/kube/stateful_set/#{namespace}/#{sts}/show")
+    assert_workload_pods_running(session, sts, "/kube/stateful_set/#{namespace}/#{sts}/show")
   end
 
   def assert_pods_in_deployment_running(session, namespace, deployment) do
-    assert_workflow_pods_running(session, deployment, "/kube/deployment/#{namespace}/#{deployment}/show")
+    assert_workload_pods_running(session, deployment, "/kube/deployment/#{namespace}/#{deployment}/show")
   end
 
   def create_pg_cluster(session, cluster_name) do
@@ -156,7 +168,7 @@ defmodule Verify.TestCase.Helpers do
     end
   end
 
-  defp assert_workflow_pods_running(session, workload, path) do
+  defp assert_workload_pods_running(session, workload, path) do
     # make sure the page is available
     {:ok, _} =
       :wallaby
@@ -168,23 +180,45 @@ defmodule Verify.TestCase.Helpers do
     session =
       session
       |> visit(path)
-      # check we're on the pods page for the deployment
+      # check we're on the pods page for the workload
       |> assert_has(h3(workload))
 
-    # get all of the pod rows
-    pods = all(session, Query.css("table#pods_table"))
+    # get all of the workload statuses e.g. total and ready replicas
+    statuses = get_statuses_from_badge(session)
+    num_pods = statuses["total_replicas"]
 
+    {:ok, session} =
+      retry(fn ->
+        session = visit(session, path)
+        new_statuses = get_statuses_from_badge(session)
+
+        case new_statuses["ready_replicas"] do
+          ^num_pods ->
+            {:ok, session}
+
+          _ ->
+            Process.sleep(654)
+            {:error, session}
+        end
+      end)
+
+    # and double check all pods are running
     session =
       session
-      # make sure all pods are Running
-      |> assert_has(table_row(text: "Running", count: length(pods)))
-      # trigger a deploy
       |> trigger_k8s_deploy()
-      # and double check all pods are running
       |> visit(path)
-      |> assert_has(table_row(text: "Running", count: length(pods)))
+      |> assert_has(table_row(text: "Running", count: String.to_integer(num_pods)))
 
     session
+  end
+
+  defp get_statuses_from_badge(session) do
+    session
+    |> text(Query.css("div#badges"))
+    |> String.split("\n")
+    |> Enum.map(fn s -> s |> String.replace(" ", "") |> String.replace(":", "") |> Macro.underscore() end)
+    |> Enum.chunk_every(2, 2, :discard)
+    |> Map.new(fn [l, r] -> {l, r} end)
   end
 
   def create_traditional_service(session, image, service_name) do
@@ -245,12 +279,12 @@ defmodule Verify.TestCase.Helpers do
 
   def check_keycloak_running(session) do
     session
+    |> assert_pod_succeeded("pg-keycloak-1-initdb")
+    |> assert_pod_running("pg-keycloak-1")
     |> assert_pods_in_sts_running("battery-core", "keycloak")
-    |> visit(@keycloak_realm_path)
+    |> visit("/keycloak/realms")
     # wait for the admin realm
     |> assert_has(table_row(minimum: 1))
-    |> trigger_k8s_deploy()
-    |> visit(@keycloak_realm_path)
     # wait for the default realm
     |> assert_has(table_row(minimum: 2))
   end
