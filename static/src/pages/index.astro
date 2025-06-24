@@ -9,6 +9,7 @@ import StartBuild from '~/components/widgets/StartBuild.astro';
 import VideoModal from '~/components/widgets/VideoModal';
 import RecentPosts from '~/components/widgets/RecentPosts.astro';
 import Image from '~/components/common/Image.astro';
+import StartLocal from '~/components/widgets/StartLocal.astro';
 export const prerender = true;
 
 const metadata = {
@@ -103,6 +104,8 @@ const metadata = {
       <div class="absolute inset-0 bg-[#FAFAFA] dark:bg-transparent"></div>
     </Fragment>
   </Features>
+
+  <StartLocal />
 
   <!-- Content Widget **************** -->
 

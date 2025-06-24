@@ -17,6 +17,7 @@ PRETTIER_GLOBS+=(
     '../README.md'
     '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'
     '../static/src/content/**/*.md'
+    '../static/src/content/**/*.mdx'
 )
 
 format_mix_code() {

@@ -6,6 +6,8 @@ category: getting-started
 draft: false
 ---
 
+import ScriptDisplay from '~/components/ui/ScriptDisplay.astro';
+
 ## Design Your Installation
 
 Start by logging in or creating an account at
@@ -23,7 +25,11 @@ Then, choose your preferred deployment type:
   provider.
 
 <div align="center">
-   <img src="/images/docs/getting-started/install-1.png" width="80%">
+  <img
+    src="/images/docs/getting-started/install-1.png"
+    width="80%"
+    alt="Screenshot of choosing installation details"
+  />
 </div>
 
 ## Run Installation
@@ -33,7 +39,26 @@ shell script. Just copy and run this command - we'll take care of all the
 configuration, security, and integration automatically!
 
 <div align="center">
-   <img src="/images/docs/getting-started/install-2.png" width="50%">
+  <img
+    src="/images/docs/getting-started/install-2.png"
+    width="50%"
+    alt="Screenshot of an example installation script"
+  />
+</div>
+
+## Pre-Configured Local Installation
+
+For faster local testing and development, you can use our pre-configured
+installation script. This script sets up a local Kubernetes cluster using Kind,
+installs all necessary components, and configures everything for you. To use
+that pre-configured local installation, simply run the following command in your
+terminal:
+
+<div align="center" class="mb-8">
+  <ScriptDisplay
+    src="https://home.batteriesincl.com/api/v1/scripts/start_local"
+    class="max-w-5xl mx-auto"
+  />
 </div>
 
 ## Post-Installation
@@ -71,7 +96,10 @@ Monitor and manage your entire infrastructure from one place:
 - Manage configurations and settings.
 - View performance metrics and alerts.
 
-<img src="/images/docs/getting-started/dashboard.png">
+<img
+  src="/images/docs/getting-started/dashboard.png"
+  alt="Screenshot of the control server's home dashboard"
+/>
 
 ## Next Steps
 
