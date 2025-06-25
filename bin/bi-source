@@ -219,7 +219,6 @@ do_gen_static_specs() {
     # around for developers. It makes tests fail.
     VERSION_OVERRIDE=''${VERSION_OVERRIDE:-"latest"} run_mix \
         "do" \
-        clean, \
         deps.get, \
         compile --force, \
         gen.static.installations "${ROOT_DIR}/bootstrap"
