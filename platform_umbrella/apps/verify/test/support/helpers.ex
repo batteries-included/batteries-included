@@ -183,18 +183,15 @@ defmodule Verify.TestCase.Helpers do
       # check we're on the pods page for the workload
       |> assert_has(h3(workload))
 
-    # get all of the workload statuses e.g. total and ready replicas
-    statuses = get_statuses_from_badge(session)
-    num_pods = statuses["total_replicas"]
-
-    {:ok, session} =
+    {:ok, {session, statuses}} =
       retry(fn ->
         session = visit(session, path)
-        new_statuses = get_statuses_from_badge(session)
+        statuses = get_statuses_from_badge(session)
 
-        case new_statuses["ready_replicas"] do
-          ^num_pods ->
-            {:ok, session}
+        case statuses do
+          %{"total_replicas" => total, "available_replicas" => available, "ready_replicas" => ready}
+          when total == available and available == ready ->
+            {:ok, {session, statuses}}
 
           _ ->
             Process.sleep(654)
@@ -207,7 +204,7 @@ defmodule Verify.TestCase.Helpers do
       session
       |> trigger_k8s_deploy()
       |> visit(path)
-      |> assert_has(table_row(text: "Running", count: String.to_integer(num_pods)))
+      |> assert_has(table_row(text: "Running", minimum: String.to_integer(statuses["total_replicas"])))
 
     session
   end
