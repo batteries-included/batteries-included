@@ -625,8 +625,9 @@ trivy_operator:
   tag_regex: ^\d+\.\d+\.\d+$
 trust_manager:
   name: quay.io/jetstack/trust-manager
-  default_tag: v0.17.1
+  default_tag: v0.18.0
   tags:
+    - v0.18.0
     - v0.17.1
     - v0.17.0
     - v0.16.0
