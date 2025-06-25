@@ -106,7 +106,7 @@ defmodule CommonCore.Resources.ResourceGenerator do
     |> decorate_non_mounting_resources()
     # Things that can mount need to get the annotations
     |> maybe_annotate_mounted_resources(opts)
-    # Now those same things need th labels copied
+    # Now those same things need the labels copied
     |> maybe_copy_labels(opts)
     # Then the annotations too.
     |> maybe_copy_annotations(opts)
@@ -187,7 +187,12 @@ defmodule CommonCore.Resources.ResourceGenerator do
       Enum.split_with(resource_path_list, fn {_path, res} -> could_have_volumes(res) end)
 
     has_vol_path_list
-    |> Enum.map(fn {path, res} -> {path, add_vol_annotations(res, other_path_list)} end)
+    |> Enum.map(fn {path, res} ->
+      {path,
+       res
+       |> add_vol_annotations(other_path_list)
+       |> add_envfrom_annotations(other_path_list)}
+    end)
     |> Enum.concat(other_path_list)
   end
 
@@ -199,6 +204,24 @@ defmodule CommonCore.Resources.ResourceGenerator do
         add_reference(res, other_path_list, :config_map, config_name)
 
       %{"secret" => %{"secretName" => secret_name}} = _vol, res ->
+        add_reference(res, other_path_list, :secret, secret_name)
+
+      _vol, res ->
+        res
+    end)
+  end
+
+  defp add_envfrom_annotations(resource, other_path_list) do
+    envs = get_in(resource, ["spec", "template", "spec", "containers", Access.all(), "envFrom"]) || []
+
+    envs
+    |> Enum.filter(& &1)
+    |> Enum.flat_map(& &1)
+    |> Enum.reduce(resource, fn
+      %{"configMapRef" => %{"name" => config_name}} = _vol, res ->
+        add_reference(res, other_path_list, :config_map, config_name)
+
+      %{"secretRef" => %{"secretName" => secret_name}} = _vol, res ->
         add_reference(res, other_path_list, :secret, secret_name)
 
       _vol, res ->
