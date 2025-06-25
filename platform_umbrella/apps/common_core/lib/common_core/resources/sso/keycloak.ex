@@ -9,6 +9,7 @@ defmodule CommonCore.Resources.Keycloak do
   alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.Hashing.MapHMAC
   alias CommonCore.Resources.Secret
   alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.PostgresState
@@ -18,38 +19,42 @@ defmodule CommonCore.Resources.Keycloak do
 
   resource(:config_map_env_vars, battery, state) do
     namespace = core_namespace(state)
-    pg_cluster = PostgresState.cluster(state, name: Defaults.KeycloakDB.db_username(), type: :internal)
-    hostname = PostgresState.read_write_hostname(state, pg_cluster)
-
-    data =
-      %{}
-      |> Map.put("KC_CACHE", "ispn")
-      # migrate to hostname:v2 https://www.keycloak.org/server/hostname
-      |> Map.put("KC_HOSTNAME_BACKCHANNEL_DYNAMIC", "false")
-      |> Map.put("KC_HOSTNAME_STRICT", "false")
-      |> Map.put("KC_PROXY_HEADERS", "xforwarded")
-      # Batteries are mounted at the root of a host
-      |> Map.put("KEYCLOAK_HTTP_RELATIVE_PATH", "/")
-      |> Map.put("KC_HTTP_RELATIVE_PATH", "/")
-      |> Map.put("KC_HTTP_ENABLED", "true")
-      |> Map.put("KC_HTTP_PORT", "#{@web_listen_port}")
-      |> Map.put("KC_DB", "postgres")
-      |> Map.put("KC_DB_URL_HOST", hostname)
-      |> Map.put("KC_LOG_LEVEL", battery.config.log_level)
-      |> Map.put("KEYCLOAK_ADMIN", battery.config.admin_username)
-      # Make sure Keycloak uses the headless service for DNS resolution
-      # which is how it does clustering
-      |> Map.put("jgroups.dns.query", "keycloak-headless.#{namespace}")
-      |> Map.put("KC_CACHE_STACK", "kubernetes")
-      # Metrics and Health enabled
-      |> Map.put("KC_METRICS_ENABLED", "true")
-      |> Map.put("KC_HEALTH_ENABLED", "true")
+    data = config_map_data(state, battery)
 
     :config_map
     |> B.build_resource()
     |> B.name("keycloak-env-vars")
     |> B.namespace(namespace)
     |> B.data(data)
+  end
+
+  defp config_map_data(state, battery) do
+    namespace = core_namespace(state)
+    pg_cluster = PostgresState.cluster(state, name: Defaults.KeycloakDB.db_username(), type: :internal)
+    hostname = PostgresState.read_write_hostname(state, pg_cluster)
+
+    %{}
+    |> Map.put("KC_CACHE", "ispn")
+    # migrate to hostname:v2 https://www.keycloak.org/server/hostname
+    |> Map.put("KC_HOSTNAME_BACKCHANNEL_DYNAMIC", "false")
+    |> Map.put("KC_HOSTNAME_STRICT", "false")
+    |> Map.put("KC_PROXY_HEADERS", "xforwarded")
+    # Batteries are mounted at the root of a host
+    |> Map.put("KEYCLOAK_HTTP_RELATIVE_PATH", "/")
+    |> Map.put("KC_HTTP_RELATIVE_PATH", "/")
+    |> Map.put("KC_HTTP_ENABLED", "true")
+    |> Map.put("KC_HTTP_PORT", "#{@web_listen_port}")
+    |> Map.put("KC_DB", "postgres")
+    |> Map.put("KC_DB_URL_HOST", hostname)
+    |> Map.put("KC_LOG_LEVEL", battery.config.log_level)
+    |> Map.put("KEYCLOAK_ADMIN", battery.config.admin_username)
+    # Make sure Keycloak uses the headless service for DNS resolution
+    # which is how it does clustering
+    |> Map.put("jgroups.dns.query", "keycloak-headless.#{namespace}")
+    |> Map.put("KC_CACHE_STACK", "kubernetes")
+    # Metrics and Health enabled
+    |> Map.put("KC_METRICS_ENABLED", "true")
+    |> Map.put("KC_HEALTH_ENABLED", "true")
   end
 
   resource(:secret_main, battery, state) do
@@ -123,6 +128,9 @@ defmodule CommonCore.Resources.Keycloak do
 
     secret_name = PostgresState.user_secret(state, pg_cluster, pg_user)
 
+    # get the hash of the configmap data so the pod template will be updated if the CM changes
+    cm_hash = state |> config_map_data(battery) |> MapHMAC.get() |> Base.encode32()
+
     template =
       %{
         "metadata" => %{"labels" => %{"battery/managed" => "true"}},
@@ -149,7 +157,8 @@ defmodule CommonCore.Resources.Keycloak do
                 },
                 %{"name" => "KEYCLOAK_ADMIN_PASSWORD", "valueFrom" => B.secret_key_ref("keycloak", "admin-password")},
                 %{"name" => "KC_DB_USERNAME", "valueFrom" => B.secret_key_ref(secret_name, "username")},
-                %{"name" => "KC_DB_PASSWORD", "valueFrom" => B.secret_key_ref(secret_name, "password")}
+                %{"name" => "KC_DB_PASSWORD", "valueFrom" => B.secret_key_ref(secret_name, "password")},
+                %{"name" => "CM_HASH", "value" => cm_hash}
               ],
               "envFrom" => [%{"configMapRef" => %{"name" => "keycloak-env-vars"}}],
               "image" => battery.config.image,
