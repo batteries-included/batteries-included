@@ -14,6 +14,9 @@ defmodule ControlServerWeb.Live.KeycloakRealm do
   def mount(%{} = _params, _session, socket) do
     if connected?(socket) do
       :ok = EventCenter.Keycloak.subscribe(:create_user)
+      :ok = EventCenter.Keycloak.subscribe(:create_realm)
+      :ok = EventCenter.Keycloak.subscribe(:update_user)
+      :ok = EventCenter.KeycloakSnapshot.subscribe()
     end
 
     {:ok, socket |> assign_keycloak_url() |> assign_current_page()}

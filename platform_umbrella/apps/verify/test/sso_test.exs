@@ -13,6 +13,7 @@ defmodule Verify.SSOTest do
   @password "password"
 
   setup_all %{battery_install_worker: install_pid, image_pull_worker: pull_pid} do
+    # we don't need to wait for these. We can install and setup SSO while these are pulling
     prepull_images(pull_pid, ~w(grafana smtp4dev oauth2_proxy)a)
 
     {:ok, session} = start_session()
@@ -59,15 +60,21 @@ defmodule Verify.SSOTest do
     # use the authenticated_session to determine the grafana url
     url =
       authenticated_session
+      # make sure the client exists
+      |> navigate_to_keycloak_realm("Batteries Included")
+      |> assert_has(Query.css("table#keycloak-clients-table tr td", text: "grafana-oauth"))
+      # trigger reconcile to update the config
       |> trigger_k8s_deploy()
-      |> assert_pod_running("grafana")
+      |> assert_pods_in_deployment_running("battery-core", "grafana")
       |> visit("/monitoring")
       |> click_external(Query.css("a", text: "Grafana"))
       |> close_tab()
       |> attr(Query.css("a", text: "Grafana"), "href")
 
     session
-    |> sleep(5_000)
+    # the grafana config flaps as the realm is created
+    # we've tried to obviate it above but there's not 
+    # a perfect way to check that grafana has rolled out
     |> visit(url)
     |> login_keycloak(@user, @password)
     # find the link to the website in the footer
