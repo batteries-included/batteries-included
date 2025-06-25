@@ -31,8 +31,6 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup-ci
-        with:
-          elixir_cache: 'false'
 
       - name: Update registry and create PR
         run: bin/bix registry create-pr

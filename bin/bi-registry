@@ -111,6 +111,14 @@ do_create_pr() {
         return 0
     fi
 
+    # If we advanced some tags then we might have changed versions
+    # that we use in static specs for bootstraping. So if advance
+    # was successful then we need to regenerate static specs.
+    if [[ $advance_exit_code -eq 0 ]]; then
+        log "Regenerating static specs after advancing default tags"
+        bi-source gen-static-specs
+    fi
+
     log "${GREEN}Formatting image_registry.yaml${NOFORMAT}"
 
     bi-source fmt yaml
@@ -135,6 +143,12 @@ do_create_pr() {
     git checkout -b "$branch"
 
     git add ../image_registry.yaml
+    # Add bootstrap specs to git if they were changed by advancing the registry
+    if [[ $advance_exit_code -eq 0 ]]; then
+        log "Adding bootstrap specs to git"
+        git add ../bootstrap/*.json
+    fi
+
     git -c user.name="bi-registry-bot" \
         -c user.email="elliott+registrybot@batteriesincl.com" \
         commit -m "${title}" -m "${message}" \
