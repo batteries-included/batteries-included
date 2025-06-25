@@ -4,7 +4,7 @@ defmodule ControlServer.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "0.72.0",
+      version: "0.73.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       releases: releases(),
