@@ -17,6 +17,17 @@ defmodule Verify.TestCase.Helpers do
   def table_row(opts \\ []), do: Query.css("table tbody tr", opts)
   def h3(text, opts \\ []), do: Query.css("h3", Keyword.put(opts, :text, text))
 
+  def assert_echo_server(session, service_name) do
+    session
+    # get json text
+    |> text()
+    |> Jason.decode!()
+    |> then(fn json ->
+      assert ^service_name <> _rest = get_in(json, ~w[host hostname])
+      assert ^service_name <> _rest = get_in(json, ~w[environment HOSTNAME])
+    end)
+  end
+
   def assert_pod(session, name_fragment) do
     session
     |> visit("/kube/pods")

@@ -6,10 +6,12 @@ defmodule Verify.TestCase do
     install_spec = Keyword.get(options, :install_spec, :int_test)
     batteries = Keyword.get(options, :batteries, [])
     images = Keyword.get(options, :images, [])
+    %{module: calling_mod} = __CALLER__
+    slug = calling_mod |> Atom.to_string() |> CommonCore.Installation.normalize_slug()
 
     quote do
       unquote(__prelude(batteries, images))
-      unquote(__setup_all(batteries, images, install_spec))
+      unquote(__setup_all(install_spec, slug))
       unquote(__setup())
     end
   end
@@ -37,39 +39,38 @@ defmodule Verify.TestCase do
       Enum.each(unquote(images), &Module.put_attribute(__MODULE__, :images, &1))
 
       @moduletag :cluster_test
-
-      @args ["--class=bi-int-test"]
     end
   end
 
-  def __setup_all(batteries, images, install_spec) do
+  def __setup_all(install_spec, slug) do
     quote do
       setup_all do
-        batteries = unquote(batteries)
-        images = unquote(images)
+        slug = unquote(slug)
+        install_spec = unquote(install_spec)
 
         image_pid =
           start_supervised!({
             Verify.ImagePullWorker,
             [
-              name: {:via, Registry, {Verify.Registry, __MODULE__.ImagePullWorker, Verify.ImagePullWorker}}
+              name: {:via, Registry, {Verify.Registry, __MODULE__.ImagePullWorker, Verify.ImagePullWorker}},
+              slug: slug
             ]
           })
 
         # kick off image pull as early as possible
-        prepull_images(image_pid, images)
+        prepull_images(image_pid, @images)
 
-        Logger.debug("Starting Kind for spec: #{unquote(install_spec)}")
+        Logger.debug("Starting Kind for spec: #{install_spec}")
         tmp_dir = get_tmp_dir(__MODULE__)
 
         {:ok, url, kube_config_path} =
-          Verify.KindInstallWorker.start(__MODULE__, unquote(install_spec))
+          Verify.KindInstallWorker.start(__MODULE__, install_spec, slug)
 
         # Make sure to clean up after ourselves
         # Stopping will also remove specs
         on_exit(&Verify.KindInstallWorker.stop_all/0)
 
-        :ok = wait_for_images(image_pid, images)
+        :ok = wait_for_images(image_pid, @images)
 
         Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
         Application.put_env(:wallaby, :base_url, url)
@@ -86,7 +87,7 @@ defmodule Verify.TestCase do
             ]
           })
 
-        install_batteries(install_pid, batteries)
+        install_batteries(install_pid, @batteries)
         on_exit(fn -> Wallaby.end_session(session) end)
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
@@ -94,14 +95,13 @@ defmodule Verify.TestCase do
 
         {:ok,
          [
-           requested_batteries: batteries,
-           requested_images: images,
            image_pull_worker: image_pid,
            battery_install_worker: install_pid,
            control_url: url,
            kube_config_path: kube_config_path,
            tested_version: tested_version,
-           tmp_dir: tmp_dir
+           tmp_dir: tmp_dir,
+           slug: slug
          ]}
       end
     end

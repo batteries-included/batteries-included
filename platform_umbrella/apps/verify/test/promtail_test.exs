@@ -5,7 +5,7 @@ defmodule Verify.PromtailTest do
     images: ~w(grafana loki promtail)a
 
   verify "promtail is running", %{session: session} do
-    assert_pod_running(session, "promtail")
+    assert_pod_running(session, "promtail-")
 
     # TODO: assert logs being shipped to loki
   end

@@ -12,8 +12,8 @@ defmodule Verify.KeycloakTest do
     Wallaby.end_session(session)
   end
 
-  verify "can access keycloak console", %{session: session, requested_batteries: batteries} do
-    %{admin_username: username, admin_password: password} = Keyword.fetch!(batteries, :keycloak)
+  verify "can access keycloak console", %{session: session} do
+    %{admin_username: username, admin_password: password} = Keyword.fetch!(@batteries, :keycloak)
 
     session
     |> navigate_to_keycloak_realm("Keycloak")

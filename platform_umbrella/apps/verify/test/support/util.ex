@@ -22,7 +22,7 @@ defmodule Verify.TestCase.Util do
   - The name/pid of the BatteryInstallWorker: `battery_install_worker`
   - The path to the kube config file for the cluster: `kube_config_path`
   - The name/pid of the ImagePullWorker: `image_pull_worker`
-  - The list of requested images and batteries: `requested_{batteries,images}`
+  - The install slug: `slug`
   """
   defmacro verify(message, context \\ quote(do: _), contents) do
     %{module: mod, file: file, line: line} = __CALLER__

@@ -59,17 +59,7 @@ defmodule CommonCore.Installation do
 
     opts =
       opts
-      |> Keyword.put_new_lazy(:slug, fn ->
-        name
-        # We don't want no stinking caps lock
-        |> String.downcase()
-        # Everything else is a dash
-        |> String.replace(~r/[^a-z0-9]/, "-")
-        # Remove duplicate dashes
-        |> String.replace(~r/-+/, "-")
-        # Trim them from the ends
-        |> String.trim("-")
-      end)
+      |> Keyword.put_new_lazy(:slug, fn -> normalize_slug(name) end)
       |> Keyword.put_new(:kube_provider, provider_type)
       |> Keyword.put_new(:kube_provider_config, default_provider_config(provider_type, usage))
       |> Keyword.put_new(:usage, @default_usage)
@@ -139,5 +129,17 @@ defmodule CommonCore.Installation do
 
   def decrypt_message!(%__MODULE__{control_jwk: control_jwk}, message) do
     CommonCore.JWK.decrypt_from_control_server!(control_jwk, message)
+  end
+
+  def normalize_slug(name) do
+    name
+    # We don't want no stinking caps lock
+    |> String.downcase()
+    # Everything else is a dash
+    |> String.replace(~r/[^a-z0-9]/, "-")
+    # Remove duplicate dashes
+    |> String.replace(~r/-+/, "-")
+    # Trim them from the ends
+    |> String.trim("-")
   end
 end
