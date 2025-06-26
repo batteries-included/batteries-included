@@ -139,7 +139,6 @@ licenses for them.
 | github.com/cloudflare/circl                                          | https://github.com/cloudflare/circl                        | BSD-3-Clause |
 | github.com/cyphar/filepath-securejoin                                | https://github.com/cyphar/filepath-securejoin              | BSD-3-Clause |
 | github.com/davecgh/go-spew/spew                                      | https://github.com/davecgh/go-spew                         | ISC          |
-| github.com/dghubble/ipnets                                           | https://github.com/dghubble/ipnets                         | MIT          |
 | github.com/distribution/reference                                    | https://github.com/distribution/reference                  | Apache-2.0   |
 | github.com/djherbis/times                                            | https://github.com/djherbis/times                          | MIT          |
 | github.com/docker/docker                                             | https://github.com/docker/docker                           | Apache-2.0   |

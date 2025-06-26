@@ -196,7 +196,7 @@ func (c *KindClusterProvider) WriteWireGuardConfig(ctx context.Context, w io.Wri
 	c.wgGateway.Nameservers = []netip.Addr{c.wgGateway.Address} // The gateway is hosting a DNS server.
 
 	// Get the CIDR of the `kind` network.
-	c.wgGateway.VPCSubnets, err = getKindNetwork(ctx)
+	_, c.wgGateway.VPCSubnets, err = getKindNetworks(ctx)
 	if err != nil {
 		return true, err
 	}
