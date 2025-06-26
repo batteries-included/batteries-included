@@ -22,12 +22,6 @@ defmodule Verify.TraditionalTest do
     |> assert_pod_running(service_name)
     # make sure we can access the running service
     |> visit_running_service()
-    # get json text
-    |> text()
-    |> Jason.decode!()
-    |> then(fn json ->
-      assert ^service_name <> _rest = get_in(json, ["host", "hostname"])
-      assert ^service_name <> _rest = get_in(json, ["environment", "HOSTNAME"])
-    end)
+    |> assert_echo_server(service_name)
   end
 end

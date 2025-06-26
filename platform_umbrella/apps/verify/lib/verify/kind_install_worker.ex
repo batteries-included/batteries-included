@@ -37,12 +37,12 @@ defmodule Verify.KindInstallWorker do
   end
 
   # determine bi_binary if necessary
-  def handle_call({:start, identifier}, _from, %{bi_binary: nil} = state) do
-    do_start(identifier, %{state | bi_binary: PathHelper.find_bi()})
+  def handle_call({:start, args}, _from, %{bi_binary: nil} = state) do
+    do_start(args, %{state | bi_binary: PathHelper.find_bi()})
   end
 
-  def handle_call({:start, identifier}, _from, state) do
-    do_start(identifier, state)
+  def handle_call({:start, args}, _from, state) do
+    do_start(args, state)
   end
 
   # determine bi_binary if necessary
@@ -62,8 +62,8 @@ defmodule Verify.KindInstallWorker do
     do_rage(mod, output, state)
   end
 
-  defp do_start({mod, identifier}, state) do
-    {spec, path} = build_install_spec(identifier, state)
+  defp do_start({mod, identifier, slug}, state) do
+    {spec, path} = build_install_spec(identifier, slug, state)
     Logger.debug("Starting with #{path}")
     env = [{"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")}]
 
@@ -118,11 +118,15 @@ defmodule Verify.KindInstallWorker do
     end
   end
 
-  def build_install_spec(identifier, %{root_path: root_dir} = _state) do
-    install = CommonCore.Installs.Generator.build(Verify.Installs.Generator, identifier)
+  def build_install_spec(identifier, slug, %{root_path: root_dir} = _state) do
+    install =
+      Verify.Installs.Generator
+      |> CommonCore.Installs.Generator.build(identifier)
+      |> Map.put(:slug, slug)
+
     spec = CommonCore.InstallSpec.new!(install)
     id = BatteryUUID.autogenerate()
-    path = Path.join(root_dir, "#{id}_#{install.slug}.spec.json")
+    path = Path.join(root_dir, "#{id}_#{slug}.spec.json")
     string = Jason.encode_to_iodata!(spec, pretty: true, escape: :javascript_safe)
     :ok = File.write!(path, string)
     {spec, path}
@@ -145,8 +149,8 @@ defmodule Verify.KindInstallWorker do
     end
   end
 
-  def start(mod, identifier) do
-    GenServer.call(__MODULE__, {:start, {mod, identifier}}, 15 * 60 * 1000)
+  def start(mod, identifier, slug) do
+    GenServer.call(__MODULE__, {:start, {mod, identifier, slug}}, 15 * 60 * 1000)
   end
 
   def rage(mod, output) do

@@ -3,7 +3,7 @@ defmodule Verify.GrafanaTest do
 
   verify "grafana is running", %{session: session} do
     session
-    |> assert_pod_running("grafana")
+    |> assert_pod_running("grafana-")
     |> visit("/monitoring")
     |> click_external(Query.css("a", text: "Grafana"))
     # find the link to the website in the footer

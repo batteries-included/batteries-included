@@ -10,9 +10,10 @@ defmodule Verify.ImagePullWorker do
 
   typedstruct module: State do
     field :tasks, :map, default: []
+    field :slug, :string
   end
 
-  @state_opts ~w(completed failed running)a
+  @state_opts ~w(tasks slug)a
 
   def start_link(opts \\ []) do
     {state_opts, gen_opts} =
@@ -100,12 +101,12 @@ defmodule Verify.ImagePullWorker do
     GenServer.call(name, {:status, image})
   end
 
-  defp build_docker_pull_cmd(key) when is_atom(key), do: key |> resolve_image() |> build_docker_pull_cmd()
+  defp build_docker_pull_cmd(key, slug) when is_atom(key), do: key |> resolve_image() |> build_docker_pull_cmd(slug)
 
-  defp build_docker_pull_cmd(image) do
+  defp build_docker_pull_cmd(image, slug) do
     fn ->
       Logger.info("Trying to pre-pull image: #{image}")
-      System.cmd("docker", ~w[exec int-test-control-plane crictl pull] ++ [image], stderr_to_stdout: true)
+      System.cmd("docker", ["exec", "#{slug}-control-plane", "crictl", "pull", image], stderr_to_stdout: true)
     end
   end
 
@@ -123,8 +124,8 @@ defmodule Verify.ImagePullWorker do
   defp key(image) when is_binary(image),
     do: image |> String.replace("/", "_") |> String.replace(":", "_") |> String.replace("-", "_") |> String.to_atom()
 
-  defp pull(image, state) do
-    task_fn = build_docker_pull_cmd(image)
+  defp pull(image, %{slug: slug} = state) do
+    task_fn = build_docker_pull_cmd(image, slug)
     task = Task.Supervisor.async_nolink(Verify.TaskSupervisor, task_fn)
 
     state = put_in(state.tasks[key(image)], {image, task})
