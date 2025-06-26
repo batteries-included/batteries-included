@@ -21,5 +21,7 @@ platform_umbrella/apps/verify
 platform_umbrella/apps/*/priv/static/assets
 
 # ignore configs anywhere in the platform_umbrella dir
+platform_umbrella/**/erl_crash.dump
 platform_umbrella/**/.formatter.exs
 platform_umbrella/**/.gitignore
+platform_umbrella/**/.vscode
