@@ -70,13 +70,11 @@ defmodule Verify.TestCase do
         # Stopping will also remove specs
         on_exit(&Verify.KindInstallWorker.stop_all/0)
 
+        # check that we have all of the pre-pulled images before installing batteries
         :ok = wait_for_images(image_pid, @images)
 
-        Application.put_env(:wallaby, :screenshot_dir, tmp_dir)
-        Application.put_env(:wallaby, :base_url, url)
-
         # install any requested batteries
-        {:ok, session} = start_session()
+        {:ok, session} = start_session(url)
 
         install_pid =
           start_supervised!({
@@ -109,8 +107,8 @@ defmodule Verify.TestCase do
 
   def __setup do
     quote do
-      setup do
-        {:ok, session} = start_session()
+      setup %{control_url: url} do
+        {:ok, session} = start_session(url)
 
         on_exit(fn -> Wallaby.end_session(session) end)
         {:ok, [session: session]}

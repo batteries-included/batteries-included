@@ -14,8 +14,8 @@ defmodule Verify.TrivyTest do
 
   # TODO: use this module to assert that there are no vulnerabilities?
 
-  setup_all do
-    {:ok, session} = start_session()
+  setup_all %{control_url: url} do
+    {:ok, session} = start_session(url)
 
     {:ok, _} =
       session

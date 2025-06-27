@@ -4,8 +4,8 @@ defmodule Verify.KeycloakTest do
     batteries: [keycloak: %{admin_username: "batteryadmin", admin_password: "password"}],
     images: ~w(keycloak)a
 
-  setup_all do
-    {:ok, session} = start_session()
+  setup_all %{control_url: url} do
+    {:ok, session} = start_session(url)
 
     check_keycloak_running(session)
 
