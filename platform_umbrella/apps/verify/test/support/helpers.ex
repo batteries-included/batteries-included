@@ -182,8 +182,8 @@ defmodule Verify.TestCase.Helpers do
   defp assert_workload_pods_running(session, workload, path) do
     # make sure the page is available
     {:ok, _} =
-      :wallaby
-      |> Application.get_env(:base_url)
+      session
+      |> Verify.SessionURLAgent.get()
       |> Path.join(path)
       |> build_retryable_get()
       |> retry()
@@ -351,8 +351,26 @@ defmodule Verify.TestCase.Helpers do
   Overrides `Wallaby.Browser.visit/2` with a small delay to reduce flakiness
   """
   def visit(parent, path) do
+    base = Verify.SessionURLAgent.get(parent)
+
+    uri = URI.parse(path)
+
+    url =
+      cond do
+        uri.host == nil && String.length(base) == 0 ->
+          raise Wallaby.NoBaseUrlError, path
+
+        # full URL
+        uri.host ->
+          path
+
+        # path
+        true ->
+          Path.join(base, path)
+      end
+
     parent
-    |> Wallaby.Browser.visit(path)
+    |> Wallaby.Browser.visit(url)
     |> sleep(100)
   end
 

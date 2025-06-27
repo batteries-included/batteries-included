@@ -7,11 +7,14 @@ defmodule Verify.Application do
 
   @impl Application
   def start(_type, _args) do
+    Application.put_env(:wallaby, :screenshot_dir, Path.join(Verify.PathHelper.tmp_dir!(), "bi-int-test"))
+
     children = [
+      Verify.SessionURLAgent,
       {Task.Supervisor, [name: Verify.TaskSupervisor]},
       {CommonCore.Installs.Generator, [name: Verify.Installs.Generator]},
       {Verify.KindInstallWorker, [name: Verify.KindInstallWorker]},
-      # for BatteryInstallWorker
+      # for BatteryInstall & ImagePull workers
       {Registry, keys: :unique, name: Verify.Registry}
     ]
 

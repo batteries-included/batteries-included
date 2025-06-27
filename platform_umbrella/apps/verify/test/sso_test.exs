@@ -12,11 +12,11 @@ defmodule Verify.SSOTest do
   @user "test"
   @password "password"
 
-  setup_all %{battery_install_worker: install_pid, image_pull_worker: pull_pid} do
+  setup_all %{battery_install_worker: install_pid, image_pull_worker: pull_pid, control_url: url} do
     # we don't need to wait for these. We can install and setup SSO while these are pulling
     prepull_images(pull_pid, ~w(grafana smtp4dev oauth2_proxy)a)
 
-    {:ok, session} = start_session()
+    {:ok, session} = start_session(url)
 
     session =
       session
@@ -28,7 +28,7 @@ defmodule Verify.SSOTest do
     Wallaby.end_session(session)
 
     # having an already logged in session will be helpful
-    {:ok, session} = start_session()
+    {:ok, session} = start_session(url)
 
     authenticated_session =
       session

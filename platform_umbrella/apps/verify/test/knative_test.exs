@@ -20,8 +20,8 @@ defmodule Verify.KnativeTest do
   @show_knative_path ~r(/knative/services/[\d\w-]+/show$)
 
   # make sure knative is fully running before tests start
-  setup_all do
-    {:ok, session} = start_session()
+  setup_all %{control_url: url} do
+    {:ok, session} = start_session(url)
 
     session
     # wait a sec for knative to "install"
