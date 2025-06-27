@@ -93,6 +93,7 @@ cert_manager_istio_csr:
   name: quay.io/jetstack/cert-manager-istio-csr
   default_tag: v0.5.0
   tags:
+    - v0.14.2
     - v0.14.1
     - v0.14.0
     - v0.13.0
@@ -394,8 +395,9 @@ knative_serving_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 kube_state_metrics:
   name: registry.k8s.io/kube-state-metrics/kube-state-metrics
-  default_tag: v2.15.0
+  default_tag: v2.16.0
   tags:
+    - v2.16.0
     - v2.15.0
     - v2.14.0
     - v2.12.0
@@ -496,8 +498,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.9.2
+  default_tag: 0.9.3
   tags:
+    - 0.9.3
     - 0.9.2
     - 0.9.1
     - 0.9.0
