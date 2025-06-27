@@ -30,7 +30,7 @@ defmodule KubeBootstrap.MixProject do
       {:logger_json, "~> 7.0.0"},
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
-      {:k8s, "~> 2.6.2"},
+      {:k8s, "~> 2.7.0"},
       {:mint, "~> 1.0"}
     ]
   end
