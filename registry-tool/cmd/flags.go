@@ -8,8 +8,6 @@ type SharedRegistryFlags struct {
 var DefaultIgnoredImages = []string{
 	// This isn't a real image
 	"ecto/schema/test",
-	// Metallb images fail to bootstrap with our config
-	"quay.io/metallb/speaker", "quay.io/metallb/controller", "quay.io/frrouting/frr",
 	// AWS things aren't integration tested yet
 	"public.ecr.aws/karpenter/controller",
 	// AWS isn't integration tested yet
