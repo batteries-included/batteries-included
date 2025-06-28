@@ -30,6 +30,7 @@ defmodule KubeServices.KubeStateCoverageTest do
 
     # BGP will come later
     {"metallb.io/v1beta1", "BGPAdvertisement"},
+    {"metallb.io/v1beta1", "ServiceBGPStatus"},
     {"metallb.io/v1beta2", "BGPPeer"},
     {"metallb.io/v1beta1", "Community"},
     {"metallb.io/v1beta1", "BFDProfile"},

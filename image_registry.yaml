@@ -150,7 +150,7 @@ forgejo:
   tag_regex: ^\d+\.\d+\.\d+-\d+$
 frrouting_frr:
   name: quay.io/frrouting/frr
-  default_tag: 9.1.0
+  default_tag: 10.3.1
   tags:
     - 10.3.1
     - 10.3.0
@@ -436,7 +436,7 @@ loki:
   tag_regex: ^\d+\.\d+\.\d+$
 metallb_controller:
   name: quay.io/metallb/controller
-  default_tag: v0.14.8
+  default_tag: v0.15.2
   tags:
     - v0.15.2
     - v0.15.1
@@ -446,7 +446,7 @@ metallb_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 metallb_speaker:
   name: quay.io/metallb/speaker
-  default_tag: v0.14.8
+  default_tag: v0.15.2
   tags:
     - v0.15.2
     - v0.15.1
