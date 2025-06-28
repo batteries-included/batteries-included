@@ -728,6 +728,7 @@ vm_operator:
   name: docker.io/victoriametrics/operator
   default_tag: v0.44.0
   tags:
+    - v0.60.2
     - v0.60.1
     - v0.60.0
     - v0.59.2
