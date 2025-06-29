@@ -3,6 +3,8 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   Given any SystemBattery this will extract the kubernetes configs for application to the cluster.
   """
   alias CommonCore.Resources.AwsLoadBalancerController
+  alias CommonCore.Resources.AzureLoadBalancerController
+  alias CommonCore.Resources.AzureClusterAutoscaler
   alias CommonCore.Resources.BatteryAccess
   alias CommonCore.Resources.BatteryCA
   alias CommonCore.Resources.BatteryCore
@@ -61,6 +63,8 @@ defmodule CommonCore.Resources.RootResourceGenerator do
 
   @default_generator_mappings [
     aws_load_balancer_controller: [AwsLoadBalancerController],
+    azure_load_balancer_controller: [AzureLoadBalancerController],
+    azure_cluster_autoscaler: [AzureClusterAutoscaler],
     traditional_services: [TraditionalServices],
     battery_ca: [BatteryCA],
     battery_core: [BatteryCore, ControlServerResources, BatteryAccess],

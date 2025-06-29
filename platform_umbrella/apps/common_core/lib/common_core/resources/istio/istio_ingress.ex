@@ -38,10 +38,12 @@ defmodule CommonCore.Resources.IstioIngress do
 
   defp add_public_lb_annotations(config, state) do
     aws_lb_installed? = Batteries.batteries_installed?(state, :aws_load_balancer_controller)
+    azure_lb_installed? = Batteries.batteries_installed?(state, :azure_load_balancer_controller)
     cluster_name = Core.config_field(state, :cluster_name)
 
     annotations =
-      if aws_lb_installed? do
+      cond do
+        aws_lb_installed? ->
         battery = Batteries.by_type(state).aws_load_balancer_controller
 
         tags =
@@ -72,8 +74,25 @@ defmodule CommonCore.Resources.IstioIngress do
           "service.beta.kubernetes.io/aws-load-balancer-eip-allocations",
           fn _ -> battery.config.eip_allocations |> Enum.sort() |> Enum.join(",") end
         )
-      else
-        %{}
+
+        azure_lb_installed? ->
+          battery = Batteries.by_type(state).azure_load_balancer_controller
+
+          %{
+            "service.beta.kubernetes.io/azure-load-balancer-internal" => "false",
+            "service.beta.kubernetes.io/azure-load-balancer-resource-group" => battery.config.resource_group_name,
+            "service.beta.kubernetes.io/azure-pip-name" => "#{cluster_name}-ingress-pip",
+            "service.beta.kubernetes.io/azure-load-balancer-tcp-idle-timeout" => "30",
+            "service.beta.kubernetes.io/azure-load-balancer-enable-high-availability-ports" => "true"
+          }
+          |> maybe_put_lazy(
+            battery.config.subnet_name != nil,
+            "service.beta.kubernetes.io/azure-load-balancer-internal-subnet",
+            fn _ -> battery.config.subnet_name end
+          )
+
+        true ->
+          %{}
       end
 
     B.annotations(config, annotations)
