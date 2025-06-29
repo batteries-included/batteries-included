@@ -19,9 +19,14 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
   end
 
   multi_resource(:storage_class, battery) do
-    Enum.filter(generate_eks_storage_classes(), fn sc ->
-      F.require(sc, battery.config.cluster_type == :aws)
-    end)
+    cond do
+      battery.config.cluster_type == :aws ->
+        generate_eks_storage_classes()
+      battery.config.cluster_type == :azure ->
+        generate_aks_storage_classes()
+      true ->
+        []
+    end
   end
 
   resource(:bootstrap_service_account, battery) do

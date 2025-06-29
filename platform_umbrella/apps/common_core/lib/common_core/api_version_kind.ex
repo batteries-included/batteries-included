@@ -51,6 +51,7 @@ defmodule CommonCore.ApiVersionKind do
     ingress: {"networking.k8s.io/v1", "Ingress"},
     ingress_class: {"networking.k8s.io/v1", "IngressClass"},
     ingress_class_params: {"elbv2.k8s.aws/v1beta1", "IngressClassParams"},
+    azure_load_balancer_config: {"networking.azure.io/v1beta1", "AzureLoadBalancerConfig"},
     istio_auth_policy: {"security.istio.io/v1beta1", "AuthorizationPolicy"},
     istio_envoy_filter: {"networking.istio.io/v1alpha3", "EnvoyFilter"},
     istio_gateway: {"networking.istio.io/v1beta1", "Gateway"},

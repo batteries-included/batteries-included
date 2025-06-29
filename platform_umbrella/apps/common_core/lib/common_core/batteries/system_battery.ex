@@ -4,6 +4,8 @@ defmodule CommonCore.Batteries.SystemBattery do
   use CommonCore, :schema
 
   alias CommonCore.Batteries.AwsLoadBalancerControllerConfig
+  alias CommonCore.Batteries.AzureLoadBalancerControllerConfig
+  alias CommonCore.Batteries.AzureClusterAutoscalerConfig
   alias CommonCore.Batteries.BatteryCAConfig
   alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.CertManagerConfig
@@ -53,6 +55,8 @@ defmodule CommonCore.Batteries.SystemBattery do
   # styler:sort
   @possible_types [
     aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
+    azure_cluster_autoscaler: AzureClusterAutoscalerConfig,
+    azure_load_balancer_controller: AzureLoadBalancerControllerConfig,
     battery_ca: BatteryCAConfig,
     battery_core: BatteryCoreConfig,
     cert_manager: CertManagerConfig,
