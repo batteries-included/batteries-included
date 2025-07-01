@@ -45,6 +45,22 @@ defmodule ControlServerWeb.Containers.HiddenForms do
     """
   end
 
+  def volumes_hidden_form(assigns) do
+    ~H"""
+    <.inputs_for :let={volume} field={@field}>
+      <.single_volume_hidden form={volume} />
+    </.inputs_for>
+    """
+  end
+
+  def single_volume_hidden(assigns) do
+    ~H"""
+    <.input type="hidden" field={@form[:name]} />
+    <.input type="hidden" field={@form[:type]} />
+    <.input type="hidden" field={@form[:config]} />
+    """
+  end
+
   def ports_hidden_form(assigns) do
     ~H"""
     <.inputs_for :let={port} field={@field}>
