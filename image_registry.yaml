@@ -244,8 +244,9 @@ istio_proxy:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
-  default_tag: lab-4.4.3
+  default_tag: lab-4.4.4
   tags:
+    - lab-4.4.4
     - lab-4.4.3
     - lab-4.4.2
     - lab-4.4.1
@@ -299,8 +300,9 @@ keycloak_upstream:
   tag_regex: ^\d+\.\d+\.\d+$
 kiali:
   name: quay.io/kiali/kiali
-  default_tag: v2.11.0
+  default_tag: v2.12.0
   tags:
+    - v2.12.0
     - v2.11.0
     - v2.10.0
     - v2.9.0
@@ -594,8 +596,9 @@ redis_exporter:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_operator:
   name: ghcr.io/ot-container-kit/redis-operator/redis-operator
-  default_tag: v0.20.2
+  default_tag: v0.21.0
   tags:
+    - v0.21.0
     - v0.20.2
     - v0.20.1
     - v0.20.0
