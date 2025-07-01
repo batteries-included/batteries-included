@@ -1,4 +1,4 @@
-<div class="relative z-40">
+<div id="foobar" class="relative z-40">
   <div class="cursor-pointer" phx-click="[[&quot;show&quot;,{&quot;time&quot;:300,&quot;to&quot;:&quot;#foobar&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-out&quot;,&quot;duration-300&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;]]}]]">
     Some trigger
   </div>
