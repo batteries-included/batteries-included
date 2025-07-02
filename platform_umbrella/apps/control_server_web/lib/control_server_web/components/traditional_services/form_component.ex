@@ -5,12 +5,14 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
   import ControlServerWeb.Containers.ContainersPanel
   import ControlServerWeb.Containers.EnvValuePanel
   import ControlServerWeb.Containers.HiddenForms
+  import ControlServerWeb.Containers.MountPanel
   import ControlServerWeb.Containers.VolumePanel
   import ControlServerWeb.PortPanel
   import ControlServerWeb.TraditionalFormSubcomponents
 
   alias CommonCore.Containers.Container
   alias CommonCore.Containers.EnvValue
+  alias CommonCore.Containers.Mount
   alias CommonCore.Port
   alias CommonCore.TraditionalServices.Service
   alias CommonCore.TraditionalServices.Volume
@@ -33,6 +35,8 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
      |> assign_env_value_idx(nil)
      |> assign_volume(nil)
      |> assign_volume_idx(nil)
+     |> assign_mount(nil)
+     |> assign_mount_idx(nil)
      |> assign_port(nil)
      |> assign_port_idx(nil)}
   end
@@ -128,6 +132,28 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     changeset = Changeset.put_embed(changeset, :volumes, volumes)
 
     {:ok, socket |> assign_volume(nil) |> assign_volume_idx(nil) |> assign_changeset(changeset)}
+  end
+
+  def update(%{mount: nil}, socket) do
+    {:ok, socket |> assign_mount(nil) |> assign_mount_idx(nil)}
+  end
+
+  def update(%{mount: mount, idx: nil}, %{assigns: %{changeset: changeset}} = socket) do
+    mounts = Changeset.get_field(changeset, :mounts, [])
+    changeset = Changeset.put_embed(changeset, :mounts, [mount | mounts])
+
+    {:ok, socket |> assign_mount(nil) |> assign_mount_idx(nil) |> assign_changeset(changeset)}
+  end
+
+  def update(%{mount: mount, idx: idx}, %{assigns: %{changeset: changeset}} = socket) do
+    mounts =
+      changeset
+      |> Changeset.get_field(:mounts, [])
+      |> List.replace_at(idx, mount)
+
+    changeset = Changeset.put_embed(changeset, :mounts, mounts)
+
+    {:ok, socket |> assign_mount(nil) |> assign_mount_idx(nil) |> assign_changeset(changeset)}
   end
 
   def update(%{port: nil}, socket) do
@@ -227,6 +253,29 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     {:noreply, assign_changeset(socket, new_changeset)}
   end
 
+  def handle_event("new_mount", _, socket) do
+    new_mount = %Mount{}
+    {:noreply, socket |> assign_mount(new_mount) |> assign_mount_idx(nil)}
+  end
+
+  def handle_event("edit:mount", %{"idx" => idx_string}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, _} = Integer.parse(idx_string)
+
+    mounts = Changeset.get_field(changeset, :mounts, [])
+    mount = Enum.fetch!(mounts, idx)
+
+    {:noreply, socket |> assign_mount(mount) |> assign_mount_idx(idx)}
+  end
+
+  def handle_event("del:mount", %{"idx" => mount_idx}, %{assigns: %{changeset: changeset}} = socket) do
+    {idx, ""} = Integer.parse(mount_idx)
+
+    mounts = changeset |> Changeset.get_field(:mounts, []) |> List.delete_at(idx)
+    new_changeset = Changeset.put_embed(changeset, :mounts, mounts)
+
+    {:noreply, assign_changeset(socket, new_changeset)}
+  end
+
   def handle_event("new_container", %{"id" => "containers_panel-" <> cfn}, socket) do
     new_container = %Container{}
 
@@ -317,6 +366,11 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     send_update(__MODULE__, id: "service-form", volume: volume, idx: idx)
   end
 
+  @spec update_mount(Volume.t() | nil, integer | nil) :: :ok
+  def update_mount(mount, idx) do
+    send_update(__MODULE__, id: "service-form", mount: mount, idx: idx)
+  end
+
   @spec update_port(Port.t() | nil, integer | nil) :: :ok
   def update_port(port, idx) do
     send_update(__MODULE__, id: "service-form", port: port, idx: idx)
@@ -350,6 +404,14 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     assign(socket, volume_idx: idx)
   end
 
+  def assign_mount(socket, mount) do
+    assign(socket, mount: mount)
+  end
+
+  def assign_mount_idx(socket, idx) do
+    assign(socket, mount_idx: idx)
+  end
+
   def assign_port(socket, port) do
     assign(socket, port: port)
   end
@@ -363,6 +425,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
     init_containers = Changeset.get_field(changeset, :init_containers, [])
     env_values = Changeset.get_field(changeset, :env_values, [])
     volumes = Changeset.get_field(changeset, :volumes, [])
+    mounts = Changeset.get_field(changeset, :mounts, [])
     ports = Changeset.get_field(changeset, :ports, [])
 
     assign(socket,
@@ -372,6 +435,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
       init_containers: init_containers,
       env_values: env_values,
       volumes: volumes,
+      mounts: mounts,
       ports: ports
     )
   end
@@ -412,6 +476,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
       |> Map.put_new("init_containers", %{})
       |> Map.put_new("env_values", %{})
       |> Map.put_new("volumes", %{})
+      |> Map.put_new("mounts", %{})
       |> Map.put_new("ports", %{})
 
     case TraditionalServices.update_service(socket.assigns.service, service_params) do
@@ -499,12 +564,14 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
           <.env_var_panel env_values={@env_values} editable target={@myself} class="lg:col-span-1" />
           <.port_panel ports={@ports} editable target={@myself} class="lg:col-span-1" />
           <.volume_panel volumes={@volumes} editable target={@myself} class="lg:col-span-1" />
+          <.mount_panel mounts={@mounts} editable target={@myself} class="lg:col-span-1" />
           <!-- Hidden inputs for embeds -->
           <.containers_hidden_form field={@form[:containers]} />
           <.containers_hidden_form field={@form[:init_containers]} />
           <.env_values_hidden_form field={@form[:env_values]} />
           <.ports_hidden_form field={@form[:ports]} />
           <.volumes_hidden_form field={@form[:volumes]} />
+          <.mounts_hidden_form field={@form[:mounts]} />
         </.grid>
       </.form>
 
@@ -545,6 +612,16 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
         volume={@volume}
         idx={@volume_idx}
         id="volume-form-modal"
+      />
+
+      <.live_component
+        :if={@mount}
+        module={ControlServerWeb.Containers.MountModal}
+        update_func={&update_mount/2}
+        volumes={Changeset.get_field(@changeset, :volumes)}
+        mount={@mount}
+        idx={@mount_idx}
+        id="mount-form-modal"
       />
     </div>
     """

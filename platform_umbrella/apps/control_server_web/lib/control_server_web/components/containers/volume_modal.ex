@@ -129,43 +129,6 @@ defmodule ControlServerWeb.Containers.VolumeModal do
     get_type(changeset) in [:secret, "secret"]
   end
 
-  # defp extract_keys(resources, name) do
-  #   resources
-  #   |> Enum.find(%{}, fn r -> name(r) == name end)
-  #   |> Map.get("data", %{})
-  #   |> Map.keys()
-  # end
-
-  # defp value_inputs(assigns) do
-  #   ~H"""
-  #   <.field>
-  #     <:label>Value</:label>
-  #     <.input field={@form[:value]} placeholder="your.service.creds" />
-  #   </.field>
-  #   """
-  # end
-  #
-
-  # field :default_mode, :integer
-  # field :name, :string
-  # field :optional, :boolean, default: false
-
-  defp resource_inputs(assigns) do
-    ~H"""
-    <.fieldset>
-      <.field>
-        <:label>{@label}</:label>
-        <.input
-          type="select"
-          field={@form[:name]}
-          placeholder="Select Source"
-          options={Enum.map(@resources, &name/1)}
-        />
-      </.field>
-    </.fieldset>
-    """
-  end
-
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
@@ -205,6 +168,37 @@ defmodule ControlServerWeb.Containers.VolumeModal do
                 Secret
               </:tab>
             </.tab_bar>
+
+            <.input type="hidden" field={@form[:type]} />
+
+            <.field :if={empty_dir_selected?(@changeset)}>
+              <:label>Medium</:label>
+              <.input
+                type="select"
+                field={@form[:medium]}
+                options={CommonCore.TraditionalServices.Volume.medium_options()}
+              />
+            </.field>
+            <.field :if={empty_dir_selected?(@changeset)}>
+              <:label>Size Limit</:label>
+              <.input field={@form[:size_limit]} />
+            </.field>
+            <.field :if={!empty_dir_selected?(@changeset)}>
+              <:label>Source</:label>
+              <.input
+                type="select"
+                field={@form[:source_name]}
+                options={resource_options(@changeset, @configs, @secrets)}
+              />
+            </.field>
+            <.field :if={!empty_dir_selected?(@changeset)}>
+              <:label>Default Mode</:label>
+              <.input field={@form[:default_mode]} />
+            </.field>
+            <.field :if={!empty_dir_selected?(@changeset)}>
+              <:label>Optional</:label>
+              <.input type="checkbox" field={@form[:optional]} />
+            </.field>
           </.fieldset>
 
           <:actions cancel="Cancel">
@@ -216,20 +210,19 @@ defmodule ControlServerWeb.Containers.VolumeModal do
     """
   end
 
-  # <.value_inputs :if={value_selected?(@changeset)} form={@form} />
-  #
-  # <.resource_inputs
-  #   :if={config_map_selected?(@changeset)}
-  #   form={@form[:config]}
-  #   resources={@configs}
-  #   label="Config Map"
-  # />
-  #
-  # <.resource_inputs
-  #   :if={secret_selected?(@changeset)}
-  #   form={@form[:config]}
-  #   resources={@secrets}
-  #   label="Secret"
-  # />
-  #
+  defp resource_options(cs, configs, secrets) do
+    resources =
+      cond do
+        config_map_selected?(cs) ->
+          configs
+
+        secret_selected?(cs) ->
+          secrets
+
+        true ->
+          []
+      end
+
+    Enum.map(resources, &name/1)
+  end
 end

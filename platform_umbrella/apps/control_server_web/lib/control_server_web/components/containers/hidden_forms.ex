@@ -57,7 +57,11 @@ defmodule ControlServerWeb.Containers.HiddenForms do
     ~H"""
     <.input type="hidden" field={@form[:name]} />
     <.input type="hidden" field={@form[:type]} />
-    <.input type="hidden" field={@form[:config]} />
+    <.input type="hidden" field={@form[:default_mode]} />
+    <.input type="hidden" field={@form[:source_name]} />
+    <.input type="hidden" field={@form[:optional]} />
+    <.input type="hidden" field={@form[:medium]} />
+    <.input type="hidden" field={@form[:size_limit]} />
     """
   end
 
@@ -74,6 +78,22 @@ defmodule ControlServerWeb.Containers.HiddenForms do
     <.input type="hidden" field={@form[:name]} />
     <.input type="hidden" field={@form[:number]} />
     <.input type="hidden" field={@form[:protocol]} />
+    """
+  end
+
+  def mounts_hidden_form(assigns) do
+    ~H"""
+    <.inputs_for :let={mount} field={@field}>
+      <.single_mount_hidden form={mount} />
+    </.inputs_for>
+    """
+  end
+
+  def single_mount_hidden(assigns) do
+    ~H"""
+    <.input type="hidden" field={@form[:volume_name]} />
+    <.input type="hidden" field={@form[:mount_path]} />
+    <.input type="hidden" field={@form[:read_only]} />
     """
   end
 end
