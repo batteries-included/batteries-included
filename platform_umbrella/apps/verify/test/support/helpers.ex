@@ -229,12 +229,18 @@ defmodule Verify.TestCase.Helpers do
     |> Map.new(fn [l, r] -> {l, r} end)
   end
 
-  def create_traditional_service(session, image, service_name) do
+  def create_traditional_service(session, service_name, opts \\ []) do
+    image = Keyword.get(opts, :image, "docker.io/ealen/echo-server:latest")
+    port = Keyword.get(opts, :port, "80")
+    callback = Keyword.get(opts, :callback, & &1)
+    size = Keyword.get(opts, :size, "Tiny")
+
     session
     # create service
     |> visit("/traditional_services/new")
     |> assert_has(h3("New Traditional Service"))
     |> fill_in_name("service[name]", service_name)
+    |> find(Query.select("service[virtual_size]"), &click(&1, Query.option(size)))
     # add container
     |> find(@container_panel, fn e -> click(e, Query.button("Add Container")) end)
     |> fill_in(Query.text_field("container[name]"), with: "workload")
@@ -246,11 +252,12 @@ defmodule Verify.TestCase.Helpers do
     # add port
     |> find(@port_panel, fn e -> click(e, Query.button("Add Port")) end)
     |> fill_in(Query.text_field("port[name]"), with: service_name)
-    |> fill_in(Query.text_field("port[number]"), with: "80")
+    |> fill_in(Query.text_field("port[number]"), with: port)
     |> click(Query.css(~s/#port-form-modal-modal-container button[type="submit"]/))
     # make sure the modal is gone
     |> sleep(100)
     |> immediately_refute_has(Query.css("#port-form-modal"))
+    |> callback.()
     # save service
     |> click(Query.button("Save Traditional Service"))
   end

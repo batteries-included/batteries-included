@@ -7,10 +7,11 @@ defmodule ControlServerWeb.Containers.MountPanel do
   attr :mounts, :list, default: []
   attr :target, :any, default: nil
   attr :variant, :string, default: "gray"
+  attr :id, :string, default: "mount_panel"
 
   def mount_panel(%{editable: false} = assigns) do
     ~H"""
-    <.panel title="Volume Mounts" class={@class} variant={@variant}>
+    <.panel title="Volume Mounts" class={@class} variant={@variant} id={@id}>
       <.mount_table mounts={@mounts} />
     </.panel>
     """
@@ -18,7 +19,7 @@ defmodule ControlServerWeb.Containers.MountPanel do
 
   def mount_panel(%{editable: true} = assigns) do
     ~H"""
-    <.panel title="Volume Mounts" class={@class} variant={@variant}>
+    <.panel title="Volume Mounts" class={@class} variant={@variant} id={@id}>
       <:menu>
         <.button icon={:plus} phx-click="new_mount" phx-target={@target}>
           Add Volume Mount

@@ -63,7 +63,7 @@ do_save_images() {
         # add our images
         local version
         version=$(bi-docker get-image-tag)
-        for img in kube-bootstrap control-server; do
+        for img in kube-bootstrap control-server home-base; do
             imgs+=("${REGISTRY}/${img}:${version}")
         done
     fi

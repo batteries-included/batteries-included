@@ -18,8 +18,10 @@ defmodule Verify.TestCase do
 
   def __prelude(batteries, images) do
     quote do
-      # copied from `use Wallaby.DSL`
+      # imports and aliases copied from `use Wallaby.DSL`
       # we want to override visit/2
+
+      # Kernel.tap/2 was introduced in 1.12 and conflicts with Browser.tap/2
       import Kernel, except: [tap: 2]
       import Verify.TestCase.Helpers
       import Verify.TestCase.Util
@@ -29,7 +31,6 @@ defmodule Verify.TestCase do
       alias Wallaby.Element
       alias Wallaby.Query
 
-      # Kernel.tap/2 was introduced in 1.12 and conflicts with Browser.tap/2
       require Logger
 
       ExUnit.Case.register_module_attribute(__MODULE__, :batteries, accumulate: true)
