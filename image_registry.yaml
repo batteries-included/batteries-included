@@ -20,8 +20,9 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: ghcr.io/aquasecurity/trivy
-  default_tag: 0.63.0
+  default_tag: 0.64.0
   tags:
+    - 0.64.0
     - 0.63.0
     - 0.62.1
   tag_regex: ^\d+\.\d+\.\d+$
@@ -500,8 +501,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.9.3
+  default_tag: 0.9.4
   tags:
+    - 0.9.4
     - 0.9.3
     - 0.9.2
     - 0.9.1
