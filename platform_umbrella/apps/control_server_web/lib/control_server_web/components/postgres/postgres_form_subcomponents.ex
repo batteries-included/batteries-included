@@ -153,7 +153,6 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
           <.field>
             <:label>Namespaces</:label>
             <.input
-              id="namespace"
               type="multiselect"
               field={@user_form[:credential_namespaces]}
               options={Enum.map(@possible_namespaces, &%{name: &1, value: &1})}

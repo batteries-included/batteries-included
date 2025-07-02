@@ -46,18 +46,6 @@ defmodule ControlServerWeb.Containers.VolumeModal do
     assign(socket, changeset: changeset, form: to_form(changeset))
   end
 
-  # defp assign_form(socket, changeset) do
-  #   assign(socket, form: changeset |> Changeset.apply_action() |> Map.from_struct() |> to_form(as: "volume"))
-  # end
-
-  # defp assign_config(%{assigns: assigns} = socket) do
-  #   config_module = if assigns[:volume], do: Volume.for_type(assigns.volume.type), else: :empty_dir
-  #   config = if assigns[:volume], do: assigns.volume.config, else: struct(config_module)
-  #   changeset = config_module.changeset(config, %{})
-  #
-  #   assign(socket, config_module: config_module, config: config, changeset: changeset, form: to_form(changeset))
-  # end
-
   defp assign_configs(%{assigns: %{namespace: namespace}} = socket) do
     assign(socket,
       configs:
