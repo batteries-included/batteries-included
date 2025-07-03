@@ -7,10 +7,11 @@ defmodule ControlServerWeb.Containers.VolumePanel do
   attr :volumes, :list, default: []
   attr :target, :any, default: nil
   attr :variant, :string, default: "gray"
+  attr :id, :string, default: "volume_panel"
 
   def volume_panel(%{editable: false} = assigns) do
     ~H"""
-    <.panel title="Volumes" class={@class} variant={@variant}>
+    <.panel title="Volumes" class={@class} variant={@variant} id={@id}>
       <.volumes_table volumes={@volumes} />
     </.panel>
     """
@@ -18,7 +19,7 @@ defmodule ControlServerWeb.Containers.VolumePanel do
 
   def volume_panel(%{editable: true} = assigns) do
     ~H"""
-    <.panel title="Volumes" class={@class} variant={@variant}>
+    <.panel title="Volumes" class={@class} variant={@variant} id={@id}>
       <:menu>
         <.button icon={:plus} phx-click="new_volume" phx-target={@target}>
           Add Volume
@@ -64,7 +65,6 @@ defmodule ControlServerWeb.Containers.VolumePanel do
 
   slot :action, doc: "the slot for showing user actions in the last table column"
 
-  # TODO(JDT): add config column
   def volumes_table(assigns) do
     ~H"""
     <.table id={@id} rows={Enum.with_index(@volumes)} opts={@opts}>

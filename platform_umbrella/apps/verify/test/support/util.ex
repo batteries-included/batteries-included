@@ -168,8 +168,8 @@ defmodule Verify.TestCase.Util do
     DateTime.diff(end_time, DateTime.utc_now(), :millisecond)
   end
 
-  @spec start_session(String.t()) :: {:ok, Wallaby.Session.t()} | {:error, Wallaby.reason()}
-  def start_session(url) do
+  @spec start_session(String.t(), list()) :: {:ok, Wallaby.Session.t()} | {:error, Wallaby.reason()}
+  def start_session(url, extra_args \\ []) do
     case Wallaby.start_session(
            # Indirectly this is the max time that an image can take to pull
            # because most of our tests end up asseting that there's a row in the
@@ -182,36 +182,37 @@ defmodule Verify.TestCase.Util do
              javascriptEnabled: true,
              loadImages: true,
              chromeOptions: %{
-               args: [
-                 # Lets act like the world is run on macbooks that
-                 # all of sillion valley uses
-                 #
-                 # Fix this at some point
-                 "window-size=1920,1080",
-                 # We don't want to see the browser
-                 "--headless",
-                 "--fullscreen",
-                 # Incognito mode means no caching for real
-                 # Unfortunately, chrome doesn't allow http requests at all incognito
-                 # "--incognito",
-                 # Seems to be better for stability
-                 "--no-sandbox",
-                 # Yeah this will run in CI
-                 "--disable-gpu",
-                 # Disable dev shm usage
-                 # This is needed for CI environments like GitHub Actions
-                 # where /dev/shm is super small
-                 #
-                 # See
-                 # https://github.com/elixir-wallaby/wallaby/issues/468#issuecomment-1113520767
-                 "--disable-dev-shm-usage",
-                 # Please google go away
-                 "--disable-extensions",
-                 "--disable-login-animations",
-                 "--no-default-browser-check",
-                 "--no-first-run",
-                 "--ignore-certificate-errors"
-               ]
+               args:
+                 [
+                   # Lets act like the world is run on macbooks that
+                   # all of sillion valley uses
+                   #
+                   # Fix this at some point
+                   "window-size=1920,1080",
+                   # We don't want to see the browser
+                   "--headless",
+                   "--fullscreen",
+                   # Incognito mode means no caching for real
+                   # Unfortunately, chrome doesn't allow http requests at all incognito
+                   # "--incognito",
+                   # Seems to be better for stability
+                   "--no-sandbox",
+                   # Yeah this will run in CI
+                   "--disable-gpu",
+                   # Disable dev shm usage
+                   # This is needed for CI environments like GitHub Actions
+                   # where /dev/shm is super small
+                   #
+                   # See
+                   # https://github.com/elixir-wallaby/wallaby/issues/468#issuecomment-1113520767
+                   "--disable-dev-shm-usage",
+                   # Please google go away
+                   "--disable-extensions",
+                   "--disable-login-animations",
+                   "--no-default-browser-check",
+                   "--no-first-run",
+                   "--ignore-certificate-errors"
+                 ] ++ extra_args
              }
            }
          ) do
