@@ -169,7 +169,7 @@ defmodule Verify.HomeBaseTest do
     |> assert_has(h3("New Postgres Cluster"))
     |> fill_in_name("cluster[name]", cluster_name)
     |> click(Query.button("edit_user_root"))
-    |> click(Query.css("div#namespace-dropdown"))
+    |> click(Query.css("div#postgres-user-namespace-dropdown"))
     |> then(fn sess ->
       sess =
         if selected?(sess, @bat_trad_dropdown_entry) do
