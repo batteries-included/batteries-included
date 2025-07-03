@@ -50,8 +50,9 @@ aws_load_balancer_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_acmesolver:
   name: quay.io/jetstack/cert-manager-acmesolver
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -64,8 +65,9 @@ cert_manager_acmesolver:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_cainjector:
   name: quay.io/jetstack/cert-manager-cainjector
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -78,8 +80,9 @@ cert_manager_cainjector:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_controller:
   name: quay.io/jetstack/cert-manager-controller
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -111,8 +114,9 @@ cert_manager_istio_csr:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_webhook:
   name: quay.io/jetstack/cert-manager-webhook
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -257,6 +261,7 @@ karpenter:
   name: public.ecr.aws/karpenter/controller
   default_tag: 1.2.0
   tags:
+    - 1.5.2
     - 1.5.1
     - 1.5.0
     - 1.4.0
@@ -288,8 +293,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.2.5
+  default_tag: 26.3.0
   tags:
+    - 26.3.0
     - 26.2.5
     - 26.2.4
     - 26.2.3
@@ -501,8 +507,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.9.4
+  default_tag: 0.9.5
   tags:
+    - 0.9.5
     - 0.9.4
     - 0.9.3
     - 0.9.2
