@@ -20,8 +20,9 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: ghcr.io/aquasecurity/trivy
-  default_tag: 0.64.0
+  default_tag: 0.64.1
   tags:
+    - 0.64.1
     - 0.64.0
     - 0.63.0
     - 0.62.1
@@ -280,8 +281,9 @@ karpenter:
   tag_regex: ^\d+\.\d+\.\d+$
 keycloak:
   name: ghcr.io/batteries-included/keycloak
-  default_tag: 26.2.5
+  default_tag: 26.3.0
   tags:
+    - 26.3.0
     - 26.2.5
     - 26.2.4
     - 26.2.3
@@ -319,8 +321,9 @@ kiali:
   tag_regex: ^v\d+\.\d+\.\d+$
 kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
-  default_tag: 1.30.5
+  default_tag: 1.30.6
   tags:
+    - 1.30.6
     - 1.30.5
     - 1.30.4
     - 1.30.3
@@ -465,8 +468,9 @@ metallb_speaker:
   tag_regex: ^v\d+\.\d+\.\d+$
 metrics_server:
   name: registry.k8s.io/metrics-server/metrics-server
-  default_tag: v0.7.2
+  default_tag: v0.8.0
   tags:
+    - v0.8.0
     - v0.7.2
     - v0.7.1
   tag_regex: ^v\d+\.\d+\.\d+$
