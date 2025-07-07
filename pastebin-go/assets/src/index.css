@@ -1,1 +1,42 @@
-@import "tailwindcss";
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+@import 'tailwindcss';
+
+@theme static {
+  --color-primary-light: #ffa8cb;
+  --color-primary: #fc408b;
+  --color-primary-dark: #de2e74;
+
+  --color-pink-500: var(--color-primary);
+
+  --color-secondary-light: #defaf8;
+  --color-secondary: #97efe9;
+  --color-secondary-dark: #36e0d4;
+
+  --color-gray-*: initial;
+
+  --color-gray-lightest: #fafafa;
+  --color-gray-lighter: #dadada;
+  --color-gray-light: #999a9f;
+  --color-gray-default: #7f7f7f;
+  --color-gray-dark: #545155;
+  --color-gray-darker: #38383a;
+  --color-gray-darkest: #1c1c1e;
+
+  /* Used for Dark Modes, I think */
+  --color-gray-darker-tint: #4e535f;
+  --color-gray-darkest-tint: #21242b;
+
+  --font-sans: 'Inter Variable', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+}
+
+@layer base {
+  a {
+    @apply cursor-pointer;
+  }
+}
+
+::selection {
+  @apply bg-primary text-white;
+}

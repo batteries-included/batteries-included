@@ -159,6 +159,7 @@ do_fmt() {
         format_go_code "pastebin-go"
         format_go_code "registry-tool"
         format_npm_code "static"
+        format_npm_code "pastebin-go/assets"
         format_prettier_code
         format_sh_code
         ;;
@@ -206,6 +207,7 @@ do_check_fmt() {
         check_format_go_code "pastebin-go"
         check_format_go_code "registry-tool"
         check_format_npm_code "static"
+        check_format_npm_code "pastebin-go/assets"
         check_format_prettier_code
         check_format_sh_code
         ;;
