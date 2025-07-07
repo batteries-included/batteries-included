@@ -29,4 +29,7 @@ var DefaultIgnoredImages = []string{
 
 	// Major Redis version bump breaks things
 	"quay.io/opstree/redis",
+
+	// 26.3.0 breaks Integration tests
+	"ghcr.io/batteries-included/keycloak",
 }
