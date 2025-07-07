@@ -1,0 +1,91 @@
+@layer base {
+  a {
+    @apply cursor-pointer;
+  }
+}
+
+.bg-page {
+  background-color: var(--bi-color-bg-page);
+}
+
+.bg-dark {
+  background-color: var(--bi-color-bg-page-dark);
+}
+
+.bg-light {
+  background-color: var(--bi-color-bg-page);
+}
+
+.text-page {
+  color: var(--bi-color-text-page);
+}
+
+.text-muted {
+  color: var(--bi-color-text-muted);
+}
+
+.u-container {
+}
+
+.u-shadow {
+  box-shadow: 0px 2px 16px 0px #00000014;
+}
+
+.u-shadow-2 {
+  box-shadow: 4px 0px 6px 0px #00000005;
+}
+
+.btn {
+}
+
+.btn-primary {
+}
+
+.btn-secondary {
+}
+
+.btn-tertiary {
+}
+
+.btn-fourth {
+}
+
+.btn-fifth {
+}
+
+.btn-square {
+}
+
+.btn-square-primary {
+}
+
+.btn-square-secondary {
+}
+
+.mobile-menu-container {
+  --MOBILE_NAV_OFFSET: 4rem;
+  /* 56px measured nav height */
+  position: absolute;
+  inset: 0;
+  height: calc(100svh - (var(--MOBILE_NAV_OFFSET)));
+}
+
+.frame-gradient {
+  background:
+    linear-gradient(
+      90deg,
+      #ebebeb 0%,
+      #fafaff 0%,
+      #fbf0f9 62.93%,
+      #fffcfd 100%
+    ),
+    linear-gradient(0deg, #ffffff, #ffffff);
+}
+
+[astro-icon].icon-light > * {
+  stroke-width: 1.2;
+}
+
+[astro-icon].icon-bold > * {
+  stroke-width: 2.4;
+}
