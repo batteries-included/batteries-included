@@ -25,10 +25,10 @@ export default function Login(
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-lightest dark:bg-gray-darker flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="h-12 w-12 bg-white rounded-lg flex items-center justify-center">
+          <div className="h-24 w-24 flex items-center justify-center">
             <svg
               aria-label="Batteries Included Logo, a cloud with charged ends"
               viewBox="0 0 145 92">
@@ -43,13 +43,13 @@ export default function Login(
             </svg>
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-darkest dark:text-white">
           {msg('loginAccountTitle')}
         </h2>
         {realm.password &&
           realm.registrationAllowed &&
           !registrationDisabled && (
-            <p className="mt-2 text-center text-sm text-gray-600">
+            <p className="mt-2 text-center text-sm text-gray-darkest dark:text-gray-lighter">
               {msg('noAccount')}{' '}
               <a
                 href={url.registrationUrl}
@@ -62,7 +62,7 @@ export default function Login(
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white dark:bg-gray-darker dark:text-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {messagesPerField.existsError('username', 'password') && (
             <div className="mb-4 rounded-md bg-red-50 p-4">
               <div className="flex">
