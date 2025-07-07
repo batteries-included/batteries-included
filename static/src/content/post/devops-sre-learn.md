@@ -3,10 +3,10 @@ title: 'DevOps and SRE: Lessons from the Frontlines'
 excerpt:
   DevOps aims to bridge the gap between software development and operations, but
   its implementation can face serious challenges.
-publishDate: 2024-06-08
+publishDate: 2025-07-07
 tags: ['devops', 'sre', 'pe', 'usability']
 image: ./covers/post-3.jpg
-draft: true
+draft: false
 ---
 
 DevOps emerged as one of the primary approaches to bridge the gap between these
@@ -14,28 +14,28 @@ traditionally separate domains in software development and operations. Yet, for
 many organizations, the actual implementation of DevOps principles often proves
 more complex than anticipated.
 
-This article examines these challenges and also explores how we can learn from
+Let's examine these challenges and learn from
 [Site Reliability Engineering (SRE)](https://sre.google) to enhance DevOps
 practices.
 
-Note: some will argue that SRE is a form of DevOps; for this discussion, we'll
-focus on SRE as the engineering role used by hyperscalers and consider DevOps as
-it is commonly described and applied in industry practice today.
+Note: Some will argue that SRE is a form of DevOps; for this discussion, we'll
+focus on SRE as the engineering role employed by hyperscalers and consider
+DevOps as it is commonly described and applied in industry practice today.
 
 ## The DevOps Dilemma
 
 _DevOps_ is a philosophy that seeks to integrate software development and
-operations-- emphasizing collaboration, automation, and integration. While this
+operations, emphasizing collaboration, automation, and integration. While this
 sounds exciting, development teams have differing needs, leading to a
-proliferation of tools and practices like GitOps, YAML workflows, infrastructure
-as code, etc. While these are intended to streamline processes, they often add
+proliferation of tools and practices, such as GitOps, YAML workflows, and
+infrastructure as code. While intended to streamline processes, they often add
 layers of complexity.
 
-Imagine a scenario where every time you wanted to make a cup of coffee, you had
-to configure a YAML file, push it to a Git repository, and then execute a series
-of commands. Sounds tedious, right? Many teams face this complexity and friction
-daily. Adding a new, more complex tool to the mix doesn't inspire a team to
-produce easy-to-operate software; it can do the opposite.
+Let's imagine a scenario where every time you wanted to make a cup of coffee,
+you had to configure a YAML file, push it to a Git repository, and then execute
+a series of commands. Sounds tedious, right? Many teams face this complexity and
+friction on a daily basis. Adding a new, more complex tool to the mix doesn't
+inspire a team to produce easy-to-use software; it can have the opposite effect.
 
 One of DevOps' primary challenges is addressing friction in the development
 process. When developers encounter obstacles to their workflow, it's not
@@ -49,23 +49,25 @@ affecting business outcomes and customer satisfaction.
 ![Silo](./devops-pe/waldemar-7kSnMLGoR9w-unsplash.jpg)
 
 Another substantial challenge is the inherently siloed nature of DevOps work.
-Production teams, comprised of specialists like designers, mobile developers,
+Production teams, comprising specialists such as designers, mobile developers,
 web developers, and product managers, often operate on different schedules and
 priorities. This can turn DevOps into an ancillary team facing unique
 challenges.
 
 DevOps engineers focus on deployment, scalability, and infrastructure, which
-tends to differ from product developers, who are often more concerned with
-business deadlines and feature development. This specialization gap can create
+differs from product developers, who are often more concerned with meeting
+business deadlines and developing features. This specialization gap can create
 significant barriers to adopting new tools and practices:
 
 - Introducing new and complex tools to team members without the necessary
-  background may face resistance.
+  background may lead to resistance.
+
 - Teams may be skeptical of solutions developed outside their immediate circle,
-  a phenomenon known as "Not Invented Here" (NIH) syndrome.
-- When DevOps engineers create tools in isolation, there's often limited input
-  from potential end-users (e.g., the product team), resulting in insufficiently
-  vetted tools.
+  a phenomenon known as "Not Invented Here" (NIH) syndrome. When DevOps
+  engineers create tools in isolation, there's often limited input from
+  potential end-users (e.g., the product team), resulting in tools that are not
+  sufficiently vetted.
+
 - Absence of regular feedback from end-users may lead to misaligned priorities
   and inefficient resource allocation.
 
@@ -94,17 +96,18 @@ adaptability. SREs don't simply build tools and automation; they immerse
 themselves in the team, influencing development practices. They act as
 educators, teaching teams how to produce more robust systems.
 
-SRE responsibilities are diverse-- a significant portion of time is spent on
+SRE responsibilities are diverse a significant portion of time is spent on
 operations work, including emergency incident response, change management, and
 IT infrastructure management. These engineers also support the development team
 in creating new features and stabilizing production systems while continuously
 improving processes through post-incident reviews and knowledge sharing.
 
-This hands-on approach ensures that the tools and the team's culture are
-internally developed. When an SRE transitions to their next assignment, they
-don't just leave behind tools; they leave behind a legacy. A legacy of a team
-that's empowered, educated, and equipped to navigate the challenges of modern
-software development through automation.
+The hands-on approach ensures that the tools and the team's culture are
+well-targeted and comprehensive, as they were developed internally. When an SRE
+transitions to their next assignment, they don't just leave behind tools; they
+leave behind a legacy. A legacy of a team that's empowered, educated, and
+equipped to navigate the challenges of modern software development through
+automation.
 
 ## Testing and The Human Element
 
@@ -113,21 +116,22 @@ software development through automation.
 > Computers are infallible; humans are not.
 
 This adage, while simplistic, captures the essence of most production issues in
-the software realm. Most production hiccups, from minor glitches to significant
-outages, can be traced back to human intervention. Whether it's an inadequately
-reviewed code change,
+the software realm. Most production hiccups, ranging from minor glitches to
+significant outages, can be attributed to human error or oversight. Whether it's
+an inadequately reviewed code change,
+
 [a configuration tweak that went awry](https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/),
 or an unintended consequence of a manual override, human error is often the root
-cause-- particularly from those closest to the software.
+cause particularly from those closest to the software.
 
-As a developer, many times, the most impactful thing you can do for operations
-is to protect operations from yourself.
+As a developer, one of the most impactful things you can do for operations is to
+protect operations from yourself.
 
 Testing plays a crucial role in verifying that the software aligns with its
 intended functionality. As Robert C. Martin once noted, _"Truth can only be
 found in one place: the code." _ But what happens when that truth is distorted
-by human error? That is where tests come into play, ensuring that the software
-we envisioned aligns with what's running in production. However, like any tool
+by human error? That's where tests come into play, ensuring that the software we
+envisioned aligns with what is running in production. However, like any tool
 wielded by humans, its effectiveness varies significantly. Over-testing can slow
 development, while inadequate or irrelevant tests can provide a false sense of
 security. Striking the right balance is crucial.
@@ -145,17 +149,17 @@ tests, developers can focus on what truly matters, ensuring their code is
 efficient and robust.
 
 Well-crafted tests can be a game-changer when complemented by integrated DevOps
-tooling like monitoring and tracing.
+tooling, such as monitoring and tracing.
 
 For example, when asserting that metrics match, a test can be a unit test, and
 monitoring is verified to be functional with helpful information. Additionally,
-a performance integration test part of the CI/CD pipeline can ensure production
-infrastructure as code (IaC) works while giving developers a new superpower to
-test if their code is faster or slower.
+a performance integration test as part of the CI/CD pipeline can ensure that
+production infrastructure as code (IaC) works, while giving developers a new
+superpower to test whether their code is faster or slower.
 
-Tests can provide fascinating insights into development team practices;
-revealing what's changing, how often, where potential issues could come from,
-and if the developer fears match production. Focusing on bridging gaps in
+Tests can provide fascinating insights into development team practices.
+Revealing what's changing, how often, where potential issues could arise, and if
+the developer's fears match production. Focusing on bridging gaps in
 understanding or expectations through tests can have an outsized impact, as they
 are a leading indicator of where corners are being cut to move faster.
 
@@ -166,6 +170,7 @@ are a leading indicator of where corners are being cut to move faster.
 ![Path](./devops-pe/path.png)
 
 While DevOps has historically focused on bringing developers closer to
+
 operations via automation, SRE aims to bring sysadmin knowledge directly to
 development teams to build automation. This distinction can lead to
 significantly different outcomes.
@@ -182,13 +187,13 @@ To improve DevOps practices, consider the following approaches:
    development cycles.
 
 3. **Build and Integrate**: Develop tools and systems that align with team
-   needs, particularly in testing. Tailor solutions based on a thorough
-   understanding of team requirements.
+   needs, particularly in testing and development. Tailor solutions based on a
+   thorough understanding of team requirements.
 
 4. **Evolve**: Your role extends beyond merely maintaining YAML hygiene or
    fixing pipeline issues. It's about education, tool development, and then
-   moving on to the next challenge so the business can also.
+   moving on to the next challenge, so the business can also.
 
 The path ahead for DevOps isn't just about tweaking configurations - it's about
 rolling up our sleeves, joining forces with dev teams, and building stuff that
-actually makes their lives easier.
+makes their lives easier.
