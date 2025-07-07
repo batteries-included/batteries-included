@@ -20,8 +20,9 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: ghcr.io/aquasecurity/trivy
-  default_tag: 0.64.0
+  default_tag: 0.64.1
   tags:
+    - 0.64.1
     - 0.64.0
     - 0.63.0
     - 0.62.1
@@ -282,6 +283,7 @@ keycloak:
   name: ghcr.io/batteries-included/keycloak
   default_tag: 26.2.5
   tags:
+    - 26.3.0
     - 26.2.5
     - 26.2.4
     - 26.2.3
@@ -319,8 +321,9 @@ kiali:
   tag_regex: ^v\d+\.\d+\.\d+$
 kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
-  default_tag: 1.30.5
+  default_tag: 1.30.6
   tags:
+    - 1.30.6
     - 1.30.5
     - 1.30.4
     - 1.30.3
@@ -465,8 +468,9 @@ metallb_speaker:
   tag_regex: ^v\d+\.\d+\.\d+$
 metrics_server:
   name: registry.k8s.io/metrics-server/metrics-server
-  default_tag: v0.7.2
+  default_tag: v0.8.0
   tags:
+    - v0.8.0
     - v0.7.2
     - v0.7.1
   tag_regex: ^v\d+\.\d+\.\d+$
@@ -527,8 +531,10 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-9
+  default_tag: 17.5-11
   tags:
+    - 17.5-11
+    - 17.5-10
     - 17.5-9
     - 17.5-8
     - 17.5-7
@@ -662,8 +668,9 @@ trust_manager_init:
   tag_regex: ^\d{8}\.\d+$
 vm_agent:
   name: docker.io/victoriametrics/vmagent
-  default_tag: v1.120.0
+  default_tag: v1.121.0
   tags:
+    - v1.121.0
     - v1.120.0
     - v1.119.0
     - v1.118.0
@@ -710,8 +717,9 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: docker.io/victoriametrics/vminsert
-  default_tag: v1.120.0-cluster
+  default_tag: v1.121.0-cluster
   tags:
+    - v1.121.0-cluster
     - v1.120.0-cluster
     - v1.119.0-cluster
     - v1.118.0-cluster
@@ -782,8 +790,9 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: docker.io/victoriametrics/vmselect
-  default_tag: v1.120.0-cluster
+  default_tag: v1.121.0-cluster
   tags:
+    - v1.121.0-cluster
     - v1.120.0-cluster
     - v1.119.0-cluster
     - v1.118.0-cluster
@@ -811,8 +820,9 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: docker.io/victoriametrics/vmstorage
-  default_tag: v1.120.0-cluster
+  default_tag: v1.121.0-cluster
   tags:
+    - v1.121.0-cluster
     - v1.120.0-cluster
     - v1.119.0-cluster
     - v1.118.0-cluster
