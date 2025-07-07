@@ -15,10 +15,13 @@ RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt \
   apt-get update && \
   apt-get install -y \
-    --no-install-recommends \
-      build-essential \
-      ca-certificates \
-      git \
-      nodejs \
-      npm
+  --no-install-recommends \
+  build-essential \
+  ca-certificates \
+  git \
+  nodejs \
+  npm \
+  maven \
+  openjdk-21-jdk-headless
+
 

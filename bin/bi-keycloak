@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get where the current script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Get the root directory of the project
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+source "${ROOT_DIR}/bin/lib/common-functions.sh"
+
+do_trigger_missing_upstream() {
+    local upstream_tags keycloak_tags
+    upstream_tags=$(yq '.keycloak_upstream.tags[]' image_registry.yaml)
+    keycloak_tags=$(yq '.keycloak.tags[]' image_registry.yaml)
+    # Each one of our tags may or may not have a batteries-included source hash
+    # so there are some versions like
+    # 26.3.0-16b3adf7c
+    # and some like
+    # 26.2.0
+    # We need to strip the source hash from the upstream tags
+    #
+    # This means we will only trigger a workflow run once for each upstream tag
+    # even if we have changed the source hash
+    keycloak_tags=$(echo "${keycloak_tags}" | sed -E 's/(-\w+)$//' | sort -u)
+
+    log "Checking for missing upstream tags in keycloak"
+
+    for tag in $(
+        echo ${upstream_tags} ${keycloak_tags} |
+            tr ' ' '\n' |
+            sort |
+            uniq -u
+    ); do
+        echo gh workflow run "keycloak.yml" -f "version=${tag}"
+    done
+}
+
+do_push_keycloak_image() {
+    local upstream_tag=${1}
+    local image_name="ghcr.io/batteries-included/keycloak"
+    local version_tag
+    version_tag=$(version_tag)
+    local tag="${upstream_tag}-${version_tag}"
+
+    log "${GREEN}Pushing${NOFORMAT} ${image_name}:${tag}"
+
+    docker push "${image_name}:${tag}"
+}
+
+usage() {
+    cat <<EOF
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+
+Available options:
+
+-h, --help      Print this help and exit
+-v, --verbose   Print script debug info
+
+Available commands:
+
+- trigger-missing-upstream  Trigger a workflow run for missing upstream tags
+- push-keycloak <upstream_tag>  Push the keycloak image with the given upstream tag
+EOF
+    exit 1
+}
+
+parse_params() {
+    while :; do
+        case "${1-}" in
+        -h | --help) usage ;;
+        -v | --verbose) export TRACE=1 ;;
+        --no-color) export NO_COLOR=1 ;;
+        -?*) die "Unknown option: $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+
+    if [[ $# -lt 1 ]]; then
+        log "Missing script arguments"
+        usage
+    fi
+
+    command="$1"
+    shift
+    args=("$@")
+
+    return 0
+}
+
+parse_params "$@"
+setup_colors
+setup_trace
+setup_root
+maybe_add_to_path "${ROOT_DIR}/bin"
+export PATH
+
+case "$command" in
+trigger-missing-upstream)
+    do_trigger_missing_upstream
+    ;;
+push-keycloak)
+    do_push_keycloak_image "${args[@]}"
+    ;;
+*)
+    log "Unknown command: $command"
+    usage
+    ;;
+esac

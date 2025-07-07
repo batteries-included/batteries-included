@@ -6,9 +6,11 @@ golang     1.24.4
 goreleaser 2.10.2
 kind       0.29.0
 kubectl    1.33.1
+maven      3.9.9
 nodejs     23.10.0
 python     3.12.9
 shfmt      3.11.0
 upx        5.0.1
 yamllint   1.37.1
 yq         4.45.4
+java       adoptopenjdk-21.0.7+6.0.LTS

@@ -142,6 +142,7 @@ do_fmt() {
     npm | node | js)
         log "Formatting ${YELLOW}node${NOFORMAT}"
         format_npm_code "static"
+        format_npm_code "keycloak-theme"
         format_prettier_code
         ;;
     yaml | md | ts)
@@ -160,6 +161,7 @@ do_fmt() {
         format_go_code "registry-tool"
         format_npm_code "static"
         format_npm_code "pastebin-go/assets"
+        format_npm_code "keycloak-theme"
         format_prettier_code
         format_sh_code
         ;;
@@ -190,6 +192,7 @@ do_check_fmt() {
     npm | node | js)
         log "Checking format ${YELLOW}node${NOFORMAT}"
         check_format_npm_code "static"
+        check_format_npm_code "keycloak-theme"
         check_format_prettier_code
         ;;
     yaml | md | ts)
@@ -208,6 +211,7 @@ do_check_fmt() {
         check_format_go_code "registry-tool"
         check_format_npm_code "static"
         check_format_npm_code "pastebin-go/assets"
+        check_format_npm_code "keycloak-theme"
         check_format_prettier_code
         check_format_sh_code
         ;;
@@ -278,9 +282,15 @@ do_set_version() {
     # There should be a line of the form:
     # @stable_version "0.73.0"
     # Where the string is the old version
-
     sed -i.bak "s/@stable_version \"${old_version}\"/@stable_version \"${new_version}\"/g" "${ROOT_DIR}/platform_umbrella/apps/common_core/lib/common_core/defaults/versions.ex"
     rm "${ROOT_DIR}/platform_umbrella/apps/common_core/lib/common_core/defaults/versions.ex.bak"
+
+    log "Changing version in Keycloak theme"
+    # In vite.config.ts we have a themeVersion
+    # that is used to generate the keycloak theme
+    # We need to change that to the new version
+    sed -i.bak "s/themeVersion: '${old_version}'/themeVersion: '${new_version}'/g" "${ROOT_DIR}/keycloak-theme/vite.config.ts"
+    rm "${ROOT_DIR}/keycloak-theme/vite.config.ts.bak"
 
     # Change the base version in the bin/lib/common-functions.sh
     sed -i.bak "s/BASE_VERSION=\"${old_version}\"/BASE_VERSION=\"${new_version}\"/g" "${ROOT_DIR}/bin/lib/common-functions.sh"

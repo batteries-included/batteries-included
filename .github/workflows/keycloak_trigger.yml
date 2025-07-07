@@ -1,5 +1,5 @@
 ---
-name: 'Check keycloak versions'
+name: 'Keycloak Trigger Missing From Upstream'
 
 'on':
   schedule:
@@ -25,12 +25,4 @@ jobs:
       - name: Kick off keycloak workflow for missing tags
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          for tag in $(echo \
-            "$(yq '.keycloak_upstream.tags[]' image_registry.yaml)" \
-            "$(yq '.keycloak.tags[]' image_registry.yaml)"  | \
-          tr ' ' '\n' | \
-          sort | \
-          uniq -u); do
-            gh workflow run "keycloak.yml" -f "version=${tag}"
-          done
+        run: bin/bix keycloak trigger-missing-upstream
