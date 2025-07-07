@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Home from './pages/Home.tsx';
 import PastePage from './pages/Paste.tsx';
-import './fonts.css';
 import './index.css';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';

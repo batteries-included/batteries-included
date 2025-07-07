@@ -84,7 +84,7 @@ function Home() {
             name="content"
             onChange={handleChange}
             value={formData.content}
-            className="block min-h-40 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-pink-500 focus:ring-pink-500"
+            className="block min-h-40 w-full rounded-lg border border-gray-light bg-gray-lightest p-2.5 text-sm text-gray-darker focus:border-pink-500 focus:ring-pink-500"
             placeholder="Some Paste Content"
             required
           />
@@ -94,7 +94,7 @@ function Home() {
             name="title"
             onChange={handleChange}
             value={formData.title}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-pink-500 focus:ring-pink-500"
+            className="block w-full rounded-lg border border-gray-light bg-gray-lightest p-2.5 text-sm text-gray-darker focus:border-pink-500 focus:ring-pink-500"
             placeholder="(Optional) Paste Title"
           />
 
@@ -108,7 +108,7 @@ function Home() {
             <button
               type="button"
               disabled={formData.loading}
-              className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-900 hover:bg-gray-400"
+              className="rounded bg-gray-lighter px-4 py-2 font-bold text-gray-darker hover:bg-gray-light"
               onClick={resetForm}>
               Cancel
             </button>

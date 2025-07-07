@@ -1,9 +1,5 @@
-// See the Tailwind configuration guide for advanced usage
-// https://tailwindcss.com/docs/configuration
-
 const path = require('path');
 const plugin = require('tailwindcss/plugin');
-const colors = require('tailwindcss/colors');
 const defaultTheme = require('tailwindcss/defaultTheme');
 const forms = require('@tailwindcss/forms');
 const typography = require('@tailwindcss/typography');
