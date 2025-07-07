@@ -281,7 +281,7 @@ karpenter:
   tag_regex: ^\d+\.\d+\.\d+$
 keycloak:
   name: ghcr.io/batteries-included/keycloak
-  default_tag: 26.2.5
+  default_tag: 26.3.0
   tags:
     - 26.3.0
     - 26.2.5
