@@ -1,6 +1,7 @@
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/jetbrains-mono';
 @import 'tailwindcss';
+@plugin "@tailwindcss/forms";
 
 @theme static {
   --color-primary-light: #ffa8cb;

@@ -15,7 +15,13 @@ export default typescriptEslint.config(
   eslintConfigPrettier,
   ...storybook.configs['flat/recommended'],
   {
-    ignores: ['dist/**', 'public/**'],
+    ignores: [
+      'dist/**',
+      'public/**',
+      'dist_keycloak/**',
+      'node_modules/**',
+      'postcss.config.cjs',
+    ],
   },
   {
     plugins: {
