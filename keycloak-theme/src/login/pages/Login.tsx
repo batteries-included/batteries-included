@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { kcSanitize } from 'keycloakify/lib/kcSanitize';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../KcContext';
 import type { I18n } from '../i18n';
 import { Logo } from '../../components/icons';
 import { PasswordInput } from '../../components/passwordInput';
 import { H2 } from '../../components/typography';
+import { ErrorMessage } from '../../components/errorMessage';
 
 export default function Login(
   props: PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n>
@@ -53,30 +53,9 @@ export default function Login(
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white dark:bg-gray-darker dark:text-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {messagesPerField.existsError('username', 'password') && (
-            <div className="mb-4 rounded-md bg-red-50 p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-red-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    {kcSanitize(
-                      messagesPerField.getFirstError('username', 'password')
-                    )}
-                  </h3>
-                </div>
-              </div>
-            </div>
+            <ErrorMessage
+              message={messagesPerField.getFirstError('username', 'password')}
+            />
           )}
 
           {realm.password && (
