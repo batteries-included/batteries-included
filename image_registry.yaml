@@ -292,7 +292,7 @@ keycloak:
     - 26.2.0
     - 25.0.6
     - 25.0.2
-  tag_regex: ^\d+\.\d+\.\d+$
+  tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
   default_tag: 26.3.0

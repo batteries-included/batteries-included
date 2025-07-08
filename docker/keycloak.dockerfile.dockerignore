@@ -1,1 +1,8 @@
 *
+# The theme directory
+!keycloak-theme/
+
+# The build directory are still not good
+keycloak-theme/node_modules
+keycloak-theme/dist
+keycloak-theme/dist_keycloak
