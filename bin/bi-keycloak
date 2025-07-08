@@ -78,7 +78,7 @@ do_trigger_missing_upstream() {
     local trigger_count=0
     for tag in ${missing_tags}; do
         log "Triggering workflow for version ${tag}${NOFORMAT}"
-        echo gh workflow run "keycloak.yml" -f "version=${tag}"
+        gh workflow run "keycloak.yml" -f "version=${tag}"
         trigger_count=$((trigger_count + 1))
     done
 
