@@ -77,7 +77,11 @@ defmodule Verify.TestCase.Helpers do
   end
 
   def assert_pods_in_deployment_running(session, namespace, deployment) do
-    assert_workload_pods_running(session, deployment, "/kube/deployment/#{namespace}/#{deployment}/show")
+    assert_workload_pods_running(
+      session,
+      deployment,
+      "/kube/deployment/#{namespace}/#{deployment}/show"
+    )
   end
 
   def create_pg_cluster(session, cluster_name) do
@@ -150,7 +154,10 @@ defmodule Verify.TestCase.Helpers do
 
     # click
     session = click(session, query)
-    new_handle = session |> window_handles() |> Enum.find(fn handle -> handle != initial_window_handle end)
+
+    new_handle =
+      session |> window_handles() |> Enum.find(fn handle -> handle != initial_window_handle end)
+
     focus_window(session, new_handle)
   end
 
@@ -200,7 +207,11 @@ defmodule Verify.TestCase.Helpers do
         statuses = get_statuses_from_badge(session)
 
         case statuses do
-          %{"total_replicas" => total, "available_replicas" => available, "ready_replicas" => ready}
+          %{
+            "total_replicas" => total,
+            "available_replicas" => available,
+            "ready_replicas" => ready
+          }
           when total == available and available == ready ->
             {:ok, {session, statuses}}
 
@@ -224,7 +235,9 @@ defmodule Verify.TestCase.Helpers do
     session
     |> text(Query.css("div#badges"))
     |> String.split("\n")
-    |> Enum.map(fn s -> s |> String.replace(" ", "") |> String.replace(":", "") |> Macro.underscore() end)
+    |> Enum.map(fn s ->
+      s |> String.replace(" ", "") |> String.replace(":", "") |> Macro.underscore()
+    end)
     |> Enum.chunk_every(2, 2, :discard)
     |> Map.new(fn [l, r] -> {l, r} end)
   end
@@ -307,7 +320,7 @@ defmodule Verify.TestCase.Helpers do
   # need to already be on realm page. see `navigate_to_keycloak_realm/2`
   def login_keycloak(session, username, password) do
     session
-    |> assert_has(Query.css("h1", text: "Sign in to your account"))
+    |> assert_has(Query.text("Sign in to your account"))
     |> fill_in(Query.text_field("username"), with: username)
     |> fill_in(Query.text_field("password"), with: password)
     |> click(Query.button("Sign In"))
@@ -344,7 +357,7 @@ defmodule Verify.TestCase.Helpers do
     |> click(Query.link("Admin Console"))
     |> last_tab()
     |> login_keycloak(user, temp_password)
-    |> assert_has(Query.css("h1", text: "Update password"))
+    |> assert_has(Query.text("Update password"))
     |> fill_in(Query.text_field("password-new"), with: password)
     |> fill_in(Query.text_field("password-confirm"), with: password)
     |> click(Query.button("Submit"))
