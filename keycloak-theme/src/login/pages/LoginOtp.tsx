@@ -3,7 +3,8 @@ import { kcSanitize } from 'keycloakify/lib/kcSanitize';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../KcContext';
 import type { I18n } from '../i18n';
-import Logo from '../../logo';
+import { Logo } from '../../components/icons';
+import { H2 } from '../../components/typography';
 
 export default function LoginOtp(
   props: PageProps<Extract<KcContext, { pageId: 'login-otp.ftl' }>, I18n>
@@ -24,9 +25,7 @@ export default function LoginOtp(
             <Logo />
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-darkest dark:text-white">
-          {msg('doLogIn')}
-        </h2>
+        <H2>{msg('doLogIn')}</H2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

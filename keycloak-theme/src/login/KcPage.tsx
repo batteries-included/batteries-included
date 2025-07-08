@@ -4,14 +4,17 @@ import type { KcContext } from './KcContext';
 import { useI18n } from './i18n';
 import DefaultPage from 'keycloakify/login/DefaultPage';
 import Template from 'keycloakify/login/Template';
+
+// Default CSS which brings in tailwind
 import './index.css';
 
+// Lazy loading components to reduce initial bundle size
 const UserProfileFormFields = lazy(
   () => import('keycloakify/login/UserProfileFormFields')
 );
-
 const Login = lazy(() => import('./pages/Login'));
 const LoginOtp = lazy(() => import('./pages/LoginOtp'));
+const LoginUpdatePassword = lazy(() => import('./pages/LoginUpdatePassword'));
 
 const doMakeUserConfirmPassword = true;
 
@@ -32,6 +35,7 @@ export default function KcPage(props: { kcContext: KcContext }) {
                 doUseDefaultCss={true}
               />
             );
+
           case 'login-otp.ftl':
             return (
               <LoginOtp
@@ -40,6 +44,16 @@ export default function KcPage(props: { kcContext: KcContext }) {
                 doUseDefaultCss={true}
               />
             );
+
+          case 'login-update-password.ftl':
+            return (
+              <LoginUpdatePassword
+                {...{ kcContext, i18n, classes }}
+                Template={Template}
+                doUseDefaultCss={true}
+              />
+            );
+
           default:
             return (
               <DefaultPage
