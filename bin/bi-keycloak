@@ -7,7 +7,6 @@
 
 # Strict mode settings
 set -Eeuo pipefail
-set -o nounset # Error on unset variables
 
 # Get script location and root directory
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
