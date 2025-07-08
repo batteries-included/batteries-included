@@ -5,13 +5,7 @@ import type { UserProfileFormFieldsProps } from 'keycloakify/login/UserProfileFo
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../KcContext';
 import type { I18n } from '../i18n';
-import {
-  FullPageContainer,
-  Logo,
-  H2,
-  Card,
-  ErrorMessage,
-} from '../components';
+import { FullPageContainer, Logo, H2, Card, ErrorMessage } from '../components';
 
 type LoginUpdateProfileProps = PageProps<
   Extract<KcContext, { pageId: 'login-update-profile.ftl' }>,

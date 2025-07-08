@@ -16,16 +16,16 @@ interface FieldProps {
   id: string;
   /** The input type (default: 'text') */
   type?:
-  | 'text'
-  | 'email'
-  | 'tel'
-  | 'url'
-  | 'password'
-  | 'select'
-  | 'textarea'
-  | 'multiselect'
-  | 'multi-select'
-  | 'hidden';
+    | 'text'
+    | 'email'
+    | 'tel'
+    | 'url'
+    | 'password'
+    | 'select'
+    | 'textarea'
+    | 'multiselect'
+    | 'multi-select'
+    | 'hidden';
   /** The input value */
   value?: string;
   /** The default input value */
@@ -95,9 +95,9 @@ export function Field({
         {
           // | 'text' | 'email' | 'tel' | 'url' are all handled by TextInput so handle that here
           type === 'text' ||
-            type === 'email' ||
-            type === 'tel' ||
-            type === 'url' ? (
+          type === 'email' ||
+          type === 'tel' ||
+          type === 'url' ? (
             <TextInput
               name={name}
               id={id}

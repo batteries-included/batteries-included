@@ -1,110 +1,258 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
+# bi-keycloak: Utilities for managing Keycloak images and deployments
+#
+# This script helps manage Keycloak images, including building, pushing,
+# and synchronizing with upstream versions.
 
-# Get where the current script is located
+# Strict mode settings
+set -Eeuo pipefail
+set -o nounset # Error on unset variables
+
+# Get script location and root directory
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
-# Get the root directory of the project
 ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
+# Load common functions
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
-do_trigger_missing_upstream() {
-    local upstream_tags keycloak_tags
-    upstream_tags=$(yq '.keycloak_upstream.tags[]' image_registry.yaml)
-    keycloak_tags=$(yq '.keycloak.tags[]' image_registry.yaml)
-    # Each one of our tags may or may not have a batteries-included source hash
-    # so there are some versions like
-    # 26.3.0-16b3adf7c
-    # and some like
-    # 26.2.0
-    # We need to strip the source hash from the upstream tags
-    #
-    # This means we will only trigger a workflow run once for each upstream tag
-    # even if we have changed the source hash
-    keycloak_tags=$(echo "${keycloak_tags}" | sed -E 's/(-\w+)$//' | sort -u)
+# Parse the registry YAML file to get tag information
+parse_registry_yaml() {
+    local registry_file="${ROOT_DIR}/image_registry.yaml"
 
-    log "Checking for missing upstream tags in keycloak"
+    if [[ ! -f "${registry_file}" ]]; then
+        die "Registry file not found at ${registry_file}"
+    fi
 
-    for tag in $(
-        echo ${upstream_tags} ${keycloak_tags} |
-            tr ' ' '\n' |
-            sort |
-            uniq -u
-    ); do
-        echo gh workflow run "keycloak.yml" -f "version=${tag}"
-    done
+    log "Reading registry data from ${registry_file}${NOFORMAT}"
+    UPSTREAM_TAGS=$(yq '.keycloak_upstream.tags[]' "${registry_file}" | sort -V)
+    KEYCLOAK_TAGS=$(yq '.keycloak.tags[]' "${registry_file}" | sort -V)
+
+    if [[ -z "${UPSTREAM_TAGS}" ]]; then
+        log "No upstream tags found in registry file"
+    fi
+
+    if [[ -z "${KEYCLOAK_TAGS}" ]]; then
+        log "No keycloak tags found in registry file"
+    fi
 }
 
+# Strip version hash from tags (e.g., 26.3.0-16b3adf7c -> 26.3.0)
+strip_version_hash() {
+    local tags="$1"
+    echo "${tags}" | sed -E 's/(-\w+)$//' | sort -u
+}
+
+# Find tags that are in upstream but not in our keycloak images
+find_missing_tags() {
+    local upstream="$1"
+    local keycloak="$2"
+
+    echo "${upstream} ${keycloak}" | tr ' ' '\n' | sort -V | uniq -u
+}
+
+# Trigger GitHub workflow for missing upstream tags
+do_trigger_missing_upstream() {
+    log "Checking for missing upstream tags in Keycloak"
+
+    parse_registry_yaml
+
+    # Strip version hashes from keycloak tags to get base versions
+    local clean_keycloak_tags
+    clean_keycloak_tags=$(strip_version_hash "${KEYCLOAK_TAGS}")
+
+    log "Upstream tags: ${UPSTREAM_TAGS}"
+    log "Keycloak tags (clean): ${clean_keycloak_tags}"
+
+    # Find missing tags (in either direction)
+    local missing_tags
+    missing_tags=$(find_missing_tags "${UPSTREAM_TAGS}" "${clean_keycloak_tags}")
+
+    if [[ -z "${missing_tags}" ]]; then
+        log "No missing tags found - all upstream tags are covered"
+        return 0
+    fi
+
+    log "Found ${YELLOW}$(echo "${missing_tags}" | wc -w)${NOFORMAT} missing tags"
+
+    local trigger_count=0
+    for tag in ${missing_tags}; do
+        log "Triggering workflow for version ${tag}${NOFORMAT}"
+        echo gh workflow run "keycloak.yml" -f "version=${tag}"
+        trigger_count=$((trigger_count + 1))
+    done
+
+    log "Triggered ${YELLOW}${trigger_count}${NOFORMAT} workflow runs"
+}
+
+# Get the full Keycloak image name with tag
+get_keycloak_image_name() {
+    local upstream_tag="$1"
+    local version_tag="$2"
+    local image_name="${REGISTRY}/keycloak"
+
+    echo "${image_name}:${upstream_tag}-${version_tag}"
+}
+
+# Validate that an image exists before trying to push it
+validate_image_exists() {
+    local image_name="$1"
+
+    log "Checking if image exists: ${image_name}"
+
+    if ! docker image inspect "${image_name}" &>/dev/null; then
+        log "Image not found: ${image_name}"
+        log "Try building the image first with: bi-docker build-image keycloak ${upstream_tag}${NOFORMAT}"
+        return 1
+    fi
+
+    log "Image exists: ${image_name}"
+    return 0
+}
+
+# Push a Keycloak image to the registry
 do_push_keycloak_image() {
-    local upstream_tag=${1}
-    local image_name="ghcr.io/batteries-included/keycloak"
+    if [[ $# -lt 1 ]]; then
+        die "Missing upstream tag. Usage: ${BASH_SOURCE[0]} push-keycloak <upstream_tag>"
+    fi
+
+    local upstream_tag="$1"
     local version_tag
     version_tag=$(version_tag)
-    local tag="${upstream_tag}-${version_tag}"
+    local image_name
+    image_name=$(get_keycloak_image_name "${upstream_tag}" "${version_tag}")
 
-    log "${GREEN}Pushing${NOFORMAT} ${image_name}:${tag}"
+    log "Preparing to push Keycloak image: ${image_name}"
 
-    docker push "${image_name}:${tag}"
+    # Validate the image exists before pushing
+    if ! validate_image_exists "${image_name}"; then
+        return 1
+    fi
+
+    log "Pushing image ${image_name} to registry"
+
+    if ! docker push "${image_name}"; then
+        log "Failed to push image: ${image_name}"
+        return 1
+    fi
+
+    log "Successfully pushed image: ${image_name}"
 }
 
+# Display help information and exit
 usage() {
     cat <<EOF
-Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
+Batteries Included - Keycloak Management Tool
 
-Available options:
+USAGE:
+    $(basename "${BASH_SOURCE[0]}") [OPTIONS] COMMAND [ARGS...]
 
--h, --help      Print this help and exit
--v, --verbose   Print script debug info
+OPTIONS:
+    -h, --help          Show this help message and exit
+    -v, --verbose       Enable verbose output (debug logging)
+    --no-color          Disable colored output
 
-Available commands:
+COMMANDS:
+    trigger-missing-upstream}
+        Identify and trigger GitHub workflows for upstream Keycloak tags 
+        that don't have corresponding Batteries Included images
 
-- trigger-missing-upstream  Trigger a workflow run for missing upstream tags
-- push-keycloak <upstream_tag>  Push the keycloak image with the given upstream tag
+    push-keycloak <upstream_tag>
+        Push a Keycloak image with the specified upstream tag to the registry
+        Example: bi-keycloak push-keycloak 26.3.0
+
+EXAMPLES:
+    # Check for missing upstream tags and trigger workflows
+    bi-keycloak trigger-missing-upstream
+
+    # Push a specific Keycloak image version
+    bi-keycloak push-keycloak 26.3.0
 EOF
     exit 1
 }
 
+# Parse command line parameters
 parse_params() {
+    # Set default values
+    export TRACE=${TRACE:-0}
+    export NO_COLOR=${NO_COLOR:-0}
+
     while :; do
         case "${1-}" in
-        -h | --help) usage ;;
-        -v | --verbose) export TRACE=1 ;;
-        --no-color) export NO_COLOR=1 ;;
-        -?*) die "Unknown option: $1" ;;
-        *) break ;;
+        -h | --help)
+            usage
+            ;;
+        -v | --verbose)
+            export TRACE=1
+            ;;
+        --no-color)
+            export NO_COLOR=1
+            ;;
+        -?*)
+            log "Unknown option: $1"
+            usage
+            ;;
+        *)
+            break
+            ;;
         esac
         shift
     done
 
     if [[ $# -lt 1 ]]; then
-        log "Missing script arguments"
+        log "Missing command argument"
         usage
     fi
 
-    command="$1"
+    COMMAND="$1"
     shift
-    args=("$@")
+    ARGS=("$@")
+
+    log "Command: ${COMMAND}"
+    log "Arguments: ${ARGS[*]:-none}"
 
     return 0
 }
 
-parse_params "$@"
-setup_colors
-setup_trace
-setup_root
-maybe_add_to_path "${ROOT_DIR}/bin"
-export PATH
+# Initialize the script environment
+initialize() {
+    setup_colors
+    setup_trace
+    setup_root
+    maybe_add_to_path "${ROOT_DIR}/bin"
+    export PATH
 
-case "$command" in
-trigger-missing-upstream)
-    do_trigger_missing_upstream
-    ;;
-push-keycloak)
-    do_push_keycloak_image "${args[@]}"
-    ;;
-*)
-    log "Unknown command: $command"
-    usage
-    ;;
-esac
+    # Set up error trap
+    trap 'log "Error occurred at line $LINENO. Command: $BASH_COMMAND"' ERR
+
+}
+
+# Main entry point
+main() {
+    parse_params "$@"
+    initialize
+
+    log "Running command: ${YELLOW}${COMMAND}${NOFORMAT}"
+
+    case "$COMMAND" in
+    trigger-missing-upstream)
+        do_trigger_missing_upstream
+        ;;
+    push-keycloak)
+        if [[ ${#ARGS[@]} -lt 1 ]]; then
+            log "Missing upstream tag argument for push-keycloak"
+            usage
+        fi
+        do_push_keycloak_image "${ARGS[0]}"
+        ;;
+    *)
+        log "Unknown command: ${COMMAND}"
+        usage
+        ;;
+    esac
+
+    log "Command ${YELLOW}${COMMAND}${NOFORMAT} completed successfully"
+}
+
+# Run the main function with all arguments
+main "$@"

@@ -116,8 +116,8 @@ export default function UserProfileFormFields(
                 placeholder={
                   attribute.annotations.inputTypePlaceholder
                     ? i18n.advancedMsgStr(
-                      attribute.annotations.inputTypePlaceholder
-                    )
+                        attribute.annotations.inputTypePlaceholder
+                      )
                     : undefined
                 }
                 autoComplete={attribute.autocomplete}
