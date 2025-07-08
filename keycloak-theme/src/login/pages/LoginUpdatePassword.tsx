@@ -1,12 +1,8 @@
 import { useState } from 'react';
-import { kcSanitize } from 'keycloakify/lib/kcSanitize';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../KcContext';
 import type { I18n } from '../i18n';
-import { Logo } from '../../components/icons';
-import { PasswordInput } from '../../components/passwordInput';
-import { H2 } from '../../components/typography';
-import { ErrorMessage } from '../../components/errorMessage';
+import { Logo, H2, ErrorMessage, Card, FullPageContainer, Field } from '../../components';
 
 export default function LoginUpdatePassword(
   props: PageProps<
@@ -23,7 +19,7 @@ export default function LoginUpdatePassword(
   const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-lightest dark:bg-gray-darker flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <FullPageContainer>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="h-24 w-24 flex items-center justify-center">
@@ -33,102 +29,80 @@ export default function LoginUpdatePassword(
         <H2>{msg('updatePasswordTitle')}</H2>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white dark:bg-gray-darker dark:text-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {messagesPerField.existsError('password', 'password-confirm') && (
-            <ErrorMessage
-              message={messagesPerField.getFirstError(
-                'password',
-                'password-confirm'
-              )}
-            />
-          )}
+      <Card>
+        {messagesPerField.existsError('password', 'password-confirm') && (
+          <ErrorMessage
+            message={messagesPerField.getFirstError(
+              'password',
+              'password-confirm'
+            )}
+          />
+        )}
 
-          <form
-            id="kc-passwd-update-form"
-            className="space-y-6"
-            onSubmit={() => {
-              setIsSubmitButtonDisabled(true);
-              return true;
-            }}
-            action={url.loginAction}
-            method="post">
-            <div>
-              <label
-                htmlFor="password-new"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-lighter">
-                {msg('passwordNew')}
-              </label>
-              <div className="mt-1">
-                <PasswordInput
-                  i18n={i18n}
-                  passwordInputId="password-new"
-                  hasError={messagesPerField.existsError(
-                    'password',
-                    'password-confirm'
-                  )}
-                  autoComplete="new-password"
-                  autoFocus
-                />
-                {messagesPerField.existsError('password') && (
-                  <p
-                    className="mt-2 text-sm text-red-600"
-                    id="input-error-password">
-                    {kcSanitize(messagesPerField.get('password'))}
-                  </p>
-                )}
-              </div>
-            </div>
+        <form
+          id="kc-passwd-update-form"
+          className="space-y-6"
+          onSubmit={() => {
+            setIsSubmitButtonDisabled(true);
+            return true;
+          }}
+          action={url.loginAction}
+          method="post">
+          <Field
+            label={msg('passwordNew')}
+            name="password-new"
+            id="password-new"
+            type="password"
+            i18n={i18n}
+            autoComplete="new-password"
+            autoFocus
+            hasError={messagesPerField.existsError('password', 'password-confirm')}
+            errorMessage={
+              messagesPerField.existsError('password')
+                ? messagesPerField.get('password')
+                : undefined
+            }
+            errorId="input-error-password"
+          />
 
-            <div>
-              <label
-                htmlFor="password-confirm"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-lighter">
-                {msg('passwordConfirm')}
-              </label>
-              <div className="mt-1">
-                <PasswordInput
-                  i18n={i18n}
-                  passwordInputId="password-confirm"
-                  hasError={messagesPerField.existsError(
-                    'password',
-                    'password-confirm'
-                  )}
-                  autoComplete="new-password"
-                />
-                {messagesPerField.existsError('password-confirm') && (
-                  <p
-                    className="mt-2 text-sm text-red-600"
-                    id="input-error-password-confirm">
-                    {kcSanitize(messagesPerField.get('password-confirm'))}
-                  </p>
-                )}
-              </div>
-            </div>
+          <Field
+            label={msg('passwordConfirm')}
+            name="password-confirm"
+            id="password-confirm"
+            type="password"
+            i18n={i18n}
+            autoComplete="new-password"
+            hasError={messagesPerField.existsError('password', 'password-confirm')}
+            errorMessage={
+              messagesPerField.existsError('password-confirm')
+                ? messagesPerField.get('password-confirm')
+                : undefined
+            }
+            errorId="input-error-password-confirm"
+          />
 
-            <LogoutOtherSessions i18n={i18n} />
+          <LogoutOtherSessions i18n={i18n} />
 
-            <div className="flex space-x-4">
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              disabled={isSubmitButtonDisabled}
+              className="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              {msgStr('doSubmit')}
+            </button>
+            {isAppInitiatedAction && (
               <button
                 type="submit"
-                disabled={isSubmitButtonDisabled}
-                className="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                {msgStr('doSubmit')}
+                name="cancel-aia"
+                value="true"
+                className="flex-1 flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                {msg('doCancel')}
               </button>
-              {isAppInitiatedAction && (
-                <button
-                  type="submit"
-                  name="cancel-aia"
-                  value="true"
-                  className="flex-1 flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                  {msg('doCancel')}
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+            )}
+          </div>
+        </form>
+      </Card>
+    </FullPageContainer>
   );
 }
 
