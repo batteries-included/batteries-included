@@ -3,7 +3,14 @@ import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../KcContext';
 import type { I18n } from '../i18n';
 
-import { FullPageContainer, Logo, H2, Card, ErrorMessage, Field } from '../../components';
+import {
+  FullPageContainer,
+  Logo,
+  H2,
+  Card,
+  ErrorMessage,
+  Field,
+} from '../components';
 
 export default function Login(
   props: PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n>
@@ -80,11 +87,10 @@ export default function Login(
                 autoFocus
                 tabIndex={2}
                 defaultValue={login.username ?? ''}
-                hasError={messagesPerField.existsError('username', 'password')}
-                errorMessage={
+                errors={
                   messagesPerField.existsError('username', 'password')
-                    ? messagesPerField.getFirstError('username', 'password')
-                    : undefined
+                    ? [messagesPerField.getFirstError('username', 'password')]
+                    : []
                 }
               />
             )}
@@ -97,7 +103,6 @@ export default function Login(
               i18n={i18n}
               autoComplete="current-password"
               tabIndex={3}
-              hasError={messagesPerField.existsError('username', 'password')}
             />
 
             <div className="flex items-center justify-between">

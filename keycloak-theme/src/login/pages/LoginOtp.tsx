@@ -2,8 +2,14 @@ import { Fragment, useState } from 'react';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../KcContext';
 import type { I18n } from '../i18n';
-import { Card, ErrorMessage, Field, FullPageContainer, H2, Logo } from '../../components';
-
+import {
+  Card,
+  ErrorMessage,
+  Field,
+  FullPageContainer,
+  H2,
+  Logo,
+} from '../components';
 
 export default function LoginOtp(
   props: PageProps<Extract<KcContext, { pageId: 'login-otp.ftl' }>, I18n>

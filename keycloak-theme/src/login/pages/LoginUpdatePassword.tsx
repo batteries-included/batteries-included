@@ -2,7 +2,14 @@ import { useState } from 'react';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import type { KcContext } from '../KcContext';
 import type { I18n } from '../i18n';
-import { Logo, H2, ErrorMessage, Card, FullPageContainer, Field } from '../../components';
+import {
+  Logo,
+  H2,
+  ErrorMessage,
+  Card,
+  FullPageContainer,
+  Field,
+} from '../components';
 
 export default function LoginUpdatePassword(
   props: PageProps<
@@ -56,7 +63,10 @@ export default function LoginUpdatePassword(
             i18n={i18n}
             autoComplete="new-password"
             autoFocus
-            hasError={messagesPerField.existsError('password', 'password-confirm')}
+            hasError={messagesPerField.existsError(
+              'password',
+              'password-confirm'
+            )}
             errorMessage={
               messagesPerField.existsError('password')
                 ? messagesPerField.get('password')
@@ -72,7 +82,10 @@ export default function LoginUpdatePassword(
             type="password"
             i18n={i18n}
             autoComplete="new-password"
-            hasError={messagesPerField.existsError('password', 'password-confirm')}
+            hasError={messagesPerField.existsError(
+              'password',
+              'password-confirm'
+            )}
             errorMessage={
               messagesPerField.existsError('password-confirm')
                 ? messagesPerField.get('password-confirm')

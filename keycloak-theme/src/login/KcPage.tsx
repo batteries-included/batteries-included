@@ -9,12 +9,11 @@ import Template from 'keycloakify/login/Template';
 import './index.css';
 
 // Lazy loading components to reduce initial bundle size
-const UserProfileFormFields = lazy(
-  () => import('keycloakify/login/UserProfileFormFields')
-);
+const UserProfileFormFields = lazy(() => import('./UserProfileFormFields'));
 const Login = lazy(() => import('./pages/Login'));
 const LoginOtp = lazy(() => import('./pages/LoginOtp'));
 const LoginUpdatePassword = lazy(() => import('./pages/LoginUpdatePassword'));
+const LoginUpdateProfile = lazy(() => import('./pages/LoginUpdateProfile'));
 
 const doMakeUserConfirmPassword = true;
 
@@ -51,6 +50,17 @@ export default function KcPage(props: { kcContext: KcContext }) {
                 {...{ kcContext, i18n, classes }}
                 Template={Template}
                 doUseDefaultCss={true}
+              />
+            );
+
+          case 'login-update-profile.ftl':
+            return (
+              <LoginUpdateProfile
+                {...{ kcContext, i18n, classes }}
+                Template={Template}
+                doUseDefaultCss={true}
+                UserProfileFormFields={UserProfileFormFields}
+                doMakeUserConfirmPassword={doMakeUserConfirmPassword}
               />
             );
 
