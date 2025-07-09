@@ -65,6 +65,8 @@ defmodule Verify.KindInstallWorker do
     do_rage(output, state)
   end
 
+  def handle_info({:EXIT, _, _}, state), do: {:noreply, state}
+
   defp do_start({:cmd, cmd, slug}, state) do
     Logger.debug("Running #{cmd}")
 
