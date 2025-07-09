@@ -34,12 +34,13 @@ defmodule Verify.TestCase.Util do
           :ok
         rescue
           e ->
+            [{kind_worker_pid, _}] = Registry.lookup(Verify.Registry, __MODULE__.KindInstallWorker)
             out = unquote(__MODULE__).rage_output_for_test(unquote(mod), unquote(message))
 
             Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), unquote(message))
             # taking a screenshot writes the paths without a final newline so add it here
             IO.write("\n")
-            Verify.KindInstallWorker.rage(unquote(mod), out)
+            Verify.KindInstallWorker.rage(kind_worker_pid, out)
 
             reraise(e, __STACKTRACE__)
         end
@@ -115,13 +116,7 @@ defmodule Verify.TestCase.Util do
   end
 
   @spec rage_output_for_test(module(), binary()) :: String.t()
-  def rage_output_for_test(mod, message) do
-    tmp_dir = get_tmp_dir(mod)
-    name = String.replace(message, " ", "_")
-
-    time = :second |> :erlang.system_time() |> to_string()
-    Path.join([tmp_dir, "#{time}_#{name}.json"])
-  end
+  def rage_output_for_test(mod, message), do: Path.join(get_tmp_dir(mod), String.replace(message, " ", "_"))
 
   @spec wait_for_images(GenServer.name(), list(), non_neg_integer()) :: :ok
   def wait_for_images(pid, images, timeout \\ 60_000)

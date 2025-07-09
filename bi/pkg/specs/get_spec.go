@@ -24,9 +24,8 @@ func GetSpecFromURL(specURL string) (*InstallSpec, error) {
 		return readLocalFile(parsedURL)
 	case "https":
 		return readRemoteFile(parsedURL)
-		// Only download on HTTP for URLs that string contain 127.0.0.1
-	case "http":
-		if strings.Contains(parsedURL.Host, "127.0.0.1") || strings.Contains(parsedURL.Host, "127-0-0-1.batrsinc.co") {
+	case "http": // Only download on HTTP if home-base is running locally
+		if strings.Contains(parsedURL.Host, "127.0.0.1") || strings.Contains(parsedURL.Host, "batrsinc.co") {
 			return readRemoteFile(parsedURL)
 		}
 		fallthrough

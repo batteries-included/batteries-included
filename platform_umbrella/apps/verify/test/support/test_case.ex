@@ -64,12 +64,15 @@ defmodule Verify.TestCase do
         Logger.debug("Starting Kind for spec: #{install_spec}")
         tmp_dir = get_tmp_dir(__MODULE__)
 
-        {:ok, url, kube_config_path} =
-          Verify.KindInstallWorker.start(__MODULE__, install_spec, slug)
+        kind_pid =
+          start_supervised!({
+            # the kind_install_worker cleans up after itself as it is stopped
+            Verify.KindInstallWorker,
+            [name: {:via, Registry, {Verify.Registry, __MODULE__.KindInstallWorker, Verify.KindInstallWorker}}]
+          })
 
-        # Make sure to clean up after ourselves
-        # Stopping will also remove specs
-        on_exit(&Verify.KindInstallWorker.stop_all/0)
+        {:ok, url, kube_config_path} =
+          Verify.KindInstallWorker.start_from_spec(kind_pid, install_spec, slug)
 
         # check that we have all of the pre-pulled images before installing batteries
         :ok = wait_for_images(image_pid, @images)
@@ -94,8 +97,9 @@ defmodule Verify.TestCase do
 
         {:ok,
          [
-           image_pull_worker: image_pid,
            battery_install_worker: install_pid,
+           image_pull_worker: image_pid,
+           kind_install_worker: kind_pid,
            control_url: url,
            kube_config_path: kube_config_path,
            tested_version: tested_version,

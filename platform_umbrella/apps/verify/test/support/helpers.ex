@@ -394,6 +394,17 @@ defmodule Verify.TestCase.Helpers do
     |> sleep(100)
   end
 
+  @doc """
+  For visiting paths relative to the current URL.
+  Useful when navigating around non control-server pages e.g. keycloak / home-base
+  """
+  def visit_relative(parent, path) do
+    parent
+    |> current_url()
+    |> Path.join(path)
+    |> then(&visit(parent, &1))
+  end
+
   def close_tab(session) do
     session
     |> close_window()
