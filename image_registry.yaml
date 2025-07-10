@@ -298,8 +298,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.3.0
+  default_tag: 26.3.1
   tags:
+    - 26.3.1
     - 26.3.0
     - 26.2.5
     - 26.2.4
@@ -324,8 +325,9 @@ kiali:
   tag_regex: ^v\d+\.\d+\.\d+$
 kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
-  default_tag: 1.30.6
+  default_tag: 1.30.7
   tags:
+    - 1.30.7
     - 1.30.6
     - 1.30.5
     - 1.30.4
