@@ -27,7 +27,8 @@ func ListInstallations(ctx context.Context, fn func(*InstallEnv) error) error {
 
 		slug := entry.Name()
 		installPath := filepath.Join(basePath, slug)
-		env, err := NewEnv(ctx, slug)
+		eb := NewEnvBuilder(WithSlugOrURL(slug))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			slog.Warn("Error creating install environment",
 				slog.String("slug", slug), slog.String("path", installPath), slog.Any("error", err))

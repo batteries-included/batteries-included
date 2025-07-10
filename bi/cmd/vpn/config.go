@@ -15,9 +15,11 @@ var vpnConfigCmd = &cobra.Command{
 	Short: "Get the wireguard config for a batteries included environment",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := args[0]
+		installURL := args[0]
 
-		env, err := installs.NewEnv(cmd.Context(), url)
+		ctx := cmd.Context()
+		eb := installs.NewEnvBuilder(installs.WithSlugOrURL(installURL))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return err
 		}
