@@ -13,7 +13,6 @@ REPO="batteries-included/batteries-included"
 # Locations
 VERSION_LOC="${BASE_DIR}/share/bi/${BI}-${BI_VERSION_TAG}"
 INSTALL_DIR="${BASE_DIR}/bin"
-BI_LOC="${INSTALL_DIR}/${BI}"
 TMP_DIR="$(mktemp -d)"
 
 # Host info

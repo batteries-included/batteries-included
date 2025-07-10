@@ -5,6 +5,7 @@ defmodule Verify.HomeBaseTest do
   alias CommonCore.Defaults
   alias CommonCore.Defaults.Images
   alias CommonCore.JWK
+  alias Verify.KindInstallWorker
 
   require Logger
 
@@ -19,10 +20,10 @@ defmodule Verify.HomeBaseTest do
     {:ok, session} = start_session(url)
 
     # make sure the namespace is created
-    session
-    |> trigger_k8s_deploy()
-    |> sleep(1_000)
-    |> Wallaby.end_session()
+    session =
+      session
+      |> trigger_k8s_deploy()
+      |> sleep(1_000)
 
     # get the seed data from the int-prod bootstrap file
     home_base_seed_data =
@@ -53,16 +54,57 @@ defmodule Verify.HomeBaseTest do
       end)
       |> Jason.decode!()
 
-    {:ok, team_id: team["id"]}
+    session
+    |> create_home_base(team["id"])
+    |> Wallaby.end_session()
+
+    :ok
   end
 
-  verify "can create home base", %{session: session, team_id: team_id} do
+  verify "can create install", %{session: session, kind_install_worker: pid} do
+    install_name = "int-test-#{:rand.uniform(10_000)}"
+
+    {url, session} = navigate_to_home_base(session)
+
+    session =
+      session
+      |> home_base_login()
+      |> visit_relative("/installations/new")
+      |> assert_text("Create a new installation")
+      |> fill_in_name("installation[slug]", install_name)
+      |> find(Query.select("installation[kube_provider]"), &click(&1, Query.option("Kind")))
+      |> find(Query.select("installation[default_size]"), &click(&1, Query.option("Tiny")))
+      |> click(Query.button("Create Installation"))
+      # make sure we're on the success page
+      |> assert_text("Installation Created")
+      |> assert_path(~r|/installations/[\d\w-]+/success$|)
+
+    cmd = text(session, Query.css("pre"))
+
+    uri = URI.new!(url)
+
+    {:ok} = KindInstallWorker.start_from_command(pid, cmd, install_name, uri.host)
+  end
+
+  defp navigate_to_home_base(session) do
+    session =
+      session
+      |> visit("/traditional_services")
+      |> assert_has(table_row(text: "home-base-"))
+
+    id = text(session, Query.css("table tr td:first-child"))
+    link = Query.link("running_service_#{id}")
+
+    {attr(session, link, "href"), session |> click(link) |> last_tab()}
+  end
+
+  defp create_home_base(session, team_id) do
     image = Images.home_base_image()
-    Logger.debug("Testing home base image: #{inspect(image)}")
     service_name = "home-base-#{:rand.uniform(10_000)}"
 
     session
     |> add_pg_cluster(service_name)
+    |> assert_pod_succeeded("pg-#{service_name}-1-initdb")
     |> assert_pod_running("pg-#{service_name}-1")
     |> create_traditional_service(
       service_name,
@@ -83,12 +125,7 @@ defmodule Verify.HomeBaseTest do
     # make sure we can access the running service
     |> visit_running_service()
     |> assert_has(Query.css("h2", text: "Log in to your account"))
-    |> then(fn session ->
-      session
-      |> current_url()
-      |> Path.join("../signup")
-      |> then(&visit(session, &1))
-    end)
+    |> visit_relative("../signup")
     |> assert_has(Query.css("h2", text: "Sign up for an account"))
     |> fill_in(Query.text_field("user[email]"), with: @email)
     |> fill_in(Query.text_field("user[password]"), with: @password)
@@ -97,6 +134,11 @@ defmodule Verify.HomeBaseTest do
     |> click(Query.button("Create account"))
     |> sleep(250)
     |> click(Query.link("Log in"))
+    |> home_base_login()
+  end
+
+  defp home_base_login(session) do
+    session
     |> assert_has(Query.css("h2", text: "Log in to your account"))
     |> fill_in(Query.text_field("user[email]"), with: @email)
     |> fill_in(Query.text_field("user[password]"), with: @password)
