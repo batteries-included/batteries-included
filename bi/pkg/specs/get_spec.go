@@ -8,12 +8,13 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"slices"
 	"strings"
 
 	jose "github.com/go-jose/go-jose/v4"
 )
 
-func GetSpecFromURL(specURL string) (*InstallSpec, error) {
+func GetSpecFromURL(specURL string, additionalInsecureHosts []string) (*InstallSpec, error) {
 	parsedURL, err := url.Parse(specURL)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing spec url: %w", err)
@@ -24,14 +25,36 @@ func GetSpecFromURL(specURL string) (*InstallSpec, error) {
 		return readLocalFile(parsedURL)
 	case "https":
 		return readRemoteFile(parsedURL)
-	case "http": // Only download on HTTP if home-base is running locally
-		if strings.Contains(parsedURL.Host, "127.0.0.1") || strings.Contains(parsedURL.Host, "batrsinc.co") {
+	case "http":
+		if allowInsecure(parsedURL, additionalInsecureHosts) {
 			return readRemoteFile(parsedURL)
 		}
 		fallthrough
 
 	default:
 		return nil, fmt.Errorf("unsupported scheme: %s", parsedURL.Scheme)
+	}
+}
+
+func allowInsecure(url *url.URL, allowedHosts []string) bool {
+	host := url.Host
+	switch {
+
+	// allow download on HTTP if home-base is running locally
+	case strings.Contains(host, "127.0.0.1"):
+		return true
+
+	case strings.Contains(host, "127-0-0-1.batrsinc.co"):
+		return true
+
+	// or if user has allowed the specific host
+	case slices.ContainsFunc(allowedHosts, func(s string) bool {
+		return strings.Contains(host, s)
+	}):
+		return true
+
+	default:
+		return false
 	}
 }
 
