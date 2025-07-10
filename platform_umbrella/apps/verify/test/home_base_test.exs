@@ -64,9 +64,10 @@ defmodule Verify.HomeBaseTest do
   verify "can create install", %{session: session, kind_install_worker: pid} do
     install_name = "int-test-#{:rand.uniform(10_000)}"
 
+    {url, session} = navigate_to_home_base(session)
+
     session =
       session
-      |> navigate_to_home_base()
       |> home_base_login()
       |> visit_relative("/installations/new")
       |> assert_text("Create a new installation")
@@ -80,7 +81,9 @@ defmodule Verify.HomeBaseTest do
 
     cmd = text(session, Query.css("pre"))
 
-    {:ok} = KindInstallWorker.start_from_command(pid, cmd, install_name)
+    uri = URI.new!(url)
+
+    {:ok} = KindInstallWorker.start_from_command(pid, cmd, install_name, uri.host)
   end
 
   defp navigate_to_home_base(session) do
@@ -90,10 +93,9 @@ defmodule Verify.HomeBaseTest do
       |> assert_has(table_row(text: "home-base-"))
 
     id = text(session, Query.css("table tr td:first-child"))
+    link = Query.link("running_service_#{id}")
 
-    session
-    |> click(Query.link("running_service_#{id}"))
-    |> last_tab()
+    {attr(session, link, "href"), session |> click(link) |> last_tab()}
   end
 
   defp create_home_base(session, team_id) do

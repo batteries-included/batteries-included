@@ -67,7 +67,7 @@ defmodule Verify.KindInstallWorker do
 
   def handle_info({:EXIT, _, _}, state), do: {:noreply, state}
 
-  defp do_start({:cmd, cmd, slug}, state) do
+  defp do_start({:cmd, cmd, slug, host}, state) do
     Logger.debug("Running #{cmd}")
 
     latest_release =
@@ -82,6 +82,7 @@ defmodule Verify.KindInstallWorker do
 
     env = [
       {"BI_VERSION_TAG", latest_release},
+      {"BI_ADDITIONAL_HOSTS", host},
       {"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")},
       {"VERSION_OVERRIDE", System.get_env("VERSION_OVERRIDE", "")}
     ]
@@ -89,7 +90,7 @@ defmodule Verify.KindInstallWorker do
     # these clusters use the gateway.
     # we need to figure out how to connect to it programatically first
     # so for now just start it
-    {_output, 0} = System.shell(cmd, env: env, stderr_to_stdout: true, lines: 1024)
+    {_output, 0} = System.shell(cmd, env: env, stderr_to_stdout: true)
     {:reply, {:ok}, %{state | started: Map.put(state.started, slug, "")}}
   end
 
@@ -188,8 +189,8 @@ defmodule Verify.KindInstallWorker do
     end
   end
 
-  def start_from_command(target, start_cmd, slug) do
-    GenServer.call(target, {:start, {:cmd, start_cmd, slug}}, 15 * 60 * 1000)
+  def start_from_command(target, start_cmd, slug, host) do
+    GenServer.call(target, {:start, {:cmd, start_cmd, slug, host}}, 15 * 60 * 1000)
   end
 
   def start_from_spec(target, identifier, slug) do
