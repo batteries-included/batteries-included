@@ -5,11 +5,11 @@
     "provider": "kind"
   },
   "target_summary": {
-    "notebooks": [],
     "knative_services": [],
+    "notebooks": [],
     "batteries": [
       {
-        "id": "batt_0197fb6e9e96739a88dcdf7bc4461ded",
+        "id": "batt_0197fc46a94d7d998aa505b427e8d24c",
         "type": "istio",
         "config": {
           "type": "istio",
@@ -24,7 +24,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0197fb6e9e967d1f8db277c9406d0a5f",
+        "id": "batt_0197fc46a94d786dba5efaf920dac5aa",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
@@ -37,7 +37,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0197fb6e9e9670aaa062184e725d710f",
+        "id": "batt_0197fc46a94d7941a2393ce15378e21d",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -49,13 +49,13 @@
           "ai_namespace": "battery-ai",
           "default_size": "tiny",
           "cluster_name": "dev",
-          "install_id": "batt_0197fb6e9e807e58b0c2f770f1572482",
+          "install_id": "batt_0197fc46a9367b9d8c84b6888b63dbad",
           "control_jwk": {
             "crv": "P-256",
-            "d": "9on4yn8Ai2w21pzbl4kqFxfdubYcJXLZHmLJGzgHr8E",
+            "d": "Evfqm0sUdfEe1QMs6y9lSSzGYzSVZx9-zVXHmYVMtZo",
             "kty": "EC",
-            "x": "MwKVVhWq8eLW2uqVwbA09BcCBURBz0ddmA2FSY_cRZA",
-            "y": "PyT8tBtJ8HZpPEKa7s2MCHoC7WVwIh3WIMcEcnuJoDA"
+            "x": "K6t6YcUS5eSEgj7QGSeTaAznS8gDD67AqR6MYgRq1qg",
+            "y": "JpyzHhab1yPQF9bT_YO0QvfRZD86pnayA2GKtVA37vY"
           },
           "upgrade_days_of_week": [
             true,
@@ -80,7 +80,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0197fb6e9e967bd0b8be650ae009f2cd",
+        "id": "batt_0197fc46a94d7819829df8bcf6800b50",
         "type": "metallb",
         "config": {
           "type": "metallb",
@@ -100,7 +100,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0197fb6e9e967b5e9f71b08479520c35",
+        "id": "batt_0197fc46a94d73dfb73eef51ef1f2e5f",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
@@ -109,8 +109,8 @@
           "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-12",
           "bucket_name": null,
           "bucket_arn": null,
-          "image_name_override": null,
           "image_tag_override": null,
+          "image_name_override": null,
           "default_postgres_image_name_override": null,
           "default_postgres_image_tag_override": null
         },
@@ -119,7 +119,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0197fb6e9e96789785bb2ba2588847e4",
+        "id": "batt_0197fc46a94e7e3799339c7eabfd9ee9",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -175,7 +175,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "ZMAZFD5D5SAWWQQ3MGUSO2VP"
+            "password": "ZLJPWFZ5YCICUAYYND5DYLUA"
           },
           {
             "version": 1,
@@ -196,11 +196,11 @@
     ],
     "redis_instances": [],
     "projects": [],
+    "install_status": null,
     "ferret_services": [],
     "ip_address_pools": [],
     "stable_versions_report": null,
-    "captured_at": null,
-    "install_status": null
+    "captured_at": null
   },
   "initial_resources": {
     "/namespace/battery_core": {
@@ -208,7 +208,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "KT6UTDCSWSR4G6KHQ5GFUM7UHCPSIUUXCX4ZIKK7BQ3ZN6DJZHZQ===="
+          "battery/hash": "5B4WHXNS4U73BTLPJENVH5YEAYIVC2XRF43ZIGPENAGK2DX5STMA===="
         },
         "labels": {
           "app": "battery-core",
@@ -218,7 +218,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_0197fb6e9e9670aaa062184e725d710f",
+          "battery/owner": "batt_0197fc46a94d7941a2393ce15378e21d",
           "istio-injection": "enabled",
           "version": "latest"
         },
