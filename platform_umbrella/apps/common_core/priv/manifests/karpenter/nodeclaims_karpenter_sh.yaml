@@ -33,6 +33,10 @@ spec:
         - jsonPath: .metadata.creationTimestamp
           name: Age
           type: date
+        - jsonPath: .status.imageID
+          name: ImageID
+          priority: 1
+          type: string
         - jsonPath: .status.providerID
           name: ID
           priority: 1
@@ -43,6 +47,10 @@ spec:
           type: string
         - jsonPath: .spec.nodeClassRef.name
           name: NodeClass
+          priority: 1
+          type: string
+        - jsonPath: .status.conditions[?(@.type=="Drifted")].status
+          name: Drifted
           priority: 1
           type: string
       name: v1
@@ -78,7 +86,7 @@ spec:
                     before terminating a node, measured from when the node is created. This
                     is useful to implement features like eventually consistent node upgrade,
                     memory leak protection, and disruption testing.
-                  pattern: ^(([0-9]+(s|m|h))+)|(Never)$
+                  pattern: ^(([0-9]+(s|m|h))+|Never)$
                   type: string
                 nodeClassRef:
                   description:
@@ -160,7 +168,9 @@ spec:
                           - message:
                               label domain "karpenter.k8s.aws" is restricted
                             rule:
-                              self in ["karpenter.k8s.aws/ec2nodeclass",
+                              self in
+                              ["karpenter.k8s.aws/capacity-reservation-id",
+                              "karpenter.k8s.aws/ec2nodeclass",
                               "karpenter.k8s.aws/instance-encryption-in-transit-supported",
                               "karpenter.k8s.aws/instance-category",
                               "karpenter.k8s.aws/instance-hypervisor",
