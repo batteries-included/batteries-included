@@ -1,4 +1,5 @@
 ---
+# Source: karpenter-crd/templates/karpenter.sh_nodepools.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -146,7 +147,7 @@ spec:
                         ConsolidateAfter is the duration the controller will wait
                         before attempting to terminate nodes that are underutilized.
                         Refer to ConsolidationPolicy for how underutilization is considered.
-                      pattern: ^(([0-9]+(s|m|h))+)|(Never)$
+                      pattern: ^(([0-9]+(s|m|h))+|Never)$
                       type: string
                     consolidationPolicy:
                       default: WhenEmptyOrUnderutilized
@@ -236,7 +237,8 @@ spec:
                                 label domain "karpenter.k8s.aws" is restricted
                               rule:
                                 self.all(x, x in
-                                ["karpenter.k8s.aws/ec2nodeclass",
+                                ["karpenter.k8s.aws/capacity-reservation-id",
+                                "karpenter.k8s.aws/ec2nodeclass",
                                 "karpenter.k8s.aws/instance-encryption-in-transit-supported",
                                 "karpenter.k8s.aws/instance-category",
                                 "karpenter.k8s.aws/instance-hypervisor",
@@ -273,7 +275,7 @@ spec:
                             before terminating a node, measured from when the node is created. This
                             is useful to implement features like eventually consistent node upgrade,
                             memory leak protection, and disruption testing.
-                          pattern: ^(([0-9]+(s|m|h))+)|(Never)$
+                          pattern: ^(([0-9]+(s|m|h))+|Never)$
                           type: string
                         nodeClassRef:
                           description:
@@ -371,7 +373,9 @@ spec:
                                       label domain "karpenter.k8s.aws" is
                                       restricted
                                     rule:
-                                      self in ["karpenter.k8s.aws/ec2nodeclass",
+                                      self in
+                                      ["karpenter.k8s.aws/capacity-reservation-id",
+                                      "karpenter.k8s.aws/ec2nodeclass",
                                       "karpenter.k8s.aws/instance-encryption-in-transit-supported",
                                       "karpenter.k8s.aws/instance-category",
                                       "karpenter.k8s.aws/instance-hypervisor",
@@ -642,6 +646,12 @@ spec:
                       - type
                     type: object
                   type: array
+                nodeClassObservedGeneration:
+                  description: |-
+                    NodeClassObservedGeneration represents the observed nodeClass generation for referenced nodeClass. If this does not match
+                    the actual NodeClass Generation, NodeRegistrationHealthy status condition on the NodePool will be reset
+                  format: int64
+                  type: integer
                 resources:
                   additionalProperties:
                     anyOf:
