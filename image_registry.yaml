@@ -38,7 +38,7 @@ aqua_trivy_checks:
   tag_regex: ^\d+\.\d+\.\d+$
 aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
-  default_tag: v2.11.0
+  default_tag: v2.13.3
   tags:
     - v2.13.3
     - v2.13.2

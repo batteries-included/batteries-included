@@ -1,6 +1,7 @@
 package eks
 
 import (
+	_ "embed"
 	"fmt"
 
 	"bi/pkg/cluster/util"
@@ -13,6 +14,11 @@ import (
 
 const (
 	LB_CONTROLLER_NAME = "aws-load-balancer-controller"
+)
+
+var (
+	//go:embed lb_controller_iam_policy.json
+	iamPolicy string
 )
 
 type lbControllerConfig struct {
@@ -105,283 +111,11 @@ func (l *lbControllerConfig) buildLBControllerRole(ctx *pulumi.Context) error {
 		return fmt.Errorf("error registering IAM role %s: %w", name, err)
 	}
 
-	policy := iam.GetPolicyDocumentOutput(ctx, iam.GetPolicyDocumentOutputArgs{
-		Statements: iam.GetPolicyDocumentStatementArray{
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"iam:CreateServiceLinkedRole",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_STRING_EQUALS,
-						Variable: pulumi.String("iam:AWSServiceName"),
-						Values:   P_STR_ARR_ELB_AMAZONAWS_COM,
-					},
-				},
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"ec2:DescribeAccountAttributes",
-					"ec2:DescribeAddresses",
-					"ec2:DescribeAvailabilityZones",
-					"ec2:DescribeCoipPools",
-					"ec2:DescribeInstances",
-					"ec2:DescribeInternetGateways",
-					"ec2:DescribeNetworkInterfaces",
-					"ec2:DescribeSecurityGroups",
-					"ec2:DescribeSubnets",
-					"ec2:DescribeTags",
-					"ec2:DescribeVpcPeeringConnections",
-					"ec2:DescribeVpcs",
-					"ec2:GetCoipPoolUsage",
-					"ec2:GetSecurityGroupsForVpc",
-					"elasticloadbalancing:DescribeCapacityReservation",
-					"elasticloadbalancing:DescribeListenerAttributes",
-					"elasticloadbalancing:DescribeListenerCertificates",
-					"elasticloadbalancing:DescribeListeners",
-					"elasticloadbalancing:DescribeLoadBalancerAttributes",
-					"elasticloadbalancing:DescribeLoadBalancers",
-					"elasticloadbalancing:DescribeRules",
-					"elasticloadbalancing:DescribeSSLPolicies",
-					"elasticloadbalancing:DescribeTags",
-					"elasticloadbalancing:DescribeTargetGroupAttributes",
-					"elasticloadbalancing:DescribeTargetGroups",
-					"elasticloadbalancing:DescribeTargetHealth",
-					"elasticloadbalancing:DescribeTrustStores",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"acm:DescribeCertificate",
-					"acm:ListCertificates",
-					"cognito-idp:DescribeUserPoolClient",
-					"iam:GetServerCertificate",
-					"iam:ListServerCertificates",
-					"shield:CreateProtection",
-					"shield:DeleteProtection",
-					"shield:DescribeProtection",
-					"shield:GetSubscriptionState",
-					"waf-regional:AssociateWebACL",
-					"waf-regional:DisassociateWebACL",
-					"waf-regional:GetWebACL",
-					"waf-regional:GetWebACLForResource",
-					"wafv2:AssociateWebACL",
-					"wafv2:DisassociateWebACL",
-					"wafv2:GetWebACL",
-					"wafv2:GetWebACLForResource",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"ec2:RevokeSecurityGroupIngress",
-					"ec2:CreateSecurityGroup",
-					"ec2:AuthorizeSecurityGroupIngress",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"ec2:CreateTags",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: pulumi.ToStringArray([]string{"arn:aws:ec2:*:*:security-group/*"}),
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:RequestTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_FALSE,
-					},
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_STRING_EQUALS,
-						Variable: pulumi.String("ec2:CreateAction"),
-						Values:   pulumi.ToStringArray([]string{"CreateSecurityGroup"}),
-					},
-				},
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"ec2:DeleteTags",
-					"ec2:CreateTags",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: pulumi.ToStringArray([]string{"arn:aws:ec2:*:*:security-group/*"}),
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:RequestTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_TRUE,
-					},
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:ResourceTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_FALSE,
-					},
-				},
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"ec2:RevokeSecurityGroupIngress",
-					"ec2:DeleteSecurityGroup",
-					"ec2:AuthorizeSecurityGroupIngress",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:ResourceTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_FALSE,
-					},
-				},
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:CreateTargetGroup",
-					"elasticloadbalancing:CreateLoadBalancer",
-					"elasticloadbalancing:AddTags",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:RequestTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_FALSE,
-					},
-				},
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:DeleteRule",
-					"elasticloadbalancing:DeleteListener",
-					"elasticloadbalancing:CreateRule",
-					"elasticloadbalancing:CreateListener",
-					"elasticloadbalancing:AddTags",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:RemoveTags",
-					"elasticloadbalancing:AddTags",
-				}),
-				Effect: P_STR_ALLOW,
-				Resources: pulumi.ToStringArray([]string{
-					"arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
-					"arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-					"arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
-				}),
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:RequestTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_TRUE,
-					},
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:ResourceTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_FALSE,
-					},
-				},
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:RemoveTags",
-					"elasticloadbalancing:AddTags",
-				}),
-				Effect: P_STR_ALLOW,
-				Resources: pulumi.ToStringArray([]string{
-					"arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
-					"arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
-					"arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
-					"arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
-				}),
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:DeleteLoadBalancer",
-					"elasticloadbalancing:DeleteTargetGroup",
-					"elasticloadbalancing:ModifyCapacityReservation",
-					"elasticloadbalancing:ModifyListenerAttributes",
-					"elasticloadbalancing:ModifyLoadBalancerAttributes",
-					"elasticloadbalancing:ModifyTargetGroup",
-					"elasticloadbalancing:ModifyTargetGroupAttributes",
-					"elasticloadbalancing:SetIpAddressType",
-					"elasticloadbalancing:SetSecurityGroups",
-					"elasticloadbalancing:SetSubnets",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:ResourceTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_FALSE,
-					},
-				},
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:AddTags",
-				}),
-				Effect: P_STR_ALLOW,
-				Resources: pulumi.ToStringArray([]string{
-					"arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
-					"arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-					"arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
-				}),
-				Conditions: iam.GetPolicyDocumentStatementConditionArray{
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_NULL,
-						Variable: pulumi.String("aws:RequestTag/elbv2.k8s.aws/cluster"),
-						Values:   P_STR_ARR_FALSE,
-					},
-					iam.GetPolicyDocumentStatementConditionArgs{
-						Test:     P_STR_STRING_EQUALS,
-						Variable: pulumi.String("elasticloadbalancing:CreateAction"),
-						Values: pulumi.ToStringArray([]string{
-							"CreateTargetGroup",
-							"CreateLoadBalancer",
-						}),
-					},
-				},
-			},
-
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:RegisterTargets",
-					"elasticloadbalancing:DeregisterTargets",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: pulumi.ToStringArray([]string{"arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"}),
-			},
-			iam.GetPolicyDocumentStatementArgs{
-				Actions: pulumi.ToStringArray([]string{
-					"elasticloadbalancing:AddListenerCertificates",
-					"elasticloadbalancing:ModifyListener",
-					"elasticloadbalancing:ModifyRule",
-					"elasticloadbalancing:RemoveListenerCertificates",
-					"elasticloadbalancing:SetWebAcl",
-				}),
-				Effect:    P_STR_ALLOW,
-				Resources: P_STR_ARR_WILDCARD,
-			},
-		},
-	})
-
 	l.role = role
 
 	_, err = iam.NewRolePolicy(ctx, name, &iam.RolePolicyArgs{
 		Role:   role.Name,
-		Policy: policy.Json(),
+		Policy: pulumi.String(iamPolicy),
 	})
 	if err != nil {
 		return fmt.Errorf("error registering IAM role policy %s: %w", name, err)
