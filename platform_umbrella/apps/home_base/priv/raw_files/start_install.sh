@@ -11,4 +11,7 @@ INSTALL_SPEC_URL="<%= spec_url %>"
 check_bi_version || install_bi
 
 # start install
-"${VERSION_LOC}" start ${TRACE:+-v=debug} "${INSTALL_SPEC_URL}"
+"${VERSION_LOC}" start \
+    ${TRACE:+-v=debug} \
+    ${BI_ADDITIONAL_HOSTS:+--additional-insecure-hosts=$BI_ADDITIONAL_HOSTS} \
+    "${INSTALL_SPEC_URL}"

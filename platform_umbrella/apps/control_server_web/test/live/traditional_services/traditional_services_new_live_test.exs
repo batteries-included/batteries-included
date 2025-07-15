@@ -7,7 +7,9 @@ defmodule ControlServerWeb.TraditionalServicesNewLiveTest do
   describe "new" do
     test "can insert good params", %{conn: conn} do
       # There are only hidden inputs for these fields
-      params = :traditional_service |> params_for() |> Map.drop(~w(containers init_containers env_values ports volumes)a)
+      params =
+        :traditional_service |> params_for() |> Map.drop(~w(containers init_containers env_values ports volumes mounts)a)
+
       container = :containers_container |> params_for() |> Map.drop(~w(env_values mounts)a)
       env_value = :containers_env_value |> params_for() |> Map.drop(~w(source_optional)a)
       port = :port |> params_for() |> Map.drop(~w(protocol)a)

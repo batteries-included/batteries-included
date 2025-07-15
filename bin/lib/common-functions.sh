@@ -4,7 +4,7 @@ TRACE=${TRACE-""}
 
 # If you are changing this also change the
 # version in mix.exs for all the apps in platform_umbrella
-export BASE_VERSION="0.73.0"
+export BASE_VERSION="0.76.0"
 
 export REGISTRY="ghcr.io/batteries-included"
 
@@ -123,4 +123,20 @@ run_mix() {
 # delegate to go subcommand
 run_bi() {
     "${SCRIPT_DIR}/bi-go" run "$@"
+}
+
+version_tag() {
+    git describe --match="badtagthatnevermatches" --always --dirty
+}
+
+docker_hash() {
+    git rev-parse HEAD:docker
+}
+
+version_lte() {
+    printf '%s\n' "$1" "$2" | sort -C -V
+}
+
+version_lt() {
+    ! version_lte "$2" "$1"
 }

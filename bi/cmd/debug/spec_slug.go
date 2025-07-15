@@ -12,11 +12,11 @@ import (
 )
 
 var specSlugCmd = &cobra.Command{
-	Use:   "spec-slug [install-slug|install-spec-url|install-spec-file]",
+	Use:   "spec-slug [install-spec-url|install-spec-file]",
 	Short: "Reads in an install spec file and prints the slug",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		spec, err := specs.GetSpecFromURL(args[0])
+		spec, err := specs.GetSpecFromURL(args[0], []string{})
 		if err != nil {
 			return err
 		}

@@ -25,7 +25,7 @@ defmodule CommonCore.Resources.KarpenterPools do
   resource(:defalt_node_class, battery, state) do
     cluster_name = Core.config_field(state, :cluster_name)
 
-    spec = build_nodeclass_spec("AL2", battery.config.ami_alias, battery.config.node_role_name, cluster_name)
+    spec = build_nodeclass_spec("AL2023", battery.config.ami_alias, battery.config.node_role_name, cluster_name)
 
     :karpenter_ec2node_class
     |> B.build_resource()

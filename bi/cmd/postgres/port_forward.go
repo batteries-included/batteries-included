@@ -23,9 +23,11 @@ var portForwardCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  `Port forward to a postgres database on a local kube cluster.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := args[0]
+		installURL := args[0]
 
-		env, err := installs.NewEnv(cmd.Context(), url)
+		ctx := cmd.Context()
+		eb := installs.NewEnvBuilder(installs.WithSlugOrURL(installURL))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return err
 		}
@@ -62,7 +64,7 @@ var portForwardCmd = &cobra.Command{
 		signal.Notify(signals, os.Interrupt)
 		defer signal.Stop(signals)
 
-		forwarder, err := kubeClient.PortForwardService(cmd.Context(), namespce, serviceName, POSTGRES_PORT, localPort, stopChannel, readyChannel)
+		forwarder, err := kubeClient.PortForwardService(ctx, namespce, serviceName, POSTGRES_PORT, localPort, stopChannel, readyChannel)
 		if err != nil {
 			return err
 		}

@@ -424,7 +424,7 @@ defmodule CommonCore.Resources.MetalLB do
         "initContainers" => [
           %{
             "command" => ["/bin/sh", "-c", "cp -rLf /tmp/frr/* /etc/frr/"],
-            "image" => "quay.io/frrouting/frr:9.1.0",
+            "image" => battery.config.frrouting_image,
             "name" => "cp-frr-files",
             "securityContext" => %{"runAsGroup" => 101, "runAsUser" => 100},
             "volumeMounts" => [
@@ -434,13 +434,13 @@ defmodule CommonCore.Resources.MetalLB do
           },
           %{
             "command" => ["/cp-tool", "/frr-reloader.sh", "/etc/frr_reloader/frr-reloader.sh"],
-            "image" => "quay.io/metallb/speaker:v0.15.2",
+            "image" => battery.config.speaker_image,
             "name" => "cp-reloader",
             "volumeMounts" => [%{"mountPath" => "/etc/frr_reloader", "name" => "reloader"}]
           },
           %{
             "command" => ["/cp-tool", "/frr-metrics", "/etc/frr_metrics/frr-metrics"],
-            "image" => "quay.io/metallb/speaker:v0.15.2",
+            "image" => battery.config.speaker_image,
             "name" => "cp-metrics",
             "volumeMounts" => [%{"mountPath" => "/etc/frr_metrics", "name" => "metrics"}]
           }
@@ -512,7 +512,7 @@ defmodule CommonCore.Resources.MetalLB do
               %{"name" => "METALLB_DEPLOYMENT", "value" => "metallb-controller"},
               %{"name" => "METALLB_BGP_TYPE", "value" => "frr"}
             ],
-            "image" => "quay.io/metallb/controller:v0.15.2",
+            "image" => battery.config.controller_image,
             "livenessProbe" => %{
               "failureThreshold" => 3,
               "httpGet" => %{"path" => "/metrics", "port" => "monitoring"},

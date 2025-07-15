@@ -16,7 +16,7 @@ import (
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
-	Use:   "start [install-slug|install-spec-url|install-spec-file]",
+	Use:   "start [install-slug|install-spec-url|install-spec-file] [flags]",
 	Short: "Start a Batteries Included Installation",
 	Long: `This will get the configuration for the
 installation and start the installation process.
@@ -47,7 +47,16 @@ complete displaying a url for running control server.`,
 		ctx, cancel := context.WithCancel(cmd.Context())
 		defer cancel()
 
-		env, err := installs.NewEnv(ctx, installURL)
+		additionalHosts, err := cmd.Flags().GetStringSlice("additional-insecure-hosts")
+		if err != nil {
+			return err
+		}
+
+		eb := installs.NewEnvBuilder(
+			installs.WithSlugOrURL(installURL),
+			installs.WithAdditionalInsecureHosts(additionalHosts),
+		)
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return err
 		}
@@ -73,4 +82,6 @@ complete displaying a url for running control server.`,
 func init() {
 	RootCmd.AddCommand(startCmd)
 	startCmd.Flags().Bool("skip-bootstrap", false, "Skip bootstrapping the cluster")
+	startCmd.Flags().StringSlice("additional-insecure-hosts", []string{}, "Additional hosts that will be allowed to be insecure - HTTP")
+	_ = startCmd.Flags().MarkHidden("additional-insecure-hosts")
 }

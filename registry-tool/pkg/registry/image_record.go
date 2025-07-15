@@ -10,10 +10,11 @@ import (
 
 // ImageRecord represents a container image entry in the registry
 type ImageRecord struct {
-	Name       string   `yaml:"name"`
-	DefaultTag string   `yaml:"default_tag"`
-	Tags       []string `yaml:"tags"`
-	TagRegex   string   `yaml:"tag_regex,omitempty"`
+	Name            string   `yaml:"name"`
+	DefaultTag      string   `yaml:"default_tag"`
+	BlacklistedTags []string `yaml:"blacklisted_tags,omitempty"` // Tags that should be ignored
+	Tags            []string `yaml:"tags"`
+	TagRegex        string   `yaml:"tag_regex,omitempty"`
 }
 
 // MaxTag returns the highest version tag in the record
@@ -40,8 +41,18 @@ func (r *ImageRecord) Validate() error {
 		return fmt.Errorf("default tag cannot be empty")
 	}
 	// Default tag must be in the tags list if tags exist
-	if len(r.Tags) > 0 && slices.Contains(r.Tags, r.DefaultTag) == false {
+	if len(r.Tags) > 0 && !slices.Contains(r.Tags, r.DefaultTag) {
 		return fmt.Errorf("default tag %q not found in tags list", r.DefaultTag)
+	}
+
+	// No tag should ever be in the blacklisted tags
+	for _, tag := range r.BlacklistedTags {
+		if tag == r.DefaultTag {
+			return fmt.Errorf("default tag %q cannot be in blacklisted tags", r.DefaultTag)
+		}
+		if slices.Contains(r.Tags, tag) {
+			return fmt.Errorf("tag %q cannot be in both tags and blacklisted tags", tag)
+		}
 	}
 
 	// Validate tag regex if provided
@@ -80,8 +91,10 @@ func (r *ImageRecord) FilterTags(tags []string) ([]string, error) {
 	}
 
 	var filtered []string
+	// Keep only tags that match the regex and are greater than or equal to the default tag
+	// don't include blacklisted tags
 	for _, tag := range tags {
-		if re.MatchString(tag) && versions.Compare(tag, r.DefaultTag) >= 0 {
+		if re.MatchString(tag) && !slices.Contains(r.BlacklistedTags, tag) && versions.Compare(tag, r.DefaultTag) >= 0 {
 			filtered = append(filtered, tag)
 		}
 	}

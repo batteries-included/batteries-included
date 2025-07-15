@@ -75,6 +75,21 @@ updates:
       - dependencies
       - automation
       - javascript
+  - package-ecosystem: npm
+    directory: '/keycloak-theme/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '00:01'
+      timezone: America/Chicago
+    groups:
+      dependencies:
+        patterns:
+          - '*'
+    labels:
+      - dependencies
+      - automation
+      - javascript
   - package-ecosystem: 'mix'
     directory: '/platform_umbrella/'
     schedule:

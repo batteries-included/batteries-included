@@ -157,7 +157,7 @@ defmodule CommonCore.Resources.TraditionalServices do
         "name" => container.name,
         "image" => container.image,
         "resources" => resources(service),
-        "volumeMounts" => volume_mounts(container),
+        "volumeMounts" => volume_mounts(container, service.mounts),
         "env" => env(service, container),
         "command" => container.command,
         "args" => container.args
@@ -169,8 +169,8 @@ defmodule CommonCore.Resources.TraditionalServices do
     Enum.map(service.volumes, &CommonCore.TraditionalServices.Volume.to_k8s_volume/1)
   end
 
-  defp volume_mounts(container) do
-    Enum.map(container.mounts, fn mount ->
+  defp volume_mounts(container, service_mounts) do
+    Enum.map(container.mounts ++ service_mounts, fn mount ->
       %{"mountPath" => mount.mount_path, "name" => mount.volume_name, "readOnly" => mount.read_only}
     end)
   end

@@ -1,4 +1,4 @@
-<div class="relative z-40">
+<div id="test-dropdown" class="relative z-40">
   <div class="cursor-pointer" phx-click="[[&quot;show&quot;,{&quot;time&quot;:300,&quot;to&quot;:&quot;#test-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-out&quot;,&quot;duration-300&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;]]}]]">
     
     <button class="inline-flex items-center justify-center gap-2 font-semibold text-sm text-nowrap cursor-pointer disabled:cursor-not-allowed phx-submit-loading:opacity-75 min-w-36 px-5 py-3 rounded-lg whitespace-nowrap text-gray-darker dark:text-gray-lighter hover:text-primary dark:hover:text-gray-lighter disabled:text-gray disabled:hover:text-gray disabled:dark:hover:text-gray border border-gray-lighter hover:border-primary-light dark:border-gray-darker-tint dark:hover:border-gray-light disabled:hover:border-gray-lighter disabled:dark:hover:border-gray-darker-tint bg-white dark:bg-gray-darkest" type="button">

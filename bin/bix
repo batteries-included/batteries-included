@@ -27,6 +27,7 @@ Available commands:
 - source            Tools for manipulating the repository
 - static            Tools for working with the static site
 - registry          Tools for working with the image registry
+- keycloak          Tools for working with the keycloak theme and oci images
 
 - mix               Run an arbitrary mix command
 - bi                Run an arbitrary bi command
@@ -87,7 +88,9 @@ static)
 registry | reg | r)
     exec -- "${SCRIPT_DIR}/bi-registry" "${args[@]}"
     ;;
-
+keycloak | kc)
+    exec -- "${SCRIPT_DIR}/bi-keycloak" "${args[@]}"
+    ;;
 mix | m)
     exec -- "${SCRIPT_DIR}/bi-elixir" run "${args[@]}"
     ;;

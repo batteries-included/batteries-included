@@ -78,6 +78,7 @@ defmodule CommonCore.TraditionalServices.Service do
     embeds_many :containers, Container, on_replace: :delete
     embeds_many :init_containers, Container, on_replace: :delete
     embeds_many :env_values, CommonCore.Containers.EnvValue, on_replace: :delete
+    embeds_many :mounts, CommonCore.Containers.Mount, on_replace: :delete
     embeds_many :ports, CommonCore.Port, on_replace: :delete
     embeds_many :volumes, CommonCore.TraditionalServices.Volume, on_replace: :delete
 

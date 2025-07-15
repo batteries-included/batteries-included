@@ -10,7 +10,7 @@ interface MOTDResponse {
 export const Layout = () => {
   const motd = useLoaderData() as MOTDResponse;
   return (
-    <div className="cursor-hand flex min-h-screen w-full flex-col bg-gray-50">
+    <div className="cursor-hand flex min-h-screen w-full flex-col bg-gray-lightest">
       <PageHeader />
       <MOTDDisplay message={motd.message} />
       <div className="container mx-auto mt-8 lg:max-w-2xl">

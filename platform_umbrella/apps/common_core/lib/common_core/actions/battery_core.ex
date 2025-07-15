@@ -30,6 +30,9 @@ defmodule CommonCore.Actions.BatteryCore do
           # Allows users to click the remember me checkbox.
           rememberMe: true,
           social: false,
+          # This should match the name field in keyclaok-theme/package.json
+          # It's the Batteries Included theme built with keycloakify.
+          loginTheme: "bi-keycloak-theme",
           enabled: true
         }
       }

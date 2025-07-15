@@ -2,7 +2,7 @@ import React from 'react';
 
 export const H1 = ({ children }: React.PropsWithChildren) => {
   return (
-    <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-5xl">
+    <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-darker md:text-4xl lg:text-5xl">
       {children}
     </h1>
   );

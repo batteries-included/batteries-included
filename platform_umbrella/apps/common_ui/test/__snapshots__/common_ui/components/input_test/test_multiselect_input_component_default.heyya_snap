@@ -1,5 +1,5 @@
 <div phx-feedback-for="foo">
-  <div class="relative z-40">
+  <div id="foo-dropdown" class="relative z-40">
   <div class="cursor-pointer" phx-click="[[&quot;show&quot;,{&quot;time&quot;:300,&quot;to&quot;:&quot;#foo-dropdown&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-out&quot;,&quot;duration-300&quot;],[&quot;opacity-0&quot;,&quot;-translate-y-4&quot;,&quot;scale-95&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;scale-100&quot;]]}]]">
     
       <div class="px-3 py-2 w-full rounded-lg focus:ring-0 text-sm text-gray-darkest dark:text-gray-lighter placeholder:text-gray-light dark:placeholder:text-gray-dark border border-gray-lighter dark:border-gray-darker-tint enabled:hover:border-primary enabled:dark:hover:border-gray focus:border-primary dark:focus:border-gray bg-gray-lightest dark:bg-gray-darkest-tint disabled:opacity-50 hover:border-primary dark:hover:border-gray flex flex-wrap items-center gap-x-1 gap-y-1.5 min-h-[38px] bg-caret bg-no-repeat bg-[length:9px] bg-[right_0.8rem_center] cursor-pointer">

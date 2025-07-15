@@ -9,14 +9,6 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
-version_tag() {
-    git describe --match="badtagthatnevermatches" --always --dirty
-}
-
-docker_hash() {
-    git rev-parse HEAD:docker
-}
-
 image_tag() {
     local version
     version="${BASE_VERSION}-$(version_tag)"
@@ -106,6 +98,15 @@ do_build_image() {
     pastebin)
         build_args+=(-f docker/pastebin.dockerfile -t "${REGISTRY}/pastebin:${version}")
         ;;
+    keycloak)
+        # Keycloak takes an upstream tag as an argument
+        if [[ $# -lt 2 ]]; then
+            die "Missing upstream tag for keycloak image. Usage: ${BASH_SOURCE[0]} build-image keycloak <upstream_tag>"
+        fi
+        local upstream_tag=${2}
+        do_build_keycloak_image "${upstream_tag}"
+        return 0
+        ;;
     *)
         die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
         ;;
@@ -118,6 +119,49 @@ do_build_image() {
     docker build \
         ${TRACE:+--progress=plain} \
         "${build_args[@]}" \
+        .
+}
+
+do_build_keycloak_image() {
+    local upstream_tag=${1}
+    local image_name="ghcr.io/batteries-included/keycloak"
+    local version_tag
+    version_tag=$(version_tag)
+    local tag="${upstream_tag}-${version_tag}"
+    local docker_base_tag
+    docker_base_tag=$(docker_hash)
+
+    log "${GREEN}Building${NOFORMAT} ${image_name}:${tag}"
+
+    bi-docker ensure-base-images
+
+    declare -a build_args
+    build_args+=(
+        --build-arg "KC_VERSION=${upstream_tag}"
+        --build-arg "BASE_IMAGE_NAME=ghcr.io/batteries-included/build-base"
+        --build-arg "BASE_IMAGE_TAG=${docker_base_tag}"
+    )
+
+    # If the upstream tag starts with less than 26 then build args needs to
+    # add the JAR_NAME keycloak-theme-for-kc-22-to-25.jar
+    #
+    # See https://docs.keycloakify.dev/deploying-your-theme#building-the-jar-file
+    if version_lt "${upstream_tag}" "26.0.0"; then
+        build_args+=(
+            --build-arg "JAR_NAME=keycloak-theme-for-kc-22-to-25.jar"
+        )
+    else
+        build_args+=(
+            --build-arg "JAR_NAME=keycloak-theme-for-kc-all-other-versions.jar"
+        )
+    fi
+
+    docker build \
+        --load \
+        "${build_args[@]}" \
+        -t "${image_name}:${tag}" \
+        -f "${ROOT_DIR}/docker/keycloak.dockerfile" \
+        ${TRACE:+--progress=plain} \
         .
 }
 

@@ -9,7 +9,8 @@ import (
 func InitLocalInstallEnv(ctx context.Context, install *Installation, baseURL string) (*installs.InstallEnv, error) {
 	url := fmt.Sprintf("%s/api/v1/installations/%s/spec", baseURL, install.ID)
 
-	env, err := installs.NewEnv(ctx, url)
+	eb := installs.NewEnvBuilder(installs.WithSlugOrURL(url))
+	env, err := eb.Build(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error creating new install env: %w", err)
 	}

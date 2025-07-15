@@ -73,7 +73,7 @@ defmodule Verify.SSOTest do
 
     session
     # the grafana config flaps as the realm is created
-    # we've tried to obviate it above but there's not 
+    # we've tried to obviate it above but there's not
     # a perfect way to check that grafana has rolled out
     |> visit(url)
     |> login_keycloak(@user, @password)

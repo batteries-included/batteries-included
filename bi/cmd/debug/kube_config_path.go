@@ -14,7 +14,11 @@ var kubeConfigPath = &cobra.Command{
 	Short: "Print the path to the install's kube config",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		env, err := installs.NewEnv(cmd.Context(), args[0])
+		installURL := args[0]
+		ctx := cmd.Context()
+
+		eb := installs.NewEnvBuilder(installs.WithSlugOrURL(installURL))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return err
 		}

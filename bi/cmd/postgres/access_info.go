@@ -15,9 +15,11 @@ var accessInfoCmd = &cobra.Command{
 	Short: "Print the information to access a Postgres database",
 	Args:  cobra.MatchAll(cobra.ExactArgs(3), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		installUrl := args[0]
+		installURL := args[0]
+		ctx := cmd.Context()
 
-		env, err := installs.NewEnv(cmd.Context(), installUrl)
+		eb := installs.NewEnvBuilder(installs.WithSlugOrURL(installURL))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to create environment: %v", err)
 		}

@@ -20,8 +20,10 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: ghcr.io/aquasecurity/trivy
-  default_tag: 0.63.0
+  default_tag: 0.64.1
   tags:
+    - 0.64.1
+    - 0.64.0
     - 0.63.0
     - 0.62.1
   tag_regex: ^\d+\.\d+\.\d+$
@@ -36,7 +38,7 @@ aqua_trivy_checks:
   tag_regex: ^\d+\.\d+\.\d+$
 aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
-  default_tag: v2.11.0
+  default_tag: v2.13.3
   tags:
     - v2.13.3
     - v2.13.2
@@ -73,8 +75,9 @@ azure_load_balancer_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_acmesolver:
   name: quay.io/jetstack/cert-manager-acmesolver
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -87,8 +90,9 @@ cert_manager_acmesolver:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_cainjector:
   name: quay.io/jetstack/cert-manager-cainjector
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -101,8 +105,9 @@ cert_manager_cainjector:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_controller:
   name: quay.io/jetstack/cert-manager-controller
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -134,8 +139,9 @@ cert_manager_istio_csr:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_webhook:
   name: quay.io/jetstack/cert-manager-webhook
-  default_tag: v1.18.1
+  default_tag: v1.18.2
   tags:
+    - v1.18.2
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -268,8 +274,9 @@ istio_proxy:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
-  default_tag: lab-4.4.3
+  default_tag: lab-4.4.4
   tags:
+    - lab-4.4.4
     - lab-4.4.3
     - lab-4.4.2
     - lab-4.4.1
@@ -277,8 +284,9 @@ jupyter_datascience_lab:
   tag_regex: ^lab-\d+\.\d+\.\d+$
 karpenter:
   name: public.ecr.aws/karpenter/controller
-  default_tag: 1.2.0
+  default_tag: 1.5.2
   tags:
+    - 1.5.2
     - 1.5.1
     - 1.5.0
     - 1.4.0
@@ -297,8 +305,13 @@ karpenter:
   tag_regex: ^\d+\.\d+\.\d+$
 keycloak:
   name: ghcr.io/batteries-included/keycloak
-  default_tag: 26.2.5
+  default_tag: 26.3.1-9d9a3af
+  blacklisted_tags:
+    - 26.3.0-3a3a040
   tags:
+    - 26.3.1-9d9a3af
+    - 26.3.0-500c879
+    - 26.3.0
     - 26.2.5
     - 26.2.4
     - 26.2.3
@@ -307,11 +320,13 @@ keycloak:
     - 26.2.0
     - 25.0.6
     - 25.0.2
-  tag_regex: ^\d+\.\d+\.\d+$
+  tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.2.5
+  default_tag: 26.3.1
   tags:
+    - 26.3.1
+    - 26.3.0
     - 26.2.5
     - 26.2.4
     - 26.2.3
@@ -323,8 +338,9 @@ keycloak_upstream:
   tag_regex: ^\d+\.\d+\.\d+$
 kiali:
   name: quay.io/kiali/kiali
-  default_tag: v2.11.0
+  default_tag: v2.12.0
   tags:
+    - v2.12.0
     - v2.11.0
     - v2.10.0
     - v2.9.0
@@ -334,8 +350,10 @@ kiali:
   tag_regex: ^v\d+\.\d+\.\d+$
 kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
-  default_tag: 1.30.5
+  default_tag: 1.30.7
   tags:
+    - 1.30.7
+    - 1.30.6
     - 1.30.5
     - 1.30.4
     - 1.30.3
@@ -428,8 +446,9 @@ kube_state_metrics:
   tag_regex: ^v\d+\.\d+\.\d+$
 loki:
   name: docker.io/grafana/loki
-  default_tag: 3.5.1
+  default_tag: 3.5.2
   tags:
+    - 3.5.2
     - 3.5.1
     - 3.5.0
     - 3.4.4
@@ -480,8 +499,9 @@ metallb_speaker:
   tag_regex: ^v\d+\.\d+\.\d+$
 metrics_server:
   name: registry.k8s.io/metrics-server/metrics-server
-  default_tag: v0.7.2
+  default_tag: v0.8.0
   tags:
+    - v0.8.0
     - v0.7.2
     - v0.7.1
   tag_regex: ^v\d+\.\d+\.\d+$
@@ -522,8 +542,11 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.9.3
+  default_tag: 0.9.6
   tags:
+    - 0.9.6
+    - 0.9.5
+    - 0.9.4
     - 0.9.3
     - 0.9.2
     - 0.9.1
@@ -540,8 +563,12 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-8
+  default_tag: 17.5-12
   tags:
+    - 17.5-12
+    - 17.5-11
+    - 17.5-10
+    - 17.5-9
     - 17.5-8
     - 17.5-7
     - 17.5-6
@@ -567,8 +594,9 @@ postgresql:
   tag_regex: ^\d+\.\d+(?:-\d+)?$
 promtail:
   name: docker.io/grafana/promtail
-  default_tag: 3.5.1
+  default_tag: 3.5.2
   tags:
+    - 3.5.2
     - 3.5.1
     - 3.5.0
     - 3.4.4
@@ -617,8 +645,9 @@ redis_exporter:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_operator:
   name: ghcr.io/ot-container-kit/redis-operator/redis-operator
-  default_tag: v0.20.2
+  default_tag: v0.21.0
   tags:
+    - v0.21.0
     - v0.20.2
     - v0.20.1
     - v0.20.0
@@ -673,8 +702,9 @@ trust_manager_init:
   tag_regex: ^\d{8}\.\d+$
 vm_agent:
   name: docker.io/victoriametrics/vmagent
-  default_tag: v1.120.0
+  default_tag: v1.121.0
   tags:
+    - v1.121.0
     - v1.120.0
     - v1.119.0
     - v1.118.0
@@ -721,8 +751,9 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: docker.io/victoriametrics/vminsert
-  default_tag: v1.120.0-cluster
+  default_tag: v1.121.0-cluster
   tags:
+    - v1.121.0-cluster
     - v1.120.0-cluster
     - v1.119.0-cluster
     - v1.118.0-cluster
@@ -793,8 +824,9 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: docker.io/victoriametrics/vmselect
-  default_tag: v1.120.0-cluster
+  default_tag: v1.121.0-cluster
   tags:
+    - v1.121.0-cluster
     - v1.120.0-cluster
     - v1.119.0-cluster
     - v1.118.0-cluster
@@ -822,8 +854,9 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: docker.io/victoriametrics/vmstorage
-  default_tag: v1.120.0-cluster
+  default_tag: v1.121.0-cluster
   tags:
+    - v1.121.0-cluster
     - v1.120.0-cluster
     - v1.119.0-cluster
     - v1.118.0-cluster

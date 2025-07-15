@@ -24,7 +24,8 @@ var rageCmd = &cobra.Command{
 		installURL := args[0]
 
 		ctx := cmd.Context()
-		env, err := installs.NewEnv(ctx, installURL)
+		eb := installs.NewEnvBuilder(installs.WithSlugOrURL(installURL))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return err
 		}

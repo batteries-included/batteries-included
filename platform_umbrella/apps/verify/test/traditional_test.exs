@@ -10,7 +10,7 @@ defmodule Verify.TraditionalTest do
     service_name = "int-test-#{:rand.uniform(10_000)}"
 
     session
-    |> create_traditional_service(@echo_server, service_name)
+    |> create_traditional_service(service_name)
     # verify we're on the show page
     |> assert_has(h3(service_name))
     |> assert_path(@show_traditional_path)

@@ -129,7 +129,7 @@ do_int_test() {
     bi-docker ensure-base-images
     log "${GREEN}Building images${NOFORMAT}"
 
-    for image_name in kube-bootstrap control-server; do
+    for image_name in kube-bootstrap control-server home-base; do
         docker rmi -f "${REGISTRY}/${image_name}:${tag}" || true
 
         bi-docker build-image "${image_name}"

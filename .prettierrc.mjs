@@ -4,6 +4,7 @@ const config = {
   trailingComma: 'es5',
   proseWrap: 'always',
   bracketSameLine: true,
+  bracketSpacing: true,
   tabWidth: 2,
 };
 

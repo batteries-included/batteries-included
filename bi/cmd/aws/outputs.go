@@ -20,9 +20,12 @@ var outputsCmd = &cobra.Command{
 		// assume output to stdout
 		var w io.Writer = os.Stdout
 
-		url := args[0]
+		installURL := args[0]
 
-		env, err := installs.NewEnv(cmd.Context(), url)
+		ctx := cmd.Context()
+
+		eb := installs.NewEnvBuilder(installs.WithSlugOrURL(installURL))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return err
 		}
@@ -32,8 +35,6 @@ var outputsCmd = &cobra.Command{
 		}
 
 		p := cluster.NewPulumiProvider(env.Spec)
-
-		ctx := cmd.Context()
 
 		if err := p.Init(ctx); err != nil {
 			return err

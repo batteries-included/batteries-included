@@ -36,11 +36,11 @@ defmodule CommonCore.Resources.Keycloak do
       |> Map.put("KC_DB", "postgres")
       |> Map.put("KC_DB_URL_HOST", hostname)
       |> Map.put("KC_LOG_LEVEL", battery.config.log_level)
-      |> Map.put("KEYCLOAK_ADMIN", battery.config.admin_username)
+      |> Map.put("KC_BOOTSTRAP_ADMIN_USERNAME", battery.config.admin_username)
       # Make sure Keycloak uses the headless service for DNS resolution
       # which is how it does clustering
       |> Map.put("jgroups.dns.query", "keycloak-headless.#{namespace}")
-      |> Map.put("KC_CACHE_STACK", "kubernetes")
+      |> Map.put("KC_CACHE_STACK", "jdbc-ping")
       # Metrics and Health enabled
       |> Map.put("KC_METRICS_ENABLED", "true")
       |> Map.put("KC_HEALTH_ENABLED", "true")
@@ -147,7 +147,10 @@ defmodule CommonCore.Resources.Keycloak do
                   "name" => "KUBERNETES_NAMESPACE",
                   "valueFrom" => %{"fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.namespace"}}
                 },
-                %{"name" => "KEYCLOAK_ADMIN_PASSWORD", "valueFrom" => B.secret_key_ref("keycloak", "admin-password")},
+                %{
+                  "name" => "KC_BOOTSTRAP_ADMIN_PASSWORD",
+                  "valueFrom" => B.secret_key_ref("keycloak", "admin-password")
+                },
                 %{"name" => "KC_DB_USERNAME", "valueFrom" => B.secret_key_ref(secret_name, "username")},
                 %{"name" => "KC_DB_PASSWORD", "valueFrom" => B.secret_key_ref(secret_name, "password")}
               ],

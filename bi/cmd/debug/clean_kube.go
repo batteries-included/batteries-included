@@ -15,10 +15,11 @@ var cleanKubeCmd = &cobra.Command{
 	Short: "clean all resources off of a batteries included kubernetes cluster",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := args[0]
+		installURL := args[0]
 		ctx := cmd.Context()
 
-		env, err := installs.NewEnv(ctx, url)
+		eb := installs.NewEnvBuilder(installs.WithSlugOrURL(installURL))
+		env, err := eb.Build(ctx)
 		if err != nil {
 			return err
 		}

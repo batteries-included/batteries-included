@@ -13,7 +13,7 @@ export const PageHeader = () => {
         </div>
       </Link>
       <div className="ml-auto flex items-center justify-center">
-        <h1 className="text-xl font-semibold">Pastebin</h1>
+        <h1 className="text-xl font-semibold font-mono">Pastebin</h1>
       </div>
     </header>
   );
