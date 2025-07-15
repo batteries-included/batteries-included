@@ -4,7 +4,7 @@ defmodule CommonCore.Installs.Options do
   alias CommonCore.Accounts.AdminTeams
 
   @sizes [:tiny, :small, :medium, :large, :xlarge, :huge]
-  @providers [Kind: :kind, AWS: :aws, Provided: :provided]
+  @providers [Kind: :kind, AWS: :aws, Azure: :azure, Provided: :provided]
   @usages [
     "Internal Dev": :internal_dev,
     "Internal Test": :internal_int_test,

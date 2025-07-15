@@ -47,6 +47,30 @@ aws_load_balancer_controller:
     - v2.8.2
     - v2.8.1
   tag_regex: ^v\d+\.\d+\.\d+$
+azure_cluster_autoscaler:
+  name: mcr.microsoft.com/oss/kubernetes/autoscaler/cluster-autoscaler
+  default_tag: v1.28.0
+  tags:
+    - v1.28.0
+    - v1.27.3
+    - v1.27.2
+  tag_regex: ^v\d+\.\d+\.\d+$
+azure_karpenter:
+  name: mcr.microsoft.com/oss/azure/karpenter/karpenter
+  default_tag: v0.37.0
+  tags:
+    - v0.37.0
+    - v0.36.0
+    - v0.35.0
+  tag_regex: ^v\d+\.\d+\.\d+$
+azure_load_balancer_controller:
+  name: mcr.microsoft.com/oss/kubernetes/azure-load-balancer-controller
+  default_tag: v1.7.0
+  tags:
+    - v1.7.0
+    - v1.6.4
+    - v1.6.3
+  tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_acmesolver:
   name: quay.io/jetstack/cert-manager-acmesolver
   default_tag: v1.18.1
