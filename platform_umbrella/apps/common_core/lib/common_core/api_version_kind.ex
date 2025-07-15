@@ -63,6 +63,8 @@ defmodule CommonCore.ApiVersionKind do
     job: {"batch/v1", "Job"},
     karpenter_ec2node_class: {"karpenter.k8s.aws/v1", "EC2NodeClass"},
     karpenter_node_pool: {"karpenter.sh/v1", "NodePool"},
+    aks_node_class: {"karpenter.azure.com/v1beta1", "AKSNodeClass"},
+    node_pool: {"karpenter.sh/v1beta1", "NodePool"},
     knative_configuration: {"serving.knative.dev/v1", "Configuration"},
     knative_image: {"caching.internal.knative.dev/v1alpha1", "Image"},
     knative_revision: {"serving.knative.dev/v1", "Revision"},

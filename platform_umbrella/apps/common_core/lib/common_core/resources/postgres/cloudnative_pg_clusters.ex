@@ -204,6 +204,23 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   defp backup(_battery, _state, _cluster), do: nil
 
+  defp maybe_add_backup(spec, %{backup_config: %{type: backup_type}}, %{config: %{storage_account_name: storage_account, container_name: container}})
+       when backup_type == :object_store
+       when not is_empty(storage_account) and not is_empty(container) do
+    Map.put(spec, :backup, %{
+      retentionPolicy: "30d",
+      barmanObjectStore: %{
+        # the backups are stored in a prefix (default: cluster_name) under this path
+        destinationPath: "azure://#{storage_account}.blob.core.windows.net/#{container}",
+        data: %{compression: "snappy"},
+        wal: %{compression: "snappy"},
+        azureCredentials: %{inheritFromAzureAD: true}
+      }
+    })
+  end
+
+  defp maybe_add_backup(spec, _cluster, _battery), do: spec
+
   def scheduled_backup(_battery, state, cluster) do
     cluster_name = cluster_name(cluster)
 
@@ -214,7 +231,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       pluginConfiguration: %{name: "barman-cloud.cloudnative-pg.io"}
     }
 
-    :cloudnative_pg_scheduledbackup
+    resource = :cloudnative_pg_scheduledbackup
     |> B.build_resource()
     |> B.name(cluster_name)
     |> B.app_labels(cluster_name)
@@ -224,6 +241,24 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.spec(spec)
     |> F.require_battery(state, :cloudnative_pg_barman)
     |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
+
+    # Apply filters based on whether this is AWS or Azure
+    cond do
+      battery.config.bucket_name && battery.config.service_role_arn ->
+        resource
+        |> F.require_non_nil(battery.config.bucket_name)
+        |> F.require_non_nil(battery.config.service_role_arn)
+      
+      battery.config.storage_account_name && battery.config.container_name ->
+        resource
+        |> F.require_non_nil(battery.config.storage_account_name)
+        |> F.require_non_nil(battery.config.container_name)
+      
+      true ->
+        resource
+        |> F.require_non_nil(battery.config.bucket_name)
+        |> F.require_non_nil(battery.config.service_role_arn)
+    end
   end
 
   defp resources(%Cluster{} = cluster) do
