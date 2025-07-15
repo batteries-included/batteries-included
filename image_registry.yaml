@@ -262,6 +262,7 @@ karpenter:
   name: public.ecr.aws/karpenter/controller
   default_tag: 1.5.2
   tags:
+    - 1.6.0
     - 1.5.2
     - 1.5.1
     - 1.5.0
@@ -539,8 +540,9 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-12
+  default_tag: 17.5-13
   tags:
+    - 17.5-13
     - 17.5-12
     - 17.5-11
     - 17.5-10
