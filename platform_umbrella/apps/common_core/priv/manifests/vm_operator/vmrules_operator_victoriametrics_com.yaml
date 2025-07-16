@@ -12,7 +12,17 @@ spec:
     singular: vmrule
   scope: Namespaced
   versions:
-    - name: v1beta1
+    - additionalPrinterColumns:
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+        - jsonPath: .status.updateStatus
+          name: Status
+          type: string
+        - jsonPath: .status.reason
+          name: Sync Error
+          type: string
+      name: v1beta1
       schema:
         openAPIV3Schema:
           description: VMRule defines rule records for vmalert application
@@ -48,14 +58,32 @@ spec:
                         description:
                           Concurrency defines how many rules execute at once.
                         type: integer
+                      eval_alignment:
+                        description: |-
+                          Optional
+                          The evaluation timestamp will be aligned with group's interval,
+                          instead of using the actual timestamp that evaluation happens at.
+                          It is enabled by default to get more predictable results
+                          and to visually align with graphs plotted via Grafana or vmui.
+                        type: boolean
+                      eval_delay:
+                        description: |-
+                          Optional
+                          Adjust the `time` parameter of group evaluation requests to compensate intentional query delay from the datasource.
+                        type: string
+                      eval_offset:
+                        description: |-
+                          Optional
+                          Group will be evaluated at the exact offset in the range of [0...interval].
+                        type: string
                       extra_filter_labels:
                         additionalProperties:
                           type: string
                         description: |-
                           ExtraFilterLabels optional list of label filters applied to every rule's
-                          request withing a group. Is compatible only with VM datasource.
-                          See more details at https://docs.victoriametrics.com#prometheus-querying-api-enhancements
-                          Deprecated, use params instead
+                          request within a group. Is compatible only with VM datasource.
+                          See more details [here](https://docs.victoriametrics.com/victoriametrics/#prometheus-querying-api-enhancements)
+                          Deprecated: use params instead
                         type: object
                       headers:
                         description: |-
@@ -164,13 +192,13 @@ spec:
                         type: array
                       tenant:
                         description: |-
-                          Tenant id for group, can be used only with enterprise version of vmalert
-                          See more details at https://docs.victoriametrics.com/vmalert.html#multitenancy
+                          Tenant id for group, can be used only with enterprise version of vmalert.
+                          See more details [here](https://docs.victoriametrics.com/victoriametrics/vmalert#multitenancy).
                         type: string
                       type:
                         description: |-
                           Type defines datasource type for enterprise version of vmalert
-                          possible values - prometheus,graphite
+                          possible values - prometheus,graphite,vlogs
                         type: string
                     required:
                       - name
@@ -182,6 +210,88 @@ spec:
               type: object
             status:
               description: VMRuleStatus defines the observed state of VMRule
+              properties:
+                conditions:
+                  description:
+                    'Known .status.conditions.type are: "Available",
+                    "Progressing", and "Degraded"'
+                  items:
+                    description:
+                      Condition defines status condition of the resource
+                    properties:
+                      lastTransitionTime:
+                        description:
+                          lastTransitionTime is the last time the condition
+                          transitioned from one status to another.
+                        format: date-time
+                        type: string
+                      lastUpdateTime:
+                        description: |-
+                          LastUpdateTime is the last time of given type update.
+                          This value is used for status TTL update and removal
+                        format: date-time
+                        type: string
+                      message:
+                        description: |-
+                          message is a human readable message indicating details about the transition.
+                          This may be an empty string.
+                        maxLength: 32768
+                        type: string
+                      observedGeneration:
+                        description: |-
+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                          with respect to the current state of the instance.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      reason:
+                        description: |-
+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                          Producers of specific condition types may define expected values and meanings for this field,
+                          and whether the values are considered a guaranteed API.
+                          The value should be a CamelCase string.
+                          This field may not be empty.
+                        maxLength: 1024
+                        minLength: 1
+                        type: string
+                      status:
+                        description:
+                          status of the condition, one of True, False, Unknown.
+                        enum:
+                          - 'True'
+                          - 'False'
+                          - Unknown
+                        type: string
+                      type:
+                        description:
+                          Type of condition in CamelCase or in
+                          name.namespace.resource.victoriametrics.com/CamelCase.
+                        maxLength: 316
+                        type: string
+                    required:
+                      - lastTransitionTime
+                      - lastUpdateTime
+                      - reason
+                      - status
+                      - type
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - type
+                  x-kubernetes-list-type: map
+                observedGeneration:
+                  description: |-
+                    ObservedGeneration defines current generation picked by operator for the
+                    reconcile
+                  format: int64
+                  type: integer
+                reason:
+                  description: Reason defines human readable error reason
+                  type: string
+                updateStatus:
+                  description: UpdateStatus defines a status for update rollout
+                  type: string
               type: object
           required:
             - spec

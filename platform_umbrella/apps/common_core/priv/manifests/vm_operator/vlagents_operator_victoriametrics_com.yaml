@@ -1,37 +1,34 @@
----
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: vmalertmanagers.operator.victoriametrics.com
+  name: vlagents.operator.victoriametrics.com
 spec:
   group: operator.victoriametrics.com
   names:
-    kind: VMAlertmanager
-    listKind: VMAlertmanagerList
-    plural: vmalertmanagers
-    shortNames:
-      - vma
-    singular: vmalertmanager
+    kind: VLAgent
+    listKind: VLAgentList
+    plural: vlagents
+    singular: vlagent
   scope: Namespaced
   versions:
     - additionalPrinterColumns:
-        - description: The desired replicas number of Alertmanagers
-          jsonPath: .spec.replicaCount
-          name: ReplicaCount
+        - description: current number of replicas
+          jsonPath: .status.replicas
+          name: Replica Count
           type: integer
+        - description: Current status of update rollout
+          jsonPath: .status.updateStatus
+          name: Status
+          type: string
         - jsonPath: .metadata.creationTimestamp
           name: Age
           type: date
-        - description: Current update status
-          jsonPath: .status.updateStatus
-          name: Update Status
-          type: string
-      name: v1beta1
+      name: v1
       schema:
         openAPIV3Schema:
           description:
-            VMAlertmanager represents Victoria-Metrics deployment for
-            Alertmanager.
+            VLAgent - is a tiny but brave agent, which helps you collect logs
+            from various sources and stores them in VictoriaLogs.
           properties:
             apiVersion:
               description: |-
@@ -51,18 +48,8 @@ spec:
             metadata:
               type: object
             spec:
-              description: |-
-                Specification of the desired behavior of the VMAlertmanager cluster. More info:
-                https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+              description: VLAgentSpec defines the desired state of VLAgent
               properties:
-                additionalPeers:
-                  description:
-                    AdditionalPeers allows injecting a set of additional
-                    Alertmanagers to peer with to form a highly available
-                    cluster.
-                  items:
-                    type: string
-                  type: array
                 affinity:
                   description:
                     Affinity If specified, the pod's scheduling constraints.
@@ -70,8 +57,8 @@ spec:
                   x-kubernetes-preserve-unknown-fields: true
                 claimTemplates:
                   description:
-                    ClaimTemplates allows adding additional VolumeClaimTemplates
-                    for StatefulSet
+                    'ClaimTemplates allows adding additional
+                    VolumeClaimTemplates for VLAgent in Mode: StatefulSet'
                   items:
                     description:
                       PersistentVolumeClaim is a user's request for and claim to
@@ -526,18 +513,6 @@ spec:
                         type: object
                     type: object
                   type: array
-                clusterAdvertiseAddress:
-                  description: |-
-                    ClusterAdvertiseAddress is the explicit address to advertise in cluster.
-                    Needs to be provided for non RFC1918 [1] (public) addresses.
-                    [1] RFC1918: https://tools.ietf.org/html/rfc1918
-                  type: string
-                clusterDomainName:
-                  description: |-
-                    ClusterDomainName defines domain name suffix for in-cluster dns addresses
-                    aka .cluster.local
-                    used to build pod peer addresses for in-cluster communication
-                  type: string
                 configMaps:
                   description: |-
                     ConfigMaps is a list of ConfigMaps in the same namespace as the Application
@@ -546,228 +521,6 @@ spec:
                   items:
                     type: string
                   type: array
-                configNamespaceSelector:
-                  description: |2-
-                     ConfigNamespaceSelector defines namespace selector for VMAlertmanagerConfig.
-                    Works in combination with Selector.
-                    NamespaceSelector nil - only objects at VMAlertmanager namespace.
-                    Selector nil - only objects at NamespaceSelector namespaces.
-                    If both nil - behaviour controlled by selectAllByDefault
-                  properties:
-                    matchExpressions:
-                      description:
-                        matchExpressions is a list of label selector
-                        requirements. The requirements are ANDed.
-                      items:
-                        description: |-
-                          A label selector requirement is a selector that contains values, a key, and an operator that
-                          relates the key and values.
-                        properties:
-                          key:
-                            description:
-                              key is the label key that the selector applies to.
-                            type: string
-                          operator:
-                            description: |-
-                              operator represents a key's relationship to a set of values.
-                              Valid operators are In, NotIn, Exists and DoesNotExist.
-                            type: string
-                          values:
-                            description: |-
-                              values is an array of string values. If the operator is In or NotIn,
-                              the values array must be non-empty. If the operator is Exists or DoesNotExist,
-                              the values array must be empty. This array is replaced during a strategic
-                              merge patch.
-                            items:
-                              type: string
-                            type: array
-                            x-kubernetes-list-type: atomic
-                        required:
-                          - key
-                          - operator
-                        type: object
-                      type: array
-                      x-kubernetes-list-type: atomic
-                    matchLabels:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-                        map is equivalent to an element of matchExpressions, whose key field is "key", the
-                        operator is "In", and the values array contains only "value". The requirements are ANDed.
-                      type: object
-                  type: object
-                  x-kubernetes-map-type: atomic
-                configRawYaml:
-                  description: |-
-                    ConfigRawYaml - raw configuration for alertmanager,
-                    it helps it to start without secret.
-                    priority -> hardcoded ConfigRaw -> ConfigRaw, provided by user -> ConfigSecret.
-                  type: string
-                configReloadAuthKeySecret:
-                  description: |-
-                    ConfigReloadAuthKeySecret defines optional secret reference authKey for /-/reload API requests.
-                    Given secret reference will be added to the application and vm-config-reloader as volume
-                    available since v0.57.0 version
-                  properties:
-                    key:
-                      description:
-                        The key of the secret to select from.  Must be a valid
-                        secret key.
-                      type: string
-                    name:
-                      default: ''
-                      description: |-
-                        Name of the referent.
-                        This field is effectively required, but due to backwards compatibility is
-                        allowed to be empty. Instances of this type with an empty value here are
-                        almost certainly wrong.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                      type: string
-                    optional:
-                      description:
-                        Specify whether the Secret or its key must be defined
-                      type: boolean
-                  required:
-                    - key
-                  type: object
-                  x-kubernetes-map-type: atomic
-                configReloaderExtraArgs:
-                  additionalProperties:
-                    type: string
-                  description: |-
-                    ConfigReloaderExtraArgs that will be passed to  VMAuths config-reloader container
-                    for example resyncInterval: "30s"
-                  type: object
-                configReloaderImageTag:
-                  description:
-                    ConfigReloaderImageTag defines image:tag for config-reloader
-                    container
-                  type: string
-                configReloaderResources:
-                  description: |-
-                    ConfigReloaderResources config-reloader container resource request and limits, https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-                    if not defined default resources from operator config will be used
-                  properties:
-                    claims:
-                      description: |-
-                        Claims lists the names of resources, defined in spec.resourceClaims,
-                        that are used by this container.
-
-                        This is an alpha field and requires enabling the
-                        DynamicResourceAllocation feature gate.
-
-                        This field is immutable. It can only be set for containers.
-                      items:
-                        description:
-                          ResourceClaim references one entry in
-                          PodSpec.ResourceClaims.
-                        properties:
-                          name:
-                            description: |-
-                              Name must match the name of one entry in pod.spec.resourceClaims of
-                              the Pod where this field is used. It makes that resource available
-                              inside a container.
-                            type: string
-                          request:
-                            description: |-
-                              Request is the name chosen for a request in the referenced claim.
-                              If empty, everything from the claim is made available, otherwise
-                              only the result of this request.
-                            type: string
-                        required:
-                          - name
-                        type: object
-                      type: array
-                      x-kubernetes-list-map-keys:
-                        - name
-                      x-kubernetes-list-type: map
-                    limits:
-                      additionalProperties:
-                        anyOf:
-                          - type: integer
-                          - type: string
-                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                        x-kubernetes-int-or-string: true
-                      description: |-
-                        Limits describes the maximum amount of compute resources allowed.
-                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-                      type: object
-                    requests:
-                      additionalProperties:
-                        anyOf:
-                          - type: integer
-                          - type: string
-                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                        x-kubernetes-int-or-string: true
-                      description: |-
-                        Requests describes the minimum amount of compute resources required.
-                        If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
-                        otherwise to an implementation-defined value. Requests cannot exceed Limits.
-                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-                      type: object
-                  type: object
-                configSecret:
-                  description: |-
-                    ConfigSecret is the name of a Kubernetes Secret in the same namespace as the
-                    VMAlertmanager object, which contains configuration for this VMAlertmanager,
-                    configuration must be inside secret key: alertmanager.yaml.
-                    It must be created by user.
-                    instance. Defaults to 'vmalertmanager-<alertmanager-name>'
-                    The secret is mounted into /etc/alertmanager/config.
-                  type: string
-                configSelector:
-                  description: |-
-                    ConfigSelector defines selector for VMAlertmanagerConfig, result config will be merged with with Raw or Secret config.
-                    Works in combination with NamespaceSelector.
-                    NamespaceSelector nil - only objects at VMAlertmanager namespace.
-                    Selector nil - only objects at NamespaceSelector namespaces.
-                    If both nil - behaviour controlled by selectAllByDefault
-                  properties:
-                    matchExpressions:
-                      description:
-                        matchExpressions is a list of label selector
-                        requirements. The requirements are ANDed.
-                      items:
-                        description: |-
-                          A label selector requirement is a selector that contains values, a key, and an operator that
-                          relates the key and values.
-                        properties:
-                          key:
-                            description:
-                              key is the label key that the selector applies to.
-                            type: string
-                          operator:
-                            description: |-
-                              operator represents a key's relationship to a set of values.
-                              Valid operators are In, NotIn, Exists and DoesNotExist.
-                            type: string
-                          values:
-                            description: |-
-                              values is an array of string values. If the operator is In or NotIn,
-                              the values array must be non-empty. If the operator is Exists or DoesNotExist,
-                              the values array must be empty. This array is replaced during a strategic
-                              merge patch.
-                            items:
-                              type: string
-                            type: array
-                            x-kubernetes-list-type: atomic
-                        required:
-                          - key
-                          - operator
-                        type: object
-                      type: array
-                      x-kubernetes-list-type: atomic
-                    matchLabels:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-                        map is equivalent to an element of matchExpressions, whose key field is "key", the
-                        operator is "In", and the values array contains only "value". The requirements are ANDed.
-                      type: object
-                  type: object
-                  x-kubernetes-map-type: atomic
                 containers:
                   description: |-
                     Containers property allows to inject additions sidecars or to patch existing containers.
@@ -788,17 +541,6 @@ spec:
                     For example, vmagent and vm-config-reloader requires k8s API access.
                     Operator creates volumes with name: "kube-api-access", which can be used as volumeMount for extraContainers if needed.
                     And also adds VolumeMounts at /var/run/secrets/kubernetes.io/serviceaccount.
-                  type: boolean
-                disableNamespaceMatcher:
-                  description: |-
-                    DisableNamespaceMatcher disables top route namespace label matcher for VMAlertmanagerConfig
-                    It may be useful if alert doesn't have namespace label for some reason
-                  type: boolean
-                disableRouteContinueEnforce:
-                  description:
-                    DisableRouteContinueEnforce cancel the behavior for
-                    VMAlertmanagerConfig that always enforce first-level route
-                    continue to true
                   type: boolean
                 disableSelfServiceScrape:
                   description: |-
@@ -858,21 +600,6 @@ spec:
                   type: object
                 dnsPolicy:
                   description: DNSPolicy sets DNS policy for the pod
-                  type: string
-                enforcedTopRouteMatchers:
-                  description: |-
-                    EnforcedTopRouteMatchers defines label matchers to be added for the top route
-                    of VMAlertmanagerConfig
-                    It allows to make some set of labels required for alerts.
-                    https://prometheus.io/docs/alerting/latest/configuration/#matcher
-                  items:
-                    type: string
-                  type: array
-                externalURL:
-                  description: |-
-                    ExternalURL the VMAlertmanager instances will be available under. This is
-                    necessary to generate correct URLs. This is necessary if VMAlertmanager is not
-                    served from root of a DNS name.
                   type: string
                 extraArgs:
                   additionalProperties:
@@ -962,278 +689,6 @@ spec:
                         x-kubernetes-map-type: atomic
                     type: object
                   type: array
-                gossipConfig:
-                  description:
-                    GossipConfig defines gossip TLS configuration for
-                    Alertmanager cluster
-                  properties:
-                    tls_client_config:
-                      description:
-                        TLSClientConfig defines client TLS configuration for
-                        alertmanager
-                      properties:
-                        ca_file:
-                          description: |-
-                            CAFile defines path to the pre-mounted file with CA
-                            mutually exclusive with CASecretRef
-                          type: string
-                        ca_secret_ref:
-                          description: |-
-                            CA defines reference for secret with CA content under given key
-                            mutually exclusive with CAFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        cert_file:
-                          description: |-
-                            CertFile defines path to the pre-mounted file with certificate
-                            mutually exclusive with CertSecretRef
-                          type: string
-                        cert_secret_ref:
-                          description: |-
-                            CertSecretRef defines reference for secret with certificate content under given key
-                            mutually exclusive with CertFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        insecure_skip_verify:
-                          description: |-
-                            Cert defines reference for secret with CA content under given key
-                            mutually exclusive with CertFile
-                          type: boolean
-                        key_file:
-                          description: |-
-                            KeyFile defines path to the pre-mounted file with certificate key
-                            mutually exclusive with KeySecretRef
-                          type: string
-                        key_secret_ref:
-                          description: |-
-                            Key defines reference for secret with certificate key content under given key
-                            mutually exclusive with KeyFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        server_name:
-                          description: ServerName indicates a name of a server
-                          type: string
-                      type: object
-                    tls_server_config:
-                      description:
-                        TLSServerConfig defines server TLS configuration for
-                        alertmanager
-                      properties:
-                        cert_file:
-                          description: |-
-                            CertFile defines path to the pre-mounted file with certificate
-                            mutually exclusive with CertSecretRef
-                          type: string
-                        cert_secret_ref:
-                          description: |-
-                            CertSecretRef defines reference for secret with certificate content under given key
-                            mutually exclusive with CertFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        cipher_suites:
-                          description: |-
-                            CipherSuites defines list of supported cipher suites for TLS versions up to TLS 1.2
-                            https://golang.org/pkg/crypto/tls/#pkg-constants
-                          items:
-                            type: string
-                          type: array
-                        client_auth_type:
-                          description: |-
-                            Cert defines reference for secret with CA content under given key
-                            mutually exclusive with CertFile
-                            ClientAuthType defines server policy for client authentication
-                            If you want to enable client authentication (aka mTLS), you need to use RequireAndVerifyClientCert
-                            Note, mTLS is supported only at enterprise version of VictoriaMetrics components
-                          enum:
-                            - NoClientCert
-                            - RequireAndVerifyClientCert
-                          type: string
-                        client_ca_file:
-                          description: |-
-                            ClientCAFile defines path to the pre-mounted file with CA
-                            mutually exclusive with ClientCASecretRef
-                          type: string
-                        client_ca_secret_ref:
-                          description: |-
-                            ClientCASecretRef defines reference for secret with CA content under given key
-                            mutually exclusive with ClientCAFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        curve_preferences:
-                          description: |-
-                            CurvePreferences defines elliptic curves that will be used in an ECDHE handshake, in preference order.
-                            https://golang.org/pkg/crypto/tls/#CurveID
-                          items:
-                            type: string
-                          type: array
-                        key_file:
-                          description: |-
-                            KeyFile defines path to the pre-mounted file with certificate key
-                            mutually exclusive with KeySecretRef
-                          type: string
-                        key_secret_ref:
-                          description: |-
-                            Key defines reference for secret with certificate key content under given key
-                            mutually exclusive with KeyFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        max_version:
-                          description:
-                            MaxVersion maximum TLS version that is acceptable.
-                          enum:
-                            - TLS10
-                            - TLS11
-                            - TLS12
-                            - TLS13
-                          type: string
-                        min_version:
-                          description:
-                            MinVersion minimum TLS version that is acceptable.
-                          enum:
-                            - TLS10
-                            - TLS11
-                            - TLS12
-                            - TLS13
-                          type: string
-                        prefer_server_cipher_suites:
-                          description: |-
-                            PreferServerCipherSuites controls whether the server selects the
-                            client's most preferred ciphersuite
-                          type: boolean
-                      type: object
-                  type: object
                 host_aliases:
                   description: |-
                     HostAliasesUnderScore provides mapping for ip and hostname,
@@ -1339,35 +794,26 @@ spec:
                     type: object
                     x-kubernetes-preserve-unknown-fields: true
                   type: array
-                listenLocal:
-                  description: |-
-                    ListenLocal makes the VMAlertmanager server listen on loopback, so that it
-                    does not bind against the Pod IP. Note this is only for the VMAlertmanager
-                    UI, not the gossip communication.
-                  type: boolean
                 livenessProbe:
                   description: LivenessProbe that will be added CRD pod
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
                 logFormat:
-                  description:
-                    LogFormat for VMAlertmanager to be configured with.
+                  description: LogFormat for VLAgent to be configured with.
                   enum:
-                    - logfmt
+                    - default
                     - json
                   type: string
                 logLevel:
-                  description:
-                    Log level for VMAlertmanager to be configured with.
+                  description: |-
+                    LogLevel for VLAgent to be configured with.
+                    INFO, WARN, ERROR, FATAL, PANIC
                   enum:
-                    - debug
-                    - info
-                    - warn
-                    - error
-                    - DEBUG
                     - INFO
                     - WARN
                     - ERROR
+                    - FATAL
+                    - PANIC
                   type: string
                 managedMetadata:
                   description: |-
@@ -1465,7 +911,7 @@ spec:
                 podMetadata:
                   description:
                     PodMetadata configures Labels and Annotations which are
-                    propagated to the alertmanager pods.
+                    propagated to the vlagent pods.
                   properties:
                     annotations:
                       additionalProperties:
@@ -1498,11 +944,6 @@ spec:
                 port:
                   description: Port listen address
                   type: string
-                portName:
-                  description: |-
-                    PortName used for the pods and governing service.
-                    This defaults to web
-                  type: string
                 priorityClassName:
                   description: PriorityClassName class assigned to the Pods
                   type: string
@@ -1525,6 +966,316 @@ spec:
                   description: ReadinessProbe that will be added CRD pod
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
+                remoteWrite:
+                  description: |-
+                    RemoteWrite list of victoria logs endpoints
+                    for victorialogs it must looks like: http://victoria-logs-single:9428/
+                    or for cluster different url
+                    https://docs.victoriametrics.com/victorialogs/vlagent/#replication-and-high-availability
+                  items:
+                    description:
+                      VLAgentRemoteWriteSpec defines the remote storage
+                      configuration for VmAgent
+                    properties:
+                      bearerTokenPath:
+                        description:
+                          Optional bearer auth token to use for -remoteWrite.url
+                        type: string
+                      bearerTokenSecret:
+                        description:
+                          Optional bearer auth token to use for -remoteWrite.url
+                        properties:
+                          key:
+                            description:
+                              The key of the secret to select from.  Must be a
+                              valid secret key.
+                            type: string
+                          name:
+                            default: ''
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                          optional:
+                            description:
+                              Specify whether the Secret or its key must be
+                              defined
+                            type: boolean
+                        required:
+                          - key
+                        type: object
+                        x-kubernetes-map-type: atomic
+                      headers:
+                        description: |-
+                          Headers allow configuring custom http headers
+                          Must be in form of semicolon separated header with value
+                          e.g.
+                          headerName: headerValue
+                        items:
+                          type: string
+                        type: array
+                      maxDiskUsage:
+                        description: |-
+                          MaxDiskUsage defines the maximum file-based buffer size in bytes for the given remoteWrite
+                          It overrides global configuration defined at remoteWriteSettings.maxDiskUsagePerURL
+                        x-kubernetes-preserve-unknown-fields: true
+                      oauth2:
+                        description: OAuth2 defines auth configuration
+                        properties:
+                          clientIDFile:
+                            description:
+                              ClientIDFile defines path to pre-mounted OAuth2
+                              client id
+                            type: string
+                          clientIDSecret:
+                            description:
+                              ClientIDSecret defines secret or configmap
+                              containing the OAuth2 client id
+                            properties:
+                              key:
+                                description:
+                                  The key of the secret to select from.  Must be
+                                  a valid secret key.
+                                type: string
+                              name:
+                                default: ''
+                                description: |-
+                                  Name of the referent.
+                                  This field is effectively required, but due to backwards compatibility is
+                                  allowed to be empty. Instances of this type with an empty value here are
+                                  almost certainly wrong.
+                                  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                type: string
+                              optional:
+                                description:
+                                  Specify whether the Secret or its key must be
+                                  defined
+                                type: boolean
+                            required:
+                              - key
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          clientSecret:
+                            description:
+                              The secret containing the OAuth2 client secret
+                            properties:
+                              key:
+                                description:
+                                  The key of the secret to select from.  Must be
+                                  a valid secret key.
+                                type: string
+                              name:
+                                default: ''
+                                description: |-
+                                  Name of the referent.
+                                  This field is effectively required, but due to backwards compatibility is
+                                  allowed to be empty. Instances of this type with an empty value here are
+                                  almost certainly wrong.
+                                  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                type: string
+                              optional:
+                                description:
+                                  Specify whether the Secret or its key must be
+                                  defined
+                                type: boolean
+                            required:
+                              - key
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          clientSecretFile:
+                            description:
+                              ClientSecretFile defines path to pre-mounted
+                              OAuth2 client secret
+                            type: string
+                          endpointParams:
+                            additionalProperties:
+                              type: string
+                            description:
+                              EndpointParams to append to the token URL
+                            type: object
+                          scopes:
+                            description: Scopes used for the token request
+                            items:
+                              type: string
+                            type: array
+                          tokenURL:
+                            description:
+                              TokenURL defines URL to fetch the token from
+                            minLength: 1
+                            type: string
+                        required:
+                          - tokenURL
+                        type: object
+                      proxyURL:
+                        description:
+                          'ProxyURL for -remoteWrite.url. Supported proxies:
+                          http, https, socks5. Example: socks5://proxy:1234'
+                        type: string
+                      sendTimeout:
+                        description:
+                          Timeout for sending a single block of data to
+                          -remoteWrite.url (default 1m0s)
+                        pattern: '[0-9]+(ms|s|m|h)'
+                        type: string
+                      tlsConfig:
+                        description:
+                          TLSConfig describes tls configuration for remote write
+                          target
+                        properties:
+                          caFile:
+                            description:
+                              CAFile defines path to the pre-mounted file with
+                              TLS ca certificate
+                            type: string
+                          caSecretKeyRef:
+                            description:
+                              CASecret defines secret reference with tls CA key
+                              by given key
+                            properties:
+                              key:
+                                description:
+                                  The key of the secret to select from.  Must be
+                                  a valid secret key.
+                                type: string
+                              name:
+                                default: ''
+                                description: |-
+                                  Name of the referent.
+                                  This field is effectively required, but due to backwards compatibility is
+                                  allowed to be empty. Instances of this type with an empty value here are
+                                  almost certainly wrong.
+                                  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                type: string
+                              optional:
+                                description:
+                                  Specify whether the Secret or its key must be
+                                  defined
+                                type: boolean
+                            required:
+                              - key
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          certFile:
+                            description: |-
+                              CertFile defines path to the pre-mounted file with TLS certificate
+                              mutually exclusive with CertSecret
+                            type: string
+                          certSecretKeyRef:
+                            description: |-
+                              CertSecret defines secret reference with TLS cert by given key
+                              mutually exclusive with CASecret
+                            properties:
+                              key:
+                                description:
+                                  The key of the secret to select from.  Must be
+                                  a valid secret key.
+                                type: string
+                              name:
+                                default: ''
+                                description: |-
+                                  Name of the referent.
+                                  This field is effectively required, but due to backwards compatibility is
+                                  allowed to be empty. Instances of this type with an empty value here are
+                                  almost certainly wrong.
+                                  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                type: string
+                              optional:
+                                description:
+                                  Specify whether the Secret or its key must be
+                                  defined
+                                type: boolean
+                            required:
+                              - key
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          insecureSkipVerify:
+                            description: Disable target certificate validation.
+                            type: boolean
+                          keyFile:
+                            description: |-
+                              KeyFile defines path to the pre-mounted file with TLS cert key
+                              mutually exclusive with CertSecret
+                            type: string
+                          keySecretKeyRef:
+                            description:
+                              CertSecret defines secret reference with TLS key
+                              by given key
+                            properties:
+                              key:
+                                description:
+                                  The key of the secret to select from.  Must be
+                                  a valid secret key.
+                                type: string
+                              name:
+                                default: ''
+                                description: |-
+                                  Name of the referent.
+                                  This field is effectively required, but due to backwards compatibility is
+                                  allowed to be empty. Instances of this type with an empty value here are
+                                  almost certainly wrong.
+                                  More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                type: string
+                              optional:
+                                description:
+                                  Specify whether the Secret or its key must be
+                                  defined
+                                type: boolean
+                            required:
+                              - key
+                            type: object
+                            x-kubernetes-map-type: atomic
+                          serverName:
+                            description:
+                              Used to verify the hostname for the targets.
+                            type: string
+                        type: object
+                      url:
+                        description: URL of the endpoint to send samples to.
+                        type: string
+                    required:
+                      - url
+                    type: object
+                  type: array
+                remoteWriteSettings:
+                  description:
+                    RemoteWriteSettings defines global settings for all
+                    remoteWrite urls.
+                  properties:
+                    flushInterval:
+                      description:
+                        Interval for flushing the data to remote storage.
+                        (default 1s)
+                      pattern: '[0-9]+(ms|s|m|h)'
+                      type: string
+                    maxBlockSize:
+                      description:
+                        The maximum size of unpacked request to send to remote
+                        storage
+                      x-kubernetes-preserve-unknown-fields: true
+                    maxDiskUsagePerURL:
+                      description:
+                        The maximum file-based buffer size in bytes at
+                        -remoteWrite.tmpDataPath
+                      x-kubernetes-preserve-unknown-fields: true
+                    queues:
+                      description: The number of concurrent queues
+                      format: int32
+                      type: integer
+                    showURL:
+                      description:
+                        Whether to show -remoteWrite.url in the exported
+                        metrics. It is hidden by default, since it can contain
+                        sensitive auth info
+                      type: boolean
+                    tmpDataPath:
+                      description: |-
+                        Path to directory where temporary data for remote write component is stored (default /vlagent_pq/vlagent-remotewrite-data)
+                        If defined, operator ignores spec.storage field and skips adding volume and volumeMount for pq
+                      type: string
+                  type: object
                 replicaCount:
                   description:
                     ReplicaCount is the expected size of the Application.
@@ -1593,12 +1344,6 @@ spec:
                         More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                       type: object
                   type: object
-                retention:
-                  description: |-
-                    Retention Time duration VMAlertmanager shall retain data for. Default is '120h',
-                    and must match the regular expression `[0-9]+(ms|s|m|h)` (milliseconds seconds minutes hours).
-                  pattern: '[0-9]+(ms|s|m|h)'
-                  type: string
                 revisionHistoryLimitCount:
                   description: |-
                     The number of old ReplicaSets to retain to allow rollback in deployment or
@@ -1609,16 +1354,8 @@ spec:
                   type: integer
                 rollingUpdateStrategy:
                   description: |-
-                    RollingUpdateStrategy defines strategy for application updates
-                    Default is OnDelete, in this case operator handles update process
-                    Can be changed for RollingUpdate
-                  type: string
-                routePrefix:
-                  description: |-
-                    RoutePrefix VMAlertmanager registers HTTP handlers for. This is useful,
-                    if using ExternalURL and a proxy is rewriting HTTP routes of a request,
-                    and the actual ExternalURL is still true, but the server serves requests
-                    under a different route prefix. For example for use with `kubectl proxy`.
+                    StatefulRollingUpdateStrategy allows configuration for strategyType
+                    set it to RollingUpdate for disabling operator statefulSet rollingUpdate
                   type: string
                 runtimeClassName:
                   description: |-
@@ -1642,13 +1379,6 @@ spec:
                     This defaults to the default PodSecurityContext.
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
-                selectAllByDefault:
-                  description: |-
-                    SelectAllByDefault changes default behavior for empty CRD selectors, such ConfigSelector.
-                    with selectAllByDefault: true and undefined ConfigSelector and ConfigNamespaceSelector
-                    Operator selects all exist alertManagerConfigs
-                    with selectAllByDefault: false - selects nothing
-                  type: boolean
                 serviceAccountName:
                   description:
                     ServiceAccountName is the name of the ServiceAccount to use
@@ -1656,7 +1386,7 @@ spec:
                   type: string
                 serviceScrapeSpec:
                   description:
-                    ServiceScrapeSpec that will be added to vmalertmanager
+                    ServiceScrapeSpec that will be added to vlagent
                     VMServiceScrape spec
                   required:
                     - endpoints
@@ -1664,8 +1394,7 @@ spec:
                   x-kubernetes-preserve-unknown-fields: true
                 serviceSpec:
                   description:
-                    ServiceSpec that will be added to vmalertmanager service
-                    spec
+                    ServiceSpec that will be added to vlagent service spec
                   properties:
                     metadata:
                       description:
@@ -1719,9 +1448,8 @@ spec:
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
                 storage:
-                  description: |-
-                    Storage is the definition of how storage will be used by the VMAlertmanager
-                    instances.
+                  description:
+                    StatefulStorage configures storage for StatefulSet
                   properties:
                     disableMountSubPath:
                       description: |-
@@ -2246,32 +1974,168 @@ spec:
                           type: object
                       type: object
                   type: object
-                templates:
-                  description: |-
-                    Templates is a list of ConfigMap key references for ConfigMaps in the same namespace as the VMAlertmanager
-                    object, which shall be mounted into the VMAlertmanager Pods.
-                    The Templates are mounted into /etc/vm/templates/<configmap-name>/<configmap-key>.
-                  items:
-                    description:
-                      ConfigMapKeyReference refers to a key in a ConfigMap.
-                    properties:
-                      key:
-                        description: The ConfigMap key to refer to.
-                        type: string
-                      name:
-                        default: ''
-                        description: |-
-                          Name of the referent.
-                          This field is effectively required, but due to backwards compatibility is
-                          allowed to be empty. Instances of this type with an empty value here are
-                          almost certainly wrong.
-                          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                        type: string
-                    required:
-                      - key
-                    type: object
-                    x-kubernetes-map-type: atomic
-                  type: array
+                syslogSpec:
+                  description: SyslogSpec defines syslog listener configuration
+                  properties:
+                    tcpListeners:
+                      description:
+                        TCPListeners defines syslog server TCP listener
+                        configuration
+                      items:
+                        description:
+                          SyslogTCPListener defines configuration for TCP syslog
+                          server listen
+                        properties:
+                          compressMethod:
+                            description: |-
+                              CompressMethod for syslog messages
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#compression
+                            pattern: ^(none|zstd|gzip|deflate)$
+                            type: string
+                          decolorizeFields:
+                            description: |-
+                              DecolorizeFields to remove ANSI color codes across logs
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#decolorizing-fields
+                            type: string
+                          ignoreFields:
+                            description: |-
+                              IgnoreFields to ignore at logs
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#dropping-fields
+                            type: string
+                          listenPort:
+                            description: ListenPort defines listen port
+                            format: int32
+                            type: integer
+                          streamFields:
+                            description: |-
+                              StreamFields to use as log stream labels
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#stream-fields
+                            type: string
+                          tenantID:
+                            description: |-
+                              TenantID for logs ingested in form of accountID:projectID
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#multiple-configs
+                            type: string
+                          tlsConfig:
+                            description:
+                              TLSServerConfig defines VictoriaMetrics TLS
+                              configuration for the application's server
+                            properties:
+                              certFile:
+                                description: |-
+                                  CertFile defines path to the pre-mounted file with certificate
+                                  mutually exclusive with CertSecret
+                                type: string
+                              certSecret:
+                                description: |-
+                                  CertSecretRef defines reference for secret with certificate content under given key
+                                  mutually exclusive with CertFile
+                                properties:
+                                  key:
+                                    description:
+                                      The key of the secret to select
+                                      from.  Must be a valid secret key.
+                                    type: string
+                                  name:
+                                    default: ''
+                                    description: |-
+                                      Name of the referent.
+                                      This field is effectively required, but due to backwards compatibility is
+                                      allowed to be empty. Instances of this type with an empty value here are
+                                      almost certainly wrong.
+                                      More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                    type: string
+                                  optional:
+                                    description:
+                                      Specify whether the Secret or its key must
+                                      be defined
+                                    type: boolean
+                                required:
+                                  - key
+                                type: object
+                                x-kubernetes-map-type: atomic
+                              keyFile:
+                                description: |-
+                                  KeyFile defines path to the pre-mounted file with certificate key
+                                  mutually exclusive with KeySecretRef
+                                type: string
+                              keySecret:
+                                description: |-
+                                  Key defines reference for secret with certificate key content under given key
+                                  mutually exclusive with KeyFile
+                                properties:
+                                  key:
+                                    description:
+                                      The key of the secret to select
+                                      from.  Must be a valid secret key.
+                                    type: string
+                                  name:
+                                    default: ''
+                                    description: |-
+                                      Name of the referent.
+                                      This field is effectively required, but due to backwards compatibility is
+                                      allowed to be empty. Instances of this type with an empty value here are
+                                      almost certainly wrong.
+                                      More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                    type: string
+                                  optional:
+                                    description:
+                                      Specify whether the Secret or its key must
+                                      be defined
+                                    type: boolean
+                                required:
+                                  - key
+                                type: object
+                                x-kubernetes-map-type: atomic
+                            type: object
+                        required:
+                          - listenPort
+                        type: object
+                      type: array
+                    udpListeners:
+                      description:
+                        UDPListeners defines syslog server UDP listener
+                        configuration
+                      items:
+                        description:
+                          SyslogUDPListener defines configuration for UDP syslog
+                          server listen
+                        properties:
+                          compressMethod:
+                            description: |-
+                              CompressMethod for syslog messages
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#compression
+                            pattern: ^(none|zstd|gzip|deflate)$
+                            type: string
+                          decolorizeFields:
+                            description: |-
+                              DecolorizeFields to remove ANSI color codes across logs
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#decolorizing-fields
+                            type: string
+                          ignoreFields:
+                            description: |-
+                              IgnoreFields to ignore at logs
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#dropping-fields
+                            type: string
+                          listenPort:
+                            description: ListenPort defines listen port
+                            format: int32
+                            type: integer
+                          streamFields:
+                            description: |-
+                              StreamFields to use as log stream labels
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#stream-fields
+                            type: string
+                          tenantID:
+                            description: |-
+                              TenantID for logs ingested in form of accountID:projectID
+                              see https://docs.victoriametrics.com/victorialogs/data-ingestion/syslog/#multiple-configs
+                            type: string
+                        required:
+                          - listenPort
+                        type: object
+                      type: array
+                  type: object
                 terminationGracePeriodSeconds:
                   description:
                     TerminationGracePeriodSeconds period for container graceful
@@ -2345,12 +2209,6 @@ spec:
                     it restricts disk writes access
                     uses non-root user out of the box
                     drops not needed security permissions
-                  type: boolean
-                useVMConfigReloader:
-                  description: |-
-                    UseVMConfigReloader replaces prometheus-like config-reloader
-                    with vm one. It uses secrets watch instead of file watch
-                    which greatly increases speed of config updates
                   type: boolean
                 volumeMounts:
                   description: |-
@@ -2433,196 +2291,11 @@ spec:
                     type: object
                     x-kubernetes-preserve-unknown-fields: true
                   type: array
-                webConfig:
-                  description: |-
-                    WebConfig defines configuration for webserver
-                    https://github.com/prometheus/alertmanager/blob/main/docs/https.md
-                  properties:
-                    basic_auth_users:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        BasicAuthUsers Usernames and hashed passwords that have full access to the web server
-                        Passwords must be hashed with bcrypt
-                      type: object
-                    http_server_config:
-                      description:
-                        HTTPServerConfig defines http server configuration for
-                        alertmanager web server
-                      properties:
-                        headers:
-                          additionalProperties:
-                            type: string
-                          description:
-                            Headers defines list of headers that can be added to
-                            HTTP responses.
-                          type: object
-                        http2:
-                          description: |-
-                            HTTP2 enables HTTP/2 support. Note that HTTP/2 is only supported with TLS.
-                            This can not be changed on the fly.
-                          type: boolean
-                      type: object
-                    tls_server_config:
-                      description:
-                        TLSServerConfig defines server TLS configuration for
-                        alertmanager
-                      properties:
-                        cert_file:
-                          description: |-
-                            CertFile defines path to the pre-mounted file with certificate
-                            mutually exclusive with CertSecretRef
-                          type: string
-                        cert_secret_ref:
-                          description: |-
-                            CertSecretRef defines reference for secret with certificate content under given key
-                            mutually exclusive with CertFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        cipher_suites:
-                          description: |-
-                            CipherSuites defines list of supported cipher suites for TLS versions up to TLS 1.2
-                            https://golang.org/pkg/crypto/tls/#pkg-constants
-                          items:
-                            type: string
-                          type: array
-                        client_auth_type:
-                          description: |-
-                            Cert defines reference for secret with CA content under given key
-                            mutually exclusive with CertFile
-                            ClientAuthType defines server policy for client authentication
-                            If you want to enable client authentication (aka mTLS), you need to use RequireAndVerifyClientCert
-                            Note, mTLS is supported only at enterprise version of VictoriaMetrics components
-                          enum:
-                            - NoClientCert
-                            - RequireAndVerifyClientCert
-                          type: string
-                        client_ca_file:
-                          description: |-
-                            ClientCAFile defines path to the pre-mounted file with CA
-                            mutually exclusive with ClientCASecretRef
-                          type: string
-                        client_ca_secret_ref:
-                          description: |-
-                            ClientCASecretRef defines reference for secret with CA content under given key
-                            mutually exclusive with ClientCAFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        curve_preferences:
-                          description: |-
-                            CurvePreferences defines elliptic curves that will be used in an ECDHE handshake, in preference order.
-                            https://golang.org/pkg/crypto/tls/#CurveID
-                          items:
-                            type: string
-                          type: array
-                        key_file:
-                          description: |-
-                            KeyFile defines path to the pre-mounted file with certificate key
-                            mutually exclusive with KeySecretRef
-                          type: string
-                        key_secret_ref:
-                          description: |-
-                            Key defines reference for secret with certificate key content under given key
-                            mutually exclusive with KeyFile
-                          properties:
-                            key:
-                              description:
-                                The key of the secret to select from.  Must be a
-                                valid secret key.
-                              type: string
-                            name:
-                              default: ''
-                              description: |-
-                                Name of the referent.
-                                This field is effectively required, but due to backwards compatibility is
-                                allowed to be empty. Instances of this type with an empty value here are
-                                almost certainly wrong.
-                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                              type: string
-                            optional:
-                              description:
-                                Specify whether the Secret or its key must be
-                                defined
-                              type: boolean
-                          required:
-                            - key
-                          type: object
-                          x-kubernetes-map-type: atomic
-                        max_version:
-                          description:
-                            MaxVersion maximum TLS version that is acceptable.
-                          enum:
-                            - TLS10
-                            - TLS11
-                            - TLS12
-                            - TLS13
-                          type: string
-                        min_version:
-                          description:
-                            MinVersion minimum TLS version that is acceptable.
-                          enum:
-                            - TLS10
-                            - TLS11
-                            - TLS12
-                            - TLS13
-                          type: string
-                        prefer_server_cipher_suites:
-                          description: |-
-                            PreferServerCipherSuites controls whether the server selects the
-                            client's most preferred ciphersuite
-                          type: boolean
-                      type: object
-                  type: object
+              required:
+                - remoteWrite
               type: object
             status:
-              description: |-
-                Most recent observed status of the VMAlertmanager cluster.
-                Operator API itself. More info:
-                https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+              description: VLAgentStatus defines the observed state of VLAgent
               properties:
                 conditions:
                   description:
@@ -2702,14 +2375,25 @@ spec:
                 reason:
                   description: Reason defines human readable error reason
                   type: string
+                replicas:
+                  description:
+                    ReplicaCount Total number of pods targeted by this VLAgent
+                  format: int32
+                  type: integer
+                selector:
+                  description:
+                    Selector string form of label value set for autoscaling
+                  type: string
                 updateStatus:
                   description: UpdateStatus defines a status for update rollout
                   type: string
               type: object
-          required:
-            - spec
           type: object
       served: true
       storage: true
       subresources:
+        scale:
+          labelSelectorPath: .status.selector
+          specReplicasPath: .spec.shardCount
+          statusReplicasPath: .status.shards
         status: {}

@@ -68,6 +68,7 @@ defmodule CommonCore.ApiVersionKind do
     monitoring_scrape_config: {"operator.victoriametrics.com/v1beta1", "VMScrapeConfig"},
     mutating_webhook_config: {"admissionregistration.k8s.io/v1", "MutatingWebhookConfiguration"},
     namespace: {"v1", "Namespace"},
+    network_policy: {"networking.k8s.io/v1", "NetworkPolicy"},
     node: {"v1", "Node"},
     node_feature: {"nfd.k8s-sigs.io/v1alpha1", "NodeFeature"},
     node_feature_group: {"nfd.k8s-sigs.io/v1alpha1", "NodeFeatureGroup"},
@@ -89,10 +90,15 @@ defmodule CommonCore.ApiVersionKind do
     storage_class: {"storage.k8s.io/v1", "StorageClass"},
     trustmanager_bundle: {"trust.cert-manager.io/v1alpha1", "Bundle"},
     validating_webhook_config: {"admissionregistration.k8s.io/v1", "ValidatingWebhookConfiguration"},
+    vl_agent: {"operator.victoriametrics.com/v1", "VLAgent"},
+    vl_cluster: {"operator.victoriametrics.com/v1", "VLCluster"},
+    v_logs: {"operator.victoriametrics.com/v1beta1", "VLogs"},
+    vl_single: {"operator.victoriametrics.com/v1", "VLSingle"},
     vm_agent: {"operator.victoriametrics.com/v1beta1", "VMAgent"},
     vm_alert: {"operator.victoriametrics.com/v1beta1", "VMAlert"},
     vm_alertmanager: {"operator.victoriametrics.com/v1beta1", "VMAlertmanager"},
     vm_alertmanager_config: {"operator.victoriametrics.com/v1beta1", "VMAlertmanagerConfig"},
+    vm_anomaly: {"operator.victoriametrics.com/v1", "VMAnomaly"},
     vm_cluster: {"operator.victoriametrics.com/v1beta1", "VMCluster"},
     vm_single: {"operator.victoriametrics.com/v1beta1", "VMSingle"}
   ]
