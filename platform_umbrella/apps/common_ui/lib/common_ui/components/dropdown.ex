@@ -17,7 +17,7 @@ defmodule CommonUI.Components.Dropdown do
     assigns = IDHelpers.provide_id(assigns)
 
     ~H"""
-    <div id={@id} class="relative z-40">
+    <div id={"div_#{@id}"} class="relative z-40">
       <div class="cursor-pointer" phx-click={show_dropdown(@id, :slide_y)}>
         {render_slot(@trigger)}
       </div>
