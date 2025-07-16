@@ -103,7 +103,7 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
          |> put_flash(:global_success, "Redis instance updated successfully")
          |> push_navigate(to: ~p"/redis/#{redis_instance.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -118,12 +118,12 @@ defmodule ControlServerWeb.Live.Redis.FormComponent do
          |> put_flash(:global_success, "Redis instance created successfully")
          |> push_navigate(to: ~p"/redis/#{redis_instance.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
   end
 
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+  defp assign_form(socket, %Changeset{} = changeset) do
     socket
     |> assign(:form, to_form(changeset))
     |> assign(:instance_type, Changeset.get_field(changeset, :instance_type))

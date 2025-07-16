@@ -13,8 +13,8 @@ defmodule KubeServices.ET.InstallStatusWorker do
   typedstruct module: State do
     field :sleep_time, integer()
     field :home_client, pid() | atom(), default: HomeBaseClient
-    field :last_status, CommonCore.ET.InstallStatus.t(), default: nil
-    field :install_id, CommonCore.Ecto.BatteryUUID.t(), default: nil
+    field :last_status, InstallStatus.t(), default: nil
+    field :install_id, BatteryUUID.t(), default: nil
   end
 
   @state_opts ~w(sleep_time home_client_pid install_id)a
@@ -54,7 +54,7 @@ defmodule KubeServices.ET.InstallStatusWorker do
     GenServer.start_link(__MODULE__, state_opts, opts)
   end
 
-  @spec get_status(atom() | pid() | {atom(), any()}) :: CommonCore.ET.InstallStatus.t() | {:error, any()}
+  @spec get_status(atom() | pid() | {atom(), any()}) :: InstallStatus.t() | {:error, any()}
   def get_status(client \\ __MODULE__) do
     GenServer.call(client, :get_status)
   catch

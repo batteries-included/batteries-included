@@ -10,7 +10,7 @@ defmodule KubeBootstrap.Postgres do
 
   require Logger
 
-  @spec wait_for_postgres(K8s.Conn.t(), CommonCore.StateSummary.t()) :: :ok | {:error, list()}
+  @spec wait_for_postgres(K8s.Conn.t(), StateSummary.t()) :: :ok | {:error, list()}
   def wait_for_postgres(%K8s.Conn{} = conn, %StateSummary{postgres_clusters: clusters} = summary) do
     errors =
       clusters

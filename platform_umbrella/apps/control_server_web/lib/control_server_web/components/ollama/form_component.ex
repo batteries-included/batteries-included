@@ -49,7 +49,7 @@ defmodule ControlServerWeb.Live.OllamaFormComponent do
          |> put_flash(:global_success, "Model successfully created")
          |> push_navigate(to: ~p"/model_instances/#{model_instance.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end
@@ -62,7 +62,7 @@ defmodule ControlServerWeb.Live.OllamaFormComponent do
          |> put_flash(:global_success, "Model successfully updated")
          |> push_navigate(to: ~p"/model_instances/#{model_instance.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end

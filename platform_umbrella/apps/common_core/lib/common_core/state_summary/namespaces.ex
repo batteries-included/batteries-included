@@ -5,13 +5,13 @@ defmodule CommonCore.StateSummary.Namespaces do
 
   alias CommonCore.StateSummary
 
-  @spec core_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec core_namespace(StateSummary.t()) :: binary() | nil
   def core_namespace(%StateSummary{} = summary), do: config_field(summary, :core_namespace)
 
-  @spec base_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec base_namespace(StateSummary.t()) :: binary() | nil
   def base_namespace(%StateSummary{} = summary), do: config_field(summary, :base_namespace)
 
-  @spec istio_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec istio_namespace(StateSummary.t()) :: binary() | nil
   def istio_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :istio)
 
   def all_namespaces(%StateSummary{} = summary) do
@@ -37,19 +37,19 @@ defmodule CommonCore.StateSummary.Namespaces do
   # Databases
   # Notebooks
   # etc
-  @spec ai_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec ai_namespace(StateSummary.t()) :: binary() | nil
   def ai_namespace(%StateSummary{} = summary), do: config_field(summary, :ai_namespace)
 
-  @spec data_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec data_namespace(StateSummary.t()) :: binary() | nil
   def data_namespace(%StateSummary{} = summary), do: config_field(summary, :data_namespace)
 
-  @spec knative_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec knative_namespace(StateSummary.t()) :: binary() | nil
   def knative_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :knative)
 
-  @spec traditional_namespace(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec traditional_namespace(StateSummary.t()) :: binary() | nil
   def traditional_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :traditional_services)
 
-  @spec battery_namespace(CommonCore.StateSummary.t(), atom()) :: binary() | nil
+  @spec battery_namespace(StateSummary.t(), atom()) :: binary() | nil
   defp battery_namespace(summary, battery) do
     case get_battery(summary, battery) do
       %{config: config} ->

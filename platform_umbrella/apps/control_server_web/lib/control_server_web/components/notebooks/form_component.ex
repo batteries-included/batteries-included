@@ -122,7 +122,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
          |> put_flash(:global_success, "Notebook successfully created")
          |> push_navigate(to: ~p"/notebooks/#{notebook.id}")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end
@@ -137,7 +137,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
          |> put_flash(:global_success, "Notebook successfully updated")
          |> push_navigate(to: ~p"/notebooks/#{notebook.id}")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end

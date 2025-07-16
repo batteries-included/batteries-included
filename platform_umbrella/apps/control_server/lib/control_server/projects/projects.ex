@@ -49,7 +49,7 @@ defmodule ControlServer.Projects do
     |> Repo.delete()
   end
 
-  @spec change_project(CommonCore.Projects.Project.t()) :: Ecto.Changeset.t()
+  @spec change_project(Project.t()) :: Ecto.Changeset.t()
   def change_project(%Project{} = project, attrs \\ %{}) do
     Project.changeset(project, attrs)
   end

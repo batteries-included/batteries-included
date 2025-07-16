@@ -9,7 +9,7 @@ defmodule CommonCore.StateSummary.Core do
 
   def get_battery_core(%StateSummary{} = summary), do: Batteries.get_battery(summary, :battery_core)
 
-  @spec config_field(CommonCore.StateSummary.t(), atom()) :: any() | nil
+  @spec config_field(StateSummary.t(), atom()) :: any() | nil
   def config_field(summary, key) do
     case battery_core_config(summary) do
       %BatteryCoreConfig{} = config -> Map.get(config, key)

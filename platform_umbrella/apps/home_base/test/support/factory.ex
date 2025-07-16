@@ -23,7 +23,7 @@ defmodule HomeBase.Factory do
     %StoredHostReport{report: build(:host_report), installation: build(:installation)}
   end
 
-  @spec user_factory() :: CommonCore.Accounts.User.t()
+  @spec user_factory() :: User.t()
   def user_factory do
     %User{
       email: sequence("user-") <> "@example.com",

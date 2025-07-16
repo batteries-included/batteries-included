@@ -116,7 +116,7 @@ defmodule CommonCore.Ecto.Validations do
   def maybe_set_random(changeset, field, opts \\ []) do
     new_length = Keyword.get(opts, :length, @default_length)
 
-    key_func = Keyword.get(opts, :func, &CommonCore.Defaults.random_key_string/1)
+    key_func = Keyword.get(opts, :func, &Defaults.random_key_string/1)
 
     case get_field(changeset, field) do
       nil ->

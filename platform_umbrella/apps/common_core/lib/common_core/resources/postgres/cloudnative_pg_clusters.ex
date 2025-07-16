@@ -216,8 +216,8 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   @spec user_role_secret(
           CommonCore.Batteries.SystemBattery.t(),
           CommonCore.StateSummary.t(),
-          CommonCore.Postgres.Cluster.t(),
-          CommonCore.Postgres.PGUser.t(),
+          Cluster.t(),
+          PGUser.t(),
           String.t()
         ) :: map
   def user_role_secret(_battery, state, %Cluster{} = cluster, %PGUser{} = user, namespace) do

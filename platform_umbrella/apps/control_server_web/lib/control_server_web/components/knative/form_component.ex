@@ -244,7 +244,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
          |> put_flash(:global_success, "Knative service created successfully")
          |> push_navigate(to: ~p"/knative/services/#{new_service.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end
@@ -263,7 +263,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
          |> put_flash(:global_success, "Knative service updated successfully")
          |> push_navigate(to: ~p"/knative/services/#{updated_service.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end

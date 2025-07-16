@@ -162,7 +162,7 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
     resource
     |> Client.create()
     |> Client.put_conn(connection)
-    |> K8s.Client.run()
+    |> Client.run()
   end
 
   defp update_single(connection, resource) do
@@ -173,7 +173,7 @@ defmodule KubeServices.SnapshotApply.ApplyResource do
     resource
     |> Client.apply()
     |> Client.put_conn(connection)
-    |> K8s.Client.run()
+    |> Client.run()
   end
 
   defp increment_ok({:ok, cnt}), do: {:ok, cnt + 1}

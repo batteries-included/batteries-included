@@ -95,7 +95,7 @@ defmodule HomeBase.TeamsTest do
     test "should soft_delete the team but not the team roles", ctx do
       assert {:ok, %Team{}} = Teams.soft_delete_team(ctx.team1)
       refute Repo.get(Team, ctx.team1.id)
-      assert %CommonCore.Teams.TeamRole{} = Repo.get_by(TeamRole, team_id: ctx.team1.id)
+      assert %TeamRole{} = Repo.get_by(TeamRole, team_id: ctx.team1.id)
 
       # assert that there's still a record and that it's "soft" deleted
       found = Repo.get!(Team, ctx.team1.id, with_deleted: true)

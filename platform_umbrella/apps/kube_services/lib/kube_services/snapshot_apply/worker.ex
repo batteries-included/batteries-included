@@ -151,7 +151,7 @@ defmodule KubeServices.SnapshotApply.Worker do
     # If the genserver is not running, we don't prepare anything so we will skip
     # apply
     if CommonCore.StateSummary.Batteries.batteries_installed?(summary, :keycloak) and
-         KubeServices.SnapshotApply.KeycloakApply.get_running() do
+         KeycloakApply.get_running() do
       KeycloakApply.prepare(us)
     else
       {:ok, nil}

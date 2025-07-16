@@ -61,7 +61,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
       {:ok, installation} ->
         {:noreply, push_navigate(socket, to: ~p"/installations/#{installation}/success")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
