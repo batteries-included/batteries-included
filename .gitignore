@@ -3,7 +3,7 @@
 .nix-hex
 .nix-elixir.cache
 .flock
-platform_umbrella/.iex.exs
+platform_umbrella/**/.iex.exs
 platform_umbrella/.dialyzer
 
 # Local cargo dirs
