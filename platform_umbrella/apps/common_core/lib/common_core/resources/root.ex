@@ -57,6 +57,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.VMCluster
   alias CommonCore.Resources.VMDashboards
   alias CommonCore.Resources.VMOperator
+  alias CommonCore.Resources.VMOperatorCRDs
   alias CommonCore.StateSummary
 
   @default_generator_mappings [
@@ -92,7 +93,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     timeline: [],
     trivy_operator: [TrivyOperator],
     trust_manager: [TrustManager],
-    victoria_metrics: [VMDashboards, VMCluster, VMOperator],
+    victoria_metrics: [VMDashboards, VMCluster, VMOperator, VMOperatorCRDs],
     vm_agent: [VMAgent]
   ]
 

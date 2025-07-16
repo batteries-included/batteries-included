@@ -5,8 +5,13 @@ defmodule CommonCore.IncludeResource do
   defmacro __using__(opts \\ []) do
     contents = Enum.map(opts, fn {id, path} -> {id, File.read!(path)} end)
 
+    %{module: mod} = __CALLER__
+    Module.register_attribute(mod, :included_resources, accumulate: true)
+
     string_defs =
       Enum.map(contents, fn {id, contents} ->
+        Module.put_attribute(mod, :included_resources, id)
+
         quote do
           defp __file_contents__(unquote(id), :string), do: unquote(contents)
         end

@@ -120,7 +120,14 @@ defmodule CommonCore.Resources.MetricsServer do
       Map.put(
         %{},
         "NannyConfiguration",
-        "apiVersion: nannyconfig/v1alpha1\nkind: NannyConfiguration\nbaseCPU: 0m\ncpuPerNode: 1m\nbaseMemory: 0Mi\nmemoryPerNode: 2Mi"
+        """
+        apiVersion: nannyconfig/v1alpha1
+        kind: NannyConfiguration
+        baseCPU: 0m
+        cpuPerNode: 1m
+        baseMemory: 0Mi
+        memoryPerNode: 2Mi
+        """
       )
 
     :config_map
