@@ -228,14 +228,14 @@ defmodule CommonCore.Keycloak.TestAdminClient do
   defp setup_mocked_admin(_context) do
     {:ok, pid} =
       AdminClient.start_link(
-        adapter: CommonCore.Keycloak.TeslaMock,
+        adapter: TeslaMock,
         base_url: "http://keycloak.local.test/",
         username: "test_user",
         password: "not-real-test",
         name: String.to_atom("admin-client-test-#{build_random_byte_string(10)}")
       )
 
-    allow(CommonCore.Keycloak.TeslaMock, self(), pid)
+    allow(TeslaMock, self(), pid)
 
     %{pid: pid}
   end

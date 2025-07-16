@@ -68,7 +68,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
   def handle_event("upsert:user", %{"pg_user" => pg_user_params}, %{assigns: %{form: %{source: changeset}}} = socket) do
     pg_user_changeset = PGUser.changeset(%PGUser{}, pg_user_params)
 
-    case Ecto.Changeset.apply_action(pg_user_changeset, :validate) do
+    case Changeset.apply_action(pg_user_changeset, :validate) do
       {:ok, pg_user} ->
         position =
           if pg_user_params["position"] == "",
@@ -138,7 +138,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
       |> Cluster.changeset(cluster_params)
       |> Map.put(:action, :validate)
 
-    data = Ecto.Changeset.apply_changes(changeset)
+    data = Changeset.apply_changes(changeset)
 
     {:noreply,
      socket
@@ -184,7 +184,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
         {:noreply, socket}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
@@ -199,7 +199,7 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
 
         {:noreply, socket}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end

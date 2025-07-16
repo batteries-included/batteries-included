@@ -63,14 +63,14 @@ defmodule ControlServer.SnapshotApply.KubeEctoSteps do
     |> Repo.transaction(timeout: @generation_timeout)
   end
 
-  @spec update_snap_status(ControlServer.SnapshotApply.KubeSnapshot.t(), any) ::
-          {:ok, ControlServer.SnapshotApply.KubeSnapshot.t()} | {:error, Ecto.Changeset.t()}
+  @spec update_snap_status(KubeSnapshot.t(), any) ::
+          {:ok, KubeSnapshot.t()} | {:error, Ecto.Changeset.t()}
   def update_snap_status(%KubeSnapshot{} = snap, status) do
     update_kube_snapshot(snap, %{status: status})
   end
 
-  @spec update_rp(ControlServer.SnapshotApply.ResourcePath.t(), boolean(), binary()) ::
-          {:ok, ControlServer.SnapshotApply.ResourcePath.t()} | {:error, Ecto.Changeset.t()}
+  @spec update_rp(ResourcePath.t(), boolean(), binary()) ::
+          {:ok, ResourcePath.t()} | {:error, Ecto.Changeset.t()}
   def update_rp(%ResourcePath{} = rp, is_success, reason) do
     update_resource_path(rp, %{
       is_success: is_success,

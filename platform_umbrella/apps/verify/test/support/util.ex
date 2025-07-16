@@ -144,7 +144,7 @@ defmodule Verify.TestCase.Util do
   defp do_wait_on_images(images, pid, end_time, _remaining) do
     waiting =
       Enum.filter(images, fn image ->
-        case Verify.ImagePullWorker.image_status(pid, image) do
+        case ImagePullWorker.image_status(pid, image) do
           # if we're still pulling, keep the image
           status when status in ~w(running retrying)a ->
             Process.sleep(500)

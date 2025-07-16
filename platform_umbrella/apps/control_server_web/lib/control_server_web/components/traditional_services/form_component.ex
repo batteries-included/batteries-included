@@ -464,7 +464,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
          |> put_flash(:global_success, "Traditional Service created successfully")
          |> push_navigate(to: ~p"/traditional_services/#{service}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end
@@ -486,7 +486,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
          |> put_flash(:global_success, "Traditional Service updated successfully")
          |> push_navigate(to: ~p"/traditional_services/#{service}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end

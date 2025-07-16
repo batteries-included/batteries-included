@@ -42,7 +42,7 @@ defmodule KubeServices.SnapshotApply.KeycloakApply do
   # They generally follow the prepare, generate, apply stages of SnapshotApply
   ##
 
-  @spec prepare(ControlServer.SnapshotApply.UmbrellaSnapshot.t()) :: any
+  @spec prepare(UmbrellaSnapshot.t()) :: any
   def prepare(%UmbrellaSnapshot{id: id} = _us) do
     args = %{umbrella_snapshot_id: id, status: :creation}
     KeycloakEctoSteps.create_snap(args)

@@ -36,7 +36,7 @@ defmodule KubeServices.Keycloak.AdminClient do
     # Admin cli is the best client that's guaranteed to exist.
     field :client_id, String.t(), default: "admin-cli"
 
-    field :token, OAuth2.AccessToken.t(), enforce: false, default: nil
+    field :token, AccessToken.t(), enforce: false, default: nil
     field :authorization_url, String.t(), enforce: false, default: nil
     field :token_url, String.t(), enforce: false, default: nil
   end
@@ -486,7 +486,7 @@ defmodule KubeServices.Keycloak.AdminClient do
          %{token: token, client_id: client_id, authorization_url: authorization_url, token_url: token_url} = state
        )
        when not is_nil(token) do
-    if OAuth2.AccessToken.expired?(token) do
+    if AccessToken.expired?(token) do
       case [client_id: client_id, authorization_url: authorization_url, token_url: token_url, token: token]
            |> TokenStrategy.new()
            |> OAuth2.Client.refresh_token() do

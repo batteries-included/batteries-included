@@ -19,14 +19,14 @@ defmodule CommonCore.StateSummary.PostgresState do
     "pg-#{cluster.name}-rw.#{ns}.svc.cluster.local."
   end
 
-  @spec cluster(CommonCore.StateSummary.t(), Keyword.t() | map()) :: nil | Cluster.t()
+  @spec cluster(StateSummary.t(), Keyword.t() | map()) :: nil | Cluster.t()
   def cluster(%StateSummary{postgres_clusters: clusters} = _state_summary, opts \\ []) do
     Enum.find(clusters, fn c ->
       Enum.all?(opts, fn {k, v} -> Map.get(c, k) == v end)
     end)
   end
 
-  @spec cluster_namespace(CommonCore.StateSummary.t(), CommonCore.Postgres.Cluster.t()) ::
+  @spec cluster_namespace(StateSummary.t(), Cluster.t()) ::
           nil | binary
   def cluster_namespace(%StateSummary{} = state_summary, %Cluster{type: :internal} = _cluster),
     do: base_namespace(state_summary)
@@ -34,9 +34,9 @@ defmodule CommonCore.StateSummary.PostgresState do
   def cluster_namespace(%StateSummary{} = state_summary, %Cluster{type: _} = _cluster), do: data_namespace(state_summary)
 
   @spec user_secret(
-          CommonCore.StateSummary.t() | any(),
-          CommonCore.Postgres.Cluster.t() | nil,
-          CommonCore.Postgres.PGUser.t() | nil
+          StateSummary.t() | any(),
+          Cluster.t() | nil,
+          PGUser.t() | nil
         ) :: binary()
   def user_secret(_state_summary, nil = _cluster, nil = _user), do: @default_secret_name
   def user_secret(_state_summary, nil = _cluster, _user), do: @default_secret_name
@@ -47,9 +47,9 @@ defmodule CommonCore.StateSummary.PostgresState do
   end
 
   @spec password_for_user(
-          CommonCore.StateSummary.t() | any(),
-          CommonCore.Postgres.Cluster.t() | nil,
-          CommonCore.Postgres.PGUser.t() | nil
+          StateSummary.t() | any(),
+          Cluster.t() | nil,
+          PGUser.t() | nil
         ) :: binary() | nil
   def password_for_user(_state_summary, nil = _cluster, nil = _user), do: nil
   def password_for_user(_state_summary, nil = _cluster, _user), do: nil

@@ -11,7 +11,7 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
 
   require Logger
 
-  @spec apply(ControlServer.SnapshotApply.KeycloakAction.t()) :: {:ok, any()} | {:error, any()}
+  @spec apply(KeycloakAction.t()) :: {:ok, any()} | {:error, any()}
   def apply(%KeycloakAction{action: :create, type: :realm} = action) do
     # Here we rely on the fact that
     # Document is already loaded for us

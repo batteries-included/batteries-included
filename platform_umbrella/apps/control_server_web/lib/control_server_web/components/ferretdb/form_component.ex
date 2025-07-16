@@ -121,7 +121,7 @@ defmodule ControlServerWeb.FerretDBFormComponent do
          |> put_flash(:global_success, "Ferret service updated successfully")
          |> push_navigate(to: ~p"/ferretdb/#{ferret_service.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end
@@ -134,7 +134,7 @@ defmodule ControlServerWeb.FerretDBFormComponent do
          |> put_flash(:global_success, "Ferret service created successfully")
          |> push_navigate(to: ~p"/ferretdb/#{ferret_service.id}/show")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign_changeset(socket, changeset)}
     end
   end

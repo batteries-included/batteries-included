@@ -20,12 +20,12 @@ defmodule KubeServices.KubeState do
   end
 
   defp children(true) do
-    [{KubeServices.KubeState.Runner, name: default_state_table()}] ++
-      Enum.map(CommonCore.ApiVersionKind.all_known(), &spec/1)
+    [{Runner, name: default_state_table()}] ++
+      Enum.map(ApiVersionKind.all_known(), &spec/1)
   end
 
   defp children(false) do
-    [{KubeServices.KubeState.Runner, name: default_state_table()}]
+    [{Runner, name: default_state_table()}]
   end
 
   def spec(type) do

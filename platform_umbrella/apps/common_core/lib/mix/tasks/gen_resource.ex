@@ -737,7 +737,7 @@ defmodule Mix.Tasks.Gen.Resource do
     string_resource_type = Atom.to_string(resource_type)
 
     resource
-    |> K8s.Resource.name()
+    |> K8Resource.name()
     |> then(fn s -> s || "unkown" end)
     |> String.downcase()
     |> String.split(~r/[^\w\d]/, trim: true)
@@ -864,12 +864,12 @@ defmodule Mix.Tasks.Gen.Resource do
 
   defp manifest_file_name(resource) do
     sanitized_name =
-      resource |> K8s.Resource.name() |> String.downcase() |> String.replace(~r/[^\w\d]/, "_")
+      resource |> K8Resource.name() |> String.downcase() |> String.replace(~r/[^\w\d]/, "_")
 
     "#{sanitized_name}.yaml"
   end
 
-  defp manifest_include_name(resource), do: resource |> K8s.Resource.name() |> to_include_name()
+  defp manifest_include_name(resource), do: resource |> K8Resource.name() |> to_include_name()
 
   defp to_include_name(name), do: name |> String.downcase() |> String.replace(~r/[^\w\d]/, "_") |> String.to_atom()
 end

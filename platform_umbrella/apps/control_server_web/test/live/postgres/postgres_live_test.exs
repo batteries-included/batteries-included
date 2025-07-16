@@ -244,7 +244,6 @@ defmodule ControlServerWeb.PostgresLiveTest do
     alias CommonCore.ResourceFactory
     alias CommonCore.Resources.Builder, as: B
     alias CommonCore.Resources.FieldAccessors
-    alias KubeServices.KubeState.Runner
 
     @kube_table_name :default_state_table
 

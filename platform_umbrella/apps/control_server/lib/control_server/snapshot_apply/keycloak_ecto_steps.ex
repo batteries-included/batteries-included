@@ -17,7 +17,7 @@ defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
     create_keycloak_snapshot(attrs)
   end
 
-  @spec snap_generation(ControlServer.SnapshotApply.KeycloakSnapshot.t(), any) :: any
+  @spec snap_generation(KeycloakSnapshot.t(), any) :: any
   def snap_generation(%KeycloakSnapshot{} = snap, base_actions) do
     Multi.new()
     |> Multi.run(:document_actions, fn _repo, _ ->
@@ -47,7 +47,7 @@ defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
     )
     |> Multi.insert_all(
       :action_insert,
-      ControlServer.SnapshotApply.KeycloakAction,
+      KeycloakAction,
       fn %{document_actions: aa} ->
         now = DateTime.utc_now()
 
@@ -64,8 +64,8 @@ defmodule ControlServer.SnapshotApply.KeycloakEctoSteps do
     |> Repo.transaction(timeout: @generation_timeout)
   end
 
-  @spec update_snap_status(ControlServer.SnapshotApply.KeycloakSnapshot.t(), any) ::
-          {:ok, ControlServer.SnapshotApply.KeycloakSnapshot.t()} | {:error, Ecto.Changeset.t()}
+  @spec update_snap_status(KeycloakSnapshot.t(), any) ::
+          {:ok, KeycloakSnapshot.t()} | {:error, Ecto.Changeset.t()}
   def update_snap_status(%KeycloakSnapshot{} = snap, status) do
     update_keycloak_snapshot(snap, %{status: status})
   end

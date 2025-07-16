@@ -12,7 +12,7 @@ defmodule CommonCore.StateSummary.Creds do
 
   This returns nil if the keycloak battery is not enabled.
   """
-  @spec root_keycloak_username(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec root_keycloak_username(StateSummary.t()) :: binary() | nil
   def root_keycloak_username(%StateSummary{} = summary) do
     case keycloak_config(summary) do
       %KeycloakConfig{} = config -> config.admin_username
@@ -26,7 +26,7 @@ defmodule CommonCore.StateSummary.Creds do
 
   This returns nil if the keycloak battery is not enabled.
   """
-  @spec root_keycloak_password(CommonCore.StateSummary.t()) :: binary() | nil
+  @spec root_keycloak_password(StateSummary.t()) :: binary() | nil
   def root_keycloak_password(%StateSummary{} = summary) do
     case keycloak_config(summary) do
       %KeycloakConfig{} = config -> config.admin_password

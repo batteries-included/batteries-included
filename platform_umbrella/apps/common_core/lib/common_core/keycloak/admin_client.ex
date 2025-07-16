@@ -45,7 +45,6 @@ defmodule CommonCore.Keycloak.AdminClient do
 
   alias CommonCore.Keycloak.TeslaBuilder
   alias CommonCore.Keycloak.TokenAcquirer
-  alias CommonCore.OpenAPI.KeycloakAdminSchema
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.CredentialRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.GroupRepresentation
@@ -245,13 +244,13 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp run({:realms}, client) do
     client
     |> Tesla.get(@base_path)
-    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
+    |> to_result(&RealmRepresentation.new!/1)
   end
 
   defp run({:realm, realm_name}, client) do
     client
     |> Tesla.get(@base_path <> realm_name)
-    |> to_result(&KeycloakAdminSchema.RealmRepresentation.new!/1)
+    |> to_result(&RealmRepresentation.new!/1)
   end
 
   defp run({:create_realm, realm}, client) do
@@ -267,13 +266,13 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp run({:clients, realm_name}, client) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/clients")
-    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
+    |> to_result(&ClientRepresentation.new!/1)
   end
 
   defp run({:client, realm_name, client_id}, client) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id)
-    |> to_result(&KeycloakAdminSchema.ClientRepresentation.new!/1)
+    |> to_result(&ClientRepresentation.new!/1)
   end
 
   defp run({:create_client, realm_name, client_data}, client) do
@@ -295,13 +294,13 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp run({:users, realm_name}, client) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/users")
-    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
+    |> to_result(&UserRepresentation.new!/1)
   end
 
   defp run({:user, realm_name, user_id}, client) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/users/" <> user_id)
-    |> to_result(&KeycloakAdminSchema.UserRepresentation.new!/1)
+    |> to_result(&UserRepresentation.new!/1)
   end
 
   defp run({:delete_user, realm_name, user_id}, client) do
@@ -328,7 +327,7 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp run({:groups, realm_name}, client) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/groups")
-    |> to_result(&KeycloakAdminSchema.GroupRepresentation.new!/1)
+    |> to_result(&GroupRepresentation.new!/1)
   end
 
   #
@@ -337,13 +336,13 @@ defmodule CommonCore.Keycloak.AdminClient do
   defp run({:roles, realm_name}, client) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/roles")
-    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
+    |> to_result(&RoleRepresentation.new!/1)
   end
 
   defp run({:client_roles, realm_name, client_id}, client) do
     client
     |> Tesla.get(@base_path <> realm_name <> "/clients/" <> client_id <> "/roles")
-    |> to_result(&KeycloakAdminSchema.RoleRepresentation.new!/1)
+    |> to_result(&RoleRepresentation.new!/1)
   end
 
   defp run({:add_client_roles, realm_name, user_id, client_id, role}, client) do

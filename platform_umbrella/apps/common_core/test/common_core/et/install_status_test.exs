@@ -3,7 +3,7 @@ defmodule CommonCore.ET.InstallStatusTest do
 
   alias CommonCore.ET.InstallStatus
 
-  doctest CommonCore.ET.InstallStatus
+  doctest InstallStatus
 
   describe "status_ok?/1" do
     test "returns false when status is :bad" do
