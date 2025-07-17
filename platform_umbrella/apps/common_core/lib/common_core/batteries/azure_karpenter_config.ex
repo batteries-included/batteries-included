@@ -14,5 +14,6 @@ defmodule CommonCore.Batteries.AzureKarpenterConfig do
     field :client_id, :string
     field :cluster_name, :string
     field :node_resource_group, :string
+    defaultable_field :instance_types, {:array, :string}, default: ["Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3"]
   end
 end

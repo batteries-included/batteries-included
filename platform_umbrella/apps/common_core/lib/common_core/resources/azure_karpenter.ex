@@ -351,7 +351,7 @@ defmodule CommonCore.Resources.AzureKarpenter do
             %{"key" => "kubernetes.io/arch", "operator" => "In", "values" => ["amd64"]},
             %{"key" => "kubernetes.io/os", "operator" => "In", "values" => ["linux"]},
             %{"key" => "karpenter.sh/capacity-type", "operator" => "In", "values" => ["on-demand"]},
-            %{"key" => "node.kubernetes.io/instance-type", "operator" => "In", "values" => ["Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3"]}
+            %{"key" => "node.kubernetes.io/instance-type", "operator" => "In", "values" => battery.config.instance_types}
           ],
           "nodeClassRef" => %{
             "apiVersion" => "karpenter.azure.com/v1beta1",

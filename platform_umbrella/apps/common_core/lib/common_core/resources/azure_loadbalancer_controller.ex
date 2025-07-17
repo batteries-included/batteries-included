@@ -149,16 +149,18 @@ defmodule CommonCore.Resources.AzureLoadBalancerController do
         ]
       })
 
+    spec = %{
+      "replicas" => 1,
+      "selector" => %{"matchLabels" => %{"app" => @app_name}},
+      "template" => template |> B.app_labels(@app_name)
+    }
+
     :deployment
     |> B.build_resource()
     |> B.name(@app_name)
     |> B.namespace(namespace)
-    |> B.label("battery/app", @app_name)
-    |> B.spec(%{
-      "replicas" => 1,
-      "selector" => %{"matchLabels" => %{"app" => @app_name}},
-      "template" => template |> B.label("app", @app_name)
-    })
+    |> B.app_labels(@app_name)
+    |> B.spec(spec)
   end
 
   resource(:service_azure_load_balancer_controller, _battery, state) do
@@ -168,7 +170,7 @@ defmodule CommonCore.Resources.AzureLoadBalancerController do
     |> B.build_resource()
     |> B.name("#{@app_name}-webhook-service")
     |> B.namespace(namespace)
-    |> B.label("battery/app", @app_name)
+    |> B.app_labels(@app_name)
     |> B.spec(%{
       "ports" => [
         %{

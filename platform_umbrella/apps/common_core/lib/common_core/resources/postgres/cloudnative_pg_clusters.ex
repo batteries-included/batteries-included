@@ -242,6 +242,10 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
 
     # Apply filters based on whether this is AWS or Azure
+    require_valid_backup_config(resource, battery)
+  end
+
+  defp require_valid_backup_config(resource, battery) do
     if battery.config.storage_account_name && battery.config.container_name do
       resource
       |> F.require_non_nil(battery.config.storage_account_name)
