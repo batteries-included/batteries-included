@@ -5,6 +5,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.AwsLoadBalancerController
   alias CommonCore.Resources.AzureLoadBalancerController
   alias CommonCore.Resources.AzureClusterAutoscaler
+  alias CommonCore.Resources.AzureKarpenter
   alias CommonCore.Resources.BatteryAccess
   alias CommonCore.Resources.BatteryCA
   alias CommonCore.Resources.BatteryCore
@@ -65,6 +66,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     aws_load_balancer_controller: [AwsLoadBalancerController],
     azure_load_balancer_controller: [AzureLoadBalancerController],
     azure_cluster_autoscaler: [AzureClusterAutoscaler],
+    azure_karpenter: [AzureKarpenter],
     traditional_services: [TraditionalServices],
     battery_ca: [BatteryCA],
     battery_core: [BatteryCore, ControlServerResources, BatteryAccess],
