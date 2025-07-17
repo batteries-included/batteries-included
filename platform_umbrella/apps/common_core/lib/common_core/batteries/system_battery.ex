@@ -6,6 +6,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.AwsLoadBalancerControllerConfig
   alias CommonCore.Batteries.AzureLoadBalancerControllerConfig
   alias CommonCore.Batteries.AzureClusterAutoscalerConfig
+  alias CommonCore.Batteries.AzureKarpenterConfig
   alias CommonCore.Batteries.BatteryCAConfig
   alias CommonCore.Batteries.BatteryCoreConfig
   alias CommonCore.Batteries.CertManagerConfig
@@ -56,6 +57,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   @possible_types [
     aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
     azure_cluster_autoscaler: AzureClusterAutoscalerConfig,
+    azure_karpenter: AzureKarpenterConfig,
     azure_load_balancer_controller: AzureLoadBalancerControllerConfig,
     battery_ca: BatteryCAConfig,
     battery_core: BatteryCoreConfig,

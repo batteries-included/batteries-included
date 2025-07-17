@@ -19,12 +19,12 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
   end
 
   multi_resource(:storage_class, battery) do
-    cond do
-      battery.config.cluster_type == :aws ->
+    case battery.config.cluster_type do
+      :aws ->
         generate_eks_storage_classes()
-      battery.config.cluster_type == :azure ->
+      :azure ->
         generate_aks_storage_classes()
-      true ->
+      _ ->
         []
     end
   end

@@ -1,39 +1,18 @@
 defmodule CommonCore.Batteries.AzureKarpenterConfig do
   @moduledoc false
 
-  use CommonCore.Batteries.Battery,
-    battery_type: :azure_karpenter,
-    resource_module: CommonCore.Resources.AzureKarpenter
+  use CommonCore, :embedded_schema
 
-  alias CommonCore.Resources.FilterResource, as: F
+  @read_only_fields ~w(subscription_id resource_group_name tenant_id)a
 
-  defstruct [
-    :subscription_id,
-    :resource_group_name,
-    :location,
-    :tenant_id,
-    :client_id,
-    :image
-  ]
-
-  def new(params \\ %{}) do
-    %__MODULE__{
-      subscription_id: params[:subscription_id],
-      resource_group_name: params[:resource_group_name],
-      location: params[:location],
-      tenant_id: params[:tenant_id],
-      client_id: params[:client_id],
-      image: params[:image] || "mcr.microsoft.com/oss/azure/karpenter/karpenter:v0.37.0"
-    }
-  end
-
-  def battery_config_to_filter_resource(battery_config) do
-    battery_config
-    |> F.require_non_nil(:subscription_id)
-    |> F.require_non_nil(:resource_group_name)
-    |> F.require_non_nil(:location)
-    |> F.require_non_nil(:tenant_id)
-    |> F.require_non_nil(:client_id)
-    |> F.require_non_nil(:image)
+  batt_polymorphic_schema type: :azure_karpenter do
+    defaultable_image_field :image, image_id: :azure_karpenter
+    field :subscription_id, :string
+    field :resource_group_name, :string
+    field :location, :string
+    field :tenant_id, :string
+    field :client_id, :string
+    field :cluster_name, :string
+    field :node_resource_group, :string
   end
 end

@@ -205,8 +205,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   defp backup(_battery, _state, _cluster), do: nil
 
   defp maybe_add_backup(spec, %{backup_config: %{type: backup_type}}, %{config: %{storage_account_name: storage_account, container_name: container}})
-       when backup_type == :object_store
-       when not is_empty(storage_account) and not is_empty(container) do
+       when backup_type == :object_store and not is_empty(storage_account) and not is_empty(container) do
     Map.put(spec, :backup, %{
       retentionPolicy: "30d",
       barmanObjectStore: %{
@@ -243,21 +242,14 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
 
     # Apply filters based on whether this is AWS or Azure
-    cond do
-      battery.config.bucket_name && battery.config.service_role_arn ->
-        resource
-        |> F.require_non_nil(battery.config.bucket_name)
-        |> F.require_non_nil(battery.config.service_role_arn)
-      
-      battery.config.storage_account_name && battery.config.container_name ->
-        resource
-        |> F.require_non_nil(battery.config.storage_account_name)
-        |> F.require_non_nil(battery.config.container_name)
-      
-      true ->
-        resource
-        |> F.require_non_nil(battery.config.bucket_name)
-        |> F.require_non_nil(battery.config.service_role_arn)
+    if battery.config.storage_account_name && battery.config.container_name do
+      resource
+      |> F.require_non_nil(battery.config.storage_account_name)
+      |> F.require_non_nil(battery.config.container_name)
+    else
+      resource
+      |> F.require_non_nil(battery.config.bucket_name)
+      |> F.require_non_nil(battery.config.service_role_arn)
     end
   end
 
