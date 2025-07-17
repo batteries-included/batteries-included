@@ -44,6 +44,16 @@ support implementation.
 - **Added Azure Karpenter to RootResourceGenerator** - Added missing alias and
   generator mapping
 
+### 6. Additional PR Comments Addressed
+
+- **Updated API version mappings** - Removed duplicate node_pool entry and kept only the correct Karpenter API versions
+- **Added defaultable_field usage** - Updated Azure cluster autoscaler config to use defaultable_field for configuration options
+- **Added instance types configuration** - Made Azure instance types configurable via defaultable_field in AzureKarpenterConfig
+- **Fixed label usage** - Updated Azure Load Balancer Controller to use app_labels method instead of manual labels
+- **Extracted deployment spec** - Made deployment spec a variable for better readability in Azure Load Balancer Controller
+- **Added backup validation function** - Created require_valid_backup_config function for cleaner backup configuration validation
+- **Added clarifying comments** - Explained the difference between Azure Cluster Autoscaler and Karpenter in image_registry.yaml
+
 ## Justifications for Existing Code
 
 ### Azure Load Balancer Controller Implementation
@@ -71,3 +81,11 @@ Blob Storage:
 - Uses workload identity for Azure (`inheritFromAzureAD: true`)
 - Correctly formats Azure blob storage paths
 - Maintains backward compatibility with AWS S3 backups
+
+### Azure Autoscaler vs Karpenter
+
+Both Azure Cluster Autoscaler and Azure Karpenter are included but should not be used together:
+
+- **Azure Cluster Autoscaler**: Traditional autoscaling solution, stable and well-tested
+- **Azure Karpenter**: Newer, more intelligent node provisioning with better scaling decisions
+- Users should choose one based on their needs - Karpenter is recommended for new deployments
