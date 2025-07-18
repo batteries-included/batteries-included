@@ -15,7 +15,7 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
     "trustDomain" => "cluster.local"
   }
 
-  def materialize(_battery, %StateSummary{} = state) do
+  def materialize(%SystemBattery{} = _battery, %StateSummary{} = state) do
     %{
       "meshNetworks" => Ymlr.document!(%{"networks" => %{}}),
       "mesh" => Ymlr.document!(build_mesh_config(state))
@@ -40,7 +40,8 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
     # add em to the config if sso is enabled
     @default_mesh_config
     |> Map.put("defaultConfig", %{
-      "discoveryAddress" => "istiod.#{namespace}.svc.cluster.local.:15012"
+      "proxyMetadata" => %{"ISTIO_META_ENABLE_HBONE" => "true"},
+      "discoveryAddress" => discovery_address(namespace)
     })
     |> Map.put("rootNamespace", namespace)
     |> maybe_append(battery_installed?.(:sso), "extensionProviders", authz_ext_providers)
@@ -68,4 +69,8 @@ defmodule CommonCore.Resources.Istio.IstioConfigMapGenerator do
       }
     }
   end
+
+  @spec discovery_address(SystemBattery.t() | String.t()) :: String.t()
+  def discovery_address(%SystemBattery{} = battery), do: discovery_address(battery.config.namespace)
+  def discovery_address(namespace), do: "istiod.#{namespace}.svc.cluster.local:15012"
 end

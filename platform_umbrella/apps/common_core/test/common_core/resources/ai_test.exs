@@ -10,7 +10,7 @@ defmodule CommonCore.Resources.AITest do
 
   describe "AI" do
     test "Can materialize no notebooks" do
-      battery = %{config: %{}}
+      battery = %{config: %{}, type: :notebooks}
       state = %StateSummary{notebooks: []}
       assert map_size(Notebooks.materialize(battery, state)) >= 1
     end
@@ -18,7 +18,7 @@ defmodule CommonCore.Resources.AITest do
     test "can materialize with a notebook" do
       # Should include the service
       # account, the statefulsets, and the service.
-      battery = %{config: %{}}
+      battery = %{config: %{}, type: :notebooks}
       state = %StateSummary{notebooks: [build(:notebook)]}
       assert map_size(Notebooks.materialize(battery, state)) >= 3
     end

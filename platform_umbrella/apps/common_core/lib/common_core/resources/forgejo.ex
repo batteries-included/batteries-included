@@ -14,11 +14,10 @@ defmodule CommonCore.Resources.Forgejo do
   import CommonCore.Util.Map
 
   alias CommonCore.Defaults
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.RouteBuilder, as: R
   alias CommonCore.Resources.Secret
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.PostgresState
 
@@ -26,22 +25,23 @@ defmodule CommonCore.Resources.Forgejo do
   @ssh_listen_port 2022
   @http_listen_port 3000
 
-  resource(:virtual_service, _battery, state) do
+  resource(:http_route, battery, state) do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: forgejo_hosts(state)]
-      |> VirtualService.new!()
-      |> V.fallback("forgejo-http", @http_listen_port)
-      |> V.tcp(@ssh_port, "forgejo-ssh", @ssh_listen_port)
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_backend("forgejo-http", @http_listen_port)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
+    |> B.name("forgejo-http")
     |> B.namespace(namespace)
-    |> B.name("forgejo")
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end
+
+  # TODO: TCPRoute for ssh listener?
 
   resource(:service_monitor_main, _battery, state) do
     namespace = core_namespace(state)

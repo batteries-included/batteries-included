@@ -7,11 +7,10 @@ defmodule CommonCore.Resources.Notebooks do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Containers.EnvValue
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.ProxyUtils, as: PU
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.Resources.RouteBuilder, as: R
 
   @container_port 8888
 
@@ -25,25 +24,25 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.app_labels(@app_name)
   end
 
-  resource(:virtual_service, battery, state) do
+  resource(:http_route, battery, state) do
     namespace = ai_namespace(state)
-    hosts = notebooks_hosts(state)
 
-    virtual_service =
-      state.notebooks
-      |> Enum.reduce(VirtualService.new!(hosts: hosts), fn nb, vs ->
-        V.prefix(vs, base_url(nb), service_name(nb), @container_port)
-      end)
-      |> V.prefix(PU.prefix(battery), PU.fully_qualified_service_name(battery, state), PU.port(battery))
+    spec =
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_oauth2_proxy_rule(battery, state)
+      |> then(
+        &Enum.reduce(state.notebooks, &1, fn nb, spec ->
+          R.add_prefixed_backend(spec, base_url(nb), service_name(nb), @container_port)
+        end)
+      )
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
+    |> B.name(@app_name)
     |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.name("notebooks")
-    |> B.spec(virtual_service)
+    |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
-    |> F.require_non_empty(state.notebooks)
   end
 
   # we can share a single configmap for now as none of the settings are configurable
@@ -162,6 +161,7 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.build_resource()
     |> B.name(service_name(notebook))
     |> B.namespace(namespace)
+    |> B.label("istio.io/ingress-use-waypoint", "true")
     |> B.app_labels(@app_name)
     |> B.add_owner(notebook)
     |> B.spec(spec)
@@ -177,11 +177,11 @@ defmodule CommonCore.Resources.Notebooks do
     spec =
       state
       |> PU.request_auth()
-      |> B.match_labels_selector(@app_name)
+      |> PU.target_refs_for_services(Enum.map(state.notebooks, &service_name/1))
 
     :istio_request_auth
     |> B.build_resource()
-    |> B.name("#{@app_name}-keycloak-auth")
+    |> B.name("#{@app_name}-keycloak-auth-gw")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
@@ -192,14 +192,13 @@ defmodule CommonCore.Resources.Notebooks do
 
     spec =
       state
-      |> notebooks_host()
-      |> List.wrap()
+      |> notebooks_hosts()
       |> PU.auth_policy(battery)
-      |> B.match_labels_selector(@app_name)
+      |> PU.target_refs_for_services(Enum.map(state.notebooks, &service_name/1))
 
     :istio_auth_policy
     |> B.build_resource()
-    |> B.name("#{@app_name}-require-keycloak-auth")
+    |> B.name("#{@app_name}-require-keycloak-auth-gw")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)

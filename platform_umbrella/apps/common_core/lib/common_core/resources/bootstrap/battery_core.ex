@@ -14,7 +14,8 @@ defmodule CommonCore.Resources.Bootstrap.BatteryCore do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.core_namespace)
-    |> B.label("istio-injection", "enabled")
+    |> B.label("istio-injection", "disabled")
+    |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
   multi_resource(:storage_class, battery) do

@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.Istiod do
+defmodule CommonCore.Resources.Istio.Istiod do
   @moduledoc false
   use CommonCore.IncludeResource,
     config: "priv/raw_files/istio/config",
@@ -10,19 +10,23 @@ defmodule CommonCore.Resources.Istiod do
   alias CommonCore.Resources.Builder, as: B
 
   resource(:cluster_role_binding_istiod_clusterrole, battery, _state) do
+    namespace = battery.config.namespace
+
     :cluster_role_binding
     |> B.build_resource()
-    |> B.name("istiod-clusterrole-#{battery.config.namespace}")
-    |> B.role_ref(B.build_cluster_role_ref("istiod-clusterrole-#{battery.config.namespace}"))
-    |> B.subject(B.build_service_account("istiod", battery.config.namespace))
+    |> B.name("istiod-clusterrole-#{namespace}")
+    |> B.role_ref(B.build_cluster_role_ref("istiod-clusterrole-#{namespace}"))
+    |> B.subject(B.build_service_account("istiod", namespace))
   end
 
   resource(:cluster_role_binding_istiod_gateway_controller, battery, _state) do
+    namespace = battery.config.namespace
+
     :cluster_role_binding
     |> B.build_resource()
-    |> B.name("istiod-gateway-controller-#{battery.config.namespace}")
-    |> B.role_ref(B.build_cluster_role_ref("istiod-gateway-controller-#{battery.config.namespace}"))
-    |> B.subject(B.build_service_account("istiod", battery.config.namespace))
+    |> B.name("istiod-gateway-controller-#{namespace}")
+    |> B.role_ref(B.build_cluster_role_ref("istiod-gateway-controller-#{namespace}"))
+    |> B.subject(B.build_service_account("istiod", namespace))
   end
 
   resource(:cluster_role_istiod_clusterrole, battery, _state) do
@@ -206,23 +210,22 @@ defmodule CommonCore.Resources.Istiod do
   end
 
   resource(:deployment_istiod, battery, _state) do
+    namespace = battery.config.namespace
+
     template =
       %{}
-      |> Map.put(
-        "metadata",
-        %{
-          "annotations" => %{
-            "ambient.istio.io/redirection" => "disabled",
-            "prometheus.io/port" => "15014",
-            "prometheus.io/scrape" => "true"
-          },
-          "labels" => %{
-            "battery/managed" => "true",
-            "istio.io/rev" => "default",
-            "sidecar.istio.io/inject" => "false"
-          }
+      |> Map.put("metadata", %{
+        "annotations" => %{
+          "prometheus.io/port" => "15014",
+          "prometheus.io/scrape" => "true",
+          "sidecar.istio.io/inject" => "false"
+        },
+        "labels" => %{
+          "istio.io/dataplane-mode" => "none",
+          "istio.io/rev" => "default",
+          "sidecar.istio.io/inject" => "false"
         }
-      )
+      })
       |> B.spec(%{
         "containers" => [
           %{
@@ -237,26 +240,43 @@ defmodule CommonCore.Resources.Istiod do
             ],
             "env" => [
               %{"name" => "REVISION", "value" => "default"},
-              %{"name" => "JWT_POLICY", "value" => "third-party-jwt"},
               %{"name" => "PILOT_CERT_PROVIDER", "value" => "istiod"},
               %{
                 "name" => "POD_NAME",
-                "valueFrom" => %{"fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.name"}}
+                "valueFrom" => %{
+                  "fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.name"}
+                }
               },
               %{
                 "name" => "POD_NAMESPACE",
-                "valueFrom" => %{"fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.namespace"}}
+                "valueFrom" => %{
+                  "fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "metadata.namespace"}
+                }
               },
               %{
                 "name" => "SERVICE_ACCOUNT",
-                "valueFrom" => %{"fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "spec.serviceAccountName"}}
+                "valueFrom" => %{
+                  "fieldRef" => %{"apiVersion" => "v1", "fieldPath" => "spec.serviceAccountName"}
+                }
               },
               %{"name" => "KUBECONFIG", "value" => "/var/run/secrets/remote/config"},
+              %{"name" => "CA_TRUSTED_NODE_ACCOUNTS", "value" => "#{battery.config.namespace}/ztunnel"},
+              %{"name" => "PILOT_ENABLE_AMBIENT", "value" => "true"},
               %{"name" => "PILOT_TRACE_SAMPLING", "value" => "1"},
               %{"name" => "PILOT_ENABLE_ANALYSIS", "value" => "false"},
               %{"name" => "CLUSTER_ID", "value" => "Kubernetes"},
-              %{"name" => "GOMEMLIMIT", "valueFrom" => %{"resourceFieldRef" => %{"resource" => "limits.memory"}}},
-              %{"name" => "GOMAXPROCS", "valueFrom" => %{"resourceFieldRef" => %{"resource" => "limits.cpu"}}},
+              %{
+                "name" => "GOMEMLIMIT",
+                "valueFrom" => %{
+                  "resourceFieldRef" => %{"divisor" => "1", "resource" => "limits.memory"}
+                }
+              },
+              %{
+                "name" => "GOMAXPROCS",
+                "valueFrom" => %{
+                  "resourceFieldRef" => %{"divisor" => "1", "resource" => "limits.cpu"}
+                }
+              },
               %{"name" => "PLATFORM", "value" => ""}
             ],
             "image" => battery.config.pilot_image,
@@ -292,6 +312,7 @@ defmodule CommonCore.Resources.Istiod do
           }
         ],
         "serviceAccountName" => "istiod",
+        "tolerations" => [%{"key" => "cni.istio.io/not-ready", "operator" => "Exists"}],
         "volumes" => [
           %{"emptyDir" => %{"medium" => "Memory"}, "name" => "local-certs"},
           %{
@@ -330,10 +351,9 @@ defmodule CommonCore.Resources.Istiod do
     :deployment
     |> B.build_resource()
     |> B.name("istiod")
-    |> B.namespace(battery.config.namespace)
+    |> B.namespace(namespace)
     |> B.label("istio", "pilot")
     |> B.label("istio.io/rev", "default")
-    |> B.label("operator.istio.io/component", "Pilot")
     |> B.spec(spec)
   end
 
@@ -452,7 +472,6 @@ defmodule CommonCore.Resources.Istiod do
     |> B.build_resource()
     |> B.name("istio-sidecar-injector-#{battery.config.namespace}")
     |> B.label("istio.io/rev", "default")
-    |> B.label("operator.istio.io/component", "Pilot")
     |> Map.put("webhooks", webhooks)
   end
 

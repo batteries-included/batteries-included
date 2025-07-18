@@ -186,7 +186,7 @@ defmodule CommonCore.StateSummary.Hosts do
     # the name of the ingress service.
     # We aren't using the Gateway name or the istio tag here
     # We are using metadata.name for service selection
-    ingress_name = "istio-ingressgateway"
+    ingress_name = "istio-ingress"
 
     summary.kube_state
     |> Map.get(:service, [])

@@ -5,11 +5,10 @@ defmodule CommonCore.Resources.VMCluster do
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.ProxyUtils, as: PU
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.Resources.RouteBuilder, as: R
 
   @vm_select_port 8481
   @instance_name "main-cluster"
@@ -72,19 +71,20 @@ defmodule CommonCore.Resources.VMCluster do
     |> B.build_resource()
     |> B.name(@instance_name)
     |> B.namespace(namespace)
+    |> B.label("istio.io/ingress-use-waypoint", "true")
     |> B.spec(spec)
   end
 
-  resource(:virtual_service_main, battery, state) do
+  resource(:http_route, battery, state) do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: vmselect_hosts(state)]
-      |> VirtualService.new!()
-      |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
-      |> V.fallback("vmselect-main-cluster", @vm_select_port)
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_oauth2_proxy_rule(battery, state)
+      |> R.add_backend("vmselect-main-cluster", @vm_select_port)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
     |> B.name(@select_k8s_name)
     |> B.namespace(namespace)
@@ -126,12 +126,11 @@ defmodule CommonCore.Resources.VMCluster do
     spec =
       state
       |> PU.request_auth()
-      |> B.match_labels_selector("app.kubernetes.io/name", @select_k8s_name)
-      |> B.match_labels_selector("app.kubernetes.io/instance", @instance_name)
+      |> PU.target_ref_for_service("vmselect-main-cluster")
 
     :istio_request_auth
     |> B.build_resource()
-    |> B.name("#{@select_k8s_name}-keycloak-auth")
+    |> B.name("#{@select_k8s_name}-keycloak-auth-gw")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
@@ -142,15 +141,13 @@ defmodule CommonCore.Resources.VMCluster do
 
     spec =
       state
-      |> vmselect_host()
-      |> List.wrap()
+      |> vmselect_hosts()
       |> PU.auth_policy(battery)
-      |> B.match_labels_selector("app.kubernetes.io/name", @select_k8s_name)
-      |> B.match_labels_selector("app.kubernetes.io/instance", @instance_name)
+      |> PU.target_ref_for_service("vmselect-main-cluster")
 
     :istio_auth_policy
     |> B.build_resource()
-    |> B.name("#{@select_k8s_name}-require-keycloak-auth")
+    |> B.name("#{@select_k8s_name}-require-keycloak-auth-gw")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)

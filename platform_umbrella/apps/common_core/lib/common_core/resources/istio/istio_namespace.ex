@@ -9,5 +9,6 @@ defmodule CommonCore.Resources.IstioNamespace do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.namespace)
+    |> B.label("istio-injection", "enabled")
   end
 end
