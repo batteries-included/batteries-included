@@ -507,8 +507,9 @@ nvidia_device_plugin:
   tag_regex: ^v\d+\.\d+\.\d+$
 oauth2_proxy:
   name: quay.io/oauth2-proxy/oauth2-proxy
-  default_tag: v7.9.0
+  default_tag: v7.10.0
   tags:
+    - v7.10.0
     - v7.9.0
     - v7.8.2
     - v7.8.1
@@ -540,8 +541,11 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-13
+  default_tag: 17.5-16
   tags:
+    - 17.5-16
+    - 17.5-15
+    - 17.5-14
     - 17.5-13
     - 17.5-12
     - 17.5-11
