@@ -826,6 +826,7 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.build_resource()
     |> B.name(battery.config.namespace)
     |> B.label("istio-injection", "enabled")
+    |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
   resource(:pod_disruption_budget_activator_pdb, battery, _state) do

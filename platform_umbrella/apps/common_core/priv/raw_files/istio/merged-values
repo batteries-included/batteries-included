@@ -1,5 +1,38 @@
 {
+  "affinity": {},
+  "autoscaleBehavior": {},
+  "autoscaleEnabled": true,
+  "autoscaleMax": 5,
+  "autoscaleMin": 1,
+  "base": {
+    "enableIstioConfigCRDs": true
+  },
+  "cni": {
+    "ambient": {
+      "enabled": true
+    },
+    "enabled": true,
+    "provider": "default"
+  },
+  "configMap": true,
+  "cpu": {
+    "targetAverageUtilization": 80
+  },
+  "defaultRevision": "",
+  "deploymentLabels": {},
+  "enabled": true,
+  "env": {
+    "PILOT_ENABLE_AMBIENT": "true"
+  },
+  "envVarFrom": [],
+  "experimental": {
+    "stableValidationPolicy": false
+  },
+  "extraContainerArgs": [],
+  "gatewayClasses": {},
   "gateways": {
+    "istio-egressgateway": {},
+    "istio-ingressgateway": {},
     "seccompProfile": {},
     "securityContext": {}
   },
@@ -107,19 +140,56 @@
       "topologySpreadConstraints": []
     }
   },
+  "hub": "",
+  "image": "pilot",
+  "initContainers": [],
+  "ipFamilies": [],
+  "ipFamilyPolicy": "",
+  "istiodRemote": {
+    "enabled": false,
+    "injectionCABundle": "",
+    "injectionPath": "/inject",
+    "injectionURL": ""
+  },
+  "jwksResolverExtraRootCA": "",
+  "keepaliveMaxServerConnectionAge": "30m",
+  "memory": {},
+  "meshConfig": {
+    "defaultConfig": {
+      "proxyMetadata": {
+        "ISTIO_META_ENABLE_HBONE": "true"
+      }
+    },
+    "enablePrometheusMerge": true
+  },
+  "nodeSelector": {},
+  "ownerName": "",
   "pilot": {
     "cni": {
-      "ambient": {
-        "enabled": true
-      },
-      "enabled": true,
-      "provider": "default"
+      "enabled": true
     },
+    "enabled": true,
     "env": {
       "PILOT_ENABLE_AMBIENT": "true"
     }
   },
+  "podAnnotations": {},
+  "podLabels": {},
+  "profile": "ambient",
+  "replicaCount": 1,
+  "resources": {
+    "requests": {
+      "cpu": "500m",
+      "memory": "2048Mi"
+    }
+  },
   "revision": "",
+  "revisionTags": [],
+  "rollingMaxSurge": "100%",
+  "rollingMaxUnavailable": "25%",
+  "seccompProfile": {},
+  "serviceAccountAnnotations": {},
+  "serviceAnnotations": {},
   "sidecarInjectorWebhook": {
     "alwaysInjectSelector": [],
     "defaultTemplates": [],
@@ -129,5 +199,34 @@
     "reinvocationPolicy": "Never",
     "rewriteAppHTTPProbe": true,
     "templates": {}
+  },
+  "sidecarInjectorWebhookAnnotations": {},
+  "tag": "",
+  "taint": {
+    "enabled": false,
+    "namespace": ""
+  },
+  "telemetry": {
+    "enabled": true,
+    "v2": {
+      "enabled": true,
+      "prometheus": {
+        "enabled": true
+      },
+      "stackdriver": {
+        "enabled": false
+      }
+    }
+  },
+  "tolerations": [],
+  "topologySpreadConstraints": [],
+  "traceSampling": 1,
+  "trustedZtunnelName": "",
+  "trustedZtunnelNamespace": "",
+  "variant": "",
+  "volumeMounts": [],
+  "volumes": [],
+  "ztunnel": {
+    "resourceName": "ztunnel"
   }
 }

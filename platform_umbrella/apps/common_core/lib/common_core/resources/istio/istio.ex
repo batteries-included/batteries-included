@@ -22,63 +22,59 @@ defmodule CommonCore.Resources.Istio do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.Istio.IstioConfigMapGenerator
 
-  resource(:crd_authorizationpolicies_security_io) do
+  resource(:crd_authorizationpolicies_security_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:authorizationpolicies_security_istio_io))
   end
 
-  resource(:crd_destinationrules_networking_io) do
+  resource(:crd_destinationrules_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:destinationrules_networking_istio_io))
   end
 
-  resource(:crd_envoyfilters_networking_io) do
+  resource(:crd_envoyfilters_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:envoyfilters_networking_istio_io))
   end
 
-  resource(:crd_gateways_networking_io) do
+  resource(:crd_gateways_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:gateways_networking_istio_io))
   end
 
-  resource(:crd_istiooperators_install_io) do
-    YamlElixir.read_all_from_string!(get_resource(:istiooperators_install_istio_io))
-  end
-
-  resource(:crd_peerauthentications_security_io) do
+  resource(:crd_peerauthentications_security_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:peerauthentications_security_istio_io))
   end
 
-  resource(:crd_proxyconfigs_networking_io) do
+  resource(:crd_proxyconfigs_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:proxyconfigs_networking_istio_io))
   end
 
-  resource(:crd_requestauthentications_security_io) do
+  resource(:crd_requestauthentications_security_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:requestauthentications_security_istio_io))
   end
 
-  resource(:crd_serviceentries_networking_io) do
+  resource(:crd_serviceentries_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:serviceentries_networking_istio_io))
   end
 
-  resource(:crd_sidecars_networking_io) do
+  resource(:crd_sidecars_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:sidecars_networking_istio_io))
   end
 
-  resource(:crd_telemetries_telemetry_io) do
+  resource(:crd_telemetries_telemetry_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:telemetries_telemetry_istio_io))
   end
 
-  resource(:crd_virtualservices_networking_io) do
+  resource(:crd_virtualservices_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:virtualservices_networking_istio_io))
   end
 
-  resource(:crd_wasmplugins_extensions_io) do
+  resource(:crd_wasmplugins_extensions_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:wasmplugins_extensions_istio_io))
   end
 
-  resource(:crd_workloadentries_networking_io) do
+  resource(:crd_workloadentries_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:workloadentries_networking_istio_io))
   end
 
-  resource(:crd_workloadgroups_networking_io) do
+  resource(:crd_workloadgroups_networking_istio_io) do
     YamlElixir.read_all_from_string!(get_resource(:workloadgroups_networking_istio_io))
   end
 
@@ -88,7 +84,6 @@ defmodule CommonCore.Resources.Istio do
     |> B.name("istio")
     |> B.namespace(battery.config.namespace)
     |> B.label("istio.io/rev", "default")
-    |> B.label("operator.istio.io/component", "Pilot")
     |> B.data(IstioConfigMapGenerator.materialize(battery, state))
   end
 end

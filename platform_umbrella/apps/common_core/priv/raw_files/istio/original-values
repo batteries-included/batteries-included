@@ -1,0 +1,23 @@
+{
+  "defaultRevision": "",
+  "gateways": {
+    "istio-egressgateway": {},
+    "istio-ingressgateway": {}
+  },
+  "global": {
+    "configValidation": true,
+    "hub": "docker.io/istio",
+    "istioNamespace": "battery-istio",
+    "tag": "1.26.2"
+  },
+  "pilot": {
+    "cni": {
+      "enabled": true
+    },
+    "enabled": true
+  },
+  "profile": "ambient",
+  "ztunnel": {
+    "resourceName": "ztunnel"
+  }
+}

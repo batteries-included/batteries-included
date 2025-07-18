@@ -20,6 +20,7 @@ defmodule CommonCore.Resources.TraditionalServices do
     |> B.name(battery.config.namespace)
     |> B.app_labels(@app_name)
     |> B.label("istio-injection", "enabled")
+    |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
   multi_resource(:kube_deployment, battery, state) do
