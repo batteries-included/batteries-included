@@ -9,7 +9,7 @@ defmodule CommonCore.Resources.Istiod do
   alias CommonCore.Defaults.Image
   alias CommonCore.Resources.Builder, as: B
 
-  resource(:cluster_role_binding_istiod_clusterrole_battery, battery, _state) do
+  resource(:cluster_role_binding_istiod_clusterrole, battery, _state) do
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("istiod-clusterrole-#{battery.config.namespace}")
@@ -17,7 +17,7 @@ defmodule CommonCore.Resources.Istiod do
     |> B.subject(B.build_service_account("istiod", battery.config.namespace))
   end
 
-  resource(:cluster_role_binding_istiod_gateway_controller_battery, battery, _state) do
+  resource(:cluster_role_binding_istiod_gateway_controller, battery, _state) do
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("istiod-gateway-controller-#{battery.config.namespace}")
@@ -25,7 +25,7 @@ defmodule CommonCore.Resources.Istiod do
     |> B.subject(B.build_service_account("istiod", battery.config.namespace))
   end
 
-  resource(:cluster_role_istiod_clusterrole_battery, battery, _state) do
+  resource(:cluster_role_istiod_clusterrole, battery, _state) do
     rules = [
       %{
         "apiGroups" => ["admissionregistration.k8s.io"],
@@ -110,7 +110,7 @@ defmodule CommonCore.Resources.Istiod do
     |> B.rules(rules)
   end
 
-  resource(:cluster_role_istiod_gateway_controller_battery, battery, _state) do
+  resource(:cluster_role_istiod_gateway_controller, battery, _state) do
     rules = [
       %{
         "apiGroups" => ["apps"],
@@ -133,6 +133,17 @@ defmodule CommonCore.Resources.Istiod do
     |> B.build_resource()
     |> B.name("istiod-gateway-controller-#{battery.config.namespace}")
     |> B.rules(rules)
+  end
+
+  resource(:config_map_istio_sidecar_injector, battery, state) do
+    data = %{"values" => values(battery, state), "config" => config(battery, state)}
+
+    :config_map
+    |> B.build_resource()
+    |> B.name("istio-sidecar-injector")
+    |> B.namespace(battery.config.namespace)
+    |> B.label("istio.io/rev", "default")
+    |> B.data(data)
   end
 
   resource(:deployment_istiod, battery, _state) do
@@ -265,45 +276,6 @@ defmodule CommonCore.Resources.Istiod do
     |> B.spec(spec)
   end
 
-  # There's a pretty static json config full of values
-  #
-  # That json needs just a little updating.
-  defp values(battery, _state) do
-    namespace = battery.config.namespace
-    proxy_img = CommonCore.Defaults.Images.get_image!(:istio_proxy)
-
-    :values
-    |> get_resource()
-    |> Jason.decode!()
-    # The whole value is wrapped in a "global"
-    # update that here
-    |> update_in(~w(global), fn val ->
-      # The namespace is where the config is installed
-      # and the tag is the default tag for this Batteries Included version
-      val
-      |> Map.put("namespace", namespace)
-      |> Map.put("istioNamespace", namespace)
-      |> Map.put("tag", proxy_img.default_tag)
-      |> Map.put("logAsJson", true)
-      |> put_in(~w(proxy image), Image.default_image(proxy_img))
-      |> put_in(~w(proxy_init image), Image.default_image(proxy_img))
-    end)
-    |> Jason.encode!()
-  end
-
-  defp config(_battery, _state), do: get_resource(:config)
-
-  resource(:config_map_sidecar_injector, battery, state) do
-    data = %{"values" => values(battery, state), "config" => config(battery, state)}
-
-    :config_map
-    |> B.build_resource()
-    |> B.name("istio-sidecar-injector")
-    |> B.namespace(battery.config.namespace)
-    |> B.label("istio.io/rev", "default")
-    |> B.data(data)
-  end
-
   resource(:horizontal_pod_autoscaler_istiod, battery, _state) do
     spec =
       %{}
@@ -326,6 +298,101 @@ defmodule CommonCore.Resources.Istiod do
     |> B.namespace(battery.config.namespace)
     |> B.label("istio.io/rev", "default")
     |> B.spec(spec)
+  end
+
+  resource(:mutating_webhook_config_sidecar_injector, battery, _state) do
+    webhooks = [
+      %{
+        "admissionReviewVersions" => ["v1beta1", "v1"],
+        "clientConfig" => %{
+          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
+        },
+        "failurePolicy" => "Fail",
+        "name" => "rev.namespace.sidecar-injector.istio.io",
+        "namespaceSelector" => %{
+          "matchExpressions" => [
+            %{"key" => "istio.io/rev", "operator" => "In", "values" => ["default"]},
+            %{"key" => "istio-injection", "operator" => "DoesNotExist"}
+          ]
+        },
+        "objectSelector" => %{
+          "matchExpressions" => [%{"key" => "sidecar.istio.io/inject", "operator" => "NotIn", "values" => ["false"]}]
+        },
+        "reinvocationPolicy" => "Never",
+        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
+        "sideEffects" => "None"
+      },
+      %{
+        "admissionReviewVersions" => ["v1beta1", "v1"],
+        "clientConfig" => %{
+          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
+        },
+        "failurePolicy" => "Fail",
+        "name" => "rev.object.sidecar-injector.istio.io",
+        "namespaceSelector" => %{
+          "matchExpressions" => [
+            %{"key" => "istio.io/rev", "operator" => "DoesNotExist"},
+            %{"key" => "istio-injection", "operator" => "DoesNotExist"}
+          ]
+        },
+        "objectSelector" => %{
+          "matchExpressions" => [
+            %{"key" => "sidecar.istio.io/inject", "operator" => "NotIn", "values" => ["false"]},
+            %{"key" => "istio.io/rev", "operator" => "In", "values" => ["default"]}
+          ]
+        },
+        "reinvocationPolicy" => "Never",
+        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
+        "sideEffects" => "None"
+      },
+      %{
+        "admissionReviewVersions" => ["v1beta1", "v1"],
+        "clientConfig" => %{
+          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
+        },
+        "failurePolicy" => "Fail",
+        "name" => "namespace.sidecar-injector.istio.io",
+        "namespaceSelector" => %{
+          "matchExpressions" => [%{"key" => "istio-injection", "operator" => "In", "values" => ["enabled"]}]
+        },
+        "objectSelector" => %{
+          "matchExpressions" => [%{"key" => "sidecar.istio.io/inject", "operator" => "NotIn", "values" => ["false"]}]
+        },
+        "reinvocationPolicy" => "Never",
+        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
+        "sideEffects" => "None"
+      },
+      %{
+        "admissionReviewVersions" => ["v1beta1", "v1"],
+        "clientConfig" => %{
+          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
+        },
+        "failurePolicy" => "Fail",
+        "name" => "object.sidecar-injector.istio.io",
+        "namespaceSelector" => %{
+          "matchExpressions" => [
+            %{"key" => "istio-injection", "operator" => "DoesNotExist"},
+            %{"key" => "istio.io/rev", "operator" => "DoesNotExist"}
+          ]
+        },
+        "objectSelector" => %{
+          "matchExpressions" => [
+            %{"key" => "sidecar.istio.io/inject", "operator" => "In", "values" => ["true"]},
+            %{"key" => "istio.io/rev", "operator" => "DoesNotExist"}
+          ]
+        },
+        "reinvocationPolicy" => "Never",
+        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
+        "sideEffects" => "None"
+      }
+    ]
+
+    :mutating_webhook_config
+    |> B.build_resource()
+    |> B.name("istio-sidecar-injector-#{battery.config.namespace}")
+    |> B.label("istio.io/rev", "default")
+    |> B.label("operator.istio.io/component", "Pilot")
+    |> Map.put("webhooks", webhooks)
   end
 
   resource(:pod_disruption_budget_istiod, battery, _state) do
@@ -434,98 +501,31 @@ defmodule CommonCore.Resources.Istiod do
     |> Map.put("webhooks", webhooks)
   end
 
-  resource(:mutating_webhook_config_sidecar_injector_battery, battery, _state) do
-    webhooks = [
-      %{
-        "admissionReviewVersions" => ["v1beta1", "v1"],
-        "clientConfig" => %{
-          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
-        },
-        "failurePolicy" => "Fail",
-        "name" => "rev.namespace.sidecar-injector.istio.io",
-        "namespaceSelector" => %{
-          "matchExpressions" => [
-            %{"key" => "istio.io/rev", "operator" => "In", "values" => ["default"]},
-            %{"key" => "istio-injection", "operator" => "DoesNotExist"}
-          ]
-        },
-        "objectSelector" => %{
-          "matchExpressions" => [%{"key" => "sidecar.istio.io/inject", "operator" => "NotIn", "values" => ["false"]}]
-        },
-        "reinvocationPolicy" => "Never",
-        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
-        "sideEffects" => "None"
-      },
-      %{
-        "admissionReviewVersions" => ["v1beta1", "v1"],
-        "clientConfig" => %{
-          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
-        },
-        "failurePolicy" => "Fail",
-        "name" => "rev.object.sidecar-injector.istio.io",
-        "namespaceSelector" => %{
-          "matchExpressions" => [
-            %{"key" => "istio.io/rev", "operator" => "DoesNotExist"},
-            %{"key" => "istio-injection", "operator" => "DoesNotExist"}
-          ]
-        },
-        "objectSelector" => %{
-          "matchExpressions" => [
-            %{"key" => "sidecar.istio.io/inject", "operator" => "NotIn", "values" => ["false"]},
-            %{"key" => "istio.io/rev", "operator" => "In", "values" => ["default"]}
-          ]
-        },
-        "reinvocationPolicy" => "Never",
-        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
-        "sideEffects" => "None"
-      },
-      %{
-        "admissionReviewVersions" => ["v1beta1", "v1"],
-        "clientConfig" => %{
-          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
-        },
-        "failurePolicy" => "Fail",
-        "name" => "namespace.sidecar-injector.istio.io",
-        "namespaceSelector" => %{
-          "matchExpressions" => [%{"key" => "istio-injection", "operator" => "In", "values" => ["enabled"]}]
-        },
-        "objectSelector" => %{
-          "matchExpressions" => [%{"key" => "sidecar.istio.io/inject", "operator" => "NotIn", "values" => ["false"]}]
-        },
-        "reinvocationPolicy" => "Never",
-        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
-        "sideEffects" => "None"
-      },
-      %{
-        "admissionReviewVersions" => ["v1beta1", "v1"],
-        "clientConfig" => %{
-          "service" => %{"name" => "istiod", "namespace" => battery.config.namespace, "path" => "/inject", "port" => 443}
-        },
-        "failurePolicy" => "Fail",
-        "name" => "object.sidecar-injector.istio.io",
-        "namespaceSelector" => %{
-          "matchExpressions" => [
-            %{"key" => "istio-injection", "operator" => "DoesNotExist"},
-            %{"key" => "istio.io/rev", "operator" => "DoesNotExist"}
-          ]
-        },
-        "objectSelector" => %{
-          "matchExpressions" => [
-            %{"key" => "sidecar.istio.io/inject", "operator" => "In", "values" => ["true"]},
-            %{"key" => "istio.io/rev", "operator" => "DoesNotExist"}
-          ]
-        },
-        "reinvocationPolicy" => "Never",
-        "rules" => [%{"apiGroups" => [""], "apiVersions" => ["v1"], "operations" => ["CREATE"], "resources" => ["pods"]}],
-        "sideEffects" => "None"
-      }
-    ]
+  # There's a pretty static json config full of values
+  #
+  # That json needs just a little updating.
+  defp values(battery, _state) do
+    namespace = battery.config.namespace
+    proxy_img = CommonCore.Defaults.Images.get_image!(:istio_proxy)
 
-    :mutating_webhook_config
-    |> B.build_resource()
-    |> B.name("istio-sidecar-injector-#{battery.config.namespace}")
-    |> B.label("istio.io/rev", "default")
-    |> B.label("operator.istio.io/component", "Pilot")
-    |> Map.put("webhooks", webhooks)
+    :values
+    |> get_resource()
+    |> Jason.decode!()
+    # The whole value is wrapped in a "global"
+    # update that here
+    |> update_in(~w(global), fn val ->
+      # The namespace is where the config is installed
+      # and the tag is the default tag for this Batteries Included version
+      val
+      |> Map.put("namespace", namespace)
+      |> Map.put("istioNamespace", namespace)
+      |> Map.put("tag", proxy_img.default_tag)
+      |> Map.put("logAsJson", true)
+      |> put_in(~w(proxy image), Image.default_image(proxy_img))
+      |> put_in(~w(proxy_init image), Image.default_image(proxy_img))
+    end)
+    |> Jason.encode!()
   end
+
+  defp config(_battery, _state), do: get_resource(:config)
 end
