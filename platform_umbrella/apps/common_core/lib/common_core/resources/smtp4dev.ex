@@ -5,27 +5,26 @@ defmodule CommonCore.Resources.Smtp4Dev do
   import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.ProxyUtils, as: PU
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.Resources.RouteBuilder, as: R
 
   @http_port 80
   @smtp_port 25
 
-  resource(:virtual_service, battery, state) do
+  resource(:http_route, battery, state) do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: smtp4dev_hosts(state)]
-      |> VirtualService.new!()
-      |> V.prefix(PU.prefix(battery), PU.service_name(battery), PU.port(battery))
-      |> V.fallback("smtp-four-dev", @http_port)
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_oauth2_proxy_rule(battery, state)
+      |> R.add_backend("smtp-four-dev", @http_port)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
-    |> B.name("smtp-four-dev")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
@@ -115,6 +114,7 @@ defmodule CommonCore.Resources.Smtp4Dev do
     :service
     |> B.build_resource()
     |> B.name("smtp-four-dev")
+    |> B.label("istio.io/ingress-use-waypoint", "true")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -122,16 +122,14 @@ defmodule CommonCore.Resources.Smtp4Dev do
   resource(:istio_request_auth, _battery, state) do
     namespace = core_namespace(state)
 
-    # Generate the CRD's neccessary for istio to
-    # validate the open id exists
     spec =
       state
       |> PU.request_auth()
-      |> B.match_labels_selector(@app_name)
+      |> PU.target_ref_for_service("smtp-four-dev")
 
     :istio_request_auth
     |> B.build_resource()
-    |> B.name("#{@app_name}-keycloak-auth")
+    |> B.name("#{@app_name}-keycloak-auth-gw")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)
@@ -142,14 +140,13 @@ defmodule CommonCore.Resources.Smtp4Dev do
 
     spec =
       state
-      |> smtp4dev_host()
-      |> List.wrap()
+      |> smtp4dev_hosts()
       |> PU.auth_policy(battery)
-      |> B.match_labels_selector(@app_name)
+      |> PU.target_ref_for_service("smtp-four-dev")
 
     :istio_auth_policy
     |> B.build_resource()
-    |> B.name("#{@app_name}-require-keycloak-auth")
+    |> B.name("#{@app_name}-require-keycloak-auth-gw")
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :sso)

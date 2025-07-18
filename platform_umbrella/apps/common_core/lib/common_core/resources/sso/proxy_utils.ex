@@ -182,4 +182,10 @@ defmodule CommonCore.Resources.ProxyUtils do
       Batteries.by_type(state).sso.config.oauth2_proxy_image
     end
   end
+
+  def target_ref_for_service(spec, name), do: target_refs_for_services(spec, [name])
+
+  def target_refs_for_services(spec, names) do
+    Map.put(spec, "targetRefs", Enum.map(names, &%{"name" => &1, "kind" => "Service"}))
+  end
 end

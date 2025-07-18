@@ -50,7 +50,7 @@ defmodule CommonCore.StateSummary.Namespaces do
   def traditional_namespace(%StateSummary{} = summary), do: battery_namespace(summary, :traditional_services)
 
   @spec battery_namespace(StateSummary.t(), atom()) :: binary() | nil
-  defp battery_namespace(summary, battery) do
+  def battery_namespace(summary, battery) do
     case get_battery(summary, battery) do
       %{config: config} ->
         config.namespace
