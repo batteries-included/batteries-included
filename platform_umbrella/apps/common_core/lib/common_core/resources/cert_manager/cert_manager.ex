@@ -1030,7 +1030,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
         "server" => @lets_encrypt_staging_url,
         "email" => battery.config.email,
         "privateKeySecretRef" => %{"name" => name},
-        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "istio"}}}]
+        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "cert-manager"}}}]
       }
     }
 
@@ -1048,13 +1048,23 @@ defmodule CommonCore.Resources.CertManager.CertManager do
         "server" => @lets_encrypt_prod_url,
         "email" => battery.config.email,
         "privateKeySecretRef" => %{"name" => name},
-        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "istio"}}}]
+        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "cert-manager"}}}]
       }
     }
 
     :certmanager_cluster_issuer
     |> B.build_resource()
     |> B.name(name)
+    |> B.spec(spec)
+  end
+
+  # This ingress class is used to present HTTP01 challenges
+  resource(:cert_manager_ingress_class) do
+    spec = %{"controller" => "istio.io/ingress-controller"}
+
+    :ingress_class
+    |> B.build_resource()
+    |> B.name("cert-manager")
     |> B.spec(spec)
   end
 end
