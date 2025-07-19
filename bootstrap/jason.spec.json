@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_01981b2dc273722f8302c9bc21a17b3f",
+        "id": "batt_01982053ca477d8e83dd346791cd650a",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -21,13 +21,13 @@
           "ai_namespace": "battery-ai",
           "default_size": "small",
           "cluster_name": "jason",
-          "install_id": "batt_01981b2dc2627aa4989b85b339eb9ed7",
+          "install_id": "batt_01982053ca3b7bffbe5f5e42d6227546",
           "control_jwk": {
             "crv": "P-256",
-            "d": "bHbPt49JOYlRyNTXRcUDntYe8uObuBr0JfllAGaJ2CQ",
+            "d": "gEzdzkPT4KAVWl3YewFP_2gOF3G4XsaRP8cF0iDRqao",
             "kty": "EC",
-            "x": "U88g9DKiUJylqa8lFJ_oxwp_O2bMkaA0B5dji51fXDo",
-            "y": "t1oTV4RN5xhcVfO-zf4--cp9bdxlDU4_fMPN5APYzNU"
+            "x": "viQsv5yZxlm-zx3j6j_ws3JAWbwGV3LcFUOKF0lKxjw",
+            "y": "r9HgWN3h3N4Te55D9M1Kzj9JdCKZNCL_QL4DXe-fTLE"
           },
           "upgrade_days_of_week": [
             true,
@@ -52,7 +52,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc273729c9cbcf59f771722f9",
+        "id": "batt_01982053ca47719496314b8e00e5980e",
         "type": "cert_manager",
         "config": {
           "type": "cert_manager",
@@ -75,7 +75,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc2737125be83f7a644f90fe5",
+        "id": "batt_01982053ca4876df843dbdcdde6e7d4d",
         "type": "battery_ca",
         "config": {
           "type": "battery_ca"
@@ -85,7 +85,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc2737ec1a42ea85e05a573b0",
+        "id": "batt_01982053ca487de4a206ad9d7a6f7532",
         "type": "karpenter",
         "config": {
           "type": "karpenter",
@@ -105,7 +105,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc2737f0197d4dcdacc3aa470",
+        "id": "batt_01982053ca48760c8936106d5df3e0c3",
         "type": "aws_load_balancer_controller",
         "config": {
           "type": "aws_load_balancer_controller",
@@ -121,13 +121,13 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc273799280f2a992dbb6ff0f",
+        "id": "batt_01982053ca487dea978412930e0ec0f6",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
           "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.26.0",
           "service_role_arn": null,
-          "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-16",
+          "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-17",
           "bucket_name": null,
           "bucket_arn": null,
           "image_tag_override": null,
@@ -140,7 +140,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc27379c09a07237f0aa1163b",
+        "id": "batt_01982053ca487ab585c41437b5647b4d",
         "type": "istio",
         "config": {
           "type": "istio",
@@ -155,7 +155,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc27374f6bb8fe571c6df41b9",
+        "id": "batt_01982053ca4871009180d75c5d63f024",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
@@ -168,7 +168,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01981b2dc2737b3687961f6097cbef87",
+        "id": "batt_01982053ca4876f08446e28a7be69b3f",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -213,7 +213,7 @@
           {
             "version": 1,
             "username": "battery-control-user",
-            "password": "RH2IM6YI5SHP3K3BPXCMZNUG"
+            "password": "U46ALK4ZETZEJMW2BW3XYKSV"
           }
         ],
         "cpu_requested": 500,
@@ -241,7 +241,7 @@
       "kind": "ClusterRoleBinding",
       "metadata": {
         "annotations": {
-          "battery/hash": "DHP2YZN4PPUXF4ELQAHIEG4HWJYGOE7HERRBJKRJDCAQDZV4NPCA===="
+          "battery/hash": "4FIPB7QDCJZPH32Y7NGC4XRAQPH2C66GNYLJT3R44OZHFZGM2RFQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -251,7 +251,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+          "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
           "version": "latest"
         },
         "name": "batteries-included:bootstrap"
@@ -274,7 +274,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "3KMK4PJ5OK3KLPPL3OKKBENHBIDMWXKZYC477CTT6LSMMJICPTLQ===="
+          "battery/hash": "5O75GMG4M4QNHOGUZBPFPXVKPH5CT4QNIDU6NTWUPZCXIJVT7IXA===="
         },
         "labels": {
           "app": "battery-core",
@@ -284,7 +284,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+          "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
           "sidecar.istio.io/inject": "false",
           "version": "latest"
         },
@@ -308,7 +308,7 @@
               "battery/component": "bootstrap",
               "battery/managed": "true",
               "battery/managed.indirect": "true",
-              "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+              "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
               "component": "bootstrap",
               "sidecar.istio.io/inject": "false",
               "version": "latest"
@@ -321,7 +321,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "WN4472S5XQMVXL7LKJMDEU4TQHZIEFGANYU26CV3L3YDEKPOHTDFCF73TYA4BAH4"
+                    "value": "GNRY3VKITDTM4NTCOIZF36JRWFB6APXI6OA5CYNIHKF2QAHBRF364UOGLZGU54B2"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",
@@ -369,7 +369,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "XFA2C6Q6LG326JUSF63SQYWI54AX2LKYNAYQH7NFWQIMUHJE3NJQ===="
+          "battery/hash": "TDEFETSNL5SJ72OKWW4XTHUDC74LDXO4NGMUMCRAAN6JW566LLZA===="
         },
         "labels": {
           "app": "battery-core",
@@ -379,7 +379,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+          "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
           "istio-injection": "enabled",
           "version": "latest"
         },
@@ -391,7 +391,7 @@
       "kind": "ServiceAccount",
       "metadata": {
         "annotations": {
-          "battery/hash": "O2ZV6J7SPJ3AITGS7S46JA4SZBKUWZDHAGLHSEXDKUJ2FGU3S2BA===="
+          "battery/hash": "GPFYOB5H6ZLLSF7H222SV2HY446YARLEWSYSLVEKDDIH7MQAI5IQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -401,7 +401,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+          "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
           "version": "latest"
         },
         "name": "bootstrap",
@@ -414,7 +414,7 @@
       "kind": "StorageClass",
       "metadata": {
         "annotations": {
-          "battery/hash": "ZHVNUE4DGGX3XDH32EUWKOFY7EAKANSONSPWHNECJYJXA42GLVSQ====",
+          "battery/hash": "DKO6BLL36D3U6M4NS5C4W5ZUQ7PNTLJ3E6Q2IES7JC3TI7Z4CFAA====",
           "storageclass.kubernetes.io/is-default-class": "false"
         },
         "labels": {
@@ -425,7 +425,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+          "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
           "version": "latest"
         },
         "name": "gp2"
@@ -440,7 +440,7 @@
       "kind": "StorageClass",
       "metadata": {
         "annotations": {
-          "battery/hash": "5C5HU3PPOITS2B2XIESHB3VMVERJZTE5AZ3PWURVF4UJUDWQCT3Q====",
+          "battery/hash": "6LRTSFGKVTSFGTPWDHZUVYOWRG5IJZVRAWRWS6LFZIUO3DLFFWFA====",
           "storageclass.kubernetes.io/is-default-class": "false"
         },
         "labels": {
@@ -451,7 +451,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+          "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
           "version": "latest"
         },
         "name": "gp2-90032408"
@@ -471,7 +471,7 @@
       "kind": "StorageClass",
       "metadata": {
         "annotations": {
-          "battery/hash": "BJKDIAVI7NT5ZZKET57DCSVDWLSF6DAUOH7AZFVY66DNCZGSHEAQ====",
+          "battery/hash": "DGBC7NY6DYKHNFWF2HQWPFLYTBY7BQMGO7O6PSHPDHTY7JHAER7Q====",
           "storageclass.kubernetes.io/is-default-class": "true"
         },
         "labels": {
@@ -482,7 +482,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01981b2dc273722f8302c9bc21a17b3f",
+          "battery/owner": "batt_01982053ca477d8e83dd346791cd650a",
           "version": "latest"
         },
         "name": "gp3-105457460"
