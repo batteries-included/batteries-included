@@ -21,8 +21,6 @@ var DefaultIgnoredImages = []string{
 	//  Uncaught TypeError: Cannot read properties of undefined (reading 'keys')
 	// ```
 	"docker.io/grafana/grafana",
-	// Victoria Metrics needs new CRDS and a refresh
-	"docker.io/victoriametrics/operator",
 
 	// needs a refresh
 	"quay.io/jetstack/cert-manager-istio-csr",
