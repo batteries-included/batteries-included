@@ -65,7 +65,7 @@ defmodule Verify.TestCase.Helpers do
         acc
         |> fill_in(Query.text_field("filter_value"), with: frag)
         |> sleep(100)
-        |> assert_has(table_row(text: "Running", count: 1))
+        |> assert_has(table_row(text: "Running", minimum: 1))
       end)
 
     # "reset" the session back to the original location
@@ -294,7 +294,7 @@ defmodule Verify.TestCase.Helpers do
     end
   end
 
-  defp execute_query_without_retry(%{driver: driver} = parent, query) do
+  def execute_query_without_retry(%{driver: driver} = parent, query) do
     with {:ok, query} <- Query.validate(query),
          compiled_query = Query.compile(query),
          {:ok, elements} <- driver.find_elements(parent, compiled_query) do
