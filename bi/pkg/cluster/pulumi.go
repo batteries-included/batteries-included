@@ -96,7 +96,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 		return nil, fmt.Errorf("failed to create necessary directories: %w", err)
 	}
 
-	cmd, err := auto.InstallPulumiCommand(ctx, &auto.PulumiCommandOptions{Root: dirs[homeDir], SkipVersionCheck: true})
+	cmd, err := auto.InstallPulumiCommand(ctx, &auto.PulumiCommandOptions{Root: dirs[homeDir]})
 	if err != nil {
 		return nil, fmt.Errorf("failed to download pulumi cli: %w", err)
 	}
@@ -104,10 +104,7 @@ func (p *pulumiProvider) configure(ctx context.Context) (auto.Workspace, error) 
 	p.workDirRoot = dirs[workDir]
 	p.pulumi = auto.Pulumi(cmd)
 	p.pulumiHome = auto.PulumiHome(dirs[homeDir])
-	p.envVars = auto.EnvVars(map[string]string{
-		"AUTOMATION_API_SKIP_VERSION_CHECK": "1",
-		"PULUMI_CONFIG_PASSPHRASE":          "PASSWORD",
-	})
+	p.envVars = auto.EnvVars(map[string]string{"PULUMI_CONFIG_PASSPHRASE": "PASSWORD"})
 
 	return p.createWorkspace(ctx)
 }
