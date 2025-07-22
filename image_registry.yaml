@@ -96,7 +96,7 @@ cert_manager_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_istio_csr:
   name: quay.io/jetstack/cert-manager-istio-csr
-  default_tag: v0.5.0
+  default_tag: v0.14.2
   tags:
     - v0.14.2
     - v0.14.1

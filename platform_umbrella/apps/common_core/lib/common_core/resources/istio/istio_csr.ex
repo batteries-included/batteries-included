@@ -13,7 +13,11 @@ defmodule CommonCore.Resources.IstioCsr do
     spec =
       %{}
       |> Map.put("commonName", "istiod.#{namespace}.svc")
-      |> Map.put("dnsNames", ["istiod.#{namespace}.svc"])
+      |> Map.put("dnsNames", [
+        "istiod.#{namespace}.svc",
+        "istiod.#{namespace}.svc.cluster.local",
+        "istiod.#{namespace}.svc.cluster.local."
+      ])
       # Here we use a duration of 1 hour by default based on NIST 800-204A
       # recommendations (SM-DR13).
       # https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-204A.pdf
@@ -101,7 +105,6 @@ defmodule CommonCore.Resources.IstioCsr do
           "--serving-certificate-key-size=2048",
           "--leader-election-namespace=#{namespace}"
         ],
-        "command" => ["cert-manager-istio-csr"],
         "image" => battery.config.image,
         "imagePullPolicy" => "IfNotPresent",
         "name" => "cert-manager-istio-csr",
