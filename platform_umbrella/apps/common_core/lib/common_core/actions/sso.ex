@@ -33,7 +33,11 @@ defmodule CommonCore.Actions.SSO do
       action: :sync,
       type: :flow_execution,
       realm: Keycloak.realm_name(),
-      value: %{flow_alias: "browser", display_name: "Browser - Conditional 2FA", requirement: requirement}
+      value: %{
+        flow_alias: "browser",
+        display_names: ["Browser - Conditional 2FA", "Browser - Conditional OTP"],
+        requirement: requirement
+      }
     }
   end
 
