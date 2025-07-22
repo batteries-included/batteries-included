@@ -15,6 +15,7 @@ PRETTIER_GLOBS+=(
     '../*.ts'
     '../*.js'
     '../README.md'
+    '../.envrc'
     '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'
     '../static/src/content/**/*.md'
     '../static/src/content/**/*.mdx'
