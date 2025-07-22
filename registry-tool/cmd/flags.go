@@ -21,7 +21,4 @@ var DefaultIgnoredImages = []string{
 	//  Uncaught TypeError: Cannot read properties of undefined (reading 'keys')
 	// ```
 	"docker.io/grafana/grafana",
-
-	// Major Redis version bump breaks things
-	"quay.io/opstree/redis",
 }
