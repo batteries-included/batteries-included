@@ -105,15 +105,15 @@ defmodule KubeServices.SnapshotApply.ApplyAction do
         type: :flow_execution,
         realm: realm,
         document: %Document{
-          value: %{"flow_alias" => flow_alias, "display_name" => display_name, "requirement" => requirement}
+          value: %{"flow_alias" => flow_alias, "display_names" => display_names, "requirement" => requirement}
         }
       }) do
     with {:ok, executions} <- AdminClient.flow_executions(realm, flow_alias) do
       execution =
         Enum.find(
           executions,
-          {:err, "execution not found with display name: #{display_name}"},
-          &(&1.displayName == display_name)
+          {:error, "execution not found with display name: #{inspect(display_names)}"},
+          &(&1.displayName in display_names)
         )
 
       case require_flow_execution(realm, flow_alias, execution, requirement) do
