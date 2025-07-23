@@ -341,24 +341,27 @@ kiwigrid_sidecar:
   tag_regex: ^\d+\.\d+\.\d+$
 knative_istio_controller:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
-  default_tag: v1.18.0
+  default_tag: v1.19.0
   tags:
+    - v1.19.0
     - v1.18.0
     - v1.17.0
     - v1.15.1
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_webhook:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook
-  default_tag: v1.18.0
+  default_tag: v1.19.0
   tags:
+    - v1.19.0
     - v1.18.0
     - v1.17.0
     - v1.15.1
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_activator:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  default_tag: v1.18.1
+  default_tag: v1.19.0
   tags:
+    - v1.19.0
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -369,8 +372,9 @@ knative_serving_activator:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_autoscaler:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  default_tag: v1.18.1
+  default_tag: v1.19.0
   tags:
+    - v1.19.0
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -381,8 +385,9 @@ knative_serving_autoscaler:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_controller:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  default_tag: v1.18.1
+  default_tag: v1.19.0
   tags:
+    - v1.19.0
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -393,8 +398,9 @@ knative_serving_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_queue:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/queue
-  default_tag: v1.18.1
+  default_tag: v1.19.0
   tags:
+    - v1.19.0
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -405,8 +411,9 @@ knative_serving_queue:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_webhook:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
-  default_tag: v1.18.1
+  default_tag: v1.19.0
   tags:
+    - v1.19.0
     - v1.18.1
     - v1.18.0
     - v1.17.2
@@ -544,8 +551,10 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-17
+  default_tag: 17.5-19
   tags:
+    - 17.5-19
+    - 17.5-18
     - 17.5-17
     - 17.5-16
     - 17.5-15

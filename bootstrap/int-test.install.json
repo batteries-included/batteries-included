@@ -1,16 +1,16 @@
 {
-  "id": "batt_01982fc6b5e075e19732dcee1218b2d5",
+  "id": "batt_019834ecdfce71439c891084bc931a1e",
   "usage": "internal_int_test",
-  "team_id": "batt_01982fc6b5c9725ebe5dd317a67f29ca",
+  "team_id": "batt_019834ecdfb9757fbece6d3f1783b83b",
   "inserted_at": null,
   "updated_at": null,
   "default_size": "tiny",
   "control_jwk": {
     "crv": "P-256",
-    "d": "oXJSl8TnIzMQ81SMnWYs73lLk5bs-7fd-1BoGI8z-rQ",
+    "d": "rp40q41_qp5x76UGUisSJgnMr8g4PCQz1SsOBusxR2w",
     "kty": "EC",
-    "x": "8qn2_V07Y7a04_no8niU-gVQgBTWbtPfMf-ARaFeReU",
-    "y": "m-t-SVhAiVkYpN2Pu2hT_lPnzFcXfDUmqHIhSLGGurA"
+    "x": "kxAlc1OVJDisUzEpnSHzN-_JbKs5tAce9a1Qg1Llj2g",
+    "y": "SVxtPZLx-3Y2AxI3gtQnWi0J9ZrZEP_ql1zUufAGQk4"
   },
   "kube_provider": "kind",
   "slug": "int-test",
