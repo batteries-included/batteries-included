@@ -418,6 +418,7 @@ defmodule CommonCore.Resources.Grafana do
     |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
+    |> B.annotation("kubectl.kubernetes.io/default-container", @app_name)
     |> B.spec(spec)
   end
 
