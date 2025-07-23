@@ -623,7 +623,7 @@ promtail:
   tag_regex: ^\d+\.\d+\.\d+$
 redis:
   name: quay.io/opstree/redis
-  default_tag: v7.4.4
+  default_tag: v8.0.3
   tags:
     - v8.0.3
     - v8.0.2
