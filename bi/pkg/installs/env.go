@@ -135,8 +135,10 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		}
 		dockerDesktop, _ := kind.IsDockerDesktop(ctx)
 		podman, _ := kind.IsPodmanAvailable()
+		colima, _ := kind.IsColimaRunning(ctx)
+		appleVirt, _ := kind.IsAppleVirtualizationAvailable()
 
-		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman)
+		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman || colima || appleVirt)
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Spec)
