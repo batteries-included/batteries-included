@@ -10,19 +10,21 @@ defmodule KubeBootstrap do
   # This is the list of batteries that are necessary to get control server running.
   # It will finish bootstrapping and running remaining resources
   # See: https://github.com/batteries-included/batteries-included/issues/1790
+  # styler:sort
   @allowed_bootstrap_batteries ~w(
     aws_load_balancer_controller
     battery_ca
     battery_core
     cert_manager
     cloudnative_pg
+    gateway_api
     istio
     istio_csr
     istio_gateway
     karpenter
     metallb
-    vm_agent
     victoria_metrics
+    vm_agent
   )a
 
   @spec bootstrap_from_summary(StateSummary.t()) :: :ok | {:error, :retries_exhausted | list()}

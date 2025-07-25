@@ -10,6 +10,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.CloudnativePGConfig
   alias CommonCore.Batteries.FerretDBConfig
   alias CommonCore.Batteries.ForgejoConfig
+  alias CommonCore.Batteries.GatewayAPIConfig
   alias CommonCore.Batteries.GrafanaConfig
   alias CommonCore.Batteries.IstioConfig
   alias CommonCore.Batteries.IstioCSRConfig
@@ -49,22 +50,23 @@ defmodule CommonCore.Batteries.SystemBattery do
     }
   }
 
+  # styler:sort
   @possible_types [
     aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
-    traditional_services: TraditionalServicesConfig,
     battery_ca: BatteryCAConfig,
     battery_core: BatteryCoreConfig,
     cert_manager: CertManagerConfig,
     cloudnative_pg: CloudnativePGConfig,
-    forgejo: ForgejoConfig,
-    grafana: GrafanaConfig,
     ferretdb: FerretDBConfig,
+    forgejo: ForgejoConfig,
+    gateway_api: GatewayAPIConfig,
+    grafana: GrafanaConfig,
     istio: IstioConfig,
     istio_csr: IstioCSRConfig,
     istio_gateway: IstioGatewayConfig,
+    karpenter: KarpenterConfig,
     keycloak: KeycloakConfig,
     kiali: KialiConfig,
-    karpenter: KarpenterConfig,
     knative: KnativeConfig,
     kube_monitoring: KubeMonitoringConfig,
     loki: LokiConfig,
@@ -75,17 +77,19 @@ defmodule CommonCore.Batteries.SystemBattery do
     ollama: OllamaConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
-    stale_resource_cleaner: StaleResourceCleanerConfig,
     smtp4dev: Smtp4devConfig,
     sso: SSOConfig,
+    stale_resource_cleaner: StaleResourceCleanerConfig,
     timeline: TimelineConfig,
+    traditional_services: TraditionalServicesConfig,
     trivy_operator: TrivyOperatorConfig,
     trust_manager: TrustManagerConfig,
     victoria_metrics: VictoriaMetricsConfig,
     vm_agent: VMAgentConfig
   ]
 
-  @possible_groups ~w(data devtools magic ai monitoring net_sec)a
+  # styler:sort
+  @possible_groups ~w(ai data devtools magic monitoring net_sec)a
 
   @required_fields ~w(group type config)a
 

@@ -57,7 +57,17 @@ defmodule CommonCore.Resources.Istiod do
       },
       %{
         "apiGroups" => ["networking.istio.io"],
-        "resources" => ["workloadentries/status"],
+        "resources" => ["workloadentries/status", "serviceentries/status"],
+        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
+      },
+      %{
+        "apiGroups" => ["security.istio.io"],
+        "resources" => ["authorizationpolicies/status"],
+        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["services/status"],
         "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
       },
       %{
@@ -70,24 +80,59 @@ defmodule CommonCore.Resources.Istiod do
         "resources" => ["pods", "nodes", "services", "namespaces", "endpoints"],
         "verbs" => ["get", "list", "watch"]
       },
-      %{"apiGroups" => ["discovery.k8s.io"], "resources" => ["endpointslices"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["discovery.k8s.io"],
+        "resources" => ["endpointslices"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{
         "apiGroups" => ["networking.k8s.io"],
         "resources" => ["ingresses", "ingressclasses"],
         "verbs" => ["get", "list", "watch"]
       },
-      %{"apiGroups" => ["networking.k8s.io"], "resources" => ["ingresses/status"], "verbs" => ["*"]},
-      %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["create", "get", "list", "watch", "update"]},
-      %{"apiGroups" => ["authentication.k8s.io"], "resources" => ["tokenreviews"], "verbs" => ["create"]},
-      %{"apiGroups" => ["authorization.k8s.io"], "resources" => ["subjectaccessreviews"], "verbs" => ["create"]},
       %{
-        "apiGroups" => ["networking.x-k8s.io", "gateway.networking.k8s.io"],
+        "apiGroups" => ["networking.k8s.io"],
+        "resources" => ["ingresses/status"],
+        "verbs" => ["*"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["configmaps"],
+        "verbs" => ["create", "get", "list", "watch", "update"]
+      },
+      %{
+        "apiGroups" => ["authentication.k8s.io"],
+        "resources" => ["tokenreviews"],
+        "verbs" => ["create"]
+      },
+      %{
+        "apiGroups" => ["authorization.k8s.io"],
+        "resources" => ["subjectaccessreviews"],
+        "verbs" => ["create"]
+      },
+      %{
+        "apiGroups" => ["gateway.networking.k8s.io", "gateway.networking.x-k8s.io"],
         "resources" => ["*"],
         "verbs" => ["get", "watch", "list"]
       },
       %{
-        "apiGroups" => ["networking.x-k8s.io", "gateway.networking.k8s.io"],
-        "resources" => ["*"],
+        "apiGroups" => ["gateway.networking.x-k8s.io"],
+        "resources" => ["xbackendtrafficpolicies/status"],
+        "verbs" => ["update", "patch"]
+      },
+      %{
+        "apiGroups" => ["gateway.networking.k8s.io"],
+        "resources" => [
+          "backendtlspolicies/status",
+          "gatewayclasses/status",
+          "gateways/status",
+          "grpcroutes/status",
+          "httproutes/status",
+          "referencegrants/status",
+          "tcproutes/status",
+          "tlsroutes/status",
+          "udproutes/status"
+        ],
         "verbs" => ["update", "patch"]
       },
       %{
@@ -101,7 +146,11 @@ defmodule CommonCore.Resources.Istiod do
         "resources" => ["serviceexports"],
         "verbs" => ["get", "watch", "list", "create", "delete"]
       },
-      %{"apiGroups" => ["multicluster.x-k8s.io"], "resources" => ["serviceimports"], "verbs" => ["get", "watch", "list"]}
+      %{
+        "apiGroups" => ["multicluster.x-k8s.io"],
+        "resources" => ["serviceimports"],
+        "verbs" => ["get", "watch", "list"]
+      }
     ]
 
     :cluster_role
@@ -115,6 +164,16 @@ defmodule CommonCore.Resources.Istiod do
       %{
         "apiGroups" => ["apps"],
         "resources" => ["deployments"],
+        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
+      },
+      %{
+        "apiGroups" => ["autoscaling"],
+        "resources" => ["horizontalpodautoscalers"],
+        "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
+      },
+      %{
+        "apiGroups" => ["policy"],
+        "resources" => ["poddisruptionbudgets"],
         "verbs" => ["get", "watch", "list", "update", "patch", "create", "delete"]
       },
       %{
@@ -203,9 +262,11 @@ defmodule CommonCore.Resources.Istiod do
             "image" => battery.config.pilot_image,
             "name" => "discovery",
             "ports" => [
-              %{"containerPort" => 8080, "protocol" => "TCP"},
-              %{"containerPort" => 15_010, "protocol" => "TCP"},
-              %{"containerPort" => 15_017, "protocol" => "TCP"}
+              %{"containerPort" => 8080, "name" => "http-debug", "protocol" => "TCP"},
+              %{"containerPort" => 15_010, "name" => "grpc-xds", "protocol" => "TCP"},
+              %{"containerPort" => 15_012, "name" => "tls-xds", "protocol" => "TCP"},
+              %{"containerPort" => 15_017, "name" => "https-webhooks", "protocol" => "TCP"},
+              %{"containerPort" => 15_014, "name" => "http-monitoring", "protocol" => "TCP"}
             ],
             "readinessProbe" => %{
               "httpGet" => %{"path" => "/ready", "port" => 8080},
