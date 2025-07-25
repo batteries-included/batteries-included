@@ -218,6 +218,12 @@ grafana:
     - 11.2.0
     - 10.4.5
   tag_regex: ^\d+\.\d+\.\d+$
+istio_cni:
+  name: docker.io/istio/install-cni
+  default_tag: 1.26.2-distroless
+  tags:
+    - 1.26.2-distroless
+  tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_pilot:
   name: docker.io/istio/pilot
   default_tag: 1.26.2-distroless
@@ -253,6 +259,12 @@ istio_proxy:
     - 1.23.2-distroless
     - 1.23.1-distroless
     - 1.22.3-distroless
+  tag_regex: ^\d+\.\d+\.\d+-distroless$
+istio_ztunnel:
+  name: docker.io/istio/ztunnel
+  default_tag: 1.26.2-distroless
+  tags:
+    - 1.26.2-distroless
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
@@ -345,6 +357,18 @@ kiwigrid_sidecar:
     - 1.30.3
     - 1.27.4
   tag_regex: ^\d+\.\d+\.\d+$
+knative_gateway_api_controller:
+  name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller
+  default_tag: v1.19.0
+  tags:
+    - v1.19.0
+  tag_regex: ^v\d+\.\d+\.\d+$
+knative_gateway_api_webhook:
+  name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook
+  default_tag: v1.19.0
+  tags:
+    - v1.19.0
+  tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_controller:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
   default_tag: v1.19.0
