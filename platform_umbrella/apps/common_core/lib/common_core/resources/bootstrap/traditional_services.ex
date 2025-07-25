@@ -11,7 +11,8 @@ defmodule CommonCore.Resources.Bootstrap.TraditionalServices do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.namespace)
-    |> B.label("istio-injection", "enabled")
+    |> B.label("istio-injection", "disabled")
+    |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
   resource(:config_map_homebase, battery, state) do

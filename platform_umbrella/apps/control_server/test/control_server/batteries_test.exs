@@ -36,11 +36,15 @@ defmodule ControlServer.BatteriesTest do
       assert {:ok, %SystemBattery{} = system_battery} =
                Batteries.create_system_battery(valid_attrs)
 
+      cni_image = Defaults.Images.get_image!(:istio_cni)
       pilot_image = Defaults.Images.get_image!(:istio_pilot)
+      ztunnel_image = Defaults.Images.get_image!(:istio_ztunnel)
 
       assert system_battery.config == %IstioConfig{
                namespace: Defaults.Namespaces.istio(),
-               pilot_image: "#{pilot_image.name}:#{pilot_image.default_tag}"
+               cni_image: "#{cni_image.name}:#{cni_image.default_tag}",
+               pilot_image: "#{pilot_image.name}:#{pilot_image.default_tag}",
+               ztunnel_image: "#{ztunnel_image.name}:#{ztunnel_image.default_tag}"
              }
 
       assert system_battery.group == :net_sec
