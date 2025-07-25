@@ -5,7 +5,6 @@ defmodule CommonCore.Resources.Istio do
     destinationrules_networking_istio_io: "priv/manifests/istio/destinationrules_networking_istio_io.yaml",
     envoyfilters_networking_istio_io: "priv/manifests/istio/envoyfilters_networking_istio_io.yaml",
     gateways_networking_istio_io: "priv/manifests/istio/gateways_networking_istio_io.yaml",
-    istiooperators_install_istio_io: "priv/manifests/istio/istiooperators_install_istio_io.yaml",
     peerauthentications_security_istio_io: "priv/manifests/istio/peerauthentications_security_istio_io.yaml",
     proxyconfigs_networking_istio_io: "priv/manifests/istio/proxyconfigs_networking_istio_io.yaml",
     requestauthentications_security_istio_io: "priv/manifests/istio/requestauthentications_security_istio_io.yaml",
@@ -36,10 +35,6 @@ defmodule CommonCore.Resources.Istio do
 
   resource(:crd_gateways_networking_io) do
     YamlElixir.read_all_from_string!(get_resource(:gateways_networking_istio_io))
-  end
-
-  resource(:crd_istiooperators_install_io) do
-    YamlElixir.read_all_from_string!(get_resource(:istiooperators_install_istio_io))
   end
 
   resource(:crd_peerauthentications_security_io) do
