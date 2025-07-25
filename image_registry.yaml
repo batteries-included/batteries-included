@@ -307,8 +307,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.3.1
+  default_tag: 26.3.2
   tags:
+    - 26.3.2
     - 26.3.1
     - 26.3.0
     - 26.2.5
