@@ -15,6 +15,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.CloudnativePGForm
   alias ControlServerWeb.Batteries.FerretDBForm
   alias ControlServerWeb.Batteries.ForgejoForm
+  alias ControlServerWeb.Batteries.GatewayAPIForm
   alias ControlServerWeb.Batteries.GrafanaForm
   alias ControlServerWeb.Batteries.IstioCSRForm
   alias ControlServerWeb.Batteries.IstioForm
@@ -43,15 +44,17 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.VictoriaMetricsForm
   alias ControlServerWeb.Batteries.VMAgentForm
 
+  # styler:sort
   @possible_forms [
     aws_load_balancer_controller: AWSLoadBalancerControllerForm,
     battery_ca: BatteryCAForm,
     battery_core: BatteryCoreForm,
     cert_manager: CertManagerForm,
     cloudnative_pg: CloudnativePGForm,
-    forgejo: ForgejoForm,
-    grafana: GrafanaForm,
     ferretdb: FerretDBForm,
+    forgejo: ForgejoForm,
+    gateway_api: GatewayAPIForm,
+    grafana: GrafanaForm,
     istio: IstioForm,
     istio_csr: IstioCSRForm,
     istio_gateway: IstioGatewayForm,

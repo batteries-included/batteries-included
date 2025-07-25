@@ -250,8 +250,16 @@ defmodule CommonCore.Batteries.Catalog do
     # Network
     %CatalogBattery{
       group: :net_sec,
-      type: :istio,
+      type: :gateway_api,
       dependencies: [],
+      name: "Gateway API",
+      description: "Gateway API is an official Kubernetes project focused on L4 and L7 routing in Kubernetes.",
+      uninstallable: false
+    },
+    %CatalogBattery{
+      group: :net_sec,
+      type: :istio,
+      dependencies: [:gateway_api],
       name: "Istio",
       description:
         "Istio is an open-source service mesh that provides a unified way to control how microservices share data with one another.",

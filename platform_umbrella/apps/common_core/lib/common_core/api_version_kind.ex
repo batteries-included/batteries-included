@@ -2,6 +2,7 @@ defmodule CommonCore.ApiVersionKind do
   @moduledoc false
   import CommonCore.Resources.FieldAccessors, only: [api_version: 1, kind: 1]
 
+  # styler:sort
   @known [
     api_service: {"apiregistration.k8s.io/v1", "APIService"},
     aqua_cluster_compliance_report: {"aquasecurity.github.io/v1alpha1", "ClusterComplianceReport"},
@@ -35,6 +36,11 @@ defmodule CommonCore.ApiVersionKind do
     deployment: {"apps/v1", "Deployment"},
     endpoint: {"v1", "Endpoints"},
     event: {"v1", "Event"},
+    gateway: {"gateway.networking.k8s.io/v1", "Gateway"},
+    gateway_class: {"gateway.networking.k8s.io/v1", "GatewayClass"},
+    gateway_grpc_route: {"gateway.networking.k8s.io/v1", "GRPCRoute"},
+    gateway_http_route: {"gateway.networking.k8s.io/v1", "HTTPRoute"},
+    gateway_reference_grant: {"gateway.networking.k8s.io/v1beta1", "ReferenceGrant"},
     horizontal_pod_autoscaler: {"autoscaling/v2", "HorizontalPodAutoscaler"},
     ingress: {"networking.k8s.io/v1", "Ingress"},
     ingress_class: {"networking.k8s.io/v1", "IngressClass"},
@@ -64,8 +70,8 @@ defmodule CommonCore.ApiVersionKind do
     monitoring_pod_monitor: {"operator.victoriametrics.com/v1beta1", "VMPodScrape"},
     monitoring_probe: {"operator.victoriametrics.com/v1beta1", "VMProbe"},
     monitoring_rule: {"operator.victoriametrics.com/v1beta1", "VMRule"},
-    monitoring_service_monitor: {"operator.victoriametrics.com/v1beta1", "VMServiceScrape"},
     monitoring_scrape_config: {"operator.victoriametrics.com/v1beta1", "VMScrapeConfig"},
+    monitoring_service_monitor: {"operator.victoriametrics.com/v1beta1", "VMServiceScrape"},
     mutating_webhook_config: {"admissionregistration.k8s.io/v1", "MutatingWebhookConfiguration"},
     namespace: {"v1", "Namespace"},
     network_policy: {"networking.k8s.io/v1", "NetworkPolicy"},
@@ -89,10 +95,10 @@ defmodule CommonCore.ApiVersionKind do
     stateful_set: {"apps/v1", "StatefulSet"},
     storage_class: {"storage.k8s.io/v1", "StorageClass"},
     trustmanager_bundle: {"trust.cert-manager.io/v1alpha1", "Bundle"},
+    v_logs: {"operator.victoriametrics.com/v1beta1", "VLogs"},
     validating_webhook_config: {"admissionregistration.k8s.io/v1", "ValidatingWebhookConfiguration"},
     vl_agent: {"operator.victoriametrics.com/v1", "VLAgent"},
     vl_cluster: {"operator.victoriametrics.com/v1", "VLCluster"},
-    v_logs: {"operator.victoriametrics.com/v1beta1", "VLogs"},
     vl_single: {"operator.victoriametrics.com/v1", "VLSingle"},
     vm_agent: {"operator.victoriametrics.com/v1beta1", "VMAgent"},
     vm_alert: {"operator.victoriametrics.com/v1beta1", "VMAlert"},

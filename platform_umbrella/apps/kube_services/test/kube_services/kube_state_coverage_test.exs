@@ -53,7 +53,13 @@ defmodule KubeServices.KubeStateCoverageTest do
     {"serving.knative.dev/v1beta1", "DomainMapping"},
     {"networking.internal.knative.dev/v1alpha1", "ClusterDomainClaim"},
     {"networking.internal.knative.dev/v1alpha1", "Ingress"},
-    {"networking.internal.knative.dev/v1alpha1", "ServerlessService"}
+    {"networking.internal.knative.dev/v1alpha1", "ServerlessService"},
+
+    # old gateway api resources:
+    {"gateway.networking.k8s.io/v1beta1", "Gateway"},
+    {"gateway.networking.k8s.io/v1beta1", "GatewayClass"},
+    {"gateway.networking.k8s.io/v1beta1", "HTTPRoute"},
+    {"gateway.networking.k8s.io/v1beta1", "GRPCRoute"}
   ]
 
   describe "KubeState can watch for every battery" do

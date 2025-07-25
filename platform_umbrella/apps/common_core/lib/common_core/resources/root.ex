@@ -15,6 +15,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
   alias CommonCore.Resources.FerretDB
   alias CommonCore.Resources.Forgejo
+  alias CommonCore.Resources.GatewayAPI
   alias CommonCore.Resources.Grafana
   alias CommonCore.Resources.Istio
   alias CommonCore.Resources.IstioCsr
@@ -60,24 +61,25 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.VMOperatorCRDs
   alias CommonCore.StateSummary
 
+  # styler:sort
   @default_generator_mappings [
     aws_load_balancer_controller: [AwsLoadBalancerController],
-    traditional_services: [TraditionalServices],
     battery_ca: [BatteryCA],
     battery_core: [BatteryCore, ControlServerResources, BatteryAccess],
     cert_manager: [CertManager, Certificates],
     cloudnative_pg: [CloudnativePG, CloudnativePGClusters, CloudnativePGDashboards],
+    ferretdb: [FerretDB],
     forgejo: [Forgejo],
+    gateway_api: [GatewayAPI],
     grafana: [Grafana],
     istio: [IstioNamespace, Istio, Istiod, IstioReader, IstioTelemetry, IstioMetrics],
     istio_csr: [IstioCsr],
     istio_gateway: [IstioIngress],
+    karpenter: [Karpenter, KarpenterPools],
     keycloak: [Keycloak],
     kiali: [Kiali],
-    ferretdb: [FerretDB],
     knative: [KnativeServingCRDs, KnativeServing, KnativeNetIstio, KnativeServices, KnativeMetrics],
     kube_monitoring: [MetricsServer, KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
-    karpenter: [Karpenter, KarpenterPools],
     loki: [Loki],
     metallb: [MetalLB, MetalLBMonitoring, MetalLBPools],
     node_feature_discovery: [NodeFeatureDiscovery],
@@ -91,6 +93,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     sso: [SSO],
     stale_resource_cleaner: [],
     timeline: [],
+    traditional_services: [TraditionalServices],
     trivy_operator: [TrivyOperator],
     trust_manager: [TrustManager],
     victoria_metrics: [VMDashboards, VMCluster, VMOperator, VMOperatorCRDs],
