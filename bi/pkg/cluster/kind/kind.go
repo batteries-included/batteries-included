@@ -201,6 +201,7 @@ func (c *KindClusterProvider) WriteWireGuardConfig(ctx context.Context, w io.Wri
 		return true, err
 	}
 
+
 	if err := c.wgClient.WriteConfig(w); err != nil {
 		return true, fmt.Errorf("error writing wireguard config: %w", err)
 	}
