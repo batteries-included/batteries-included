@@ -50,8 +50,13 @@ func split(ipNet *net.IPNet, count int) (*net.IPNet, error) {
 func calculateShift(ipNet *net.IPNet) int {
 	ones, _ := ipNet.Mask.Size()
 
+	// For networks with prefix >= 24, we need to accommodate more subnets
+	// by using a larger shift value. A shift of 2 allows for 4 subnets,
+	// shift of 3 allows for 8 subnets, etc.
 	if ones >= 24 {
-		return 1
+		// Use a shift of 3 to allow up to 8 subnets
+		// This should be sufficient for most local development scenarios
+		return 3
 	}
 
 	return 24 - ones
