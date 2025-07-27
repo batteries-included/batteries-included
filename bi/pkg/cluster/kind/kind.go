@@ -196,10 +196,23 @@ func (c *KindClusterProvider) WriteWireGuardConfig(ctx context.Context, w io.Wri
 	c.wgGateway.Nameservers = []netip.Addr{c.wgGateway.Address} // The gateway is hosting a DNS server.
 
 	// Get the CIDR of the `kind` network.
-	_, c.wgGateway.VPCSubnets, err = getKindNetworks(ctx)
+	_, kindNetworks, err := getKindNetworks(ctx)
 	if err != nil {
 		return true, err
 	}
+	
+	// Also include the MetalLB subnet to ensure control server traffic is routed through the gateway
+	metalLBCIDR, err := GetMetalLBIPs(ctx)
+	if err != nil {
+		return true, fmt.Errorf("failed to get MetalLB IP range: %w", err)
+	}
+	
+	_, metalLBNet, err := net.ParseCIDR(metalLBCIDR)
+	if err != nil {
+		return true, fmt.Errorf("failed to parse MetalLB CIDR: %w", err)
+	}
+	
+	c.wgGateway.VPCSubnets = append(kindNetworks, metalLBNet)
 
 
 	if err := c.wgClient.WriteConfig(w); err != nil {
