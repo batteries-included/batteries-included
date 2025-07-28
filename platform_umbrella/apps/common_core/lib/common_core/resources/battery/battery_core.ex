@@ -22,7 +22,7 @@ defmodule CommonCore.Resources.BatteryCore do
     |> B.name(battery.config.base_namespace)
     |> B.label("elbv2.k8s.aws/service-webhook", "disabled")
     |> B.label("istio-injection", "disabled")
-    |> B.label("istio.io/dataplane-mode", "ambient")
+    |> B.label("istio.io/dataplane-mode", "none")
   end
 
   resource(:data_namespace, battery, _state) do
