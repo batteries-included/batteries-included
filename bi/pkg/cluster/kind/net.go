@@ -43,23 +43,44 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 // Given a Network such as 172.18.0.0/16
 // Return the bottom half of the network, such as 172.18.1.0/24
 func split(ipNet *net.IPNet, count int) (*net.IPNet, error) {
-	shift := calculateShift(ipNet)
+	shift := calculateShift(ipNet, count)
 	return cidr.Subnet(ipNet, shift, count+1)
 }
 
-func calculateShift(ipNet *net.IPNet) int {
-	ones, _ := ipNet.Mask.Size()
-
-	// For networks with prefix >= 24, we need to accommodate more subnets
-	// by using a larger shift value. A shift of 2 allows for 4 subnets,
-	// shift of 3 allows for 8 subnets, etc.
-	if ones >= 24 {
-		// Use a shift of 3 to allow up to 8 subnets
-		// This should be sufficient for most local development scenarios
-		return 3
+func calculateShift(ipNet *net.IPNet, count int) int {
+	ones, bits := ipNet.Mask.Size()
+	
+	// Original logic for backward compatibility
+	if ones < 24 {
+		// For networks smaller than /24, try to create /24 subnets
+		return 24 - ones
 	}
-
-	return 24 - ones
+	
+	// For /24 and smaller networks, calculate required bits dynamically
+	// Calculate how many bits we need to accommodate count+1 subnets
+	requiredSubnets := count + 2 // +1 for the new subnet, +1 for safety margin
+	requiredBits := 0
+	for i := 1; i < requiredSubnets; i <<= 1 {
+		requiredBits++
+	}
+	
+	// Default to 3 bits (8 subnets) for most cases to maintain compatibility
+	// But use more bits if needed to accommodate more containers
+	defaultShift := 3
+	if requiredBits < defaultShift {
+		requiredBits = defaultShift
+	}
+	
+	// Calculate available bits
+	availableBits := bits - ones
+	
+	// If we need more bits than available, use what we have
+	// This will cause an error later in cidr.Subnet, but at least we tried
+	if requiredBits > availableBits {
+		return availableBits
+	}
+	
+	return requiredBits
 }
 
 func getKindNetworks(ctx context.Context) (int, []*net.IPNet, error) {
