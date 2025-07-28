@@ -27,8 +27,8 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.KarpenterPools
   alias CommonCore.Resources.Keycloak
   alias CommonCore.Resources.Kiali
+  alias CommonCore.Resources.Knative.NetGateway
   alias CommonCore.Resources.KnativeMetrics
-  alias CommonCore.Resources.KnativeNetIstio
   alias CommonCore.Resources.KnativeServices
   alias CommonCore.Resources.KnativeServing
   alias CommonCore.Resources.KnativeServingCRDs
@@ -85,7 +85,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     karpenter: [Karpenter, KarpenterPools],
     keycloak: [Keycloak],
     kiali: [Kiali],
-    knative: [KnativeServingCRDs, KnativeServing, KnativeNetIstio, KnativeServices, KnativeMetrics],
+    knative: [KnativeServingCRDs, KnativeServing, KnativeServices, KnativeMetrics, NetGateway],
     kube_monitoring: [MetricsServer, KubeStateMetrics, NodeExporter, KubeMonitoring, KubeDashboards],
     loki: [Loki],
     metallb: [MetalLB, MetalLBMonitoring, MetalLBPools],
