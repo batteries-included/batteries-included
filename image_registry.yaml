@@ -586,8 +586,9 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-19
+  default_tag: 17.5-20
   tags:
+    - 17.5-20
     - 17.5-19
     - 17.5-18
     - 17.5-17
