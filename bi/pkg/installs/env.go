@@ -133,10 +133,20 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("error checking if local gateway is needed: %w", err)
 		}
-		dockerDesktop, _ := kind.IsDockerDesktop(ctx)
-		podman, _ := kind.IsPodmanAvailable()
-
-		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman)
+		
+		runtimeInfo, err := kind.DetectContainerRuntime(ctx)
+		if err != nil {
+			slog.Warn("Failed to detect container runtime", slog.String("error", err.Error()))
+			runtimeInfo = &kind.ContainerRuntimeInfo{Runtime: kind.RuntimeUnknown}
+		}
+		
+		gatewayEnabled := needsLocalGateway && kind.SupportsGateway(runtimeInfo.Runtime)
+		
+		slog.Debug("Container runtime detection for kind cluster", 
+			slog.String("runtime", runtimeInfo.Runtime.String()),
+			slog.Bool("needsLocalGateway", needsLocalGateway),
+			slog.Bool("gatewayEnabled", gatewayEnabled))
+		
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Spec)

@@ -49,20 +49,43 @@ func (spec *InstallSpec) PrintAccessInfo(ctx context.Context, kubeClient kube.Ku
 		return nil
 	}
 
-	dockerDesktop, err := kind.IsDockerDesktop(ctx)
+	// Use improved container runtime detection
+	runtimeInfo, err := kind.DetectContainerRuntime(ctx)
 	if err != nil {
-		return err
+		slog.Warn("Failed to detect container runtime", slog.String("error", err.Error()))
+		runtimeInfo = &kind.ContainerRuntimeInfo{Runtime: kind.RuntimeUnknown}
 	}
 
-	podman, _ := kind.IsPodmanAvailable()
-
-	if dockerDesktop || podman {
+	if kind.SupportsGateway(runtimeInfo.Runtime) {
+		runtimeName := runtimeInfo.Runtime.String()
+		if runtimeName == "Unknown" {
+			runtimeName = "your container runtime"
+		}
+		
+		configPath := fmt.Sprintf("wg0-%s.conf", slug)
+		
 		fmt.Printf(
-			`Because you are using Docker Desktop, to access services running inside the
+			`Because you are using %s, to access services running inside the
 cluster, you will need to use a Wireguard VPN. To obtain the VPN configuration, 
 run the following command:
-bi vpn config -o wg0.conf %s
-`, slug)
+
+bi vpn config -o %s %s
+
+`, runtimeName, configPath, slug)
+
+		// Provide simplified connection instructions
+		fmt.Printf(`To connect to the VPN:
+1. Install WireGuard: brew install wireguard-tools
+2. Connect: sudo wg-quick up %s
+3. Access cluster services in your browser
+4. Disconnect: sudo wg-quick down %s
+
+`, configPath, configPath)
+		
+		fmt.Printf(`For troubleshooting %s specific issues, run:
+bi debug runtime-info
+
+`, runtimeInfo.Runtime.String())
 	}
 
 	return nil
