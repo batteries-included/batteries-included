@@ -326,10 +326,10 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:config_map_network, battery, state) do
-    ssl = ssl_enabled?(state)
-
     data =
-      maybe_put(%{}, ssl, "http-protocol", "Enabled")
+      %{}
+      |> Map.put("ingress.class", "gateway-api.ingress.networking.knative.dev")
+      |> maybe_put(ssl_enabled?(state), "http-protocol", "Enabled")
 
     :config_map
     |> B.build_resource()
