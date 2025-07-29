@@ -45,6 +45,10 @@ defmodule CommonCore.Resources.VMCluster do
                 }
               }
             }
+          },
+          "serviceSpec" => %{
+            "metadata" => %{"labels" => %{"istio.io/ingress-use-waypoint" => "true"}},
+            "spec" => %{}
           }
         }
       )
@@ -71,7 +75,6 @@ defmodule CommonCore.Resources.VMCluster do
     |> B.build_resource()
     |> B.name(@instance_name)
     |> B.namespace(namespace)
-    |> B.label("istio.io/ingress-use-waypoint", "true")
     |> B.spec(spec)
   end
 
@@ -82,7 +85,7 @@ defmodule CommonCore.Resources.VMCluster do
       battery
       |> R.new_httproute_spec(state)
       |> R.add_oauth2_proxy_rule(battery, state)
-      |> R.add_backend("vmselect-main-cluster", @vm_select_port)
+      |> R.add_backend("vmselect-main-cluster-additional-service", @vm_select_port)
 
     :gateway_http_route
     |> B.build_resource()
@@ -126,7 +129,7 @@ defmodule CommonCore.Resources.VMCluster do
     spec =
       state
       |> PU.request_auth()
-      |> PU.target_ref_for_service("vmselect-main-cluster")
+      |> PU.target_ref_for_service("vmselect-main-cluster-additional-service")
 
     :istio_request_auth
     |> B.build_resource()
@@ -143,7 +146,7 @@ defmodule CommonCore.Resources.VMCluster do
       state
       |> vmselect_hosts()
       |> PU.auth_policy(battery)
-      |> PU.target_ref_for_service("vmselect-main-cluster")
+      |> PU.target_ref_for_service("vmselect-main-cluster-additional-service")
 
     :istio_auth_policy
     |> B.build_resource()
