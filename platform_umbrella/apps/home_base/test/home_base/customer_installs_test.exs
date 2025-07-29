@@ -140,7 +140,7 @@ defmodule HomeBase.CustomerInstallsTest do
 
       found = List.first(all_installations)
       assert installation.slug == found.slug
-      assert found.deleted_at != nil
+      assert found.deleted_at
     end
 
     test "soft deleted installations are still readable" do

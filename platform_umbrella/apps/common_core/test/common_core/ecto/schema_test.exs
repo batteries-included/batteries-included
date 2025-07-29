@@ -107,14 +107,14 @@ defmodule CommonCore.Ecto.SchemaTest do
     test "embedded schema can have a secret field" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{meta: %{}})
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.meta.password != nil
+      assert todo.meta.password
       assert byte_size(todo.meta.password) == 64
     end
 
     test "embedded schema runs validations" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{meta: %{name: "admin"}})
       assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
-      assert changeset.changes.meta.errors[:name] != nil
+      assert changeset.changes.meta.errors[:name]
     end
 
     test "embedded schemas can have default values" do
@@ -126,7 +126,7 @@ defmodule CommonCore.Ecto.SchemaTest do
     test "name slug_field gets value generated" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{})
       todo = Ecto.Changeset.apply_changes(changeset)
-      assert todo.name != nil
+      assert todo.name
 
       assert String.contains?(todo.name, "-")
     end
@@ -140,25 +140,25 @@ defmodule CommonCore.Ecto.SchemaTest do
     test "slug_field validates dns hostname safe no spaces" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{name: "my name"})
       assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
-      assert changeset.errors[:name] != nil
+      assert changeset.errors[:name]
     end
 
     test "slug_field validates dns hostname safe no underscores" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{name: "my_name"})
       assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
-      assert changeset.errors[:name] != nil
+      assert changeset.errors[:name]
     end
 
     test "slug_field validates dns hostname safe no dots" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{name: "my.name"})
       assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
-      assert changeset.errors[:name] != nil
+      assert changeset.errors[:name]
     end
 
     test "slug_field validates dns hostname safe length" do
       changeset = TodoSchema.changeset(%TodoSchema{}, %{name: String.duplicate("a", 64)})
       assert {:error, changeset} = Ecto.Changeset.apply_action(changeset, :validate)
-      assert changeset.errors[:name] != nil
+      assert changeset.errors[:name]
     end
   end
 

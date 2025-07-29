@@ -28,7 +28,7 @@ defmodule ControlServer.TraditionalServicesTest do
     test "get_service!/1 returns the service with given id" do
       service = service_fixture()
       found = TraditionalServices.get_service!(service.id)
-      assert found != nil
+      assert found
       assert found.name == service.name
       assert found.containers == service.containers
       assert found.init_containers == service.init_containers

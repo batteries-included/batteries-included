@@ -145,7 +145,7 @@ defmodule Verify.TestCase.Helpers do
   def click_external(session, query) do
     # get the URL that we will be visiting
     url = attr(session, query, "href")
-    assert url != nil
+    assert url
 
     # retry until success or timeout
     {:ok, _} = url |> build_retryable_get() |> retry()

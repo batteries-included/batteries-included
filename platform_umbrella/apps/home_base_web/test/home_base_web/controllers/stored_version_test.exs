@@ -4,7 +4,7 @@ defmodule HomeBaseWeb.StableVersionControllerTest do
   describe "StableVersionController" do
     test "gets a jwt", %{conn: conn} do
       conn = get(conn, ~p"/api/v1/stable_versions")
-      assert json_response(conn, 200)["jwt"] != nil
+      assert json_response(conn, 200)["jwt"]
     end
   end
 end

@@ -12,7 +12,7 @@ defmodule ControlServer.ContentAddressable.ReaperTest do
       document = insert(:content_addressable_document)
       assert Reap.reap_unused_documents() == 0
       # This document shoudl be fine since the document is new
-      assert Repo.get!(Document, document.id) != nil
+      assert Repo.get!(Document, document.id)
     end
 
     test "Removes old documents" do
