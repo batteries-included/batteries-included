@@ -41,31 +41,46 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 }
 
 // Given a Network such as 172.18.0.0/16
-// Return the bottom half of the network, such as 172.18.1.0/24
+// Return an available subnet for MetalLB, such as 172.18.1.0/24
 func split(ipNet *net.IPNet, count int) (*net.IPNet, error) {
 	shift := calculateShift(ipNet)
 	
 	// Calculate maximum number of subnets we can create
 	maxSubnets := 1 << shift
 	
-	// Use count + 1 as the subnet number to avoid subnet 0
-	// This ensures we get sequential subnets starting from 1
-	subnetNum := count + 1
+	// Find the first available subnet number
+	// Always try to use subnet 1 first (avoiding subnet 0)
+	// If that fails, find the next available subnet
+	var selectedSubnet int
 	
-	// Check if we can fit the requested subnet
-	if subnetNum >= maxSubnets {
-		return nil, fmt.Errorf("cannot allocate subnet %d, maximum subnets: %d", subnetNum, maxSubnets)
+	// Start with subnet 1 (avoiding 0 which is typically used by the bridge)
+	selectedSubnet = 1
+	
+	// If we have more containers than available subnets, we need to wrap around
+	// but ensure we don't exceed the maximum
+	if selectedSubnet >= maxSubnets {
+		// Fall back to using modulo to stay within bounds
+		selectedSubnet = (count % maxSubnets)
+		if selectedSubnet == 0 {
+			selectedSubnet = 1 % maxSubnets
+		}
 	}
 	
-	subnet, err := cidr.Subnet(ipNet, shift, subnetNum)
+	// Final safety check - if we still exceed maxSubnets, it's an error
+	if selectedSubnet >= maxSubnets {
+		return nil, fmt.Errorf("cannot allocate subnet %d, maximum subnets: %d", selectedSubnet, maxSubnets)
+	}
+	
+	subnet, err := cidr.Subnet(ipNet, shift, selectedSubnet)
 	if err != nil {
-		return nil, fmt.Errorf("failed to allocate subnet %d: %w", subnetNum, err)
+		return nil, fmt.Errorf("failed to allocate subnet %d: %w", selectedSubnet, err)
 	}
 	
 	slog.Debug("Allocated subnet", 
 		slog.Int("shift", shift),
 		slog.Int("maxSubnets", maxSubnets),
-		slog.Int("selectedSubnet", subnetNum),
+		slog.Int("containerCount", count),
+		slog.Int("selectedSubnet", selectedSubnet),
 		slog.String("subnet", subnet.String()))
 	
 	return subnet, nil
