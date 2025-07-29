@@ -72,9 +72,9 @@ defmodule ControlServerWeb.Router do
     pipe_through [:browser, :auth]
 
     live "/", Live.SnapshotApplyIndex, :index
-    live "/:id/show", Live.UmbrellaSnapshotShow, :index
-    live "/:umbrella_id/kube/:id", Live.KubeSnapshotShow, :index
-    live "/:umbrella_id/keycloak/:id", Live.KeycloakSnapshotShow, :index
+    live "/:id/show", Live.UmbrellaSnapshotShow, :overview
+    live "/:id/kube", Live.UmbrellaSnapshotShow, :kube
+    live "/:id/keycloak", Live.UmbrellaSnapshotShow, :keycloak
   end
 
   scope "/batteries", ControlServerWeb do
@@ -272,6 +272,7 @@ defmodule ControlServerWeb.Router do
     resources "/redis/clusters", RedisInstanceController, except: [:new, :edit]
     resources "/knative/services", KnativeServiceController, except: [:new, :edit]
     resources "/traditional_services", TraditionalServicesController, except: [:new, :edit]
+
     resources "/notebooks/jupyter_lab_notebooks", JupyterLabNotebookController, except: [:new, :edit]
   end
 
