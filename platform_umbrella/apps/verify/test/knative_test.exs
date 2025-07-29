@@ -6,8 +6,8 @@ defmodule Verify.KnativeTest do
     batteries: ~w(knative)a,
     # these are sorted roughly by image size, desc
     images: ~w(
-      knative_istio_controller 
-      knative_istio_webhook 
+      knative_gateway_api_controller
+      knative_gateway_api_webhook
       knative_serving_controller 
       knative_serving_autoscaler 
       knative_serving_activator 
@@ -32,7 +32,7 @@ defmodule Verify.KnativeTest do
     |> assert_pods_in_deployment_running(@knative_ns, "activator")
     |> assert_pods_in_deployment_running(@knative_ns, "autoscaler")
     |> assert_pods_in_deployment_running(@knative_ns, "controller")
-    |> assert_pods_in_deployment_running(@knative_ns, "net-istio-controller")
+    |> assert_pods_in_deployment_running(@knative_ns, "net-gateway-api-controller")
     |> assert_pods_in_deployment_running(@knative_ns, "webhook")
 
     Wallaby.end_session(session)
