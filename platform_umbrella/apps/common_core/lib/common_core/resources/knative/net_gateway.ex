@@ -54,8 +54,8 @@ defmodule CommonCore.Resources.Knative.NetGateway do
         Ymlr.document!([
           %{
             class: "istio",
-            gateway: "#{istio_namespace(state)}/istio-ingress",
-            service: "#{istio_namespace(state)}/istio-ingress"
+            gateway: "#{istio_namespace(state)}/istio-ingressgateway",
+            service: "#{istio_namespace(state)}/istio-ingressgateway"
           }
         ]),
       # This is used for "internal" services - e.g. not publicly accessible
