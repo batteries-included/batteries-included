@@ -13,6 +13,8 @@ defmodule HomeBaseWeb.DashboardLive do
     total_installations = CustomerInstalls.count_installations(socket.assigns.current_user)
     recent_installations = CustomerInstalls.list_recent_installations(socket.assigns.current_user)
 
+    grouped_installations = group_installations_by_team(recent_installations)
+
     {:ok,
      socket
      |> assign(:page, :dashboard)
@@ -20,6 +22,7 @@ defmodule HomeBaseWeb.DashboardLive do
      |> assign(:total_teams, total_teams)
      |> assign(:total_installations, total_installations)
      |> assign(:recent_installations, recent_installations)
+     |> assign(:grouped_installations, grouped_installations)
      |> assign(:confirmation_resent, false)}
   end
 
@@ -75,30 +78,32 @@ defmodule HomeBaseWeb.DashboardLive do
         </.button>
       </.panel>
 
-      <.panel :if={@total_installations > 0} title="Recent Installations">
-        <.table
-          id="recent-installations"
-          rows={@recent_installations}
-          row_click={&JS.navigate(show_installation_url(&1))}
-        >
-          <:col :let={installation} label="Slug">{installation.slug}</:col>
-          <:col :let={installation} label="Team">
-            {if installation.team, do: installation.team.name, else: "Personal"}
-          </:col>
+      <.panel :if={@total_installations > 0}>
+        <div :for={{team_name, installations} <- @grouped_installations} class="mb-6 last:mb-0">
+          <h3 class="text-lg font-semibold mb-3 text-gray-900">{team_name}</h3>
+          <.table
+            id={"recent-installations-#{team_name |> String.replace(" ", "-") |> String.downcase()}"}
+            rows={installations}
+            row_click={&JS.navigate(show_installation_url(&1))}
+          >
+            <:col :let={installation} label="Slug">{installation.slug}</:col>
+            <:col :let={installation} label="Provider">{installation.kube_provider}</:col>
+            <:col :let={installation} label="Usage">{installation.usage}</:col>
 
-          <:action :let={installation}>
-            <.button
-              variant="minimal"
-              link={~p"/installations/#{installation}"}
-              icon={:eye}
-              id={"show_installation_" <> installation.id}
-            />
+            <:action :let={installation}>
+              <.button
+                variant="minimal"
+                link={~p"/installations/#{installation}"}
+                icon={:eye}
+                id={"show_installation_" <> installation.id}
+              />
 
-            <.tooltip target_id={"show_installation_" <> installation.id}>
-              Show Installation
-            </.tooltip>
-          </:action>
-        </.table>
+              <.tooltip target_id={"show_installation_" <> installation.id}>
+                Show Installation
+              </.tooltip>
+            </:action>
+          </.table>
+        </div>
       </.panel>
 
       <.panel :if={@total_installations > 0} title="Keep Going">
@@ -114,5 +119,15 @@ defmodule HomeBaseWeb.DashboardLive do
 
   defp show_installation_url(%Installation{} = installation) do
     ~p"/teams/#{installation.team_id || "personal"}?redirect_to=/installations/#{installation.id}"
+  end
+
+  defp group_installations_by_team(installations) do
+    installations
+    |> Enum.group_by(&team_name/1)
+    |> Enum.sort_by(fn {team_name, _} -> team_name end)
+  end
+
+  defp team_name(installation) do
+    if installation.team, do: installation.team.name, else: "Personal"
   end
 end

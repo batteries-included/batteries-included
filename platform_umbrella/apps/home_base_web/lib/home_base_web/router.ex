@@ -84,6 +84,7 @@ defmodule HomeBaseWeb.Router do
       live "/installations/", InstallationLive
       live "/installations/new", InstallationNewLive
       live "/installations/:id", InstallationShowLive, :show
+      live "/installations/:id/usage", InstallationShowLive, :usage
       live "/installations/:id/success", InstallationShowLive, :success
       live "/installations/:id/edit", InstallationEditLive
 
@@ -113,7 +114,9 @@ defmodule HomeBaseWeb.Router do
     scope "/installations/:installation_id" do
       resources "/usage_reports", StoredUsageReportController, only: [:create]
       resources "/host_reports", StoredHostReportController, only: [:create]
+
       resources "/project_snapshots", StoredProjectSnapshotController, only: [:create, :index, :show]
+
       get "/status", InstallationStatusContoller, :show
       get "/spec", InstallSpecController, :show
       get "/script", InstallScriptController, :show
