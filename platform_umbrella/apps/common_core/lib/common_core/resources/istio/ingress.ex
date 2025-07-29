@@ -1,13 +1,15 @@
 defmodule CommonCore.Resources.Istio.Ingress do
   @moduledoc false
-  use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingress"
+  use CommonCore.Resources.ResourceGenerator, app_name: "istio-ingressgateway"
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.Util.Map
+  import K8s.Resource
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.Core
+  alias CommonCore.StateSummary.FromKubeState
 
   resource(:service_ingress, _battery, state) do
     namespace = istio_namespace(state)
@@ -15,18 +17,17 @@ defmodule CommonCore.Resources.Istio.Ingress do
     spec =
       %{}
       |> Map.put("ports", [
-        %{"name" => "status-port", "port" => 15_021, "protocol" => "TCP", "targetPort" => 15_021},
-        %{"name" => "http2", "port" => 80, "protocol" => "TCP", "targetPort" => 80},
-        %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => 443}
+        %{"name" => "http2", "port" => 80, "protocol" => "TCP", "targetPort" => 8080},
+        %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => 8443}
       ])
-      |> Map.put("selector", %{"battery/app" => @app_name, "istio" => "ingress"})
+      |> Map.put("selector", %{"battery/app" => @app_name, "istio" => "ingressgateway"})
       |> Map.put("type", "LoadBalancer")
 
     :service
     |> B.build_resource()
     |> B.name(@app_name)
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.spec(spec)
     |> add_public_lb_annotations(state)
   end
@@ -85,14 +86,15 @@ defmodule CommonCore.Resources.Istio.Ingress do
       ],
       "gatewayClassName" => "istio",
       "infrastructure" => %{},
-      "listeners" => [
-        %{
-          "name" => "http",
-          "port" => 80,
-          "protocol" => "HTTP",
-          "allowedRoutes" => %{"namespaces" => %{"from" => "All"}}
-        }
-      ]
+      "listeners" =>
+        [
+          %{
+            "name" => "http",
+            "port" => 80,
+            "protocol" => "HTTP",
+            "allowedRoutes" => %{"namespaces" => %{"from" => "All"}}
+          }
+        ] ++ https_listeners(state)
     }
 
     :gateway
@@ -111,10 +113,10 @@ defmodule CommonCore.Resources.Istio.Ingress do
 
     :role
     |> B.build_resource()
-    |> B.name("istio-ingress-sds")
+    |> B.name("istio-ingressgateway-sds")
     |> B.namespace(namespace)
     |> B.label("istio.io/rev", "default")
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.rules(rules)
   end
 
@@ -123,12 +125,12 @@ defmodule CommonCore.Resources.Istio.Ingress do
 
     :role_binding
     |> B.build_resource()
-    |> B.name("istio-ingress-sds")
+    |> B.name("istio-ingressgateway-sds")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.label("istio.io/rev", "default")
-    |> B.role_ref(B.build_role_ref("istio-ingress-sds"))
-    |> B.subject(B.build_service_account("istio-ingress-service-account", namespace))
+    |> B.role_ref(B.build_role_ref("istio-ingressgateway-sds"))
+    |> B.subject(B.build_service_account("istio-ingressgateway-service-account", namespace))
   end
 
   resource(:deployment_ingress, battery, state) do
@@ -141,10 +143,22 @@ defmodule CommonCore.Resources.Istio.Ingress do
             %{
               "name" => "istio-proxy",
               "image" => "auto",
-              "securityContext" => %{"capabilities" => %{"drop" => ["ALL"]}, "runAsUser" => 1337, "runAsGroup" => 1337}
+              "securityContext" => %{
+                "capabilities" => %{"drop" => ["ALL"]},
+                "runAsUser" => 1337,
+                "runAsGroup" => 1337
+              },
+              "ports" => [
+                %{"containerPort" => 15_021, "protocol" => "TCP"},
+                %{"containerPort" => 8080, "protocol" => "TCP"},
+                %{"containerPort" => 8443, "protocol" => "TCP"},
+                %{"containerPort" => 15_090, "name" => "http-envoy-prom", "protocol" => "TCP"}
+              ]
             }
           ],
-          "securityContext" => %{"sysctls" => [%{"name" => "net.ipv4.ip_unprivileged_port_start", "value" => "0"}]}
+          "securityContext" => %{
+            "sysctls" => [%{"name" => "net.ipv4.ip_unprivileged_port_start", "value" => "0"}]
+          }
         }
       }
       |> B.annotation("inject.istio.io/templates", "gateway")
@@ -154,14 +168,16 @@ defmodule CommonCore.Resources.Istio.Ingress do
 
     spec =
       %{}
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "istio" => "ingress"}})
+      |> Map.put("selector", %{
+        "matchLabels" => %{"battery/app" => @app_name, "istio" => "ingressgateway"}
+      })
       |> B.template(template)
 
     :deployment
     |> B.build_resource()
-    |> B.name("istio-ingress")
+    |> B.name("istio-ingressgateway")
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.label("istio.io/rev", "default")
     |> B.spec(spec)
   end
@@ -192,7 +208,33 @@ defmodule CommonCore.Resources.Istio.Ingress do
     |> B.build_resource()
     |> B.name(@app_name)
     |> B.namespace(namespace)
-    |> B.label("istio", "ingress")
+    |> B.label("istio", "ingressgateway")
     |> B.spec(spec)
+  end
+
+  defp https_listeners(state) do
+    state
+    |> FromKubeState.all_resources(:certmanager_certificate)
+    |> Enum.filter(&(label(&1, "battery/gateway") == @app_name))
+    |> Enum.flat_map(fn cert ->
+      type = cert |> label("battery/certificate-for") |> String.replace("_", "-")
+
+      cert
+      |> get_in(~w(spec dnsNames))
+      |> Enum.with_index()
+      |> Enum.map(fn {name, ix} ->
+        %{
+          "name" => "https-#{type}-#{ix}",
+          "hostname" => name,
+          "port" => 443,
+          "protocol" => "HTTPS",
+          "tls" => %{
+            "mode" => "Terminate",
+            "certificateRefs" => [%{"name" => get_in(cert, ~w(spec secretName))}]
+          },
+          "allowedRoutes" => %{"namespaces" => %{"from" => "All"}}
+        }
+      end)
+    end)
   end
 end

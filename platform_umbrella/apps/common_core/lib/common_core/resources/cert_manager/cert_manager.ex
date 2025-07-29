@@ -525,7 +525,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
                 "--leader-election-namespace=#{namespace}",
                 "--acme-http01-solver-image=#{battery.config.acmesolver_image}",
                 "--max-concurrent-challenges=60",
-                "--enabled-gateway-api"
+                "--enable-gateway-api"
               ],
               "env" => [
                 %{"name" => "POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
@@ -1033,7 +1033,9 @@ defmodule CommonCore.Resources.CertManager.CertManager do
           %{
             "http01" => %{
               "gatewayHTTPRoute" => %{
-                "parentRefs" => [%{"name" => "istio-ingress", "namespace" => istio_namespace(state), "kind" => "Gateway"}]
+                "parentRefs" => [
+                  %{"name" => "istio-ingressgateway", "namespace" => istio_namespace(state), "kind" => "Gateway"}
+                ]
               }
             }
           }
@@ -1045,7 +1047,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name(name)
     |> B.spec(spec)
-    |> F.require_battery(:istio_gateway)
+    |> F.require_battery(state, :istio_gateway)
   end
 
   resource(:lets_encrypt_cluster_issuer, battery, state) do
@@ -1060,7 +1062,9 @@ defmodule CommonCore.Resources.CertManager.CertManager do
           %{
             "http01" => %{
               "gatewayHTTPRoute" => %{
-                "parentRefs" => [%{"name" => "istio-ingress", "namespace" => istio_namespace(state), "kind" => "Gateway"}]
+                "parentRefs" => [
+                  %{"name" => "istio-ingressgateway", "namespace" => istio_namespace(state), "kind" => "Gateway"}
+                ]
               }
             }
           }
@@ -1072,16 +1076,6 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name(name)
     |> B.spec(spec)
-    |> F.require_battery(:istio_gateway)
-  end
-
-  # This ingress class is used to present HTTP01 challenges
-  resource(:cert_manager_ingress_class) do
-    spec = %{"controller" => "istio.io/ingress-controller"}
-
-    :ingress_class
-    |> B.build_resource()
-    |> B.name("cert-manager")
-    |> B.spec(spec)
+    |> F.require_battery(state, :istio_gateway)
   end
 end

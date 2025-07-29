@@ -43,6 +43,8 @@ defmodule CommonCore.Resources.CertManager.Certificates.Cert do
     |> B.build_resource()
     |> B.name(name)
     |> B.namespace(namespace)
+    |> B.label("battery/gateway", "istio-ingressgateway")
+    |> B.label("battery/certificate-for", Atom.to_string(type))
     |> B.spec(spec)
     |> F.require_non_empty(spec)
   end

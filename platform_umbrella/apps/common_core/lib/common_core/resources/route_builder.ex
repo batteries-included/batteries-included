@@ -7,6 +7,7 @@ defmodule CommonCore.Resources.RouteBuilder do
   alias CommonCore.StateSummary
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.Hosts
+  alias CommonCore.StateSummary.SSL
 
   @spec new_httproute_spec(SystemBattery.t(), StateSummary.t()) :: map()
   def new_httproute_spec(battery, state) do
@@ -20,7 +21,7 @@ defmodule CommonCore.Resources.RouteBuilder do
     istio_ns = istio_namespace(state)
 
     %{
-      "parentRefs" => [%{"name" => "istio-ingress", "namespace" => istio_ns}],
+      "parentRefs" => [%{"name" => "istio-ingressgateway", "namespace" => istio_ns}],
       "hostnames" => hosts,
       "rules" => []
     }
@@ -65,5 +66,22 @@ defmodule CommonCore.Resources.RouteBuilder do
     )
   end
 
-  # TODO: prepend http -> https redirect
+  @spec maybe_https_redirect(map(), StateSummary.t()) :: map()
+  def maybe_https_redirect(spec, state) do
+    if SSL.ssl_enabled?(state) do
+      update_in(
+        spec,
+        ["rules"],
+        &([
+            %{
+              "filters" => [
+                %{"type" => "RequestRedirect", "requestRedirect" => %{"scheme" => "http", "statusCode" => 301}}
+              ]
+            }
+          ] ++ &1)
+      )
+    else
+      spec
+    end
+  end
 end
