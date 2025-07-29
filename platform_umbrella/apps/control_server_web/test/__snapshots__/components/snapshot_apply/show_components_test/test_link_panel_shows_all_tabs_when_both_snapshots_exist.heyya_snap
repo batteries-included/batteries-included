@@ -1,0 +1,32 @@
+<div class="bg-gray-lightest rounded-lg dark:bg-gray-darker/20 flex flex-col lg:order-last">
+  
+
+  <div class="relative flex-1 px-6 py-5 ">
+    
+  <div class="flex rounded-lg flex-col gap-3">
+  
+    <a href="/deploy/test-id/show" data-phx-link="patch" data-phx-link-state="push" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md font-medium text-gray-dark dark:text-gray bg-white dark:bg-gray-darkest drop-shadow-md text-gray-darkest dark:text-white [&amp;&gt;svg]:text-primary transform-gpu">
+      
+      <span>
+      Overview
+    </span>
+    </a>
+  
+    <a href="/deploy/test-id/kube" data-phx-link="patch" data-phx-link-state="push" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md font-medium text-gray-dark dark:text-gray transform-gpu">
+      
+      <span>
+      Kubernetes
+    </span>
+    </a>
+  
+    <a href="/deploy/test-id/keycloak" data-phx-link="patch" data-phx-link-state="push" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md font-medium text-gray-dark dark:text-gray transform-gpu">
+      
+      <span>
+      Keycloak
+    </span>
+    </a>
+  
+</div>
+
+  </div>
+</div>

@@ -48,6 +48,12 @@ defmodule ControlServer.Factory do
     }
   end
 
+  def keycloak_snapshot_factory do
+    %ControlServer.SnapshotApply.KeycloakSnapshot{
+      status: sequence(:status, [:creation, :generation, :applying, :ok, :error])
+    }
+  end
+
   def resource_path_factory do
     %ControlServer.SnapshotApply.ResourcePath{
       path: sequence("/path/path-"),
@@ -82,17 +88,24 @@ defmodule ControlServer.Factory do
     user_two = build(:postgres_user)
 
     name = Map.get_lazy(attrs, :name, fn -> sequence("postgres-cluster-") end)
-    num_instances = Map.get_lazy(attrs, :num_instances, fn -> sequence(:num_instances, [1, 2, 5]) end)
+
+    num_instances =
+      Map.get_lazy(attrs, :num_instances, fn -> sequence(:num_instances, [1, 2, 5]) end)
+
     type = Map.get_lazy(attrs, :type, fn -> sequence(:type, ~w(standard internal)a) end)
     project_id = Map.get(attrs, :project_id, nil)
 
     virtual_size =
-      Map.get_lazy(attrs, :virtual_size, fn -> sequence(:virtual_size, ~w(tiny small medium large xlarge huge)) end)
+      Map.get_lazy(attrs, :virtual_size, fn ->
+        sequence(:virtual_size, ~w(tiny small medium large xlarge huge))
+      end)
 
     # Factories don't go through changesets so we apply the virtual size attributes here
     # if there is one
     virtual_size_attrs =
-      CommonCore.Postgres.Cluster.presets() |> Enum.find(%{}, fn pre -> pre.name == virtual_size end) |> Map.delete(:name)
+      CommonCore.Postgres.Cluster.presets()
+      |> Enum.find(%{}, fn pre -> pre.name == virtual_size end)
+      |> Map.delete(:name)
 
     storage_class = Map.get(attrs, :storage_class, "default")
 
@@ -143,7 +156,11 @@ defmodule ControlServer.Factory do
   end
 
   def containers_env_value_factory do
-    %CommonCore.Containers.EnvValue{name: sequence("env-value-"), value: "test", source_type: :value}
+    %CommonCore.Containers.EnvValue{
+      name: sequence("env-value-"),
+      value: "test",
+      source_type: :value
+    }
   end
 
   def port_factory do
@@ -191,7 +208,10 @@ defmodule ControlServer.Factory do
   end
 
   def timeline_event_factory(attrs) do
-    event_type = Map.get_lazy(attrs, :type, fn -> sequence(:event_type, [:battery_install, :kube, :named_database]) end)
+    event_type =
+      Map.get_lazy(attrs, :type, fn ->
+        sequence(:event_type, [:battery_install, :kube, :named_database])
+      end)
 
     case event_type do
       :battery_install ->
@@ -224,7 +244,14 @@ defmodule ControlServer.Factory do
       name: sequence("kube-resource-"),
       namespace: sequence(:namespace, ["default", "battery-core", "battery-data"]),
       computed_status:
-        sequence(:computed_status, [:ready, :containers_ready, :initialized, :pod_has_network, :pod_scheduled, :unknown])
+        sequence(:computed_status, [
+          :ready,
+          :containers_ready,
+          :initialized,
+          :pod_has_network,
+          :pod_scheduled,
+          :unknown
+        ])
     }
   end
 
