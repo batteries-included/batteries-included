@@ -67,7 +67,7 @@ defmodule HomeBase.ETTest do
 
       found = List.first(all_reports)
       assert stored_usage_report.id == found.id
-      assert found.deleted_at != nil
+      assert found.deleted_at
     end
 
     test "soft deleted usage reports are still readable" do
@@ -80,7 +80,7 @@ defmodule HomeBase.ETTest do
 
       found = List.first(all_reports)
       assert stored_usage_report.id == found.id
-      assert found.deleted_at != nil
+      assert found.deleted_at
     end
 
     test "change_stored_usage_report/1 returns a stored_usage_report changeset" do
@@ -153,7 +153,7 @@ defmodule HomeBase.ETTest do
 
       found = List.first(all_reports)
       assert stored_host_report.id == found.id
-      assert found.deleted_at != nil
+      assert found.deleted_at
     end
 
     test "soft deleted host reports are still readable" do
@@ -166,7 +166,7 @@ defmodule HomeBase.ETTest do
 
       found = List.first(all_reports)
       assert stored_host_report.id == found.id
-      assert found.deleted_at != nil
+      assert found.deleted_at
     end
 
     test "change_stored_host_report/1 returns a stored_host_report changeset" do

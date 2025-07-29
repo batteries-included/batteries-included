@@ -58,7 +58,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> start(~p"/postgres/new")
       |> submit_form("#cluster-form", @valid_attrs)
 
-      assert not is_nil(Repo.get_by(Cluster, name: @valid_attrs.cluster.name))
+      assert Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
     end
 
     test "create a cluster with project", %{conn: conn} do
@@ -104,7 +104,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> submit_form("#cluster-form", @valid_attrs)
 
       cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
-      assert Enum.find(cluster.users, &(&1.roles == valid_user_params["roles"]))
+      assert Enum.any?(cluster.users, &(&1.roles == valid_user_params["roles"]))
     end
 
     test "can create a cluster with user and database owner", %{conn: conn} do
@@ -148,7 +148,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> submit_form("#cluster-form", @valid_attrs)
 
       cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
-      refute Enum.find(cluster.users, &(&1.roles == valid_user_params["roles"]))
+      refute Enum.any?(cluster.users, &(&1.roles == valid_user_params["roles"]))
     end
 
     test "can edit a user", %{conn: conn} do
@@ -165,7 +165,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       |> submit_form("#cluster-form", @valid_attrs)
 
       cluster = Repo.get_by(Cluster, name: @valid_attrs.cluster.name)
-      assert Enum.find(cluster.users, &(&1.roles == updated_user_params["roles"]))
+      assert Enum.any?(cluster.users, &(&1.roles == updated_user_params["roles"]))
     end
   end
 

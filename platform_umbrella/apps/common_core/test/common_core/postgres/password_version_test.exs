@@ -12,6 +12,6 @@ defmodule CommonCore.Postgres.PasswordVersionTest do
   test "sets a password when not provided" do
     changeset = PGPasswordVersion.changeset(%PGPasswordVersion{}, %{})
 
-    assert changeset.changes.password != nil
+    assert changeset.changes.password
   end
 end

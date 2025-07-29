@@ -6,7 +6,7 @@ defmodule CommonCore.InstallationTest do
   describe "Installations can sign with elytic keys" do
     test "Installations gets keys" do
       installation = Installation.new!("signing-test", provider: :kind, usage: :development)
-      assert installation.control_jwk != nil
+      assert installation.control_jwk
     end
 
     test "Installations can sign and verify" do

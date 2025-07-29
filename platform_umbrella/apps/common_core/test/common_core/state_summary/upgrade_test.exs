@@ -12,7 +12,7 @@ defmodule CommonCore.StateSummary.UpgradeTest do
     test "sunday isn't an upgrade day" do
       captured_at = DateTime.new!(Date.new!(2024, 7, 28), Time.new!(19, 42, 0, 0), "Etc/UTC")
       state_summary = build(:state_summary, captured_at: captured_at)
-      assert !Core.upgrade_time?(state_summary)
+      refute Core.upgrade_time?(state_summary)
     end
 
     test "monday is an upgrade day" do

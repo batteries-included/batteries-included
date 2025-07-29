@@ -21,7 +21,7 @@ defmodule HomeBaseWeb.StoredHostReportControllerTest do
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
       report = HomeBase.ET.get_stored_host_report!(id)
-      assert report != nil
+      assert report
       assert report.installation_id == install.id
     end
 

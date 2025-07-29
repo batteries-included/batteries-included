@@ -24,7 +24,7 @@ defmodule HomeBaseWeb.JwkDeleteTest do
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       report = HomeBase.ET.get_stored_host_report!(id)
-      assert report != nil
+      assert report
 
       install_two = HomeBase.CustomerInstalls.get_installation!(install.id)
 
@@ -46,7 +46,7 @@ defmodule HomeBaseWeb.JwkDeleteTest do
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       report = HomeBase.ET.get_stored_usage_report!(id)
-      assert report != nil
+      assert report
 
       install_two = HomeBase.CustomerInstalls.get_installation!(install.id)
 

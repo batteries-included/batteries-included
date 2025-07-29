@@ -10,7 +10,7 @@ defmodule HomeBaseWeb.InstallationStatusControllerTest do
   describe "InstallationStatusController" do
     test "gets jwt on a new installation", %{conn: conn, installation: install} do
       conn = get(conn, ~p"/api/v1/installations/#{install.id}/status")
-      assert json_response(conn, 200)["jwt"] != nil
+      assert json_response(conn, 200)["jwt"]
     end
 
     test "can verify the jwt on status", %{conn: conn, installation: install} do
