@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.30.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.35.0
 	github.com/aws/smithy-go v1.22.5
-	github.com/docker/docker v28.3.2+incompatible
+	github.com/docker/docker v28.3.3+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/go-jose/go-jose/v4 v4.1.1
 	github.com/lmittmann/tint v1.1.2
