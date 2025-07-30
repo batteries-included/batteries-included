@@ -221,14 +221,16 @@ grafana:
   tag_regex: ^\d+\.\d+\.\d+$
 istio_cni:
   name: docker.io/istio/install-cni
-  default_tag: 1.26.2-distroless
+  default_tag: 1.26.3-distroless
   tags:
+    - 1.26.3-distroless
     - 1.26.2-distroless
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_pilot:
   name: docker.io/istio/pilot
-  default_tag: 1.26.2-distroless
+  default_tag: 1.26.3-distroless
   tags:
+    - 1.26.3-distroless
     - 1.26.2-distroless
     - 1.26.1-distroless
     - 1.26.0-distroless
@@ -245,8 +247,9 @@ istio_pilot:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_proxy:
   name: docker.io/istio/proxyv2
-  default_tag: 1.26.2-distroless
+  default_tag: 1.26.3-distroless
   tags:
+    - 1.26.3-distroless
     - 1.26.2-distroless
     - 1.26.1-distroless
     - 1.26.0-distroless
@@ -263,8 +266,9 @@ istio_proxy:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_ztunnel:
   name: docker.io/istio/ztunnel
-  default_tag: 1.26.2-distroless
+  default_tag: 1.26.3-distroless
   tags:
+    - 1.26.3-distroless
     - 1.26.2-distroless
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
