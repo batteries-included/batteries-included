@@ -123,8 +123,16 @@ defmodule ControlServerWeb.Router do
     live "/pod/:namespace/:name/logs", Live.PodShow, :logs
     live "/pod/:namespace/:name/show", Live.PodShow, :index
 
-    live "/deployment/:namespace/:name/show", Live.DeploymentShow
-    live "/stateful_set/:namespace/:name/show", Live.StatefulSetShow
+    live "/deployment/:namespace/:name/events", Live.DeploymentShow, :events
+    live "/deployment/:namespace/:name/pods", Live.DeploymentShow, :pods
+    live "/deployment/:namespace/:name/labels", Live.DeploymentShow, :labels
+    live "/deployment/:namespace/:name/annotations", Live.DeploymentShow, :annotations
+    live "/deployment/:namespace/:name/show", Live.DeploymentShow, :index
+    live "/stateful_set/:namespace/:name/events", Live.StatefulSetShow, :events
+    live "/stateful_set/:namespace/:name/pods", Live.StatefulSetShow, :pods
+    live "/stateful_set/:namespace/:name/labels", Live.StatefulSetShow, :labels
+    live "/stateful_set/:namespace/:name/annotations", Live.StatefulSetShow, :annotations
+    live "/stateful_set/:namespace/:name/show", Live.StatefulSetShow, :index
     live "/service/:namespace/:name/show", Live.ServiceShow
   end
 
