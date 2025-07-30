@@ -14,7 +14,7 @@ defmodule ControlServerWeb.Batteries.StaleResourceCleanerForm do
         <.fieldset>
           <.field>
             <:label>Delay</:label>
-            <.input type="number" field={@form[:delay]} />
+            <.input type="number" field={@form[:delay_override]} value={@form[:delay].value} />
           </.field>
         </.fieldset>
       </.panel>
