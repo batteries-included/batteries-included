@@ -37,7 +37,7 @@ defmodule Verify.HomeBaseTest do
     {:ok, conn} = K8s.Conn.from_file(kube_config_path, insecure_skip_tls_verify: true)
     op = K8s.Client.apply(home_base_seed_data)
 
-    case K8s.Client.run(conn, op) do
+    case retry(fn -> K8s.Client.run(conn, op) end) do
       {:ok, _} ->
         :ok
 
