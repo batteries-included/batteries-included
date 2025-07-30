@@ -8,6 +8,7 @@ import { ClipboardHook } from '../../../common_ui/assets/js/clipboard';
 import { RangeHook } from '../../../common_ui/assets/js/range';
 import { TooltipHook } from '../../../common_ui/assets/js/tooltip';
 import '../../../common_ui/assets/js/shared';
+import ObjectDisplayHook from './object-display';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -20,6 +21,7 @@ const hooks: { [name: string]: Partial<ViewHook> } = {
   Range: RangeHook,
   Tooltip: TooltipHook,
   ResourceLogsModal: ResourceLogsModalHook,
+  ObjectDisplay: ObjectDisplayHook,
 };
 
 const liveSocket = new LiveSocket('/live', Socket, {
