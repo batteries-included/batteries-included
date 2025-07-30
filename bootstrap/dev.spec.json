@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_01984ead540a717f8a5740b447534a07",
+        "id": "batt_019859497ff87ff1a249e53dbe5f1ce5",
         "type": "gateway_api",
         "config": {
           "type": "gateway_api"
@@ -19,12 +19,12 @@
         "updated_at": null
       },
       {
-        "id": "batt_01984ead540a7a53b07f3a47356c28de",
+        "id": "batt_019859497ff87d589edf627ecadbc05f",
         "type": "istio",
         "config": {
           "type": "istio",
           "namespace": "battery-istio",
-          "pilot_image": "docker.io/istio/pilot:1.26.2-distroless",
+          "pilot_image": "docker.io/istio/pilot:1.26.3-distroless",
           "namespace_override": null,
           "pilot_image_name_override": null,
           "pilot_image_tag_override": null
@@ -34,11 +34,11 @@
         "updated_at": null
       },
       {
-        "id": "batt_01984ead540b75f2805adcf5e344416e",
+        "id": "batt_019859497ff87ca89a903a3870074e52",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.26.2-distroless",
+          "proxy_image": "docker.io/istio/proxyv2:1.26.3-distroless",
           "proxy_image_name_override": null,
           "proxy_image_tag_override": null
         },
@@ -47,7 +47,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01984ead540b7fa481df6888ccb1bb8d",
+        "id": "batt_019859497ff8731b95844c69d4eb4cee",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -59,13 +59,13 @@
           "ai_namespace": "battery-ai",
           "default_size": "tiny",
           "cluster_name": "dev",
-          "install_id": "batt_01984ead53f47818b4c638b227a9b051",
+          "install_id": "batt_019859497fdf762daf4a6f96b24edba2",
           "control_jwk": {
             "crv": "P-256",
-            "d": "PSCioSgtzbGzrSOFo5CgWKWkVSeN-MzXdiw2pyF_fbQ",
+            "d": "Z7HMeFhxXWBwFJnbD_89sJcqY-R7r9lizwPfFzVUM3U",
             "kty": "EC",
-            "x": "E8DqZNJktH_6PzbHA-rCLqlT5_2HWgNLRRPir_M5ZOI",
-            "y": "FTyIxxFxFjHFY3J9Ff96Txd6umMQcki3jDvcnuxm_Yg"
+            "x": "Yuhr0VzAV97NoqaF4HU3JnH4Zktf0uKnn9HErGf8oV4",
+            "y": "BTJ6VUIQVrIzP_Yx2XG9JZkPFcgvv9v57cVCP7qBlPI"
           },
           "upgrade_days_of_week": [
             true,
@@ -90,7 +90,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01984ead540b7fbcb602cc10343d5027",
+        "id": "batt_019859497ff87e53a3b0278bfe827c7e",
         "type": "metallb",
         "config": {
           "type": "metallb",
@@ -110,7 +110,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01984ead540b7a9d8e0ee8d4099e9e2e",
+        "id": "batt_019859497ff87c52b0a0125651cdc9b7",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
@@ -129,7 +129,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_01984ead540b7d28a40e692f6a425d36",
+        "id": "batt_019859497ff879b2b86d56c036d714f1",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -185,7 +185,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "KG4IKIU7PVN6OYO63OMOZEZG"
+            "password": "S7KURUWIG4HYH5DT6YBZWYHV"
           },
           {
             "version": 1,
@@ -218,7 +218,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "DFOFVDLAIB5R55UA3XDZQDYPR6F4HEDHVJ5NRQ7EYS27ZDB6TNKA===="
+          "battery/hash": "ZLK7S264JKQ3T6RDHKQQXRRR6DE3Q4PRE2ZYTACQMY5DIODFIJ7A===="
         },
         "labels": {
           "app": "battery-core",
@@ -228,7 +228,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_01984ead540b7fa481df6888ccb1bb8d",
+          "battery/owner": "batt_019859497ff8731b95844c69d4eb4cee",
           "istio-injection": "enabled",
           "version": "latest"
         },
