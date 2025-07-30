@@ -23,14 +23,21 @@ defmodule ControlServerWeb.Live.DeployementLiveTest do
   describe "show" do
     setup [:create_deployment]
 
-    test "displays deployment", %{conn: conn, deployment: deployment} do
+    test "displays deployment conditions", %{conn: conn, deployment: deployment} do
       {:ok, _show_live, html} =
-        live(conn, "/kube/deployment/#{namespace(deployment)}/#{name(deployment)}/show")
+        live(conn, ~p"/kube/deployment/#{namespace(deployment)}/#{name(deployment)}/show")
 
       assert html =~ name(deployment)
 
       conditions = conditions(deployment)
       assert html =~ get_in(conditions, [Access.at(0), "type"])
+    end
+
+    test "displays deployment labels", %{conn: conn, deployment: deployment} do
+      {:ok, _show_live, html} =
+        live(conn, "/kube/deployment/#{namespace(deployment)}/#{name(deployment)}/labels")
+
+      assert html =~ name(deployment)
 
       labels = labels(deployment)
       {label_key, label_value} = Enum.at(Map.to_list(labels), 0)
