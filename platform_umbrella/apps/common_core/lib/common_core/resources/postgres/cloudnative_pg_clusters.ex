@@ -10,6 +10,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Batteries
+  alias CommonCore.StateSummary.FromKubeState
   alias CommonCore.StateSummary.PostgresState
 
   multi_resource(:postgres_clusters, battery, state) do
@@ -332,6 +333,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.build_resource()
     |> B.name(name)
     |> B.namespace(namespace)
+    |> Map.put("type", get_secret_type(state, namespace, name))
     |> B.label("cnpg.io/reload", "")
     |> F.require_battery(state, :battery_ca)
   end
@@ -358,5 +360,19 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
     |> Map.put("revisionHistoryLimit", 1)
     |> Map.put("secretName", cert_secret_name(cluster, :server))
+  end
+
+  # Normally, we wouldn't (shouldn't) base anything on what's already running 
+  # But this is to "fix" a race condition where sometimes we create the secret before
+  # cnpg and sometimes they create it before us. If they create it, it's `kubernetes.io/tls`
+  # which makes sense for this resource. But we can't change it to "opaque" which is the default.
+  defp get_secret_type(state, namespace, name) do
+    case FromKubeState.find_state_resource(state, :secret, namespace, name) do
+      nil ->
+        "kubernetes.io/tls"
+
+      r ->
+        Map.get(r, "type", "kubernetes.io/tls")
+    end
   end
 end
