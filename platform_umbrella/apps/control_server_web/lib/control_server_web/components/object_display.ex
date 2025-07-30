@@ -5,10 +5,15 @@ defmodule ControlServerWeb.ObjectDisplay do
   attr :base_url, :string, default: "/"
   attr :path, :any, default: []
   attr :object, :any, default: %{}
+  attr :id, :string, default: "object-display"
 
   def object_display(assigns) do
     ~H"""
-    <.flex class="overflow-x-auto focus:outline-none full-screen-minus mx-2">
+    <.flex
+      class="overflow-x-auto focus:outline-none full-screen-minus mx-2"
+      phx-hook="ObjectDisplay"
+      id={@id}
+    >
       <.column
         :for={idx <- 0..length(@path)}
         path={Enum.slice(@path, 0, idx)}
@@ -46,11 +51,11 @@ defmodule ControlServerWeb.ObjectDisplay do
   attr :base_url, :string, default: "/"
   attr :path, :any, default: []
   attr :object, :any, default: %{}
-  attr :class, :string, default: "flex-none border-r-[1px] border-gray-lighter/90 w-96 overflow-x-clip"
+  attr :class, :string, default: "flex-none w-96 overflow-x-clip"
 
   defp column(%{object: object} = assigns) when is_map(object) or is_list(object) do
     ~H"""
-    <div class={@class}>
+    <div class={"object-display-column #{@class}"}>
       <.flex column class="h-full overflow-y-auto">
         <.column_title selected={selected(@path)} />
         <.column_data object={@object} path={@path} base_url={@base_url} />
@@ -61,7 +66,7 @@ defmodule ControlServerWeb.ObjectDisplay do
 
   defp column(assigns) do
     ~H"""
-    <div class={@class}>
+    <div class={"object-display-column #{@class}"}>
       <.flex column class="h-full overflow-y-auto">
         <.column_title selected={selected(@path)} />
         <.truncate_tooltip value={to_string(@object)} class="text-md" />
