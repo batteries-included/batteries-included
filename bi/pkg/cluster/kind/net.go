@@ -44,7 +44,22 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 // Return the bottom half of the network, such as 172.18.1.0/24
 func split(ipNet *net.IPNet, count int) (*net.IPNet, error) {
 	shift := calculateShift(ipNet, count)
-	return cidr.Subnet(ipNet, shift, count+1)
+	
+	// For Podman compatibility, try multiple subnet indices if the initial one fails
+	for subnetIndex := count + 1; subnetIndex >= 0; subnetIndex-- {
+		subnet, err := cidr.Subnet(ipNet, shift, subnetIndex)
+		if err == nil {
+			return subnet, nil
+		}
+		// If this subnet index doesn't work, try a smaller one
+	}
+	
+	// If all attempts fail, try with a smaller shift (fewer subnets, larger subnet)
+	if shift > 1 {
+		return cidr.Subnet(ipNet, shift-1, 1)
+	}
+	
+	return nil, fmt.Errorf("unable to split network %s with count %d", ipNet.String(), count)
 }
 
 func calculateShift(ipNet *net.IPNet, count int) int {
@@ -56,31 +71,25 @@ func calculateShift(ipNet *net.IPNet, count int) int {
 		return 24 - ones
 	}
 	
-	// For /24 and smaller networks, calculate required bits dynamically
-	// Calculate how many bits we need to accommodate count+1 subnets
-	requiredSubnets := count + 2 // +1 for the new subnet, +1 for safety margin
-	requiredBits := 0
-	for i := 1; i < requiredSubnets; i <<= 1 {
-		requiredBits++
-	}
-	
-	// Default to 3 bits (8 subnets) for most cases to maintain compatibility
-	// But use more bits if needed to accommodate more containers
-	defaultShift := 3
-	if requiredBits < defaultShift {
-		requiredBits = defaultShift
-	}
-	
-	// Calculate available bits
+	// For /24 and smaller networks, calculate required bits more conservatively
+	// We need to accommodate the existing containers plus room for MetalLB
 	availableBits := bits - ones
 	
-	// If we need more bits than available, use what we have
-	// This will cause an error later in cidr.Subnet, but at least we tried
-	if requiredBits > availableBits {
-		return availableBits
+	// Conservative approach: use fewer bits to ensure we have room
+	switch {
+	case availableBits >= 4:
+		// With 4+ available bits, we can safely use 2-3 bits for subnetting
+		return 2 // This gives us 4 subnets, should be enough for most cases
+	case availableBits >= 2:
+		// With 2-3 available bits, use 1 bit (2 subnets)
+		return 1
+	case availableBits >= 1:
+		// With only 1 available bit, use it
+		return 1
+	default:
+		// Network is already at maximum size, can't split further
+		return 0
 	}
-	
-	return requiredBits
 }
 
 func getKindNetworks(ctx context.Context) (int, []*net.IPNet, error) {
