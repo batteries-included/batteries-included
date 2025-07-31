@@ -131,7 +131,7 @@ defmodule ControlServerWeb.Live.StatefulSetShow do
       <.grid columns={[sm: 1, lg: 4]} class="lg:template-rows-2">
         <.link_panel live_action={@live_action} resource={@resource} />
         <.panel title="Details" class="lg:col-span-3 lg:row-span-2">
-          <.data_list>
+          <.data_list id="status">
             <:item title="Total Replicas">{Map.get(@status, "replicas", 0)}</:item>
             <:item title="Available Replicas">{Map.get(@status, "availableReplicas", 0)}</:item>
             <:item title="Updated Replicas">{Map.get(@status, "updatedReplicas", 0)}</:item>

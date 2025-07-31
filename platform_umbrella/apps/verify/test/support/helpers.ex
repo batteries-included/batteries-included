@@ -204,7 +204,7 @@ defmodule Verify.TestCase.Helpers do
     {:ok, {session, statuses}} =
       retry(fn ->
         session = visit(session, path)
-        statuses = get_statuses_from_badge(session)
+        statuses = get_statuses(session)
 
         case statuses do
           %{
@@ -226,14 +226,15 @@ defmodule Verify.TestCase.Helpers do
       session
       |> trigger_k8s_deploy()
       |> visit(path)
+      |> click(Query.link("Pods"))
       |> assert_has(table_row(text: "Running", minimum: String.to_integer(statuses["total_replicas"])))
 
     session
   end
 
-  defp get_statuses_from_badge(session) do
+  defp get_statuses(session) do
     session
-    |> text(Query.css("div#badges"))
+    |> text(Query.css("div#status"))
     |> String.split("\n")
     |> Enum.map(fn s ->
       s |> String.replace(" ", "") |> String.replace(":", "") |> Macro.underscore()
