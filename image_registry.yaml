@@ -40,6 +40,7 @@ aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.13.3
   tags:
+    - v2.13.4
     - v2.13.3
     - v2.13.2
     - v2.13.1
@@ -556,8 +557,9 @@ nvidia_device_plugin:
   tag_regex: ^v\d+\.\d+\.\d+$
 oauth2_proxy:
   name: quay.io/oauth2-proxy/oauth2-proxy
-  default_tag: v7.10.0
+  default_tag: v7.11.0
   tags:
+    - v7.11.0
     - v7.10.0
     - v7.9.0
     - v7.8.2
@@ -569,8 +571,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.9.6
+  default_tag: 0.10.0
   tags:
+    - 0.10.0
     - 0.9.6
     - 0.9.5
     - 0.9.4
