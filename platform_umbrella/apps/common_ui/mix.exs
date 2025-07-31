@@ -46,6 +46,7 @@ defmodule CommonUI.MixProject do
       {:phoenix_storybook, "~> 0.6"},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
       {:phoenix_live_view, "~> 1.0", override: true},
+      {:lazy_html, ">= 0.1.0", only: :test},
       {:flop_phoenix, "~> 0.23"},
       {:heyya, "~> 1.0", only: [:dev, :test]},
       {:earmark, "~> 1.4"}
