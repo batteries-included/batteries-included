@@ -1,6 +1,7 @@
 defmodule CommonCore.Resources.RouteBuilder do
   @moduledoc false
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.Util.String
 
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Resources.ProxyUtils, as: PU
@@ -13,15 +14,13 @@ defmodule CommonCore.Resources.RouteBuilder do
   def new_httproute_spec(battery, state) do
     state
     |> Hosts.hosts_for_battery(battery.type)
-    |> new_httproute_spec_for_hosts(state)
+    |> new_httproute_spec_for_hosts(battery, state)
   end
 
-  @spec new_httproute_spec_for_hosts(list(binary()), StateSummary.t()) :: map()
-  def new_httproute_spec_for_hosts(hosts, state) do
-    istio_ns = istio_namespace(state)
-
+  @spec new_httproute_spec_for_hosts(list(binary()), SystemBattery.t(), StateSummary.t()) :: map()
+  def new_httproute_spec_for_hosts(hosts, battery, state) do
     %{
-      "parentRefs" => [%{"name" => "istio-ingressgateway", "namespace" => istio_ns}],
+      "parentRefs" => get_parent_ref(battery, state),
       "hostnames" => hosts,
       "rules" => []
     }
@@ -66,22 +65,23 @@ defmodule CommonCore.Resources.RouteBuilder do
     )
   end
 
-  @spec maybe_https_redirect(map(), StateSummary.t()) :: map()
-  def maybe_https_redirect(spec, state) do
+  defp get_parent_ref(battery, state) do
+    istio_ns = istio_namespace(state)
+
     if SSL.ssl_enabled?(state) do
-      update_in(
-        spec,
-        ["rules"],
-        &([
-            %{
-              "filters" => [
-                %{"type" => "RequestRedirect", "requestRedirect" => %{"scheme" => "http", "statusCode" => 301}}
-              ]
-            }
-          ] ++ &1)
-      )
+      state
+      |> Batteries.hosts_by_battery_type()
+      |> Map.get(battery.type, [])
+      |> Enum.with_index()
+      |> Enum.map(fn {_host, ix} ->
+        %{
+          "name" => "istio-ingressgateway",
+          "namespace" => istio_ns,
+          "sectionName" => "https-#{kebab_case(battery.type)}-#{ix}"
+        }
+      end)
     else
-      spec
+      [%{"name" => "istio-ingressgateway", "namespace" => istio_ns}]
     end
   end
 end
