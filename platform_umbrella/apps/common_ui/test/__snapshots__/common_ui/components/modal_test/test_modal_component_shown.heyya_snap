@@ -4,7 +4,7 @@
   <div aria-labelledby="modal-title" aria-describedby="modal-description" aria-modal="true" role="dialog" tabindex="0" class="h-full overflow-y-auto">
     <div class="flex items-center justify-center min-h-full px-4 py-6">
       <div id="modal-container" phx-hook="Phoenix.FocusWrap" class="relative z-20 w-full bg-white dark:bg-gray-darkest rounded-xl shadow-xl shadow-gray-darkest/10 ring-1 ring-gray-darkest/10 dark:ring-gray-light/10 max-w-xl" phx-click-away="[[&quot;hide&quot;,{&quot;to&quot;:&quot;#modal-bg&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-200&quot;],[&quot;opacity-100&quot;],[&quot;opacity-0&quot;]]}],[&quot;hide&quot;,{&quot;time&quot;:200,&quot;to&quot;:&quot;#modal-container&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-200&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;sm:scale-100&quot;],[&quot;opacity-0&quot;,&quot;translate-y-4&quot;,&quot;sm:translate-y-0&quot;,&quot;sm:scale-95&quot;]]}],[&quot;hide&quot;,{&quot;to&quot;:&quot;#modal&quot;,&quot;transition&quot;:[[&quot;block&quot;],[&quot;block&quot;],[&quot;hidden&quot;]]}],[&quot;pop_focus&quot;,{}]]" phx-key="escape" phx-mounted="[[&quot;show&quot;,{&quot;to&quot;:&quot;#modal&quot;}],[&quot;show&quot;,{&quot;to&quot;:&quot;#modal-bg&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-out&quot;,&quot;duration-300&quot;],[&quot;opacity-0&quot;],[&quot;opacity-100&quot;]]}],[&quot;show&quot;,{&quot;to&quot;:&quot;#modal-container&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-out&quot;,&quot;duration-300&quot;],[&quot;opacity-0&quot;,&quot;translate-y-4&quot;,&quot;sm:translate-y-0&quot;,&quot;sm:scale-95&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;sm:scale-100&quot;]]}],[&quot;focus_first&quot;,{&quot;to&quot;:&quot;#modal-container&quot;}]]" phx-window-keydown="[[&quot;hide&quot;,{&quot;to&quot;:&quot;#modal-bg&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-200&quot;],[&quot;opacity-100&quot;],[&quot;opacity-0&quot;]]}],[&quot;hide&quot;,{&quot;time&quot;:200,&quot;to&quot;:&quot;#modal-container&quot;,&quot;transition&quot;:[[&quot;transition-all&quot;,&quot;transform&quot;,&quot;ease-in&quot;,&quot;duration-200&quot;],[&quot;opacity-100&quot;,&quot;translate-y-0&quot;,&quot;sm:scale-100&quot;],[&quot;opacity-0&quot;,&quot;translate-y-4&quot;,&quot;sm:translate-y-0&quot;,&quot;sm:scale-95&quot;]]}],[&quot;hide&quot;,{&quot;to&quot;:&quot;#modal&quot;,&quot;transition&quot;:[[&quot;block&quot;],[&quot;block&quot;],[&quot;hidden&quot;]]}],[&quot;pop_focus&quot;,{}]]">
-  <span id="modal-container-start" tabindex="0" aria-hidden="true"></span>
+  <div id="modal-container-start" tabindex="0" aria-hidden="true"></div>
   
         <div class="flex items-center justify-between px-5 pt-5">
           <h2 class="text-2xl font-semibold leading-8 text-gray-darkest dark:text-gray-lightest">
@@ -30,7 +30,7 @@
 
         
       
-  <span id="modal-container-end" tabindex="0" aria-hidden="true"></span>
+  <div id="modal-container-end" tabindex="0" aria-hidden="true"></div>
 </div>
     </div>
   </div>
