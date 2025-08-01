@@ -7,7 +7,7 @@ require (
 	github.com/lmittmann/tint v1.1.2
 	github.com/satori/go.uuid v1.2.0
 	gorm.io/driver/postgres v1.6.0
-	gorm.io/gorm v1.30.0
+	gorm.io/gorm v1.30.1
 )
 
 require github.com/felixge/httpsnoop v1.0.4 // indirect
