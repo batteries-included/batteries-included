@@ -58,7 +58,7 @@ defmodule CommonCore.Resources.TraditionalServices do
     spec =
       state
       |> traditional_hosts(service)
-      |> R.new_httproute_spec_for_hosts(state)
+      |> R.new_httproute_spec_for_hosts(battery, state)
       |> R.add_backend(service.name, default_port.number)
 
     :gateway_http_route

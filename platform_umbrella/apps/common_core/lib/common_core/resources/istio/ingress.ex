@@ -4,12 +4,13 @@ defmodule CommonCore.Resources.Istio.Ingress do
 
   import CommonCore.StateSummary.Namespaces
   import CommonCore.Util.Map
-  import K8s.Resource
+  import CommonCore.Util.String
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.Core
-  alias CommonCore.StateSummary.FromKubeState
+  alias CommonCore.StateSummary.SSL
 
   resource(:service_ingress, _battery, state) do
     namespace = istio_namespace(state)
@@ -212,29 +213,61 @@ defmodule CommonCore.Resources.Istio.Ingress do
     |> B.spec(spec)
   end
 
+  # create an httproute for each battery that redirects to https if ssl enabled
+  multi_resource(:httproute_http_redirect, _battery, state) do
+    namespace = istio_namespace(state)
+
+    state
+    |> Batteries.hosts_by_battery_type()
+    |> Enum.map(fn {type, hosts} ->
+      name = kebab_case(type)
+
+      spec = %{
+        "hostnames" => hosts,
+        "parentRefs" => [%{"name" => "istio-ingressgateway", "sectionName" => "http"}],
+        "rules" => [
+          %{
+            "filters" => [
+              %{
+                "type" => "RequestRedirect",
+                "requestRedirect" => %{"scheme" => "https", "statusCode" => 301}
+              }
+            ]
+          }
+        ]
+      }
+
+      :gateway_http_route
+      |> B.build_resource()
+      |> B.name("http-redirect-#{name}")
+      |> B.namespace(namespace)
+      |> B.spec(spec)
+      |> F.require(SSL.ssl_enabled?(state))
+      |> F.require_non_empty(hosts)
+    end)
+  end
+
   defp https_listeners(state) do
     state
-    |> FromKubeState.all_resources(:certmanager_certificate)
-    |> Enum.filter(&(label(&1, "battery/gateway") == @app_name))
-    |> Enum.flat_map(fn cert ->
-      type = cert |> label("battery/certificate-for") |> String.replace("_", "-")
-
-      cert
-      |> get_in(~w(spec dnsNames))
+    |> Batteries.hosts_by_battery_type()
+    |> Enum.reject(fn {_type, hosts} -> hosts == nil || hosts == [] end)
+    |> Enum.flat_map(fn {type, hosts} ->
+      hosts
       |> Enum.with_index()
-      |> Enum.map(fn {name, ix} ->
+      |> Enum.map(fn {host, ix} ->
         %{
-          "name" => "https-#{type}-#{ix}",
-          "hostname" => name,
+          "name" => "https-#{kebab_case(type)}-#{ix}",
+          "hostname" => host,
           "port" => 443,
           "protocol" => "HTTPS",
           "tls" => %{
             "mode" => "Terminate",
-            "certificateRefs" => [%{"name" => get_in(cert, ~w(spec secretName))}]
+            "certificateRefs" => [%{"name" => "#{kebab_case(type)}-ingress-cert"}]
           },
           "allowedRoutes" => %{"namespaces" => %{"from" => "All"}}
         }
       end)
     end)
+    |> Enum.sort_by(&Map.get(&1, "name"))
   end
 end

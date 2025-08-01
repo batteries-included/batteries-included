@@ -25,16 +25,18 @@ defmodule CommonCore.Resources.CertManager.Certificates.Cert do
   use CommonCore.Resources.ResourceGenerator, app_name: "certificates"
 
   import CommonCore.Resources.FieldAccessors
-  import CommonCore.Resources.ProxyUtils, only: [sanitize: 1]
   import CommonCore.StateSummary.FromKubeState, only: [find_state_resource: 3]
   import CommonCore.StateSummary.Namespaces
+  import CommonCore.Util.String
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Hosts
 
+  @cluster_issuer "lets-encrypt"
+
   resource(:certificate, %{type: type} = _battery, state) do
-    name = "#{sanitize(type)}-ingress-cert"
+    name = "#{kebab_case(type)}-ingress-cert"
     namespace = istio_namespace(state)
 
     spec = spec(name, state, type)
@@ -51,19 +53,19 @@ defmodule CommonCore.Resources.CertManager.Certificates.Cert do
 
   defp spec(name, state, :knative) do
     hosts = Enum.flat_map(state.knative_services, &Hosts.knative_hosts(state, &1))
-    issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
+    issuer = find_state_resource(state, :certmanager_cluster_issuer, @cluster_issuer)
     build_cert_spec(name, hosts, issuer)
   end
 
   defp spec(name, state, :traditional_services) do
     hosts = Enum.flat_map(state.traditional_services, &Hosts.traditional_hosts(state, &1))
-    issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
+    issuer = find_state_resource(state, :certmanager_cluster_issuer, @cluster_issuer)
     build_cert_spec(name, hosts, issuer)
   end
 
   defp spec(name, state, battery_type) do
     host = Hosts.hosts_for_battery(state, battery_type)
-    issuer = find_state_resource(state, :certmanager_cluster_issuer, "lets-encrypt")
+    issuer = find_state_resource(state, :certmanager_cluster_issuer, @cluster_issuer)
     build_cert_spec(name, host, issuer)
   end
 
