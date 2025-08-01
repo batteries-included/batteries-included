@@ -1,4 +1,7 @@
 <h1 class="text-3xl text-primary sm:text-5xl font-extrabold my-6 ">
   
-  Header<span class="m-0 text-gray-darkest">::<span class="font-mono">with sub</span></span>
+  Header
+  <span class="m-0 text-gray-darkest">
+    ::<span class="font-mono">with sub</span>
+  </span>
 </h1>

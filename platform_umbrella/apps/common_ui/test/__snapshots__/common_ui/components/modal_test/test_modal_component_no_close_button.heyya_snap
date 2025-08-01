@@ -4,7 +4,7 @@
   <div aria-labelledby="modal-title" aria-describedby="modal-description" aria-modal="true" role="dialog" tabindex="0" class="h-full overflow-y-auto">
     <div class="flex items-center justify-center min-h-full px-4 py-6">
       <div id="modal-container" phx-hook="Phoenix.FocusWrap" class="relative z-20 w-full bg-white dark:bg-gray-darkest rounded-xl shadow-xl shadow-gray-darkest/10 ring-1 ring-gray-darkest/10 dark:ring-gray-light/10 max-w-xl" phx-key="escape">
-  <span id="modal-container-start" tabindex="0" aria-hidden="true"></span>
+  <div id="modal-container-start" tabindex="0" aria-hidden="true"></div>
   
         <div class="flex items-center justify-between px-5 pt-5">
           <h2 class="text-2xl font-semibold leading-8 text-gray-darkest dark:text-gray-lightest">
@@ -22,7 +22,7 @@
 
         
       
-  <span id="modal-container-end" tabindex="0" aria-hidden="true"></span>
+  <div id="modal-container-end" tabindex="0" aria-hidden="true"></div>
 </div>
     </div>
   </div>

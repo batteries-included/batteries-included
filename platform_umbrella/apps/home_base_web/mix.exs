@@ -48,10 +48,10 @@ defmodule HomeBaseWeb.MixProject do
       {:phoenix_live_dashboard, "~> 0.8"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
-      {:heyya, "~> 1.0", only: [:dev, :test]},
+      {:heyya, "~> 2.0", only: [:dev, :test]},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
-      {:phoenix_live_view, "~> 1.0", override: true},
-      {:flop_phoenix, "~> 0.23"},
+      {:phoenix_live_view, "~> 1.1"},
+      {:flop_phoenix, "~> 0.25"},
 
       # Log to json
       {:logger_json, "~> 7.0.0"},
