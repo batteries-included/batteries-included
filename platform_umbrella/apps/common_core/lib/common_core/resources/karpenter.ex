@@ -350,8 +350,8 @@ defmodule CommonCore.Resources.Karpenter do
                 "timeoutSeconds" => 30
               },
               "resources" => %{
-                "limits" => %{"cpu" => 1, "memory" => "1Gi"},
-                "requests" => %{"cpu" => 1, "memory" => "1Gi"}
+                "limits" => %{"cpu" => ".5", "memory" => ".5Gi"},
+                "requests" => %{"cpu" => ".5", "memory" => ".5Gi"}
               },
               "securityContext" => %{
                 "allowPrivilegeEscalation" => false,

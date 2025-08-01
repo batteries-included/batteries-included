@@ -174,7 +174,7 @@ defmodule Verify.TestCase.Helpers do
     client = Tesla.client([{Tesla.Middleware.FollowRedirects, max_redirects: 3}])
 
     fn ->
-      case Tesla.get(client, url) do
+      case dbg(Tesla.get(client, url)) do
         {:ok, %{status: 200} = resp} ->
           {:ok, resp}
 

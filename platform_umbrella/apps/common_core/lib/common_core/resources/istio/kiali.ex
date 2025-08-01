@@ -2,14 +2,12 @@ defmodule CommonCore.Resources.Kiali do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "kiali"
 
-  import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Istio.KialiConfigGenerator
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.Resources.RouteBuilder, as: R
 
   @http_port 20_001
 
@@ -309,18 +307,19 @@ defmodule CommonCore.Resources.Kiali do
     |> B.spec(spec)
   end
 
-  resource(:virtual_service, _battery, state) do
+  resource(:http_route, battery, state) do
     namespace = istio_namespace(state)
 
     spec =
-      [hosts: kiali_hosts(state)]
-      |> VirtualService.new!()
-      |> V.fallback("kiali", @http_port)
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_oauth2_proxy_rule(battery, state)
+      |> R.add_backend(@app_name, @http_port)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
+    |> B.name(@app_name)
     |> B.namespace(namespace)
-    |> B.name("kiali")
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
   end

@@ -17,6 +17,9 @@ defmodule CommonCore.Batteries.KnativeConfig do
     defaultable_image_field :istio_controller_image, image_id: :knative_istio_controller
     defaultable_image_field :istio_webhook_image, image_id: :knative_istio_webhook
 
+    defaultable_image_field :gateway_controller_image, image_id: :knative_gateway_api_controller
+    defaultable_image_field :gateway_webhook_image, image_id: :knative_gateway_api_webhook
+
     secret_field :cookie_secret, length: 32, func: &Defaults.urlsafe_random_key_string/1
   end
 end
