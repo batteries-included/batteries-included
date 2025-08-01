@@ -18,12 +18,22 @@ defmodule ControlServer.Seed do
   end
 
   def seed_from_summary(%{} = summary) do
-    :ok = seed_postgres(summary)
-    :ok = seed_redis(summary)
-    :ok = seed_postgres(summary)
-    :ok = seed_ip_address_pools(summary)
-    :ok = seed_batteries(summary)
-    :ok = seed_traditional_services(summary)
+    tasks = [
+      Task.async(fn -> seed_postgres(summary) end),
+      Task.async(fn -> seed_redis(summary) end),
+      Task.async(fn -> seed_ip_address_pools(summary) end),
+      Task.async(fn -> seed_batteries(summary) end),
+      Task.async(fn -> seed_traditional_services(summary) end)
+    ]
+
+    results = Task.await_many(tasks, 30_000)
+
+    Enum.each(results, fn result ->
+      # Ensure all tasks returned :ok
+      :ok = result
+    end)
+
+    :ok
   end
 
   defp seed_batteries(summary) do
