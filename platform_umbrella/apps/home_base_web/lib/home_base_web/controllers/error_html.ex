@@ -172,15 +172,15 @@ defmodule HomeBaseWeb.ErrorHTML do
           </p>
 
           <p>
-            Need some help? Check out our
-            <.a href="https://www.batteriesincl.com/docs" target="_blank">docs</.a>, file an issue on
-            <.a
+            Need some help? Check out our <.a
+              href="https://www.batteriesincl.com/docs"
+              target="_blank"
+            >docs</.a>, file an issue on <.a
               href="https://github.com/batteries-included/batteries-included/issues/new"
               target="_blank"
             >
               GitHub
-            </.a>, or come visit us in
-            <.a
+            </.a>, or come visit us in <.a
               href="https://join.slack.com/t/batteries-included/shared_invite/zt-2qw1pm9pz-egaqvjbMuzKNvCpG1QXXHg"
               target="_blank"
             >
