@@ -40,8 +40,23 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 	// keys).
 	_ = c.destroyWireGuardGateway(ctx)
 
+	// Detect container runtime for runtime-specific configuration
+	runtimeInfo, err := DetectContainerRuntime(ctx)
+	if err != nil {
+		slog.Warn("Failed to detect container runtime, using default configuration", slog.String("error", err.Error()))
+		runtimeInfo = &ContainerRuntimeInfo{
+			Runtime:     RuntimeUnknown,
+			HostIP:      "localhost",
+			NetworkMode: "bridge",
+		}
+	}
+
+	slog.Debug("Creating gateway for runtime", 
+		slog.String("runtime", runtimeInfo.Runtime.String()),
+		slog.String("networkMode", runtimeInfo.NetworkMode))
+
 	// Check if the NoisySockets image is already available.
-	_, err := c.dockerClient.ImageInspect(ctx, NoisySocketsImage)
+	_, err = c.dockerClient.ImageInspect(ctx, NoisySocketsImage)
 	if err != nil {
 		slog.Debug("NoisySockets image not found, pulling it")
 
@@ -57,7 +72,7 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 		}
 	}
 
-	// Create the wireguard gateway container.
+	// Create the wireguard gateway container with runtime-specific configuration.
 	config := &container.Config{
 		Image: NoisySocketsImage,
 		Cmd: []string{"up", "--log-level=debug", "--enable-dns", "--enable-router",
@@ -70,24 +85,8 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 		},
 	}
 
-	hostConfig := &container.HostConfig{
-		// Use a random port on the host.
-		PortBindings: nat.PortMap{
-			nat.Port("51820/udp"): []nat.PortBinding{
-				{
-					HostIP:   "127.0.0.1",
-					HostPort: "0",
-				},
-			},
-		},
-	}
-
-	// Use the `kind` network.
-	networkingConfig := &network.NetworkingConfig{
-		EndpointsConfig: map[string]*network.EndpointSettings{
-			"kind": {},
-		},
-	}
+	hostConfig := c.createHostConfigForRuntime(runtimeInfo)
+	networkingConfig := c.createNetworkingConfigForRuntime(runtimeInfo)
 
 	resp, err := c.dockerClient.ContainerCreate(ctx, config, hostConfig, networkingConfig, nil, containerName)
 	if err != nil {
@@ -111,6 +110,83 @@ func (c *KindClusterProvider) createWireGuardGateway(ctx context.Context) error 
 	}
 
 	return nil
+}
+
+// createHostConfigForRuntime creates runtime-specific host configuration
+func (c *KindClusterProvider) createHostConfigForRuntime(runtimeInfo *ContainerRuntimeInfo) *container.HostConfig {
+	hostConfig := &container.HostConfig{
+		PortBindings: nat.PortMap{
+			nat.Port("51820/udp"): []nat.PortBinding{
+				{
+					HostIP:   "127.0.0.1",
+					HostPort: "0",
+				},
+			},
+		},
+	}
+
+	// Runtime-specific host configuration
+	switch runtimeInfo.Runtime {
+	case RuntimePodman:
+		hostConfig.PortBindings[nat.Port("51820/udp")] = []nat.PortBinding{
+			{
+				HostIP:   "0.0.0.0",
+				HostPort: "0",
+			},
+		}
+	case RuntimeColima:
+		hostConfig.PortBindings[nat.Port("51820/udp")] = []nat.PortBinding{
+			{
+				HostIP:   "0.0.0.0",
+				HostPort: "0",
+			},
+		}
+	case RuntimeDockerDesktop:
+	}
+
+	return hostConfig
+}
+
+func (c *KindClusterProvider) createNetworkingConfigForRuntime(runtimeInfo *ContainerRuntimeInfo) *network.NetworkingConfig {
+	networkName := GetNetworkNameForRuntime(runtimeInfo.Runtime)
+	
+	networkingConfig := &network.NetworkingConfig{
+		EndpointsConfig: map[string]*network.EndpointSettings{
+			networkName: {},
+		},
+	}
+
+	// Runtime-specific networking configuration
+	switch runtimeInfo.Runtime {
+	case RuntimePodman:
+		if !c.networkExists(networkName) {
+			networkingConfig.EndpointsConfig = map[string]*network.EndpointSettings{
+				"bridge": {},
+			}
+		}
+	case RuntimeColima:
+		if !c.networkExists(networkName) {
+			networkingConfig.EndpointsConfig = map[string]*network.EndpointSettings{
+				"bridge": {},
+			}
+		}
+	case RuntimeDockerDesktop:
+		// Docker Desktop typically has the 'kind' network available
+	}
+
+	return networkingConfig
+}
+
+// networkExists checks if a network exists
+func (c *KindClusterProvider) networkExists(networkName string) bool {
+	networks, err := c.dockerClient.NetworkList(context.Background(), network.ListOptions{
+		Filters: filters.NewArgs(filters.Arg("name", networkName)),
+	})
+	if err != nil {
+		slog.Debug("Failed to check if network exists", slog.String("network", networkName), slog.String("error", err.Error()))
+		return false
+	}
+	return len(networks) > 0
 }
 
 func (c *KindClusterProvider) destroyWireGuardGateway(ctx context.Context) error {
@@ -162,6 +238,59 @@ func (c *KindClusterProvider) getWireGuardGatewayEndpoint(ctx context.Context, c
 		return "", fmt.Errorf("failed to get wireguard gateway container port")
 	}
 
+	// Detect the container runtime to determine the correct host IP
+	runtimeInfo, err := DetectContainerRuntime(ctx)
+	if err != nil {
+		slog.Warn("Failed to detect container runtime, falling back to default logic", slog.String("error", err.Error()))
+		return c.getWireGuardGatewayEndpointFallback(ctx, port[0].HostPort)
+	}
+
+	slog.Debug("Using detected container runtime for gateway endpoint", 
+		slog.String("runtime", runtimeInfo.Runtime.String()),
+		slog.String("hostIP", runtimeInfo.HostIP))
+
+	host := runtimeInfo.HostIP
+
+	// Special handling for container runtimes that need additional logic
+	switch runtimeInfo.Runtime {
+	case RuntimePodman:
+		if host == "localhost" {
+			host = c.getPodmanGatewayHost(ctx)
+		}
+	case RuntimeColima:
+		if host == "localhost" {
+			host = c.getColimaGatewayHost(ctx)
+		}
+	case RuntimeDockerDesktop:
+		host = "localhost"
+	default:
+		return c.getWireGuardGatewayEndpointFallback(ctx, port[0].HostPort)
+	}
+
+	if net.ParseIP(host) == nil {
+		ips, err := net.LookupIP(host)
+		if err != nil {
+			return "", fmt.Errorf("failed to resolve host: %w", err)
+		}
+
+		var found bool
+		for _, ip := range ips {
+			if ip.To4() != nil {
+				host = ip.String()
+				found = true
+				break
+			}
+		}
+		if !found {
+			return "", fmt.Errorf("no IPv4 address found for host: %s", host)
+		}
+	}
+
+	return net.JoinHostPort(host, port[0].HostPort), nil
+}
+
+// getWireGuardGatewayEndpointFallback provides the original logic as a fallback
+func (c *KindClusterProvider) getWireGuardGatewayEndpointFallback(ctx context.Context, hostPort string) (string, error) {
 	daemonHostURL, err := url.Parse(c.dockerClient.DaemonHost())
 	if err != nil {
 		return "", fmt.Errorf("failed to parse daemon host URL: %w", err)
@@ -184,7 +313,9 @@ func (c *KindClusterProvider) getWireGuardGatewayEndpoint(ctx context.Context, c
 			for _, line := range strings.Split(string(stdout), "\n") {
 				if strings.Contains(line, "default") {
 					fields := strings.Fields(line)
-					host = fields[2]
+					if len(fields) > 2 {
+						host = fields[2]
+					}
 					break
 				}
 			}
@@ -214,7 +345,62 @@ func (c *KindClusterProvider) getWireGuardGatewayEndpoint(ctx context.Context, c
 		}
 	}
 
-	return net.JoinHostPort(host, port[0].HostPort), nil
+	return net.JoinHostPort(host, hostPort), nil
+}
+
+// getPodmanGatewayHost determines the correct host for Podman networking
+func (c *KindClusterProvider) getPodmanGatewayHost(ctx context.Context) string {
+	cmd := exec.CommandContext(ctx, "podman", "machine", "inspect", "--format", "{{.Host.IP}}")
+	output, err := cmd.Output()
+	if err != nil {
+		slog.Debug("Failed to get Podman machine IP, using localhost", slog.String("error", err.Error()))
+		return "localhost"
+	}
+	
+	ip := strings.TrimSpace(string(output))
+	if ip != "" && net.ParseIP(ip) != nil {
+		slog.Debug("Using Podman machine IP", slog.String("ip", ip))
+		return ip
+	}
+	
+	return "localhost"
+}
+
+// getColimaGatewayHost determines the correct host for Colima networking
+func (c *KindClusterProvider) getColimaGatewayHost(ctx context.Context) string {
+	// For Colima, try to get the VM IP
+	cmd := exec.CommandContext(ctx, "colima", "list", "--json")
+	output, err := cmd.Output()
+	if err != nil {
+		slog.Debug("Failed to get Colima VM info, using localhost", slog.String("error", err.Error()))
+		return "localhost"
+	}
+	
+	// Simple string search for IP address (could be improved with JSON parsing)
+	outputStr := string(output)
+	if strings.Contains(outputStr, "192.168.") {
+		lines := strings.Split(outputStr, "\n")
+		for _, line := range lines {
+			if strings.Contains(line, "\"address\"") {
+				start := strings.Index(line, "192.168.")
+				if start >= 0 {
+					end := start
+					for i := start; i < len(line) && (line[i] >= '0' && line[i] <= '9' || line[i] == '.'); i++ {
+						end = i + 1
+					}
+					if end > start {
+						ip := line[start:end]
+						if net.ParseIP(ip) != nil {
+							slog.Debug("Using Colima VM IP", slog.String("ip", ip))
+							return ip
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	return "localhost"
 }
 
 func (c *KindClusterProvider) createWireGuardConfigArchive() (io.Reader, error) {

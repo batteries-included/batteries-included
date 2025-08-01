@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/netip"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/avast/retry-go/v4"
@@ -69,6 +70,13 @@ func (c *KindClusterProvider) initForGateway() error {
 		return fmt.Errorf("failed to create docker client: %w", err)
 	}
 
+	// Detect container runtime and validate networking
+	runtimeInfo, err := DetectContainerRuntime(context.Background())
+	if err != nil {
+		slog.Warn("Failed to detect container runtime for gateway init", slog.String("error", err.Error()))
+		runtimeInfo = &ContainerRuntimeInfo{Runtime: RuntimeUnknown}
+	}
+
 	// Use the same CIDR block as AWS.
 	_, gatewayCIDRBlock, err := net.ParseCIDR("100.64.250.0/24")
 	if err != nil {
@@ -84,6 +92,10 @@ func (c *KindClusterProvider) initForGateway() error {
 	if err != nil {
 		return fmt.Errorf("failed to create wireguard client for installer: %w", err)
 	}
+
+	slog.Debug("Gateway initialization completed", 
+		slog.String("runtime", runtimeInfo.Runtime.String()),
+		slog.String("hostIP", runtimeInfo.HostIP))
 
 	return nil
 }
@@ -105,57 +117,97 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 		))
 	}
 
-	if !isRunning {
-		createOpts := []cluster.CreateOption{
-			// We'll need to configure the cluster here
-			// if customers need to access the docker images.
-			cluster.CreateWithNodeImage(KindImage),
-			cluster.CreateWithDisplayUsage(false),
-			cluster.CreateWithDisplaySalutation(false),
-		}
-
-		if err := c.kindProviderWithLogger(logger).Create(c.name, createOpts...); err != nil {
-			return fmt.Errorf("failed to create kind cluster: %w", err)
-		}
-	} else {
-		c.logger.Debug("Kind cluster already running", slog.String("name", c.name))
+	// If the cluster is already running, we're done
+	if isRunning {
+		logger.Debug("Kind cluster is already running")
+		return nil
 	}
 
-	if err := c.maybeLoadImages(ctx); err != nil {
-		return fmt.Errorf("failed to load images: %w", err)
+	// Create the kind cluster using the detected node provider
+	provider := cluster.NewProvider(
+		cluster.ProviderWithLogger(NewKindLogger(logger)),
+		c.nodeProvider,
+	)
+
+	if err := provider.Create(c.name,
+		cluster.CreateWithNodeImage(KindImage),
+		cluster.CreateWithRetain(false),
+		cluster.CreateWithWaitForReady(time.Minute*10),
+		cluster.CreateWithKubeconfigPath(""),
+		cluster.CreateWithDisplayUsage(false),
+		cluster.CreateWithDisplaySalutation(false),
+		cluster.CreateWithConfigFile(""),
+	); err != nil {
+		return fmt.Errorf("failed to create kind cluster: %w", err)
 	}
 
-	// Create the wireguard gateway container.
+	// Create the WireGuard gateway if enabled
 	if c.gatewayEnabled {
 		if err := c.createWireGuardGateway(ctx); err != nil {
 			return fmt.Errorf("failed to create wireguard gateway: %w", err)
 		}
+		
+		// After cluster creation is complete, check for control server and print "When It Works" instructions
+		c.checkControlServerAndPrintInstructions(ctx)
+		// Note: Control server check errors are non-critical - cluster creation has succeeded
 	}
 
 	return nil
 }
 
-func (c *KindClusterProvider) Destroy(ctx context.Context, _ *util.ProgressReporter) error {
+func (c *KindClusterProvider) Delete(ctx context.Context) error {
 	isRunning, err := c.isRunning()
 	if err != nil {
 		return fmt.Errorf("failed to check if kind cluster is running: %w", err)
 	}
 
-	if isRunning {
-		if err := c.kindProvider().Delete(c.name, ""); err != nil {
-			return fmt.Errorf("failed to delete existing kind cluster: %w", err)
-		}
-	} else {
-		c.logger.Debug("Kind cluster is not running", slog.String("name", c.name))
+	if !isRunning {
+		c.logger.Debug("Kind cluster is not running")
+		return nil
 	}
 
-	// Remove the wireguard gateway container (if it exists).
-	if c.gatewayEnabled {
-		if err := c.destroyWireGuardGateway(ctx); err != nil {
-			return fmt.Errorf("failed to remove wireguard gateway: %w", err)
-		}
+	kindProvider := cluster.NewProvider(c.nodeProvider)
+
+	if err := kindProvider.Delete(c.name, ""); err != nil {
+		return fmt.Errorf("failed to delete kind cluster: %w", err)
 	}
 
+	return nil
+}
+
+// Destroy implements the cluster.Provider interface
+func (c *KindClusterProvider) Destroy(ctx context.Context, progressReporter *util.ProgressReporter) error {
+	return c.Delete(ctx)
+}
+
+// checkControlServerAndPrintInstructions verifies the control server is accessible and prints final instructions
+func (c *KindClusterProvider) checkControlServerAndPrintInstructions(ctx context.Context) error {
+	// Detect container runtime for proper URL construction
+	runtimeInfo, err := DetectContainerRuntime(ctx)
+	if err != nil {
+		slog.Warn("Failed to detect container runtime for control server check", slog.String("error", err.Error()))
+		runtimeInfo = &ContainerRuntimeInfo{Runtime: RuntimeUnknown}
+	}
+
+	// Always print instructions first - they're needed regardless of server status
+	PrintWhenItWorksInstructions(runtimeInfo, c.name)
+
+	// For localhost URLs, skip the accessibility check since it requires VPN
+	controlServerURL := GetControlServerURL(runtimeInfo)
+	if strings.Contains(controlServerURL, "localhost") {
+		slog.Info("Skipping localhost control server check - VPN connection required for access")
+		return nil
+	}
+	
+	// For non-localhost URLs, try to check accessibility
+	checker := NewControlServerChecker(controlServerURL)
+	if err := checker.WaitForControlServer(ctx, 30*time.Second); err != nil {
+		slog.Warn("Control server accessibility check failed", slog.String("error", err.Error()))
+		// Return nil since instructions were already printed
+		return nil
+	}
+	
+	slog.Info("Control server is accessible", slog.String("url", controlServerURL))
 	return nil
 }
 

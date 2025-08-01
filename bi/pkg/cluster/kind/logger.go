@@ -11,6 +11,10 @@ import (
 
 var _ log.Logger = (*slogAdapter)(nil)
 
+func NewKindLogger(logger *slog.Logger) log.Logger {
+	return &slogAdapter{Logger: logger}
+}
+
 type slogAdapter struct {
 	*slog.Logger
 }
