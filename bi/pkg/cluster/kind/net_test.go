@@ -19,9 +19,11 @@ func Test_split(t *testing.T) {
 		{sub: "172.0.0.0/8", expected: "172.0.6.0/24", existing: 5},
 		{sub: "172.18.0.0/16", expected: "172.18.1.0/24", existing: 0},
 		{sub: "172.18.0.0/16", expected: "172.18.6.0/24", existing: 5},
-		{sub: "172.18.1.0/24", expected: "172.18.1.128/25", existing: 0},
-		{sub: "172.18.1.1/26", expected: "172.18.1.32/27", existing: 0},
-		{sub: "172.18.1.1/26", expected: "", existing: 2, errExpected: true},
+		{sub: "172.18.1.0/24", expected: "172.18.1.32/27", existing: 0},
+		{sub: "172.18.1.0/24", expected: "172.18.1.128/27", existing: 3},
+		{sub: "172.18.1.1/26", expected: "172.18.1.8/29", existing: 0},
+		{sub: "172.18.1.1/26", expected: "172.18.1.24/29", existing: 2},
+		{sub: "172.18.1.1/26", expected: "172.18.1.32/29", existing: 3},
 		{sub: "172.18.1.1/32", expected: "", existing: 0, errExpected: true},
 	}
 

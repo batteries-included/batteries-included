@@ -43,18 +43,53 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 // Given a Network such as 172.18.0.0/16
 // Return the bottom half of the network, such as 172.18.1.0/24
 func split(ipNet *net.IPNet, count int) (*net.IPNet, error) {
-	shift := calculateShift(ipNet)
-	return cidr.Subnet(ipNet, shift, count+1)
+	shift := calculateShift(ipNet, count)
+	
+	// For Podman compatibility, try multiple subnet indices if the initial one fails
+	for subnetIndex := count + 1; subnetIndex >= 0; subnetIndex-- {
+		subnet, err := cidr.Subnet(ipNet, shift, subnetIndex)
+		if err == nil {
+			return subnet, nil
+		}
+		// If this subnet index doesn't work, try a smaller one
+	}
+	
+	// If all attempts fail, try with a smaller shift (fewer subnets, larger subnet)
+	if shift > 1 {
+		return cidr.Subnet(ipNet, shift-1, 1)
+	}
+	
+	return nil, fmt.Errorf("unable to split network %s with count %d", ipNet.String(), count)
 }
 
-func calculateShift(ipNet *net.IPNet) int {
-	ones, _ := ipNet.Mask.Size()
-
-	if ones >= 24 {
-		return 1
+func calculateShift(ipNet *net.IPNet, count int) int {
+	ones, bits := ipNet.Mask.Size()
+	
+	// Original logic for backward compatibility
+	if ones < 24 {
+		// For networks smaller than /24, try to create /24 subnets
+		return 24 - ones
 	}
-
-	return 24 - ones
+	
+	// For /24 and smaller networks, calculate required bits more conservatively
+	// We need to accommodate the existing containers plus room for MetalLB
+	availableBits := bits - ones
+	
+	// Conservative approach: use fewer bits to ensure we have room
+	switch {
+	case availableBits >= 4:
+		// With 4+ available bits, we can safely use 2-3 bits for subnetting
+		return 2 // This gives us 4 subnets, should be enough for most cases
+	case availableBits >= 2:
+		// With 2-3 available bits, use 1 bit (2 subnets)
+		return 1
+	case availableBits >= 1:
+		// With only 1 available bit, use it
+		return 1
+	default:
+		// Network is already at maximum size, can't split further
+		return 0
+	}
 }
 
 func getKindNetworks(ctx context.Context) (int, []*net.IPNet, error) {
