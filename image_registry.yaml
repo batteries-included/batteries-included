@@ -159,8 +159,9 @@ forgejo:
   tag_regex: ^\d+\.\d+\.\d+-\d+$
 frrouting_frr:
   name: quay.io/frrouting/frr
-  default_tag: 10.4.0
+  default_tag: 10.4.1
   tags:
+    - 10.4.1
     - 10.4.0
     - 10.3.1
     - 10.3.0
@@ -595,8 +596,9 @@ ollama:
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
   name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-20
+  default_tag: 17.5-21
   tags:
+    - 17.5-21
     - 17.5-20
     - 17.5-19
     - 17.5-18
