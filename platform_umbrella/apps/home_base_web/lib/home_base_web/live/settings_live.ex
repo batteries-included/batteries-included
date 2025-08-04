@@ -210,7 +210,7 @@ defmodule HomeBaseWeb.SettingsLive do
       _ ->
         {:noreply,
          socket
-         |> assign(:roles, socket.assign.roles)
+         |> assign(:roles, socket.assigns.roles)
          |> put_flash(:global_error, "Could not update member")}
     end
   end
