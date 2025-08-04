@@ -11,7 +11,7 @@ require (
 	github.com/aws/smithy-go v1.22.5
 	github.com/docker/docker v28.3.3+incompatible
 	github.com/docker/go-connections v0.5.0
-	github.com/go-jose/go-jose/v4 v4.1.1
+	github.com/go-jose/go-jose/v4 v4.1.2
 	github.com/lmittmann/tint v1.1.2
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
