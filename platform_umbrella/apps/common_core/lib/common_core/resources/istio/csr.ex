@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.IstioCsr do
+defmodule CommonCore.Resources.Istio.CSR do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-csr"
 

@@ -18,11 +18,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.GatewayAPI
   alias CommonCore.Resources.Grafana
   alias CommonCore.Resources.Istio
-  alias CommonCore.Resources.IstioCsr
-  alias CommonCore.Resources.IstioMetrics
-  alias CommonCore.Resources.IstioNamespace
-  alias CommonCore.Resources.IstioReader
-  alias CommonCore.Resources.IstioTelemetry
   alias CommonCore.Resources.Karpenter
   alias CommonCore.Resources.KarpenterPools
   alias CommonCore.Resources.Keycloak
@@ -71,16 +66,16 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     gateway_api: [GatewayAPI],
     grafana: [Grafana],
     istio: [
-      IstioNamespace,
+      Istio.Namespace,
       Istio,
       Istio.Istiod,
       Istio.CNI,
       Istio.Ztunnel,
-      IstioReader,
-      IstioTelemetry,
-      IstioMetrics
+      Istio.Reader,
+      Istio.Telemetry,
+      Istio.Metrics
     ],
-    istio_csr: [IstioCsr],
+    istio_csr: [Istio.CSR],
     istio_gateway: [Istio.Ingress, Istio.Gateways],
     karpenter: [Karpenter, KarpenterPools],
     keycloak: [Keycloak],

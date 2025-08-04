@@ -16,15 +16,12 @@ defmodule CommonCore.Resources.ControlServer do
 
   resource(:http_route, battery, state) do
     namespace = core_namespace(state)
-    _ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
 
     spec =
       battery
       |> R.new_httproute_spec(state)
       |> R.add_oauth2_proxy_rule(battery, state)
       |> R.add_backend(@app_name, @web_port)
-
-    # TODO: https redirect
 
     :gateway_http_route
     |> B.build_resource()

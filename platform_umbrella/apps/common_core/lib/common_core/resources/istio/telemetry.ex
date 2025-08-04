@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.IstioTelemetry do
+defmodule CommonCore.Resources.Istio.Telemetry do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-telemetry"
 

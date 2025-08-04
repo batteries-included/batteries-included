@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.IstioReader do
+defmodule CommonCore.Resources.Istio.Reader do
   @moduledoc false
 
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-reader"

@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.IstioNamespace do
+defmodule CommonCore.Resources.Istio.Namespace do
   @moduledoc false
 
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-namespace"

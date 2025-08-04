@@ -1,4 +1,4 @@
-defmodule CommonCore.Resources.IstioMetrics do
+defmodule CommonCore.Resources.Istio.Metrics do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "istio-metrics"
 

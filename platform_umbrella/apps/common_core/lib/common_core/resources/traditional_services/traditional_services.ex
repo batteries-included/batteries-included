@@ -52,9 +52,6 @@ defmodule CommonCore.Resources.TraditionalServices do
     # TODO: allow specifying 'default' port instead of just using the first port?
     [default_port | _] = service.ports
 
-    # TODO: fix!!
-    # ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
-
     spec =
       state
       |> traditional_hosts(service)
