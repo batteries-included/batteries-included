@@ -262,6 +262,7 @@ defmodule CommonCore.Resources.Istio.Istiod do
               %{"name" => "KUBECONFIG", "value" => "/var/run/secrets/remote/config"},
               %{"name" => "CA_TRUSTED_NODE_ACCOUNTS", "value" => "#{battery.config.namespace}/ztunnel"},
               %{"name" => "PILOT_ENABLE_AMBIENT", "value" => "true"},
+              %{"name" => "PILOT_ENABLE_ALPHA_GATEWAY_API", "value" => "true"},
               %{"name" => "PILOT_TRACE_SAMPLING", "value" => "1"},
               %{"name" => "PILOT_ENABLE_ANALYSIS", "value" => "false"},
               %{"name" => "CLUSTER_ID", "value" => "Kubernetes"},
