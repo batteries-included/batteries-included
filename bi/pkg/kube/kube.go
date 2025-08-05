@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net"
 	"os"
 	"time"
 
@@ -44,6 +45,7 @@ type KubeClient interface {
 	GetAccessInfo(ctx context.Context, namespace string) (*access.AccessSpec, error)
 	GetPostgresAccessInfo(ctx context.Context, namespace string, clusterName string, userName string) (*access.PostgresAccessSpec, error)
 	ListPodsRage(ctx context.Context) ([]rage.PodRageInfo, error)
+	GetDialContext() func(ctx context.Context, network, address string) (net.Conn, error)
 }
 
 type batteryKubeClient struct {
@@ -199,6 +201,13 @@ func (c *batteryKubeClient) WatchFor(ctx context.Context, opts *WatchOptions) er
 		if done {
 			watch.Stop()
 		}
+	}
+	return nil
+}
+
+func (c *batteryKubeClient) GetDialContext() func(ctx context.Context, network, address string) (net.Conn, error) {
+	if c.net != nil {
+		return c.net.DialContext
 	}
 	return nil
 }
