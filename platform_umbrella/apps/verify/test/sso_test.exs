@@ -107,6 +107,20 @@ defmodule Verify.SSOTest do
     session
     |> visit(url)
     |> login_keycloak(@user, @password)
+    |> then(fn s ->
+      retry(fn ->
+        case execute_query_without_retry(s, Query.text("no healthy upstream")) do
+          {:ok, %{result: []}} ->
+            {:ok, s}
+
+          _ ->
+            visit(s, url)
+            {:error, s}
+        end
+      end)
+
+      session
+    end)
     # find the link to the website in the footer
     |> assert_has(Query.css("img.logo"))
 
