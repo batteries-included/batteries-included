@@ -2,15 +2,13 @@ defmodule CommonCore.Resources.Keycloak do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "keycloak"
 
-  import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.RouteBuilder, as: R
   alias CommonCore.Resources.Secret
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.PostgresState
 
   @web_port 8181
@@ -203,17 +201,17 @@ defmodule CommonCore.Resources.Keycloak do
     |> B.spec(spec)
   end
 
-  resource(:virtual_service, _battery, state) do
+  resource(:http_route, battery, state) do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: keycloak_hosts(state)]
-      |> VirtualService.new!()
-      |> V.fallback("keycloak", @web_port)
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_backend(@app_name, @web_port)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
-    |> B.name("keycloak")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)

@@ -7,11 +7,10 @@ defmodule CommonCore.Resources.TraditionalServices do
   import CommonCore.Util.Map
 
   alias CommonCore.Containers.EnvValue
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Port
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.Resources.RouteBuilder, as: R
   alias CommonCore.TraditionalServices.Service
 
   resource(:namespace, battery, _state) do
@@ -19,7 +18,8 @@ defmodule CommonCore.Resources.TraditionalServices do
     |> B.build_resource()
     |> B.name(battery.config.namespace)
     |> B.app_labels(@app_name)
-    |> B.label("istio-injection", "enabled")
+    |> B.label("istio-injection", "disabled")
+    |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
   multi_resource(:kube_deployment, battery, state) do
@@ -39,33 +39,32 @@ defmodule CommonCore.Resources.TraditionalServices do
     Enum.map(state.traditional_services, fn service -> service(service, battery, state) end)
   end
 
-  multi_resource(:virtual_service, battery, state) do
-    Enum.map(state.traditional_services, fn service -> virtual_service(service, battery, state) end)
+  multi_resource(:http_route, battery, state) do
+    Enum.map(state.traditional_services, fn service -> route(service, battery, state) end)
   end
 
-  defp virtual_service(%{kube_internal: true}, _battery, _state), do: nil
-  defp virtual_service(%{ports: []}, _battery, _state), do: nil
+  defp route(%{kube_internal: true}, _battery, _state), do: nil
+  defp route(%{ports: []}, _battery, _state), do: nil
 
-  defp virtual_service(service, battery, state) do
-    ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
-    ports = to_svc_ports(service)
+  defp route(service, battery, state) do
+    namespace = battery.config.namespace
 
     # TODO: allow specifying 'default' port instead of just using the first port?
-    [default_port | _] = ports
+    [default_port | _] = service.ports
 
     spec =
-      [hosts: traditional_hosts(state, service)]
-      |> VirtualService.new!()
-      |> V.fallback(service.name, default_port.port)
-      |> V.maybe_https_redirect(ssl_enabled?)
+      state
+      |> traditional_hosts(service)
+      |> R.new_httproute_spec_for_hosts(battery, state)
+      |> R.add_backend(service.name, default_port.number)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
-    |> B.namespace(battery.config.namespace)
     |> B.name(service.name)
+    |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
-    |> F.require_non_empty(ports)
+    |> F.require_non_empty(service.ports)
   end
 
   defp service(service, battery, _state) do

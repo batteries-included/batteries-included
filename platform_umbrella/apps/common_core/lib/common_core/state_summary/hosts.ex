@@ -91,6 +91,9 @@ defmodule CommonCore.StateSummary.Hosts do
     "#{service.name}.#{namespace}.#{webapp_base_host(summary)}"
   end
 
+  def knative_hosts(%StateSummary{} = summary),
+    do: summary.knative_services |> Enum.reject(& &1.kube_internal) |> Enum.flat_map(&knative_hosts(summary, &1))
+
   def knative_hosts(%StateSummary{} = summary, service) do
     namespace = knative_namespace(summary)
 
@@ -106,6 +109,9 @@ defmodule CommonCore.StateSummary.Hosts do
     namespace = traditional_namespace(summary)
     "#{service.name}.#{namespace}.#{webapp_base_host(summary)}"
   end
+
+  def traditional_hosts(%StateSummary{} = summary),
+    do: Enum.flat_map(summary.traditional_services, &traditional_hosts(summary, &1))
 
   def traditional_hosts(%StateSummary{} = summary, service) do
     namespace = traditional_namespace(summary)
@@ -156,6 +162,8 @@ defmodule CommonCore.StateSummary.Hosts do
   def hosts_for_battery(summary, :smtp4dev), do: smtp4dev_hosts(summary)
   def hosts_for_battery(summary, :vm_agent), do: vmagent_hosts(summary)
   def hosts_for_battery(summary, :victoria_metrics), do: vmselect_hosts(summary)
+  def hosts_for_battery(summary, :knative), do: knative_hosts(summary)
+  def hosts_for_battery(summary, :traditional_services), do: traditional_hosts(summary)
   def hosts_for_battery(_summary, _battery_type), do: nil
 
   defp ip(summary) do

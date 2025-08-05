@@ -326,10 +326,10 @@ defmodule CommonCore.Resources.KnativeServing do
   end
 
   resource(:config_map_network, battery, state) do
-    ssl = ssl_enabled?(state)
-
     data =
-      maybe_put(%{}, ssl, "http-protocol", "Enabled")
+      %{}
+      |> Map.put("ingress.class", "gateway-api.ingress.networking.knative.dev")
+      |> maybe_put(ssl_enabled?(state), "http-protocol", "Enabled")
 
     :config_map
     |> B.build_resource()
@@ -825,7 +825,8 @@ defmodule CommonCore.Resources.KnativeServing do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.namespace)
-    |> B.label("istio-injection", "enabled")
+    |> B.label("istio-injection", "disabled")
+    |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
   resource(:pod_disruption_budget_activator_pdb, battery, _state) do

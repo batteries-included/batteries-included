@@ -2,33 +2,31 @@ defmodule CommonCore.Resources.ControlServer do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "battery-control-server"
 
-  import CommonCore.StateSummary.Hosts
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
+  alias CommonCore.Resources.RouteBuilder, as: R
   alias CommonCore.StateSummary.Core
   alias CommonCore.StateSummary.PostgresState
 
   @server_port 4000
   @web_port 4001
 
-  resource(:virtual_service, battery, state) do
-    ssl_enabled? = CommonCore.StateSummary.SSL.ssl_enabled?(state)
+  resource(:http_route, battery, state) do
+    namespace = core_namespace(state)
 
     spec =
-      [hosts: control_hosts(state)]
-      |> VirtualService.new!()
-      |> V.fallback(@app_name, @web_port)
-      |> V.maybe_https_redirect(ssl_enabled?)
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_oauth2_proxy_rule(battery, state)
+      |> R.add_backend(@app_name, @web_port)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
-    |> B.namespace(core_namespace(state))
-    |> B.name("control-server")
+    |> B.name(@app_name)
+    |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
     |> F.require(battery.config.usage != :internal_dev)

@@ -524,7 +524,8 @@ defmodule CommonCore.Resources.CertManager.CertManager do
                 "--cluster-resource-namespace=$(POD_NAMESPACE)",
                 "--leader-election-namespace=#{namespace}",
                 "--acme-http01-solver-image=#{battery.config.acmesolver_image}",
-                "--max-concurrent-challenges=60"
+                "--max-concurrent-challenges=60",
+                "--enable-gateway-api"
               ],
               "env" => [
                 %{"name" => "POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
@@ -651,7 +652,8 @@ defmodule CommonCore.Resources.CertManager.CertManager do
                 "--dynamic-serving-ca-secret-name=cert-manager-webhook-ca",
                 "--dynamic-serving-dns-names=cert-manager-webhook",
                 "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)",
-                "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc"
+                "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc",
+                "--dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc.cluster.local"
               ],
               "env" => [
                 %{"name" => "POD_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}}
@@ -918,10 +920,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
       |> Map.put("ports", [
         %{"name" => "tcp-prometheus-servicemonitor", "port" => 9402, "protocol" => "TCP", "targetPort" => 9402}
       ])
-      |> Map.put(
-        "selector",
-        %{"battery/app" => @app_name, "battery/component" => component}
-      )
+      |> Map.put("selector", %{"battery/app" => @app_name, "battery/component" => component})
       |> Map.put("type", "ClusterIP")
 
     :service
@@ -1022,7 +1021,7 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> F.require_battery(state, :victoria_metrics)
   end
 
-  resource(:lets_encrypt_cluster_issuer_stage, battery) do
+  resource(:lets_encrypt_cluster_issuer_stage, battery, state) do
     name = "lets-encrypt-stage"
 
     spec = %{
@@ -1030,7 +1029,17 @@ defmodule CommonCore.Resources.CertManager.CertManager do
         "server" => @lets_encrypt_staging_url,
         "email" => battery.config.email,
         "privateKeySecretRef" => %{"name" => name},
-        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "istio"}}}]
+        "solvers" => [
+          %{
+            "http01" => %{
+              "gatewayHTTPRoute" => %{
+                "parentRefs" => [
+                  %{"name" => "istio-ingressgateway", "namespace" => istio_namespace(state), "kind" => "Gateway"}
+                ]
+              }
+            }
+          }
+        ]
       }
     }
 
@@ -1038,9 +1047,10 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name(name)
     |> B.spec(spec)
+    |> F.require_battery(state, :istio_gateway)
   end
 
-  resource(:lets_encrypt_cluster_issuer, battery) do
+  resource(:lets_encrypt_cluster_issuer, battery, state) do
     name = "lets-encrypt"
 
     spec = %{
@@ -1048,7 +1058,17 @@ defmodule CommonCore.Resources.CertManager.CertManager do
         "server" => @lets_encrypt_prod_url,
         "email" => battery.config.email,
         "privateKeySecretRef" => %{"name" => name},
-        "solvers" => [%{"http01" => %{"ingress" => %{"ingressClassName" => "istio"}}}]
+        "solvers" => [
+          %{
+            "http01" => %{
+              "gatewayHTTPRoute" => %{
+                "parentRefs" => [
+                  %{"name" => "istio-ingressgateway", "namespace" => istio_namespace(state), "kind" => "Gateway"}
+                ]
+              }
+            }
+          }
+        ]
       }
     }
 
@@ -1056,5 +1076,6 @@ defmodule CommonCore.Resources.CertManager.CertManager do
     |> B.build_resource()
     |> B.name(name)
     |> B.spec(spec)
+    |> F.require_battery(state, :istio_gateway)
   end
 end

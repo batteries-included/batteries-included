@@ -1,12 +1,14 @@
 {
+  "gateways": {
+    "seccompProfile": {},
+    "securityContext": {}
+  },
   "global": {
-    "autoscalingv2API": true,
     "caAddress": "",
     "caName": "",
     "certSigners": [],
     "configCluster": false,
     "configValidation": true,
-    "defaultNodeSelector": {},
     "defaultPodDisruptionBudget": {
       "enabled": true
     },
@@ -15,7 +17,6 @@
         "cpu": "10m"
       }
     },
-    "enabled": true,
     "externalIstiod": false,
     "hub": "docker.io/istio",
     "imagePullPolicy": "",
@@ -24,7 +25,6 @@
     "istiod": {
       "enableAnalysis": false
     },
-    "jwtPolicy": "third-party-jwt",
     "logAsJson": false,
     "logging": {
       "level": "default:info"
@@ -36,10 +36,8 @@
       "clusterName": "",
       "enabled": false
     },
-    "namespace": "battery-istio",
     "network": "",
     "omitSidecarInjectorConfigMap": false,
-    "oneNamespace": false,
     "operatorManageWebhooks": false,
     "pilotCertProvider": "istiod",
     "priorityClassName": "",
@@ -47,7 +45,6 @@
       "autoInject": "enabled",
       "clusterDomain": "cluster.local",
       "componentLogLevel": "misc:error",
-      "enableCoreDump": false,
       "excludeIPRanges": "",
       "excludeInboundPorts": "",
       "excludeOutboundPorts": "",
@@ -55,8 +52,8 @@
       "includeIPRanges": "*",
       "includeInboundPorts": "*",
       "includeOutboundPorts": "",
-      "holdApplicationUntilProxyStarts": true,
       "logLevel": "warning",
+      "outlierLogPath": "",
       "privileged": false,
       "readinessFailureThreshold": 4,
       "readinessInitialDelaySeconds": 0,
@@ -76,9 +73,10 @@
         "failureThreshold": 600
       },
       "statusPort": 15020,
-      "tracer": "zipkin"
+      "tracer": "none"
     },
     "proxy_init": {
+      "forceApplyIptables": false,
       "image": "proxyv2"
     },
     "remotePilotAddress": "",
@@ -90,19 +88,36 @@
     "sts": {
       "servicePort": 0
     },
-    "tag": "1.20.0",
-    "tracer": {
-      "datadog": {},
-      "lightstep": {},
-      "stackdriver": {},
-      "zipkin": {}
-    },
-    "useMCP": false,
-    "variant": ""
+    "tag": "1.26.2",
+    "variant": "distroless",
+    "waypoint": {
+      "affinity": {},
+      "nodeSelector": {},
+      "resources": {
+        "limits": {
+          "cpu": "2",
+          "memory": "1Gi"
+        },
+        "requests": {
+          "cpu": "100m",
+          "memory": "128Mi"
+        }
+      },
+      "tolerations": [],
+      "topologySpreadConstraints": []
+    }
   },
-  "istio_cni": {
-    "chained": true,
-    "enabled": false
+  "pilot": {
+    "cni": {
+      "ambient": {
+        "enabled": true
+      },
+      "enabled": true,
+      "provider": "default"
+    },
+    "env": {
+      "PILOT_ENABLE_AMBIENT": "true"
+    }
   },
   "revision": "",
   "sidecarInjectorWebhook": {

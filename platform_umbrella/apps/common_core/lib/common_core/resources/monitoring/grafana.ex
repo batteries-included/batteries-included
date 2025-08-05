@@ -10,11 +10,10 @@ defmodule CommonCore.Resources.Grafana do
   import CommonCore.StateSummary.URLs
 
   alias CommonCore.INIConfig
-  alias CommonCore.OpenAPI.IstioVirtualService.VirtualService
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.RouteBuilder, as: R
   alias CommonCore.Resources.Secret
-  alias CommonCore.Resources.VirtualServiceBuilder, as: V
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.URLs
 
@@ -545,20 +544,22 @@ defmodule CommonCore.Resources.Grafana do
     |> B.build_resource()
     |> B.name("grafana")
     |> B.namespace(namespace)
+    |> B.label("istio.io/ingress-use-waypoint", "true")
     |> B.spec(spec)
   end
 
-  resource(:virtual_service, _battery, state) do
+  resource(:http_route, battery, state) do
     namespace = core_namespace(state)
 
     spec =
-      [hosts: grafana_hosts(state)]
-      |> VirtualService.new!()
-      |> V.fallback("grafana", @service_http_port)
+      battery
+      |> R.new_httproute_spec(state)
+      |> R.add_oauth2_proxy_rule(battery, state)
+      |> R.add_backend("grafana", @service_http_port)
 
-    :istio_virtual_service
+    :gateway_http_route
     |> B.build_resource()
-    |> B.name("grafana")
+    |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)

@@ -37,7 +37,7 @@ defmodule Verify.HomeBaseTest do
     {:ok, conn} = K8s.Conn.from_file(kube_config_path, insecure_skip_tls_verify: true)
     op = K8s.Client.apply(home_base_seed_data)
 
-    case K8s.Client.run(conn, op) do
+    case retry(fn -> K8s.Client.run(conn, op) end) do
       {:ok, _} ->
         :ok
 
@@ -108,7 +108,7 @@ defmodule Verify.HomeBaseTest do
     |> assert_pod_running("pg-#{service_name}-1")
     |> create_traditional_service(
       service_name,
-      size: "Medium",
+      size: "Small",
       image: image,
       port: "4000",
       callback: create_home_base_callback(service_name, team_id)

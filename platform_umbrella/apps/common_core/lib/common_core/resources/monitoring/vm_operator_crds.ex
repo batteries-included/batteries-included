@@ -33,8 +33,6 @@ defmodule CommonCore.Resources.VMOperatorCRDs do
   use CommonCore.Resources.ResourceGenerator, app_name: "vm_operator_crds"
 
   multi_resource(:crds_vm_operator) do
-    Enum.map(@included_resources, fn id ->
-      {"/crd_#{id}", id |> get_resource() |> YamlElixir.read_from_string!()}
-    end)
+    Enum.flat_map(@included_resources, &(&1 |> get_resource() |> YamlElixir.read_all_from_string!()))
   end
 end
