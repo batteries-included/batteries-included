@@ -170,7 +170,7 @@ defmodule Verify.TestCase.Helpers do
     session
   end
 
-  defp build_retryable_get(url) do
+  def build_retryable_get(url) do
     client = Tesla.client([{Tesla.Middleware.FollowRedirects, max_redirects: 3}])
 
     fn ->

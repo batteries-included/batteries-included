@@ -102,6 +102,8 @@ defmodule Verify.SSOTest do
       |> close_tab()
       |> attr(Query.css("a", text: "SMTP4Dev"), "href")
 
+    {:ok, _} = url |> build_retryable_get() |> retry()
+
     session
     |> visit(url)
     |> login_keycloak(@user, @password)
