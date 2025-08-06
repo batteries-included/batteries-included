@@ -6,14 +6,15 @@ defmodule CommonCore.Resources.BatteryCore do
   import CommonCore.Resources.StorageClass
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.StateSummary.Batteries
 
-  resource(:core_namespace, battery, _state) do
+  resource(:core_namespace, battery, state) do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.core_namespace)
     |> B.label("istio-injection", "disabled")
     |> B.label("istio.io/dataplane-mode", "ambient")
-    |> B.label("istio.io/use-waypoint", "waypoint")
+    |> maybe_add_waypoint_label(state)
   end
 
   resource(:base_namespace, battery, _state) do
@@ -33,13 +34,13 @@ defmodule CommonCore.Resources.BatteryCore do
     |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
-  resource(:ai_namespace, battery, _state) do
+  resource(:ai_namespace, battery, state) do
     :namespace
     |> B.build_resource()
     |> B.name(battery.config.ai_namespace)
     |> B.label("istio-injection", "disabled")
     |> B.label("istio.io/dataplane-mode", "ambient")
-    |> B.label("istio.io/use-waypoint", "waypoint")
+    |> maybe_add_waypoint_label(state)
   end
 
   multi_resource(:storage_class, battery) do
@@ -48,5 +49,11 @@ defmodule CommonCore.Resources.BatteryCore do
     else
       []
     end
+  end
+
+  defp maybe_add_waypoint_label(resource, state) do
+    if Batteries.batteries_installed?(state, :keycloak),
+      do: B.label(resource, "istio.io/use-waypoint", "waypoint"),
+      else: resource
   end
 end

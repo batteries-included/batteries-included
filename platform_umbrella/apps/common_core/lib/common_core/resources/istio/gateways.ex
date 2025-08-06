@@ -5,6 +5,7 @@ defmodule CommonCore.Resources.Istio.Gateways do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.StateSummary.Batteries
 
   # styler:sort
@@ -14,20 +15,20 @@ defmodule CommonCore.Resources.Istio.Gateways do
   )a
 
   resource(:ai_waypoint, _battery, state) do
-    state |> ai_namespace() |> gateway_for_namespace()
+    state |> ai_namespace() |> gateway_for_namespace(state)
   end
 
   resource(:core_waypoint, _battery, state) do
-    state |> core_namespace() |> gateway_for_namespace()
+    state |> core_namespace() |> gateway_for_namespace(state)
   end
 
   multi_resource(:battery_waypoints, _battery, state) do
     @waypoint_enabled_batteries
     |> Enum.filter(&Batteries.batteries_installed?(state, &1))
-    |> Enum.map(&(state |> battery_namespace(&1) |> gateway_for_namespace()))
+    |> Enum.map(&(state |> battery_namespace(&1) |> gateway_for_namespace(state)))
   end
 
-  defp gateway_for_namespace(ns) do
+  defp gateway_for_namespace(ns, state) do
     :gateway
     |> B.build_resource()
     |> B.name("waypoint")
@@ -37,5 +38,6 @@ defmodule CommonCore.Resources.Istio.Gateways do
       "gatewayClassName" => "istio-waypoint",
       "listeners" => [%{"name" => "mesh", "port" => 15_008, "protocol" => "HBONE"}]
     })
+    |> F.require_battery(state, :keycloak)
   end
 end
