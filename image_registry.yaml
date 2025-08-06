@@ -573,8 +573,11 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.10.1
+  default_tag: 0.11.2
   tags:
+    - 0.11.2
+    - 0.11.1
+    - 0.11.0
     - 0.10.1
     - 0.10.0
     - 0.9.6
