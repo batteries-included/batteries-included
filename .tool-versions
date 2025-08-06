@@ -1,7 +1,7 @@
 actionlint 1.7.7
 awscli     2.27.50
-elixir     1.18.4-otp-27
-erlang     27.3.4
+erlang     ref:OTP-27.3.4.2
+elixir     ref:v1.18.4
 golang     1.24.5
 goreleaser 2.11.0
 java       adoptopenjdk-21.0.7+6.0.LTS
