@@ -40,21 +40,35 @@ func GetMetalLBIPs(ctx context.Context) (string, error) {
 	return "", errors.New("no kind networks found")
 }
 
-// Given a Network such as 172.18.0.0/16
-// Return the bottom half of the network, such as 172.18.1.0/24
+// Given a Network such as 172.18.0.0/16 or 10.89.0.0/24
+// Return a subnet that can be used for MetalLB
+// The count parameter indicates how many subnets have already been allocated
 func split(ipNet *net.IPNet, count int) (*net.IPNet, error) {
 	shift := calculateShift(ipNet)
-	return cidr.Subnet(ipNet, shift, count+1)
+
+	// Calculate how many subnets we can create with this shift
+	maxSubnets := 1 << shift // 2^shift
+
+	// Allocate the next available subnet
+	subnetIndex := count + 1
+
+	if subnetIndex >= maxSubnets {
+		return nil, fmt.Errorf("cannot create subnet %d: network %s with shift %d only supports %d subnets",
+			subnetIndex, ipNet.String(), shift, maxSubnets)
+	}
+
+	return cidr.Subnet(ipNet, shift, subnetIndex)
 }
 
 func calculateShift(ipNet *net.IPNet) int {
 	ones, _ := ipNet.Mask.Size()
 
-	if ones >= 24 {
-		return 1
+	// For /32, /31, /30, and /29 networks, we can't split further
+	if ones >= 29 {
+		return 0
 	}
 
-	return 24 - ones
+	return 28 - ones
 }
 
 func getKindNetworks(ctx context.Context) (int, []*net.IPNet, error) {

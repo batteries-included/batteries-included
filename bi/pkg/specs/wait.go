@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/avast/retry-go/v4"
 	appsv1 "k8s.io/api/apps/v1"
@@ -50,6 +51,17 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 		l.Info("Finished waiting")
 	}
 
+	// Create HTTP client with WireGuard support if available
+	httpClient := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	if dialContext := kubeClient.GetDialContext(); dialContext != nil {
+		httpClient.Transport = &http.Transport{
+			DialContext: dialContext,
+		}
+	}
+
 	// try to get cs url and connect, 10x
 	err = retry.Do(func() error {
 		// get the access-info configmap (and URL information)
@@ -62,7 +74,7 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 
 		// try to make sure the control server is up before we return
 		slog.Debug("Attempting to connect to control server", slog.String("url", url))
-		_, err = http.Head(url)
+		_, err = httpClient.Head(url)
 		return err
 	}, retry.Context(ctx))
 
