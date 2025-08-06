@@ -95,8 +95,7 @@ jobs:
       - name: Run integration tests
         env:
           MIX_TEST_PARTITION: ${{ matrix.partition }}
-          BI_IMAGE_TAR: |-
-            ${{ runner.temp }}/${{ needs.save-images.outputs.artifact-name }}/images.tar
+          BI_IMAGE_TAR: ${{ runner.temp }}/images.tar
         run: |
           bin/bix go ensure-bi
           bin/bix elixir int-test --partitions=${{ matrix.num_partitions }}
