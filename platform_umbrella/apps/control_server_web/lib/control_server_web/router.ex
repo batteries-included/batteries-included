@@ -259,12 +259,12 @@ defmodule ControlServerWeb.Router do
     live "/:resource_type/:namespace/:name", Live.TrivyReportShow, :show
   end
 
-  # Istio service mesh management - requires authentication
-  scope "/istio", ControlServerWeb do
+  # gateway management - requires authentication
+  scope "/gateway", ControlServerWeb do
     pipe_through [:browser, :auth]
 
-    live "/virtual_services", Live.IstioVirtualServicesIndex, :index
-    live "/virtual_service/:namespace/:name", Live.IstioVirtualServiceShow, :index
+    live "/routes", Live.GatewayRoutesIndex, :index
+    live "/route/:kind/:namespace/:name", Live.GatewayRouteShow, :index
   end
 
   # Keycloak identity management - requires authentication

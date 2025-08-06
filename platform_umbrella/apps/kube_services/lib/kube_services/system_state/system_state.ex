@@ -15,7 +15,7 @@ defmodule KubeServices.SystemState do
       KubeServices.SystemState.SummaryBackup,
       KubeServices.SystemState.SummaryBatteries,
       KubeServices.SystemState.SummaryHosts,
-      KubeServices.SystemState.SummaryIstio,
+      KubeServices.SystemState.SummaryGateway,
       KubeServices.SystemState.SummaryRecent,
       KubeServices.SystemState.SummaryStorage,
       KubeServices.SystemState.SummaryURLs
