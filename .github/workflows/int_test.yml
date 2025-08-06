@@ -80,7 +80,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           artifact-ids: ${{ needs.save-images.outputs.artifact-id }}
           path: ${{ runner.temp }}
@@ -95,8 +95,7 @@ jobs:
       - name: Run integration tests
         env:
           MIX_TEST_PARTITION: ${{ matrix.partition }}
-          BI_IMAGE_TAR: |-
-            ${{ runner.temp }}/${{ needs.save-images.outputs.artifact-name }}/images.tar
+          BI_IMAGE_TAR: ${{ runner.temp }}/images.tar
         run: |
           bin/bix go ensure-bi
           bin/bix elixir int-test --partitions=${{ matrix.num_partitions }}
