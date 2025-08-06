@@ -38,6 +38,6 @@ defmodule CommonCore.Resources.Istio.Gateways do
       "gatewayClassName" => "istio-waypoint",
       "listeners" => [%{"name" => "mesh", "port" => 15_008, "protocol" => "HBONE"}]
     })
-    |> F.require_battery(state, :sso)
+    |> F.require_battery(state, :keycloak)
   end
 end
