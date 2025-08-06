@@ -18,6 +18,7 @@ defmodule CommonCore.Resources.Istio.Ingress do
     spec =
       %{}
       |> Map.put("ports", [
+        %{"name" => "ssh", "port" => 2202, "protocol" => "TCP", "targetPort" => 2202},
         %{"name" => "http2", "port" => 80, "protocol" => "TCP", "targetPort" => 8080},
         %{"name" => "https", "port" => 443, "protocol" => "TCP", "targetPort" => 8443}
       ])
@@ -90,6 +91,12 @@ defmodule CommonCore.Resources.Istio.Ingress do
       "listeners" =>
         [
           %{
+            "name" => "ssh",
+            "port" => 2202,
+            "protocol" => "TCP",
+            "allowedRoutes" => %{"namespaces" => %{"from" => "All"}}
+          },
+          %{
             "name" => "http",
             "port" => 80,
             "protocol" => "HTTP",
@@ -151,6 +158,7 @@ defmodule CommonCore.Resources.Istio.Ingress do
               },
               "ports" => [
                 %{"containerPort" => 15_021, "protocol" => "TCP"},
+                %{"containerPort" => 2202, "protocol" => "TCP"},
                 %{"containerPort" => 8080, "protocol" => "TCP"},
                 %{"containerPort" => 8443, "protocol" => "TCP"},
                 %{"containerPort" => 15_090, "name" => "http-envoy-prom", "protocol" => "TCP"}

@@ -41,7 +41,29 @@ defmodule CommonCore.Resources.Forgejo do
     |> F.require_battery(state, :istio_gateway)
   end
 
-  # TODO: TCPRoute for ssh listener?
+  resource(:tcp_route, _battery, state) do
+    namespace = core_namespace(state)
+
+    spec = %{
+      "parentRefs" => [
+        %{
+          "name" => "istio-ingressgateway",
+          "namespace" => istio_namespace(state),
+          "sectionName" => "ssh"
+        }
+      ],
+      "rules" => [
+        %{"name" => "ssh", "backendRefs" => [%{"name" => "forgejo-ssh", "port" => @ssh_port}]}
+      ]
+    }
+
+    :gateway_tcp_route
+    |> B.build_resource()
+    |> B.name("forgejo-ssh")
+    |> B.namespace(namespace)
+    |> B.spec(spec)
+    |> F.require_battery(state, :istio_gateway)
+  end
 
   resource(:service_monitor_main, _battery, state) do
     namespace = core_namespace(state)

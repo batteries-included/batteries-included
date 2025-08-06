@@ -5,7 +5,13 @@ defmodule CommonCore.Resources.GatewayAPI do
     gateways_gateway_networking_k8s_io: "priv/manifests/gateway_api/gateways_gateway_networking_k8s_io.yaml",
     grpcroutes_gateway_networking_k8s_io: "priv/manifests/gateway_api/grpcroutes_gateway_networking_k8s_io.yaml",
     httproutes_gateway_networking_k8s_io: "priv/manifests/gateway_api/httproutes_gateway_networking_k8s_io.yaml",
-    referencegrants_gateway_networking_k8s_io: "priv/manifests/gateway_api/referencegrants_gateway_networking_k8s_io.yaml"
+    referencegrants_gateway_networking_k8s_io:
+      "priv/manifests/gateway_api/referencegrants_gateway_networking_k8s_io.yaml",
+    backendtlspolicies_gateway_networking_k8s_io:
+      "priv/manifests/gateway_api/backendtlspolicies_gateway_networking_k8s_io.yaml",
+    tcproutes_gateway_networking_k8s_io: "priv/manifests/gateway_api/tcproutes_gateway_networking_k8s_io.yaml",
+    tlsroutes_gateway_networking_k8s_io: "priv/manifests/gateway_api/tlsroutes_gateway_networking_k8s_io.yaml",
+    udproutes_gateway_networking_k8s_io: "priv/manifests/gateway_api/udproutes_gateway_networking_k8s_io.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "gateway_api"
 
