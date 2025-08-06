@@ -4,13 +4,13 @@ defmodule ControlServerWeb.Live.NetSecHome do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import ControlServerWeb.EmptyHome
+  import ControlServerWeb.Gateway.RoutesTable
   import ControlServerWeb.IPAddressPoolsTable
-  import ControlServerWeb.Istio.VirtualServicesTable
   import ControlServerWeb.Keycloak.RealmsTable
   import ControlServerWeb.VulnerabilityReportTable
   import KubeServices.SystemState.SummaryBatteries
+  import KubeServices.SystemState.SummaryGateway
   import KubeServices.SystemState.SummaryHosts
-  import KubeServices.SystemState.SummaryIstio
   import KubeServices.SystemState.SummaryRecent
   import KubeServices.SystemState.SummaryURLs
 
@@ -29,7 +29,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
      |> assign_keycloak_realms()
      |> assign_keycloak_url()
      |> assign_ip_address_pools()
-     |> assign_istio_virtual_services()
+     |> assign_gateway_routes()
      |> assign_vulnerability_reports()
      |> assign_catalog_group()
      |> assign_current_page()
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
      |> assign_keycloak_realms()
      |> assign_keycloak_url()
      |> assign_ip_address_pools()
-     |> assign_istio_virtual_services()
+     |> assign_gateway_routes()
      |> assign_vulnerability_reports()}
   end
 
@@ -68,8 +68,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
     assign(socket, :ip_address_pools, ip_address_pools())
   end
 
-  defp assign_istio_virtual_services(socket) do
-    assign(socket, :virtual_services, virtual_services())
+  defp assign_gateway_routes(socket) do
+    assign(socket, :routes, routes())
   end
 
   defp assign_catalog_group(socket) do
@@ -124,15 +124,15 @@ defmodule ControlServerWeb.Live.NetSecHome do
     """
   end
 
-  defp virtual_services_panel(assigns) do
+  defp routes_panel(assigns) do
     ~H"""
-    <.panel :if={@virtual_services != []} title="Virtual Services">
+    <.panel :if={@routes != []} title="Routes">
       <:menu>
         <.flex>
-          <.button variant="minimal" link={~p"/istio/virtual_services"}>View All</.button>
+          <.button variant="minimal" link={~p"/gateway/routes"}>View All</.button>
         </.flex>
       </:menu>
-      <.virtual_services_table abridged rows={@virtual_services} />
+      <.routes_table abridged rows={@routes} />
     </.panel>
     """
   end
@@ -166,8 +166,8 @@ defmodule ControlServerWeb.Live.NetSecHome do
             <.metallb_panel ip_address_pools={@ip_address_pools} />
           <% :trivy_operator -> %>
             <.trivy_panel vulnerability_reports={@vulnerability_reports} />
-          <% :istio -> %>
-            <.virtual_services_panel virtual_services={@virtual_services} />
+          <% :gateway_api -> %>
+            <.routes_panel routes={@routes} />
           <% _ -> %>
         <% end %>
       <% end %>
