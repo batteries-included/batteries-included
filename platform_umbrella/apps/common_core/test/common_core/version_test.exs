@@ -3,7 +3,9 @@ defmodule CommonCore.VersionTest do
 
   describe "CommonCore.Version.version/1" do
     test "version is the correct length" do
-      assert String.length(CommonCore.Version.version()) == 6
+      # 1.0.0 is 5 characters long
+      # 0.27.0 is 6 characters long
+      assert String.length(CommonCore.Version.version()) >= 5
     end
 
     test "version can be parsed by Elixir.Version" do
