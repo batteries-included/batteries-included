@@ -100,14 +100,6 @@ defmodule ControlServerWeb.Live.DevtoolsHome do
     """
   end
 
-  defp battery_link_panel(%{battery: %{type: :smtp4dev}} = assigns) do
-    ~H"""
-    <.panel>
-      <.a href={"//#{smtp4dev_host()}"} variant="external">SMTP4Dev</.a>
-    </.panel>
-    """
-  end
-
   defp battery_link_panel(assigns), do: ~H||
 
   defp install_path, do: ~p"/batteries/devtools"

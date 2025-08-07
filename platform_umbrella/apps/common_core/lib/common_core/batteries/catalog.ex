@@ -170,14 +170,6 @@ defmodule CommonCore.Batteries.Catalog do
       description:
         "Forgejo is a self-hosted, open-source, Go-based Git repository manager with a web interface and command-line tools."
     },
-    %CatalogBattery{
-      group: :devtools,
-      type: :smtp4dev,
-      dependencies: [:battery_core, :istio_gateway],
-      name: "SMTP4Dev",
-      description: "SMTP4Dev is a dummy SMTP server for development, testing, and debugging of email systems.",
-      allowed_usages: ~w(internal_dev internal_int_test)a
-    },
     # AI
     %CatalogBattery{
       group: :ai,

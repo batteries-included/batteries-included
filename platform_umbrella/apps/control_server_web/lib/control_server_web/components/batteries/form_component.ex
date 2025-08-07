@@ -34,7 +34,6 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.ProjectExportForm
   alias ControlServerWeb.Batteries.PromtailForm
   alias ControlServerWeb.Batteries.RedisForm
-  alias ControlServerWeb.Batteries.Smtp4devForm
   alias ControlServerWeb.Batteries.SSOForm
   alias ControlServerWeb.Batteries.StaleResourceCleanerForm
   alias ControlServerWeb.Batteries.TimelineForm
@@ -72,7 +71,6 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     project_export: ProjectExportForm,
     promtail: PromtailForm,
     redis: RedisForm,
-    smtp4dev: Smtp4devForm,
     sso: SSOForm,
     stale_resource_cleaner: StaleResourceCleanerForm,
     timeline: TimelineForm,

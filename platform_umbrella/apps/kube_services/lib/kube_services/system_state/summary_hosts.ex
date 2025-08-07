@@ -11,7 +11,6 @@ defmodule KubeServices.SystemState.SummaryHosts do
   - Grafana Hostname
   - Vmselect Hostname
   - Keycloak Hostname
-  - Smtp4dev Hostname
   - Notebook Hostname
 
   It also hosts the ablity to compute a knative service hostname
@@ -86,11 +85,6 @@ defmodule KubeServices.SystemState.SummaryHosts do
   @spec vmagent_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
   def vmagent_host(target \\ @me) do
     GenServer.call(target, :vmagent_host)
-  end
-
-  @spec smtp4dev_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil
-  def smtp4dev_host(target \\ @me) do
-    GenServer.call(target, :smtp4dev_host)
   end
 
   @spec keycloak_host(atom | pid | {atom, any} | {:via, atom, any}) :: String.t() | nil

@@ -28,7 +28,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.OllamaConfig
   alias CommonCore.Batteries.PromtailConfig
   alias CommonCore.Batteries.RedisConfig
-  alias CommonCore.Batteries.Smtp4devConfig
   alias CommonCore.Batteries.SSOConfig
   alias CommonCore.Batteries.StaleResourceCleanerConfig
   alias CommonCore.Batteries.TimelineConfig
@@ -77,7 +76,6 @@ defmodule CommonCore.Batteries.SystemBattery do
     ollama: OllamaConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
-    smtp4dev: Smtp4devConfig,
     sso: SSOConfig,
     stale_resource_cleaner: StaleResourceCleanerConfig,
     timeline: TimelineConfig,

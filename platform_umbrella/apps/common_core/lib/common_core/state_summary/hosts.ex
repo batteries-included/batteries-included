@@ -46,14 +46,6 @@ defmodule CommonCore.StateSummary.Hosts do
     summary |> ingress_ips() |> hosts("vmagent")
   end
 
-  def smtp4dev_host(%StateSummary{} = summary) do
-    summary |> ip() |> host("smtp4dev")
-  end
-
-  def smtp4dev_hosts(%StateSummary{} = summary) do
-    summary |> ingress_ips() |> hosts("smtp4dev")
-  end
-
   def keycloak_host(%StateSummary{} = summary) do
     summary |> ip() |> host("keycloak")
   end
@@ -143,7 +135,6 @@ defmodule CommonCore.StateSummary.Hosts do
   def for_battery(summary, :keycloak), do: keycloak_host(summary)
   def for_battery(summary, :kiali), do: kiali_host(summary)
   def for_battery(summary, :notebooks), do: notebooks_host(summary)
-  def for_battery(summary, :smtp4dev), do: smtp4dev_host(summary)
   def for_battery(summary, :vm_agent), do: vmagent_host(summary)
   def for_battery(summary, :victoria_metrics), do: vmselect_host(summary)
   def for_battery(_summary, _battery_type), do: nil
@@ -159,7 +150,6 @@ defmodule CommonCore.StateSummary.Hosts do
   def hosts_for_battery(summary, :keycloak), do: keycloak_hosts(summary)
   def hosts_for_battery(summary, :kiali), do: kiali_hosts(summary)
   def hosts_for_battery(summary, :notebooks), do: notebooks_hosts(summary)
-  def hosts_for_battery(summary, :smtp4dev), do: smtp4dev_hosts(summary)
   def hosts_for_battery(summary, :vm_agent), do: vmagent_hosts(summary)
   def hosts_for_battery(summary, :victoria_metrics), do: vmselect_hosts(summary)
   def hosts_for_battery(summary, :knative), do: knative_hosts(summary)
