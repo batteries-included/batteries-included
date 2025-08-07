@@ -197,6 +197,7 @@ defmodule Verify.TestCase.Helpers do
 
     session =
       session
+      |> trigger_k8s_deploy()
       |> visit(path)
       # check we're on the pods page for the workload
       |> assert_has(h3(workload))

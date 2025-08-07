@@ -14,7 +14,7 @@ defmodule Verify.SSOTest do
 
   setup_all %{battery_install_worker: install_pid, image_pull_worker: pull_pid, control_url: url} do
     # we don't need to wait for these. We can install and setup SSO while these are pulling
-    prepull_images(pull_pid, ~w(grafana smtp4dev oauth2_proxy)a)
+    prepull_images(pull_pid, ~w(grafana oauth2_proxy)a ++ @victoria_metrics)
 
     {:ok, session} = start_session(url)
 
@@ -83,47 +83,32 @@ defmodule Verify.SSOTest do
     uninstall_batteries(install, :grafana)
   end
 
-  verify "smtp4dev (oauth2_proxy) prompts for login", %{
+  verify "vmagent (oauth2_proxy) prompts for login", %{
     session: session,
     authenticated_session: authenticated_session,
     battery_install_worker: install,
     image_pull_worker: pull
   } do
-    :ok = wait_for_images(pull, [:smtp4dev])
-    :ok = install_batteries(install, :smtp4dev)
+    :ok = wait_for_images(pull, @victoria_metrics)
+    :ok = install_batteries(install, :victoria_metrics)
+    ns = "battery-core"
 
-    # use the authenticated_session to determine the smtp4dev url
+    # use the authenticated_session to determine the url
     url =
       authenticated_session
-      |> trigger_k8s_deploy()
-      |> assert_pod_running("oauth2-proxy-smtp4dev")
-      |> visit("/devtools")
-      |> click_external(Query.css("a", text: "SMTP4Dev"))
-      |> close_tab()
-      |> attr(Query.css("a", text: "SMTP4Dev"), "href")
-
-    {:ok, _} = url |> build_retryable_get() |> retry()
+      |> assert_pods_in_deployment_running(ns, "vm-operator")
+      |> assert_pods_in_deployment_running(ns, "vmagent-main-agent")
+      |> assert_pods_in_sts_running(ns, "vmstorage-main-cluster")
+      |> assert_pods_in_sts_running(ns, "vmselect-main-cluster")
+      |> assert_pods_in_deployment_running(ns, "vminsert-main-cluster")
+      |> visit("/monitoring")
+      |> attr(Query.css("a", text: "VM Agent"), "href")
 
     session
     |> visit(url)
     |> login_keycloak(@user, @password)
-    |> then(fn s ->
-      retry(fn ->
-        case execute_query_without_retry(s, Query.text("no healthy upstream")) do
-          {:ok, %{result: []}} ->
-            {:ok, s}
+    |> assert_has(Query.css("h2", text: "vmagent"))
 
-          _ ->
-            visit(s, url)
-            {:error, s}
-        end
-      end)
-
-      session
-    end)
-    # find the link to the website in the footer
-    |> assert_has(Query.css("img.logo"))
-
-    uninstall_batteries(install, :smtp4dev)
+    uninstall_batteries(install, :victoria_metrics)
   end
 end
