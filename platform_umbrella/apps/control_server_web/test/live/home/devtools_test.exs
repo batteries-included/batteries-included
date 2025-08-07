@@ -10,8 +10,7 @@ defmodule ControlServerWeb.DevtoolsHomeTest do
   defp install_batteries(_) do
     knative_report = Installer.install!(:knative)
     forgejo_report = Installer.install!(:forgejo)
-    smtp4dev_report = Installer.install!(:smtp4dev)
-    %{knative: knative_report, forgejo: forgejo_report, smtp4dev: smtp4dev_report}
+    %{knative: knative_report, forgejo: forgejo_report}
   end
 
   defp knative_service(_) do

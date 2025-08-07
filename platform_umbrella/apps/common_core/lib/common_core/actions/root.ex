@@ -8,7 +8,6 @@ defmodule CommonCore.Actions.RootActionGenerator do
   alias CommonCore.Actions.Kiali
   alias CommonCore.Actions.Knative
   alias CommonCore.Actions.Notebooks
-  alias CommonCore.Actions.Smtp4dev
   alias CommonCore.Actions.SSO
   alias CommonCore.Actions.VictoriaMetrics
   alias CommonCore.Actions.VMAgent
@@ -21,7 +20,6 @@ defmodule CommonCore.Actions.RootActionGenerator do
     kiali: [Kiali],
     knative: [Knative],
     notebooks: [Notebooks],
-    smtp4dev: [Smtp4dev],
     sso: [SSO],
     vm_agent: [VMAgent],
     victoria_metrics: [VictoriaMetrics]

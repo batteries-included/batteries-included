@@ -7,8 +7,8 @@ defmodule CommonCore.StateSummary.URLsTest do
   describe "uri_for_battery/2" do
     test "returns a host matching the host module" do
       summary = build(:install_spec).target_summary
-      uri = uri_for_battery(summary, :smtp4dev)
-      assert CommonCore.StateSummary.Hosts.for_battery(summary, :smtp4dev) == uri.host
+      uri = uri_for_battery(summary, :keycloak)
+      assert CommonCore.StateSummary.Hosts.for_battery(summary, :keycloak) == uri.host
     end
 
     test "returns an HTTPS URI when :cert_manager is installed" do

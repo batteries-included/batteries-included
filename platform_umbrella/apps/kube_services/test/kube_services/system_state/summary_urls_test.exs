@@ -17,7 +17,6 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
 
       assert "https://keycloak.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :keycloak)
       assert "https://forgejo.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :forgejo)
-      assert "https://smtp4dev.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :smtp4dev)
     end
 
     test "returns an HTTP URL when :cert_manager is not installed", %{pid: pid} do
@@ -26,7 +25,6 @@ defmodule KubeServices.SystemState.SummaryURLsTest do
 
       assert "http://keycloak.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :keycloak)
       assert "http://forgejo.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :forgejo)
-      assert "http://smtp4dev.127-0-0-1.batrsinc.co" == SummaryURLs.url_for_battery(pid, :smtp4dev)
     end
   end
 

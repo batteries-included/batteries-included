@@ -43,7 +43,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.Promtail
   alias CommonCore.Resources.Redis
   alias CommonCore.Resources.RedisOperator
-  alias CommonCore.Resources.Smtp4Dev
   alias CommonCore.Resources.SSO
   alias CommonCore.Resources.TraditionalServices
   alias CommonCore.Resources.TrivyOperator
@@ -91,7 +90,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     project_export: [],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],
-    smtp4dev: [Smtp4Dev],
     sso: [SSO],
     stale_resource_cleaner: [],
     timeline: [],
