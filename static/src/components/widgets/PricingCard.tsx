@@ -6,11 +6,6 @@ interface PricingCardProps {
   options?: string[];
   preference?: {
     description?: string;
-    battery: {
-      price: number;
-      quantity: number;
-      per: string;
-    };
     pod: {
       price: number;
       quantity: number;
@@ -25,7 +20,6 @@ export default function PricingCard({
   options,
   preference,
 }: PricingCardProps) {
-  const [battery, setBattery] = useState(preference?.battery.quantity || 0);
   const [pod, setPod] = useState(preference?.pod.quantity || 0);
 
   return (
@@ -47,28 +41,6 @@ export default function PricingCard({
         <>
           <p>{preference.description}</p>
           <div className="mb-3 mt-5 space-y-4">
-            <div className="flex items-center justify-center gap-x-4">
-              <button
-                onClick={() => battery > 1 && setBattery((prev) => prev - 1)}
-                className="grid h-7 w-7 place-items-center rounded-full border border-[#DADADA]">
-                -
-              </button>
-              <p className="w-20 text-center">
-                <b>{battery + ''}</b> battery
-              </p>
-              <button
-                onClick={() => setBattery((prev) => prev + 1)}
-                className="grid h-7 w-7 place-items-center rounded-full border border-[#DADADA]">
-                +
-              </button>
-              <p>
-                <b>=</b>
-              </p>
-              <p>
-                <b>${preference.battery.price * battery}</b> /per{' '}
-                {preference.battery.per}
-              </p>
-            </div>
             <div className="flex items-center justify-center gap-x-4">
               <button
                 onClick={() => pod > 1 && setPod((prev) => prev - 1)}
