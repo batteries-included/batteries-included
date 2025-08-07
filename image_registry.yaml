@@ -187,6 +187,7 @@ grafana:
   default_tag: 11.4.5
   tags:
     - 12.1.0
+    - 12.0.4
     - 12.0.3
     - 12.0.2
     - 12.0.1
@@ -573,8 +574,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.11.2
+  default_tag: 0.11.3
   tags:
+    - 0.11.3
     - 0.11.2
     - 0.11.1
     - 0.11.0
