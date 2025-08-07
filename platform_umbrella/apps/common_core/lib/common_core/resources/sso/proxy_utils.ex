@@ -53,7 +53,7 @@ defmodule CommonCore.Resources.ProxyUtils do
   @spec fully_qualified_service_name(SystemBattery.t(), StateSummary.t()) :: String.t()
   def fully_qualified_service_name(%SystemBattery{} = battery, %StateSummary{} = state) do
     svc = service_name(battery)
-    namespace = core_namespace(state)
+    namespace = proxy_namespace_for_battery(battery, state)
     "#{svc}.#{namespace}.svc.cluster.local"
   end
 
