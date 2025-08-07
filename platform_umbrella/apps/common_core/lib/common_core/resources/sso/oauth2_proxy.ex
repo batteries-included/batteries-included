@@ -3,7 +3,6 @@ defmodule CommonCore.Resources.Oauth2Proxy do
   use CommonCore.Resources.ResourceGenerator, app_name: "oauth2_proxy"
 
   import CommonCore.Resources.ProxyUtils
-  import CommonCore.StateSummary.Namespaces
   import CommonCore.StateSummary.URLs
 
   alias CommonCore.Resources.Builder, as: B
@@ -16,7 +15,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
 
   resource(:deployment, battery, state) do
     name = service_name(battery)
-    namespace = core_namespace(state)
+    namespace = proxy_namespace_for_battery(battery, state)
 
     image = deployment_image(state)
 
@@ -110,7 +109,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
 
   resource(:secret, battery, state) do
     name = service_name(battery)
-    namespace = core_namespace(state)
+    namespace = proxy_namespace_for_battery(battery, state)
 
     data =
       case KeycloakSummary.client(state.keycloak_state, battery.type) do
@@ -133,7 +132,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
 
   resource(:service_account, battery, state) do
     name = service_name(battery)
-    namespace = core_namespace(state)
+    namespace = proxy_namespace_for_battery(battery, state)
 
     :service_account
     |> B.build_resource()
@@ -147,7 +146,7 @@ defmodule CommonCore.Resources.Oauth2Proxy do
 
   resource(:service, battery, state) do
     name = service_name(battery)
-    namespace = core_namespace(state)
+    namespace = proxy_namespace_for_battery(battery, state)
 
     spec =
       %{}

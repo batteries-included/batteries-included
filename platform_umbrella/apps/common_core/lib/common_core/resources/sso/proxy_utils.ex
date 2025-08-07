@@ -188,4 +188,7 @@ defmodule CommonCore.Resources.ProxyUtils do
   def target_refs_for_services(spec, names) do
     Map.put(spec, "targetRefs", Enum.map(names, &%{"name" => &1, "kind" => "Service"}))
   end
+
+  def proxy_namespace_for_battery(%{type: :notebooks}, state), do: ai_namespace(state)
+  def proxy_namespace_for_battery(_battery, state), do: core_namespace(state)
 end
