@@ -3,6 +3,7 @@ defmodule ControlServerWeb.PortModal do
   use ControlServerWeb, :live_component
 
   alias CommonCore.Port
+  alias CommonCore.Protocol
   alias Ecto.Changeset
 
   @impl Phoenix.LiveComponent
@@ -103,7 +104,7 @@ defmodule ControlServerWeb.PortModal do
 
             <.field>
               <:label>Protocol</:label>
-              <.input field={@form[:protocol]} type="select" options={Port.protocols()} />
+              <.input field={@form[:protocol]} type="select" options={Protocol.options()} />
             </.field>
           </.fieldset>
 
