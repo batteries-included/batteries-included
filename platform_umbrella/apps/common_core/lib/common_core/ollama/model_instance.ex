@@ -16,19 +16,19 @@ defmodule CommonCore.Ollama.ModelInstance do
     },
     %{
       name: "medium",
-      cpu_requested: 4000,
+      cpu_requested: 2000,
       memory_requested: Memory.to_bytes(8, :GB),
       memory_limits: Memory.to_bytes(8, :GB)
     },
     %{
       name: "large",
-      cpu_requested: 8000,
+      cpu_requested: 4000,
       memory_requested: Memory.to_bytes(16, :GB),
       memory_limits: Memory.to_bytes(16, :GB)
     },
     %{
       name: "xlarge",
-      cpu_requested: 10_000,
+      cpu_requested: 8_000,
       memory_requested: Memory.to_bytes(64, :GB),
       memory_limits: Memory.to_bytes(64, :GB)
     },
@@ -43,6 +43,8 @@ defmodule CommonCore.Ollama.ModelInstance do
   @models %{
     "deepseek-r1:1.5b" => %{name: "Deepseek R1 1.5b", size: Memory.to_bytes(1.1, :GB)},
     "deepseek-r1:7b" => %{name: "Deepseek R1 7b", size: Memory.to_bytes(4.7, :GB)},
+    "gpt-oss:20b" => %{name: "GPT-OSS 20b", size: Memory.to_bytes(14.0, :GB)},
+    "gpt-oss:120b" => %{name: "GPT-OSS 120b", size: Memory.to_bytes(65.0, :GB)},
     "llama3.1:70b" => %{name: "Llama 3.1 70b", size: Memory.to_bytes(43.0, :GB)},
     "llama3.1:8b" => %{name: "Llama 3.1 8b", size: Memory.to_bytes(4.9, :GB)},
     "llama3.2:1b" => %{name: "Llama 3.2 1b", size: Memory.to_bytes(1.3, :GB)},
