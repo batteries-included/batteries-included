@@ -64,7 +64,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Check existing ASDF cache
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: asdf
         with:
           path: ${{ env.ASDF_PATHS }}
@@ -72,7 +72,7 @@ jobs:
           lookup-only: true
 
       - name: Check existing elixir cache
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: elixir
         with:
           path: ${{ env.ELIXIR_PATHS }}
@@ -80,7 +80,7 @@ jobs:
           lookup-only: true
 
       - name: Check existing Go cache
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: go
         with:
           path: ${{ env.GO_PATHS }}
@@ -88,7 +88,7 @@ jobs:
           lookup-only: true
 
       - name: Check existing bi cache
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: bi
         with:
           path: ${{ env.BI_PATHS }}
@@ -96,7 +96,7 @@ jobs:
           lookup-only: true
 
       - name: Check existing image cache
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: images
         with:
           path: ${{ env.IMAGE_PATHS }}
@@ -135,7 +135,7 @@ jobs:
         run: asdf reshim
 
       - name: Save ASDF cache
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           path: ${{ env.ASDF_PATHS }}
           key: ${{ needs.check-caches.outputs.asdf-hash-key }}
@@ -163,7 +163,7 @@ jobs:
         run: bin/bix mix dialyzer --plt
 
       - name: Save Elixir cache
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: elixir-cache
         with:
           path: ${{ env.ELIXIR_PATHS }}
@@ -190,7 +190,7 @@ jobs:
         run: bin/bix go test
 
       - name: Save Go cache
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: go-cache
         with:
           path: ${{ env.GO_PATHS }}
@@ -216,7 +216,7 @@ jobs:
         run: bin/bix go ensure-bi
 
       - name: Save `bi` cache
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: bi-cache
         with:
           path: |
@@ -256,7 +256,7 @@ jobs:
             /home/runner/work/_temp/base_images.tar
 
       - name: Save images cache
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: images-cache
         with:
           path: ${{ env.IMAGE_PATHS }}
