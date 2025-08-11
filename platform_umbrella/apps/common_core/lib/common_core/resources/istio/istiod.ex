@@ -313,7 +313,10 @@ defmodule CommonCore.Resources.Istio.Istiod do
           }
         ],
         "serviceAccountName" => "istiod",
-        "tolerations" => [%{"key" => "cni.istio.io/not-ready", "operator" => "Exists"}],
+        "tolerations" => [
+          %{"key" => "cni.istio.io/not-ready", "operator" => "Exists"},
+          %{"key" => "CriticalAddonsOnly", "operator" => "Exists"}
+        ],
         "volumes" => [
           %{"emptyDir" => %{"medium" => "Memory"}, "name" => "local-certs"},
           %{
