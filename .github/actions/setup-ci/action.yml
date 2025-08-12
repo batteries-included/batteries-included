@@ -25,7 +25,7 @@ runs:
 
     - name: Restore BI cache
       if: ${{ inputs.bi_cache == 'true' }}
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809
       with:
         path: |
           /home/runner/.local/share/bi/dev/
@@ -35,7 +35,7 @@ runs:
 
     - name: Restore elixir cache
       if: ${{ inputs.elixir_cache == 'true' }}
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809
       id: elixir-cache
       with:
         path: |
@@ -49,7 +49,7 @@ runs:
 
     - name: Restore Go cache
       if: ${{ inputs.go_cache == 'true' }}
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809
       with:
         path: |
           ${{ env.GOCACHE }}
