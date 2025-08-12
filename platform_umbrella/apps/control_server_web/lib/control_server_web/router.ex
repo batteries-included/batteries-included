@@ -156,7 +156,11 @@ defmodule ControlServerWeb.Router do
     live "/stateful_set/:namespace/:name/annotations", Live.StatefulSetShow, :annotations
 
     # Service detail views
-    live "/service/:namespace/:name/show", Live.ServiceShow
+    live "/service/:namespace/:name/show", Live.ServiceShow, :index
+    live "/service/:namespace/:name/events", Live.ServiceShow, :events
+    live "/service/:namespace/:name/endpoints", Live.ServiceShow, :endpoints
+    live "/service/:namespace/:name/labels", Live.ServiceShow, :labels
+    live "/service/:namespace/:name/annotations", Live.ServiceShow, :annotations
   end
 
   # Redis cluster management - requires authentication
