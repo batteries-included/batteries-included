@@ -5,6 +5,32 @@ defmodule CommonCore.Util.MapTest do
 
   doctest CommonCore.Util.Map
 
+  describe "maybe_put/3" do
+    test "doesn't update the map if value is \"empty\"" do
+      assert %{} = maybe_put(%{}, "a", "")
+      assert %{} = maybe_put(%{}, "a", "0")
+      assert %{} = maybe_put(%{}, "a", %{})
+      assert %{} = maybe_put(%{}, "a", 0)
+    end
+
+    test "doesn't update the map if key is \"empty\"" do
+      assert %{} = maybe_put(%{}, "", :a)
+      assert %{} = maybe_put(%{}, "0", :a)
+      assert %{} = maybe_put(%{}, %{}, :a)
+      assert %{} = maybe_put(%{}, 0, :a)
+    end
+
+    test "doesn't update the map if value is nil" do
+      assert %{} = maybe_put(%{}, "a", nil)
+    end
+
+    test "updates the map" do
+      assert %{"a" => "b"} = maybe_put(%{}, "a", "b")
+      assert %{"a" => %{x: :y}} = maybe_put(%{}, "a", %{x: :y})
+      assert %{"a" => "false"} = maybe_put(%{}, "a", "false")
+    end
+  end
+
   describe "maybe_put/4" do
     test "updates the map when predicate is `true`" do
       assert %{"a" => "b"} = maybe_put(%{}, true, "a", "b")

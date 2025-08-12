@@ -3,8 +3,10 @@ defmodule CommonCore.Util.Map do
   Utility functions for working with maps
   """
 
+  @considered_empty ["", %{}, 0, "0"]
+
   @doc """
-  Put `key` in `map` with `value` if `value` is not an empty string or empty map.
+  Put `key` in `map` with `value` if `value` is not an empty string or empty map or zero.
   Returns the original map if `value` is an empty string or empty map.
 
   ### Examples
@@ -23,16 +25,11 @@ defmodule CommonCore.Util.Map do
   """
 
   @spec maybe_put(map(), String.t(), integer() | list(any()) | String.t() | map() | nil) :: map()
-  def maybe_put(map, _key, value) when value == "", do: map
-  def maybe_put(map, _key, value) when value == %{}, do: map
-  def maybe_put(map, key, _value) when key == "", do: map
+  def maybe_put(map, _key, value) when value in @considered_empty, do: map
+  def maybe_put(map, key, _value) when key in @considered_empty, do: map
 
   def maybe_put(map, key, value) do
-    if value do
-      Map.put(map, key, value)
-    else
-      map
-    end
+    if value, do: Map.put(map, key, value), else: map
   end
 
   @doc ~S"""
