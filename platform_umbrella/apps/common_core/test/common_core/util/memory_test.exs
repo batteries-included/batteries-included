@@ -34,6 +34,35 @@ defmodule CommonCore.Util.MemoryTest do
     test "returns error for invalid string" do
       assert to_bytes("foobar") == :error
     end
+
+    test "formats from Ki (Kubernetes/IEC binary)" do
+      assert to_bytes("1Ki") == 1024
+      assert to_bytes("2Ki") == 2048
+      assert to_bytes(1, :Ki) == 1024
+    end
+
+    test "formats from Mi (Kubernetes/IEC binary)" do
+      assert to_bytes("1Mi") == 1_048_576
+      assert to_bytes("2Mi") == 2_097_152
+      assert to_bytes(1, :Mi) == 1_048_576
+    end
+
+    test "formats from Gi (Kubernetes/IEC binary)" do
+      assert to_bytes("1Gi") == 1_073_741_824
+      assert to_bytes("2Gi") == 2_147_483_648
+      assert to_bytes(1, :Gi) == 1_073_741_824
+    end
+
+    test "formats from Ti (Kubernetes/IEC binary)" do
+      assert to_bytes("1Ti") == 1_099_511_627_776
+      assert to_bytes("2Ti") == 2_199_023_255_552
+      assert to_bytes(1, :Ti) == 1_099_511_627_776
+    end
+
+    test "parses Kubernetes node memory format" do
+      # Example from kubectl get nodes -o json: "31986428Ki"
+      assert to_bytes("31986428Ki") == 31_986_428 * 1024
+    end
   end
 
   describe "from_bytes/2" do
@@ -60,6 +89,29 @@ defmodule CommonCore.Util.MemoryTest do
 
     test "formats to TB" do
       assert from_bytes(1_099_511_627_776, :TB) == 1.0
+    end
+
+    test "formats to Ki (Kubernetes/IEC binary)" do
+      assert from_bytes(1024, :Ki) == 1.0
+      assert from_bytes(2048, :Ki) == 2.0
+      assert from_bytes(1_048_576, :Ki) == 1024.0
+    end
+
+    test "formats to Mi (Kubernetes/IEC binary)" do
+      assert from_bytes(1_048_576, :Mi) == 1.0
+      assert from_bytes(2_097_152, :Mi) == 2.0
+      assert from_bytes(1_073_741_824, :Mi) == 1024.0
+    end
+
+    test "formats to Gi (Kubernetes/IEC binary)" do
+      assert from_bytes(1_073_741_824, :Gi) == 1.0
+      assert from_bytes(2_147_483_648, :Gi) == 2.0
+      assert from_bytes(1_099_511_627_776, :Gi) == 1024.0
+    end
+
+    test "formats to Ti (Kubernetes/IEC binary)" do
+      assert from_bytes(1_099_511_627_776, :Ti) == 1.0
+      assert from_bytes(2_199_023_255_552, :Ti) == 2.0
     end
   end
 

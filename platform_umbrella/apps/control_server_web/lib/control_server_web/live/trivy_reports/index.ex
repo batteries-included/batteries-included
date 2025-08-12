@@ -2,9 +2,14 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
+  import ControlServerWeb.ClusterInfraAssessmentReportTable
+  import ControlServerWeb.ClusterSBOMReportTable
+  import ControlServerWeb.ClusterVulnerabilityReportTable
   import ControlServerWeb.ConfigAuditReportTable
+  import ControlServerWeb.ExposedSecretReportTable
   import ControlServerWeb.InfraAssessmentReportTable
   import ControlServerWeb.RBACReportTable
+  import ControlServerWeb.SBOMReportTable
   import ControlServerWeb.VulnerabilityReportTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
@@ -69,16 +74,41 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
     "Kube Infra Report"
   end
 
+  defp title_text(:aqua_cluster_infra_assessment_report) do
+    "Cluster Kube Infra Report"
+  end
+
+  defp title_text(:aqua_exposed_secret_report) do
+    "Exposed Secrets Report"
+  end
+
+  defp title_text(:aqua_sbom_report) do
+    "SBOM Report"
+  end
+
+  defp title_text(:aqua_cluster_sbom_report) do
+    "Cluster SBOM Report"
+  end
+
+  defp title_text(:aqua_cluster_vulnerability_report) do
+    "Cluster Vulnerability Report"
+  end
+
   defp title_text(:aqua_vulnerability_report) do
     "Vulnerability Report"
   end
 
   @report_tabs [
-    {"Audit", "/trivy_reports/config_audit_report", :aqua_config_audit_report},
-    {"Cluster RBAC", "/trivy_reports/cluster_rbac_assessment_report", :aqua_cluster_rbac_assessment_report},
+    {"Vulnerability", "/trivy_reports/vulnerability_report", :aqua_vulnerability_report},
+    {"Cluster Vuln", "/trivy_reports/cluster_vulnerability_report", :aqua_cluster_vulnerability_report},
+    {"Exposed Secrets", "/trivy_reports/exposed_secret_report", :aqua_exposed_secret_report},
+    {"SBOM", "/trivy_reports/sbom_report", :aqua_sbom_report},
+    {"Cluster SBOM", "/trivy_reports/cluster_sbom_report", :aqua_cluster_sbom_report},
+    {"Config Audit", "/trivy_reports/config_audit_report", :aqua_config_audit_report},
     {"RBAC", "/trivy_reports/rbac_assessment_report", :aqua_rbac_assessment_report},
+    {"Cluster RBAC", "/trivy_reports/cluster_rbac_assessment_report", :aqua_cluster_rbac_assessment_report},
     {"Kube Infra", "/trivy_reports/infra_assessment_report", :aqua_infra_assessment_report},
-    {"Vulnerability", "/trivy_reports/vulnerability_report", :aqua_vulnerability_report}
+    {"Cluster Infra", "/trivy_reports/cluster_infra_assessment_report", :aqua_cluster_infra_assessment_report}
   ]
 
   defp report_tabs, do: @report_tabs
@@ -110,6 +140,16 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
         <.rbac_reports_table reports={@objects} />
       <% :aqua_infra_assessment_report -> %>
         <.infra_assessment_reports_table reports={@objects} />
+      <% :aqua_cluster_infra_assessment_report -> %>
+        <.cluster_infra_assessment_reports_table reports={@objects} />
+      <% :aqua_exposed_secret_report -> %>
+        <.exposed_secret_reports_table reports={@objects} />
+      <% :aqua_sbom_report -> %>
+        <.sbom_reports_table reports={@objects} />
+      <% :aqua_cluster_sbom_report -> %>
+        <.cluster_sbom_reports_table reports={@objects} />
+      <% :aqua_cluster_vulnerability_report -> %>
+        <.cluster_vulnerability_reports_table reports={@objects} />
       <% :aqua_vulnerability_report -> %>
         <.vulnerability_reports_table reports={@objects} />
     <% end %>

@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.DeployementLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.ResourceFactory
   import CommonCore.Resources.FieldAccessors
-  import ControlServer.ResourceFixtures
   import Phoenix.LiveViewTest
 
   alias KubeServices.KubeState.Runner
@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.DeployementLiveTest do
   @table_name :default_state_table
 
   defp create_deployment(_) do
-    deployment = resource_fixture(%{kind: "Deployment"})
+    deployment = build(:deployment)
     Runner.add(@table_name, deployment)
 
     on_exit(fn ->

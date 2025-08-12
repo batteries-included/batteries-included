@@ -8,10 +8,13 @@ defmodule ControlServerWeb.ResourceHTMLHelper do
 
   def resource_path(%{} = resource, action \\ :show, params \\ %{}) do
     resource_type = ApiVersionKind.resource_type(resource)
-    namespace = namespace(resource)
     name = name(resource)
 
-    path = "/kube/#{resource_type}/#{namespace}/#{name}/#{Atom.to_string(action)}"
+    path =
+      case namespace(resource) do
+        nil -> "/kube/#{resource_type}/#{name}/#{Atom.to_string(action)}"
+        ns -> "/kube/#{resource_type}/#{ns}/#{name}/#{Atom.to_string(action)}"
+      end
 
     if Enum.empty?(params) do
       path
@@ -25,7 +28,10 @@ defmodule ControlServerWeb.ResourceHTMLHelper do
     namespace = namespace(resource)
     name = name(resource)
 
-    "/kube/raw/#{resource_type}/#{namespace}/#{name}"
+    case namespace do
+      nil -> "/kube/raw/#{resource_type}/#{name}"
+      _ -> "/kube/raw/#{resource_type}/#{namespace}/#{name}"
+    end
   end
 
   def to_html_id(%{"containerID" => id}) do
@@ -33,6 +39,9 @@ defmodule ControlServerWeb.ResourceHTMLHelper do
   end
 
   def to_html_id(resource) do
-    [kind(resource), namespace(resource), name(resource)] |> Enum.filter(& &1) |> Enum.join("_") |> String.downcase()
+    [kind(resource), namespace(resource), name(resource)]
+    |> Enum.filter(& &1)
+    |> Enum.join("_")
+    |> String.downcase()
   end
 end

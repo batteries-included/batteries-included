@@ -3,7 +3,6 @@ defmodule ControlServerWeb.PostgresLiveTest do
   use ControlServerWeb.ConnCase
 
   import ControlServer.Factory
-  import ControlServer.ResourceFixtures
 
   alias CommonCore.Postgres.Cluster
   alias ControlServer.Repo
@@ -25,7 +24,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
   }
 
   defp create_namespace(_) do
-    namespace = resource_fixture(%{kind: "Namespace"})
+    namespace = CommonCore.ResourceFactory.build(:namespace)
     Runner.add(@kube_table_name, namespace)
 
     on_exit(fn ->
@@ -171,7 +170,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
 
   describe "edit" do
     defp setup_edit(_) do
-      namespace = resource_fixture(%{kind: "Namespace"})
+      namespace = CommonCore.ResourceFactory.build(:namespace)
       Runner.add(@kube_table_name, namespace)
 
       on_exit(fn ->
@@ -241,8 +240,6 @@ defmodule ControlServerWeb.PostgresLiveTest do
   describe "postgres show page" do
     import ControlServer.Factory
 
-    alias CommonCore.ResourceFactory
-    alias CommonCore.Resources.Builder, as: B
     alias CommonCore.Resources.FieldAccessors
 
     @kube_table_name :default_state_table
@@ -251,7 +248,7 @@ defmodule ControlServerWeb.PostgresLiveTest do
       cluster = insert(:postgres_cluster)
 
       # Add a pod that's owned by this cluster
-      pod = :pod |> ResourceFactory.build() |> B.add_owner(cluster)
+      pod = CommonCore.ResourceFactory.build(:pod, %{owner: cluster})
 
       Runner.add(@kube_table_name, pod)
 

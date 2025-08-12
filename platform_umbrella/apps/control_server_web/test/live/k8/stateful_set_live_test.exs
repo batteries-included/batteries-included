@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.StatefulSetLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.ResourceFactory
   import CommonCore.Resources.FieldAccessors
-  import ControlServer.ResourceFixtures
   import Phoenix.LiveViewTest
 
   alias KubeServices.KubeState.Runner
@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.StatefulSetLiveTest do
   @table_name :default_state_table
 
   defp create_stateful_set(_) do
-    stateful_set = resource_fixture(%{kind: "StatefulSet"})
+    stateful_set = build(:stateful_set)
     Runner.add(@table_name, stateful_set)
 
     on_exit(fn ->

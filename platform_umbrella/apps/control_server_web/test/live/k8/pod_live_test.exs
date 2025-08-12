@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.PodLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.ResourceFactory
   import CommonCore.Resources.FieldAccessors
-  import ControlServer.ResourceFixtures
   import Phoenix.LiveViewTest
 
   alias KubeServices.KubeState.Runner
@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.PodLiveTest do
   @table_name :default_state_table
 
   defp create_pod(_) do
-    pod = resource_fixture(%{kind: "Pod"})
+    pod = build(:pod)
     Runner.add(@table_name, pod)
 
     on_exit(fn ->

@@ -1,8 +1,8 @@
 defmodule ControlServerWeb.Live.ServiceLiveTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.ResourceFactory
   import CommonCore.Resources.FieldAccessors
-  import ControlServer.ResourceFixtures
   import Phoenix.LiveViewTest
 
   alias KubeServices.KubeState.Runner
@@ -10,7 +10,7 @@ defmodule ControlServerWeb.Live.ServiceLiveTest do
   @table_name :default_state_table
 
   defp create_service(_) do
-    service = resource_fixture(%{kind: "Service"})
+    service = build(:service)
     Runner.add(@table_name, service)
 
     on_exit(fn ->

@@ -83,6 +83,11 @@ defmodule CommonCore.Util.Memory do
   defp multiplier(:MB), do: Integer.pow(1024, 2)
   defp multiplier(:KB), do: 1024
   defp multiplier(:B), do: 1
+  # Kubernetes/IEC binary units
+  defp multiplier(:Ti), do: Integer.pow(1024, 4)
+  defp multiplier(:Gi), do: Integer.pow(1024, 3)
+  defp multiplier(:Mi), do: Integer.pow(1024, 2)
+  defp multiplier(:Ki), do: 1024
 
   @doc """
   Returns a list of tuples for use in select input options.
@@ -109,7 +114,7 @@ defmodule CommonCore.Util.Memory do
   ## Examples
 
       iex> ticks = [{"0GB", 0}, {"10GB", 0.25}, {"500GB", 0.5}, {"1TB", 0.75}, {"2TB", 1}]
-      
+
       iex> "256GB" |> to_bytes() |> range_value_to_bytes(ticks) |> humanize()
       "5GB"
 
@@ -157,7 +162,7 @@ defmodule CommonCore.Util.Memory do
   ## Examples
 
       iex> ticks = [{"0GB", 0}, {"10GB", 0.25}, {"500GB", 0.5}, {"1TB", 0.75}, {"2TB", 1}]
-      
+
       iex> "5GB" |> to_bytes() |> bytes_to_range_value(ticks) |> humanize()
       "256GB"
 
@@ -250,3 +255,5 @@ defmodule CommonCore.Util.Memory do
     if percent < 1, do: round(size / percent), else: size
   end
 end
+
+TB

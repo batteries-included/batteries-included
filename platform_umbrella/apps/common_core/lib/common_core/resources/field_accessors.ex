@@ -3,8 +3,10 @@ defmodule CommonCore.Resources.FieldAccessors do
   Provides accessor functions for common fields in Kubernetes resources.
   """
 
+  # Namespace should be able to be nil.
+  @dialyzer {:nowarn_function, namespace: 1}
+
   defdelegate name(resource), to: K8s.Resource
-  defdelegate namespace(resource), to: K8s.Resource
   defdelegate kind(resource), to: K8s.Resource
   defdelegate label(resource, label), to: K8s.Resource
   defdelegate labels(resource), to: K8s.Resource
@@ -12,6 +14,15 @@ defmodule CommonCore.Resources.FieldAccessors do
   defdelegate annotations(resource), to: K8s.Resource
   defdelegate metadata(resource), to: K8s.Resource
   defdelegate api_version(resource), to: K8s.Resource
+
+  @spec namespace(map() | nil) :: binary() | nil
+  def namespace(resource) do
+    case(K8s.Resource.namespace(resource)) do
+      nil -> nil
+      "" -> nil
+      ns -> ns
+    end
+  end
 
   def uid(resource) when is_nil(resource), do: nil
 
