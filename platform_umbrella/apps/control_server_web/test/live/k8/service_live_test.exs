@@ -27,6 +27,12 @@ defmodule ControlServerWeb.Live.ServiceLiveTest do
       {:ok, _show_live, html} = live(conn, ~p"/kube/service/#{namespace(service)}/#{name(service)}/show")
 
       assert html =~ name(service)
+    end
+
+    test "displays service labels on labels page", %{conn: conn, service: service} do
+      {:ok, _show_live, html} = live(conn, ~p"/kube/service/#{namespace(service)}/#{name(service)}/labels")
+
+      assert html =~ name(service)
 
       labels = labels(service)
       {label_key, label_value} = Enum.at(Map.to_list(labels), 0)
