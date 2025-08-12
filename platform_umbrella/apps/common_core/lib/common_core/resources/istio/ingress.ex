@@ -141,6 +141,15 @@ defmodule CommonCore.Resources.Istio.Ingress do
     |> B.subject(B.build_service_account("istio-ingressgateway-service-account", namespace))
   end
 
+  resource(:service_account_ingress, _battery, state) do
+    namespace = istio_namespace(state)
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("istio-ingressgateway-service-account")
+    |> B.namespace(namespace)
+  end
+
   resource(:deployment_ingress, battery, state) do
     namespace = istio_namespace(state)
 
