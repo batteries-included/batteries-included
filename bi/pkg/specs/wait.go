@@ -51,16 +51,7 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 		l.Info("Finished waiting")
 	}
 
-	// Create HTTP client with WireGuard support if available
-	httpClient := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-
-	if dialContext := kubeClient.GetDialContext(); dialContext != nil {
-		httpClient.Transport = &http.Transport{
-			DialContext: dialContext,
-		}
-	}
+	httpClient := getHTTPClient(spec, kubeClient)
 
 	// try to get cs url and connect, 10x
 	err = retry.Do(func() error {
@@ -79,6 +70,23 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 	}, retry.Context(ctx))
 
 	return err
+}
+
+func getHTTPClient(spec *InstallSpec, kubeClient kube.KubeClient) *http.Client {
+	httpClient := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	dialContext := kubeClient.GetDialContext()
+
+	// Create HTTP client with WireGuard support if available and necessary
+	if dialContext != nil && spec.KubeCluster.Provider == "kind" {
+		httpClient.Transport = &http.Transport{
+			DialContext: dialContext,
+		}
+	}
+
+	return httpClient
 }
 
 func bootstrapJobWatchOpts(ns string) *kube.WatchOptions {
