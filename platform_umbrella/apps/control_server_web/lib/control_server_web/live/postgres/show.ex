@@ -65,7 +65,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   end
 
   defp assign_timeline_installed(socket) do
-    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed?(:timeline))
   end
 
   defp assign_cluster(socket, id) do
@@ -125,7 +125,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
   defp grafana_url(nil), do: nil
 
   defp grafana_url(cluster) do
-    if SummaryBatteries.battery_installed(:grafana) do
+    if SummaryBatteries.battery_installed?(:grafana) do
       SummaryURLs.pg_dashboard_url(cluster)
     end
   end

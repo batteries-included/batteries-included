@@ -304,7 +304,11 @@ defmodule ControlServerWeb.Live.PostgresFormComponent do
             </.fieldset>
           </.panel>
 
-          <.panel :if={SummaryBatteries.cluster_type() == :aws} title="Backup Settings" variant="gray">
+          <.panel
+            :if={SummaryBatteries.battery_installed?(:cloudnative_pg_barman)}
+            title="Backup Settings"
+            variant="gray"
+          >
             <.fieldset>
               <.inputs_for :let={backup_config} field={@form[:backup_config]}>
                 <.field>

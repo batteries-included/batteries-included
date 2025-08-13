@@ -41,7 +41,7 @@ defmodule ControlServerWeb.Live.RedisShow do
   end
 
   defp assign_timeline_installed(socket) do
-    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed?(:timeline))
   end
 
   @impl Phoenix.LiveView

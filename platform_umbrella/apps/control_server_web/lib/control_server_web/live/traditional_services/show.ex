@@ -85,7 +85,7 @@ defmodule ControlServerWeb.Live.TraditionalServicesShow do
   defp maybe_assign_edit_versions(socket), do: socket
 
   defp assign_timeline_installed(socket) do
-    assign(socket, :timeline_installed, SummaryBatteries.battery_installed(:timeline))
+    assign(socket, :timeline_installed, SummaryBatteries.battery_installed?(:timeline))
   end
 
   defp find_k8_resource(id, type) do

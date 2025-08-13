@@ -26,7 +26,7 @@ defmodule ControlServerWeb.Live.TraditionalServices.FormComponent do
      socket
      |> assign_new(:save_info, fn -> "service:save" end)
      |> assign_new(:save_target, fn -> nil end)
-     |> assign_new(:keycloak_enabled, fn -> SummaryBatteries.battery_installed(:keycloak) end)
+     |> assign_new(:keycloak_enabled, fn -> SummaryBatteries.battery_installed?(:keycloak) end)
      |> assign_new(:namespace, fn -> SummaryBatteries.traditional_namespace() end)
      |> assign_container(nil)
      |> assign_container_idx(nil)
