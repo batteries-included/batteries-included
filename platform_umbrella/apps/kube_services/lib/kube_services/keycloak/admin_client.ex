@@ -60,7 +60,7 @@ defmodule KubeServices.Keycloak.AdminClient do
   #
   # Realms
   #
-  @spec realms(atom | pid | {atom, any} | {:via, atom, any}) :: result(list(RealmRepresentation.t()))
+  @spec realms(GenServer.server()) :: result(list(RealmRepresentation.t()))
 
   @doc """
   List the realms on Keycloak
@@ -71,8 +71,7 @@ defmodule KubeServices.Keycloak.AdminClient do
     GenServer.call(target, :realms)
   end
 
-  @spec realm(atom | pid | {atom, any} | {:via, atom, any}, any) ::
-          {:ok, RealmRepresentation.t()} | {:error, any()}
+  @spec realm(GenServer.server(), any) :: {:ok, RealmRepresentation.t()} | {:error, any()}
   @doc """
   Get the realm representation from Keycloak
 

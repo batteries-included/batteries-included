@@ -30,7 +30,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
   @state_opts ~w(resource_type client conn watch_delay connection_func table_name)a
 
-  @spec start_link(keyword) :: {:ok, pid}
+  @spec start_link(keyword) :: GenServer.on_start()
   def start_link(opts) do
     {state_opts, gen_opts} = Keyword.split(opts, @state_opts)
 

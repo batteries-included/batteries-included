@@ -34,12 +34,7 @@ defmodule KubeServices.Keycloak.UserManager do
     {:ok, struct!(State, args)}
   end
 
-  @spec create(
-          atom | pid | {atom, any} | {:via, atom, any},
-          String.t(),
-          Keyword.t() | map() | struct()
-        ) ::
-          {:ok, binary()} | {:error, any()}
+  @spec create(GenServer.server(), String.t(), Keyword.t() | map() | struct()) :: {:ok, binary()} | {:error, any()}
   def create(target \\ @me, realm, attributes) do
     GenServer.call(target, {:create, realm, attributes})
   end
@@ -48,7 +43,7 @@ defmodule KubeServices.Keycloak.UserManager do
     GenServer.call(target, {:reset_password, realm, user_id})
   end
 
-  @spec make_realm_admin(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, String.t(), binary()) ::
+  @spec make_realm_admin(GenServer.server(), String.t(), binary()) ::
           :ok | {:error, any()}
   def make_realm_admin(target \\ @me, realm, user_id) do
     GenServer.call(target, {:make_realm_admin, realm, user_id})

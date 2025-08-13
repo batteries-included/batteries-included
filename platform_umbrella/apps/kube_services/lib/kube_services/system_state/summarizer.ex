@@ -21,15 +21,15 @@ defmodule KubeServices.SystemState.Summarizer do
     field :last, StateSummary.t()
   end
 
-  @spec new(atom | pid | {atom, any} | {:via, atom, any}) :: StateSummary.t()
+  @spec new(GenServer.server()) :: StateSummary.t()
   def new(target \\ @me), do: GenServer.call(target, :new, to_timeout(second: 90))
 
-  @spec cached(atom | pid | {atom, any} | {:via, atom, any}) :: StateSummary.t()
+  @spec cached(GenServer.server()) :: StateSummary.t()
   def cached(target \\ @me), do: GenServer.call(target, :cached)
-  @spec cached_field(atom | pid | {atom, any} | {:via, atom, any}, atom) :: any
+  @spec cached_field(GenServer.server(), atom) :: any
   def cached_field(target \\ @me, field), do: GenServer.call(target, {:cached, field})
 
-  @spec start_link(keyword) :: {:ok, pid}
+  @spec start_link(keyword) :: GenServer.on_start()
   def start_link(opts) do
     {state_opts, gen_opts} =
       opts

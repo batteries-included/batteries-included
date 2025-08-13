@@ -123,21 +123,19 @@ defmodule KubeServices.SystemState.SummaryURLs do
     {:reply, apply(URLs, method, [summary | args]), state}
   end
 
-  @spec url_for_battery(atom | pid | {atom, any} | {:via, atom, any}, atom()) :: String.t() | nil
+  @spec url_for_battery(GenServer.server(), atom()) :: String.t() | nil
   def url_for_battery(target \\ @me, battery) do
     result = GenServer.call(target, [:uri_for_battery, battery])
     URI.to_string(result)
   end
 
-  @spec keycloak_url_for_realm(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
-          String.t() | nil
+  @spec keycloak_url_for_realm(GenServer.server(), String.t()) :: String.t() | nil
   def keycloak_url_for_realm(target \\ @me, realm) do
     result = GenServer.call(target, [:keycloak_uri_for_realm, realm])
     URI.to_string(result)
   end
 
-  @spec keycloak_console_url_for_realm(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
-          String.t() | nil
+  @spec keycloak_console_url_for_realm(GenServer.server(), String.t()) :: String.t() | nil
   def keycloak_console_url_for_realm(target \\ @me, realm) do
     result = GenServer.call(target, [:keycloak_console_uri_for_realm, realm])
     URI.to_string(result)

@@ -39,7 +39,7 @@ defmodule KubeServices.SnapshotApply.KubeApply do
     end
   end
 
-  @spec start_link(keyword) :: {:ok, pid}
+  @spec start_link(keyword) :: GenServer.on_start()
   def start_link(opts) do
     {state_opts, opts} =
       opts

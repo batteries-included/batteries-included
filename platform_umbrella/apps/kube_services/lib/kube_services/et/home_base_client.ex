@@ -56,15 +56,14 @@ defmodule KubeServices.ET.HomeBaseClient do
     :exit, {:noproc, _} -> {:error, :not_started}
   end
 
-  @spec get_status(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: {:ok, InstallStatus.t()} | {:error, any()}
+  @spec get_status(GenServer.server()) :: {:ok, InstallStatus.t()} | {:error, any()}
   def get_status(client \\ @me) do
     GenServer.call(client, :get_status)
   catch
     :exit, {:noproc, _} -> {:error, :not_started}
   end
 
-  @spec get_stable_versions(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) ::
-          {:ok, StableVersionsReport.t()} | {:error, any()}
+  @spec get_stable_versions(GenServer.server()) :: {:ok, StableVersionsReport.t()} | {:error, any()}
   def get_stable_versions(client \\ @me) do
     GenServer.call(client, :get_stable_versions)
   catch

@@ -54,7 +54,7 @@ defmodule KubeServices.ET.InstallStatusWorker do
     GenServer.start_link(__MODULE__, state_opts, opts)
   end
 
-  @spec get_status(atom() | pid() | {atom(), any()}) :: InstallStatus.t() | {:error, any()}
+  @spec get_status(GenServer.server()) :: InstallStatus.t() | {:error, any()}
   def get_status(client \\ __MODULE__) do
     GenServer.call(client, :get_status)
   catch
