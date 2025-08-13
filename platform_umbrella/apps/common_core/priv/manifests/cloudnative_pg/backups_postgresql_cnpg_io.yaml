@@ -31,7 +31,8 @@ spec:
       name: v1
       schema:
         openAPIV3Schema:
-          description: Backup is the Schema for the backups API
+          description:
+            A Backup resource is a request for a PostgreSQL backup by the user.
           properties:
             apiVersion:
               description: |-
@@ -141,6 +142,9 @@ spec:
               required:
                 - cluster
               type: object
+              x-kubernetes-validations:
+                - message: BackupSpec is immutable once set
+                  rule: oldSelf == self
             status:
               description: |-
                 Most recently observed status of the backup. This data may not be up to

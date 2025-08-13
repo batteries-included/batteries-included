@@ -132,8 +132,9 @@ cert_manager_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 cloudnative_pg:
   name: ghcr.io/cloudnative-pg/cloudnative-pg
-  default_tag: 1.26.1
+  default_tag: 1.27.0
   tags:
+    - 1.27.0
     - 1.26.1
     - 1.26.0
     - 1.25.2
@@ -192,11 +193,13 @@ grafana:
     - 12.0.2
     - 12.0.1
     - 12.0.0
+    - 11.6.5
     - 11.6.4
     - 11.6.3
     - 11.6.2
     - 11.6.1
     - 11.6.0
+    - 11.5.8
     - 11.5.7
     - 11.5.6
     - 11.5.5
@@ -205,6 +208,7 @@ grafana:
     - 11.5.2
     - 11.5.1
     - 11.5.0
+    - 11.4.8
     - 11.4.7
     - 11.4.6
     - 11.4.5
