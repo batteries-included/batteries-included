@@ -255,5 +255,3 @@ defmodule CommonCore.Util.Memory do
     if percent < 1, do: round(size / percent), else: size
   end
 end
-
-TB
