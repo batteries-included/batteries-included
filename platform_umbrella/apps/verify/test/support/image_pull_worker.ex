@@ -91,12 +91,12 @@ defmodule Verify.ImagePullWorker do
     {:noreply, state}
   end
 
-  @spec pull_image(GenServer.name(), atom | String.t()) :: term()
+  @spec pull_image(GenServer.server(), atom | String.t()) :: term()
   def pull_image(name, image) do
     GenServer.cast(name, {:pull, image})
   end
 
-  @spec image_status(GenServer.name(), atom | String.t()) :: term()
+  @spec image_status(GenServer.server(), atom | String.t()) :: term()
   def image_status(name, image) do
     GenServer.call(name, {:status, image})
   end

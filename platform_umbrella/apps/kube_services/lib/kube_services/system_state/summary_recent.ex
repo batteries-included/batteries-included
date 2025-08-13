@@ -77,44 +77,38 @@ defmodule KubeServices.SystemState.SummaryRecent do
 
   defp sorted_limit(_enum, _limit), do: []
 
-  @spec postgres_clusters(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.Postgres.Cluster.t())
+  @spec postgres_clusters(GenServer.server(), integer()) :: list(CommonCore.Postgres.Cluster.t())
   def postgres_clusters(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:postgres_clusters, limit})
   end
 
-  @spec redis_instances(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.Redis.RedisInstance.t())
+  @spec redis_instances(GenServer.server(), integer()) :: list(CommonCore.Redis.RedisInstance.t())
   def redis_instances(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:redis_instances, limit})
   end
 
-  @spec knative_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.Knative.Service.t())
+  @spec knative_services(GenServer.server(), integer()) :: list(CommonCore.Knative.Service.t())
   def knative_services(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:knative_services, limit})
   end
 
-  @spec keycloak_realms(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
+  @spec keycloak_realms(GenServer.server(), integer()) ::
           list(CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation.t())
   def keycloak_realms(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:keycloak_realms, limit})
   end
 
-  @spec aqua_vulnerability_reports(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(map())
+  @spec aqua_vulnerability_reports(GenServer.server(), integer()) :: list(map())
   def aqua_vulnerability_reports(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:aqua_vulnerability_reports, limit})
   end
 
-  @spec ip_address_pools(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.MetalLB.IPAddressPool.t())
+  @spec ip_address_pools(GenServer.server(), integer()) :: list(CommonCore.MetalLB.IPAddressPool.t())
   def ip_address_pools(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:ip_address_pools, limit})
   end
 
-  @spec notebooks(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.Notebooks.JupyterLabNotebook.t())
+  @spec notebooks(GenServer.server(), integer()) :: list(CommonCore.Notebooks.JupyterLabNotebook.t())
   def notebooks(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:notebooks, limit})
   end
@@ -123,20 +117,17 @@ defmodule KubeServices.SystemState.SummaryRecent do
     GenServer.call(target, {:model_instances, limit})
   end
 
-  @spec ferret_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.FerretDB.FerretService.t())
+  @spec ferret_services(GenServer.server(), integer()) :: list(CommonCore.FerretDB.FerretService.t())
   def ferret_services(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:ferret_services, limit})
   end
 
-  @spec projects(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.Projects.Project.t())
+  @spec projects(GenServer.server(), integer()) :: list(CommonCore.Projects.Project.t())
   def projects(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:projects, limit})
   end
 
-  @spec traditional_services(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, integer()) ::
-          list(CommonCore.TraditionalServices.Service.t())
+  @spec traditional_services(GenServer.server(), integer()) :: list(CommonCore.TraditionalServices.Service.t())
   def traditional_services(target \\ @me, limit \\ 7) do
     GenServer.call(target, {:traditional_services, limit})
   end

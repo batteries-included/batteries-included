@@ -100,17 +100,17 @@ defmodule Verify.BatteryInstallWorker do
     end)
   end
 
-  @spec set_session(GenServer.name(), Wallaby.Session.t()) :: term()
+  @spec set_session(GenServer.server(), Wallaby.Session.t()) :: term()
   def set_session(name, session) do
     GenServer.call(name, {:set_session, session})
   end
 
-  @spec install_battery(GenServer.name(), CatalogBattery.t(), map()) :: term()
+  @spec install_battery(GenServer.server(), CatalogBattery.t(), map()) :: term()
   def install_battery(name, battery, config \\ %{}) do
     GenServer.call(name, {:install_battery, battery, config}, 5 * 60 * 1000)
   end
 
-  @spec uninstall_battery(GenServer.name(), CatalogBattery.t()) :: term()
+  @spec uninstall_battery(GenServer.server(), CatalogBattery.t()) :: term()
   def uninstall_battery(name, battery) do
     GenServer.call(name, {:uninstall_battery, battery}, 5 * 60 * 1000)
   end

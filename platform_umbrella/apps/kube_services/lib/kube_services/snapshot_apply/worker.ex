@@ -43,12 +43,12 @@ defmodule KubeServices.SnapshotApply.Worker do
     GenServer.call(target, :start)
   end
 
-  @spec set_running(atom() | pid() | {atom(), any()} | {:via, atom(), any()}, boolean()) :: boolean()
+  @spec set_running(GenServer.server(), boolean()) :: boolean()
   def set_running(target \\ @me, value) do
     GenServer.call(target, {:set_running, value})
   end
 
-  @spec get_running(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) :: boolean()
+  @spec get_running(GenServer.server()) :: boolean()
   def get_running(target \\ @me) do
     # The Worker might not be running because it crashed.
     # We want that to mean it's not running
@@ -60,8 +60,7 @@ defmodule KubeServices.SnapshotApply.Worker do
     _e, _r -> false
   end
 
-  @spec get_last_success(atom() | pid() | {atom(), any()} | {:via, atom(), any()}) ::
-          {:ok, DateTime.t() | nil} | {:error, String.t()}
+  @spec get_last_success(GenServer.server()) :: {:ok, DateTime.t() | nil} | {:error, String.t()}
   def get_last_success(target \\ @me) do
     last = GenServer.call(target, :get_last_success)
     {:ok, last}

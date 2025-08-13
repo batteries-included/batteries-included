@@ -63,14 +63,14 @@ defmodule Verify.TestCase.Util do
     end
   end
 
-  @spec prepull_images(GenServer.name(), list(atom() | String.t())) :: :ok
+  @spec prepull_images(GenServer.server(), list(atom() | String.t())) :: :ok
   def prepull_images(_pid, []), do: :ok
 
   def prepull_images(pid, images) do
     Enum.each(images, &ImagePullWorker.pull_image(pid, &1))
   end
 
-  @spec install_batteries(GenServer.name(), list(atom() | {atom() | map()})) :: :ok | list(atom())
+  @spec install_batteries(GenServer.server(), list(atom() | {atom() | map()})) :: :ok | list(atom())
   def install_batteries(worker_pid, batteries \\ [])
 
   def install_batteries(worker_pid, battery) when is_atom(battery), do: install_battery(worker_pid, {battery, %{}})
@@ -93,7 +93,7 @@ defmodule Verify.TestCase.Util do
     end
   end
 
-  @spec uninstall_batteries(GenServer.name(), list(atom())) :: :ok | list(term())
+  @spec uninstall_batteries(GenServer.server(), list(atom())) :: :ok | list(term())
   def uninstall_batteries(worker_pid, battery) when is_atom(battery), do: uninstall_batteries(worker_pid, [battery])
 
   def uninstall_batteries(_worker_pid, []), do: :ok
@@ -118,7 +118,7 @@ defmodule Verify.TestCase.Util do
   @spec rage_output_for_test(module(), binary()) :: String.t()
   def rage_output_for_test(mod, message), do: Path.join(get_tmp_dir(mod), String.replace(message, " ", "_"))
 
-  @spec wait_for_images(GenServer.name(), list(), non_neg_integer()) :: :ok
+  @spec wait_for_images(GenServer.server(), list(), non_neg_integer()) :: :ok
   def wait_for_images(pid, images, timeout \\ 60_000)
 
   def wait_for_images(_pid, [] = _images, _timeout), do: :ok

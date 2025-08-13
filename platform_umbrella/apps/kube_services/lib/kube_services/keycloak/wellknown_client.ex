@@ -50,7 +50,7 @@ defmodule KubeServices.Keycloak.WellknownClient do
 
   def base_url(target \\ @me), do: GenServer.call(target, :base_url)
 
-  @spec get(atom | pid | {atom, any} | {:via, atom, any}, String.t()) :: {:ok, OIDCConfiguration.t()} | {:error, any()}
+  @spec get(GenServer.server(), String.t()) :: {:ok, OIDCConfiguration.t()} | {:error, any()}
   def get(target \\ @me, realm) do
     GenServer.call(target, {:get, realm})
   end
