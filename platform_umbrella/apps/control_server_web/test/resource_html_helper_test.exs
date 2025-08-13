@@ -1,12 +1,12 @@
 defmodule ControlServerWeb.ResourceHTMLHelperTest do
   use ControlServerWeb.ConnCase
 
+  import CommonCore.ResourceFactory
   import CommonCore.Resources.FieldAccessors
-  import ControlServer.ResourceFixtures
   import ControlServerWeb.ResourceHTMLHelper
 
   test "resource_path/2" do
-    resource = resource_fixture()
+    resource = build(:pod)
 
     assert resource_path(resource) ==
              "/kube/#{resource |> kind() |> String.downcase()}/#{namespace(resource)}/#{name(resource)}/show"

@@ -25,7 +25,9 @@ defmodule KubeServices.SystemState.SummaryURLs do
   @me __MODULE__
 
   def start_link(opts) do
-    {state_opts, genserver_opts} = opts |> Keyword.put_new(:name, @me) |> Keyword.split([:summary])
+    {state_opts, genserver_opts} =
+      opts |> Keyword.put_new(:name, @me) |> Keyword.split([:summary])
+
     GenServer.start_link(@me, state_opts, genserver_opts)
   end
 
@@ -64,7 +66,9 @@ defmodule KubeServices.SystemState.SummaryURLs do
   @impl GenServer
   def handle_call({:pg_dashboard_url, %{} = cluster}, _from, %{summary: summary} = state) do
     namespace = PostgresState.cluster_namespace(summary, cluster)
-    query = URI.encode_query(%{"var-cluster" => "pg-" <> cluster.name, "var-namespace" => namespace})
+
+    query =
+      URI.encode_query(%{"var-cluster" => "pg-" <> cluster.name, "var-namespace" => namespace})
 
     url =
       summary
@@ -91,6 +95,21 @@ defmodule KubeServices.SystemState.SummaryURLs do
     {:reply, url, state}
   end
 
+  def handle_call({:node_dashboard_url, %{} = node}, _from, %{summary: summary} = state) do
+    query =
+      URI.encode_query(%{
+        "var-node" => FieldAccessors.name(node)
+      })
+
+    url =
+      summary
+      |> URLs.node_dashboard()
+      |> URI.append_query(query)
+      |> URI.to_string()
+
+    {:reply, url, state}
+  end
+
   def handle_call({:knative_service_url, %{} = service}, _from, %{summary: summary} = state) do
     url =
       summary
@@ -110,13 +129,15 @@ defmodule KubeServices.SystemState.SummaryURLs do
     URI.to_string(result)
   end
 
-  @spec keycloak_url_for_realm(atom | pid | {atom, any} | {:via, atom, any}, String.t()) :: String.t() | nil
+  @spec keycloak_url_for_realm(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
+          String.t() | nil
   def keycloak_url_for_realm(target \\ @me, realm) do
     result = GenServer.call(target, [:keycloak_uri_for_realm, realm])
     URI.to_string(result)
   end
 
-  @spec keycloak_console_url_for_realm(atom | pid | {atom, any} | {:via, atom, any}, String.t()) :: String.t() | nil
+  @spec keycloak_console_url_for_realm(atom | pid | {atom, any} | {:via, atom, any}, String.t()) ::
+          String.t() | nil
   def keycloak_console_url_for_realm(target \\ @me, realm) do
     result = GenServer.call(target, [:keycloak_console_uri_for_realm, realm])
     URI.to_string(result)
@@ -132,6 +153,10 @@ defmodule KubeServices.SystemState.SummaryURLs do
 
   def pod_dashboard_url(target \\ @me, pod_resource) do
     GenServer.call(target, {:pod_dashboard_url, pod_resource})
+  end
+
+  def node_dashboard_url(target \\ @me, node_resource) do
+    GenServer.call(target, {:node_dashboard_url, node_resource})
   end
 
   def knative_service_url(target \\ @me, service) do

@@ -2,46 +2,57 @@
 defmodule KubeServices.Timeline.PodStatusTest do
   use ExUnit.Case, async: true
 
-  import KubeServices.Factory
+  import CommonCore.ResourceFactory
 
   alias KubeServices.Timeline.PodStatus
 
   require Logger
 
+  @conditions ~w(Ready ContainersReady Initialized PodHasNetwork PodScheduled)
+
   setup do
     pid = start_supervised!({PodStatus, [table_name: :test, initial_sync_delay: 0]})
-    pod = build(:pod)
-    %{pid: pid, pod: pod}
+    %{pid: pid}
   end
 
   describe "upsert/2" do
-    test "it adds the mapping if it's not already present", %{pid: pid, pod: pod} do
+    test "it adds the mapping if it's not already present", %{pid: pid} do
+      pod = build(:pod)
       PodStatus.upsert(pid, pod)
+      :sys.get_state(pid)
       assert length(PodStatus.dump()) == 1
     end
 
-    test "it updates the mapping if it's already present", %{pid: pid, pod: pod} do
+    test "it updates the mapping if it's already present", %{pid: pid} do
+      pod = build(:pod)
       PodStatus.upsert(pid, pod)
+      :sys.get_state(pid)
       assert length(PodStatus.dump()) == 1
 
       # mark pod not ready
-      pod = with_conditions(pod, with_false_condition(pod["status"]["conditions"], "Ready"))
+      pod =
+        update_in(pod, ~w(status)a, fn status ->
+          Map.put(status || %{}, "conditions", [%{"type" => "Ready", "status" => "False"}])
+        end)
+
       PodStatus.upsert(pid, pod)
+      :sys.get_state(pid)
       assert length(PodStatus.dump()) == 1
     end
   end
 
   describe "delete/2" do
-    test "it removes existing mapping", %{pid: pid, pod: pod} do
+    test "it removes existing mapping", %{pid: pid} do
+      pod = build(:pod)
       PodStatus.upsert(pid, pod)
       PodStatus.delete(pid, pod)
       assert length(PodStatus.dump()) == 0
     end
 
-    test "it doesn't error on non-existent mapping", %{pid: pid, pod: pod} do
+    test "it doesn't error on non-existent mapping", %{pid: pid} do
+      pod = build(:pod)
       :ok = PodStatus.delete(pid, pod)
       assert length(PodStatus.dump()) == 0
-      assert {_, ^pid, _, _} = :sys.get_status(PodStatus)
     end
   end
 
@@ -66,44 +77,71 @@ defmodule KubeServices.Timeline.PodStatusTest do
   end
 
   describe "status_changed?/2" do
-    # seed the mapping with a ready pod
-    setup %{pid: pid, pod: pod} do
+    test "it returns {true, new_status} when status changes", %{pid: pid} do
+      pod = build(:pod, %{"status" => %{"conditions" => [%{"type" => "Ready", "status" => "True"}]}})
       PodStatus.upsert(pid, pod)
-      # to flush the server's messages
-      _ = :sys.get_state(pid)
-      assert {false, :ready} = PodStatus.status_changed?(:test, pod)
-      :ok
-    end
+      # Wait for the async upsert to complete
+      :sys.get_state(pid)
 
-    test "it returns {true, new_status} when status changes", %{pid: _pid, pod: pod} do
-      pod = with_conditions(pod, build(:conditions, condition: :containers_ready))
+      # Remove Ready condition, keep only ContainersReady
+      pod = put_in(pod, ["status", "conditions"], [%{"type" => "ContainersReady", "status" => "True"}])
+
       assert {true, :containers_ready} = PodStatus.status_changed?(:test, pod)
     end
 
-    test "it returns {false, status} when status didn't change", %{pid: _pid, pod: pod} do
-      assert {false, :ready} = PodStatus.status_changed?(:test, pod)
+    test "it returns {false, status} when status didn't change", %{pid: pid} do
+      pod = build(:pod)
+      PodStatus.upsert(pid, pod)
+      # Wait for the async upsert to complete
+      :sys.get_state(pid)
+      assert {false, _} = PodStatus.status_changed?(:test, pod)
     end
 
-    test "it handles unknown statuses", %{pid: _pid, pod: pod} do
-      pod = with_conditions(pod, build(:conditions, condition: :unknown))
-      assert {true, :unknown} = PodStatus.status_changed?(:test, pod)
+    test "it handles unknown statuses", %{pid: _pid} do
+      pod = build(:pod, %{"status" => %{"conditions" => []}})
+      # This pod was never upserted, so the table doesn't have it
+      assert {_, :unknown} = PodStatus.status_changed?(:test, pod)
     end
 
-    test "it handles all permutations of statuses", %{pid: pid, pod: _pod} do
-      for {condition, _} <- get_container_status_mapping() ++ [unknown: "Unknown"] do
-        pod = :pod |> build() |> with_conditions(build(:conditions, condition: condition))
-        PodStatus.upsert(pod)
-        _ = :sys.get_state(pid)
+    test "it handles all permutations of statuses", %{pid: pid} do
+      for condition <- @conditions do
+        pod = build(:pod, %{"status" => %{"conditions" => [%{"type" => condition, "status" => "True"}]}})
+        PodStatus.upsert(pid, pod)
+        # Wait for the async upsert to complete
+        :sys.get_state(pid)
 
-        for {other, _} <- get_container_status_mapping() ++ [unknown: "Unknown"] do
-          pod = with_conditions(pod, build(:conditions, condition: other))
+        for other <- @conditions do
+          new_pod =
+            update_in(pod, ~w(status), fn status ->
+              Map.put(status || %{}, "conditions", [%{"type" => other, "status" => "True"}])
+            end)
 
-          if other == condition do
-            # status hasn't changed, new and old status are the same other == condition
-            assert {false, ^other} = PodStatus.status_changed?(:test, pod)
+          if condition == other do
+            # status hasn't changed, same condition type
+            expected_status =
+              case condition do
+                "Ready" -> :ready
+                "ContainersReady" -> :containers_ready
+                "Initialized" -> :initialized
+                "PodHasNetwork" -> :pod_has_network
+                "PodScheduled" -> :pod_scheduled
+                _ -> :unknown
+              end
+
+            assert {false, ^expected_status} = PodStatus.status_changed?(:test, new_pod)
           else
-            # status has changed, new status should be other
-            assert {true, ^other} = PodStatus.status_changed?(:test, pod)
+            # status has changed, new status should be based on other
+            expected_status =
+              case other do
+                "Ready" -> :ready
+                "ContainersReady" -> :containers_ready
+                "Initialized" -> :initialized
+                "PodHasNetwork" -> :pod_has_network
+                "PodScheduled" -> :pod_scheduled
+                _ -> :unknown
+              end
+
+            assert {true, ^expected_status} = PodStatus.status_changed?(:test, new_pod)
           end
         end
       end

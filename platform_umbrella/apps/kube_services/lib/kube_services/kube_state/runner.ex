@@ -24,7 +24,7 @@ defmodule KubeServices.KubeState.Runner do
   @doc """
   Get the stored state of a resource.
   """
-  @spec get(:ets.table(), atom(), String.t(), String.t()) :: {:ok, map()} | :missing
+  @spec get(:ets.table(), atom(), String.t() | nil, String.t()) :: {:ok, map()} | :missing
   def get(table_name, resource_type, namespace, name) do
     case :ets.lookup(table_name, {resource_type, namespace, name}) do
       [{_key, resource}] -> {:ok, resource}

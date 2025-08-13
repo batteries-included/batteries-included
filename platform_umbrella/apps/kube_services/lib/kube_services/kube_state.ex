@@ -61,7 +61,7 @@ defmodule KubeServices.KubeState do
     )
   end
 
-  @spec get!(:ets.table(), atom(), binary(), binary()) :: map()
+  @spec get!(:ets.table(), atom(), binary() | nil, binary()) :: map()
   def get!(t \\ @default_table, resource_type, namespace, name) do
     case get(t, resource_type, namespace, name) do
       {:ok, %{} = res} ->
@@ -79,7 +79,7 @@ defmodule KubeServices.KubeState do
   def get(t \\ @default_table, resource),
     do: get(t, ApiVersionKind.resource_type(resource), Resource.namespace(resource), Resource.name(resource))
 
-  @spec get(:ets.table(), atom(), binary(), binary()) :: :missing | {:ok, map()}
+  @spec get(:ets.table(), atom(), binary() | nil, binary()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource_type, namespace, name) do
     Runner.get(t, resource_type, namespace, name)
   end

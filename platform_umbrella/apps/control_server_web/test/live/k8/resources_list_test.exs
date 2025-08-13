@@ -2,7 +2,7 @@ defmodule ControlServerWeb.Live.ResourcesListTest do
   use Heyya.LiveCase
   use ControlServerWeb.ConnCase
 
-  import ControlServer.ResourceFixtures
+  import CommonCore.ResourceFactory
 
   alias KubeServices.KubeState.Runner
 
@@ -10,16 +10,17 @@ defmodule ControlServerWeb.Live.ResourcesListTest do
 
   defp create_resources(_) do
     resources = [
-      resource_fixture(%{kind: "Pod"}),
-      resource_fixture(%{kind: "Pod"}),
-      resource_fixture(%{kind: "Deployment"}),
-      resource_fixture(%{kind: "Deployment"}),
-      resource_fixture(%{kind: "StatefulSet"}),
-      resource_fixture(%{kind: "StatefulSet"}),
-      resource_fixture(%{kind: "Service"}),
-      resource_fixture(%{kind: "Service"}),
-      resource_fixture(%{kind: "Node"}),
-      resource_fixture(%{kind: "Node"})
+      build(:pod),
+      build(:pod),
+      build(:pod),
+      build(:deployment),
+      build(:deployment),
+      build(:stateful_set),
+      build(:stateful_set),
+      build(:service),
+      build(:service),
+      build(:node),
+      build(:node)
     ]
 
     Enum.each(resources, fn resource ->

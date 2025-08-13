@@ -161,6 +161,13 @@ defmodule ControlServerWeb.Router do
     live "/service/:namespace/:name/endpoints", Live.ServiceShow, :endpoints
     live "/service/:namespace/:name/labels", Live.ServiceShow, :labels
     live "/service/:namespace/:name/annotations", Live.ServiceShow, :annotations
+
+    # Node detail views (nodes are global resources, no namespace)
+    live "/node/:name/show", Live.NodeShow, :index
+    live "/node/:name/events", Live.NodeShow, :events
+    live "/node/:name/pods", Live.NodeShow, :pods
+    live "/node/:name/labels", Live.NodeShow, :labels
+    live "/node/:name/annotations", Live.NodeShow, :annotations
   end
 
   # Redis cluster management - requires authentication
@@ -254,12 +261,29 @@ defmodule ControlServerWeb.Router do
 
     # Report type listing pages
     live "/config_audit_report", Live.TrivyReportsIndex, :aqua_config_audit_report
-    live "/cluster_rbac_assessment_report", Live.TrivyReportsIndex, :aqua_cluster_rbac_assessment_report
+
+    live "/cluster_rbac_assessment_report",
+         Live.TrivyReportsIndex,
+         :aqua_cluster_rbac_assessment_report
+
     live "/rbac_assessment_report", Live.TrivyReportsIndex, :aqua_rbac_assessment_report
     live "/infra_assessment_report", Live.TrivyReportsIndex, :aqua_infra_assessment_report
+    live "/cluster_infra_assessment_report", Live.TrivyReportsIndex, :aqua_cluster_infra_assessment_report
+    live "/exposed_secret_report", Live.TrivyReportsIndex, :aqua_exposed_secret_report
+    live "/sbom_report", Live.TrivyReportsIndex, :aqua_sbom_report
+    live "/cluster_sbom_report", Live.TrivyReportsIndex, :aqua_cluster_sbom_report
     live "/vulnerability_report", Live.TrivyReportsIndex, :aqua_vulnerability_report
+    live "/cluster_vulnerability_report", Live.TrivyReportsIndex, :aqua_cluster_vulnerability_report
 
-    # Individual report viewing
+    # Individual cluster resource viewing (no namespace)
+    live "/clustercompliancereports/:name", Live.TrivyReportShow, :cluster_show, as: :cluster_compliance_report
+    live "/clusterconfigauditreports/:name", Live.TrivyReportShow, :cluster_show, as: :cluster_config_audit_report
+    live "/clusterinfraassessmentreports/:name", Live.TrivyReportShow, :cluster_show, as: :cluster_infra_assessment_report
+    live "/clusterrbacassessmentreports/:name", Live.TrivyReportShow, :cluster_show, as: :cluster_rbac_assessment_report
+    live "/clustersbomreports/:name", Live.TrivyReportShow, :cluster_show, as: :cluster_sbom_report
+    live "/clustervulnerabilityreports/:name", Live.TrivyReportShow, :cluster_show, as: :cluster_vulnerability_report
+
+    # Individual namespaced resource viewing
     live "/:resource_type/:namespace/:name", Live.TrivyReportShow, :show
   end
 

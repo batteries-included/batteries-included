@@ -111,6 +111,20 @@ defmodule CommonCore.StateSummary.URLs do
     |> Enum.map(&URI.append_path(&1, "/d/k8s_views_pods/kubernetes-views-pods"))
   end
 
+  @spec node_dashboard(StateSummary.t()) :: URI.t()
+  def node_dashboard(state) do
+    state
+    |> uri_for_battery(:grafana)
+    |> URI.append_path("/d/k8s_views_nodes/kubernetes-views-nodes")
+  end
+
+  @spec node_dashboards(StateSummary.t()) :: list(URI.t())
+  def node_dashboards(state) do
+    state
+    |> uris_for_battery(:grafana)
+    |> Enum.map(&URI.append_path(&1, "/d/k8s_views_nodes/kubernetes-views-nodes"))
+  end
+
   @spec knative_url(StateSummary.t(), Service.t()) :: URI.t()
   def knative_url(state, service) do
     state
@@ -129,5 +143,6 @@ defmodule CommonCore.StateSummary.URLs do
   def append_path_to_string(uri, path), do: uri |> URI.append_path(path) |> URI.to_string()
 
   defp build_uri(host, false = _ssl_enabled?), do: URI.new!("http://#{host}")
+
   defp build_uri(host, true = _ssl_enabled?), do: %{URI.new!("https://#{host}") | scheme: "https", port: 443}
 end
