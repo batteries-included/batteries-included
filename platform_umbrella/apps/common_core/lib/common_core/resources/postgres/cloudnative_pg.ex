@@ -7,6 +7,7 @@ defmodule CommonCore.Resources.CloudnativePG do
     clusters_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/clusters_postgresql_cnpg_io.yaml",
     databases_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/databases_postgresql_cnpg_io.yaml",
     imagecatalogs_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/imagecatalogs_postgresql_cnpg_io.yaml",
+    failoverquorums_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/failoverquorums_postgresql_cnpg_io.yaml",
     poolers_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/poolers_postgresql_cnpg_io.yaml",
     publications_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/publications_postgresql_cnpg_io.yaml",
     scheduledbackups_postgresql_cnpg_io: "priv/manifests/cloudnative_pg/scheduledbackups_postgresql_cnpg_io.yaml",
@@ -20,6 +21,12 @@ defmodule CommonCore.Resources.CloudnativePG do
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
 
+  multi_resource(:crds_cnpg_io) do
+    @included_resources
+    |> Enum.reject(&(&1 == :queries))
+    |> Enum.flat_map(&(&1 |> get_resource() |> YamlElixir.read_all_from_string!()))
+  end
+
   resource(:cluster_role_binding_cloudnative_pg, _battery, state) do
     namespace = core_namespace(state)
 
@@ -32,17 +39,6 @@ defmodule CommonCore.Resources.CloudnativePG do
 
   resource(:cluster_role_cloudnative_pg) do
     rules = [
-      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
-      %{
-        "apiGroups" => ["admissionregistration.k8s.io"],
-        "resources" => ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"],
-        "verbs" => ["get", "patch"]
-      },
-      %{
-        "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["clusterimagecatalogs"],
-        "verbs" => ["get", "list", "watch"]
-      },
       %{
         "apiGroups" => [""],
         "resources" => ["configmaps", "secrets", "services"],
@@ -54,6 +50,7 @@ defmodule CommonCore.Resources.CloudnativePG do
         "verbs" => ["get", "patch", "update"]
       },
       %{"apiGroups" => [""], "resources" => ["events"], "verbs" => ["create", "patch"]},
+      %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => [""],
         "resources" => ["persistentvolumeclaims", "pods", "pods/exec"],
@@ -64,6 +61,11 @@ defmodule CommonCore.Resources.CloudnativePG do
         "apiGroups" => [""],
         "resources" => ["serviceaccounts"],
         "verbs" => ["create", "get", "list", "patch", "update", "watch"]
+      },
+      %{
+        "apiGroups" => ["admissionregistration.k8s.io"],
+        "resources" => ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"],
+        "verbs" => ["get", "patch"]
       },
       %{
         "apiGroups" => ["apps"],
@@ -116,7 +118,7 @@ defmodule CommonCore.Resources.CloudnativePG do
       },
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["imagecatalogs"],
+        "resources" => ["clusterimagecatalogs", "imagecatalogs"],
         "verbs" => ["get", "list", "watch"]
       },
       %{
@@ -126,8 +128,13 @@ defmodule CommonCore.Resources.CloudnativePG do
       },
       %{
         "apiGroups" => ["postgresql.cnpg.io"],
-        "resources" => ["clusters/status", "poolers/status"],
+        "resources" => ["clusters/status", "failoverquorums/status", "poolers/status"],
         "verbs" => ["get", "patch", "update", "watch"]
+      },
+      %{
+        "apiGroups" => ["postgresql.cnpg.io"],
+        "resources" => ["failoverquorums"],
+        "verbs" => ["create", "delete", "get", "list", "watch"]
       },
       %{
         "apiGroups" => ["rbac.authorization.k8s.io"],
@@ -167,42 +174,6 @@ defmodule CommonCore.Resources.CloudnativePG do
     |> B.name("cnpg-default-monitoring")
     |> B.namespace(namespace)
     |> B.data(data)
-  end
-
-  resource(:crd_backups_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:backups_postgresql_cnpg_io))
-  end
-
-  resource(:crd_clusterimagecatalogs_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clusterimagecatalogs_postgresql_cnpg_io))
-  end
-
-  resource(:crd_clusters_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clusters_postgresql_cnpg_io))
-  end
-
-  resource(:crd_databases_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:databases_postgresql_cnpg_io))
-  end
-
-  resource(:crd_imagecatalogs_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:imagecatalogs_postgresql_cnpg_io))
-  end
-
-  resource(:crd_poolers_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:poolers_postgresql_cnpg_io))
-  end
-
-  resource(:crd_publications_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:publications_postgresql_cnpg_io))
-  end
-
-  resource(:crd_scheduledbackups_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:scheduledbackups_postgresql_cnpg_io))
-  end
-
-  resource(:crd_subscriptions_postgresql_cnpg_io) do
-    YamlElixir.read_all_from_string!(get_resource(:subscriptions_postgresql_cnpg_io))
   end
 
   resource(:deployment_cloudnative_pg, battery, state) do

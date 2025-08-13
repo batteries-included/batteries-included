@@ -26,6 +26,7 @@ defmodule CommonCore.ApiVersionKind do
     cloudnative_pg_backup: {"postgresql.cnpg.io/v1", "Backup"},
     cloudnative_pg_cluster: {"postgresql.cnpg.io/v1", "Cluster"},
     cloudnative_pg_database: {"postgresql.cnpg.io/v1", "Database"},
+    cloudnative_pg_failoverquorum: {"postgresql.cnpg.io/v1", "FailoverQuorum"},
     cloudnative_pg_pooler: {"postgresql.cnpg.io/v1", "Pooler"},
     cloudnative_pg_scheduledbackup: {"postgresql.cnpg.io/v1", "ScheduledBackup"},
     cluster_role: {"rbac.authorization.k8s.io/v1", "ClusterRole"},
