@@ -128,8 +128,7 @@ config :phoenix, :json_library, Jason
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: CommonCore.Finch
 
 config :tesla,
-  adapter: {Finch, [timeout: 30_000, name: CommonCore.Finch]},
-  disable_deprecated_builder_warning: true
+  adapter: {Finch, [timeout: 30_000, name: CommonCore.Finch]}
 
 config :verify, :bi_bin_override, System.get_env("BI_BIN_OVERRIDE", nil)
 

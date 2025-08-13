@@ -1,14 +1,22 @@
 defmodule CommonCore.GrafanaDashboardClient do
   @moduledoc false
 
-  use Tesla
+  def client do
+    Tesla.client(middleware(), adapter())
+  end
 
-  plug(Tesla.Middleware.JSON)
+  defp middleware do
+    [Tesla.Middleware.JSON]
+  end
+
+  defp adapter do
+    Finch
+  end
 
   def dashboard(id) do
     url = "https://grafana.com/api/dashboards/#{id}"
 
-    case get(url) do
+    case Tesla.get(client(), url) do
       {:ok, %{status: 200, body: body}} -> {:ok, body}
       {:error, exception} -> {:error, exception}
       err -> {:error, {:unknown_error, err}}
