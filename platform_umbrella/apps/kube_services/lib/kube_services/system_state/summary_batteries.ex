@@ -118,11 +118,11 @@ defmodule KubeServices.SystemState.SummaryBatteries do
   #
   # @param target [pid] the pid of the genserver to query
   # @param battery_type [atom] the type of the battery to check
-  def battery_installed(target \\ @me, battery_type) do
+  def battery_installed?(target \\ @me, battery_type) do
     GenServer.call(target, {:batteries_installed, battery_type})
   end
 
-  def batteries_installed(target \\ @me, battery_types) do
+  def batteries_installed?(target \\ @me, battery_types) do
     GenServer.call(target, {:batteries_installed, battery_types})
   end
 

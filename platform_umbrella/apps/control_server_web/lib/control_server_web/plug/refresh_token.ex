@@ -18,7 +18,7 @@ defmodule ControlServerWeb.Plug.RefreshToken do
       !battery_services_running?() ->
         conn
 
-      !SummaryBatteries.battery_installed(:sso) ->
+      !SummaryBatteries.battery_installed?(:sso) ->
         conn
 
       true ->

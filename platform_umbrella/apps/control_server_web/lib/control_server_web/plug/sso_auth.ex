@@ -21,7 +21,7 @@ defmodule ControlServerWeb.Plug.SSOAuth do
   defp maybe_require_sso(conn, _opts) do
     cond do
       # There's no sso so let them in
-      !SummaryBatteries.battery_installed(:sso) ->
+      !SummaryBatteries.battery_installed?(:sso) ->
         conn
 
       # In test mode we don't require sso as there's no kubernetes

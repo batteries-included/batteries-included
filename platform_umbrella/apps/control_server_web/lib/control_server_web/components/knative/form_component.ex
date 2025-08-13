@@ -63,7 +63,7 @@ defmodule ControlServerWeb.Live.Knative.FormComponent do
   end
 
   defp assign_sso_enabled(socket) do
-    assign_new(socket, :sso_enabled, fn -> SummaryBatteries.battery_installed(:sso) end)
+    assign_new(socket, :sso_enabled, fn -> SummaryBatteries.battery_installed?(:sso) end)
   end
 
   def assign_container_field_name(socket, cfn) do

@@ -84,13 +84,13 @@ defmodule ControlServerWeb.Live.NodeShow do
 
   defp assign_batteries_enabled(socket) do
     assign(socket,
-      grafana_enabled: SummaryBatteries.batteries_installed(~w(grafana kube_monitoring)a)
+      grafana_enabled: SummaryBatteries.batteries_installed?(~w(grafana kube_monitoring)a)
     )
   end
 
   defp assign_grafana_dashboard(%{assigns: %{resource: resource}} = socket) do
     url =
-      if SummaryBatteries.batteries_installed(~w(grafana kube_monitoring)a) do
+      if SummaryBatteries.batteries_installed?(~w(grafana kube_monitoring)a) do
         SummaryURLs.node_dashboard_url(resource)
       end
 

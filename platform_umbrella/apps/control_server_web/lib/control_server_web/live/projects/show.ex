@@ -44,8 +44,8 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign(:project_export_installed, SummaryBatteries.battery_installed(:project_export))
-     |> assign(:timeline_installed, SummaryBatteries.battery_installed(:timeline))
+     |> assign(:project_export_installed, SummaryBatteries.battery_installed?(:project_export))
+     |> assign(:timeline_installed, SummaryBatteries.battery_installed?(:timeline))
      |> assign_project(id)
      |> assign_page_title()
      |> assign_pods()
@@ -87,7 +87,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
 
   defp assign_grafana_dashboard(socket) do
     url =
-      if SummaryBatteries.battery_installed(:grafana) do
+      if SummaryBatteries.battery_installed?(:grafana) do
         SummaryURLs.project_dashboard_url(socket.assigns.project)
       end
 
@@ -106,7 +106,7 @@ defmodule ControlServerWeb.Live.ProjectsShow do
   end
 
   defp add_link(battery_type, url) do
-    if SummaryBatteries.battery_installed(battery_type) do
+    if SummaryBatteries.battery_installed?(battery_type) do
       url
     else
       %{group: battery_group} = Catalog.get(battery_type)
