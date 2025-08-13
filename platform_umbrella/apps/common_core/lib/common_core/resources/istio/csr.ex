@@ -24,10 +24,7 @@ defmodule CommonCore.Resources.Istio.CSR do
       # Warning: cert-manager does not allow a duration on Certificates of less
       # than 1 hour.
       |> Map.put("duration", "1h")
-      |> Map.put(
-        "issuerRef",
-        %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"}
-      )
+      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
       |> Map.put("privateKey", %{"algorithm" => "ECDSA", "size" => 256})
       |> Map.put("renewBefore", "30m")
       |> Map.put("revisionHistoryLimit", 1)

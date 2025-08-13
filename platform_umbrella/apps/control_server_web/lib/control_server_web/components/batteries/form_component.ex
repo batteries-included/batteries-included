@@ -12,6 +12,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.BatteryCAForm
   alias ControlServerWeb.Batteries.BatteryCoreForm
   alias ControlServerWeb.Batteries.CertManagerForm
+  alias ControlServerWeb.Batteries.CloudnativePGBarmanForm
   alias ControlServerWeb.Batteries.CloudnativePGForm
   alias ControlServerWeb.Batteries.FerretDBForm
   alias ControlServerWeb.Batteries.ForgejoForm
@@ -50,6 +51,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     battery_core: BatteryCoreForm,
     cert_manager: CertManagerForm,
     cloudnative_pg: CloudnativePGForm,
+    cloudnative_pg_barman: CloudnativePGBarmanForm,
     ferretdb: FerretDBForm,
     forgejo: ForgejoForm,
     gateway_api: GatewayAPIForm,

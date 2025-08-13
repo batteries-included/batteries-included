@@ -333,7 +333,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.build_resource()
     |> B.name(name)
     |> B.namespace(namespace)
-    |> Map.put("type", get_secret_type(state, namespace, name))
+    |> B.secret_type(get_secret_type(state, namespace, name))
     |> B.label("cnpg.io/reload", "")
     |> F.require_battery(state, :battery_ca)
   end

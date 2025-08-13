@@ -24,6 +24,7 @@ defmodule CommonCore.ApiVersionKind do
     certmanager_issuer: {"cert-manager.io/v1", "Issuer"},
     certmanager_order: {"acme.cert-manager.io/v1", "Order"},
     cloudnative_pg_backup: {"postgresql.cnpg.io/v1", "Backup"},
+    cloudnative_pg_barman_objectstore: {"barmancloud.cnpg.io/v1", "ObjectStore"},
     cloudnative_pg_cluster: {"postgresql.cnpg.io/v1", "Cluster"},
     cloudnative_pg_database: {"postgresql.cnpg.io/v1", "Database"},
     cloudnative_pg_failoverquorum: {"postgresql.cnpg.io/v1", "FailoverQuorum"},

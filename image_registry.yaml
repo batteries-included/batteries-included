@@ -143,6 +143,18 @@ cloudnative_pg:
     - 1.24.0
     - 1.23.2
   tag_regex: ^\d+\.\d+\.\d+$
+cnpg_plugin_barman:
+  name: ghcr.io/cloudnative-pg/plugin-barman-cloud
+  default_tag: v0.5.0
+  tags:
+    - v0.5.0
+  tag_regex: ^v\d+\.\d+\.\d+$
+cnpg_plugin_barman_sidecar:
+  name: ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar
+  default_tag: v0.5.0
+  tags:
+    - v0.5.0
+  tag_regex: ^v\d+\.\d+\.\d+$
 ferretdb:
   name: ghcr.io/ferretdb/ferretdb
   default_tag: 1.24.2

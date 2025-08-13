@@ -217,4 +217,6 @@ defmodule CommonCore.Resources.Builder do
       "name" => name
     }
   end
+
+  def secret_type(resource, type), do: Map.put(resource, "type", type)
 end
