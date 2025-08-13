@@ -81,7 +81,7 @@ defmodule ControlServer.SnapshotApply.Kube do
   def get_preloaded_kube_snapshot!(id) do
     rp_query =
       from rp in ResourcePath,
-        order_by: rp.path,
+        order_by: [rp.is_success, rp.path],
         select: [
           :apply_result,
           :hash,
