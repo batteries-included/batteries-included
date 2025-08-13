@@ -99,6 +99,10 @@ func (env *InstallEnv) startAWS(ctx context.Context, progressReporter *util.Prog
 		return fmt.Errorf("error configuring cloudnative_pg battery: %w", err)
 	}
 
+	if err := env.configureCNPGBarmanBattery(parsed); err != nil {
+		return fmt.Errorf("error configuring cloudnative_pg_barman battery: %w", err)
+	}
+
 	return nil
 }
 
@@ -174,6 +178,22 @@ func (env *InstallEnv) configureCNPGBattery(outputs *eksOutputs) error {
 	b, err := env.Spec.GetBatteryByType("cloudnative_pg")
 	if err != nil {
 		return fmt.Errorf("cloudnative_pg battery wasn't found in install spec")
+	}
+
+	b.Config["bucket_name"] = outputs.Postgres["bucketName"].Value
+	b.Config["bucket_arn"] = outputs.Postgres["bucketARN"].Value
+	b.Config["service_role_arn"] = outputs.Postgres["roleARN"].Value
+
+	return nil
+}
+
+// we're migrating to the barman plugin.
+// it may not be part of the bootstrap so don't error
+func (env *InstallEnv) configureCNPGBarmanBattery(outputs *eksOutputs) error {
+	b, err := env.Spec.GetBatteryByType("cloudnative_pg_barman")
+	if err != nil {
+		slog.Debug("cloudnative_pg_barman battery wasn't found in install spec")
+		return nil
 	}
 
 	b.Config["bucket_name"] = outputs.Postgres["bucketName"].Value

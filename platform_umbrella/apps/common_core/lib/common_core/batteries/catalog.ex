@@ -83,6 +83,14 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :data,
+      type: :cloudnative_pg_barman,
+      dependencies: [:battery_ca],
+      name: "Barman Cloud Plugin for CNPG",
+      description: "Backup and Recovery Manager for PostgreSQL",
+      allowed_usages: ~w(internal_dev internal_int_test)a
+    },
+    %CatalogBattery{
+      group: :data,
       type: :cloudnative_pg,
       dependencies: [:battery_core],
       name: "PostgreSQL",

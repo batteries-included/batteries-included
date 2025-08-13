@@ -1,13 +1,11 @@
 defmodule Verify.CertManagerTest do
+  use Verify.Images
+
   use Verify.TestCase,
     async: false,
     batteries: ~w(cert_manager trust_manager istio_csr battery_ca)a,
-    images: ~w(
-      cert_manager_acmesolver
-      cert_manager_cainjector
-      cert_manager_controller
+    images: @cert_manager ++ ~w(
       cert_manager_istio_csr
-      cert_manager_webhook
       trust_manager
       trust_manager_init
     )a
