@@ -6,7 +6,7 @@ defmodule ControlServerWeb.Live.PodShow do
   import ControlServerWeb.ConditionsDisplay
   import ControlServerWeb.ResourceComponents
   import ControlServerWeb.ResourceHTMLHelper
-  import ControlServerWeb.TrivyReports.VulnerabilitiesTable
+  import ControlServerWeb.Trivy.TrivyShowTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -409,11 +409,15 @@ defmodule ControlServerWeb.Live.PodShow do
               </:item>
             </.data_list>
           </.grid>
-          <.vulnerabilities_table rows={
-            report
-            |> get_in(~w(report vulnerabilities))
-            |> Enum.sort_by(fn v -> Map.get(v, "severity") end)
-          } />
+          <.trivy_show_table
+            id="pod-vulnerabilities"
+            type="vulnerabilities"
+            findings={
+              report
+              |> get_in(~w(report vulnerabilities))
+              |> Enum.sort_by(fn v -> Map.get(v, "severity") end)
+            }
+          />
         </.flex>
       </.panel>
       <.panel :if={@reports == []} title="No Vulnerabilities">

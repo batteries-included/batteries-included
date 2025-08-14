@@ -146,7 +146,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndexTest do
       {:ok, _live, html} = live(conn, ~p"/trivy_reports/sbom_report")
 
       # Check for the show/view button
-      assert html =~ "show_sbom_#{name(report)}"
+      assert html =~ "show_#{name(report)}__#{namespace(report)}"
     end
   end
 
@@ -167,7 +167,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndexTest do
       {:ok, _live, html} = live(conn, ~p"/trivy_reports/cluster_sbom_report")
 
       # Check for the show/view button
-      assert html =~ "show_cluster_sbom_#{name(report)}"
+      assert html =~ "show_#{name(report)}"
     end
   end
 
@@ -188,7 +188,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndexTest do
       {:ok, _live, html} = live(conn, ~p"/trivy_reports/config_audit_report")
 
       # Check for the show/view button
-      assert html =~ "show_config_audit_#{name(report)}"
+      assert html =~ "show_#{name(report)}"
     end
   end
 
@@ -202,14 +202,14 @@ defmodule ControlServerWeb.Live.TrivyReportsIndexTest do
       assert html =~ name(report)
 
       # Check that the report table is displayed
-      assert html =~ "rbac-table"
+      assert html =~ "rbac-assessment-reports-table"
     end
 
     test "shows rbac assessment report details link", %{conn: conn, rbac_assessment_report: report} do
       {:ok, _live, html} = live(conn, ~p"/trivy_reports/rbac_assessment_report")
 
       # Check for the show/view button
-      assert html =~ "show_rbac_#{name(report)}"
+      assert html =~ "show_#{name(report)}"
     end
   end
 
@@ -223,14 +223,14 @@ defmodule ControlServerWeb.Live.TrivyReportsIndexTest do
       assert html =~ name(report)
 
       # Check that the report table is displayed
-      assert html =~ "cluster-rbac-table"
+      assert html =~ "cluster-rbac-assessment-reports-table"
     end
 
     test "shows cluster rbac assessment report details link", %{conn: conn, cluster_rbac_assessment_report: report} do
       {:ok, _live, html} = live(conn, ~p"/trivy_reports/cluster_rbac_assessment_report")
 
       # Check for the show/view button
-      assert html =~ "show_cluster_rbac_#{name(report)}"
+      assert html =~ "show_#{name(report)}"
     end
   end
 
@@ -251,7 +251,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndexTest do
       {:ok, _live, html} = live(conn, ~p"/trivy_reports/infra_assessment_report")
 
       # Check for the show/view button
-      assert html =~ "show_infra_assessment_#{name(report)}"
+      assert html =~ "show_#{name(report)}__#{namespace(report)}"
     end
   end
 
