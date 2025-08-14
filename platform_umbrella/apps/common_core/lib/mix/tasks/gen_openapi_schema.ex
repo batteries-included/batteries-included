@@ -115,15 +115,11 @@ defmodule Mix.Tasks.Gen.Openapi.Schema do
   defp do_sorted_modules_and_enums(result, %State{deps: deps, enum_deps: enum_deps} = state) do
     # Try to find an enum with no dependencies first
     enum_possible =
-      enum_deps
-      |> Enum.filter(fn {_enum_name, deps} -> Enum.empty?(deps) end)
-      |> List.first()
+      Enum.find(enum_deps, fn {_enum_name, deps} -> Enum.empty?(deps) end)
 
     # Try to find a module with no dependencies
     module_possible =
-      deps
-      |> Enum.filter(fn {_schema_name, deps} -> Enum.empty?(deps) end)
-      |> List.first()
+      Enum.find(deps, fn {_schema_name, deps} -> Enum.empty?(deps) end)
 
     cond do
       enum_possible != nil ->
