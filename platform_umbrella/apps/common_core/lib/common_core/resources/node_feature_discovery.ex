@@ -29,6 +29,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("nfd-gc")
+    |> B.component_labels("nfd-gc")
     |> B.role_ref(B.build_cluster_role_ref("nfd-gc"))
     |> B.subject(B.build_service_account("nfd-gc", namespace))
   end
@@ -39,6 +40,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
     :cluster_role_binding
     |> B.build_resource()
     |> B.name("nfd-master")
+    |> B.component_labels("nfd-master")
     |> B.role_ref(B.build_cluster_role_ref("nfd-master"))
     |> B.subject(B.build_service_account("nfd-master", namespace))
   end
@@ -59,7 +61,11 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
       }
     ]
 
-    :cluster_role |> B.build_resource() |> B.name("nfd-gc") |> B.rules(rules)
+    :cluster_role
+    |> B.build_resource()
+    |> B.name("nfd-gc")
+    |> B.component_labels("nfd-gc")
+    |> B.rules(rules)
   end
 
   resource(:cluster_role_nfd_master) do
@@ -89,7 +95,11 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
       }
     ]
 
-    :cluster_role |> B.build_resource() |> B.name("nfd-master") |> B.rules(rules)
+    :cluster_role
+    |> B.build_resource()
+    |> B.name("nfd-master")
+    |> B.component_labels("nfd-master")
+    |> B.rules(rules)
   end
 
   resource(:role_nfd_worker, _battery, state) do
@@ -104,12 +114,16 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
       %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["get"]}
     ]
 
-    :role |> B.build_resource() |> B.name("nfd-worker") |> B.namespace(namespace) |> B.rules(rules)
+    :role
+    |> B.build_resource()
+    |> B.name("nfd-worker")
+    |> B.namespace(namespace)
+    |> B.rules(rules)
   end
 
   resource(:config_map_nfd_master, _battery, state) do
     namespace = core_namespace(state)
-    data = Map.put(%{}, "nfd-master.conf", Ymlr.document!(%{}))
+    data = Map.put(%{}, "nfd-master.conf", Ymlr.document!(%{extraLabelNs: ["nvidia.com"]}))
 
     :config_map
     |> B.build_resource()
@@ -121,7 +135,16 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
   resource(:config_map_nfd_worker, _battery, state) do
     namespace = core_namespace(state)
 
-    data = Map.put(%{}, "nfd-worker.conf", Ymlr.document!(%{}))
+    config = %{
+      sources: %{
+        pci: %{
+          deviceClassWhitelist: ["02", "0200", "0207", "0300", "0302"],
+          deviceLabelFields: ["vendor"]
+        }
+      }
+    }
+
+    data = Map.put(%{}, "nfd-worker.conf", Ymlr.document!(config))
 
     :config_map
     |> B.build_resource()
@@ -136,7 +159,9 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
     template =
       %{}
       |> Map.put("metadata", %{
-        "labels" => %{"battery/component" => "nfd-worker", "battery/app" => @app_name, "battery/managed" => "true"}
+        "labels" => %{
+          "battery/app" => @app_name
+        }
       })
       |> Map.put("spec", %{
         "containers" => [
@@ -241,10 +266,12 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
       %{}
       |> Map.put("selector", %{"matchLabels" => %{"battery/component" => "nfd-worker", "battery/app" => @app_name}})
       |> B.template(template)
+      |> B.component_labels("nfd-worker")
 
     :daemon_set
     |> B.build_resource()
     |> B.name("nfd-worker")
+    |> B.component_labels("nfd-worker")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -255,7 +282,9 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
     template =
       %{}
       |> Map.put("metadata", %{
-        "labels" => %{"battery/component" => "nfd-gc", "battery/app" => @app_name, "battery/managed" => "true"}
+        "labels" => %{
+          "battery/managed" => "true"
+        }
       })
       |> Map.put("spec", %{
         "containers" => [
@@ -296,6 +325,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
       })
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
+      |> B.component_labels("nfd-gc")
 
     spec =
       %{}
@@ -305,6 +335,7 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
     :deployment
     |> B.build_resource()
     |> B.name("nfd-gc")
+    |> B.component_labels("nfd-gc")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -315,7 +346,9 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
     template =
       %{}
       |> Map.put("metadata", %{
-        "labels" => %{"battery/component" => "nfd-master", "battery/app" => @app_name, "battery/managed" => "true"}
+        "labels" => %{
+          "battery/managed" => "true"
+        }
       })
       |> Map.put("spec", %{
         "affinity" => %{
@@ -405,16 +438,23 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
       })
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
+      |> B.component_labels("nfd-master")
 
     spec =
       %{}
       |> Map.put("replicas", 1)
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "nfd-master"}})
+      |> Map.put("selector", %{
+        "matchLabels" => %{
+          "battery/app" => @app_name,
+          "battery/component" => "nfd-master"
+        }
+      })
       |> B.template(template)
 
     :deployment
     |> B.build_resource()
     |> B.name("nfd-master")
+    |> B.component_labels("nfd-master")
     |> B.namespace(namespace)
     |> B.spec(spec)
   end
@@ -432,16 +472,31 @@ defmodule CommonCore.Resources.NodeFeatureDiscovery do
 
   resource(:service_account_nfd_gc, _battery, state) do
     namespace = core_namespace(state)
-    :service_account |> B.build_resource() |> B.name("nfd-gc") |> B.namespace(namespace)
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("nfd-gc")
+    |> B.component_labels("nfd-gc")
+    |> B.namespace(namespace)
   end
 
   resource(:service_account_nfd_master, _battery, state) do
     namespace = core_namespace(state)
-    :service_account |> B.build_resource() |> B.name("nfd-master") |> B.namespace(namespace)
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("nfd-master")
+    |> B.component_labels("nfd-master")
+    |> B.namespace(namespace)
   end
 
   resource(:service_account_nfd_worker, _battery, state) do
     namespace = core_namespace(state)
-    :service_account |> B.build_resource() |> B.name("nfd-worker") |> B.namespace(namespace)
+
+    :service_account
+    |> B.build_resource()
+    |> B.name("nfd-worker")
+    |> B.component_labels("nfd-worker")
+    |> B.namespace(namespace)
   end
 end

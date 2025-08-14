@@ -65,4 +65,5 @@ defmodule CommonCore.StateSummary.Batteries do
 
   def sso_installed?(%StateSummary{} = state), do: batteries_installed?(state, [:sso])
   def keycloak_installed?(%StateSummary{} = state), do: batteries_installed?(state, [:keycloak])
+  def victoria_metrics_installed?(%StateSummary{} = state), do: batteries_installed?(state, [:victoria_metrics])
 end

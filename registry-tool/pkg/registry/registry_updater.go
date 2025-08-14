@@ -3,12 +3,13 @@ package registry
 import (
 	"fmt"
 	"log/slog"
+	"math/rand"
 	"registry-tool/pkg/versions"
 	"slices"
+	"time"
 
 	"github.com/google/go-containerregistry/pkg/authn"
 	"github.com/google/go-containerregistry/pkg/name"
-	"github.com/google/go-containerregistry/pkg/v1/remote"
 )
 
 type RegistryUpdater struct {
@@ -16,14 +17,32 @@ type RegistryUpdater struct {
 	ignoredList []string
 	keychain    authn.Keychain
 	changed     bool
+	delay       time.Duration
+	jitter      time.Duration
+	maxFailures int
 }
 
-func NewRegistryUpdater(registry Registry, ignoredImages []string) *RegistryUpdater {
+func NewRegistryUpdater(registry Registry, ignoredImages []string, maxFailures int) *RegistryUpdater {
 	return &RegistryUpdater{
 		registry:    registry,
 		ignoredList: ignoredImages,
 		keychain:    authn.DefaultKeychain,
 		changed:     false,
+		delay:       0,
+		jitter:      0,
+		maxFailures: maxFailures,
+	}
+}
+
+func NewRegistryUpdaterWithDelay(registry Registry, ignoredImages []string, delay, jitter time.Duration, maxFailures int) *RegistryUpdater {
+	return &RegistryUpdater{
+		registry:    registry,
+		ignoredList: ignoredImages,
+		keychain:    authn.DefaultKeychain,
+		changed:     false,
+		delay:       delay,
+		jitter:      jitter,
+		maxFailures: maxFailures,
 	}
 }
 
@@ -43,13 +62,60 @@ func (u *RegistryUpdater) Write(path string) error {
 	return nil
 }
 
-func (u *RegistryUpdater) UpdateTags() error {
-	for name, record := range u.registry.Records() {
-		if err := u.updateImageTags(name, record); err != nil {
-			slog.Error("failed to update image tags", "image", name, "error", err)
-			return fmt.Errorf("failed to update tags for image %q: %w", name, err)
+// calculateDelay returns the delay duration with optional jitter applied
+func (u *RegistryUpdater) calculateDelay() time.Duration {
+	if u.delay <= 0 {
+		return 0
+	}
+
+	baseDelay := u.delay
+	if u.jitter > 0 {
+		// Add random jitter between -jitter and +jitter
+		jitterAmount := time.Duration(rand.Int63n(int64(u.jitter*2))) - u.jitter
+		baseDelay += jitterAmount
+		// Ensure the delay is never negative
+		if baseDelay < 0 {
+			baseDelay = 0
 		}
 	}
+
+	return baseDelay
+}
+
+func (u *RegistryUpdater) UpdateTags() error {
+	imageCount := len(u.registry.Records())
+	currentImage := 0
+	failureCount := 0
+
+	for name, record := range u.registry.Records() {
+		currentImage++
+
+		if err := u.updateImageTags(name, record); err != nil {
+			failureCount++
+			slog.Error("failed to update image tags", "image", name, "error", err, "failures", failureCount, "max_failures", u.maxFailures)
+
+			if failureCount > u.maxFailures {
+				return fmt.Errorf("too many failures (%d) exceeded maximum allowed (%d), last error for image %q: %w", failureCount, u.maxFailures, name, err)
+			}
+
+			// Continue processing other images even after a failure
+			slog.Warn("continuing despite failure", "image", name, "failures", failureCount, "max_failures", u.maxFailures)
+		}
+		delay := u.calculateDelay()
+		if delay > 0 {
+			slog.Debug("applying delay before processing next image",
+				"name", name,
+				"image", record.Name,
+				"delay", delay.String(),
+				"progress", fmt.Sprintf("%d/%d", currentImage, imageCount))
+			time.Sleep(delay)
+		}
+	}
+
+	if failureCount > 0 {
+		slog.Info("completed with some failures", "total_failures", failureCount, "max_failures", u.maxFailures)
+	}
+
 	return nil
 }
 
@@ -89,12 +155,18 @@ func (u *RegistryUpdater) updateImageTags(key string, record ImageRecord) error 
 		return nil
 	}
 
+	// Create a remote repository with the configured delay and jitter
 	ref, err := name.ParseReference(record.Name)
 	if err != nil {
-		return fmt.Errorf("failed to parse image reference %q: %w", record.Name, err)
+		return fmt.Errorf("failed to create remote repository for %q: %w", record.Name, err)
 	}
+	remoteRepo := NewBatteryRemoteRepository(ref.Context(), 3, u.delay, u.jitter)
 
-	tags, err := remote.List(ref.Context(), remote.WithAuthFromKeychain(u.keychain))
+	// Set the keychain for authentication
+	remoteRepo.SetKeychain(u.keychain)
+
+	// List tags using the remote repository
+	tags, err := remoteRepo.ListTags()
 	if err != nil {
 		return fmt.Errorf("failed to list tags for %q: %w", record.Name, err)
 	}

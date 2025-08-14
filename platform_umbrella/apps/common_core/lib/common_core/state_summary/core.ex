@@ -66,4 +66,11 @@ defmodule CommonCore.StateSummary.Core do
     config = battery_core_config(summary)
     Enum.zip(~w(monday tuesday wednesday thursday friday saturday sunday)a, config.upgrade_days_of_week)
   end
+
+  def kind_cluster?(%StateSummary{} = summary) do
+    case battery_core_config(summary) do
+      %BatteryCoreConfig{cluster_type: :kind} -> true
+      _ -> false
+    end
+  end
 end

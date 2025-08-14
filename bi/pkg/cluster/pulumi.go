@@ -200,3 +200,8 @@ func (p *pulumiProvider) toEKSConfig() *eks.Config {
 		EnvVars:    p.envVars,
 	}
 }
+
+// HasNvidiaRuntimeInstalled returns false for EKS clusters since they don't need runtime class registration
+func (p *pulumiProvider) HasNvidiaRuntimeInstalled() bool {
+	return false
+}

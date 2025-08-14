@@ -5,7 +5,11 @@ defmodule CommonCore.Resources.CopyDown do
   @banned_labels ["battery/managed.direct"]
   @banned_annotations ["battery/hash"]
 
-  @default_labels %{"battery/managed" => "true", "battery/managed.indirect" => "true"}
+  @default_labels %{
+    "battery/managed" => "true",
+    "app.kubernetes.io/managed-by" => "batteries-included",
+    "battery/managed.indirect" => "true"
+  }
 
   def indirect_labels, do: @default_labels
 

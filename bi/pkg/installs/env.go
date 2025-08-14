@@ -26,6 +26,10 @@ type InstallEnv struct {
 	source          string
 }
 
+func (env *InstallEnv) ClusterProvider() cluster.Provider {
+	return env.clusterProvider
+}
+
 type envBuilder struct {
 	slugOrURL               string
 	additionalInsecureHosts []string
