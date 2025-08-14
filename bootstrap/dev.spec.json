@@ -9,7 +9,7 @@
     "notebooks": [],
     "batteries": [
       {
-        "id": "batt_0198a1566352784494907e7368b1e2b4",
+        "id": "batt_0198a638df7874d9b2337235ce836d96",
         "type": "gateway_api",
         "config": {
           "type": "gateway_api"
@@ -19,7 +19,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0198a156635270b1af461350add4e63c",
+        "id": "batt_0198a638df7871e5873e520837c531be",
         "type": "istio",
         "config": {
           "type": "istio",
@@ -40,7 +40,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0198a15663527abfbc6b76cd5ec21c30",
+        "id": "batt_0198a638df7877fc9eb593440891299e",
         "type": "istio_gateway",
         "config": {
           "type": "istio_gateway",
@@ -53,7 +53,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0198a15663527c57a2cd3ef6752ff133",
+        "id": "batt_0198a638df787c9a9a5be8c78058932e",
         "type": "battery_core",
         "config": {
           "type": "battery_core",
@@ -65,13 +65,13 @@
           "ai_namespace": "battery-ai",
           "default_size": "tiny",
           "cluster_name": "dev",
-          "install_id": "batt_0198a156632f766a8ceb4cf1d1f00d68",
+          "install_id": "batt_0198a638df5d7278a20d8b248af17def",
           "control_jwk": {
             "crv": "P-256",
-            "d": "n2Ic79DhgZeacDwaCKqZvMadEWRtA_m3h8fHpJgY93w",
+            "d": "_T3utFN6_fdt3syhlMjcH6CYeZUJFj7Z8nQai2c7P7o",
             "kty": "EC",
-            "x": "mBY09aBSqVUZFJN1qWRUMRKFgisj6sBn67H6W-paL2w",
-            "y": "bZbraluHaD97_fn8qACfHBWCkN6DmxIF6T51oxMwuVY"
+            "x": "6GqIoGBgAaPwUUj2ThT2q624LafcMImZOQOSoQnQWg4",
+            "y": "rxwzNQ52ftpGpgL6jetkd6pP8xbzxV23Iy-h3HtXMBs"
           },
           "upgrade_days_of_week": [
             true,
@@ -96,7 +96,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0198a156635273a08689693f631415d3",
+        "id": "batt_0198a638df7879f8a2eec3fa46c18952",
         "type": "metallb",
         "config": {
           "type": "metallb",
@@ -116,15 +116,15 @@
         "updated_at": null
       },
       {
-        "id": "batt_0198a15663527f11bac374b7410a3d91",
+        "id": "batt_0198a638df7871b2a4b39bcfeed2e7c8",
         "type": "cloudnative_pg",
         "config": {
           "type": "cloudnative_pg",
           "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0",
           "service_role_arn": null,
-          "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-22",
           "bucket_name": null,
           "bucket_arn": null,
+          "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-22",
           "image_tag_override": null,
           "image_name_override": null,
           "default_postgres_image_name_override": null,
@@ -135,7 +135,7 @@
         "updated_at": null
       },
       {
-        "id": "batt_0198a15663537e6da25fe7d2aac6a328",
+        "id": "batt_0198a638df787e0899d4cdb1c0e8a705",
         "type": "stale_resource_cleaner",
         "config": {
           "type": "stale_resource_cleaner",
@@ -191,7 +191,7 @@
           {
             "version": 2,
             "username": "battery-control-user",
-            "password": "4YO7MAZ6RBADCVA2V7OWXG5N"
+            "password": "FCXDCARP6FDBDC67CF6U2QFI"
           },
           {
             "version": 1,
@@ -224,7 +224,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "ZM6IXHDGXTIM32BHWTHCNEW6LVQSOTEXEPH3NCWXB7MJYANFT5VQ===="
+          "battery/hash": "MMCTFR5RXF4OLNFRPS565JRKGTORTWIRFIFMM7W4VAOVNYC672HA===="
         },
         "labels": {
           "app": "battery-core",
@@ -234,7 +234,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_0198a15663527c57a2cd3ef6752ff133",
+          "battery/owner": "batt_0198a638df787c9a9a5be8c78058932e",
           "istio-injection": "disabled",
           "istio.io/dataplane-mode": "ambient",
           "version": "latest"
