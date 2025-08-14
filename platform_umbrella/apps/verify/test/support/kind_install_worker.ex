@@ -67,6 +67,11 @@ defmodule Verify.KindInstallWorker do
 
   def handle_info({:EXIT, _, _}, state), do: {:noreply, state}
 
+  def handle_info(msg, state) do
+    Logger.error("Caught unhandled message: #{inspect(msg)}")
+    {:noreply, state}
+  end
+
   defp do_start({:cmd, cmd, slug, host}, state) do
     Logger.debug("Running #{cmd}")
 
