@@ -2,15 +2,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   @moduledoc false
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
-  import ControlServerWeb.ClusterInfraAssessmentReportTable
-  import ControlServerWeb.ClusterSBOMReportTable
-  import ControlServerWeb.ClusterVulnerabilityReportTable
-  import ControlServerWeb.ConfigAuditReportTable
-  import ControlServerWeb.ExposedSecretReportTable
-  import ControlServerWeb.InfraAssessmentReportTable
-  import ControlServerWeb.RBACReportTable
-  import ControlServerWeb.SBOMReportTable
-  import ControlServerWeb.VulnerabilityReportTable
+  import ControlServerWeb.Trivy.TrivyListTable
 
   alias EventCenter.KubeState, as: KubeEventCenter
   alias KubeServices.KubeState
@@ -133,25 +125,65 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
     <.tabs live_action={@live_action} />
     <%= case @live_action do %>
       <% :aqua_config_audit_report -> %>
-        <.config_audit_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="config-audit-reports-table"
+          reports={@objects}
+          columns={[:name, :namespace, :critical, :high, :medium, :low, :checks]}
+        />
       <% :aqua_cluster_rbac_assessment_report -> %>
-        <.cluster_rbac_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="cluster-rbac-assessment-reports-table"
+          reports={@objects}
+          columns={[:name, :critical, :high, :medium, :low, :checks]}
+        />
       <% :aqua_rbac_assessment_report -> %>
-        <.rbac_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="rbac-assessment-reports-table"
+          reports={@objects}
+          columns={[:name, :namespace, :critical, :high, :medium, :low, :checks]}
+        />
       <% :aqua_infra_assessment_report -> %>
-        <.infra_assessment_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="infra-assessment-reports-table"
+          reports={@objects}
+          columns={[:name, :namespace, :critical, :high, :medium, :low, :checks]}
+        />
       <% :aqua_cluster_infra_assessment_report -> %>
-        <.cluster_infra_assessment_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="cluster-infra-assessment-reports-table"
+          reports={@objects}
+          columns={[:name, :critical, :high, :medium, :low, :checks]}
+        />
       <% :aqua_exposed_secret_report -> %>
-        <.exposed_secret_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="exposed-secret-reports-table"
+          reports={@objects}
+          columns={[:name, :namespace, :image, :critical, :high, :medium, :low]}
+        />
       <% :aqua_sbom_report -> %>
-        <.sbom_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="sbom-reports-table"
+          reports={@objects}
+          columns={[:name, :namespace, :image, :components]}
+        />
       <% :aqua_cluster_sbom_report -> %>
-        <.cluster_sbom_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="cluster-sbom-reports-table"
+          reports={@objects}
+          columns={[:name, :image, :components]}
+        />
       <% :aqua_cluster_vulnerability_report -> %>
-        <.cluster_vulnerability_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="cluster-vulnerability-reports-table"
+          reports={@objects}
+          columns={[:name, :image, :critical, :high, :medium, :low]}
+        />
       <% :aqua_vulnerability_report -> %>
-        <.vulnerability_reports_table reports={@objects} />
+        <.trivy_list_table
+          id="vulnerability-reports-table"
+          reports={@objects}
+          columns={[:name, :namespace, :image, :critical, :high, :medium, :low]}
+        />
     <% end %>
     """
   end

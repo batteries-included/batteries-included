@@ -1,9 +1,0 @@
-<div class="bg-white border border-gray-lighter rounded-lg dark:bg-gray-darkest/70 dark:border-gray-darker flex flex-col">
-  
-
-  <div class="relative flex-1 px-6 py-5 ">
-    
-  Inner test
-
-  </div>
-</div>

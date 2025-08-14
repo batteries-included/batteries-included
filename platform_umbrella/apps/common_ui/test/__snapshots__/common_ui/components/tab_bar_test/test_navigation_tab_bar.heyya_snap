@@ -1,21 +1,21 @@
 <div class="flex rounded-lg flex-col gap-3">
   
     <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md font-medium text-gray-dark dark:text-gray transform-gpu">
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"/>
 </svg>
       <span>Foo</span>
     </a>
   
     <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md font-medium text-gray-dark dark:text-gray bg-white dark:bg-gray-darkest drop-shadow-md text-gray-darkest dark:text-white [&amp;&gt;svg]:text-primary transform-gpu">
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"/>
 </svg>
       <span>Bar</span>
     </a>
   
     <a href="#" class="flex items-center gap-3 px-5 py-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-darkest hover:drop-shadow-md font-medium text-gray-dark dark:text-gray transform-gpu">
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-6" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"/>
 </svg>
       <span>Baz</span>

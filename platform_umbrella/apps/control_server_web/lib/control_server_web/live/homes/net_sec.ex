@@ -7,7 +7,7 @@ defmodule ControlServerWeb.Live.NetSecHome do
   import ControlServerWeb.Gateway.RoutesTable
   import ControlServerWeb.IPAddressPoolsTable
   import ControlServerWeb.Keycloak.RealmsTable
-  import ControlServerWeb.VulnerabilityReportTable
+  import ControlServerWeb.Trivy.TrivyListTable
   import KubeServices.SystemState.SummaryBatteries
   import KubeServices.SystemState.SummaryGateway
   import KubeServices.SystemState.SummaryHosts
@@ -119,7 +119,12 @@ defmodule ControlServerWeb.Live.NetSecHome do
           <.button variant="minimal" link={~p"/trivy_reports/vulnerability_report"}>View All</.button>
         </.flex>
       </:menu>
-      <.vulnerability_reports_table reports={@vulnerability_reports} />
+      <.trivy_list_table
+        id="vulnerability-reports"
+        type="vulnerability_report"
+        reports={@vulnerability_reports}
+        columns={[:name, :namespace, :critical, :high, :medium, :low, :actions]}
+      />
     </.panel>
     """
   end

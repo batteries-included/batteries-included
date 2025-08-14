@@ -269,7 +269,7 @@ defmodule ControlServerWeb.Live.TrivyReportShowTest do
       assert html =~ report_name
 
       # Check that SBOM table is displayed
-      assert html =~ "sbom-table"
+      assert html =~ "sbom-components-table"
 
       # Check for component information
       components = get_in(report, ~w(report components components)) || []
@@ -308,7 +308,7 @@ defmodule ControlServerWeb.Live.TrivyReportShowTest do
       assert html =~ report_name
 
       # Check that SBOM table is displayed
-      assert html =~ "sbom-table"
+      assert html =~ "sbom-components-table"
     end
 
     test "has back link to cluster sbom reports index", %{conn: conn, cluster_sbom_report: report} do

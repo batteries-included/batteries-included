@@ -1,0 +1,68 @@
+
+  
+      <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table id="rbac-checks-table" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
+      <tr>
+        <th class="pb-4">Severity</th><th class="pb-4">Check ID</th><th class="pb-4">Title</th><th class="pb-4">Description</th><th class="pb-4">Messages</th><th class="pb-4">Remediation</th>
+        
+      </tr>
+    </thead>
+
+    <tbody id="rbac-checks-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      <tr>
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+          <span class="inline-block px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800">
+            CRITICAL
+          </span>
+        
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          KSV113
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+          <div class="">
+  Dangerous RBAC permission
+</div>
+        
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+          <div class="group/hover-tooltip relative ">
+  <div class="invisible group-hover/hover-tooltip:visible group-focus-within/hover-tooltip:visible absolute -translate-x-1 -translate-y-full rounded-md shadow-md p-2 bg-white/90 text-gray-darkest" role="tooltip" aria-hidden="true">
+    
+    <div class="max-w-md">
+      <p class="break-words">Role shouldn&#39;t have dangerous permission on cluster level</p>
+    </div>
+  
+  </div>
+  
+  Role shouldn&#39;t have dangerous permission on c...
+
+</div>
+        
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+          <div class="space-y-1">
+            
+              <div class="text-sm text-gray-600 p-2 bg-gray-50 rounded">
+                <div class="">
+  Role has dangerous permission &#39;*&#39; on &#39;*&#39;
+</div>
+              </div>
+            
+          </div>
+        
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+          <div class="">
+  Remove dangerous permissions from the role
+</div>
+        
+        </td>
+
+        
+      </tr>
+    </tbody>
+  </table>
+</div>
+    

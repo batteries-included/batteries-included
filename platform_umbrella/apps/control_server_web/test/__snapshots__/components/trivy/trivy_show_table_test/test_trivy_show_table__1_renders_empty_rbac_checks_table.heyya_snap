@@ -1,0 +1,9 @@
+
+  <div class="text-center text-gray-500 py-8">
+    <div class="text-xl">
+      No RBAC issues found
+    </div>
+    <div class="text-sm mt-2">
+      This is a good thing! Your cluster RBAC configuration doesn&#39;t have any security issues.
+    </div>
+  </div>

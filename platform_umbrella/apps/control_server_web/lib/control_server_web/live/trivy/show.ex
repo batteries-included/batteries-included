@@ -3,12 +3,7 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
   use ControlServerWeb, {:live_view, layout: :sidebar}
 
   import CommonCore.Resources.FieldAccessors
-  import ControlServerWeb.TrivyReports.ConfigAuditChecksTable
-  import ControlServerWeb.TrivyReports.ExposedSecretsTable
-  import ControlServerWeb.TrivyReports.InfraChecksTable
-  import ControlServerWeb.TrivyReports.RBACChecksTable
-  import ControlServerWeb.TrivyReports.SBOMTable
-  import ControlServerWeb.TrivyReports.VulnerabilitiesTable
+  import ControlServerWeb.Trivy.TrivyShowTable
 
   alias ControlServerWeb.TrivyURL
   alias KubeServices.KubeState
@@ -227,25 +222,49 @@ defmodule ControlServerWeb.Live.TrivyReportShow do
     <.panel title={@name}>
       <%= case @report_type do %>
         <% :aqua_vulnerability_report -> %>
-          <.vulnerabilities_table rows={@vulnerabilities} />
+          <.trivy_show_table
+            id="vulnerabilities-table"
+            type={:vulnerabilities}
+            rows={@vulnerabilities}
+          />
         <% :aqua_cluster_vulnerability_report -> %>
-          <.vulnerabilities_table rows={@vulnerabilities} />
+          <.trivy_show_table
+            id="vulnerabilities-table"
+            type={:vulnerabilities}
+            rows={@vulnerabilities}
+          />
         <% :aqua_exposed_secret_report -> %>
-          <.exposed_secrets_table rows={@exposed_secrets} />
+          <.trivy_show_table
+            id="exposed-secrets-table"
+            type={:exposed_secrets}
+            rows={@exposed_secrets}
+          />
         <% :aqua_sbom_report -> %>
-          <.sbom_table rows={@sbom_components} />
+          <.trivy_show_table
+            id="sbom-components-table"
+            type={:sbom_components}
+            rows={@sbom_components}
+          />
         <% :aqua_cluster_sbom_report -> %>
-          <.sbom_table rows={@sbom_components} />
+          <.trivy_show_table
+            id="sbom-components-table"
+            type={:sbom_components}
+            rows={@sbom_components}
+          />
         <% :aqua_infra_assessment_report -> %>
-          <.infra_checks_table rows={@infra_checks} />
+          <.trivy_show_table id="infra-checks-table" type={:infra_checks} rows={@infra_checks} />
         <% :aqua_cluster_infra_assessment_report -> %>
-          <.infra_checks_table rows={@infra_checks} />
+          <.trivy_show_table id="infra-checks-table" type={:infra_checks} rows={@infra_checks} />
         <% :aqua_rbac_assessment_report -> %>
-          <.rbac_checks_table rows={@rbac_checks} />
+          <.trivy_show_table id="rbac-checks-table" type={:rbac_checks} rows={@rbac_checks} />
         <% :aqua_cluster_rbac_assessment_report -> %>
-          <.rbac_checks_table rows={@rbac_checks} />
+          <.trivy_show_table id="rbac-checks-table" type={:rbac_checks} rows={@rbac_checks} />
         <% :aqua_config_audit_report -> %>
-          <.config_audit_checks_table rows={@config_audit_checks} />
+          <.trivy_show_table
+            id="config-audit-checks-table"
+            type={:config_audit_checks}
+            rows={@config_audit_checks}
+          />
         <% _ -> %>
           <div class="text-gray-500">
             Report details not yet implemented for this report type.
