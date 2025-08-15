@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"log/slog"
 	"registry-tool/pkg/registry"
@@ -31,7 +32,12 @@ latest versions that match each image's configured tag pattern.`,
 			return fmt.Errorf("failed to read registry file: %w", err)
 		}
 
-		updater := registry.NewRegistryUpdater(reg, updateFlags.ignoredImages)
+		var updater *registry.RegistryUpdater
+		if updateFlags.delay > 0 {
+			updater = registry.NewRegistryUpdaterWithDelay(reg, updateFlags.ignoredImages, updateFlags.delay, updateFlags.jitter, updateFlags.maxFailures)
+		} else {
+			updater = registry.NewRegistryUpdater(reg, updateFlags.ignoredImages, updateFlags.maxFailures)
+		}
 
 		if err := updater.UpdateTags(); err != nil {
 			return fmt.Errorf("failed to update image tags: %w", err)
@@ -53,7 +59,10 @@ latest versions that match each image's configured tag pattern.`,
 func init() {
 	// Notice that we don't use the DefaultIgnoredImages here,
 	// as we want to keep updating even while we can't upgrade some images.
-	updateTagsCmd.Flags().StringSliceVarP(&updateFlags.ignoredImages, "ignored-images", "I", []string{"ecto/schema/test"}, "List of images to ignore")
+	updateTagsCmd.Flags().StringSliceVarP(&updateFlags.ignoredImages, "ignored-images", "I", []string{"ecto/schema/test", "nvcr.io/nvidia/vgpu-manager"}, "List of images to ignore")
 	updateTagsCmd.Flags().BoolVarP(&updateFlags.dryRun, "dry-run", "D", false, "Perform a dry run without making changes")
+	updateTagsCmd.Flags().DurationVar(&updateFlags.delay, "delay", 500*time.Millisecond, "Delay between processing each image (e.g., 1s, 500ms)")
+	updateTagsCmd.Flags().DurationVar(&updateFlags.jitter, "jitter", 500*time.Millisecond, "Maximum random jitter to add to delay (e.g., 100ms, 1s)")
+	updateTagsCmd.Flags().IntVar(&updateFlags.maxFailures, "max-failures", 0, "Maximum number of image update failures to tolerate before aborting")
 	RootCmd.AddCommand(updateTagsCmd)
 }

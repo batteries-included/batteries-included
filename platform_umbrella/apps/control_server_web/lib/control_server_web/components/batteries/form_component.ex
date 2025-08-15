@@ -30,7 +30,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
   alias ControlServerWeb.Batteries.MetalLBForm
   alias ControlServerWeb.Batteries.NodeFeatureDiscoveryForm
   alias ControlServerWeb.Batteries.NotebooksForm
-  alias ControlServerWeb.Batteries.NvidiaDevicePluginForm
+  alias ControlServerWeb.Batteries.NvidiaGpuOperatorForm
   alias ControlServerWeb.Batteries.OllamaForm
   alias ControlServerWeb.Batteries.ProjectExportForm
   alias ControlServerWeb.Batteries.PromtailForm
@@ -68,7 +68,7 @@ defmodule ControlServerWeb.BatteriesFormComponent do
     metallb: MetalLBForm,
     node_feature_discovery: NodeFeatureDiscoveryForm,
     notebooks: NotebooksForm,
-    nvidia_device_plugin: NvidiaDevicePluginForm,
+    nvidia_gpu_operator: NvidiaGpuOperatorForm,
     ollama: OllamaForm,
     project_export: ProjectExportForm,
     promtail: PromtailForm,

@@ -39,7 +39,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.NodeExporter
   alias CommonCore.Resources.NodeFeatureDiscovery
   alias CommonCore.Resources.Notebooks
-  alias CommonCore.Resources.NvidiaDevicePlugin
+  alias CommonCore.Resources.NvidiaGPUOperator
   alias CommonCore.Resources.Ollama
   alias CommonCore.Resources.Promtail
   alias CommonCore.Resources.Redis
@@ -87,7 +87,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     metallb: [MetalLB, MetalLBMonitoring, MetalLBPools],
     node_feature_discovery: [NodeFeatureDiscovery],
     notebooks: [Notebooks],
-    nvidia_device_plugin: [NvidiaDevicePlugin],
+    nvidia_gpu_operator: [NvidiaGPUOperator],
     ollama: [Ollama],
     project_export: [],
     promtail: [Promtail],

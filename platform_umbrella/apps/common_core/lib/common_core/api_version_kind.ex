@@ -85,6 +85,8 @@ defmodule CommonCore.ApiVersionKind do
     node_feature: {"nfd.k8s-sigs.io/v1alpha1", "NodeFeature"},
     node_feature_group: {"nfd.k8s-sigs.io/v1alpha1", "NodeFeatureGroup"},
     node_feature_rule: {"nfd.k8s-sigs.io/v1alpha1", "NodeFeatureRule"},
+    nvidia_cluster_policy: {"nvidia.com/v1", "ClusterPolicy"},
+    nvidia_driver: {"nvidia.com/v1alpha1", "NVIDIADriver"},
     persistent_volume_claim: {"v1", "PersistentVolumeClaim"},
     pod: {"v1", "Pod"},
     pod_disruption_budget: {"policy/v1", "PodDisruptionBudget"},

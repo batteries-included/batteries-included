@@ -188,11 +188,11 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :ai,
-      type: :nvidia_device_plugin,
-      dependencies: [:battery_core],
-      name: "Nvidia Device Plugin",
-      description: "The Nvidia Device Plugin for Kubernetes. This exposes the nvidia device details to kubernetes.",
-      allowed_usages: ~w(internal_dev internal_int_test)a
+      type: :nvidia_gpu_operator,
+      dependencies: [:battery_core, :node_feature_discovery],
+      name: "NVIDIA GPU Operator",
+      description:
+        "The NVIDIA GPU Operator is a Kubernetes operator that automates the deployment and management of GPU drivers, device plugins, and runtime components."
     },
     %CatalogBattery{
       group: :ai,

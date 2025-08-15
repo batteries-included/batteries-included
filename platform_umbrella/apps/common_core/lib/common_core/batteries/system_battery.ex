@@ -25,7 +25,7 @@ defmodule CommonCore.Batteries.SystemBattery do
   alias CommonCore.Batteries.MetalLBConfig
   alias CommonCore.Batteries.NodeFeatureDiscoveryConfig
   alias CommonCore.Batteries.NotebooksConfig
-  alias CommonCore.Batteries.NvidiaDevicePluginConfig
+  alias CommonCore.Batteries.NvidiaGPUOperatorConfig
   alias CommonCore.Batteries.OllamaConfig
   alias CommonCore.Batteries.PromtailConfig
   alias CommonCore.Batteries.RedisConfig
@@ -74,7 +74,7 @@ defmodule CommonCore.Batteries.SystemBattery do
     metallb: MetalLBConfig,
     node_feature_discovery: NodeFeatureDiscoveryConfig,
     notebooks: NotebooksConfig,
-    nvidia_device_plugin: NvidiaDevicePluginConfig,
+    nvidia_gpu_operator: NvidiaGPUOperatorConfig,
     ollama: OllamaConfig,
     promtail: PromtailConfig,
     redis: RedisConfig,
