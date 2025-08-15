@@ -25,4 +25,6 @@ type Provider interface {
 	// WriteWireGuardConfig returns the WireGuard configuration for the cluster.
 	// The return value indicates if the cluster has WireGuard enabled.
 	WriteWireGuardConfig(ctx context.Context, w io.Writer) (hasConfig bool, err error)
+	// HasNvidiaRuntimeInstalled returns true if NVIDIA runtime was installed during cluster creation.
+	HasNvidiaRuntimeInstalled() bool
 }

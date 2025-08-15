@@ -67,6 +67,12 @@ func (env *InstallEnv) startLocal(ctx context.Context, progressReporter *util.Pr
 		return fmt.Errorf("error adding metal ips: %w", err)
 	}
 
+	if env.ClusterProvider().HasNvidiaRuntimeInstalled() {
+		if err := env.addNvidiaLocalSpecResource(ctx); err != nil {
+			return fmt.Errorf("error adding NVIDIA initial resources: %w", err)
+		}
+	}
+
 	return nil
 }
 
@@ -224,5 +230,53 @@ func (env *InstallEnv) addMetalIPs(ctx context.Context) error {
 	pools = append(pools, newIpSpec)
 	env.Spec.TargetSummary.IPAddressPools = pools
 
+	return nil
+}
+
+func (env *InstallEnv) addNvidiaLocalSpecResource(_ context.Context) error {
+	slog.Info("Adding NVIDIA runtime class to initial resources")
+
+	runtimeClass := map[string]interface{}{
+		"apiVersion": "node.k8s.io/v1",
+		"kind":       "RuntimeClass",
+		"metadata": map[string]interface{}{
+			"name": "nvidia",
+		},
+		"handler": "nvidia",
+	}
+
+	env.Spec.InitialResources["gpu-runtime/runtime-class/nvidia"] = runtimeClass
+
+	// Now add NVIDIA GPU operator and node feature discovery to the batteries in the spec if they are not already there.
+	// If the battery is there then make sure that device_plugin_enabled_overide is true
+	if gpuOperator, err := env.Spec.GetBatteryByType("nvidia_gpu_operator"); err == nil {
+		gpuOperator.Config["device_plugin_enabled_override"] = true
+	} else {
+		slog.Debug("NVIDIA GPU operator battery wasn't found in install spec")
+		// Add the battery
+		env.Spec.AddBattery(specs.BatterySpec{
+			Type:  "nvidia_gpu_operator",
+			Group: "ai",
+			Config: map[string]interface{}{
+				"device_plugin_enabled_override": true,
+				"type":                           "nvidia_gpu_operator",
+			},
+		})
+	}
+
+	if !env.Spec.HasBatteryType("node_feature_discovery") {
+		slog.Debug("NVIDIA node feature discovery battery wasn't found in install spec")
+
+		// Add the battery
+		env.Spec.AddBattery(specs.BatterySpec{
+			Type:  "node_feature_discovery",
+			Group: "ai",
+			Config: map[string]interface{}{
+				"type": "node_feature_discovery",
+			},
+		})
+	}
+
+	slog.Debug("NVIDIA runtime class added to initial resources")
 	return nil
 }

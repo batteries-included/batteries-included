@@ -383,6 +383,7 @@ kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
   default_tag: 1.30.8
   tags:
+    - 1.30.9
     - 1.30.8
     - 1.30.7
     - 1.30.6
@@ -572,6 +573,138 @@ node_feature_discovery:
     - v0.17.3
     - v0.17.2
   tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_container_toolkit:
+  name: nvcr.io/nvidia/k8s/container-toolkit
+  default_tag: v1.17.8-ubuntu20.04
+  tags:
+    - v1.17.8-ubuntu20.04
+  tag_regex: ^v\d+\.\d+\.\d+-ubuntu\d{2}\.\d{2}$
+nvidia_cuda:
+  name: nvcr.io/nvidia/cuda
+  default_tag: 12.9.1-base-ubuntu24.04
+  tags:
+    - 13.0.0-base-ubuntu24.04
+    - 13.0.0-base-ubuntu22.04
+    - 12.9.1-base-ubuntu24.04
+    - 12.9.1-base-ubuntu22.04
+    - 12.9.1-base-ubuntu20.04
+    - 12.9.0-base-ubuntu24.04
+    - 12.9.0-base-ubuntu20.04
+    - 12.8.1-base-ubuntu24.04
+    - 12.8.1-base-ubuntu22.04
+    - 12.8.1-base-ubuntu20.04
+    - 12.8.0-base-ubuntu24.04
+    - 12.8.0-base-ubuntu22.04
+    - 12.8.0-base-ubuntu20.04
+    - 12.6.3-base-ubuntu24.04
+    - 12.6.3-base-ubuntu22.04
+    - 12.6.3-base-ubuntu20.04
+    - 12.6.2-base-ubuntu24.04
+    - 12.6.2-base-ubuntu22.04
+    - 12.6.2-base-ubuntu20.04
+    - 12.6.1-base-ubuntu24.04
+    - 12.6.1-base-ubuntu22.04
+    - 12.6.1-base-ubuntu20.04
+    - 12.6.0-base-ubuntu24.04
+    - 12.6.0-base-ubuntu22.04
+    - 12.6.0-base-ubuntu20.04
+    - 12.5.1-base-ubuntu24.04
+    - 12.5.1-base-ubuntu22.04
+    - 12.5.1-base-ubuntu20.04
+    - 12.5.0-base-ubuntu22.04
+    - 12.5.0-base-ubuntu20.04
+    - 12.4.1-base-ubuntu22.04
+    - 12.4.1-base-ubuntu20.04
+    - 12.4.0-base-ubuntu22.04
+    - 12.4.0-base-ubuntu20.04
+    - 12.3.2-base-ubuntu22.04
+    - 12.3.2-base-ubuntu20.04
+    - 12.3.1-base-ubuntu22.04
+    - 12.3.1-base-ubuntu20.04
+    - 12.3.0-base-ubuntu22.04
+    - 12.3.0-base-ubuntu20.04
+    - 12.2.2-base-ubuntu22.04
+    - 12.2.2-base-ubuntu20.04
+    - 12.2.0-base-ubuntu22.04
+    - 12.2.0-base-ubuntu20.04
+    - 12.1.1-base-ubuntu22.04
+    - 12.1.1-base-ubuntu20.04
+    - 12.1.0-base-ubuntu22.04
+    - 12.1.0-base-ubuntu20.04
+    - 12.1.0-base-ubuntu18.04
+    - 12.0.1-base-ubuntu22.04
+    - 12.0.1-base-ubuntu20.04
+    - 12.0.1-base-ubuntu18.04
+    - 12.0.0-base-ubuntu22.04
+    - 12.0.0-base-ubuntu20.04
+    - 12.0.0-base-ubuntu18.04
+    - 11.8.0-base-ubuntu22.04
+    - 11.8.0-base-ubuntu20.04
+    - 11.8.0-base-ubuntu18.04
+    - 11.7.1-base-ubuntu22.04
+    - 11.7.1-base-ubuntu20.04
+    - 11.7.1-base-ubuntu18.04
+    - 11.7.0-base-ubuntu22.04
+    - 11.7.0-base-ubuntu20.04
+    - 11.7.0-base-ubuntu18.04
+    - 11.6.2-base-ubuntu20.04
+    - 11.6.2-base-ubuntu18.04
+    - 11.6.1-base-ubuntu20.04
+    - 11.6.1-base-ubuntu18.04
+    - 11.6.0-base-ubuntu20.04
+    - 11.6.0-base-ubuntu18.04
+    - 11.5.2-base-ubuntu20.04
+    - 11.5.2-base-ubuntu18.04
+    - 11.5.1-base-ubuntu20.04
+    - 11.5.1-base-ubuntu18.04
+    - 11.5.0-base-ubuntu20.04
+    - 11.5.0-base-ubuntu18.04
+    - 11.4.3-base-ubuntu20.04
+    - 11.4.3-base-ubuntu18.04
+    - 11.4.2-base-ubuntu20.04
+    - 11.4.2-base-ubuntu18.04
+    - 11.4.1-base-ubuntu20.04
+    - 11.4.1-base-ubuntu18.04
+    - 11.4.0-base-ubuntu20.04
+    - 11.4.0-base-ubuntu18.04
+    - 11.3.1-base-ubuntu20.04
+    - 11.3.1-base-ubuntu18.04
+    - 11.3.1-base-ubuntu16.04
+    - 11.3.0-base-ubuntu20.04
+    - 11.3.0-base-ubuntu18.04
+    - 11.3.0-base-ubuntu16.04
+    - 11.2.2-base-ubuntu20.04
+    - 11.2.2-base-ubuntu18.04
+    - 11.2.2-base-ubuntu16.04
+    - 11.2.1-base-ubuntu20.04
+    - 11.2.1-base-ubuntu18.04
+    - 11.2.1-base-ubuntu16.04
+    - 11.2.0-base-ubuntu20.04
+    - 11.2.0-base-ubuntu18.04
+    - 11.2.0-base-ubuntu16.04
+    - 11.1.1-base-ubuntu20.04
+    - 11.1.1-base-ubuntu18.04
+    - 11.1.1-base-ubuntu16.04
+    - 11.0.3-base-ubuntu20.04
+    - 11.0.3-base-ubuntu18.04
+    - 11.0.3-base-ubuntu16.04
+  tag_regex: ^\d+\.\d+\.\d+-base-ubuntu\d{2}\.\d{2}$
+nvidia_dcgm:
+  name: nvcr.io/nvidia/cloud-native/dcgm
+  default_tag: 4.2.3-1-ubuntu22.04
+  tags:
+    - 4.3.1-1-ubuntu22.04
+    - 4.2.3-1-ubuntu22.04
+  tag_regex: ^\d+\.\d+\.\d+-\d+-ubuntu\d{2}\.\d{2}$
+nvidia_dcgm_exporter:
+  name: nvcr.io/nvidia/k8s/dcgm-exporter
+  default_tag: 4.3.1-4.4.1-ubuntu22.04
+  tags:
+    - 4.3.1-4.4.1-ubuntu22.04
+    - 3.3.9-3.6.1-ubuntu22.04
+    - 2.4.7-2.6.11-ubuntu20.04
+    - 2.0.13-2.1.0-ubuntu18.04
+  tag_regex: ^\d+\.\d+\.\d+-\d+\.\d+\.\d+-ubuntu\d{2}\.\d{2}$
 nvidia_device_plugin:
   name: nvcr.io/nvidia/k8s-device-plugin
   default_tag: v0.17.3
@@ -580,6 +713,89 @@ nvidia_device_plugin:
     - v0.17.2
     - v0.17.1
     - v0.16.2
+  tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_driver:
+  name: nvcr.io/nvidia/driver
+  default_tag: 580.65.06-ubuntu22.04
+  tags:
+    - 580.65.06-ubuntu22.04
+    - 575.57.08-ubuntu22.04
+    - 570.86.15-ubuntu22.04
+    - 565.57.01-ubuntu22.04
+    - 560.35.03-ubuntu22.04
+    - 550.90.12-ubuntu22.04
+    - 550.90.07-ubuntu22.04
+    - 550.54.15-ubuntu22.04
+    - 550.54.14-ubuntu22.04
+    - 535.86.10-ubuntu22.04
+  tag_regex: ^\d{3}\.\d{2}\.\d{2}-ubuntu22\.04$
+nvidia_gdrdrv:
+  name: nvcr.io/nvidia/cloud-native/gdrdrv
+  default_tag: v2.4.1-ubuntu22.04
+  tags:
+    - v2.4.4-ubuntu22.04
+    - v2.4.1-ubuntu22.04
+  tag_regex: ^v\d+\.\d+\.\d+-ubuntu22\.04$
+nvidia_gpu_operator:
+  name: nvcr.io/nvidia/gpu-operator
+  default_tag: v25.3.2
+  tags:
+    - v25.3.2
+  tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_gpu_operator_validator:
+  name: nvcr.io/nvidia/cloud-native/gpu-operator-validator
+  default_tag: v25.3.2
+  tags:
+    - v25.3.2
+  tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_k8s_cc_manager:
+  name: nvcr.io/nvidia/cloud-native/k8s-cc-manager
+  default_tag: v0.1.1
+  tags:
+    - v0.1.1
+  tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_k8s_driver_manager:
+  name: nvcr.io/nvidia/cloud-native/k8s-driver-manager
+  default_tag: v0.8.0
+  tags:
+    - v0.8.0
+  tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_k8s_kata_manager:
+  name: nvcr.io/nvidia/cloud-native/k8s-kata-manager
+  default_tag: v0.2.3
+  tags:
+    - v0.2.3
+  tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_k8s_mig_manager:
+  name: nvcr.io/nvidia/cloud-native/k8s-mig-manager
+  default_tag: v0.12.2-ubuntu20.04
+  tags:
+    - v0.12.3-ubuntu20.04
+    - v0.12.2-ubuntu20.04
+  tag_regex: ^v\d+\.\d+\.\d+-ubuntu\d{2}\.\d{2}$
+nvidia_kata_gpu_artifacts:
+  name: nvcr.io/nvidia/cloud-native/kata-gpu-artifacts
+  default_tag: ubuntu22.04-535.54.03
+  tags:
+    - ubuntu22.04-535.54.03
+  tag_regex: ^ubuntu\d{2}\.\d{2}-\d{3}\.\d{2}\.\d{2}$
+nvidia_kata_gpu_artifacts_snp:
+  name: nvcr.io/nvidia/cloud-native/kata-gpu-artifacts
+  default_tag: ubuntu22.04-535.86.10-snp
+  tags:
+    - ubuntu22.04-535.86.10-snp
+  tag_regex: ^ubuntu\d{2}\.\d{2}-\d{3}\.\d{2}\.\d{2}-snp$
+nvidia_kubevirt_gpu_device_plugin:
+  name: nvcr.io/nvidia/kubevirt-gpu-device-plugin
+  default_tag: v1.3.1
+  tags:
+    - v1.3.1
+  tag_regex: ^v\d+\.\d+\.\d+$
+nvidia_vgpu_device_manager:
+  name: nvcr.io/nvidia/cloud-native/vgpu-device-manager
+  default_tag: v0.3.0
+  tags:
+    - v0.3.0
   tag_regex: ^v\d+\.\d+\.\d+$
 oauth2_proxy:
   name: quay.io/oauth2-proxy/oauth2-proxy
