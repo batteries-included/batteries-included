@@ -298,8 +298,9 @@ istio_ztunnel:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
-  default_tag: lab-4.4.5
+  default_tag: lab-4.4.6
   tags:
+    - lab-4.4.6
     - lab-4.4.5
     - lab-4.4.4
     - lab-4.4.3
@@ -311,6 +312,7 @@ karpenter:
   name: public.ecr.aws/karpenter/controller
   default_tag: 1.6.0
   tags:
+    - 1.6.2
     - 1.6.1
     - 1.6.0
     - 1.5.2
@@ -381,8 +383,9 @@ kiali:
   tag_regex: ^v\d+\.\d+\.\d+$
 kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
-  default_tag: 1.30.8
+  default_tag: 1.30.9
   tags:
+    - 1.30.9
     - 1.30.8
     - 1.30.7
     - 1.30.6
