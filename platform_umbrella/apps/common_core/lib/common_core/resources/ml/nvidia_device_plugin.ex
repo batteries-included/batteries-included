@@ -5,49 +5,8 @@ defmodule CommonCore.Resources.NvidiaDevicePlugin do
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.GPU
   alias CommonCore.StateSummary.Core
-
-  defp nvidia_gpu_affinity do
-    %{
-      "nodeAffinity" => %{
-        "requiredDuringSchedulingIgnoredDuringExecution" => %{
-          "nodeSelectorTerms" => [
-            %{
-              "matchExpressions" => [
-                %{
-                  "key" => "feature.node.kubernetes.io/pci-10de.present",
-                  "operator" => "In",
-                  "values" => ["true"]
-                }
-              ]
-            },
-            %{
-              "matchExpressions" => [
-                %{
-                  "key" => "feature.node.kubernetes.io/cpu-model.vendor_id",
-                  "operator" => "In",
-                  "values" => ["NVIDIA"]
-                }
-              ]
-            },
-            %{
-              "matchExpressions" => [
-                %{"key" => "nvidia.com/gpu.present", "operator" => "In", "values" => ["true"]}
-              ]
-            }
-          ]
-        }
-      }
-    }
-  end
-
-  defp maybe_add_runtime(template, false = _is_kind_provider) do
-    template
-  end
-
-  defp maybe_add_runtime(template, true = _is_kind_provider) do
-    update_in(template, ["spec"], fn spec -> Map.put(spec, "runtimeClassName", "nvidia") end)
-  end
 
   defp nvidia_tolerations do
     [
@@ -65,7 +24,7 @@ defmodule CommonCore.Resources.NvidiaDevicePlugin do
       |> Map.put(
         "spec",
         %{
-          "affinity" => nvidia_gpu_affinity(),
+          "affinity" => GPU.nvidia_gpu_affinity(),
           "containers" => [
             %{
               "command" => ["nvidia-device-plugin"],
@@ -93,7 +52,7 @@ defmodule CommonCore.Resources.NvidiaDevicePlugin do
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
       |> B.component_labels("nvidia-device-plugin")
-      |> maybe_add_runtime(Core.kind_cluster?(state))
+      |> GPU.maybe_add_nvidia_runtime(state)
 
     spec =
       %{}
@@ -144,7 +103,7 @@ defmodule CommonCore.Resources.NvidiaDevicePlugin do
       |> Map.put(
         "spec",
         %{
-          "affinity" => nvidia_gpu_affinity(),
+          "affinity" => GPU.nvidia_gpu_affinity(),
           "containers" => [
             %{
               "command" => ["mps-control-daemon"],
@@ -187,7 +146,7 @@ defmodule CommonCore.Resources.NvidiaDevicePlugin do
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
       |> B.component_labels("mps-control-daemon")
-      |> maybe_add_runtime(Core.kind_cluster?(state))
+      |> GPU.maybe_add_nvidia_runtime(state)
 
     spec =
       %{}
@@ -213,7 +172,7 @@ defmodule CommonCore.Resources.NvidiaDevicePlugin do
       %{}
       |> Map.put("metadata", %{"labels" => %{"battery/managed" => "true"}})
       |> Map.put("spec", %{
-        "affinity" => nvidia_gpu_affinity(),
+        "affinity" => GPU.nvidia_gpu_affinity(),
         "containers" => [
           %{
             "command" => ["gpu-feature-discovery"],
@@ -261,7 +220,7 @@ defmodule CommonCore.Resources.NvidiaDevicePlugin do
       |> B.app_labels(@app_name)
       |> B.add_owner(battery)
       |> B.component_labels("gpu-feature-discovery")
-      |> maybe_add_runtime(Core.kind_cluster?(state))
+      |> GPU.maybe_add_nvidia_runtime(state)
 
     spec =
       %{}

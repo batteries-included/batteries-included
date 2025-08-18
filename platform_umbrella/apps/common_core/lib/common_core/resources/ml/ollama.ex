@@ -80,8 +80,9 @@ defmodule CommonCore.Resources.Ollama do
     template =
       %{}
       |> B.spec(spec)
-      |> maybe_add_node_selector(model_instance)
+      |> maybe_add_node_selector(model_instance, state)
       |> maybe_add_tolerations(model_instance)
+      |> maybe_add_nvidia_runtime(state)
       |> B.app_labels(@app_name)
       |> B.add_owner(model_instance)
       |> B.label("battery/ollama", model_instance.name)
