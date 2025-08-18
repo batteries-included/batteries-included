@@ -20,10 +20,11 @@ import (
 // the spec is used to tell us what should be running.
 type InstallEnv struct {
 	// The Slug of the customer install
-	Slug            string
-	clusterProvider cluster.Provider
-	Spec            *specs.InstallSpec
-	source          string
+	Slug                string
+	clusterProvider     cluster.Provider
+	Spec                *specs.InstallSpec
+	source              string
+	nvidiaAutoDiscovery bool
 }
 
 func (env *InstallEnv) ClusterProvider() cluster.Provider {
@@ -33,6 +34,7 @@ func (env *InstallEnv) ClusterProvider() cluster.Provider {
 type envBuilder struct {
 	slugOrURL               string
 	additionalInsecureHosts []string
+	nvidiaAutoDiscovery     bool
 }
 
 type envBuilderOption func(*envBuilder)
@@ -49,8 +51,17 @@ func WithAdditionalInsecureHosts(hosts []string) envBuilderOption {
 	}
 }
 
+func WithNvidiaAutoDiscovery(enabled bool) envBuilderOption {
+	return func(eb *envBuilder) {
+		eb.nvidiaAutoDiscovery = enabled
+	}
+}
+
 func NewEnvBuilder(opts ...envBuilderOption) *envBuilder {
-	eb := &envBuilder{additionalInsecureHosts: []string{}}
+	eb := &envBuilder{
+		additionalInsecureHosts: []string{},
+		nvidiaAutoDiscovery:     true, // Default to enabled
+	}
 	for _, cb := range opts {
 		cb(eb)
 	}
@@ -80,7 +91,12 @@ func (eb *envBuilder) readInstallEnv() (*InstallEnv, error) {
 			continue
 		}
 		l.Debug("Found install")
-		return &InstallEnv{Slug: spec.Slug, Spec: spec, source: p.source}, nil
+		return &InstallEnv{
+			Slug:                spec.Slug,
+			Spec:                spec,
+			source:              p.source,
+			nvidiaAutoDiscovery: eb.nvidiaAutoDiscovery,
+		}, nil
 	}
 
 	return nil, errors.New("no spec found")
@@ -141,7 +157,7 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		podman, _ := kind.IsPodmanAvailable()
 
 		gatewayEnabled := needsLocalGateway && (dockerDesktop || podman)
-		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled)
+		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled, env.nvidiaAutoDiscovery)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Spec)
 	case "provided":

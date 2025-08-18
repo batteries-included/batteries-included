@@ -27,6 +27,11 @@ It will create a local kubernetes cluster and start the installation process.`,
 			return fmt.Errorf("failed to get home-base flag: %w", err)
 		}
 
+		nvidiaAutoDiscovery, err := cmd.Flags().GetBool("nvidia-auto-discovery")
+		if err != nil {
+			return fmt.Errorf("failed to get nvidia-auto-discovery flag: %w", err)
+		}
+
 		ctx := cmd.Context()
 
 		install, err := local.CreateNewLocalInstall(ctx, baseURL)
@@ -35,7 +40,7 @@ It will create a local kubernetes cluster and start the installation process.`,
 		}
 
 		slog.Debug("Created new local installation ", slog.Any("ID", install.ID))
-		env, err := local.InitLocalInstallEnv(ctx, install, baseURL)
+		env, err := local.InitLocalInstallEnv(ctx, install, baseURL, nvidiaAutoDiscovery)
 		if err != nil {
 			return fmt.Errorf("failed to initialize local install environment: %w", err)
 		}
@@ -55,4 +60,5 @@ func init() {
 
 	// Flag for where to talk to home base
 	startLocalCmd.Flags().String("home-base", "https://home.batteriesincl.com", "The URL of the home base to use for the local installation")
+	startLocalCmd.Flags().Bool("nvidia-auto-discovery", true, "Enable NVIDIA GPU auto-discovery for Kind clusters")
 }

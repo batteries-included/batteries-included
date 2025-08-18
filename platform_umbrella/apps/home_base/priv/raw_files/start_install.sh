@@ -14,4 +14,5 @@ check_bi_version || install_bi
 "${VERSION_LOC}" start \
     ${TRACE:+-v=debug} \
     ${BI_ADDITIONAL_HOSTS:+--additional-insecure-hosts=$BI_ADDITIONAL_HOSTS} \
+    ${BI_DISABLE_GPU:+--nvidia-auto-discovery=false} \
     "${INSTALL_SPEC_URL}"

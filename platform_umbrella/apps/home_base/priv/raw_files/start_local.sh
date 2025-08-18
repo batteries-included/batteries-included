@@ -8,4 +8,6 @@
 check_bi_version || install_bi
 
 # start install
-"${VERSION_LOC}" start-local ${TRACE:+-v=debug}
+"${VERSION_LOC}" start-local \
+    ${TRACE:+-v=debug} \
+    ${BI_DISABLE_GPU:+--nvidia-auto-discovery=false}

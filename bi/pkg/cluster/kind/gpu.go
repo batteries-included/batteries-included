@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"os"
 	"os/exec"
 	"strings"
 
@@ -28,9 +27,9 @@ var ubuntuImage = "ubuntu:24.04"
 
 // detectGPUs checks if NVIDIA GPUs are available on the host
 func (c *KindClusterProvider) detectGPUs(ctx context.Context) error {
-	// Check if GPU support is explicitly disabled
-	if os.Getenv("BI_DISABLE_GPU") == "1" || os.Getenv("BI_DISABLE_GPU") == "true" {
-		c.logger.Info("GPU support disabled via environment variable BI_DISABLE_GPU")
+	// Check if GPU auto-discovery is disabled via flag
+	if !c.nvidiaAutoDiscovery {
+		c.logger.Info("GPU auto-discovery disabled via --nvidia-auto-discovery=false flag")
 		c.gpuAvailable = false
 		c.gpuCount = 0
 		return nil

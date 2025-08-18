@@ -52,9 +52,15 @@ complete displaying a url for running control server.`,
 			return err
 		}
 
+		nvidiaAutoDiscovery, err := cmd.Flags().GetBool("nvidia-auto-discovery")
+		if err != nil {
+			return err
+		}
+
 		eb := installs.NewEnvBuilder(
 			installs.WithSlugOrURL(installURL),
 			installs.WithAdditionalInsecureHosts(additionalHosts),
+			installs.WithNvidiaAutoDiscovery(nvidiaAutoDiscovery),
 		)
 		env, err := eb.Build(ctx)
 		if err != nil {
@@ -82,6 +88,7 @@ complete displaying a url for running control server.`,
 func init() {
 	RootCmd.AddCommand(startCmd)
 	startCmd.Flags().Bool("skip-bootstrap", false, "Skip bootstrapping the cluster")
+	startCmd.Flags().Bool("nvidia-auto-discovery", true, "Enable NVIDIA GPU auto-discovery for Kind clusters")
 	startCmd.Flags().StringSlice("additional-insecure-hosts", []string{}, "Additional hosts that will be allowed to be insecure - HTTP")
 	_ = startCmd.Flags().MarkHidden("additional-insecure-hosts")
 }

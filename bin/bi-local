@@ -38,7 +38,10 @@ do_start() {
 
     spec_path=$(realpath "${spec_path}")
     log "${GREEN}Starting${NOFORMAT} ${CYAN}${spec_path}${NOFORMAT}"
-    run_bi start ${TRACE:+-v=debug} "${spec_path}"
+    run_bi start \
+        ${TRACE:+-v=debug} \
+        ${BI_DISABLE_GPU:+--nvidia-auto-discovery=false} \
+        "${spec_path}"
 }
 
 ## Stop a running installation

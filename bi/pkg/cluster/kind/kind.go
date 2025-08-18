@@ -30,23 +30,25 @@ const (
 )
 
 type KindClusterProvider struct {
-	logger         *slog.Logger
-	nodeProvider   cluster.ProviderOption
-	name           string
-	dockerClient   *dockerclient.Client
-	gatewayEnabled bool
-	wgGateway      *wireguard.Gateway
-	wgClient       *wireguard.Client
+	logger              *slog.Logger
+	nodeProvider        cluster.ProviderOption
+	name                string
+	dockerClient        *dockerclient.Client
+	gatewayEnabled      bool
+	wgGateway           *wireguard.Gateway
+	wgClient            *wireguard.Client
 	// GPU support fields
-	gpuAvailable bool
-	gpuCount     int
+	gpuAvailable        bool
+	gpuCount            int
+	nvidiaAutoDiscovery bool
 }
 
-func NewClusterProvider(logger *slog.Logger, name string, gatewayEnabled bool) *KindClusterProvider {
+func NewClusterProvider(logger *slog.Logger, name string, gatewayEnabled bool, nvidiaAutoDiscovery bool) *KindClusterProvider {
 	return &KindClusterProvider{
-		logger:         logger,
-		name:           name,
-		gatewayEnabled: gatewayEnabled,
+		logger:              logger,
+		name:                name,
+		gatewayEnabled:      gatewayEnabled,
+		nvidiaAutoDiscovery: nvidiaAutoDiscovery,
 	}
 }
 
