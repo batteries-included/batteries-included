@@ -1,8 +1,13 @@
 package cmd
 
+import "time"
+
 type SharedRegistryFlags struct {
 	ignoredImages []string
 	dryRun        bool
+	delay         time.Duration
+	jitter        time.Duration
+	maxFailures   int
 }
 
 var DefaultIgnoredImages = []string{
@@ -21,4 +26,7 @@ var DefaultIgnoredImages = []string{
 	//  Uncaught TypeError: Cannot read properties of undefined (reading 'keys')
 	// ```
 	"docker.io/grafana/grafana",
+
+	// No Users are not ready for Cuda versions to be automatically updated
+	"docker.io/nvidia/cuda",
 }

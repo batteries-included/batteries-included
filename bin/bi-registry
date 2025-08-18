@@ -93,7 +93,7 @@ do_create_pr() {
     local update_exit_code=0
     log "Running registry updates"
     update_exit_code=$(
-        go run registry-tool update-tags ../image_registry.yaml
+        go run registry-tool update-tags --delay 500ms --jitter 250ms ../image_registry.yaml
         echo $?
     )
     local advance_exit_code=0

@@ -1,5 +1,7 @@
 package specs
 
+import "log/slog"
+
 type KubeClusterSpec struct {
 	Provider string         `json:"provider"`
 	Config   map[string]any `json:"config"`
@@ -44,4 +46,23 @@ type InstallSpec struct {
 	InitialResources map[string]map[string]interface{} `json:"initial_resources"`
 	KubeCluster      KubeClusterSpec                   `json:"kube_cluster"`
 	TargetSummary    StateSummarySpec                  `json:"target_summary"`
+}
+
+func (s *InstallSpec) AddBattery(batterySpec BatterySpec) {
+	// First check if a battery of the same type already exists
+	if s.HasBatteryType(batterySpec.Type) {
+		slog.Warn("Battery of this type already exists", "type", batterySpec.Type)
+		return
+	}
+
+	s.TargetSummary.Batteries = append(s.TargetSummary.Batteries, batterySpec)
+}
+
+func (s *InstallSpec) HasBatteryType(batteryType string) bool {
+	for _, battery := range s.TargetSummary.Batteries {
+		if battery.Type == batteryType {
+			return true
+		}
+	}
+	return false
 }

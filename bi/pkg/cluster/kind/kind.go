@@ -4,6 +4,7 @@ import (
 	"bi/pkg/cluster/util"
 	"bi/pkg/wireguard"
 	"context"
+	_ "embed"
 	"fmt"
 	"io"
 	"log/slog"
@@ -15,6 +16,7 @@ import (
 	"github.com/avast/retry-go/v4"
 	dockerclient "github.com/docker/docker/client"
 	slogmulti "github.com/samber/slog-multi"
+	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
 	"sigs.k8s.io/kind/pkg/cluster"
 	"sigs.k8s.io/kind/pkg/cluster/nodes"
 	"sigs.k8s.io/kind/pkg/cluster/nodeutils"
@@ -23,7 +25,7 @@ import (
 const (
 	// This ideally will be a pre-built image for the kind release we're using
 	// But should match the minor version of k8s that we're running in AWS
-	KindImage         = "kindest/node:v1.33.1"
+	KindImage         = "kindest/node:v1.33.2"
 	NoisySocketsImage = "ghcr.io/noisysockets/nsh:v0.9.3"
 )
 
@@ -35,6 +37,9 @@ type KindClusterProvider struct {
 	gatewayEnabled bool
 	wgGateway      *wireguard.Gateway
 	wgClient       *wireguard.Client
+	// GPU support fields
+	gpuAvailable bool
+	gpuCount     int
 }
 
 func NewClusterProvider(logger *slog.Logger, name string, gatewayEnabled bool) *KindClusterProvider {
@@ -55,6 +60,18 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 		return fmt.Errorf("neither docker nor podman are available")
 	}
 
+	// Create Docker client for both GPU detection and gateway functionality
+	c.dockerClient, err = dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
+	if err != nil {
+		c.logger.Warn("Failed to create Docker client", slog.String("error", err.Error()))
+		// Continue without Docker client - some functionality may be limited
+	}
+
+	// Detect GPU support
+	if err := c.detectGPUs(ctx); err != nil {
+		return fmt.Errorf("failed to detect GPUs: %w", err)
+	}
+
 	if c.gatewayEnabled {
 		return c.initForGateway()
 	}
@@ -63,10 +80,8 @@ func (c *KindClusterProvider) Init(ctx context.Context) error {
 }
 
 func (c *KindClusterProvider) initForGateway() error {
-	var err error
-	c.dockerClient, err = dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
-	if err != nil {
-		return fmt.Errorf("failed to create docker client: %w", err)
+	if c.dockerClient == nil {
+		return fmt.Errorf("docker client is required for gateway functionality")
 	}
 
 	// Use the same CIDR block as AWS.
@@ -106,16 +121,34 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 	}
 
 	if !isRunning {
+		clusterConfig := c.createClusterConfig()
 		createOpts := []cluster.CreateOption{
 			// We'll need to configure the cluster here
 			// if customers need to access the docker images.
 			cluster.CreateWithNodeImage(KindImage),
 			cluster.CreateWithDisplayUsage(false),
 			cluster.CreateWithDisplaySalutation(false),
+			cluster.CreateWithV1Alpha4Config(clusterConfig),
 		}
 
-		if err := c.kindProviderWithLogger(logger).Create(c.name, createOpts...); err != nil {
+		if c.gpuAvailable {
+			c.logger.Info("Creating kind cluster with GPU support",
+				slog.Int("gpu_count", c.gpuCount))
+		} else {
+			c.logger.Info("Creating kind cluster without GPU support")
+		}
+
+		kindProvider := c.kindProviderWithLogger(logger)
+		// Do the damn thing.
+		if err := kindProvider.Create(c.name, createOpts...); err != nil {
 			return fmt.Errorf("failed to create kind cluster: %w", err)
+		}
+
+		// Setup GPU support on cluster nodes after creation
+		if c.gpuAvailable {
+			if err := c.setupGPUNodes(ctx, kindProvider, c.name); err != nil {
+				return fmt.Errorf("failed to setup GPU support: %w", err)
+			}
 		}
 	} else {
 		c.logger.Debug("Kind cluster already running", slog.String("name", c.name))
@@ -133,6 +166,57 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 	}
 
 	return nil
+}
+
+// createClusterConfig creates a kind cluster configuration, with GPU support if available
+func (c *KindClusterProvider) createClusterConfig() *v1alpha4.Cluster {
+	// Create a basic cluster config with control plane node
+	config := &v1alpha4.Cluster{
+		TypeMeta: v1alpha4.TypeMeta{
+			Kind:       "Cluster",
+			APIVersion: "kind.x-k8s.io/v1alpha4",
+		},
+		FeatureGates: map[string]bool{
+			"InPlacePodVerticalScaling": true,
+		},
+		Nodes: []v1alpha4.Node{
+			{
+				Role: v1alpha4.ControlPlaneRole,
+			},
+		},
+	}
+
+	// Add default mounts to all nodes
+	defaultMounts := []v1alpha4.Mount{}
+
+	// Mount the current user's home directory if available
+	if homeDir, err := os.UserHomeDir(); err == nil {
+		defaultMounts = append(defaultMounts, v1alpha4.Mount{
+			HostPath:      homeDir,
+			ContainerPath: "/var/host-mounts/home",
+		})
+	}
+
+	// Add GPU-specific configuration if GPUs are available
+	if c.gpuAvailable {
+		defaultMounts = append(defaultMounts, v1alpha4.Mount{
+			// This is a very specific thing that tells the NVIDIA container runtime
+			// which gpus to share with this container.
+			//
+			// In order for it to work though the user needs to have enabled some
+			// settings. We should add checks that inform the user what they need
+			// to have enabled.
+			HostPath:      "/dev/null",
+			ContainerPath: "/var/run/nvidia-container-devices/all",
+		})
+	}
+
+	// Apply mounts to the control plane node
+	if len(defaultMounts) > 0 {
+		config.Nodes[0].ExtraMounts = defaultMounts
+	}
+
+	return config
 }
 
 func (c *KindClusterProvider) Destroy(ctx context.Context, _ *util.ProgressReporter) error {
@@ -275,4 +359,9 @@ func (c *KindClusterProvider) loadImages(ctx context.Context, imageTarName strin
 		retry.Context(ctx),
 		retry.MaxDelay(5*time.Second),
 	)
+}
+
+// HasNvidiaRuntimeInstalled returns true if NVIDIA runtime was installed during cluster creation
+func (c *KindClusterProvider) HasNvidiaRuntimeInstalled() bool {
+	return c.gpuAvailable
 }

@@ -67,6 +67,12 @@ func (env *InstallEnv) startLocal(ctx context.Context, progressReporter *util.Pr
 		return fmt.Errorf("error adding metal ips: %w", err)
 	}
 
+	if env.ClusterProvider().HasNvidiaRuntimeInstalled() {
+		if err := env.addNvidiaLocalSpecResource(ctx); err != nil {
+			return fmt.Errorf("error adding NVIDIA initial resources: %w", err)
+		}
+	}
+
 	return nil
 }
 
@@ -223,6 +229,50 @@ func (env *InstallEnv) addMetalIPs(ctx context.Context) error {
 	}
 	pools = append(pools, newIpSpec)
 	env.Spec.TargetSummary.IPAddressPools = pools
+
+	return nil
+}
+
+func (env *InstallEnv) addNvidiaLocalSpecResource(_ context.Context) error {
+	slog.Info("Adding NVIDIA runtime class to initial resources")
+
+	runtimeClass := map[string]interface{}{
+		"apiVersion": "node.k8s.io/v1",
+		"kind":       "RuntimeClass",
+		"metadata": map[string]interface{}{
+			"name": "nvidia",
+		},
+		"handler": "nvidia",
+	}
+
+	env.Spec.InitialResources["gpu-runtime/runtime-class/nvidia"] = runtimeClass
+	slog.Debug("NVIDIA runtime class added to initial resources")
+
+	if !env.Spec.HasBatteryType("node_feature_discovery") {
+		slog.Debug("Node feature discovery battery wasn't found in install spec")
+
+		// Add the battery
+		env.Spec.AddBattery(specs.BatterySpec{
+			Type:  "node_feature_discovery",
+			Group: "magic",
+			Config: map[string]interface{}{
+				"type": "node_feature_discovery",
+			},
+		})
+	}
+
+	if !env.Spec.HasBatteryType("nvidia_device_plugin") {
+		slog.Debug("NVIDIA device plugin battery wasn't found in install spec")
+
+		// Add the battery
+		env.Spec.AddBattery(specs.BatterySpec{
+			Type:  "nvidia_device_plugin",
+			Group: "ai",
+			Config: map[string]interface{}{
+				"type": "nvidia_device_plugin",
+			},
+		})
+	}
 
 	return nil
 }

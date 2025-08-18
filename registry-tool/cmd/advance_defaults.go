@@ -33,7 +33,7 @@ This is useful for ensuring that the default tag always points to the latest ver
 			return fmt.Errorf("failed to read registry file: %w", err)
 		}
 
-		updater := registry.NewRegistryUpdater(reg, advanceDefaultsCmdFlags.ignoredImages)
+		updater := registry.NewRegistryUpdater(reg, advanceDefaultsCmdFlags.ignoredImages, 0)
 		if err := updater.UpdateDefaultTags(); err != nil {
 			return fmt.Errorf("failed to advance default tags: %w", err)
 		}
