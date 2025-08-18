@@ -126,8 +126,9 @@ defmodule CommonCore.Resources.Notebooks do
         }
       }
       |> maybe_add_gpu_resource(notebook)
-      |> maybe_add_node_selector(notebook)
+      |> maybe_add_node_selector(notebook, state)
       |> maybe_add_tolerations(notebook)
+      |> maybe_add_nvidia_runtime(state)
       |> B.app_labels(notebook.name)
       |> B.component_labels(notebook.name)
       |> B.label("battery/notebook", notebook.name)
