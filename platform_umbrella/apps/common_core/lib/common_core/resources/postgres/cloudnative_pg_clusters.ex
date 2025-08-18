@@ -10,19 +10,14 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Batteries
-  alias CommonCore.StateSummary.FromKubeState
   alias CommonCore.StateSummary.PostgresState
 
   multi_resource(:postgres_clusters, battery, state) do
-    Enum.map(state.postgres_clusters, fn cluster ->
-      cluster_resource(cluster, battery, state)
-    end)
+    Enum.map(state.postgres_clusters, &cluster_resource(battery, state, &1))
   end
 
   multi_resource(:scheduled_backups, battery, state) do
-    Enum.map(state.postgres_clusters, fn cluster ->
-      scheduled_backup(cluster, battery, state)
-    end)
+    Enum.map(state.postgres_clusters, &scheduled_backup(battery, state, &1))
   end
 
   multi_resource(:role_secrets, battery, state) do
@@ -43,12 +38,14 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   end
 
   multi_resource(:pod_monitors, battery, state) do
-    Enum.map(state.postgres_clusters, fn cluster ->
-      cluster_pod_monitor(battery, state, cluster)
-    end)
+    Enum.map(state.postgres_clusters, &cluster_pod_monitor(battery, state, &1))
   end
 
-  def cluster_resource(%Cluster{} = cluster, battery, state) do
+  multi_resource(:object_store_backups, battery, state) do
+    Enum.map(state.postgres_clusters, &backup(battery, state, &1))
+  end
+
+  def cluster_resource(battery, state, %Cluster{} = cluster) do
     db = cluster.database || %{database: "app", owner: "app"}
     cluster_name = cluster_name(cluster)
 
@@ -57,6 +54,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         instances: cluster.num_instances,
         storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
         enableSuperuserAccess: false,
+        backup: %{},
         bootstrap: bootstrap(cluster, db),
         postgresql: %{
           parameters: postgres_paramters(cluster)
@@ -82,8 +80,8 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         }
       }
       |> maybe_add_certificates(Batteries.batteries_installed?(state, :battery_ca), cluster)
-      |> maybe_add_sa_annotations(battery)
-      |> maybe_add_backup(cluster, battery)
+      |> maybe_add_sa_annotations(state, battery)
+      |> maybe_add_plugin_config(cluster, Batteries.batteries_installed?(state, :cloudnative_pg_barman))
 
     :cloudnative_pg_cluster
     |> B.build_resource()
@@ -114,35 +112,73 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     })
   end
 
-  defp maybe_add_sa_annotations(spec, %{config: %{service_role_arn: arn}}) when not is_empty(arn) do
-    Map.put(spec, :serviceAccountTemplate, %{
-      metadata: %{annotations: %{"eks.amazonaws.com/role-arn" => arn}}
-    })
+  defp maybe_add_sa_annotations(spec, state, battery) do
+    settings = get_object_store_settings(battery, state)
+
+    case Map.get(settings, :service_role_arn) do
+      nil ->
+        spec
+
+      arn ->
+        Map.put(spec, :serviceAccountTemplate, %{
+          metadata: %{annotations: %{"eks.amazonaws.com/role-arn" => arn}}
+        })
+    end
   end
 
-  defp maybe_add_sa_annotations(spec, _battery), do: spec
+  defp maybe_add_plugin_config(spec, %{backup_config: %{type: :object_store}} = cluster, barman_installed?)
+       when barman_installed? do
+    cluster_name = cluster_name(cluster)
 
-  defp maybe_add_backup(spec, %{backup_config: %{type: backup_type}}, %{config: %{bucket_name: bucket}})
-       when backup_type == :object_store
-       when not is_empty(bucket) do
-    Map.put(spec, :backup, %{
+    Map.put(spec, "plugins", [
+      %{
+        name: "barman-cloud.cloudnative-pg.io",
+        isWALArchiver: true,
+        parameters: %{barmanObjectName: cluster_name}
+      }
+    ])
+  end
+
+  defp maybe_add_plugin_config(spec, _cluster, _barman_installed?), do: spec
+
+  defp backup(battery, state, %{backup_config: %{type: backup_type}} = cluster) when backup_type == :object_store do
+    settings = get_object_store_settings(battery, state)
+    bucket = Map.get(settings, :bucket_name)
+    cluster_name = cluster_name(cluster)
+
+    spec = %{
       retentionPolicy: "30d",
-      barmanObjectStore: %{
+      configuration: %{
         # the backups are stored in a prefix (default: cluster_name) under this path
         destinationPath: "s3://#{bucket}",
         data: %{compression: "snappy"},
         wal: %{compression: "snappy"},
         s3Credentials: %{inheritFromIAMRole: true}
       }
-    })
+    }
+
+    :cloudnative_pg_barman_objectstore
+    |> B.build_resource()
+    |> B.name(cluster_name)
+    |> B.namespace(PostgresState.cluster_namespace(state, cluster))
+    |> B.add_owner(cluster)
+    |> B.app_labels(cluster_name)
+    |> B.spec(spec)
+    |> F.require_battery(state, :cloudnative_pg_barman)
+    |> F.require_non_nil(bucket)
   end
 
-  defp maybe_add_backup(spec, _cluster, _battery), do: spec
+  defp backup(_battery, _state, _cluster), do: nil
 
-  def scheduled_backup(cluster, battery, state) do
+  def scheduled_backup(_battery, state, cluster) do
     cluster_name = cluster_name(cluster)
 
-    spec = %{schedule: "0 0 0 * * *", cluster: %{name: cluster_name}}
+    spec = %{
+      schedule: "0 0 0 * * *",
+      method: "plugin",
+      cluster: %{name: cluster_name},
+      pluginConfiguration: %{name: "barman-cloud.cloudnative-pg.io"}
+    }
 
     :cloudnative_pg_scheduledbackup
     |> B.build_resource()
@@ -152,8 +188,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.namespace(PostgresState.cluster_namespace(state, cluster))
     |> B.add_owner(cluster)
     |> B.spec(spec)
-    |> F.require_non_nil(battery.config.bucket_name)
-    |> F.require_non_nil(battery.config.service_role_arn)
+    |> F.require_battery(state, :cloudnative_pg_barman)
     |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
   end
 
@@ -304,12 +339,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   multi_resource(:postgres_certificates, _battery, state) do
     Enum.flat_map(state.postgres_clusters, fn cluster ->
-      Enum.flat_map([:server, :client], fn type ->
-        [
-          cert_resource(cluster, type, state),
-          cert_secret_resource(cluster, type, state)
-        ]
-      end)
+      Enum.map([:server, :client], &cert_resource(cluster, &1, state))
     end)
   end
 
@@ -325,28 +355,13 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> F.require_battery(state, :battery_ca)
   end
 
-  defp cert_secret_resource(cluster, type, state) do
-    name = cert_secret_name(cluster, type)
-    namespace = PostgresState.cluster_namespace(state, cluster)
-
-    :secret
-    |> B.build_resource()
-    |> B.name(name)
-    |> B.namespace(namespace)
-    |> B.secret_type(get_secret_type(state, namespace, name))
-    |> B.label("cnpg.io/reload", "")
-    |> F.require_battery(state, :battery_ca)
-  end
-
   defp build_cert_spec(_state, cluster, type) when type == :client do
     name = cluster_name(cluster)
 
     %{}
     |> Map.put("commonName", "#{name}-client")
     |> Map.put("usages", ["client auth"])
-    |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
-    |> Map.put("revisionHistoryLimit", 1)
-    |> Map.put("secretName", cert_secret_name(cluster, :client))
+    |> build_cert_spec_common(cluster, type)
   end
 
   defp build_cert_spec(state, cluster, type) when type == :server do
@@ -357,22 +372,36 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> Map.put("commonName", "#{name}.#{namespace}.svc")
     |> Map.put("dnsNames", gen_dns_names(state, cluster))
     |> Map.put("usages", ["server auth"])
-    |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
-    |> Map.put("revisionHistoryLimit", 1)
-    |> Map.put("secretName", cert_secret_name(cluster, :server))
+    |> build_cert_spec_common(cluster, type)
   end
 
-  # Normally, we wouldn't (shouldn't) base anything on what's already running 
-  # But this is to "fix" a race condition where sometimes we create the secret before
-  # cnpg and sometimes they create it before us. If they create it, it's `kubernetes.io/tls`
-  # which makes sense for this resource. But we can't change it to "opaque" which is the default.
-  defp get_secret_type(state, namespace, name) do
-    case FromKubeState.find_state_resource(state, :secret, namespace, name) do
-      nil ->
-        "kubernetes.io/tls"
+  defp build_cert_spec_common(spec, cluster, type) do
+    spec
+    |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "cnpg-ca"})
+    |> Map.put("revisionHistoryLimit", 1)
+    |> Map.put("secretName", cert_secret_name(cluster, type))
+    # allow cert_manager to manage the secret with the correct labels
+    |> Map.put("secretTemplate", %{} |> B.managed_indirect_labels() |> B.label("cnpg.io/reload", ""))
+  end
 
-      r ->
-        Map.get(r, "type", "kubernetes.io/tls")
+  # TODO: this needs to be fixed for backwards <-> forwards compatibility
+  defp get_object_store_settings(battery, state) do
+    # if barman battery isn't installed, just return an empty config
+    case Batteries.get_battery(state, :cloudnative_pg_barman) do
+      nil ->
+        %{}
+
+      # use the barman config if it's set, otherwise cnpg config
+      barman_battery ->
+        barman_battery.config
+        |> Map.from_struct()
+        |> Enum.reject(fn
+          {_k, nil} -> true
+          _ -> false
+        end)
+        |> Map.new()
+        |> then(&Map.merge(battery.config, &1))
+        |> Map.take(~w(service_role_arn bucket_name bucket_arn)a)
     end
   end
 end

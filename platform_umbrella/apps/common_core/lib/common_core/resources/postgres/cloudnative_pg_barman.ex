@@ -9,6 +9,8 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
 
   alias CommonCore.Resources.Builder, as: B
 
+  @server_port 9090
+
   multi_resource(:crds_barmancloud) do
     Enum.flat_map(@included_resources, &(&1 |> get_resource() |> YamlElixir.read_all_from_string!()))
   end
@@ -21,7 +23,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
       |> Map.put("commonName", "barman-cloud-client")
       |> Map.put("duration", "2160h")
       |> Map.put("isCA", false)
-      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
+      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "cnpg-ca"})
       |> Map.put("renewBefore", "360h")
       |> Map.put("secretName", "barman-cloud-client-tls")
       |> Map.put("usages", ["client auth"])
@@ -42,7 +44,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
       |> Map.put("dnsNames", ["barman-cloud"])
       |> Map.put("duration", "2160h")
       |> Map.put("isCA", false)
-      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
+      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "cnpg-ca"})
       |> Map.put("renewBefore", "360h")
       |> Map.put("secretName", "barman-cloud-server-tls")
       |> Map.put("usages", ["server auth"])
@@ -59,8 +61,8 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
 
     :cluster_role_binding
     |> B.build_resource()
-    |> B.name("metrics-auth-rolebinding")
-    |> B.role_ref(B.build_cluster_role_ref("metrics-auth-role"))
+    |> B.name("barman:metrics-auth-rolebinding")
+    |> B.role_ref(B.build_cluster_role_ref("barman:metrics-auth-role"))
     |> B.subject(B.build_service_account("plugin-barman-cloud", namespace))
   end
 
@@ -89,12 +91,12 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
       }
     ]
 
-    :cluster_role |> B.build_resource() |> B.name("metrics-auth-role") |> B.rules(rules)
+    :cluster_role |> B.build_resource() |> B.name("barman:metrics-auth-role") |> B.rules(rules)
   end
 
   resource(:cluster_role_metrics_reader) do
     rules = [%{"nonResourceURLs" => ["/metrics"], "verbs" => ["get"]}]
-    :cluster_role |> B.build_resource() |> B.name("metrics-reader") |> B.rules(rules)
+    :cluster_role |> B.build_resource() |> B.name("barman:metrics-reader") |> B.rules(rules)
   end
 
   resource(:cluster_role_objectstore_editor) do
@@ -113,7 +115,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
 
     :cluster_role
     |> B.build_resource()
-    |> B.name("objectstore-editor-role")
+    |> B.name("barman:objectstore-editor-role")
     |> B.component_labels("plugin-barman-cloud")
     |> B.rules(rules)
   end
@@ -134,7 +136,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
 
     :cluster_role
     |> B.build_resource()
-    |> B.name("objectstore-viewer-role")
+    |> B.name("barman:objectstore-viewer-role")
     |> B.component_labels("plugin-barman-cloud")
     |> B.rules(rules)
   end
@@ -190,7 +192,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
               "--server-cert=/server/tls.crt",
               "--server-key=/server/tls.key",
               "--client-cert=/client/tls.crt",
-              "--server-address=:9090",
+              "--server-address=:#{@server_port}",
               "--leader-elect",
               "--log-level=trace"
             ],
@@ -202,11 +204,11 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
             ],
             "image" => battery.config.barman_plugin_image,
             "name" => "barman-cloud",
-            "ports" => [%{"containerPort" => 9090, "protocol" => "TCP"}],
+            "ports" => [%{"containerPort" => @server_port, "protocol" => "TCP"}],
             "readinessProbe" => %{
               "initialDelaySeconds" => 10,
               "periodSeconds" => 10,
-              "tcpSocket" => %{"port" => 9090}
+              "tcpSocket" => %{"port" => @server_port}
             },
             "resources" => %{},
             "securityContext" => %{
@@ -255,10 +257,10 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
 
     :role_binding
     |> B.build_resource()
-    |> B.name("leader-election-rolebinding")
+    |> B.name("barman:leader-election-rolebinding")
     |> B.namespace(namespace)
     |> B.component_labels("plugin-barman-cloud")
-    |> B.role_ref(B.build_role_ref("leader-election-role"))
+    |> B.role_ref(B.build_role_ref("barman:leader-election-role"))
     |> B.subject(B.build_service_account("plugin-barman-cloud", namespace))
   end
 
@@ -281,7 +283,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
 
     :role
     |> B.build_resource()
-    |> B.name("leader-election-role")
+    |> B.name("barman:leader-election-role")
     |> B.namespace(namespace)
     |> B.component_labels("plugin-barman-cloud")
     |> B.rules(rules)
@@ -302,7 +304,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
 
     spec =
       %{}
-      |> Map.put("ports", [%{"port" => 9090, "protocol" => "TCP", "targetPort" => 9090}])
+      |> Map.put("ports", [%{"port" => @server_port, "protocol" => "TCP", "targetPort" => @server_port}])
       |> Map.put("selector", %{"battery/app" => @app_name})
 
     :service
@@ -310,6 +312,11 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
     |> B.name("barman-cloud")
     |> B.namespace(namespace)
     |> B.label("cnpg.io/pluginName", "barman-cloud.cloudnative-pg.io")
+    |> B.annotations(%{
+      "cnpg.io/pluginPort" => "#{@server_port}",
+      "cnpg.io/pluginClientSecret" => "barman-cloud-client-tls",
+      "cnpg.io/pluginServerSecret" => "barman-cloud-server-tls"
+    })
     |> B.spec(spec)
   end
 end
