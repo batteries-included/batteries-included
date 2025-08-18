@@ -846,8 +846,9 @@ vm_insert:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_operator:
   name: docker.io/victoriametrics/operator
-  default_tag: v0.61.2
+  default_tag: v0.62.0
   tags:
+    - v0.62.0
     - v0.61.2
     - v0.61.1
     - v0.61.0
