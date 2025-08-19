@@ -41,7 +41,7 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv, skipBootstrap b
 	}
 
 	slog.Info("Starting initial sync")
-	if err := env.Spec.InitialSync(ctx, kubeClient); err != nil {
+	if err := env.Spec.InitialSync(ctx, kubeClient, progressReporter); err != nil {
 		return fmt.Errorf("unable to perform initial sync: %w", err)
 	}
 
@@ -51,14 +51,14 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv, skipBootstrap b
 	}
 
 	slog.Info("Waiting for bootstrap completion")
-	if err := env.Spec.WaitForBootstrap(ctx, kubeClient); err != nil {
+	if err := env.Spec.WaitForBootstrap(ctx, kubeClient, progressReporter); err != nil {
 		return fmt.Errorf("failed to wait for bootstrap: %w", err)
 	}
 
 	time.Sleep(10 * time.Second)
 
 	slog.Info("Double checking bootstrap completion")
-	if err := env.Spec.WaitForBootstrap(ctx, kubeClient); err != nil {
+	if err := env.Spec.WaitForBootstrap(ctx, kubeClient, progressReporter); err != nil {
 		return fmt.Errorf("failed to wait for bootstrap: %w", err)
 	}
 

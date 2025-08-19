@@ -1,17 +1,27 @@
 package specs
 
 import (
+	"bi/pkg/cluster/util"
+	"bi/pkg/kube"
 	"context"
 	"log/slog"
 	"time"
 
-	"bi/pkg/kube"
+	"github.com/vbauerster/mpb/v8"
 )
 
-func (installSpec *InstallSpec) InitialSync(ctx context.Context, kubeClient kube.KubeClient) error {
+func (installSpec *InstallSpec) InitialSync(ctx context.Context, kubeClient kube.KubeClient, progressReporter *util.ProgressReporter) error {
+	var syncBar *mpb.Bar
+	if progressReporter != nil {
+		syncBar = progressReporter.ForInitialSync()
+		// Set total to the number of resources we need to sync
+		syncBar.SetTotal(int64(len(installSpec.InitialResources)), false)
+	}
+
 	var savedErr error = nil
 	for attempt := 0; attempt < 7; attempt++ {
 		savedErr = nil
+		resourceCount := 0
 		for resourceName, resource := range installSpec.InitialResources {
 			slog.Debug("Ensuring resource exists in target kubernetes cluster",
 				slog.String("resourceName", resourceName))
@@ -24,9 +34,14 @@ func (installSpec *InstallSpec) InitialSync(ctx context.Context, kubeClient kube
 				savedErr = err
 				continue
 			}
+			resourceCount++
+			if syncBar != nil {
+				syncBar.SetCurrent(int64(resourceCount))
+			}
 		}
 		if savedErr == nil {
 			slog.Info("Initial sync complete", slog.Int("attempt", attempt))
+			util.SetTotalAndComplete(syncBar)
 			return nil
 		}
 

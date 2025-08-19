@@ -30,13 +30,13 @@ const (
 )
 
 type KindClusterProvider struct {
-	logger              *slog.Logger
-	nodeProvider        cluster.ProviderOption
-	name                string
-	dockerClient        *dockerclient.Client
-	gatewayEnabled      bool
-	wgGateway           *wireguard.Gateway
-	wgClient            *wireguard.Client
+	logger         *slog.Logger
+	nodeProvider   cluster.ProviderOption
+	name           string
+	dockerClient   *dockerclient.Client
+	gatewayEnabled bool
+	wgGateway      *wireguard.Gateway
+	wgClient       *wireguard.Client
 	// GPU support fields
 	gpuAvailable        bool
 	gpuCount            int
@@ -148,7 +148,7 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 
 		// Setup GPU support on cluster nodes after creation
 		if c.gpuAvailable {
-			if err := c.setupGPUNodes(ctx, kindProvider, c.name); err != nil {
+			if err := c.setupGPUNodes(ctx, kindProvider, c.name, progressReporter); err != nil {
 				return fmt.Errorf("failed to setup GPU support: %w", err)
 			}
 		}
@@ -366,4 +366,24 @@ func (c *KindClusterProvider) loadImages(ctx context.Context, imageTarName strin
 // HasNvidiaRuntimeInstalled returns true if NVIDIA runtime was installed during cluster creation
 func (c *KindClusterProvider) HasNvidiaRuntimeInstalled() bool {
 	return c.gpuAvailable
+}
+
+// HasGPUs returns true if NVIDIA GPUs are available and detected
+func (c *KindClusterProvider) HasGPUs() bool {
+	return c.gpuAvailable
+}
+
+// GetGPUCount returns the number of detected NVIDIA GPUs
+func (c *KindClusterProvider) GetGPUCount() int {
+	return c.gpuCount
+}
+
+// HasDockerClient returns true if a Docker client is available
+func (c *KindClusterProvider) HasDockerClient() bool {
+	return c.dockerClient != nil
+}
+
+// GetDockerClient returns the Docker client if available
+func (c *KindClusterProvider) GetDockerClient() *dockerclient.Client {
+	return c.dockerClient
 }

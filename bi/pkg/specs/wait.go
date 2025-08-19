@@ -1,6 +1,7 @@
 package specs
 
 import (
+	"bi/pkg/cluster/util"
 	"bi/pkg/kube"
 	"context"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/avast/retry-go/v4"
+	"github.com/vbauerster/mpb/v8"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -21,7 +23,7 @@ import (
 // testFn tests a converted object returned from a watch to determine if the watch is done or errored
 type testFn[T any] func(convertedAPIObject *T) (done bool, err error)
 
-func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.KubeClient) error {
+func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.KubeClient, progressReporter *util.ProgressReporter) error {
 	usage, err := spec.GetCoreUsage()
 	if err != nil {
 		return fmt.Errorf("failed to determine if control server is running in cluster: %w", err)
@@ -33,32 +35,57 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 		return nil
 	}
 
+	var bootstrapBar *mpb.Bar
+	if progressReporter != nil {
+		bootstrapBar = progressReporter.ForBootstrapProgress()
+	}
+
 	ns, err := spec.GetCoreNamespace()
 	if err != nil {
 		return fmt.Errorf("failed to get core namespace: %w", err)
 	}
 
-	for name, opts := range map[string]*kube.WatchOptions{
+	util.IncrementWithMessage(bootstrapBar, "Starting bootstrap wait")
+
+	watchSteps := map[string]*kube.WatchOptions{
 		"bootstrap job":   bootstrapJobWatchOpts(ns),
 		"control server":  controlServerDeployWatchOpts(ns),
 		"host config map": batteryInfoConfigMapWatchOpts(ns),
-	} {
+	}
+
+	stepCount := 0
+	for name, opts := range watchSteps {
 		l := slog.With(slog.String("watch", name))
 		l.Debug("Waiting for watch to complete...")
 		if err := kubeClient.WatchFor(ctx, opts); err != nil {
 			return fmt.Errorf("failed to wait for %s: %w", name, err)
 		}
 		l.Info("Finished waiting")
+		stepCount++
+		util.IncrementWithMessage(bootstrapBar, fmt.Sprintf("Completed %s", name))
 	}
+
+	util.IncrementWithMessage(bootstrapBar, "Getting access info")
 
 	httpClient := getHTTPClient(spec, kubeClient)
 
+	// Create a separate progress bar for HTTP health check
+	var healthBar *mpb.Bar
+	if progressReporter != nil {
+		healthBar = progressReporter.ForHealthCheck()
+	}
+
+	util.IncrementWithMessage(healthBar, "Starting control server health check")
+
 	// try to get cs url and connect, 10x
+	attemptCount := 0
 	err = retry.Do(func() error {
+		attemptCount++
 		// get the access-info configmap (and URL information)
 		info, err := kubeClient.GetAccessInfo(ctx, ns)
 		if err != nil {
 			slog.Debug("Failed to get access info config map", slog.Any("error", err))
+			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Failed to get access info", attemptCount))
 			return err
 		}
 		url := info.GetURL()
@@ -66,8 +93,22 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 		// try to make sure the control server is up before we return
 		slog.Debug("Attempting to connect to control server", slog.String("url", url))
 		_, err = httpClient.Head(url)
+		if err != nil {
+			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Health check failed", attemptCount))
+		} else {
+			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Health check successful", attemptCount))
+		}
 		return err
 	}, retry.Context(ctx))
+
+	if err == nil {
+		util.SetTotalAndComplete(healthBar)
+		util.IncrementWithMessage(bootstrapBar, "Control server accessible")
+		util.IncrementWithMessage(bootstrapBar, "Bootstrap complete")
+		util.SetTotalAndComplete(bootstrapBar)
+	} else {
+		util.SetTotalAndComplete(healthBar)
+	}
 
 	return err
 }

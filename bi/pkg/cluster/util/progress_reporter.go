@@ -86,6 +86,54 @@ func (pr *ProgressReporter) ForKindCreateLogs() slog.Handler {
 	}
 }
 
+// ForGPUSetup creates a new progress bar for GPU setup operations.
+func (pr *ProgressReporter) ForGPUSetup() *mpb.Bar {
+	return pr.progress.AddBar(4,
+		mpb.PrependDecorators(
+			decor.Name("gpu setup", decor.WC{C: decor.DindentRight | decor.DextraSpace}),
+		),
+		mpb.AppendDecorators(
+			decor.Percentage(),
+		),
+	)
+}
+
+// ForBootstrapProgress creates a new progress bar for bootstrap operations.
+func (pr *ProgressReporter) ForBootstrapProgress() *mpb.Bar {
+	return pr.progress.AddBar(7,
+		mpb.PrependDecorators(
+			decor.Name("bootstrap", decor.WC{C: decor.DindentRight | decor.DextraSpace}),
+		),
+		mpb.AppendDecorators(
+			decor.Percentage(),
+		),
+	)
+}
+
+// ForInitialSync creates a new progress bar for initial resource sync.
+func (pr *ProgressReporter) ForInitialSync() *mpb.Bar {
+	return pr.progress.AddBar(0, // Will be updated as we discover resources
+		mpb.PrependDecorators(
+			decor.Name("sync", decor.WC{C: decor.DindentRight | decor.DextraSpace}),
+		),
+		mpb.AppendDecorators(
+			decor.Percentage(),
+		),
+	)
+}
+
+// ForHealthCheck creates a new progress bar for HTTP health check operations.
+func (pr *ProgressReporter) ForHealthCheck() *mpb.Bar {
+	return pr.progress.AddBar(10, // retry attempts
+		mpb.PrependDecorators(
+			decor.Name("health check", decor.WC{C: decor.DindentRight | decor.DextraSpace}),
+		),
+		mpb.AppendDecorators(
+			decor.Percentage(),
+		),
+	)
+}
+
 type logInterceptor struct {
 	bar      *mpb.Bar
 	messages []string
@@ -112,3 +160,18 @@ func (h *logInterceptor) Handle(_ context.Context, r slog.Record) error {
 func (h *logInterceptor) WithAttrs(_ []slog.Attr) slog.Handler { return h }
 
 func (h *logInterceptor) WithGroup(_ string) slog.Handler { return h }
+
+// IncrementWithMessage increments a progress bar and logs a message
+func IncrementWithMessage(bar *mpb.Bar, message string) {
+	if bar != nil {
+		bar.Increment()
+		slog.Info(message)
+	}
+}
+
+// SetTotalAndComplete sets the total for a progress bar and marks it complete
+func SetTotalAndComplete(bar *mpb.Bar) {
+	if bar != nil {
+		bar.SetTotal(bar.Current(), true)
+	}
+}
