@@ -24,6 +24,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
     if connected?(socket) do
       :ok = KubeEventCenter.subscribe(:pod)
       :ok = KubeEventCenter.subscribe(:cloudnative_pg_cluster)
+      :ok = KubeEventCenter.subscribe(:cloudnative_pg_backup)
     end
 
     {:ok, socket}
@@ -49,7 +50,7 @@ defmodule ControlServerWeb.Live.PostgresShow do
 
   @impl Phoenix.LiveView
   def handle_info(_unused, socket) do
-    {:noreply, socket |> assign_k8_cluster() |> assign_k8_services() |> assign_k8_pods()}
+    {:noreply, socket |> assign_k8_cluster() |> assign_k8_services() |> assign_k8_pods() |> assign_backups()}
   end
 
   @impl Phoenix.LiveView
