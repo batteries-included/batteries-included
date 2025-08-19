@@ -33,17 +33,18 @@ If validation fails, it provides helpful instructions to fix the setup.`,
 
 		fmt.Println("🔍 Validating NVIDIA Container Toolkit setup...")
 		fmt.Println()
+		// Create a provider to get Docker client access if available
+		provider := kind.NewClusterProvider(slog.Default(), "validation-test", false, false) // Disable GPU auto-discovery
+		var dockerClient *dockerclient.Client
+		if err := provider.Init(ctx); err == nil && provider.HasDockerClient() {
+			dockerClient = provider.GetDockerClient()
+		}
+
+		gpuCount := -1
 
 		// First check if we can detect any GPUs using the new ctkutil GPU detector
 		if !skipGPUCountValidation {
 			fmt.Println("📊 Checking for NVIDIA GPUs...")
-
-			// Create a provider to get Docker client access if available
-			provider := kind.NewClusterProvider(slog.Default(), "validation-test", false, false) // Disable GPU auto-discovery
-			var dockerClient *dockerclient.Client
-			if err := provider.Init(ctx); err == nil && provider.HasDockerClient() {
-				dockerClient = provider.GetDockerClient()
-			}
 
 			detector := ctkutil.NewGPUDetector(dockerClient)
 			gpuCount, err := detector.DetectGPUs(ctx)
@@ -60,16 +61,10 @@ If validation fails, it provides helpful instructions to fix the setup.`,
 
 			fmt.Printf("✅ Found %d NVIDIA GPU(s)\n", gpuCount)
 			fmt.Println()
+
 		} else {
 			fmt.Println("📊 Skipping GPU count validation (--skip-gpu-count-validation)")
 			fmt.Println()
-		}
-
-		// Create a provider for validation
-		provider := kind.NewClusterProvider(slog.Default(), "validation-test", false, false) // Disable GPU auto-discovery
-		if err := provider.Init(ctx); err != nil {
-			fmt.Printf("❌ Failed to initialize provider: %v\n", err)
-			return
 		}
 
 		// Now run the validation
@@ -78,7 +73,19 @@ If validation fails, it provides helpful instructions to fix the setup.`,
 
 		// Run the validation logic directly
 		if err := validateNvidiaContainerToolkitDirect(provider, ctx); err != nil {
-			fmt.Printf("❌ Validation failed: %v\n", err)
+			fmt.Printf("❌ Container toolkit validation failed: %v\n", err)
+			fmt.Println()
+			printInstallationInstructions()
+			return
+		}
+
+		// Validate NVIDIA inside of running containers
+		fmt.Println("🔧 Validating NVIDIA inside of running containers...")
+		fmt.Println()
+
+		// Validate nvidia-smi in container
+		if err := validateNvidiaSmiInContainer(ctx, provider, gpuCount); err != nil {
+			fmt.Printf("❌ Container validation failed: %v\n", err)
 			fmt.Println()
 			printInstallationInstructions()
 			return
@@ -87,6 +94,32 @@ If validation fails, it provides helpful instructions to fix the setup.`,
 		fmt.Println("✅ NVIDIA Container Toolkit validation passed!")
 		fmt.Println("🚀 Your system is ready for GPU support in Kind clusters")
 	},
+}
+
+// validateNvidiaSmiInContainer checks if nvidia-smi can run in a container and detect the correct number of GPUs.
+func validateNvidiaSmiInContainer(ctx context.Context, provider *kind.KindClusterProvider, expectedGpuCount int) error {
+	fmt.Println("  Validating nvidia-smi in container...")
+
+	var dockerClient *dockerclient.Client
+	if provider != nil && provider.HasDockerClient() {
+		dockerClient = provider.GetDockerClient()
+	} else {
+		return fmt.Errorf("docker client not available for container validation")
+	}
+
+	detector := ctkutil.NewGPUDetector(dockerClient)
+	// We test the volume mount method as it's what Kind uses.
+	gpuCount, err := detector.DetectGPUsInContainer(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to run nvidia-smi in container: %w", err)
+	}
+
+	if expectedGpuCount != -1 && gpuCount != expectedGpuCount {
+		return fmt.Errorf("container detected %d GPUs, but host detected %d", gpuCount, expectedGpuCount)
+	}
+
+	fmt.Printf("  ✅ nvidia-smi successfully detected %d GPU(s) in container\n", gpuCount)
+	return nil
 }
 
 // validateNvidiaContainerToolkitDirect runs validation without the provider's GPU detection logic
