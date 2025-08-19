@@ -367,3 +367,23 @@ func (c *KindClusterProvider) loadImages(ctx context.Context, imageTarName strin
 func (c *KindClusterProvider) HasNvidiaRuntimeInstalled() bool {
 	return c.gpuAvailable
 }
+
+// HasGPUs returns true if NVIDIA GPUs are available and detected
+func (c *KindClusterProvider) HasGPUs() bool {
+	return c.gpuAvailable
+}
+
+// GetGPUCount returns the number of detected NVIDIA GPUs
+func (c *KindClusterProvider) GetGPUCount() int {
+	return c.gpuCount
+}
+
+// HasDockerClient returns true if a Docker client is available
+func (c *KindClusterProvider) HasDockerClient() bool {
+	return c.dockerClient != nil
+}
+
+// GetDockerClient returns the Docker client if available
+func (c *KindClusterProvider) GetDockerClient() *dockerclient.Client {
+	return c.dockerClient
+}
