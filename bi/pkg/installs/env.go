@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"bi/pkg/jwt"
 	"bi/pkg/specs"
 
 	"bi/pkg/cluster"
@@ -35,6 +36,7 @@ type envBuilder struct {
 	slugOrURL               string
 	additionalInsecureHosts []string
 	nvidiaAutoDiscovery     bool
+	allowTestKeys           bool
 }
 
 type envBuilderOption func(*envBuilder)
@@ -57,10 +59,17 @@ func WithNvidiaAutoDiscovery(enabled bool) envBuilderOption {
 	}
 }
 
+func WithAllowTestKeys(enabled bool) envBuilderOption {
+	return func(eb *envBuilder) {
+		eb.allowTestKeys = enabled
+	}
+}
+
 func NewEnvBuilder(opts ...envBuilderOption) *envBuilder {
 	eb := &envBuilder{
 		additionalInsecureHosts: []string{},
 		nvidiaAutoDiscovery:     true, // Default to enabled
+		allowTestKeys:           false,
 	}
 	for _, cb := range opts {
 		cb(eb)
@@ -78,6 +87,9 @@ func (eb *envBuilder) Build(ctx context.Context) (*InstallEnv, error) {
 }
 
 func (eb *envBuilder) readInstallEnv() (*InstallEnv, error) {
+	// Create JWT verifier based on allowTestKeys setting
+	jwtVerifier := jwt.NewVerifier(eb.allowTestKeys)
+
 	type potentialPath struct{ source, path string }
 	for _, p := range []potentialPath{
 		{source: "file", path: filepath.Join(xdg.StateHome, "bi", "installs", eb.slugOrURL, "spec.json")},
@@ -85,7 +97,23 @@ func (eb *envBuilder) readInstallEnv() (*InstallEnv, error) {
 	} {
 		l := slog.With(slog.String("path", p.path), slog.String("source", p.source))
 
-		spec, err := specs.GetSpecFromURL(p.path, eb.additionalInsecureHosts)
+		// Create SpecFetcher with JWT verification for remote URLs
+		var fetcher *specs.SpecFetcher
+		if p.source == "url" {
+			fetcher = specs.NewSpecFetcher(
+				specs.WithURL(p.path),
+				specs.WithAdditionalInsecureHosts(eb.additionalInsecureHosts),
+				specs.WithJWTVerifier(jwtVerifier),
+			)
+		} else {
+			// For local files, we can skip JWT verification
+			fetcher = specs.NewSpecFetcher(
+				specs.WithURL(p.path),
+				specs.WithJWTVerifier(jwt.SkipVerification()),
+			)
+		}
+
+		spec, err := fetcher.Fetch()
 		if err != nil {
 			l.Debug("Didn't find install", slog.Any("error", err))
 			continue
