@@ -1,6 +1,7 @@
 package kind
 
 import (
+	"bi/pkg/cluster/util"
 	"context"
 	_ "embed"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types/container"
+	"github.com/vbauerster/mpb/v8"
 	"sigs.k8s.io/kind/pkg/cluster"
 	"sigs.k8s.io/kind/pkg/cluster/nodes"
 )
@@ -215,12 +217,17 @@ func (c *KindClusterProvider) countGPUsFromOutput(output string) int {
 }
 
 // setupGPUNodes configures GPU support on the cluster nodes after creation
-func (c *KindClusterProvider) setupGPUNodes(ctx context.Context, kindProvider *cluster.Provider, clusterName string) error {
+func (c *KindClusterProvider) setupGPUNodes(ctx context.Context, kindProvider *cluster.Provider, clusterName string, progressReporter *util.ProgressReporter) error {
 	if !c.gpuAvailable {
 		return nil
 	}
 
-	c.logger.Info("Setting up GPU support on cluster nodes")
+	var gpuBar *mpb.Bar
+	if progressReporter != nil {
+		gpuBar = progressReporter.ForGPUSetup()
+	}
+
+	util.IncrementWithMessage(gpuBar, "Setting up GPU support on cluster nodes")
 
 	// Get all nodes in the cluster
 	nodeList, err := kindProvider.ListInternalNodes(clusterName)
@@ -228,18 +235,28 @@ func (c *KindClusterProvider) setupGPUNodes(ctx context.Context, kindProvider *c
 		return fmt.Errorf("failed to list nodes: %w", err)
 	}
 
+	util.IncrementWithMessage(gpuBar, "Found cluster nodes")
+
+	// Update total count: start(1) + found nodes(1) + setup per node(len) + complete(1)
+	if gpuBar != nil {
+		totalSteps := 2 + len(nodeList) + 1
+		gpuBar.SetTotal(int64(totalSteps), false)
+	}
+
 	// Setup GPU support on all nodes (both control plane and worker nodes may need GPU support)
 	for _, node := range nodeList {
-		if err := c.setupGPUNode(ctx, node); err != nil {
+		if err := c.setupGPUNode(ctx, node, gpuBar); err != nil {
 			return fmt.Errorf("failed to setup GPU support on node %s: %w", node.String(), err)
 		}
 	}
 
+	util.IncrementWithMessage(gpuBar, "GPU setup completed")
+	util.SetTotalAndComplete(gpuBar)
 	return nil
 }
 
 // setupGPUNode configures GPU support on a single node
-func (c *KindClusterProvider) setupGPUNode(ctx context.Context, node nodes.Node) error {
+func (c *KindClusterProvider) setupGPUNode(ctx context.Context, node nodes.Node, gpuBar *mpb.Bar) error {
 	c.logger.Info("Setting up GPU support on node", slog.String("node", node.String()))
 
 	// Install nvidia-container-toolkit
@@ -247,6 +264,7 @@ func (c *KindClusterProvider) setupGPUNode(ctx context.Context, node nodes.Node)
 	if err := c.installContainerToolkit(ctx, node); err != nil {
 		return fmt.Errorf("failed to install container toolkit: %w", err)
 	}
+	util.IncrementWithMessage(gpuBar, fmt.Sprintf("Installed container toolkit on %s", node.String()))
 
 	// Configure containerd runtime
 	c.logger.Debug("Configuring containerd runtime", slog.String("node", node.String()))

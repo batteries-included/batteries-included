@@ -30,13 +30,13 @@ const (
 )
 
 type KindClusterProvider struct {
-	logger              *slog.Logger
-	nodeProvider        cluster.ProviderOption
-	name                string
-	dockerClient        *dockerclient.Client
-	gatewayEnabled      bool
-	wgGateway           *wireguard.Gateway
-	wgClient            *wireguard.Client
+	logger         *slog.Logger
+	nodeProvider   cluster.ProviderOption
+	name           string
+	dockerClient   *dockerclient.Client
+	gatewayEnabled bool
+	wgGateway      *wireguard.Gateway
+	wgClient       *wireguard.Client
 	// GPU support fields
 	gpuAvailable        bool
 	gpuCount            int
@@ -148,7 +148,7 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 
 		// Setup GPU support on cluster nodes after creation
 		if c.gpuAvailable {
-			if err := c.setupGPUNodes(ctx, kindProvider, c.name); err != nil {
+			if err := c.setupGPUNodes(ctx, kindProvider, c.name, progressReporter); err != nil {
 				return fmt.Errorf("failed to setup GPU support: %w", err)
 			}
 		}
