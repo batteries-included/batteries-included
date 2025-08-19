@@ -36,7 +36,7 @@ func ValidateNvidiaContainerToolkit(ctx context.Context, hasDockerClient bool) e
 func ValidateNvidiaCtk(ctx context.Context) error {
 	cmd := exec.CommandContext(ctx, "nvidia-ctk", "--version")
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("nvidia-ctk not found. Install with: sudo apt-get install nvidia-container-toolkit (Ubuntu/Debian) or sudo dnf install nvidia-container-toolkit (RHEL/Fedora). Run 'bi debug validate-nvidia-ctk' for detailed instructions")
+		return fmt.Errorf("nvidia-ctk not found. Install with: sudo apt-get install nvidia-container-toolkit (Ubuntu/Debian) or sudo dnf install nvidia-container-toolkit (RHEL/Fedora). Run 'bi gpu validate-nvidia-ctk' for detailed instructions")
 	}
 	return nil
 }
@@ -47,7 +47,7 @@ func ValidateDockerDaemonConfig() error {
 
 	// Check if daemon.json exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return fmt.Errorf("docker daemon.json not found. Configure with: sudo nvidia-ctk runtime configure --runtime=docker. Run 'bi debug validate-nvidia-ctk' for detailed instructions")
+		return fmt.Errorf("docker daemon.json not found. Configure with: sudo nvidia-ctk runtime configure --runtime=docker. Run 'bi gpu validate-nvidia-ctk' for detailed instructions")
 	}
 
 	// Read and parse daemon.json
@@ -64,12 +64,12 @@ func ValidateDockerDaemonConfig() error {
 	// Check if runtimes section exists
 	runtimes, ok := config["runtimes"].(map[string]interface{})
 	if !ok {
-		return fmt.Errorf("docker daemon.json missing 'runtimes' section. Configure with: sudo nvidia-ctk runtime configure --runtime=docker. Run 'bi debug validate-nvidia-ctk' for detailed instructions")
+		return fmt.Errorf("docker daemon.json missing 'runtimes' section. Configure with: sudo nvidia-ctk runtime configure --runtime=docker. Run 'bi gpu validate-nvidia-ctk' for detailed instructions")
 	}
 
 	// Check if nvidia runtime exists
 	if _, ok := runtimes["nvidia"]; !ok {
-		return fmt.Errorf("docker daemon.json missing 'nvidia' runtime. Configure with: sudo nvidia-ctk runtime configure --runtime=docker. Run 'bi debug validate-nvidia-ctk' for detailed instructions")
+		return fmt.Errorf("docker daemon.json missing 'nvidia' runtime. Configure with: sudo nvidia-ctk runtime configure --runtime=docker. Run 'bi gpu validate-nvidia-ctk' for detailed instructions")
 	}
 
 	return nil
@@ -81,7 +81,7 @@ func ValidateNvidiaContainerRuntimeConfig() error {
 
 	// Check if config.toml exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return fmt.Errorf("nvidia-container-runtime config not found. Install with: sudo apt-get install nvidia-container-toolkit (Ubuntu/Debian). Run 'bi debug validate-nvidia-ctk' for detailed instructions")
+		return fmt.Errorf("nvidia-container-runtime config not found. Install with: sudo apt-get install nvidia-container-toolkit (Ubuntu/Debian). Run 'bi gpu validate-nvidia-ctk' for detailed instructions")
 	}
 
 	// Read and parse config.toml
@@ -98,12 +98,12 @@ func ValidateNvidiaContainerRuntimeConfig() error {
 	// Check for accept-nvidia-visible-devices-as-volume-mounts setting
 	acceptNvidiaVisibleDevices, ok := config["accept-nvidia-visible-devices-as-volume-mounts"]
 	if !ok {
-		return fmt.Errorf("nvidia-container-runtime config missing 'accept-nvidia-visible-devices-as-volume-mounts' setting. Configure with: sudo nvidia-ctk config --set accept-nvidia-visible-devices-as-volume-mounts=true --in-place. Run 'bi debug validate-nvidia-ctk' for detailed instructions")
+		return fmt.Errorf("nvidia-container-runtime config missing 'accept-nvidia-visible-devices-as-volume-mounts' setting. Configure with: sudo nvidia-ctk config --set accept-nvidia-visible-devices-as-volume-mounts=true --in-place. Run 'bi gpu validate-nvidia-ctk' for detailed instructions")
 	}
 
 	// Check if the setting is true
 	if accept, ok := acceptNvidiaVisibleDevices.(bool); !ok || !accept {
-		return fmt.Errorf("nvidia-container-runtime 'accept-nvidia-visible-devices-as-volume-mounts' must be true. Configure with: sudo nvidia-ctk config --set accept-nvidia-visible-devices-as-volume-mounts=true --in-place. Run 'bi debug validate-nvidia-ctk' for detailed instructions")
+		return fmt.Errorf("nvidia-container-runtime 'accept-nvidia-visible-devices-as-volume-mounts' must be true. Configure with: sudo nvidia-ctk config --set accept-nvidia-visible-devices-as-volume-mounts=true --in-place. Run 'bi gpu validate-nvidia-ctk' for detailed instructions")
 	}
 
 	return nil

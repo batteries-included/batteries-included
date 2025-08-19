@@ -30,7 +30,7 @@ var patchNvidiaParamsScript string
 func (c *KindClusterProvider) detectGPUs(ctx context.Context) error {
 	// Check if GPU auto-discovery is disabled via flag
 	if !c.nvidiaAutoDiscovery {
-		c.logger.Info("GPU auto-discovery disabled via --nvidia-auto-discovery=false flag")
+		c.logger.Info("GPU auto-discovery disabled via nvidiaAutoDiscovery=false")
 		c.gpuAvailable = false
 		c.gpuCount = 0
 		return nil

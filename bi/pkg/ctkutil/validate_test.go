@@ -18,7 +18,7 @@ func TestValidateNvidiaCtk(t *testing.T) {
 	err := ValidateNvidiaCtk(ctx)
 	if err != nil {
 		assert.Contains(t, err.Error(), "nvidia-ctk not found")
-		assert.Contains(t, err.Error(), "bi debug validate-nvidia-ctk")
+		assert.Contains(t, err.Error(), "bi gpu validate-nvidia-ctk")
 	}
 }
 

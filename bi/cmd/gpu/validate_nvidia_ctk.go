@@ -1,17 +1,22 @@
-package debug
+package gpu
 
 import (
 	"bi/pkg/cluster/kind"
 	"bi/pkg/ctkutil"
+	"bi/pkg/osutil"
 	"context"
 	"fmt"
 	"log/slog"
-	"os"
-	"os/exec"
-	"strings"
 
 	dockerclient "github.com/docker/docker/client"
 	"github.com/spf13/cobra"
+)
+
+var (
+	skipGPUCountValidation         bool
+	skipCTKInstallValidation       bool
+	skipDockerRuntimeValidation    bool
+	skipContainerRuntimeValidation bool
 )
 
 var validateNvidiaCmd = &cobra.Command{
@@ -24,40 +29,49 @@ This checks:
 - nvidia-container-runtime config.toml is properly configured
 
 If validation fails, it provides helpful instructions to fix the setup.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-			Level: slog.LevelDebug,
-		}))
-
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
 
 		fmt.Println("🔍 Validating NVIDIA Container Toolkit setup...")
 		fmt.Println()
 
 		// First check if we can detect any GPUs using the new ctkutil GPU detector
-		fmt.Println("📊 Checking for NVIDIA GPUs...")
+		if !skipGPUCountValidation {
+			fmt.Println("📊 Checking for NVIDIA GPUs...")
 
-		// Create a provider to get Docker client access if available
-		provider := kind.NewClusterProvider(logger, "validation-test", false, false) // Disable GPU auto-discovery
-		var dockerClient *dockerclient.Client
-		if err := provider.Init(ctx); err == nil && provider.HasDockerClient() {
-			dockerClient = provider.GetDockerClient()
-		}
-
-		detector := ctkutil.NewGPUDetector(dockerClient)
-		gpuCount, err := detector.DetectGPUs(ctx)
-
-		if err != nil || gpuCount == 0 {
-			fmt.Println("⚠️  No NVIDIA GPUs detected")
-			fmt.Println("   This validation is only relevant if you have NVIDIA GPUs")
-			if err != nil {
-				fmt.Printf("   GPU detection error: %v\n", err)
+			// Create a provider to get Docker client access if available
+			provider := kind.NewClusterProvider(slog.Default(), "validation-test", false, false) // Disable GPU auto-discovery
+			var dockerClient *dockerclient.Client
+			if err := provider.Init(ctx); err == nil && provider.HasDockerClient() {
+				dockerClient = provider.GetDockerClient()
 			}
-			return nil
+
+			detector := ctkutil.NewGPUDetector(dockerClient)
+			gpuCount, err := detector.DetectGPUs(ctx)
+
+			if err != nil || gpuCount == 0 {
+				fmt.Println("⚠️  No NVIDIA GPUs detected")
+				fmt.Println("   This validation is only relevant if you have NVIDIA GPUs")
+				if err != nil {
+					fmt.Printf("   GPU detection error: %v\n", err)
+				}
+				fmt.Println("   Use --skip-gpu-count-validation to skip this check")
+				return
+			}
+
+			fmt.Printf("✅ Found %d NVIDIA GPU(s)\n", gpuCount)
+			fmt.Println()
+		} else {
+			fmt.Println("📊 Skipping GPU count validation (--skip-gpu-count-validation)")
+			fmt.Println()
 		}
 
-		fmt.Printf("✅ Found %d NVIDIA GPU(s)\n", gpuCount)
-		fmt.Println()
+		// Create a provider for validation
+		provider := kind.NewClusterProvider(slog.Default(), "validation-test", false, false) // Disable GPU auto-discovery
+		if err := provider.Init(ctx); err != nil {
+			fmt.Printf("❌ Failed to initialize provider: %v\n", err)
+			return
+		}
 
 		// Now run the validation
 		fmt.Println("🔧 Running NVIDIA Container Toolkit validation...")
@@ -68,108 +82,54 @@ If validation fails, it provides helpful instructions to fix the setup.`,
 			fmt.Printf("❌ Validation failed: %v\n", err)
 			fmt.Println()
 			printInstallationInstructions()
-			return fmt.Errorf("validation failed: %w", err)
+			return
 		}
 
 		fmt.Println("✅ NVIDIA Container Toolkit validation passed!")
 		fmt.Println("🚀 Your system is ready for GPU support in Kind clusters")
-
-		return nil
 	},
 }
 
 // validateNvidiaContainerToolkitDirect runs validation without the provider's GPU detection logic
 func validateNvidiaContainerToolkitDirect(provider *kind.KindClusterProvider, ctx context.Context) error {
 	// Check if nvidia-ctk is installed
-	fmt.Println("  Checking nvidia-ctk installation...")
-	if err := ctkutil.ValidateNvidiaCtk(ctx); err != nil {
-		return fmt.Errorf("nvidia-ctk validation failed: %w", err)
+	if !skipCTKInstallValidation {
+		fmt.Println("  Checking nvidia-ctk installation...")
+		if err := ctkutil.ValidateNvidiaCtk(ctx); err != nil {
+			return fmt.Errorf("nvidia-ctk validation failed: %w", err)
+		}
+		fmt.Println("  ✅ nvidia-ctk is installed")
+	} else {
+		fmt.Println("  ⏭️  Skipping nvidia-ctk installation check (--skip-ctk-install-validation)")
 	}
-	fmt.Println("  ✅ nvidia-ctk is installed")
 
 	// Check Docker daemon configuration if using Docker
-	fmt.Println("  Checking Docker daemon configuration...")
-	if provider != nil && provider.HasDockerClient() {
-		if err := ctkutil.ValidateDockerDaemonConfig(); err != nil {
-			return fmt.Errorf("docker daemon configuration validation failed: %w", err)
+	if !skipDockerRuntimeValidation {
+		fmt.Println("  Checking Docker daemon configuration...")
+		if provider != nil && provider.HasDockerClient() {
+			if err := ctkutil.ValidateDockerDaemonConfig(); err != nil {
+				return fmt.Errorf("docker daemon configuration validation failed: %w", err)
+			}
+			fmt.Println("  ✅ Docker daemon has nvidia runtime configured")
+		} else {
+			fmt.Println("  ℹ️  Docker client not available, skipping Docker daemon validation")
 		}
-		fmt.Println("  ✅ Docker daemon has nvidia runtime configured")
 	} else {
-		fmt.Println("  ℹ️  Docker client not available, skipping Docker daemon validation")
+		fmt.Println("  ⏭️  Skipping Docker daemon configuration check (--skip-docker-runtime-validation)")
 	}
 
 	// Check nvidia-container-runtime config
-	fmt.Println("  Checking nvidia-container-runtime configuration...")
-	if err := ctkutil.ValidateNvidiaContainerRuntimeConfig(); err != nil {
-		return fmt.Errorf("nvidia-container-runtime configuration validation failed: %w", err)
-	}
-	fmt.Println("  ✅ nvidia-container-runtime is properly configured")
-
-	return nil
-}
-
-// validateNvidiaContainerToolkit uses the shared validation logic
-func validateNvidiaContainerToolkit(provider *kind.KindClusterProvider, ctx context.Context) error {
-	// Check if nvidia-ctk is installed
-	fmt.Println("  Checking nvidia-ctk installation...")
-	if err := ctkutil.ValidateNvidiaCtk(ctx); err != nil {
-		return fmt.Errorf("nvidia-ctk validation failed: %w", err)
-	}
-	fmt.Println("  ✅ nvidia-ctk is installed")
-
-	// Check Docker daemon configuration if using Docker
-	fmt.Println("  Checking Docker daemon configuration...")
-	if provider.HasDockerClient() {
-		if err := ctkutil.ValidateDockerDaemonConfig(); err != nil {
-			return fmt.Errorf("docker daemon configuration validation failed: %w", err)
+	if !skipContainerRuntimeValidation {
+		fmt.Println("  Checking nvidia-container-runtime configuration...")
+		if err := ctkutil.ValidateNvidiaContainerRuntimeConfig(); err != nil {
+			return fmt.Errorf("nvidia-container-runtime configuration validation failed: %w", err)
 		}
-		fmt.Println("  ✅ Docker daemon has nvidia runtime configured")
+		fmt.Println("  ✅ nvidia-container-runtime is properly configured")
 	} else {
-		fmt.Println("  ℹ️  Docker client not available, skipping Docker daemon validation")
+		fmt.Println("  ⏭️  Skipping nvidia-container-runtime configuration check (--skip-container-runtime-config-validation)")
 	}
-
-	// Check nvidia-container-runtime config
-	fmt.Println("  Checking nvidia-container-runtime configuration...")
-	if err := ctkutil.ValidateNvidiaContainerRuntimeConfig(); err != nil {
-		return fmt.Errorf("nvidia-container-runtime configuration validation failed: %w", err)
-	}
-	fmt.Println("  ✅ nvidia-container-runtime is properly configured")
 
 	return nil
-}
-
-// detectLinuxDistribution attempts to detect the Linux distribution
-func detectLinuxDistribution() string {
-	// Try to read /etc/os-release
-	if data, err := os.ReadFile("/etc/os-release"); err == nil {
-		content := string(data)
-		if strings.Contains(strings.ToLower(content), "ubuntu") || strings.Contains(strings.ToLower(content), "debian") {
-			return "debian"
-		}
-		if strings.Contains(strings.ToLower(content), "rhel") || strings.Contains(strings.ToLower(content), "centos") ||
-			strings.Contains(strings.ToLower(content), "fedora") || strings.Contains(strings.ToLower(content), "amazon") {
-			return "rhel"
-		}
-		if strings.Contains(strings.ToLower(content), "opensuse") || strings.Contains(strings.ToLower(content), "sle") {
-			return "suse"
-		}
-	}
-
-	// Try to check for package managers
-	if _, err := exec.LookPath("apt"); err == nil {
-		return "debian"
-	}
-	if _, err := exec.LookPath("dnf"); err == nil {
-		return "rhel"
-	}
-	if _, err := exec.LookPath("yum"); err == nil {
-		return "rhel"
-	}
-	if _, err := exec.LookPath("zypper"); err == nil {
-		return "suse"
-	}
-
-	return "unknown"
 }
 
 // printInstallationInstructions prints comprehensive installation instructions
@@ -178,7 +138,7 @@ func printInstallationInstructions() {
 	fmt.Println("════════════════════════════════════════════════════")
 	fmt.Println()
 
-	distro := detectLinuxDistribution()
+	distro := osutil.DetectLinuxDistribution()
 
 	// Step 1: Prerequisites
 	fmt.Println("1️⃣ Prerequisites:")
@@ -192,7 +152,7 @@ func printInstallationInstructions() {
 	fmt.Println()
 
 	switch distro {
-	case "debian":
+	case osutil.DistroDebian:
 		fmt.Println("   📦 For Ubuntu/Debian:")
 		fmt.Println("   # Configure the production repository")
 		fmt.Println("   curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg")
@@ -204,7 +164,7 @@ func printInstallationInstructions() {
 		fmt.Println("   sudo apt-get update")
 		fmt.Println("   sudo apt-get install -y nvidia-container-toolkit")
 
-	case "rhel":
+	case osutil.DistroRHEL:
 		fmt.Println("   📦 For RHEL/CentOS/Fedora/Amazon Linux:")
 		fmt.Println("   # Configure the production repository")
 		fmt.Println("   curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | \\")
@@ -213,7 +173,7 @@ func printInstallationInstructions() {
 		fmt.Println("   # Install the toolkit")
 		fmt.Println("   sudo dnf install -y nvidia-container-toolkit")
 
-	case "suse":
+	case osutil.DistroSUSE:
 		fmt.Println("   📦 For OpenSUSE/SLE:")
 		fmt.Println("   # Configure the production repository")
 		fmt.Println("   sudo zypper ar https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo")
@@ -260,5 +220,10 @@ func printInstallationInstructions() {
 }
 
 func init() {
-	debugCmd.AddCommand(validateNvidiaCmd)
+	validateNvidiaCmd.Flags().BoolVar(&skipGPUCountValidation, "skip-gpu-count-validation", false, "Skip checking for NVIDIA GPUs on the system")
+	validateNvidiaCmd.Flags().BoolVar(&skipCTKInstallValidation, "skip-ctk-install-validation", false, "Skip validation that nvidia-ctk binary is installed")
+	validateNvidiaCmd.Flags().BoolVar(&skipDockerRuntimeValidation, "skip-docker-runtime-validation", false, "Skip checking Docker daemon.json configuration")
+	validateNvidiaCmd.Flags().BoolVar(&skipContainerRuntimeValidation, "skip-container-runtime-config-validation", false, "Skip checking nvidia-container-runtime config.toml")
+
+	gpuCommand.AddCommand(validateNvidiaCmd)
 }
