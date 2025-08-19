@@ -11,7 +11,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   alias CommonCore.Resources.CertManager.TrustManager
   alias CommonCore.Resources.CloudnativePG
   alias CommonCore.Resources.CloudnativePGBarman
-  alias CommonCore.Resources.CloudnativePGCA
   alias CommonCore.Resources.CloudnativePGClusters
   alias CommonCore.Resources.CloudnativePGDashboards
   alias CommonCore.Resources.ControlServer, as: ControlServerResources
@@ -61,7 +60,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     battery_ca: [BatteryCA],
     battery_core: [BatteryCore, ControlServerResources, BatteryAccess],
     cert_manager: [CertManager, Certificates],
-    cloudnative_pg: [CloudnativePG, CloudnativePGCA, CloudnativePGClusters, CloudnativePGDashboards],
+    cloudnative_pg: [CloudnativePG, CloudnativePGClusters, CloudnativePGDashboards],
     cloudnative_pg_barman: [CloudnativePGBarman],
     ferretdb: [FerretDB],
     forgejo: [Forgejo],

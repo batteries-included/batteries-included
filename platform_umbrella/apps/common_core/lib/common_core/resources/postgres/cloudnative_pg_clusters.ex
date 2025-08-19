@@ -78,18 +78,12 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         #
         # In this case we just use them as users.
         managed: %{
-          roles:
-            Enum.map(cluster.users, fn user ->
-              pg_user_to_pg_role(state, cluster, user)
-            end)
+          roles: Enum.map(cluster.users, &pg_user_to_pg_role(state, cluster, &1))
         }
       }
       |> maybe_add_certificates(Batteries.batteries_installed?(state, :battery_ca), cluster)
       |> maybe_add_sa_annotations(state, battery)
-      |> maybe_add_plugin_config(
-        cluster,
-        Batteries.batteries_installed?(state, :cloudnative_pg_barman)
-      )
+      |> maybe_add_plugin_config(cluster, Batteries.batteries_installed?(state, :cloudnative_pg_barman))
 
     :cloudnative_pg_cluster
     |> B.build_resource()
@@ -420,14 +414,14 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> Map.put("issuerRef", %{
       "group" => "cert-manager.io",
       "kind" => "ClusterIssuer",
-      "name" => "cnpg-ca"
+      "name" => "battery-ca"
     })
     |> Map.put("revisionHistoryLimit", 1)
     |> Map.put("secretName", cert_secret_name(cluster, type))
     # allow cert_manager to manage the secret with the correct labels
     |> Map.put(
       "secretTemplate",
-      %{} |> B.managed_indirect_labels() |> B.label("cnpg.io/reload", "")
+      %{} |> B.managed_indirect_labels() |> B.label("cnpg.io/reload", "") |> Map.get("metadata")
     )
   end
 

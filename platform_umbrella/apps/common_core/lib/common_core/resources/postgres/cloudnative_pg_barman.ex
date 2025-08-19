@@ -23,7 +23,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
       |> Map.put("commonName", "barman-cloud-client")
       |> Map.put("duration", "2160h")
       |> Map.put("isCA", false)
-      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "cnpg-ca"})
+      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
       |> Map.put("renewBefore", "360h")
       |> Map.put("secretName", "barman-cloud-client-tls")
       |> Map.put("usages", ["client auth"])
@@ -44,7 +44,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
       |> Map.put("dnsNames", ["barman-cloud"])
       |> Map.put("duration", "2160h")
       |> Map.put("isCA", false)
-      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "cnpg-ca"})
+      |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "battery-ca"})
       |> Map.put("renewBefore", "360h")
       |> Map.put("secretName", "barman-cloud-server-tls")
       |> Map.put("usages", ["server auth"])
@@ -191,7 +191,7 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
               "operator",
               "--server-cert=/server/tls.crt",
               "--server-key=/server/tls.key",
-              "--client-cert=/client/tls.crt",
+              "--client-cert=/client/ca.crt",
               "--server-address=:#{@server_port}",
               "--leader-elect",
               "--log-level=trace"
