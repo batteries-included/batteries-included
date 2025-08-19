@@ -2,6 +2,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "cloudnative-pg-clusters"
 
+  import CommonCore.Resources.FieldAccessors
   import CommonCore.Util.String
 
   alias CommonCore.Postgres.Cluster
@@ -10,7 +11,10 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Batteries
+  alias CommonCore.StateSummary.FromKubeState
   alias CommonCore.StateSummary.PostgresState
+
+  require Logger
 
   multi_resource(:postgres_clusters, battery, state) do
     Enum.map(state.postgres_clusters, &cluster_resource(battery, state, &1))
@@ -56,6 +60,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         enableSuperuserAccess: false,
         backup: %{},
         bootstrap: bootstrap(cluster, db),
+        externalClusters: external_clusters(state, cluster),
         postgresql: %{
           parameters: postgres_paramters(cluster)
         },
@@ -81,7 +86,10 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       }
       |> maybe_add_certificates(Batteries.batteries_installed?(state, :battery_ca), cluster)
       |> maybe_add_sa_annotations(state, battery)
-      |> maybe_add_plugin_config(cluster, Batteries.batteries_installed?(state, :cloudnative_pg_barman))
+      |> maybe_add_plugin_config(
+        cluster,
+        Batteries.batteries_installed?(state, :cloudnative_pg_barman)
+      )
 
     :cloudnative_pg_cluster
     |> B.build_resource()
@@ -93,10 +101,42 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.spec(spec)
   end
 
-  defp bootstrap(%{restore_from_backup: backup}, _db) when not is_empty(backup),
-    do: %{recovery: %{backup: %{name: backup}}}
+  defp bootstrap(%{restore_from_backup: backup_name}, _db) when not is_empty(backup_name),
+    do: %{recovery: %{source: backup_name}}
 
   defp bootstrap(_cluster, db), do: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}}
+
+  defp external_clusters(state, %{restore_from_backup: backup} = cluster) when not is_empty(backup) do
+    namespace = PostgresState.cluster_namespace(state, cluster)
+
+    previous_cluster_name =
+      state
+      |> FromKubeState.find_state_resource(:cloudnative_pg_backup, namespace, backup)
+      |> spec()
+      |> get_in(~w(cluster name))
+
+    case previous_cluster_name do
+      nil ->
+        Logger.error("Failed to get get cluster name from backup: #{inspect(backup)}")
+        []
+
+      name ->
+        [
+          %{
+            name: backup,
+            plugin: %{
+              name: "barman-cloud.cloudnative-pg.io",
+              parameters: %{
+                barmanObjectName: name,
+                serverName: name
+              }
+            }
+          }
+        ]
+    end
+  end
+
+  defp external_clusters(_state, _cluster), do: []
 
   defp maybe_add_certificates(spec, predicate, _cluster) when not predicate, do: spec
 
@@ -377,11 +417,18 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   defp build_cert_spec_common(spec, cluster, type) do
     spec
-    |> Map.put("issuerRef", %{"group" => "cert-manager.io", "kind" => "ClusterIssuer", "name" => "cnpg-ca"})
+    |> Map.put("issuerRef", %{
+      "group" => "cert-manager.io",
+      "kind" => "ClusterIssuer",
+      "name" => "cnpg-ca"
+    })
     |> Map.put("revisionHistoryLimit", 1)
     |> Map.put("secretName", cert_secret_name(cluster, type))
     # allow cert_manager to manage the secret with the correct labels
-    |> Map.put("secretTemplate", %{} |> B.managed_indirect_labels() |> B.label("cnpg.io/reload", ""))
+    |> Map.put(
+      "secretTemplate",
+      %{} |> B.managed_indirect_labels() |> B.label("cnpg.io/reload", "")
+    )
   end
 
   # TODO: this needs to be fixed for backwards <-> forwards compatibility
