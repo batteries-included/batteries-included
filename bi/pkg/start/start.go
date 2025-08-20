@@ -12,10 +12,10 @@ import (
 )
 
 func StartInstall(ctx context.Context, env *installs.InstallEnv, skipBootstrap bool) error {
-	slog.Info("Starting provider")
+	printStartinInfo(env)
 
 	var progressReporter *util.ProgressReporter
-	if log.Level != slog.LevelDebug {
+	if log.Level == slog.LevelWarn {
 		progressReporter = util.NewProgressReporter()
 		defer progressReporter.Shutdown()
 	}
@@ -75,4 +75,31 @@ func StartInstall(ctx context.Context, env *installs.InstallEnv, skipBootstrap b
 	}
 
 	return nil
+}
+
+func printStartinInfo(env *installs.InstallEnv) {
+	provider := env.Spec.KubeCluster.Provider
+	installName := env.Slug
+
+	var timeRange string
+	switch provider {
+	case "kind":
+		timeRange = "30 seconds to 8 minutes"
+	case "aws":
+		timeRange = "25 minutes to 45 minutes"
+	case "provided":
+		timeRange = "30 seconds to 5 minutes"
+	default:
+		timeRange = "unknown"
+	}
+
+	slog.Info("Starting install",
+		slog.String("name", installName),
+		slog.String("provider", provider),
+		slog.String("expected_time", timeRange))
+
+	if log.Level == slog.LevelWarn {
+		// Print the information
+		fmt.Printf("Starting installation %s with expected_time=%s\n", installName, timeRange)
+	}
 }
