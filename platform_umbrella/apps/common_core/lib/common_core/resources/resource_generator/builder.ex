@@ -66,6 +66,13 @@ defmodule CommonCore.Resources.Builder do
     |> label("app.kubernetes.io/managed-by", "batteries-included")
   end
 
+  def managed_indirect_labels(resource) do
+    resource
+    |> label("battery/managed", "true")
+    |> label("battery/managed.indirect", "true")
+    |> label("app.kubernetes.io/managed-by", "batteries-included")
+  end
+
   @spec add_owner(map(), String.t() | map() | nil) :: any
   def add_owner(resource, %{id: id} = _id_backed_strut), do: owner_label(resource, id)
   def add_owner(resource, owner_binary) when is_binary(owner_binary), do: owner_label(resource, owner_binary)
