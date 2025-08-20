@@ -48,6 +48,7 @@ func init() {
 		"Force linking even if the new version is not newer")
 	updateCmd.Flags().Bool("allow-test-keys", false,
 		"Allow test keys for JWT verification when fetching stable version (default: production keys only)")
+	updateCmd.Flags().MarkHidden("allow-test-keys")
 	updateCmd.Flags().StringVar(&updateDataHome, "data-home", "",
 		"Data directory for installation (default: XDG_DATA_HOME/bi)")
 	updateCmd.Flags().StringVar(&updateBinHome, "bin-home", "",

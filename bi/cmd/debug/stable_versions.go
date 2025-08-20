@@ -50,5 +50,6 @@ var stableVersionsCmd = &cobra.Command{
 func init() {
 	stableVersionsCmd.Flags().StringVar(&stableVersionsFormat, "format", "text", "Output format (text or json)")
 	stableVersionsCmd.Flags().Bool("allow-test-keys", false, "Allow test keys for JWT verification (default: production keys only)")
+	stableVersionsCmd.Flags().MarkHidden("allow-test-keys")
 	debugCmd.AddCommand(stableVersionsCmd)
 }

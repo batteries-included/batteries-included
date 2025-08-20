@@ -43,6 +43,7 @@ var specSlugCmd = &cobra.Command{
 
 func init() {
 	specSlugCmd.Flags().Bool("allow-test-keys", false, "Allow test keys for JWT verification (default: production keys only)")
+	specSlugCmd.Flags().MarkHidden("allow-test-keys")
 	viper.BindPFlag("allow-test-keys", specSlugCmd.Flags().Lookup("allow-test-keys"))
 
 	debugCmd.AddCommand(specSlugCmd)
