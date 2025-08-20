@@ -203,7 +203,6 @@ func (env *InstallEnv) configureCNPGBarmanBattery(outputs *eksOutputs) error {
 	}
 
 	b.Config["bucket_name"] = outputs.Postgres["bucketName"].Value
-	b.Config["bucket_arn"] = outputs.Postgres["bucketARN"].Value
 	b.Config["service_role_arn"] = outputs.Postgres["roleARN"].Value
 
 	return nil

@@ -425,7 +425,6 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     )
   end
 
-  # TODO: this needs to be fixed for backwards <-> forwards compatibility
   defp get_object_store_settings(battery, state) do
     # if barman battery isn't installed, just return an empty config
     case Batteries.get_battery(state, :cloudnative_pg_barman) do
@@ -442,7 +441,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         end)
         |> Map.new()
         |> then(&Map.merge(battery.config, &1))
-        |> Map.take(~w(service_role_arn bucket_name bucket_arn)a)
+        |> Map.take(~w(service_role_arn bucket_name)a)
     end
   end
 end

@@ -10,6 +10,5 @@ defmodule CommonCore.Batteries.CloudnativePGBarmanConfig do
     # These are duplicated / migrated from cloudnativepgconfig
     field :service_role_arn, :string
     field :bucket_name, :string
-    field :bucket_arn, :string
   end
 end
