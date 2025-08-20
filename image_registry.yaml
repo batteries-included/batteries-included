@@ -396,20 +396,23 @@ kiwigrid_sidecar:
   tag_regex: ^\d+\.\d+\.\d+$
 knative_gateway_api_controller:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_gateway_api_webhook:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_controller:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.0
     - v1.17.0
@@ -417,8 +420,9 @@ knative_istio_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_webhook:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.0
     - v1.17.0
@@ -426,8 +430,9 @@ knative_istio_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_activator:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.1
     - v1.18.0
@@ -439,8 +444,9 @@ knative_serving_activator:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_autoscaler:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.1
     - v1.18.0
@@ -452,8 +458,9 @@ knative_serving_autoscaler:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_controller:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.1
     - v1.18.0
@@ -465,8 +472,9 @@ knative_serving_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_queue:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/queue
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.1
     - v1.18.0
@@ -478,8 +486,9 @@ knative_serving_queue:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_webhook:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.1
     - v1.18.0
@@ -586,8 +595,9 @@ nvidia_device_plugin:
   tag_regex: ^v\d+\.\d+\.\d+$
 oauth2_proxy:
   name: quay.io/oauth2-proxy/oauth2-proxy
-  default_tag: v7.11.0
+  default_tag: v7.12.0
   tags:
+    - v7.12.0
     - v7.11.0
     - v7.10.0
     - v7.9.0
@@ -600,8 +610,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.11.4
+  default_tag: 0.11.5
   tags:
+    - 0.11.5
     - 0.11.4
     - 0.11.3
     - 0.11.2
