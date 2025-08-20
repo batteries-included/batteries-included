@@ -7,24 +7,31 @@ import (
 	"log/slog"
 	"os"
 
+	"bi/pkg"
 	"bi/pkg/log"
 	biviper "bi/pkg/viper"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
-
-var cfgFile string
-var verbosity string
-var color bool
 
 // rootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "bi",
-	Short: "A CLI for Batteries Included infrastructure",
+	Use:     "bi",
+	Version: pkg.Version,
+	Short:   "A CLI for Batteries Included infrastructure",
 	Long: `An all in one cli for installing and
 debugging Batteries Included infrastructure
 on top of kubernetes`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// Initialize Viper configuration first
+		if err := biviper.SetupConfig(viper.GetString("config")); err != nil {
+			return err
+		}
+
+		// Then setup logging using Viper values
+		verbosity := viper.GetString("verbosity")
+		color := viper.GetBool("color")
 		return log.SetupLogging(verbosity, color)
 	},
 	// We do our own error logging.
@@ -42,13 +49,13 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $XDG_CONFIG_HOME/bi/bi.yaml)")
-	RootCmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", slog.LevelWarn.String(), "Log level (debug, info, warn, error")
-	RootCmd.PersistentFlags().BoolVarP(&color, "color", "c", true, "Use color in logs")
-}
+	// Define persistent flags
+	RootCmd.PersistentFlags().String("config", "", "config file (default is $XDG_CONFIG_HOME/bi/bi.yaml)")
+	RootCmd.PersistentFlags().StringP("verbosity", "v", slog.LevelWarn.String(), "Log level (debug, info, warn, error)")
+	RootCmd.PersistentFlags().BoolP("color", "c", true, "Use color in logs")
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	biviper.SetupConfig(cfgFile)
+	// Bind flags to Viper
+	viper.BindPFlag("config", RootCmd.PersistentFlags().Lookup("config"))
+	viper.BindPFlag("verbosity", RootCmd.PersistentFlags().Lookup("verbosity"))
+	viper.BindPFlag("color", RootCmd.PersistentFlags().Lookup("color"))
 }

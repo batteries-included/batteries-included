@@ -102,7 +102,11 @@ defmodule Verify.KindInstallWorker do
   defp do_start({:spec, identifier, slug}, state) do
     {_spec, path} = build_install_spec(identifier, slug, state)
     Logger.debug("Starting with #{path}")
-    env = [{"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")}]
+
+    env = [
+      {"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")},
+      {"BI_ALLOW_TEST_KEYS", "true"}
+    ]
 
     common_start(fn -> System.cmd(state.bi_binary, ["start", path], env: env) end, state, slug, path)
   end

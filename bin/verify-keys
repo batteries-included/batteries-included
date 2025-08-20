@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Get the root directory of the project
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+# Source common functions
+source "${SCRIPT_DIR}/lib/common-functions.sh"
+
+# Setup colors and common environment
+setup_colors
+
+# Define the key files to verify
+KEYS=(
+    "home_a.pub.pem"
+    "home_b.pub.pem"
+    "test.pub.pem"
+)
+
+# Define source and destination directories
+SOURCE_DIR="${ROOT_DIR}/platform_umbrella/apps/common_core/priv/keys"
+DEST_DIR="${ROOT_DIR}/bi/pkg/jwt/keys"
+
+log "Verifying JWT keys are identical between source and embedded locations..."
+
+# Check if source directory exists
+if [[ ! -d "${SOURCE_DIR}" ]]; then
+    die "Source directory does not exist: ${SOURCE_DIR}"
+fi
+
+# Check if destination directory exists
+if [[ ! -d "${DEST_DIR}" ]]; then
+    die "Destination directory does not exist: ${DEST_DIR}"
+fi
+
+# Verify each key file
+for key in "${KEYS[@]}"; do
+    source_file="${SOURCE_DIR}/${key}"
+    dest_file="${DEST_DIR}/${key}"
+
+    log "Checking ${key}... "
+
+    # Check if source file exists
+    if [[ ! -f "${source_file}" ]]; then
+        log "${RED}FAILED${NOFORMAT}"
+        die "Source file does not exist: ${source_file}"
+    fi
+
+    # Check if destination file exists
+    if [[ ! -f "${dest_file}" ]]; then
+        log "${RED}FAILED${NOFORMAT}"
+        die "Destination file does not exist: ${dest_file}"
+    fi
+
+    # Compare files byte-for-byte
+    if ! cmp -s "${source_file}" "${dest_file}"; then
+        log "${RED}FAILED${NOFORMAT}"
+        log "${RED}ERROR: Files are not identical:${NOFORMAT}"
+        log "  Source: ${source_file}"
+        log "  Dest:   ${dest_file}"
+        log ""
+        log "To fix this, run:"
+        log "  cp '${source_file}' '${dest_file}'"
+        exit 1
+    fi
+
+    file_hash=$(sha256sum "${source_file}" | awk '{print $1}')
+
+    log "Hash: ${BLUE}${file_hash}${NOFORMAT} Status: ${GREEN}OK${NOFORMAT}"
+done
+
+log "${GREEN}All JWT keys verified successfully!${NOFORMAT}"

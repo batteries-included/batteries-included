@@ -25,6 +25,7 @@ builds:
       - -w -s -X 'bi/pkg.Version={{.Version}}'
 
     hooks:
+      pre: ./bin/verify-keys
       post: ./bin/clean-tmp
 upx:
   # only run upx on release, not on snapshot.

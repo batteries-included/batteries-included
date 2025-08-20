@@ -1,7 +1,7 @@
 package specs
 
 import (
-	"encoding/json"
+	"bi/pkg/jwt"
 	"fmt"
 	"io"
 	"log/slog"
@@ -10,11 +10,64 @@ import (
 	"os"
 	"slices"
 	"strings"
-
-	jose "github.com/go-jose/go-jose/v4"
 )
 
-func GetSpecFromURL(specURL string, additionalInsecureHosts []string) (*InstallSpec, error) {
+// SpecFetcher handles fetching and parsing installation specs with configurable JWT verification
+type SpecFetcher struct {
+	url                     string
+	additionalInsecureHosts []string
+	jwtVerifier             *jwt.JWTVerifier
+}
+
+// SpecFetcherOption configures the SpecFetcher
+type SpecFetcherOption func(*SpecFetcher)
+
+// WithURL sets the spec URL to fetch from
+func WithURL(url string) SpecFetcherOption {
+	return func(sf *SpecFetcher) {
+		sf.url = url
+	}
+}
+
+// WithAdditionalInsecureHosts sets additional hosts that are allowed over HTTP
+func WithAdditionalInsecureHosts(hosts []string) SpecFetcherOption {
+	return func(sf *SpecFetcher) {
+		sf.additionalInsecureHosts = hosts
+		// if sf.jwtVerifier is still prod then set it to jwt.VerifyTestOrProd
+		if sf.jwtVerifier == jwt.VerifyProd() {
+			sf.jwtVerifier = jwt.VerifyTestOrProd()
+		}
+	}
+}
+
+// WithJWTVerifier sets the JWT verifier to use for remote specs
+func WithJWTVerifier(verifier *jwt.JWTVerifier) SpecFetcherOption {
+	return func(sf *SpecFetcher) {
+		sf.jwtVerifier = verifier
+	}
+}
+
+// NewSpecFetcher creates a new SpecFetcher with the given options
+func NewSpecFetcher(opts ...SpecFetcherOption) *SpecFetcher {
+	sf := &SpecFetcher{
+		additionalInsecureHosts: []string{},
+		jwtVerifier:             jwt.VerifyProd(),
+	}
+
+	for _, opt := range opts {
+		opt(sf)
+	}
+
+	return sf
+}
+
+// Fetch retrieves and parses the installation spec
+func (sf *SpecFetcher) Fetch() (*InstallSpec, error) {
+	return sf.fetchFromURL(sf.url)
+}
+
+// fetchFromURL retrieves and parses an installation spec from the given URL
+func (sf *SpecFetcher) fetchFromURL(specURL string) (*InstallSpec, error) {
 	parsedURL, err := url.Parse(specURL)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing spec url: %w", err)
@@ -22,12 +75,12 @@ func GetSpecFromURL(specURL string, additionalInsecureHosts []string) (*InstallS
 
 	switch parsedURL.Scheme {
 	case "":
-		return readLocalFile(parsedURL)
+		return sf.readLocalFile(parsedURL)
 	case "https":
-		return readRemoteFile(parsedURL)
+		return sf.readRemoteFile(parsedURL)
 	case "http":
-		if allowInsecure(parsedURL, additionalInsecureHosts) {
-			return readRemoteFile(parsedURL)
+		if sf.allowInsecure(parsedURL) {
+			return sf.readRemoteFile(parsedURL)
 		}
 		fallthrough
 
@@ -36,7 +89,7 @@ func GetSpecFromURL(specURL string, additionalInsecureHosts []string) (*InstallS
 	}
 }
 
-func allowInsecure(url *url.URL, allowedHosts []string) bool {
+func (sf *SpecFetcher) allowInsecure(url *url.URL) bool {
 	host := url.Host
 	switch {
 
@@ -48,7 +101,7 @@ func allowInsecure(url *url.URL, allowedHosts []string) bool {
 		return true
 
 	// or if user has allowed the specific host
-	case slices.ContainsFunc(allowedHosts, func(s string) bool {
+	case slices.ContainsFunc(sf.additionalInsecureHosts, func(s string) bool {
 		return strings.Contains(host, s)
 	}):
 		return true
@@ -58,7 +111,7 @@ func allowInsecure(url *url.URL, allowedHosts []string) bool {
 	}
 }
 
-func readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
+func (sf *SpecFetcher) readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
 	// Use the path from parsedURL Open the file
 	// and read the contents
 	// Unmarshal the json using UnmarshalJSON
@@ -78,7 +131,7 @@ func readLocalFile(parsedURL *url.URL) (*InstallSpec, error) {
 	return &installSpec, nil
 }
 
-func readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
+func (sf *SpecFetcher) readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
 	// Download the file
 	slog.Debug("Downloading remote file", slog.String("url", parsedURL.String()))
 	res, err := http.Get(parsedURL.String())
@@ -91,7 +144,7 @@ func readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
 		return nil, fmt.Errorf("error reading spec: %w", err)
 	}
 
-	payload, err := parseSpecResponse(specBytes)
+	payload, err := sf.parseSpecResponse(specBytes)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing spec: %w", err)
 	}
@@ -104,29 +157,6 @@ func readRemoteFile(parsedURL *url.URL) (*InstallSpec, error) {
 	return &installSpec, nil
 }
 
-func parseSpecResponse(specBytes []byte) ([]byte, error) {
-	type biJWT struct {
-		JWS json.RawMessage `json:"jwt"`
-	}
-	jwt := &biJWT{}
-
-	// we need the `jwt` key of the response. parse the whole thing first
-	err := json.Unmarshal(specBytes, jwt)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal into temporary structure: %w", err)
-	}
-
-	// remarshal back into a string for go-jose
-	bs, err := jwt.JWS.MarshalJSON()
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal JWS back into string: %w", err)
-	}
-
-	jws, err := jose.ParseSigned(string(bs), []jose.SignatureAlgorithm{jose.ES256})
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse signed payload: %w", err)
-	}
-
-	// TODO(jdt): actually verify
-	return jws.UnsafePayloadWithoutVerification(), nil
+func (sf *SpecFetcher) parseSpecResponse(specBytes []byte) ([]byte, error) {
+	return sf.jwtVerifier.ParseHomeBaseJWT(specBytes)
 }
