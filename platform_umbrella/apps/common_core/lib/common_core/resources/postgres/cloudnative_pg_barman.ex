@@ -169,6 +169,11 @@ defmodule CommonCore.Resources.CloudnativePGBarman do
         "verbs" => ["get", "list", "watch"]
       },
       %{
+        "apiGroups" => ["postgresql.cnpg.io"],
+        "resources" => ["clusters/finalizers"],
+        "verbs" => ["update"]
+      },
+      %{
         "apiGroups" => ["rbac.authorization.k8s.io"],
         "resources" => ["rolebindings", "roles"],
         "verbs" => ["create", "get", "list", "patch", "update", "watch"]
