@@ -145,14 +145,16 @@ cloudnative_pg:
   tag_regex: ^\d+\.\d+\.\d+$
 cnpg_plugin_barman:
   name: ghcr.io/cloudnative-pg/plugin-barman-cloud
-  default_tag: v0.5.0
+  default_tag: v0.6.0
   tags:
+    - v0.6.0
     - v0.5.0
   tag_regex: ^v\d+\.\d+\.\d+$
 cnpg_plugin_barman_sidecar:
   name: ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar
-  default_tag: v0.5.0
+  default_tag: v0.6.0
   tags:
+    - v0.6.0
     - v0.5.0
   tag_regex: ^v\d+\.\d+\.\d+$
 ferretdb:
@@ -353,8 +355,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.3.2
+  default_tag: 26.3.3
   tags:
+    - 26.3.3
     - 26.3.2
     - 26.3.1
     - 26.3.0
@@ -610,8 +613,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.11.5
+  default_tag: 0.11.6
   tags:
+    - 0.11.6
     - 0.11.5
     - 0.11.4
     - 0.11.3
