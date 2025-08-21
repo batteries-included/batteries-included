@@ -25,16 +25,16 @@ parse_registry_yaml() {
         die "Registry file not found at ${registry_file}"
     fi
 
-    log_info "Reading registry data from ${CYAN}${registry_file}${NOFORMAT}"
+    log "Reading registry data from ${CYAN}${registry_file}${NOFORMAT}"
     UPSTREAM_TAGS=$(yq '.keycloak_upstream.tags[]' "${registry_file}")
     KEYCLOAK_TAGS=$(yq '.keycloak.tags[]' "${registry_file}")
 
     if [[ -z "${UPSTREAM_TAGS}" ]]; then
-        log_warn "No upstream tags found in registry file"
+        log "No upstream tags found in registry file"
     fi
 
     if [[ -z "${KEYCLOAK_TAGS}" ]]; then
-        log_warn "No keycloak tags found in registry file"
+        log "No keycloak tags found in registry file"
     fi
 }
 
@@ -54,7 +54,7 @@ find_missing_tags() {
 
 # Trigger GitHub workflow for missing upstream tags
 do_trigger_missing_upstream() {
-    log_info "Checking for missing upstream tags in Keycloak"
+    log "Checking for missing upstream tags in Keycloak"
 
     parse_registry_yaml
 
@@ -62,28 +62,28 @@ do_trigger_missing_upstream() {
     local clean_keycloak_tags
     clean_keycloak_tags=$(strip_version_hash "${KEYCLOAK_TAGS}")
 
-    log_debug "Upstream tags: ${UPSTREAM_TAGS}"
-    log_debug "Keycloak tags (clean): ${clean_keycloak_tags}"
+    log "Upstream tags: ${UPSTREAM_TAGS}"
+    log "Keycloak tags (clean): ${clean_keycloak_tags}"
 
     # Find missing tags (in either direction)
     local missing_tags
     missing_tags=$(find_missing_tags "${UPSTREAM_TAGS}" "${clean_keycloak_tags}")
 
     if [[ -z "${missing_tags}" ]]; then
-        log_success "No missing tags found - all upstream tags are covered"
+        log "No missing tags found - all upstream tags are covered"
         return 0
     fi
 
-    log_info "Found ${YELLOW}$(echo "${missing_tags}" | wc -w)${NOFORMAT} missing tags"
+    log "Found ${YELLOW}$(echo "${missing_tags}" | wc -w)${NOFORMAT} missing tags"
 
     local trigger_count=0
     for tag in ${missing_tags}; do
-        log_action "Triggering workflow for version ${CYAN}${tag}${NOFORMAT}"
+        log "Triggering workflow for version ${CYAN}${tag}${NOFORMAT}"
         echo gh workflow run "keycloak.yml" -f "version=${tag}"
         trigger_count=$((trigger_count + 1))
     done
 
-    log_info "Triggered ${YELLOW}${trigger_count}${NOFORMAT} workflow runs"
+    log "Triggered ${YELLOW}${trigger_count}${NOFORMAT} workflow runs"
 }
 
 # Get the full Keycloak image name with tag
@@ -99,15 +99,15 @@ get_keycloak_image_name() {
 validate_image_exists() {
     local image_name="$1"
 
-    log_debug "Checking if image exists: ${image_name}"
+    log "Checking if image exists: ${image_name}"
 
     if ! docker image inspect "${image_name}" &>/dev/null; then
-        log_error "Image not found: ${image_name}"
-        log_info "Try building the image first with: ${CYAN}bi-docker build-image keycloak ${upstream_tag}${NOFORMAT}"
+        log "Image not found: ${image_name}"
+        log "Try building the image first with: ${CYAN}bi-docker build-image keycloak ${upstream_tag}${NOFORMAT}"
         return 1
     fi
 
-    log_debug "Image exists: ${image_name}"
+    log "Image exists: ${image_name}"
     return 0
 }
 
@@ -123,21 +123,21 @@ do_push_keycloak_image() {
     local image_name
     image_name=$(get_keycloak_image_name "${upstream_tag}" "${version_tag}")
 
-    log_info "Preparing to push Keycloak image: ${CYAN}${image_name}${NOFORMAT}"
+    log "Preparing to push Keycloak image: ${CYAN}${image_name}${NOFORMAT}"
 
     # Validate the image exists before pushing
     if ! validate_image_exists "${image_name}"; then
         return 1
     fi
 
-    log_action "Pushing image ${CYAN}${image_name}${NOFORMAT} to registry"
+    log "Pushing image ${CYAN}${image_name}${NOFORMAT} to registry"
 
     if ! docker push "${image_name}"; then
-        log_error "Failed to push image: ${image_name}"
+        log "Failed to push image: ${image_name}"
         return 1
     fi
 
-    log_success "Successfully pushed image: ${CYAN}${image_name}${NOFORMAT}"
+    log "Successfully pushed image: ${CYAN}${image_name}${NOFORMAT}"
 }
 
 # Display help information and exit
@@ -233,7 +233,7 @@ main() {
     parse_params "$@"
     initialize
 
-    log_info "Running command: ${YELLOW}${COMMAND}${NOFORMAT}"
+    log "Running command: ${YELLOW}${COMMAND}${NOFORMAT}"
 
     case "$COMMAND" in
     trigger-missing-upstream)
