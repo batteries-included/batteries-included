@@ -4,7 +4,6 @@ defmodule Verify.HomeBaseTest do
 
   alias CommonCore.Defaults
   alias CommonCore.Defaults.Images
-  alias CommonCore.JWK
   alias Verify.KindInstallWorker
 
   require Logger
@@ -70,6 +69,7 @@ defmodule Verify.HomeBaseTest do
       session
       |> home_base_login()
       |> visit_relative("/installations/new")
+      |> assert_path("/installations/new")
       |> assert_text("Create a new installation")
       |> fill_in_name("installation[slug]", install_name)
       |> find(Query.select("installation[kube_provider]"), &click(&1, Query.option("Kind")))
@@ -95,7 +95,7 @@ defmodule Verify.HomeBaseTest do
     id = text(session, Query.css("table tr td:first-child"))
     link = Query.link("running_service_#{id}")
 
-    {attr(session, link, "href"), session |> click(link) |> last_tab()}
+    {attr(session, link, "href"), session |> click(link) |> close_tab() |> last_tab()}
   end
 
   defp create_home_base(session, team_id) do
@@ -146,6 +146,14 @@ defmodule Verify.HomeBaseTest do
   end
 
   defp create_home_base_callback(service_name, team_id) do
+    test_jwk =
+      File.cwd!()
+      |> Path.join("../../apps/common_core/priv/keys/test.pem")
+      |> File.read!()
+      |> JOSE.JWK.from_pem()
+      |> JOSE.JWK.to_binary()
+      |> elem(1)
+
     fn session ->
       session
       |> add_init_container()
@@ -158,7 +166,7 @@ defmodule Verify.HomeBaseTest do
       |> add_explicit_var("POSTMARK_KEY", "abc123")
       |> add_explicit_var("BATTERY_TEAM_IDS", team_id)
       |> add_explicit_var("SECRET_KEY_BASE", Defaults.random_key_string())
-      |> add_explicit_var("HOME_JWK", JWK.generate_key() |> JWK.to_jwk() |> JOSE.JWK.to_binary() |> elem(1))
+      |> add_explicit_var("HOME_JWK", test_jwk)
       # add home-base-seed-data
       |> add_cm_volume("home-base-seed-data", false)
       |> add_cm_mount("home-base-seed-data", "/etc/init-config/")

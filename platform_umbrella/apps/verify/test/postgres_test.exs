@@ -14,7 +14,7 @@ defmodule Verify.PostgresTest do
     # verify show page
     |> assert_has(h3("Postgres Cluster", minimum: 1))
     |> assert_has(h3(cluster_name))
-    |> assert_path(~r/\/postgres\/[\d\w-]+\/show$/)
+    |> assert_path(~r|/postgres/[\d\w-]+/show$|)
     # Make sure that this page has the kubernetes elements
     |> assert_has(@pod_query)
     |> click(@pod_query)

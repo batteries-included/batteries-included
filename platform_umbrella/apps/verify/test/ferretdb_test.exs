@@ -56,7 +56,7 @@ defmodule Verify.FerretDBTest do
     # verify show page
     |> assert_has(h3("Show FerretDB Service", minimum: 1))
     |> assert_has(h3(instance_name, minimum: 1))
-    |> assert_path(~r/\/ferretdb\/[\d\w-]+\/show$/)
+    |> assert_path(~r|/ferretdb/[\d\w-]+/show$|)
     # Assert that the first pod for the cluster is shown
     |> assert_has(Query.text("Pods"))
     |> click(Query.text("Pods"))
