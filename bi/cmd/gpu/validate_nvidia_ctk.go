@@ -3,7 +3,6 @@ package gpu
 import (
 	"bi/pkg/cluster/kind"
 	"bi/pkg/ctkutil"
-	"bi/pkg/osutil"
 	"context"
 	"fmt"
 	"log/slog"
@@ -132,91 +131,16 @@ func validateNvidiaContainerToolkitDirect(provider *kind.KindClusterProvider, ct
 	return nil
 }
 
-// printInstallationInstructions prints comprehensive installation instructions
+// printInstallationInstructions prints a message directing the user to the setup command.
 func printInstallationInstructions() {
-	fmt.Println("🔧 NVIDIA Container Toolkit Installation Instructions")
-	fmt.Println("════════════════════════════════════════════════════")
+	fmt.Println("🔧 To fix this, you can use the automated setup command:")
+	fmt.Println("   sudo bash -c \"$(bi gpu setup-command)\"")
 	fmt.Println()
-
-	distro := osutil.DetectLinuxDistribution()
-
-	// Step 1: Prerequisites
-	fmt.Println("1️⃣ Prerequisites:")
-	fmt.Println("   • NVIDIA GPU driver must be installed")
-	fmt.Println("   • Docker must be installed and running")
-	fmt.Println("   • Verify GPU driver: nvidia-smi")
+	fmt.Println("   This command will attempt to install and configure the NVIDIA Container Toolkit for your system.")
+	fmt.Println("   After running the command, please restart your Docker daemon and run the validation again.")
 	fmt.Println()
-
-	// Step 2: Install NVIDIA Container Toolkit
-	fmt.Println("2️⃣ Install NVIDIA Container Toolkit:")
-	fmt.Println()
-
-	switch distro {
-	case osutil.DistroDebian:
-		fmt.Println("   📦 For Ubuntu/Debian:")
-		fmt.Println("   # Configure the production repository")
-		fmt.Println("   curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg")
-		fmt.Println("   curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \\")
-		fmt.Println("     sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \\")
-		fmt.Println("     sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list")
-		fmt.Println()
-		fmt.Println("   # Update package list and install")
-		fmt.Println("   sudo apt-get update")
-		fmt.Println("   sudo apt-get install -y nvidia-container-toolkit")
-
-	case osutil.DistroRHEL:
-		fmt.Println("   📦 For RHEL/CentOS/Fedora/Amazon Linux:")
-		fmt.Println("   # Configure the production repository")
-		fmt.Println("   curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | \\")
-		fmt.Println("     sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo")
-		fmt.Println()
-		fmt.Println("   # Install the toolkit")
-		fmt.Println("   sudo dnf install -y nvidia-container-toolkit")
-
-	case osutil.DistroSUSE:
-		fmt.Println("   📦 For OpenSUSE/SLE:")
-		fmt.Println("   # Configure the production repository")
-		fmt.Println("   sudo zypper ar https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo")
-		fmt.Println()
-		fmt.Println("   # Install the toolkit")
-		fmt.Println("   sudo zypper --gpg-auto-import-keys install -y nvidia-container-toolkit")
-
-	default:
-		fmt.Println("   📦 For your distribution, please visit:")
-		fmt.Println("   https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html")
-	}
-
-	fmt.Println()
-
-	// Step 3: Configure Docker
-	fmt.Println("3️⃣ Configure Docker for NVIDIA runtime:")
-	fmt.Println("   sudo nvidia-ctk runtime configure --runtime=docker")
-	fmt.Println()
-
-	// Step 4: Enable volume mounts
-	fmt.Println("4️⃣ Enable volume mount support (required for Kind):")
-	fmt.Println("   sudo nvidia-ctk config --set accept-nvidia-visible-devices-as-volume-mounts=true --in-place")
-	fmt.Println()
-
-	// Step 5: Restart Docker
-	fmt.Println("5️⃣ Restart Docker daemon:")
-	fmt.Println("   sudo systemctl restart docker")
-	fmt.Println()
-
-	// Step 6: Verify
-	fmt.Println("6️⃣ Verify installation:")
-	fmt.Println("   # Test with nvidia runtime")
-	fmt.Println("   docker run --rm --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all ubuntu:24.04 nvidia-smi -L")
-	fmt.Println()
-	fmt.Println("   # Test with volume mount (used by Kind)")
-	fmt.Println("   docker run --rm -v /dev/null:/var/run/nvidia-container-devices/all ubuntu:24.04 nvidia-smi -L")
-	fmt.Println()
-
-	// Step 7: Validate
-	fmt.Println("7️⃣ Run validation again:")
-	fmt.Println("   bi debug validate-nvidia-ctk")
-	fmt.Println()
-	fmt.Println("════════════════════════════════════════════════════")
+	fmt.Println("   For manual installation instructions, please refer to the official NVIDIA documentation:")
+	fmt.Println("   https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html")
 }
 
 func init() {
