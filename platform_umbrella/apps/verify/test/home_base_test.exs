@@ -68,8 +68,7 @@ defmodule Verify.HomeBaseTest do
     session =
       session
       |> home_base_login()
-      |> visit_relative("/installations/new")
-      |> assert_path("/installations/new")
+      |> visit_relative("../installations/new")
       |> assert_text("Create a new installation")
       |> fill_in_name("installation[slug]", install_name)
       |> find(Query.select("installation[kube_provider]"), &click(&1, Query.option("Kind")))
@@ -176,7 +175,7 @@ defmodule Verify.HomeBaseTest do
   defp add_init_container(session) do
     session
     # add init container
-    |> find(Query.css("#containers_panel-init_containers"), fn e -> click(e, Query.button("Add Container")) end)
+    |> find(Query.css("#containers_panel-init_containers"), &click(&1, Query.button("Add Container")))
     |> fill_in(Query.text_field("container[name]"), with: "home-base-init")
     |> fill_in(Query.text_field("container[image]"), with: Images.home_base_image())
     |> fill_in(Query.text_field("container[path]"), with: "/app/bin/start")

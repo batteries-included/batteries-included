@@ -404,8 +404,31 @@ defmodule Verify.TestCase.Helpers do
     parent
     |> current_url()
     |> Path.join(path)
-    |> then(&visit(parent, &1))
+    |> then(fn full_path ->
+      # this is silly but we've had failures
+      # where the session just didn't "visit" the path
+      # ¯\_(ツ)_/¯
+      parent
+      |> visit(full_path)
+      |> retry_visit_relative(full_path)
+    end)
   end
+
+  defp retry_visit_relative(parent, url) do
+    {:ok, session} =
+      retry(fn ->
+        if parent |> current_url() |> normalize() == normalize(url) do
+          {:ok, parent}
+        else
+          Process.sleep(176)
+          {:error, visit(parent, url)}
+        end
+      end)
+
+    session
+  end
+
+  defp normalize(url), do: url |> :uri_string.parse() |> :uri_string.normalize()
 
   def close_tab(session) do
     session
