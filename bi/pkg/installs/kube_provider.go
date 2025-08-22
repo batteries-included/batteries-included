@@ -101,10 +101,6 @@ func (env *InstallEnv) startAWS(ctx context.Context, progressReporter *util.Prog
 		return fmt.Errorf("error configuring karpenter battery: %w", err)
 	}
 
-	if err := env.configureCNPGBattery(parsed); err != nil {
-		return fmt.Errorf("error configuring cloudnative_pg battery: %w", err)
-	}
-
 	if err := env.configureCNPGBarmanBattery(parsed); err != nil {
 		return fmt.Errorf("error configuring cloudnative_pg_barman battery: %w", err)
 	}
@@ -176,19 +172,6 @@ func (env *InstallEnv) configureKarpenterBattery(outputs *eksOutputs) error {
 	b.Config["node_role_name"] = outputs.Cluster["nodeRoleName"].Value
 	b.Config["queue_name"] = outputs.Karpenter["queueName"].Value
 	b.Config["service_role_arn"] = outputs.Karpenter["roleARN"].Value
-
-	return nil
-}
-
-func (env *InstallEnv) configureCNPGBattery(outputs *eksOutputs) error {
-	b, err := env.Spec.GetBatteryByType("cloudnative_pg")
-	if err != nil {
-		return fmt.Errorf("cloudnative_pg battery wasn't found in install spec")
-	}
-
-	b.Config["bucket_name"] = outputs.Postgres["bucketName"].Value
-	b.Config["bucket_arn"] = outputs.Postgres["bucketARN"].Value
-	b.Config["service_role_arn"] = outputs.Postgres["roleARN"].Value
 
 	return nil
 }
