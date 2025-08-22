@@ -58,6 +58,28 @@ func (d *GPUDetector) DetectGPUs(ctx context.Context) (int, error) {
 	return gpuCount, nil
 }
 
+// DetectGPUsInContainer runs nvidia-smi in a container to detect GPUs.
+// It specifically uses the volume mount method if useVolumeMount is true.
+func (d *GPUDetector) DetectGPUsInContainer(ctx context.Context) (int, error) {
+	if d.dockerClient == nil {
+		return 0, fmt.Errorf("docker client is not available for container validation")
+	}
+
+	var output string
+	var err error
+
+	args := []string{"-L"} // We just need to list GPUs
+
+	output, err = d.runNvidiaSmiContainer(ctx, false, true, args...)
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to run nvidia-smi in container: %w", err)
+	}
+
+	gpuCount := d.countGPUsFromOutput(output)
+	return gpuCount, nil
+}
+
 // DetectGPUInfo retrieves detailed information about local NVIDIA GPUs
 func (d *GPUDetector) DetectGPUInfo(ctx context.Context) ([]GPUInfo, error) {
 	// Define the query fields we want to retrieve
@@ -244,7 +266,11 @@ func (d *GPUDetector) runNvidiaSmiContainer(ctx context.Context, useNvidiaRuntim
 		return "", fmt.Errorf("failed to read container logs: %w", err)
 	}
 
-	return string(logData), nil
+	// Strip Docker log headers. Docker logs have 8-byte headers for each line:
+	// 1 byte stream type (1=stdout, 2=stderr), 3 bytes padding, 4 bytes size
+	cleanOutput := stripDockerLogHeaders(logData)
+
+	return cleanOutput, nil
 }
 
 // countGPUsFromOutput parses nvidia-smi output and counts the number of GPUs
@@ -356,4 +382,41 @@ func (d *GPUDetector) parseGPUInfoFromCSV(csvOutput string) ([]GPUInfo, error) {
 	}
 
 	return gpus, nil
+}
+
+// stripDockerLogHeaders removes Docker log headers from raw log output
+// Docker logs include 8-byte headers: 1 byte stream type, 3 bytes padding, 4 bytes size
+func stripDockerLogHeaders(logData []byte) string {
+	var result strings.Builder
+
+	for i := 0; i < len(logData); {
+		// Check if we have enough bytes for a header
+		if i+8 > len(logData) {
+			// Not enough bytes for a complete header, treat remaining as data
+			result.Write(logData[i:])
+			break
+		}
+
+		// Read the 4-byte size from bytes 4-7 (big-endian)
+		size := int(logData[i+4])<<24 | int(logData[i+5])<<16 | int(logData[i+6])<<8 | int(logData[i+7])
+
+		// Skip the 8-byte header
+		dataStart := i + 8
+		dataEnd := dataStart + size
+
+		// Make sure we don't read past the end of the buffer
+		if dataEnd > len(logData) {
+			dataEnd = len(logData)
+		}
+
+		// Append the actual data (skip the header)
+		if dataStart < len(logData) {
+			result.Write(logData[dataStart:dataEnd])
+		}
+
+		// Move to the next header
+		i = dataEnd
+	}
+
+	return result.String()
 }
