@@ -38,6 +38,9 @@ RUN go mod download && \
 
 FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG} AS final
 
+LABEL org.opencontainers.image.source="https://github.com/batteries-included/batteries-included"
+LABEL org.opencontainers.image.description="Batteries Included Pastebin Service"
+
 ARG LANG
 
 ENV LANG=$LANG \

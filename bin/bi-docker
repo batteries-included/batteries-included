@@ -87,13 +87,13 @@ do_build_image() {
 
     case "${image_name}" in
     control-server)
-        build_args+=(-t "${REGISTRY}/control-server:${version}" --build-arg RELEASE=control_server "${platform_args[@]}")
+        build_args+=(-t "${REGISTRY}/control-server:${version}" --build-arg RELEASE=control_server --build-arg IMAGE_DESCRIPTION="Batteries Included Control Server - Management and orchestration service for Kubernetes clusters" "${platform_args[@]}")
         ;;
     home-base)
-        build_args+=(-t "${REGISTRY}/home-base:${version}" --build-arg RELEASE=home_base "${platform_args[@]}")
+        build_args+=(-t "${REGISTRY}/home-base:${version}" --build-arg RELEASE=home_base --build-arg IMAGE_DESCRIPTION="Batteries Included Home Base - User interface and dashboard for cluster management" "${platform_args[@]}")
         ;;
     kube-bootstrap)
-        build_args+=(-t "${REGISTRY}/kube-bootstrap:${version}" --build-arg RELEASE=kube_bootstrap "${platform_args[@]}")
+        build_args+=(-t "${REGISTRY}/kube-bootstrap:${version}" --build-arg RELEASE=kube_bootstrap --build-arg IMAGE_DESCRIPTION="Batteries Included Kube Bootstrap - Kubernetes cluster initialization and setup service" "${platform_args[@]}")
         ;;
     pastebin)
         build_args+=(-f docker/pastebin.dockerfile -t "${REGISTRY}/pastebin:${version}")
