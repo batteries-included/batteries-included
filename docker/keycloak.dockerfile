@@ -36,4 +36,7 @@ RUN /opt/keycloak/bin/kc.sh build
 
 FROM quay.io/keycloak/keycloak:${KC_VERSION}
 
+LABEL org.opencontainers.image.source="https://github.com/batteries-included/batteries-included"
+LABEL org.opencontainers.image.description="Batteries Included Keycloak with Custom Theme"
+
 COPY --from=builder /opt/keycloak/ /opt/keycloak/

@@ -7,10 +7,13 @@ ARG UBUNTU_VERSION=noble-20250415.1
 ARG BUILD_IMAGE_NAME=hexpm/elixir
 ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-ubuntu-${UBUNTU_VERSION}
 
+FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG}
+
+LABEL org.opencontainers.image.source="https://github.com/batteries-included/batteries-included"
+LABEL org.opencontainers.image.description="Batteries Included Build env for elixir"
+
 ##########################################################################
 # Fetch OS build dependencies
-
-FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG}
 RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt \
   apt-get update && \

@@ -8,6 +8,8 @@ ARG DEPLOY_IMAGE_TAG=latest
 
 ARG MIX_ENV=prod
 
+ARG IMAGE_DESCRIPTION="Batteries Included Platform Service"
+
 ##########################################################################
 # Set up base mix / elixir build container
 
@@ -24,9 +26,9 @@ COPY platform_umbrella/mix.lock mix.lock
 COPY --parents platform_umbrella/apps/*/mix.exs /source/
 
 RUN mix "do" \
-    local.hex --force, \
-    local.rebar --force, \
-    deps.get --only "${MIX_ENV}"
+  local.hex --force, \
+  local.rebar --force, \
+  deps.get --only "${MIX_ENV}"
 
 ##########################################################################
 # Build control server assets
@@ -86,12 +88,12 @@ ENV BI_RELEASE_HASH=${BI_RELEASE_HASH}
 COPY . /source/
 
 COPY --from=home-base-assets \
-    /source/platform_umbrella/apps/home_base_web/priv \
-    /source/platform_umbrella/apps/home_base_web/priv
+  /source/platform_umbrella/apps/home_base_web/priv \
+  /source/platform_umbrella/apps/home_base_web/priv
 
 COPY --from=control-server-assets \
-    /source/platform_umbrella/apps/control_server_web/priv \
-    /source/platform_umbrella/apps/control_server_web/priv
+  /source/platform_umbrella/apps/control_server_web/priv \
+  /source/platform_umbrella/apps/control_server_web/priv
 
 WORKDIR /source/platform_umbrella
 
@@ -118,6 +120,11 @@ RUN mix release "${RELEASE}"
 
 ##########################################################################
 FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG}
+
+# Container metadata
+ARG IMAGE_DESCRIPTION
+LABEL org.opencontainers.image.source="https://github.com/batteries-included/batteries-included"
+LABEL org.opencontainers.image.description="${IMAGE_DESCRIPTION}"
 
 # Name of app, used for directories
 ARG APP_NAME=batteries_included
@@ -154,8 +161,8 @@ RUN mkdir -p "/run/$APP_NAME" && \
 USER $APP_USER
 
 COPY --from=release --chown="$APP_USER:$APP_GROUP" \
-    "/source/platform_umbrella/_build/${MIX_ENV}/rel/${RELEASE}" \
-    ./
+  "/source/platform_umbrella/_build/${MIX_ENV}/rel/${RELEASE}" \
+  ./
 
 EXPOSE $PORT
 
