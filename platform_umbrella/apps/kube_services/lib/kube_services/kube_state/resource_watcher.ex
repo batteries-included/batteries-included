@@ -35,7 +35,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     {state_opts, gen_opts} = Keyword.split(opts, @state_opts)
 
     {:ok, pid} = result = GenServer.start_link(__MODULE__, state_opts, gen_opts)
-    Logger.debug("GenServer started with# #{inspect(pid)}. #{inspect(gen_opts)}")
+    Logger.debug("GenServer started with #{inspect(pid)}. #{inspect(gen_opts)}")
     result
   end
 

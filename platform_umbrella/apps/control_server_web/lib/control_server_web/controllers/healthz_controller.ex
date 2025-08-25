@@ -38,14 +38,18 @@ defmodule ControlServerWeb.HealthzController do
   end
 
   defp check_kube_state_healthz(_conn, _params) do
-    case KubeServices.KubeState.get_all(:pod) do
-      # Assume for now that if there are pods
-      # in the KubeState table, it is healthy
-      [_ | _] ->
-        {:ok, "KubeState is healthy"}
+    case KubeServices.KubeState.get_status() do
+      nil ->
+        {:error, "No KubeState updates"}
 
-      [] ->
-        {:error, "No pods in KubeState table"}
+      timestamp ->
+        now = DateTime.utc_now()
+
+        if DateTime.after?(now, DateTime.add(timestamp, 45, :minute)) do
+          {:error, "KubeState is unhealthy, #{DateTime.to_iso8601(timestamp)}"}
+        else
+          {:ok, "KubeState is healthy, #{DateTime.to_iso8601(timestamp)}"}
+        end
     end
   end
 

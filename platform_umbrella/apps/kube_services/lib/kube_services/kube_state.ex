@@ -7,6 +7,7 @@ defmodule KubeServices.KubeState do
   alias CommonCore.Resources.ResourceVersion
   alias K8s.Resource
   alias KubeServices.KubeState.Runner
+  alias KubeServices.KubeState.Status
 
   @default_table :default_state_table
 
@@ -20,12 +21,12 @@ defmodule KubeServices.KubeState do
   end
 
   defp children(true) do
-    [{Runner, name: default_state_table()}] ++
+    [{Status, []}, {Runner, name: default_state_table()}] ++
       Enum.map(ApiVersionKind.all_known(), &spec/1)
   end
 
   defp children(false) do
-    [{Runner, name: default_state_table()}]
+    [{Status, []}, {Runner, name: default_state_table()}]
   end
 
   def spec(type) do
@@ -121,4 +122,7 @@ defmodule KubeServices.KubeState do
   end
 
   def get_events(_, _), do: []
+
+  @spec get_status(:ets.table()) :: DateTime.t() | nil
+  def get_status(table \\ @default_table), do: Status.get(table)
 end
