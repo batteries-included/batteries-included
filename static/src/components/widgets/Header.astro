@@ -33,6 +33,31 @@ const {
 } = Astro.props;
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+
+// Function to get icon for navigation items
+const getNavIcon = (label: string | undefined): string | null => {
+  if (!label) return null;
+  switch (label) {
+    case 'Home':
+      return 'home';
+    case 'Batteries For':
+      return 'battery';
+    case 'Blog':
+      return 'posts';
+    case 'Docs':
+      return 'document';
+    case 'Pricing':
+      return 'pricing';
+    case 'GitHub':
+      return 'github';
+    case 'Login':
+      return 'login';
+    case 'Sign Up':
+      return 'signup';
+    default:
+      return null;
+  }
+};
 ---
 
 <header
@@ -82,8 +107,17 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                           `group-hover/${item.label}:text-primary hover:text-primary duration-300`,
                           { 'text-primary': item.link === currentPath }
                         )}
-                        href={item.link}>
+                        href={item.link}
+                        {...(item.label === 'GitHub'
+                          ? { target: '_blank', rel: 'noopener noreferrer' }
+                          : {})}>
                         <span class:list={['flex gap-2 items-center']}>
+                          {(() => {
+                            const iconName = getNavIcon(item.label);
+                            return iconName ? (
+                              <IconFactory icon={iconName} classes="size-4" />
+                            ) : null;
+                          })()}
                           <span class="line-clamp-1">{item.label}</span>
                         </span>
                       </a>
@@ -199,10 +233,22 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                     item.link ? (
                       <li>
                         <a
-                          class={clsx('text-xl font-medium', {
-                            'text-primary': item.link === currentPath,
-                          })}
-                          href={item.link}>
+                          class={clsx(
+                            'text-xl font-medium flex gap-2 items-center',
+                            {
+                              'text-primary': item.link === currentPath,
+                            }
+                          )}
+                          href={item.link}
+                          {...(item.label === 'GitHub'
+                            ? { target: '_blank', rel: 'noopener noreferrer' }
+                            : {})}>
+                          {(() => {
+                            const iconName = getNavIcon(item.label);
+                            return iconName ? (
+                              <IconFactory icon={iconName} classes="size-5" />
+                            ) : null;
+                          })()}
                           {item.label}
                         </a>
                       </li>

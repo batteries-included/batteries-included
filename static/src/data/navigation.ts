@@ -212,6 +212,10 @@ export const headerData = [
     link: '/pricing',
   },
   {
+    label: 'GitHub',
+    link: 'https://github.com/batteries-included/batteries-included/',
+  },
+  {
     label: 'Login',
     link: 'https://home.batteriesincl.com/login',
   },

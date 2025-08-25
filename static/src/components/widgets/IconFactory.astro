@@ -64,6 +64,12 @@ import DownIcon from '~/components/icons/DownIcon.astro';
 import ChevronRightIcon from '~/components/icons/ChevronRightIcon.astro';
 import AutoscalingIcon from '~/components/icons/AutoscalingIcon.astro';
 import AIStackIcon from '~/components/icons/AIStackIcon.astro';
+import GithubIcon from '~/components/icons/GithubIcon.astro';
+import BatteryIcon from '~/components/icons/BatteryIcon.astro';
+import PostsIcon from '~/components/icons/PostsIcon.astro';
+import PricingIcon from '~/components/icons/PricingIcon.astro';
+import LoginIcon from '~/components/icons/LoginIcon.astro';
+import SignUpIcon from '~/components/icons/SignUpIcon.astro';
 
 type Icons =
   | 'none'
@@ -133,6 +139,12 @@ type Icons =
   | 'chevronright'
   | 'autoscaling'
   | 'aistack'
+  | 'github'
+  | 'battery'
+  | 'posts'
+  | 'pricing'
+  | 'login'
+  | 'signup'
   | string;
 
 type Props = {
@@ -216,3 +228,9 @@ const { icon, classes } = Astro.props;
 {icon === 'chevronright' && <ChevronRightIcon class={classes} />}
 {icon === 'autoscaling' && <AutoscalingIcon class={classes} />}
 {icon === 'aistack' && <AIStackIcon class={classes} />}
+{icon === 'github' && <GithubIcon class={classes} />}
+{icon === 'battery' && <BatteryIcon class={classes} />}
+{icon === 'posts' && <PostsIcon class={classes} />}
+{icon === 'pricing' && <PricingIcon class={classes} />}
+{icon === 'login' && <LoginIcon class={classes} />}
+{icon === 'signup' && <SignUpIcon class={classes} />}
