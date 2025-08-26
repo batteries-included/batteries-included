@@ -1,11 +1,16 @@
 ---
-name: Build and push Keycloak image
+name: Build and push image
 
 'on':
   workflow_dispatch:
     inputs:
+      target:
+        description: The upstream image to build from
+        required: true
+        type: string
+
       version:
-        description: The upstream version of Keycloak to build from
+        description: The upstream version to build from
         required: true
         type: string
 
@@ -22,9 +27,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
-
       - name: Login to GHCR
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3
         with:
@@ -35,8 +37,10 @@ jobs:
       - name: Setup ASDF
         uses: ./.github/actions/setup-asdf
 
-      - name: Build keycloak image
-        run: bin/bix docker build-image keycloak ${{ inputs.version }}
+      - name: Build image
+        run:
+          bin/bix docker build-image ${{ inputs.target }} ${{ inputs.version }}
 
-      - name: Push keycloak image
-        run: bin/bix keycloak push-keycloak ${{ inputs.version }}
+      - name: Push image
+        run:
+          bin/bix docker push-image ${{ inputs.target }} ${{ inputs.version }}
