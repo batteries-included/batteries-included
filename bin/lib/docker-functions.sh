@@ -47,6 +47,40 @@ tags_for_registry_image() {
     echo "$tags"
 }
 
+default_tag_for_registry_image() {
+    # name of the image to look up in the registry
+    local name="$1"
+    local registry_file="${ROOT_DIR}/image_registry.yaml"
+    local tag
+    local query
+    query=$(printf ".%s.default_tag" "${name}")
+
+    if [[ ! -f "${registry_file}" ]]; then
+        die "Registry file not found at ${registry_file}"
+    fi
+
+    log "Reading registry data for ${CYAN}${name}${NOFORMAT}"
+
+    tag=$(yq "${query}" "${registry_file}")
+    if [[ -z "${tag}" ]]; then
+        log "No default tag found in registry file for #{name}"
+    fi
+    echo "$tag"
+}
+
+tool_version() {
+    local name="$1"
+
+    local tool_version_file="${ROOT_DIR}/.tool-versions"
+    [[ -f "${tool_version_file}" ]] || die ".tool_version file not found at ${tool_version_file}"
+
+    local version
+    version=$(yq --input-format props --output-format yaml ".${name}" "${tool_version_file}")
+    [[ -z "${version}" ]] && log "no version found for ${name} in ${tool_version_file}"
+
+    echo "${version}"
+}
+
 # Strip version hash from tags (e.g., 26.3.0-16b3adf7c -> 26.3.0)
 strip_version_hash() {
     local tags="$1"

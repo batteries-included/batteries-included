@@ -4,7 +4,7 @@
 # The container image used as the final image that we use to deploy
 #
 
-ARG UBUNTU_VERSION=noble-20250127
+ARG UBUNTU_VERSION=use_version_from_tool-versions
 ARG LANGUAGE=en_US:en
 ARG LANG=en_US.UTF-8
 

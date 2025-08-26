@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:1
 
-ARG ELIXIR_VERSION=1.18.4
-ARG ERLANG_VERSION=27.3.4
-ARG UBUNTU_VERSION=noble-20250415.1
+ARG UBUNTU_VERSION=use_version_from_tool-versions
+ARG ELIXIR_VERSION=use_version_from_tool-versions
+ARG ERLANG_VERSION=use_version_from_tool-versions
+
 
 ARG BUILD_IMAGE_NAME=hexpm/elixir
 ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-ubuntu-${UBUNTU_VERSION}
