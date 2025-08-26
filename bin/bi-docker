@@ -12,6 +12,7 @@ source "${ROOT_DIR}/bin/lib/docker-functions.sh"
 
 do_build_base_images() {
     local tag
+    local ubuntu_version
     tag=$(docker_hash)
 
     declare -a ci_args
@@ -19,11 +20,17 @@ do_build_base_images() {
         ci_args+=(--progress=plain)
     fi
 
+    ubuntu_version=$(default_tag_for_registry_image ubuntu)
+    elixir_version=$(tool_version elixir | cut -d'-' -f 1)
+    erlang_version=$(tool_version erlang)
     for base in build deploy; do
         docker build \
             --load \
             -t "${REGISTRY}/${base}-base:${tag}" \
             -f docker/${base}-base.dockerfile \
+            --build-arg UBUNTU_VERSION="${ubuntu_version}" \
+            --build-arg ELIXIR_VERSION="${elixir_version}" \
+            --build-arg ERLANG_VERSION="${erlang_version}" \
             ${TRACE:+--progress=plain} \
             "${ci_args[@]}" \
             .
@@ -210,8 +217,8 @@ do_trigger_missing_upstream() {
     local clean_tags
     clean_tags=$(strip_version_hash "${our_tags}")
 
-    log "Upstream tags: ${upstream_tags}"
-    log "Our tags (clean): ${clean_tags}"
+    log "Upstream tags:\n${upstream_tags}"
+    log "Our tags (clean):\n${clean_tags}"
 
     # Find missing tags (in either direction)
     local missing_tags
