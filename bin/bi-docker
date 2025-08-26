@@ -8,33 +8,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
-
-image_tag() {
-    local version
-    version="${BASE_VERSION}-$(version_tag)"
-    if [ -n "${VERSION_OVERRIDE:-""}" ]; then
-        version="$VERSION_OVERRIDE"
-    fi
-    echo "${version}"
-}
-
-tag_push() {
-    local image_name=${1}
-    shift
-    local version=${1}
-    shift
-    local additional_tags=("$@")
-
-    log "${GREEN}Pushing${NOFORMAT} ${image_name}:${version}"
-
-    docker push "${image_name}:${version}"
-
-    for tag in "${additional_tags[@]}"; do
-        log "${GREEN}Tagging${NOFORMAT} ${image_name}:${version} as ${tag}"
-        docker tag "${image_name}:${version}" "${image_name}:${tag}"
-        docker push "${image_name}:${tag}"
-    done
-}
+source "${ROOT_DIR}/bin/lib/docker-functions.sh"
 
 do_build_base_images() {
     local tag
@@ -87,13 +61,28 @@ do_build_image() {
 
     case "${image_name}" in
     control-server)
-        build_args+=(-t "${REGISTRY}/control-server:${version}" --build-arg RELEASE=control_server --build-arg IMAGE_DESCRIPTION="Batteries Included Control Server - Management and orchestration service for Kubernetes clusters" "${platform_args[@]}")
+        build_args+=(
+            -t "${REGISTRY}/control-server:${version}"
+            --build-arg RELEASE=control_server
+            --build-arg IMAGE_DESCRIPTION="Batteries Included Control Server - Management and orchestration service for Kubernetes clusters"
+            "${platform_args[@]}"
+        )
         ;;
     home-base)
-        build_args+=(-t "${REGISTRY}/home-base:${version}" --build-arg RELEASE=home_base --build-arg IMAGE_DESCRIPTION="Batteries Included Home Base - User interface and dashboard for cluster management" "${platform_args[@]}")
+        build_args+=(
+            -t "${REGISTRY}/home-base:${version}"
+            --build-arg RELEASE=home_base
+            --build-arg IMAGE_DESCRIPTION="Batteries Included Home Base - User interface and dashboard for cluster management"
+            "${platform_args[@]}"
+        )
         ;;
     kube-bootstrap)
-        build_args+=(-t "${REGISTRY}/kube-bootstrap:${version}" --build-arg RELEASE=kube_bootstrap --build-arg IMAGE_DESCRIPTION="Batteries Included Kube Bootstrap - Kubernetes cluster initialization and setup service" "${platform_args[@]}")
+        build_args+=(
+            -t "${REGISTRY}/kube-bootstrap:${version}"
+            --build-arg RELEASE=kube_bootstrap
+            --build-arg IMAGE_DESCRIPTION="Batteries Included Kube Bootstrap - Kubernetes cluster initialization and setup service"
+            "${platform_args[@]}"
+        )
         ;;
     pastebin)
         build_args+=(-f docker/pastebin.dockerfile -t "${REGISTRY}/pastebin:${version}")
@@ -104,11 +93,19 @@ do_build_image() {
             die "Missing upstream tag for keycloak image. Usage: ${BASH_SOURCE[0]} build-image keycloak <upstream_tag>"
         fi
         local upstream_tag=${2}
-        do_build_keycloak_image "${upstream_tag}"
-        return 0
+        build_args+=(
+            -t "ghcr.io/batteries-included/keycloak:${upstream_tag}-${version_hash}"
+            -f "${ROOT_DIR}/docker/keycloak.dockerfile"
+            --build-arg "KC_VERSION=${upstream_tag}"
+        )
+        if version_lt "${upstream_tag}" "26.0.0"; then
+            build_args+=(--build-arg "JAR_NAME=keycloak-theme-for-kc-22-to-25.jar")
+        else
+            build_args+=(--build-arg "JAR_NAME=keycloak-theme-for-kc-all-other-versions.jar")
+        fi
         ;;
     *)
-        die "Unknown image name: ${image_name} not in expected list control-server, home-base, kube-bootstrap, pastebin"
+        die "Unknown image name: ${image_name} not in control-server, home-base, kube-bootstrap, pastebin, keycloak"
         ;;
     esac
 
@@ -119,49 +116,6 @@ do_build_image() {
     docker build \
         ${TRACE:+--progress=plain} \
         "${build_args[@]}" \
-        .
-}
-
-do_build_keycloak_image() {
-    local upstream_tag=${1}
-    local image_name="ghcr.io/batteries-included/keycloak"
-    local version_tag
-    version_tag=$(version_tag)
-    local tag="${upstream_tag}-${version_tag}"
-    local docker_base_tag
-    docker_base_tag=$(docker_hash)
-
-    log "${GREEN}Building${NOFORMAT} ${image_name}:${tag}"
-
-    bi-docker ensure-base-images
-
-    declare -a build_args
-    build_args+=(
-        --build-arg "KC_VERSION=${upstream_tag}"
-        --build-arg "BASE_IMAGE_NAME=ghcr.io/batteries-included/build-base"
-        --build-arg "BASE_IMAGE_TAG=${docker_base_tag}"
-    )
-
-    # If the upstream tag starts with less than 26 then build args needs to
-    # add the JAR_NAME keycloak-theme-for-kc-22-to-25.jar
-    #
-    # See https://docs.keycloakify.dev/deploying-your-theme#building-the-jar-file
-    if version_lt "${upstream_tag}" "26.0.0"; then
-        build_args+=(
-            --build-arg "JAR_NAME=keycloak-theme-for-kc-22-to-25.jar"
-        )
-    else
-        build_args+=(
-            --build-arg "JAR_NAME=keycloak-theme-for-kc-all-other-versions.jar"
-        )
-    fi
-
-    docker build \
-        --load \
-        "${build_args[@]}" \
-        -t "${image_name}:${tag}" \
-        -f "${ROOT_DIR}/docker/keycloak.dockerfile" \
-        ${TRACE:+--progress=plain} \
         .
 }
 
@@ -228,6 +182,89 @@ do_save_images() {
     log "Finished saving images to tar file in ${SECONDS} seconds"
 }
 
+# Trigger GitHub workflow for missing upstream tags
+do_trigger_missing_upstream() {
+    local target="${1:-""}"
+    local upstream_image
+    local upstream_tags
+    local our_tags
+
+    if [[ -z "${target}" ]]; then
+        die "Missing desired target to check"
+    fi
+
+    case "${target}" in
+    keycloak)
+        upstream_image=keycloak_upstream
+        ;;
+    *)
+        die "Unknown upstream target: ${target}"
+        ;;
+    esac
+
+    log "Checking for missing upstream tags for ${target}"
+    upstream_tags=$(tags_for_registry_image "${upstream_image}")
+    our_tags=$(tags_for_registry_image "${target}")
+
+    # Strip version hashes from our tags to get base versions
+    local clean_tags
+    clean_tags=$(strip_version_hash "${our_tags}")
+
+    log "Upstream tags: ${upstream_tags}"
+    log "Our tags (clean): ${clean_tags}"
+
+    # Find missing tags (in either direction)
+    local missing_tags
+    missing_tags=$(find_missing_tags "${upstream_tags}" "${clean_tags}")
+
+    if [[ -z "${missing_tags}" ]]; then
+        log "No missing tags found - all upstream tags are covered"
+        return 0
+    fi
+
+    log "Found ${YELLOW}$(echo "${missing_tags}" | wc -w)${NOFORMAT} missing tags"
+
+    local trigger_count=0
+    for tag in ${missing_tags}; do
+        log "Triggering workflow for target ${CYAN}${target}${NOFORMAT} and version ${CYAN}${tag}${NOFORMAT}"
+        gh workflow run "image.yml" -f "target=${target}" -f "version=${tag}"
+        trigger_count=$((trigger_count + 1))
+    done
+
+    log "Triggered ${YELLOW}${trigger_count}${NOFORMAT} workflow runs"
+}
+
+do_push_image() {
+    local target="$1"
+    local upstream_tag="$2"
+    local image_name
+
+    [[ -z "$target" ]] && die "Missing target"
+    [[ -z "$upstream_tag" ]] && die "Missing upstream tag"
+
+    case "${target}" in
+    keycloak)
+        local version_tag
+        version_tag=$(version_tag)
+        image_name="${REGISTRY}/keycloak:${upstream_tag}-${version_tag}"
+        ;;
+    *)
+        die "Unknown upstream target: ${RED}${target}${NOFORMAT}"
+        ;;
+    esac
+
+    log "Preparing to push image: ${CYAN}${image_name}${NOFORMAT}"
+
+    # Validate the image exists before pushing
+    validate_image_exists "${image_name}" || return 1
+
+    log "Pushing image ${CYAN}${image_name}${NOFORMAT} to registry"
+
+    docker push "${image_name}" || die "Failed to push image: ${RED}${image_name}${NOFORMAT}"
+
+    log "Successfully pushed image: ${CYAN}${image_name}${NOFORMAT}"
+}
+
 usage() {
     cat <<EOF
 Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] command [arg1...]
@@ -239,13 +276,15 @@ Available options:
 
 Available commands:
 
-- ensure-base-images    Ensure base images are present locally
-- build-base-images     Builds docker base images
-- build-image           Build a docker image
-- push-images           Push all the container images to a registry
-- save-images           Archive all the container images to an output tar
-- get-base-tag          Get the current tag of the docker base images
-- get-image-tag         Get the current tag of the publishable images
+- ensure-base-images        Ensure base images are present locally
+- build-base-images         Builds docker base images
+- build-image               Build a docker image
+- push-images               Push all the container images to a registry
+- save-images               Archive all the container images to an output tar
+- get-base-tag              Get the current tag of the docker base images
+- get-image-tag             Get the current tag of the publishable images
+- trigger-missing-upstream  Identify and trigger workflow for upstream image tags that don't have BI images
+- push-image                Push the specified upstream image with the specified tag
 EOF
     exit 1
 }
@@ -302,6 +341,16 @@ get-base-tag)
     ;;
 get-image-tag)
     image_tag
+    ;;
+trigger-missing-upstream)
+    do_trigger_missing_upstream "${args[@]}"
+    ;;
+push-image)
+    if [[ ${#args[@]} -lt 2 ]]; then
+        log "Missing argument(s) for push-image. Need image and upstream tag"
+        usage
+    fi
+    do_push_image "${args[@]}"
     ;;
 *)
     usage
