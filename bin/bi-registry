@@ -40,6 +40,9 @@ do_save_images() {
     if [[ "$type" == all || "$type" == registry_bootstrap ]]; then
         while read -r img tag; do
             case "$img" in
+            ghcr.io/batteries-included/postgresql)
+                imgs+=("${img}:${tag}")
+                ;;
             docker.io/istio/*)
                 imgs+=("${img}:${tag}")
                 ;;
