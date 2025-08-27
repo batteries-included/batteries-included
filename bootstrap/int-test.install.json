@@ -1,10 +1,4 @@
 {
-  "id": "batt_0198e965c4e97fe08dacec9798b051d4",
-  "usage": "internal_int_test",
-  "team_id": "batt_0198e965c4d2742ca85e48f3e76d6c71",
-  "inserted_at": null,
-  "updated_at": null,
-  "default_size": "tiny",
   "control_jwk": {
     "crv": "P-256",
     "d": "CW2xNnFREiaVgP4KqzW1NTMM4zyde53s0p6OLnVNy08",
@@ -12,9 +6,15 @@
     "x": "jo7O826Qe6YV8FH8M_CeNtbhh0G9-_2YD5WJO69mexU",
     "y": "uIwwZOWuBrVIJErJaTuo-sEJuzee6_ioRRIGB3gWOUs"
   },
-  "kube_provider": "kind",
-  "slug": "int-test",
-  "kube_provider_config": {},
+  "default_size": "tiny",
   "deleted_at": null,
+  "id": "batt_0198e965c4e97fe08dacec9798b051d4",
+  "inserted_at": null,
+  "kube_provider": "kind",
+  "kube_provider_config": {},
+  "slug": "int-test",
+  "team_id": "batt_0198e965c4d2742ca85e48f3e76d6c71",
+  "updated_at": null,
+  "usage": "internal_int_test",
   "user_id": null
 }

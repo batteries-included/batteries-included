@@ -22,6 +22,22 @@ PRETTIER_GLOBS+=(
     '../static/src/content/**/*.mdx'
 )
 
+check_format_bootstrap_json() {
+    local files="${ROOT_DIR}/bootstrap/*.json"
+    format_bootstrap_json
+    if ! git diff --exit-code "$files" &>/dev/null; then
+        git checkout "$files"
+        die "bootstrap json not formatted"
+    fi
+}
+
+format_bootstrap_json() {
+    # sort specs consistently
+    for file in "${ROOT_DIR}"/bootstrap/*.json; do
+        yq --inplace 'sort_keys(..)' --output-format json "$file"
+    done
+}
+
 format_mix_code() {
     local path=${1}
     bi_pushd "${path}"
@@ -155,6 +171,10 @@ do_fmt() {
         log "Formatting ${YELLOW}sh${NOFORMAT}"
         format_sh_code
         ;;
+    json | bootstrap)
+        log "Formatting ${YELLOW}bootstrap json${NOFORMAT}"
+        format_bootstrap_json
+        ;;
     *)
         log "Formatting ${YELLOW}everything${NOFORMAT}"
         format_mix_code "platform_umbrella"
@@ -166,6 +186,7 @@ do_fmt() {
         format_npm_code "keycloak-theme"
         format_prettier_code
         format_sh_code
+        format_bootstrap_json
         ;;
     esac
 }
@@ -205,6 +226,10 @@ do_check_fmt() {
         log "Checking format ${YELLOW}sh${NOFORMAT}"
         check_format_sh_code
         ;;
+    json | bootstrap)
+        log "Checking format ${YELLOW}bootstrap json${NOFORMAT}"
+        check_format_bootstrap_json
+        ;;
     *)
         log "Checking format ${YELLOW}everything${NOFORMAT}"
         check_format_mix_code "platform_umbrella"
@@ -233,6 +258,7 @@ do_gen_static_specs() {
 
     # Done
     log "Generated static specs in ${BLUE}${ROOT_DIR}/bootstrap${NOFORMAT}"
+    format_bootstrap_json
     run_mix clean
 }
 

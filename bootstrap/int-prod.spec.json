@@ -1,726 +1,4 @@
 {
-  "slug": "int-prod",
-  "kube_cluster": {
-    "config": {},
-    "provider": "aws"
-  },
-  "target_summary": {
-    "knative_services": [],
-    "notebooks": [],
-    "batteries": [
-      {
-        "id": "batt_0198e965c4f37812a0aef7af01964ed5",
-        "type": "battery_core",
-        "config": {
-          "type": "battery_core",
-          "usage": "internal_prod",
-          "cluster_type": "aws",
-          "core_namespace": "battery-core",
-          "base_namespace": "battery-base",
-          "data_namespace": "battery-data",
-          "ai_namespace": "battery-ai",
-          "default_size": "medium",
-          "cluster_name": "int-prod",
-          "install_id": "batt_0198e965c4e9747cbe146f7b4d51e31d",
-          "control_jwk": {
-            "crv": "P-256",
-            "d": "vfjcZqQLF3jlSmfKMyG6QpklSKl3OW_sC8BGyM1bc7E",
-            "kty": "EC",
-            "x": "3EUnSVF1T2RIT0qeD4EEDMFzibfUD31i8dWXEQe2tBw",
-            "y": "TRusX830izmmP70qHFjNce0FhSjLEIS_SMmGhRObGaA"
-          },
-          "upgrade_days_of_week": [
-            true,
-            true,
-            true,
-            true,
-            false,
-            false,
-            false
-          ],
-          "virtual_upgrade_days_of_week": [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday"
-          ],
-          "upgrade_start_hour": 18,
-          "upgrade_end_hour": 23
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f371199f1463ff1e5fefe6",
-        "type": "cert_manager",
-        "config": {
-          "type": "cert_manager",
-          "email": null,
-          "acmesolver_image": "quay.io/jetstack/cert-manager-acmesolver:v1.18.2",
-          "cainjector_image": "quay.io/jetstack/cert-manager-cainjector:v1.18.2",
-          "controller_image": "quay.io/jetstack/cert-manager-controller:v1.18.2",
-          "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.18.2",
-          "acmesolver_image_name_override": null,
-          "acmesolver_image_tag_override": null,
-          "cainjector_image_name_override": null,
-          "cainjector_image_tag_override": null,
-          "controller_image_name_override": null,
-          "controller_image_tag_override": null,
-          "webhook_image_name_override": null,
-          "webhook_image_tag_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37f8cb3d8452c5ad984b5",
-        "type": "battery_ca",
-        "config": {
-          "type": "battery_ca"
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37663821a1d517fa3f402",
-        "type": "karpenter",
-        "config": {
-          "type": "karpenter",
-          "image": "public.ecr.aws/karpenter/controller:1.6.0",
-          "service_role_arn": null,
-          "queue_name": null,
-          "node_role_name": null,
-          "ami_alias": "al2023@v20250704",
-          "bottlerocket_ami_alias": "bottlerocket@v1.42.0",
-          "image_tag_override": null,
-          "image_name_override": null,
-          "ami_alias_override": null,
-          "bottlerocket_ami_alias_override": null
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37c8e91a4dabf42b0acf9",
-        "type": "aws_load_balancer_controller",
-        "config": {
-          "type": "aws_load_balancer_controller",
-          "image": "public.ecr.aws/eks/aws-load-balancer-controller:v2.13.3",
-          "service_role_arn": null,
-          "subnets": null,
-          "eip_allocations": null,
-          "image_tag_override": null,
-          "image_name_override": null
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37feabacdad9163dfc86b",
-        "type": "cloudnative_pg",
-        "config": {
-          "type": "cloudnative_pg",
-          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0",
-          "service_role_arn": null,
-          "bucket_name": null,
-          "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-22",
-          "bucket_arn": null,
-          "image_tag_override": null,
-          "image_name_override": null,
-          "default_postgres_image_name_override": null,
-          "default_postgres_image_tag_override": null
-        },
-        "group": "data",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f3738987d2e29e4a86a89c",
-        "type": "gateway_api",
-        "config": {
-          "type": "gateway_api"
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f377ab93fa01040e106ddf",
-        "type": "istio",
-        "config": {
-          "type": "istio",
-          "namespace": "battery-istio",
-          "cni_image": "docker.io/istio/install-cni:1.27.0-distroless",
-          "pilot_image": "docker.io/istio/pilot:1.27.0-distroless",
-          "ztunnel_image": "docker.io/istio/ztunnel:1.27.0-distroless",
-          "namespace_override": null,
-          "cni_image_name_override": null,
-          "cni_image_tag_override": null,
-          "pilot_image_name_override": null,
-          "pilot_image_tag_override": null,
-          "ztunnel_image_name_override": null,
-          "ztunnel_image_tag_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37009bad54043a920c47a",
-        "type": "istio_gateway",
-        "config": {
-          "type": "istio_gateway",
-          "proxy_image": "docker.io/istio/proxyv2:1.27.0-distroless",
-          "proxy_image_name_override": null,
-          "proxy_image_tag_override": null
-        },
-        "group": "net_sec",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37eb39ecdb98263607aca",
-        "type": "stale_resource_cleaner",
-        "config": {
-          "type": "stale_resource_cleaner",
-          "delay": 900000,
-          "delay_override": null
-        },
-        "group": "magic",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f370bbbe0d38b336fd92bf",
-        "type": "ferretdb",
-        "config": {
-          "type": "ferretdb",
-          "ferretdb_image": "ghcr.io/ferretdb/ferretdb:1.24.2",
-          "ferretdb_image_name_override": null,
-          "ferretdb_image_tag_override": null
-        },
-        "group": "data",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37c29b41cafacbb06a6a3",
-        "type": "traditional_services",
-        "config": {
-          "type": "traditional_services",
-          "namespace": "battery-traditional"
-        },
-        "group": "devtools",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37b619e00bcc008de6987",
-        "type": "vm_agent",
-        "config": {
-          "type": "vm_agent",
-          "image_tag": "v1.124.0",
-          "image_tag_override": null
-        },
-        "group": "monitoring",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f37ab19edbfaca7f6afbc5",
-        "type": "victoria_metrics",
-        "config": {
-          "type": "victoria_metrics",
-          "cookie_secret": "QZg_Mo71hNWSYrw4oa-C6WI8aiFZUuMu2b8DvkiEHIU=",
-          "replication_factor": 1,
-          "operator_image": "docker.io/victoriametrics/operator:v0.62.0",
-          "vmselect_volume_size": 536870912,
-          "vmstorage_volume_size": 1073741824,
-          "cluster_image_tag": "v1.124.0-cluster",
-          "vminsert_replicas": 1,
-          "vmselect_replicas": 1,
-          "vmstorage_replicas": 1,
-          "virtual_size": "tiny",
-          "virtual_vmselect_volume_size_range": 5035931120,
-          "virtual_vmstorage_volume_size_range": 219902325555,
-          "cluster_image_tag_override": null,
-          "operator_image_name_override": null,
-          "operator_image_tag_override": null
-        },
-        "group": "monitoring",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f374aa8b79d71b17dc21b1",
-        "type": "grafana",
-        "config": {
-          "type": "grafana",
-          "image": "docker.io/grafana/grafana:11.4.5",
-          "sidecar_image": "quay.io/kiwigrid/k8s-sidecar:1.30.9",
-          "image_tag_override": null,
-          "image_name_override": null,
-          "sidecar_image_name_override": null,
-          "sidecar_image_tag_override": null
-        },
-        "group": "monitoring",
-        "inserted_at": null,
-        "updated_at": null
-      },
-      {
-        "id": "batt_0198e965c4f47ec991f34f2d4497903a",
-        "type": "cloudnative_pg_barman",
-        "config": {
-          "type": "cloudnative_pg_barman",
-          "service_role_arn": null,
-          "barman_plugin_image": "ghcr.io/cloudnative-pg/plugin-barman-cloud:v0.6.0",
-          "barman_plugin_sidecar_image": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.6.0",
-          "bucket_name": null,
-          "barman_plugin_image_name_override": null,
-          "barman_plugin_image_tag_override": null,
-          "barman_plugin_sidecar_image_name_override": null,
-          "barman_plugin_sidecar_image_tag_override": null
-        },
-        "group": "data",
-        "inserted_at": null,
-        "updated_at": null
-      }
-    ],
-    "traditional_services": [
-      {
-        "id": null,
-        "name": "home-base",
-        "ports": [
-          {
-            "name": "home-base",
-            "protocol": "http2",
-            "number": 4000
-          }
-        ],
-        "inserted_at": null,
-        "updated_at": null,
-        "virtual_size": "medium",
-        "env_values": [
-          {
-            "name": "BATTERY_TEAM_IDS",
-            "value": "batt_0198e965c4d2742ca85e48f3e76d6c71",
-            "source_name": null,
-            "source_type": "value",
-            "source_key": null,
-            "source_optional": false
-          },
-          {
-            "name": "SECRET_KEY_BASE",
-            "value": "HKVGVBEFQMTQXUZID6YYNJHV5SLEMHAIENPELWD4FB5F6XRTSZHKDEETUEJX452I",
-            "source_name": null,
-            "source_type": "value",
-            "source_key": null,
-            "source_optional": false
-          },
-          {
-            "name": "HOME_JWK",
-            "value": null,
-            "source_name": "home-base-jwk",
-            "source_type": "secret",
-            "source_key": "jwk",
-            "source_optional": false
-          },
-          {
-            "name": "POSTGRES_DB",
-            "value": "home-base",
-            "source_name": null,
-            "source_type": "value",
-            "source_key": null,
-            "source_optional": false
-          },
-          {
-            "name": "POSTGRES_USER",
-            "value": null,
-            "source_name": "cloudnative-pg.pg-home-base.home-base",
-            "source_type": "secret",
-            "source_key": "username",
-            "source_optional": false
-          },
-          {
-            "name": "POSTGRES_PASSWORD",
-            "value": null,
-            "source_name": "cloudnative-pg.pg-home-base.home-base",
-            "source_type": "secret",
-            "source_key": "password",
-            "source_optional": false
-          },
-          {
-            "name": "POSTGRES_HOST",
-            "value": null,
-            "source_name": "cloudnative-pg.pg-home-base.home-base",
-            "source_type": "secret",
-            "source_key": "hostname",
-            "source_optional": false
-          }
-        ],
-        "mounts": [
-          {
-            "read_only": true,
-            "volume_name": "home-base-seed-data",
-            "mount_path": "/etc/init-config/"
-          }
-        ],
-        "num_instances": 1,
-        "cpu_requested": 4000,
-        "cpu_limits": 4000,
-        "memory_requested": 8589934592,
-        "memory_limits": 8589934592,
-        "project_id": null,
-        "additional_hosts": [
-          "home.batteriesincl.com"
-        ],
-        "init_containers": [
-          {
-            "args": [
-              "home_base_init"
-            ],
-            "command": [
-              "/app/bin/start"
-            ],
-            "name": "init",
-            "path": "/app/bin/start",
-            "image": "ghcr.io/batteries-included/home-base:latest",
-            "env_values": [],
-            "mounts": []
-          }
-        ],
-        "containers": [
-          {
-            "args": null,
-            "command": null,
-            "name": "home-base",
-            "path": null,
-            "image": "ghcr.io/batteries-included/home-base:latest",
-            "env_values": [],
-            "mounts": []
-          }
-        ],
-        "volumes": [
-          {
-            "name": "home-base-seed-data",
-            "type": "config_map",
-            "source_name": "home-base-seed-data",
-            "optional": true,
-            "medium": "default",
-            "default_mode": null,
-            "size_limit": null
-          }
-        ],
-        "kube_internal": false,
-        "kube_deployment_type": "deployment"
-      },
-      {
-        "id": null,
-        "name": "cla",
-        "ports": [
-          {
-            "name": "cla",
-            "protocol": "http2",
-            "number": 5000
-          }
-        ],
-        "inserted_at": null,
-        "updated_at": null,
-        "virtual_size": "medium",
-        "env_values": [
-          {
-            "name": "PROTOCOL",
-            "value": "https",
-            "source_name": null,
-            "source_type": "value",
-            "source_key": null,
-            "source_optional": false
-          },
-          {
-            "name": "HOST",
-            "value": "cla.batteriesincl.com",
-            "source_name": null,
-            "source_type": "value",
-            "source_key": null,
-            "source_optional": false
-          },
-          {
-            "name": "NODE_ENV",
-            "value": "prod",
-            "source_name": null,
-            "source_type": "value",
-            "source_key": null,
-            "source_optional": false
-          },
-          {
-            "name": "MONGODB",
-            "value": null,
-            "source_name": "ferret.cla.cla",
-            "source_type": "secret",
-            "source_key": "uri",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_TOKEN",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_TOKEN",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_SECRET",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_SECRET",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_CLIENT",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_CLIENT",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_APP_SECRET",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_APP_SECRET",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_APP_PRIVATE_KEY",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_APP_PRIVATE_KEY",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_APP_NAME",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_APP_NAME",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_APP_ID",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_APP_ID",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_APP_CLIENT",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_APP_CLIENT",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_APP_SECRET",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_APP_SECRET",
-            "source_optional": false
-          },
-          {
-            "name": "GITHUB_ADMIN_USERS",
-            "value": null,
-            "source_name": "cla",
-            "source_type": "secret",
-            "source_key": "GITHUB_ADMIN_USERS",
-            "source_optional": false
-          }
-        ],
-        "mounts": [],
-        "num_instances": 1,
-        "cpu_requested": 4000,
-        "cpu_limits": 4000,
-        "memory_requested": 8589934592,
-        "memory_limits": 8589934592,
-        "project_id": null,
-        "additional_hosts": [
-          "cla.batteriesincl.com"
-        ],
-        "init_containers": [],
-        "containers": [
-          {
-            "args": null,
-            "command": null,
-            "name": "cla",
-            "path": null,
-            "image": "ghcr.io/batteries-included/cla-assistant:v2.13.1",
-            "env_values": [],
-            "mounts": []
-          }
-        ],
-        "volumes": [],
-        "kube_internal": false,
-        "kube_deployment_type": "deployment"
-      }
-    ],
-    "model_instances": [],
-    "postgres_clusters": [
-      {
-        "id": null,
-        "name": "controlserver",
-        "type": "internal",
-        "database": {
-          "name": "control",
-          "owner": "battery-control-user"
-        },
-        "users": [
-          {
-            "position": null,
-            "username": "battery-control-user",
-            "roles": [
-              "createdb",
-              "login"
-            ],
-            "credential_namespaces": [
-              "battery-core"
-            ]
-          }
-        ],
-        "storage_class": null,
-        "inserted_at": null,
-        "updated_at": null,
-        "virtual_size": "medium",
-        "num_instances": 1,
-        "password_versions": [
-          {
-            "version": 1,
-            "username": "battery-control-user",
-            "password": "H3NPB4FWUHIK4POAHXHFHXYD"
-          }
-        ],
-        "cpu_requested": 4000,
-        "cpu_limits": 4000,
-        "memory_requested": 8589934592,
-        "memory_limits": 8589934592,
-        "project_id": null,
-        "backup_config": {
-          "type": "object_store"
-        },
-        "storage_size": 68719476736,
-        "restore_from_backup": null,
-        "virtual_storage_size_range_value": 470590976688
-      },
-      {
-        "id": null,
-        "name": "home-base",
-        "type": "standard",
-        "database": {
-          "name": "home-base",
-          "owner": "home-base"
-        },
-        "users": [
-          {
-            "position": null,
-            "username": "home-base",
-            "roles": [
-              "superuser",
-              "createdb",
-              "login"
-            ],
-            "credential_namespaces": [
-              "battery-traditional"
-            ]
-          }
-        ],
-        "storage_class": null,
-        "inserted_at": null,
-        "updated_at": null,
-        "virtual_size": "medium",
-        "num_instances": 1,
-        "password_versions": [
-          {
-            "version": 1,
-            "username": "home-base",
-            "password": "646CTTVI6CK6743AUJWQSQEP"
-          }
-        ],
-        "cpu_requested": 4000,
-        "cpu_limits": 4000,
-        "memory_requested": 8589934592,
-        "memory_limits": 8589934592,
-        "project_id": null,
-        "backup_config": {
-          "type": "object_store"
-        },
-        "storage_size": 68719476736,
-        "restore_from_backup": null,
-        "virtual_storage_size_range_value": 470590976688
-      },
-      {
-        "id": null,
-        "name": "cla",
-        "type": "standard",
-        "database": {
-          "name": "cla",
-          "owner": "cla"
-        },
-        "users": [
-          {
-            "position": null,
-            "username": "cla",
-            "roles": [
-              "superuser",
-              "createdb",
-              "login"
-            ],
-            "credential_namespaces": [
-              "battery-traditional"
-            ]
-          }
-        ],
-        "storage_class": null,
-        "inserted_at": null,
-        "updated_at": null,
-        "virtual_size": "medium",
-        "num_instances": 1,
-        "password_versions": [
-          {
-            "version": 1,
-            "username": "cla",
-            "password": "2VYPZJNGA2GAJ6FATOLPLEL7"
-          }
-        ],
-        "cpu_requested": 4000,
-        "cpu_limits": 4000,
-        "memory_requested": 8589934592,
-        "memory_limits": 8589934592,
-        "project_id": null,
-        "backup_config": {
-          "type": "object_store"
-        },
-        "storage_size": 68719476736,
-        "restore_from_backup": null,
-        "virtual_storage_size_range_value": 470590976688
-      }
-    ],
-    "redis_instances": [],
-    "projects": [],
-    "install_status": null,
-    "ferret_services": [],
-    "ip_address_pools": [],
-    "stable_versions_report": null,
-    "captured_at": null
-  },
   "initial_resources": {
     "/cluster_role_binding/batteries_included_bootstrap": {
       "apiVersion": "rbac.authorization.k8s.io/v1",
@@ -1037,5 +315,727 @@
       "reclaimPolicy": "Delete",
       "volumeBindingMode": "WaitForFirstConsumer"
     }
+  },
+  "kube_cluster": {
+    "config": {},
+    "provider": "aws"
+  },
+  "slug": "int-prod",
+  "target_summary": {
+    "batteries": [
+      {
+        "config": {
+          "ai_namespace": "battery-ai",
+          "base_namespace": "battery-base",
+          "cluster_name": "int-prod",
+          "cluster_type": "aws",
+          "control_jwk": {
+            "crv": "P-256",
+            "d": "vfjcZqQLF3jlSmfKMyG6QpklSKl3OW_sC8BGyM1bc7E",
+            "kty": "EC",
+            "x": "3EUnSVF1T2RIT0qeD4EEDMFzibfUD31i8dWXEQe2tBw",
+            "y": "TRusX830izmmP70qHFjNce0FhSjLEIS_SMmGhRObGaA"
+          },
+          "core_namespace": "battery-core",
+          "data_namespace": "battery-data",
+          "default_size": "medium",
+          "install_id": "batt_0198e965c4e9747cbe146f7b4d51e31d",
+          "type": "battery_core",
+          "upgrade_days_of_week": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
+          ],
+          "upgrade_end_hour": 23,
+          "upgrade_start_hour": 18,
+          "usage": "internal_prod",
+          "virtual_upgrade_days_of_week": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday"
+          ]
+        },
+        "group": "magic",
+        "id": "batt_0198e965c4f37812a0aef7af01964ed5",
+        "inserted_at": null,
+        "type": "battery_core",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "acmesolver_image": "quay.io/jetstack/cert-manager-acmesolver:v1.18.2",
+          "acmesolver_image_name_override": null,
+          "acmesolver_image_tag_override": null,
+          "cainjector_image": "quay.io/jetstack/cert-manager-cainjector:v1.18.2",
+          "cainjector_image_name_override": null,
+          "cainjector_image_tag_override": null,
+          "controller_image": "quay.io/jetstack/cert-manager-controller:v1.18.2",
+          "controller_image_name_override": null,
+          "controller_image_tag_override": null,
+          "email": null,
+          "type": "cert_manager",
+          "webhook_image": "quay.io/jetstack/cert-manager-webhook:v1.18.2",
+          "webhook_image_name_override": null,
+          "webhook_image_tag_override": null
+        },
+        "group": "net_sec",
+        "id": "batt_0198e965c4f371199f1463ff1e5fefe6",
+        "inserted_at": null,
+        "type": "cert_manager",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "type": "battery_ca"
+        },
+        "group": "net_sec",
+        "id": "batt_0198e965c4f37f8cb3d8452c5ad984b5",
+        "inserted_at": null,
+        "type": "battery_ca",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "ami_alias": "al2023@v20250704",
+          "ami_alias_override": null,
+          "bottlerocket_ami_alias": "bottlerocket@v1.42.0",
+          "bottlerocket_ami_alias_override": null,
+          "image": "public.ecr.aws/karpenter/controller:1.6.0",
+          "image_name_override": null,
+          "image_tag_override": null,
+          "node_role_name": null,
+          "queue_name": null,
+          "service_role_arn": null,
+          "type": "karpenter"
+        },
+        "group": "magic",
+        "id": "batt_0198e965c4f37663821a1d517fa3f402",
+        "inserted_at": null,
+        "type": "karpenter",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "eip_allocations": null,
+          "image": "public.ecr.aws/eks/aws-load-balancer-controller:v2.13.3",
+          "image_name_override": null,
+          "image_tag_override": null,
+          "service_role_arn": null,
+          "subnets": null,
+          "type": "aws_load_balancer_controller"
+        },
+        "group": "magic",
+        "id": "batt_0198e965c4f37c8e91a4dabf42b0acf9",
+        "inserted_at": null,
+        "type": "aws_load_balancer_controller",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "bucket_arn": null,
+          "bucket_name": null,
+          "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-22",
+          "default_postgres_image_name_override": null,
+          "default_postgres_image_tag_override": null,
+          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0",
+          "image_name_override": null,
+          "image_tag_override": null,
+          "service_role_arn": null,
+          "type": "cloudnative_pg"
+        },
+        "group": "data",
+        "id": "batt_0198e965c4f37feabacdad9163dfc86b",
+        "inserted_at": null,
+        "type": "cloudnative_pg",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "type": "gateway_api"
+        },
+        "group": "net_sec",
+        "id": "batt_0198e965c4f3738987d2e29e4a86a89c",
+        "inserted_at": null,
+        "type": "gateway_api",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "cni_image": "docker.io/istio/install-cni:1.27.0-distroless",
+          "cni_image_name_override": null,
+          "cni_image_tag_override": null,
+          "namespace": "battery-istio",
+          "namespace_override": null,
+          "pilot_image": "docker.io/istio/pilot:1.27.0-distroless",
+          "pilot_image_name_override": null,
+          "pilot_image_tag_override": null,
+          "type": "istio",
+          "ztunnel_image": "docker.io/istio/ztunnel:1.27.0-distroless",
+          "ztunnel_image_name_override": null,
+          "ztunnel_image_tag_override": null
+        },
+        "group": "net_sec",
+        "id": "batt_0198e965c4f377ab93fa01040e106ddf",
+        "inserted_at": null,
+        "type": "istio",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "proxy_image": "docker.io/istio/proxyv2:1.27.0-distroless",
+          "proxy_image_name_override": null,
+          "proxy_image_tag_override": null,
+          "type": "istio_gateway"
+        },
+        "group": "net_sec",
+        "id": "batt_0198e965c4f37009bad54043a920c47a",
+        "inserted_at": null,
+        "type": "istio_gateway",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "delay": 900000,
+          "delay_override": null,
+          "type": "stale_resource_cleaner"
+        },
+        "group": "magic",
+        "id": "batt_0198e965c4f37eb39ecdb98263607aca",
+        "inserted_at": null,
+        "type": "stale_resource_cleaner",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "ferretdb_image": "ghcr.io/ferretdb/ferretdb:1.24.2",
+          "ferretdb_image_name_override": null,
+          "ferretdb_image_tag_override": null,
+          "type": "ferretdb"
+        },
+        "group": "data",
+        "id": "batt_0198e965c4f370bbbe0d38b336fd92bf",
+        "inserted_at": null,
+        "type": "ferretdb",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "namespace": "battery-traditional",
+          "type": "traditional_services"
+        },
+        "group": "devtools",
+        "id": "batt_0198e965c4f37c29b41cafacbb06a6a3",
+        "inserted_at": null,
+        "type": "traditional_services",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "image_tag": "v1.124.0",
+          "image_tag_override": null,
+          "type": "vm_agent"
+        },
+        "group": "monitoring",
+        "id": "batt_0198e965c4f37b619e00bcc008de6987",
+        "inserted_at": null,
+        "type": "vm_agent",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "cluster_image_tag": "v1.124.0-cluster",
+          "cluster_image_tag_override": null,
+          "cookie_secret": "QZg_Mo71hNWSYrw4oa-C6WI8aiFZUuMu2b8DvkiEHIU=",
+          "operator_image": "docker.io/victoriametrics/operator:v0.62.0",
+          "operator_image_name_override": null,
+          "operator_image_tag_override": null,
+          "replication_factor": 1,
+          "type": "victoria_metrics",
+          "virtual_size": "tiny",
+          "virtual_vmselect_volume_size_range": 5035931120,
+          "virtual_vmstorage_volume_size_range": 219902325555,
+          "vminsert_replicas": 1,
+          "vmselect_replicas": 1,
+          "vmselect_volume_size": 536870912,
+          "vmstorage_replicas": 1,
+          "vmstorage_volume_size": 1073741824
+        },
+        "group": "monitoring",
+        "id": "batt_0198e965c4f37ab19edbfaca7f6afbc5",
+        "inserted_at": null,
+        "type": "victoria_metrics",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "image": "docker.io/grafana/grafana:11.4.5",
+          "image_name_override": null,
+          "image_tag_override": null,
+          "sidecar_image": "quay.io/kiwigrid/k8s-sidecar:1.30.9",
+          "sidecar_image_name_override": null,
+          "sidecar_image_tag_override": null,
+          "type": "grafana"
+        },
+        "group": "monitoring",
+        "id": "batt_0198e965c4f374aa8b79d71b17dc21b1",
+        "inserted_at": null,
+        "type": "grafana",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "barman_plugin_image": "ghcr.io/cloudnative-pg/plugin-barman-cloud:v0.6.0",
+          "barman_plugin_image_name_override": null,
+          "barman_plugin_image_tag_override": null,
+          "barman_plugin_sidecar_image": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.6.0",
+          "barman_plugin_sidecar_image_name_override": null,
+          "barman_plugin_sidecar_image_tag_override": null,
+          "bucket_name": null,
+          "service_role_arn": null,
+          "type": "cloudnative_pg_barman"
+        },
+        "group": "data",
+        "id": "batt_0198e965c4f47ec991f34f2d4497903a",
+        "inserted_at": null,
+        "type": "cloudnative_pg_barman",
+        "updated_at": null
+      }
+    ],
+    "captured_at": null,
+    "ferret_services": [],
+    "install_status": null,
+    "ip_address_pools": [],
+    "knative_services": [],
+    "model_instances": [],
+    "notebooks": [],
+    "postgres_clusters": [
+      {
+        "backup_config": {
+          "type": "object_store"
+        },
+        "cpu_limits": 4000,
+        "cpu_requested": 4000,
+        "database": {
+          "name": "control",
+          "owner": "battery-control-user"
+        },
+        "id": null,
+        "inserted_at": null,
+        "memory_limits": 8589934592,
+        "memory_requested": 8589934592,
+        "name": "controlserver",
+        "num_instances": 1,
+        "password_versions": [
+          {
+            "password": "H3NPB4FWUHIK4POAHXHFHXYD",
+            "username": "battery-control-user",
+            "version": 1
+          }
+        ],
+        "project_id": null,
+        "restore_from_backup": null,
+        "storage_class": null,
+        "storage_size": 68719476736,
+        "type": "internal",
+        "updated_at": null,
+        "users": [
+          {
+            "credential_namespaces": [
+              "battery-core"
+            ],
+            "position": null,
+            "roles": [
+              "createdb",
+              "login"
+            ],
+            "username": "battery-control-user"
+          }
+        ],
+        "virtual_size": "medium",
+        "virtual_storage_size_range_value": 470590976688
+      },
+      {
+        "backup_config": {
+          "type": "object_store"
+        },
+        "cpu_limits": 4000,
+        "cpu_requested": 4000,
+        "database": {
+          "name": "home-base",
+          "owner": "home-base"
+        },
+        "id": null,
+        "inserted_at": null,
+        "memory_limits": 8589934592,
+        "memory_requested": 8589934592,
+        "name": "home-base",
+        "num_instances": 1,
+        "password_versions": [
+          {
+            "password": "646CTTVI6CK6743AUJWQSQEP",
+            "username": "home-base",
+            "version": 1
+          }
+        ],
+        "project_id": null,
+        "restore_from_backup": null,
+        "storage_class": null,
+        "storage_size": 68719476736,
+        "type": "standard",
+        "updated_at": null,
+        "users": [
+          {
+            "credential_namespaces": [
+              "battery-traditional"
+            ],
+            "position": null,
+            "roles": [
+              "superuser",
+              "createdb",
+              "login"
+            ],
+            "username": "home-base"
+          }
+        ],
+        "virtual_size": "medium",
+        "virtual_storage_size_range_value": 470590976688
+      },
+      {
+        "backup_config": {
+          "type": "object_store"
+        },
+        "cpu_limits": 4000,
+        "cpu_requested": 4000,
+        "database": {
+          "name": "cla",
+          "owner": "cla"
+        },
+        "id": null,
+        "inserted_at": null,
+        "memory_limits": 8589934592,
+        "memory_requested": 8589934592,
+        "name": "cla",
+        "num_instances": 1,
+        "password_versions": [
+          {
+            "password": "2VYPZJNGA2GAJ6FATOLPLEL7",
+            "username": "cla",
+            "version": 1
+          }
+        ],
+        "project_id": null,
+        "restore_from_backup": null,
+        "storage_class": null,
+        "storage_size": 68719476736,
+        "type": "standard",
+        "updated_at": null,
+        "users": [
+          {
+            "credential_namespaces": [
+              "battery-traditional"
+            ],
+            "position": null,
+            "roles": [
+              "superuser",
+              "createdb",
+              "login"
+            ],
+            "username": "cla"
+          }
+        ],
+        "virtual_size": "medium",
+        "virtual_storage_size_range_value": 470590976688
+      }
+    ],
+    "projects": [],
+    "redis_instances": [],
+    "stable_versions_report": null,
+    "traditional_services": [
+      {
+        "additional_hosts": [
+          "home.batteriesincl.com"
+        ],
+        "containers": [
+          {
+            "args": null,
+            "command": null,
+            "env_values": [],
+            "image": "ghcr.io/batteries-included/home-base:latest",
+            "mounts": [],
+            "name": "home-base",
+            "path": null
+          }
+        ],
+        "cpu_limits": 4000,
+        "cpu_requested": 4000,
+        "env_values": [
+          {
+            "name": "BATTERY_TEAM_IDS",
+            "source_key": null,
+            "source_name": null,
+            "source_optional": false,
+            "source_type": "value",
+            "value": "batt_0198e965c4d2742ca85e48f3e76d6c71"
+          },
+          {
+            "name": "SECRET_KEY_BASE",
+            "source_key": null,
+            "source_name": null,
+            "source_optional": false,
+            "source_type": "value",
+            "value": "HKVGVBEFQMTQXUZID6YYNJHV5SLEMHAIENPELWD4FB5F6XRTSZHKDEETUEJX452I"
+          },
+          {
+            "name": "HOME_JWK",
+            "source_key": "jwk",
+            "source_name": "home-base-jwk",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "POSTGRES_DB",
+            "source_key": null,
+            "source_name": null,
+            "source_optional": false,
+            "source_type": "value",
+            "value": "home-base"
+          },
+          {
+            "name": "POSTGRES_USER",
+            "source_key": "username",
+            "source_name": "cloudnative-pg.pg-home-base.home-base",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "POSTGRES_PASSWORD",
+            "source_key": "password",
+            "source_name": "cloudnative-pg.pg-home-base.home-base",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "POSTGRES_HOST",
+            "source_key": "hostname",
+            "source_name": "cloudnative-pg.pg-home-base.home-base",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          }
+        ],
+        "id": null,
+        "init_containers": [
+          {
+            "args": [
+              "home_base_init"
+            ],
+            "command": [
+              "/app/bin/start"
+            ],
+            "env_values": [],
+            "image": "ghcr.io/batteries-included/home-base:latest",
+            "mounts": [],
+            "name": "init",
+            "path": "/app/bin/start"
+          }
+        ],
+        "inserted_at": null,
+        "kube_deployment_type": "deployment",
+        "kube_internal": false,
+        "memory_limits": 8589934592,
+        "memory_requested": 8589934592,
+        "mounts": [
+          {
+            "mount_path": "/etc/init-config/",
+            "read_only": true,
+            "volume_name": "home-base-seed-data"
+          }
+        ],
+        "name": "home-base",
+        "num_instances": 1,
+        "ports": [
+          {
+            "name": "home-base",
+            "number": 4000,
+            "protocol": "http2"
+          }
+        ],
+        "project_id": null,
+        "updated_at": null,
+        "virtual_size": "medium",
+        "volumes": [
+          {
+            "default_mode": null,
+            "medium": "default",
+            "name": "home-base-seed-data",
+            "optional": true,
+            "size_limit": null,
+            "source_name": "home-base-seed-data",
+            "type": "config_map"
+          }
+        ]
+      },
+      {
+        "additional_hosts": [
+          "cla.batteriesincl.com"
+        ],
+        "containers": [
+          {
+            "args": null,
+            "command": null,
+            "env_values": [],
+            "image": "ghcr.io/batteries-included/cla-assistant:v2.13.1",
+            "mounts": [],
+            "name": "cla",
+            "path": null
+          }
+        ],
+        "cpu_limits": 4000,
+        "cpu_requested": 4000,
+        "env_values": [
+          {
+            "name": "PROTOCOL",
+            "source_key": null,
+            "source_name": null,
+            "source_optional": false,
+            "source_type": "value",
+            "value": "https"
+          },
+          {
+            "name": "HOST",
+            "source_key": null,
+            "source_name": null,
+            "source_optional": false,
+            "source_type": "value",
+            "value": "cla.batteriesincl.com"
+          },
+          {
+            "name": "NODE_ENV",
+            "source_key": null,
+            "source_name": null,
+            "source_optional": false,
+            "source_type": "value",
+            "value": "prod"
+          },
+          {
+            "name": "MONGODB",
+            "source_key": "uri",
+            "source_name": "ferret.cla.cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_TOKEN",
+            "source_key": "GITHUB_TOKEN",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_SECRET",
+            "source_key": "GITHUB_SECRET",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_CLIENT",
+            "source_key": "GITHUB_CLIENT",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_APP_SECRET",
+            "source_key": "GITHUB_APP_SECRET",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_APP_PRIVATE_KEY",
+            "source_key": "GITHUB_APP_PRIVATE_KEY",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_APP_NAME",
+            "source_key": "GITHUB_APP_NAME",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_APP_ID",
+            "source_key": "GITHUB_APP_ID",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_APP_CLIENT",
+            "source_key": "GITHUB_APP_CLIENT",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_APP_SECRET",
+            "source_key": "GITHUB_APP_SECRET",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          },
+          {
+            "name": "GITHUB_ADMIN_USERS",
+            "source_key": "GITHUB_ADMIN_USERS",
+            "source_name": "cla",
+            "source_optional": false,
+            "source_type": "secret",
+            "value": null
+          }
+        ],
+        "id": null,
+        "init_containers": [],
+        "inserted_at": null,
+        "kube_deployment_type": "deployment",
+        "kube_internal": false,
+        "memory_limits": 8589934592,
+        "memory_requested": 8589934592,
+        "mounts": [],
+        "name": "cla",
+        "num_instances": 1,
+        "ports": [
+          {
+            "name": "cla",
+            "number": 5000,
+            "protocol": "http2"
+          }
+        ],
+        "project_id": null,
+        "updated_at": null,
+        "virtual_size": "medium",
+        "volumes": []
+      }
+    ]
   }
 }
