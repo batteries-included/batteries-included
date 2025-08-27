@@ -8,9 +8,32 @@ draft: false
 
 import ScriptDisplay from '~/components/ui/ScriptDisplay.astro';
 
+## Pre-Configured Local Installation
+
+For fast local development or testing, you can use our pre-configured
+installations. This script sets up a local Kubernetes cluster using Kind,
+installs all necessary components, and configures everything for you. To use
+that pre-configured local installation, simply run the following command in your
+terminal:
+
+<div align="center" class="mb-8">
+  <ScriptDisplay
+    src="https://home.batteriesincl.com/api/v1/scripts/start_local"
+    class="max-w-5xl mx-auto"
+  />
+</div>
+
+From then on the `bi` binary will be located at `~/.local/bin/bi` so starting a
+new Kubernetes cluster is just one command away:
+
+```bash
+bi start-local
+```
+
 ## Design Your Installation
 
-Start by logging in or creating an account at
+If instead you want to design your installation, choosing what software, and
+where to run it, then start by logging in or creating an account at
 [https://home.batteriesincl.com/login](https://home.batteriesincl.com/login).
 Once logged in, click `Create an installation` and provide some basic details
 for your environment.
@@ -32,7 +55,7 @@ Then, choose your preferred deployment type:
   />
 </div>
 
-## Run Installation
+### Run Installation
 
 After configuring your installation details, you'll receive a simple one-line
 shell script. Just copy and run this command - we'll take care of all the
@@ -45,22 +68,6 @@ configuration, security, and integration automatically!
     alt="Screenshot of an example installation script"
   />
 </div>
-
-## Pre-Configured Local Installation
-
-For faster local testing and development, you can use our pre-configured
-installation script. This script sets up a local Kubernetes cluster using Kind,
-installs all necessary components, and configures everything for you. To use
-that pre-configured local installation, simply run the following command in your
-terminal:
-
-<div align="center" class="mb-8">
-  <ScriptDisplay
-    src="https://home.batteriesincl.com/api/v1/scripts/start_local"
-    class="max-w-5xl mx-auto"
-  />
-</div>
-
 ## Post-Installation
 
 That's it! Once installation completes, the control server becomes your central
