@@ -147,7 +147,7 @@ do_fmt() {
         format_npm_code "keycloak-theme"
         format_prettier_code
         ;;
-    yaml | md | ts)
+    yaml | yml | md | ts)
         log "Formatting using ${YELLOW}prettier${NOFORMAT}"
         format_prettier_code
         ;;

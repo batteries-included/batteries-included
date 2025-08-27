@@ -101,7 +101,7 @@ do_build_image() {
         fi
         local upstream_tag=${2}
         build_args+=(
-            -t "ghcr.io/batteries-included/keycloak:${upstream_tag}-${version_hash}"
+            -t "${REGISTRY}/keycloak:${upstream_tag}-${version_hash}"
             -f "${ROOT_DIR}/docker/keycloak.dockerfile"
             --build-arg "KC_VERSION=${upstream_tag}"
         )
@@ -111,8 +111,24 @@ do_build_image() {
             build_args+=(--build-arg "JAR_NAME=keycloak-theme-for-kc-all-other-versions.jar")
         fi
         ;;
+    postgres | postgresql)
+        if [[ $# -lt 2 ]]; then
+            die "Missing upstream tag for postgres image. Usage: ${BASH_SOURCE[0]} build-image postgres <upstream_tag>"
+        fi
+        local upstream_tag=${2}
+        local major
+        major=$(echo "$upstream_tag" | cut -d'.' -f 1)
+
+        build_args+=(
+            -t "${REGISTRY}/postgresql:${upstream_tag}"
+            -f "${ROOT_DIR}/docker/postgres.dockerfile"
+            --build-arg "PG_VERSION=${upstream_tag}"
+            --build-arg "PG_MAJOR=${major}"
+        )
+        ;;
+
     *)
-        die "Unknown image name: ${image_name} not in control-server, home-base, kube-bootstrap, pastebin, keycloak"
+        die "Unknown image name: ${image_name} not in control-server, home-base, kube-bootstrap, pastebin, keycloak, postgres{,ql}"
         ;;
     esac
 
@@ -204,6 +220,10 @@ do_trigger_missing_upstream() {
     keycloak)
         upstream_image=keycloak_upstream
         ;;
+    postgres | postgresql)
+        target=postgresql
+        upstream_image=postgresql_upstream
+        ;;
     *)
         die "Unknown upstream target: ${target}"
         ;;
@@ -254,6 +274,9 @@ do_push_image() {
         local version_tag
         version_tag=$(version_tag)
         image_name="${REGISTRY}/keycloak:${upstream_tag}-${version_tag}"
+        ;;
+    postgres | postgresql)
+        image_name="${REGISTRY}/postgresql:${upstream_tag}"
         ;;
     *)
         die "Unknown upstream target: ${RED}${target}${NOFORMAT}"

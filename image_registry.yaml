@@ -654,46 +654,17 @@ ollama:
     - 0.3.9
   tag_regex: ^\d+\.\d+\.\d+$
 postgresql:
-  name: ghcr.io/cloudnative-pg/postgresql
-  default_tag: 17.5-22
+  name: ghcr.io/batteries-included/postgresql
+  default_tag: '17.6'
   tags:
-    - 17.5-22
-    - 17.5-21
-    - 17.5-20
-    - 17.5-19
-    - 17.5-18
-    - 17.5-17
-    - 17.5-16
-    - 17.5-15
-    - 17.5-14
-    - 17.5-13
-    - 17.5-12
-    - 17.5-11
-    - 17.5-10
-    - 17.5-9
-    - 17.5-8
-    - 17.5-7
-    - 17.5-6
-    - 17.5-5
-    - 17.5-4
-    - 17.5-3
-    - 17.5-1
-    - '17.5'
-    - 17.4-14
-    - 17.4-13
-    - 17.4-12
-    - 17.4-11
-    - 17.4-10
-    - 17.4-9
-    - 17.4-8
-    - 17.4-7
-    - 17.4-6
-    - 17.4-5
-    - 17.4-3
-    - 17.4-2
-    - 17.4-1
-    - '17.4'
-  tag_regex: ^\d+\.\d+(?:-\d+)?$
+    - '17.6'
+  tag_regex: ^\d+\.\d+$
+postgresql_upstream:
+  name: docker.io/library/postgresql
+  default_tag: '17.6'
+  tags:
+    - '17.6'
+  tag_regex: ^\d+\.\d+$
 promtail:
   name: docker.io/grafana/promtail
   default_tag: 3.5.3
