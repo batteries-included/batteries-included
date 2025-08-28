@@ -660,7 +660,7 @@ postgresql:
     - '17.6'
   tag_regex: ^\d+\.\d+$
 postgresql_upstream:
-  name: docker.io/library/postgresql
+  name: docker.io/library/postgres
   default_tag: '17.6'
   tags:
     - '17.6'
