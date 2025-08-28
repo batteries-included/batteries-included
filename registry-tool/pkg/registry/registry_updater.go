@@ -51,7 +51,7 @@ func (u *RegistryUpdater) Write(path string) error {
 		slog.Info("no changes to write")
 		// Return an error when there's no changes to
 		// show that the pr process should be skipped.
-		return fmt.Errorf("no changes to write")
+		return fmt.Errorf("no changes to write: %w", ErrNoChanges)
 	}
 
 	if err := u.registry.Write(path); err != nil {
