@@ -27,7 +27,7 @@ const (
 	// But should match the minor version of k8s that we're running in AWS
 	//
 	// Kind only does sha256 in order to attach kind binary version to the OCI image version
-	// This means that when we update kind dependency we should get the corresponding image 
+	// This means that when we update kind dependency we should get the corresponding image
 	// digest from the last kind release
 	//
 	// https://github.com/kubernetes-sigs/kind/releases/latest
