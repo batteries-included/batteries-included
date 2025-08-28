@@ -96,13 +96,13 @@ do_create_pr() {
     local update_exit_code=0
     log "Running registry updates"
     update_exit_code=$(
-        go run registry-tool update-tags --delay 500ms --jitter 250ms ../image_registry.yaml
+        go run registry-tool update-tags ${TRACE:+-v=debug} --delay 500ms --jitter 250ms ../image_registry.yaml
         echo $?
     )
     local advance_exit_code=0
     log "Running registry advances"
     advance_exit_code=$(
-        go run registry-tool advance-defaults ../image_registry.yaml
+        go run registry-tool advance-defaults ${TRACE:+-v=debug} ../image_registry.yaml
         echo $?
     )
 
@@ -158,7 +158,7 @@ do_create_pr() {
         --author "bi-registry-bot <elliott+registrybot@batteriesincl.com>"
 
     # If we are on Github actions then close all pull requests with label automation and registry
-    if [[ -n "${GITHUB_JOB:-}" ]]; then
+    if in_github_action; then
         log "Running in Github Actions, closing old pull requests with labels automation and registry"
         gh pr list --label "automation" --label "registry" --json number --jq '.[].number' | while read -r pr; do
             log "Closing pull request ${BLUE}${pr}${NOFORMAT}"
