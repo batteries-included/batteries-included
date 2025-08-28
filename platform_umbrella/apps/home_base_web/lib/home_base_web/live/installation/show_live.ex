@@ -79,12 +79,7 @@ defmodule HomeBaseWeb.InstallationShowLive do
     end
   end
 
-  def provider_label(provider) do
-    CommonCore.Installs.Options.providers()
-    |> Enum.find(&(elem(&1, 1) == provider))
-    |> elem(0)
-    |> Atom.to_string()
-  end
+  def provider_label(provider), do: CommonCore.ClusterType.label(provider)
 
   defp control_server_url(%{host_report: nil}), do: ""
 

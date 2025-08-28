@@ -5,6 +5,7 @@ defmodule CommonCore.Factory do
   """
   use ExMachina
 
+  alias CommonCore.ClusterType
   alias CommonCore.Ecto.BatteryUUID
   alias CommonCore.FerretDB.FerretService
   alias CommonCore.Installs.Options
@@ -58,7 +59,7 @@ defmodule CommonCore.Factory do
     usage = Map.get_lazy(attrs, :usage, fn -> sequence(:usage, Keyword.values(Options.usages())) end)
 
     kube_provider =
-      Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, Keyword.values(Options.providers())) end)
+      Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, Map.keys(ClusterType.__enum_map__())) end)
 
     kube_provider_config = Map.get_lazy(attrs, :kube_provider_config, fn -> %{} end)
 
