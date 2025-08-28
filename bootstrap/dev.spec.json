@@ -5,7 +5,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "EMN7L5C5OO5W36P3ZJBP7EUSWXBLSBZSBU7DCOSG2OI6QXOTHK7Q===="
+          "battery/hash": "QXG3EYPNIDHXDZ5DH3VWWGQKZT5XB3JD45YA4ND7VAJFHS3JEIMQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -15,7 +15,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_0198e965c4ef75f2afc536e39d238419",
+          "battery/owner": "batt_0198f0f1474b78e99453309bf4a8fc18",
           "istio-injection": "disabled",
           "istio.io/dataplane-mode": "ambient",
           "version": "latest"
@@ -36,7 +36,7 @@
           "type": "gateway_api"
         },
         "group": "net_sec",
-        "id": "batt_0198e965c4ef7d4ebe3ba1c95c255cf5",
+        "id": "batt_0198f0f1474b7bc5b5e2d7351ead8bdd",
         "inserted_at": null,
         "type": "gateway_api",
         "updated_at": null
@@ -57,7 +57,7 @@
           "ztunnel_image_tag_override": null
         },
         "group": "net_sec",
-        "id": "batt_0198e965c4ef772581080397735cd061",
+        "id": "batt_0198f0f1474b726da7ff2a996bb40061",
         "inserted_at": null,
         "type": "istio",
         "updated_at": null
@@ -70,7 +70,7 @@
           "type": "istio_gateway"
         },
         "group": "net_sec",
-        "id": "batt_0198e965c4ef707fa5b30e7376b015cd",
+        "id": "batt_0198f0f1474b7e6496cbc25be889d11b",
         "inserted_at": null,
         "type": "istio_gateway",
         "updated_at": null
@@ -83,15 +83,15 @@
           "cluster_type": "kind",
           "control_jwk": {
             "crv": "P-256",
-            "d": "z2WtlUJpfWTqlPTwo5jD-J5n64ahkylFcMX1P05CU8s",
+            "d": "0mAEMS_cvnRNlOLiGMnoSjWRIY7TrPQUstx1bXR4yW8",
             "kty": "EC",
-            "x": "SzoRE4JhIHJp6ihjdy6e6KnWYHdxqaMxU9oYd4eV_EU",
-            "y": "6UxMDJ-0OHNEIAdAvR3ZgAjeFhYr8V-LtXRq7KxipcM"
+            "x": "OsxV7Gcd666TpBqNvVOYHhXrsKlitzoRbdRLDI3zM_c",
+            "y": "NjBadz60RGodsCA8-VJlgbtaFAKsWm7BhB1xC6xeitA"
           },
           "core_namespace": "battery-core",
           "data_namespace": "battery-data",
           "default_size": "tiny",
-          "install_id": "batt_0198e965c4d6748c87e44b74d23efc0a",
+          "install_id": "batt_0198f0f1473876fe9c2c1dcbdf346eb4",
           "type": "battery_core",
           "upgrade_days_of_week": [
             true,
@@ -113,7 +113,7 @@
           ]
         },
         "group": "magic",
-        "id": "batt_0198e965c4ef75f2afc536e39d238419",
+        "id": "batt_0198f0f1474b78e99453309bf4a8fc18",
         "inserted_at": null,
         "type": "battery_core",
         "updated_at": null
@@ -133,7 +133,7 @@
           "type": "metallb"
         },
         "group": "net_sec",
-        "id": "batt_0198e965c4ef787ea05ad622d3117415",
+        "id": "batt_0198f0f1474b7226b9a5b008580aa415",
         "inserted_at": null,
         "type": "metallb",
         "updated_at": null
@@ -142,7 +142,7 @@
         "config": {
           "bucket_arn": null,
           "bucket_name": null,
-          "default_postgres_image": "ghcr.io/cloudnative-pg/postgresql:17.5-22",
+          "default_postgres_image": "ghcr.io/batteries-included/postgresql:17.6",
           "default_postgres_image_name_override": null,
           "default_postgres_image_tag_override": null,
           "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0",
@@ -152,7 +152,7 @@
           "type": "cloudnative_pg"
         },
         "group": "data",
-        "id": "batt_0198e965c4f07e68b6c83dfcb375cb16",
+        "id": "batt_0198f0f1474b7e48a9a289d7248adac5",
         "inserted_at": null,
         "type": "cloudnative_pg",
         "updated_at": null
@@ -164,7 +164,7 @@
           "type": "stale_resource_cleaner"
         },
         "group": "magic",
-        "id": "batt_0198e965c4f07ad4a5259f5be6fd75b8",
+        "id": "batt_0198f0f1474b7ddf9e0aea1d1109dabd",
         "inserted_at": null,
         "type": "stale_resource_cleaner",
         "updated_at": null
@@ -194,7 +194,7 @@
         "num_instances": 1,
         "password_versions": [
           {
-            "password": "SVB6S5KDOJQDCSBKRLC5ZUTG",
+            "password": "WVVXDAXXIQAN2HNNJU4UQP6X",
             "username": "battery-control-user",
             "version": 2
           },

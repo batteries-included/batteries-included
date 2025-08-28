@@ -388,8 +388,9 @@ kiali:
   tag_regex: ^v\d+\.\d+\.\d+$
 kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
-  default_tag: 1.30.9
+  default_tag: 1.30.10
   tags:
+    - 1.30.10
     - 1.30.9
     - 1.30.8
     - 1.30.7
