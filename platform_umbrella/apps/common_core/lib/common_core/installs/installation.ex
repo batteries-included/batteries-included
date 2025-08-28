@@ -11,6 +11,7 @@ defmodule CommonCore.Installation do
   import Ecto.SoftDelete.Schema
 
   alias CommonCore.Accounts.User
+  alias CommonCore.ClusterType
   alias CommonCore.Installs.Options
   alias CommonCore.Teams.Team
 
@@ -25,7 +26,7 @@ defmodule CommonCore.Installation do
     # cluster is hosted.
     field :usage, Ecto.Enum, values: Keyword.values(Options.usages()), default: :development
 
-    field :kube_provider, Ecto.Enum, values: Keyword.values(Options.providers())
+    field :kube_provider, ClusterType
     field :kube_provider_config, :map, default: %{}
 
     # Default size for the installation

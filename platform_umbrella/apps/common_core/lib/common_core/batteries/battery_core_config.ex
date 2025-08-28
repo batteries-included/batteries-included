@@ -3,6 +3,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
 
   use CommonCore, {:embedded_schema, no_encode: [:secret_key]}
 
+  alias CommonCore.ClusterType
   alias CommonCore.Defaults
   alias CommonCore.Ecto.Schema
   alias CommonCore.Installs.Options
@@ -18,7 +19,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
     field :ai_namespace, :string, default: Defaults.Namespaces.ai()
 
     secret_field :secret_key
-    field :cluster_type, Ecto.Enum, values: Keyword.values(Options.providers()), default: :kind
+    field :cluster_type, ClusterType, default: :kind
     field :default_size, Ecto.Enum, values: Options.sizes()
     field :cluster_name, :string
 
