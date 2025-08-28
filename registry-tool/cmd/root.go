@@ -4,11 +4,14 @@ Copyright © 2025 Elliott Clark
 package cmd
 
 import (
+	"errors"
 	"os"
 
-	"github.com/spf13/cobra"
 	"log/slog"
 	"registry-tool/pkg/log"
+	"registry-tool/pkg/registry"
+
+	"github.com/spf13/cobra"
 )
 
 var verbosity string
@@ -28,8 +31,13 @@ list of images and information about them.`,
 
 func Execute() {
 	err := RootCmd.Execute()
-	if err != nil {
+	switch {
+	case err == nil:
+		return
+	case errors.Is(err, registry.ErrNoChanges):
 		os.Exit(1)
+	default:
+		os.Exit(2)
 	}
 }
 
