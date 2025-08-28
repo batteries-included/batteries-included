@@ -25,7 +25,13 @@ import (
 const (
 	// This ideally will be a pre-built image for the kind release we're using
 	// But should match the minor version of k8s that we're running in AWS
-	KindImage         = "kindest/node:v1.33.2"
+	//
+	// Kind only does sha256 in order to attach kind binary version to the OCI image version
+	// This means that when we update kind dependency we should get the corresponding image 
+	// digest from the last kind release
+	//
+	// https://github.com/kubernetes-sigs/kind/releases/latest
+	KindImage         = "kindest/node:v1.33.4@sha256:25a6018e48dfcaee478f4a59af81157a437f15e6e140bf103f85a2e7cd0cbbf2"
 	NoisySocketsImage = "ghcr.io/noisysockets/nsh:v0.9.3"
 )
 
