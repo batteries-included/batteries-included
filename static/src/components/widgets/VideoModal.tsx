@@ -16,7 +16,7 @@ export default function VideoModal({ url, children }: VideoModal) {
         <Dialog.Overlay className="data-[state=open]:animate-fade data-[state=open]:animate-duration-300 fixed inset-0 z-50 bg-black/60" />
         <Dialog.Content className="data-[state=open]:animate-fade data-[state=open]:animate-duration-300 fixed left-[50%] top-[50%] z-50 h-[85vh] w-[70vw] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] focus:outline-none">
           <div className="flex items-center justify-between">
-            <img src="/images/logo.svg" alt="logo" />
+            <img src="/images/logo.svg" alt="logo" className="h-8 w-auto" />
             <Dialog.Close asChild>
               <button className="focus:outline-none" aria-label="Close">
                 <Cross2Icon className="size-8" />
