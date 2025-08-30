@@ -5,15 +5,11 @@ defmodule CommonCore.Batteries.AzureKarpenterConfig do
 
   @read_only_fields ~w(subscription_id resource_group_name tenant_id)a
 
-  # Default Azure instance types for Karpenter node provisioning
-  # These instance types were selected for:
-  # - Standard_D2s_v3: Entry-level general purpose workloads (2 vCPUs, 8 GiB RAM)
-  # - Standard_D4s_v3: Medium workloads with balanced compute/memory (4 vCPUs, 16 GiB RAM)
-  # - Standard_D8s_v3: Larger workloads requiring more resources (8 vCPUs, 32 GiB RAM)
-  # All are from the Dsv3 series which offers:
-  # - Premium SSD support for better I/O performance
-  # - Cost-effective general purpose compute
-  # - Good balance of CPU, memory, and temporary storage
+  # Default instance types for Azure node pools
+  # D2s_v3: 2 vCPUs, 8 GB RAM - small workloads
+  # D4s_v3: 4 vCPUs, 16 GB RAM - medium workloads  
+  # D8s_v3: 8 vCPUs, 32 GB RAM - larger workloads
+  # Dsv3 series = SSD storage + good price/performance
   @default_instance_types ["Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3"]
 
   batt_polymorphic_schema type: :azure_karpenter do
