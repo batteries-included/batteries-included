@@ -58,7 +58,7 @@ defmodule CommonCore.FerretDB.FerretService do
     belongs_to :postgres_cluster, CommonCore.Postgres.Cluster
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
-    field :virtual_size, :string, virtual: true
+    field :virtual_size, CommonCore.Size, virtual: true
 
     belongs_to :project, Project
 
@@ -69,7 +69,7 @@ defmodule CommonCore.FerretDB.FerretService do
 
   def preset_by_name(name), do: Enum.find(@presets, fn p -> p.name == name end)
 
-  def preset_options_for_select, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
+  def preset_options, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
 
   @doc false
   def changeset(ferret_service, attrs, opts \\ []) do

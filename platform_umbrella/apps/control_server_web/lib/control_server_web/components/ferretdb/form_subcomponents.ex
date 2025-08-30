@@ -28,7 +28,7 @@ defmodule ControlServerWeb.FerretDBFormSubcomponents do
           type="select"
           label="Size"
           placeholder="Choose a size"
-          options={FerretService.preset_options_for_select()}
+          options={FerretService.preset_options()}
         />
       </.grid>
 

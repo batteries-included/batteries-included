@@ -210,12 +210,12 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         <.input
           type="select"
           field={@form[:virtual_size]}
-          options={Cluster.preset_options_for_select()}
+          options={Cluster.preset_options()}
         />
       </.field>
 
       <.data_list
-        :if={@form[:virtual_size].value != "custom"}
+        :if={to_string(@form[:virtual_size].value) != "custom"}
         variant="horizontal-bolded"
         class="lg:col-span-2"
         data={[
@@ -225,7 +225,7 @@ defmodule ControlServerWeb.PostgresFormSubcomponents do
         ]}
       />
 
-      <%= if @form[:virtual_size].value == "custom" do %>
+      <%= if to_string(@form[:virtual_size].value) == "custom" do %>
         <.h3 class="lg:col-span-2">Storage</.h3>
 
         <.fieldset responsive>

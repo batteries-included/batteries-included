@@ -12,8 +12,9 @@ defmodule CommonCore.Installation do
 
   alias CommonCore.Accounts.User
   alias CommonCore.ClusterType
-  alias CommonCore.Installs.Options
+  alias CommonCore.Size
   alias CommonCore.Teams.Team
+  alias CommonCore.Usage
 
   @required_fields ~w(usage kube_provider slug)a
   @dialyzer {:nowarn_function, decrypt_message!: 2}
@@ -24,13 +25,13 @@ defmodule CommonCore.Installation do
     # This will be the main switch for specialization
     # of the installation after choosing the where the kubernetes
     # cluster is hosted.
-    field :usage, Ecto.Enum, values: Keyword.values(Options.usages()), default: :development
+    field :usage, Usage, default: :development
 
     field :kube_provider, ClusterType
     field :kube_provider_config, :map, default: %{}
 
     # Default size for the installation
-    field :default_size, Ecto.Enum, values: Options.sizes(), default: :medium
+    field :default_size, Size, default: :medium
 
     field :control_jwk, :map, redact: true
 

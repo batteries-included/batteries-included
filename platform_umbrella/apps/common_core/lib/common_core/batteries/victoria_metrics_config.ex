@@ -73,7 +73,7 @@ defmodule CommonCore.Batteries.VictoriaMetricsConfig do
       default: Enum.find_value(@presets, fn %{name: name, vmstorage_volume_size: size} -> if name == "tiny", do: size end)
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
-    field :virtual_size, :string, virtual: true
+    field :virtual_size, CommonCore.Size, virtual: true
 
     field :virtual_vmselect_volume_size_range, :integer, virtual: true
     field :virtual_vmstorage_volume_size_range, :integer, virtual: true
@@ -110,7 +110,7 @@ defmodule CommonCore.Batteries.VictoriaMetricsConfig do
     |> load()
   end
 
-  def preset_options_for_select do
+  def preset_options do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
   end
 
