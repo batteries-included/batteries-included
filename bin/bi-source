@@ -20,6 +20,7 @@ PRETTIER_GLOBS+=(
     '../platform_umbrella/apps/home_base_web/priv/markdown/*.md'
     '../static/src/content/**/*.md'
     '../static/src/content/**/*.mdx'
+    '../presentations/**/*.md'
 )
 
 check_format_bootstrap_json() {
@@ -161,6 +162,7 @@ do_fmt() {
         log "Formatting ${YELLOW}node${NOFORMAT}"
         format_npm_code "static"
         format_npm_code "keycloak-theme"
+        format_npm_code "presentations/seed"
         format_prettier_code
         ;;
     yaml | yml | md | ts)
@@ -184,6 +186,7 @@ do_fmt() {
         format_npm_code "static"
         format_npm_code "pastebin-go/assets"
         format_npm_code "keycloak-theme"
+        format_npm_code "presentations/seed"
         format_prettier_code
         format_sh_code
         format_bootstrap_json
@@ -216,6 +219,7 @@ do_check_fmt() {
         log "Checking format ${YELLOW}node${NOFORMAT}"
         check_format_npm_code "static"
         check_format_npm_code "keycloak-theme"
+        check_format_npm_code "presentations/seed"
         check_format_prettier_code
         ;;
     yaml | md | ts)
@@ -239,6 +243,7 @@ do_check_fmt() {
         check_format_npm_code "static"
         check_format_npm_code "pastebin-go/assets"
         check_format_npm_code "keycloak-theme"
+        check_format_npm_code "presentations/seed"
         check_format_prettier_code
         check_format_sh_code
         ;;

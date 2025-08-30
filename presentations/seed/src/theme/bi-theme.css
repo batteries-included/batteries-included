@@ -1,0 +1,178 @@
+/* Batteries Included Reveal.js theme (CSS-only) */
+/* Uses brand variables and fonts similar to static site */
+
+/* Font faces: use system fallback if fontsource not present */
+@font-face {
+  font-family: 'Inter var';
+  src: local('Inter Variable'), local('Inter');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono Variable'), local('JetBrains Mono');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Brand colors borrowed from keycloak theme variables */
+  --bi-primary-light: #ffa8cb;
+  --bi-primary: #fc408b;
+  --bi-primary-dark: #de2e74;
+
+  --bi-secondary-light: #defaf8;
+  --bi-secondary: #97efe9;
+  --bi-secondary-dark: #36e0d4;
+
+  --bi-gray-0: #fafafa;
+  --bi-gray-2: #dadada;
+  --bi-gray-4: #999a9f;
+  --bi-gray-6: #7f7f7f;
+  --bi-gray-8: #545155;
+  --bi-gray-9: #38383a;
+  --bi-gray-10: #1c1c1e;
+
+  /* Reveal CSS variables */
+  --r-background-color: var(--bi-gray-10);
+  --r-main-font:
+    'Inter var', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --r-main-font-size: 36px;
+  --r-main-color: var(--bi-gray-0);
+  --r-heading-font:
+    'Inter var', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial;
+  --r-heading-color: #fff;
+  --r-heading-line-height: 1.1;
+  --r-heading-letter-spacing: -0.02em;
+  --r-heading-text-transform: none;
+  --r-heading-text-shadow: none;
+  --r-heading-font-weight: 700;
+  --r-link-color: var(--bi-primary);
+  --r-link-color-hover: var(--bi-primary-light);
+  --r-selection-background-color: var(--bi-primary);
+  --r-selection-color: #fff;
+}
+
+.reveal .slides {
+  text-rendering: optimizeLegibility;
+  color: var(--bi-gray-8);
+  font-family: var(--r-main-font);
+  line-height: 1.3;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  line-height: var(--r-heading-line-height);
+  letter-spacing: var(--r-heading-letter-spacing);
+}
+
+/* Title slide style */
+.reveal section:first-child h2 {
+  font-size: 2.2em;
+}
+
+/* Accent underline on headings */
+.reveal h2::before,
+.reveal h3::before {
+  content: '';
+  display: block;
+  width: 72px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--bi-primary), var(--bi-secondary));
+  margin: 10px 0 0 0;
+  border-radius: 999px;
+}
+
+/* Cards */
+.reveal .bi-card {
+  background: #1f1f22cc;
+  border: 1px solid #2a2a2e;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+/* Bullets */
+.reveal ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.reveal ul li {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.reveal ul li::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 2px;
+  background: var(--bi-primary-light);
+}
+
+/* Code */
+.reveal pre code,
+.reveal code {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+
+/* Links */
+.reveal a {
+  text-decoration: none;
+}
+
+.reveal a:visited {
+  color: inherit;
+}
+
+.reveal a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--bi-primary);
+}
+
+/* Progress bar in accent */
+.reveal .progress span {
+  background: linear-gradient(90deg, var(--bi-secondary), var(--bi-primary));
+}
+
+/* Controls color */
+.reveal .controls .navigate-left,
+.reveal .controls .navigate-right,
+.reveal .controls .navigate-up,
+.reveal .controls .navigate-down {
+  color: var(--bi-secondary);
+}
+
+/* Controls Slide number */
+body .reveal .slide-number {
+  color: var(--bi-gray-8);
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: auto;
+
+  background-color: transparent;
+  font-family: var(--r-main-font);
+}
+
+/* Footer helper */
+.reveal .bi-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  font-size: 0.45em;
+  color: #c9c9ce;
+}
