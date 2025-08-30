@@ -45,6 +45,8 @@ func runGetToken(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
+	azureCmd.AddCommand(NewGetTokenCmd())
+	
 	// Set environment variables for Azure authentication if not already set
 	if os.Getenv("AZURE_CLIENT_ID") == "" {
 		// Try to use managed identity or Azure CLI credentials

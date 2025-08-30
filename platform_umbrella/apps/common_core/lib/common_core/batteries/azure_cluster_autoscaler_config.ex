@@ -12,8 +12,12 @@ defmodule CommonCore.Batteries.AzureClusterAutoscalerConfig do
     field :tenant_id, :string
     field :node_resource_group, :string
     field :cluster_name, :string
-    defaultable_field :scale_down_delay_after_add, :string, default: "10m"
-    defaultable_field :scale_down_unneeded_time, :string, default: "10m"
-    defaultable_field :max_node_provision_time, :string, default: "15m"
+    defaultable_field :scale_down_delay_after_add, :integer, default: 600  # seconds (10 minutes)
+    defaultable_field :scale_down_unneeded_time, :integer, default: 600    # seconds (10 minutes)
+    defaultable_field :max_node_provision_time, :integer, default: 900     # seconds (15 minutes)
+    defaultable_field :cpu_limit, :string, default: "100m"
+    defaultable_field :memory_limit, :string, default: "300Mi"
+    defaultable_field :cpu_request, :string, default: "100m"
+    defaultable_field :memory_request, :string, default: "300Mi"
   end
 end

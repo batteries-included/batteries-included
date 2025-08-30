@@ -80,7 +80,7 @@ defmodule CommonCore.Resources.AzureLoadBalancerController do
 
   resource(:deployment_azure_load_balancer_controller, battery, state) do
     namespace = base_namespace(state)
-    cluster_name = battery.config.cluster_name || Core.cluster_name(state)
+    cluster_name = battery.config.cluster_name
 
     template =
       %{}

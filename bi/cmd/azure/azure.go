@@ -14,6 +14,4 @@ var azureCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(azureCmd)
-	azureCmd.AddCommand(NewGetTokenCmd())
-	azureCmd.AddCommand(NewOutputsCmd())
 }

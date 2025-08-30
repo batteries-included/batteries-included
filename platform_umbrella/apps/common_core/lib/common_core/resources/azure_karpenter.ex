@@ -324,10 +324,10 @@ defmodule CommonCore.Resources.AzureKarpenter do
 
     spec = %{
       "imageFamily" => "Ubuntu2204",
-      "imageVersion" => "latest"
+      "imageVersion" => "202410.01.0"  # Pin to specific version for stability
     }
 
-    :aks_node_class
+    :karpenter_aksnode_class
     |> B.build_resource()
     |> B.name("default")
     |> B.namespace(namespace)
@@ -369,7 +369,7 @@ defmodule CommonCore.Resources.AzureKarpenter do
       }
     }
 
-    :node_pool
+    :karpenter_node_pool
     |> B.build_resource()
     |> B.name("default")
     |> B.namespace(namespace)

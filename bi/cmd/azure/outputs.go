@@ -61,3 +61,7 @@ func getEnvOrDefault(key, defaultValue string) string {
 	}
 	return defaultValue
 }
+
+func init() {
+	azureCmd.AddCommand(NewOutputsCmd())
+}

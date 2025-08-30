@@ -107,7 +107,7 @@ defmodule CommonCore.Resources.AzureClusterAutoscaler do
 
   resource(:deployment_azure_cluster_autoscaler, battery, state) do
     namespace = base_namespace(state)
-    cluster_name = battery.config.cluster_name || Core.cluster_name(state)
+    cluster_name = battery.config.cluster_name
 
     template =
       %{}
@@ -127,9 +127,9 @@ defmodule CommonCore.Resources.AzureClusterAutoscaler do
               "--expander=random",
               "--node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/#{cluster_name}",
               "--balance-similar-node-groups",
-              "--scale-down-delay-after-add=#{battery.config.scale_down_delay_after_add}",
-              "--scale-down-unneeded-time=#{battery.config.scale_down_unneeded_time}",
-              "--max-node-provision-time=#{battery.config.max_node_provision_time}"
+              "--scale-down-delay-after-add=#{battery.config.scale_down_delay_after_add}s",
+              "--scale-down-unneeded-time=#{battery.config.scale_down_unneeded_time}s",
+              "--max-node-provision-time=#{battery.config.max_node_provision_time}s"
             ],
             "env" => [
               %{
@@ -158,8 +158,8 @@ defmodule CommonCore.Resources.AzureClusterAutoscaler do
               }
             ],
             "resources" => %{
-              "limits" => %{"cpu" => "100m", "memory" => "300Mi"},
-              "requests" => %{"cpu" => "100m", "memory" => "300Mi"}
+              "limits" => %{"cpu" => battery.config.cpu_limit, "memory" => battery.config.memory_limit},
+              "requests" => %{"cpu" => battery.config.cpu_request, "memory" => battery.config.memory_request}
             },
             "securityContext" => %{
               "allowPrivilegeEscalation" => false,
@@ -170,16 +170,19 @@ defmodule CommonCore.Resources.AzureClusterAutoscaler do
           }
         ]
       })
+      |> B.app_labels(@app_name)
+      |> B.add_owner(battery)
 
     :deployment
     |> B.build_resource()
     |> B.name(@app_name)
     |> B.namespace(namespace)
-    |> B.label("battery/app", @app_name)
+    |> B.app_labels(@app_name)
+    |> B.add_owner(battery)
     |> B.spec(%{
       "replicas" => 1,
       "selector" => %{"matchLabels" => %{"app" => @app_name}},
-      "template" => template |> B.label("app", @app_name)
+      "template" => template
     })
   end
 end
