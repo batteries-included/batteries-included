@@ -41,7 +41,7 @@ defmodule CommonCore.Projects.Project do
     |> no_assoc_constraint(:model_instances, name: :model_instances_project_id_fkey)
   end
 
-  def type_options_for_select do
+  def type_options do
     __MODULE__
     |> Ecto.Enum.values(:type)
     |> Enum.map(&{type_name(&1), &1})

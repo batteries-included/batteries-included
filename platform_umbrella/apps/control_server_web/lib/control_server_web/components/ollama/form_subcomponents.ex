@@ -2,7 +2,7 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
   @moduledoc false
   use ControlServerWeb, :html
 
-  alias CommonCore.Defaults.GPU
+  alias CommonCore.Nvidia.GPU
   alias CommonCore.Ollama.ModelInstance
   alias CommonCore.Util.Memory
 
@@ -24,7 +24,7 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
           field={@form[:model]}
           type="select"
           placeholder="Select Model"
-          options={ModelInstance.model_options_for_select()}
+          options={ModelInstance.model_options()}
         />
       </.field>
     </.fieldset>
@@ -44,7 +44,7 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
           field={@form[:virtual_size]}
           type="select"
           placeholder="Choose a size"
-          options={ModelInstance.preset_options_for_select(@form[:model].value)}
+          options={ModelInstance.preset_options(@form[:model].value)}
         />
       </.field>
 
@@ -61,7 +61,7 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
           type="select"
           label="GPU"
           placeholder="None"
-          options={GPU.node_types_for_select()}
+          options={GPU.options()}
         />
       </.field>
       <.field :if={gpu_node_type?(@form[:node_type].value)}>
@@ -85,5 +85,5 @@ defmodule ControlServerWeb.OllamaFormSubcomponents do
 
   defp gpu_node_type?(node_type) when is_binary(node_type), do: node_type |> String.to_existing_atom() |> gpu_node_type?()
 
-  defp gpu_node_type?(node_type), do: node_type in GPU.node_types_with_gpus()
+  defp gpu_node_type?(node_type), do: node_type in GPU.with_gpus()
 end

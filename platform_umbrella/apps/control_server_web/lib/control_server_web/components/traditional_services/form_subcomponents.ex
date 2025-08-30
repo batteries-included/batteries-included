@@ -19,7 +19,7 @@ defmodule ControlServerWeb.TraditionalFormSubcomponents do
           field={@form[:virtual_size]}
           type="select"
           label="Size"
-          options={Service.preset_options_for_select()}
+          options={Service.preset_options()}
         />
       </.grid>
 

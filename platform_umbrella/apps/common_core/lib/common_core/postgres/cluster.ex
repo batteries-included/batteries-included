@@ -82,7 +82,7 @@ defmodule CommonCore.Postgres.Cluster do
     field :restore_from_backup, :string
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
-    field :virtual_size, :string, virtual: true
+    field :virtual_size, CommonCore.Size, virtual: true
 
     # Used in the CRUD form. A range input value that gets converted into the storage size in bytes.
     field :virtual_storage_size_range_value, :integer, virtual: true
@@ -195,7 +195,7 @@ defmodule CommonCore.Postgres.Cluster do
     end
   end
 
-  def preset_options_for_select do
+  def preset_options do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
   end
 

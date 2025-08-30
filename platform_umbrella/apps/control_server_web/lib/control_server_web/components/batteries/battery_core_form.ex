@@ -3,7 +3,9 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
 
   use ControlServerWeb, :live_component
 
-  alias CommonCore.Installs.Options
+  alias CommonCore.ClusterType
+  alias CommonCore.Size
+  alias CommonCore.Usage
   alias CommonCore.Util.Time
   alias CommonUI.TextHelpers
 
@@ -26,14 +28,14 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
             <.input
               type="select"
               field={@form[:cluster_type]}
-              options={Options.provider_options()}
+              options={ClusterType.options()}
               disabled={@action != :new}
             />
           </.field>
 
           <.field>
             <:label>Default Size</:label>
-            <.input type="select" field={@form[:default_size]} options={Options.size_options()} />
+            <.input type="select" field={@form[:default_size]} options={Size.options()} />
           </.field>
 
           <.field>
@@ -41,7 +43,7 @@ defmodule ControlServerWeb.Batteries.BatteryCoreForm do
             <.input
               type="select"
               field={@form[:usage]}
-              options={Options.usages()}
+              options={Usage.usages()}
               disabled={@action != :new}
             />
           </.field>

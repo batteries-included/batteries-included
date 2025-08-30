@@ -1,3 +1,5 @@
+alias CommonCore.ClusterType
+
 defmodule HomeBaseWeb.InstallationNewLive do
   @moduledoc false
   use HomeBaseWeb, :live_view
@@ -10,6 +12,8 @@ defmodule HomeBaseWeb.InstallationNewLive do
     provided_description: "priv/markdown/install/provided.md"
 
   alias CommonCore.Installation
+  alias CommonCore.Size
+  alias CommonCore.Usage
   alias Ecto.Changeset
   alias HomeBase.CustomerInstalls
   alias HomeBaseWeb.UserAuth
@@ -91,7 +95,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
               field={@form[:usage]}
               type="select"
               placeholder="Select usage type"
-              options={CommonCore.Installs.Options.usage_options(@current_role)}
+              options={Usage.options(@current_role)}
             />
           </.input_panel>
 
@@ -103,7 +107,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
               field={@form[:kube_provider]}
               type="select"
               placeholder="Choose a provider"
-              options={CommonCore.Installs.Options.provider_options(@form[:usage].value)}
+              options={ClusterType.options()}
             />
           </.input_panel>
 
@@ -114,7 +118,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
             <.input
               field={@form[:default_size]}
               type="select"
-              options={CommonCore.Installs.Options.size_options()}
+              options={Size.options()}
               phx-change="change-default-size"
             />
           </.input_panel>

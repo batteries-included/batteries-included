@@ -48,7 +48,7 @@ defmodule CommonCore.Redis.RedisInstance do
     # - replication: A master and one or more slaves.
     # - sentinel: A set of processes that watch a redis replication setup and can failover to a new master if the current master fails.
     # - cluster: A cluster of redis instances with sharding and replication.
-    field :instance_type, Ecto.Enum, values: [:standalone, :replication, :sentinel, :cluster], default: :standalone
+    field :instance_type, CommonCore.Redis.InstanceType, default: :standalone
 
     # Not used on :standalone
     field :num_instances, :integer, default: 1
@@ -71,7 +71,7 @@ defmodule CommonCore.Redis.RedisInstance do
     field :storage_class, :string
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
-    field :virtual_size, :string, virtual: true
+    field :virtual_size, CommonCore.Size, virtual: true
 
     belongs_to :project, Project
 
@@ -84,12 +84,11 @@ defmodule CommonCore.Redis.RedisInstance do
     Enum.find(@presets, fn preset -> preset.name == name end)
   end
 
-  def preset_options_for_select, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
+  def preset_options, do: Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
 
   # Note that Sentinel is not a valid option for the user to select.
   # that's until we have a proper ui for it.
-  def type_options_for_select,
-    do: Enum.map([:standalone, :replication, :cluster], &{String.capitalize(to_string(&1)), &1})
+  def type_options, do: Enum.map([:standalone, :replication, :cluster], &{String.capitalize(to_string(&1)), &1})
 
   @doc false
   def changeset(redis_instance, attrs, opts \\ []) do

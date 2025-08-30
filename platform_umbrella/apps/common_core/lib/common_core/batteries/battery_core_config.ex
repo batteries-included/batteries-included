@@ -6,7 +6,7 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
   alias CommonCore.ClusterType
   alias CommonCore.Defaults
   alias CommonCore.Ecto.Schema
-  alias CommonCore.Installs.Options
+  alias CommonCore.Usage
   alias CommonCore.Util.Time
 
   @required_fields ~w(cluster_type)a
@@ -20,11 +20,11 @@ defmodule CommonCore.Batteries.BatteryCoreConfig do
 
     secret_field :secret_key
     field :cluster_type, ClusterType, default: :kind
-    field :default_size, Ecto.Enum, values: Options.sizes()
+    field :default_size, CommonCore.Size, default: :medium
     field :cluster_name, :string
 
     # The decalared usage of the cluster
-    field :usage, Ecto.Enum, values: Keyword.values(Options.usages()), default: :development
+    field :usage, Usage, default: :development
 
     # This is the install id that the control server is reporting to
     # It shouldn't be nil. However we can't make it required before

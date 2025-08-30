@@ -1,9 +1,9 @@
 defmodule CommonCore.Resources.GPU do
   @moduledoc false
-  alias CommonCore.Defaults.GPU
+  alias CommonCore.Nvidia.GPU
   alias CommonCore.StateSummary.Core
 
-  @node_types_with_gpus GPU.node_types_with_gpus()
+  @node_types_with_gpus GPU.with_gpus()
 
   def maybe_add_gpu_resource(template, %{node_type: type} = _resource) when type in @node_types_with_gpus,
     do: put_in(template, ["spec", "containers", Access.all(), "resources"], %{"limits" => %{"nvidia.com/gpu" => 1}})

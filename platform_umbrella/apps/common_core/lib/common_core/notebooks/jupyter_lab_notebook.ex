@@ -4,7 +4,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
   use CommonCore, {:schema, no_encode: [:project]}
 
   alias CommonCore.Containers.EnvValue
-  alias CommonCore.Defaults.GPU
+  alias CommonCore.Nvidia.GPU
   alias CommonCore.Projects.Project
   alias CommonCore.Util.Memory
 
@@ -83,10 +83,10 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     field :memory_requested, :integer
     field :memory_limits, :integer
 
-    field :node_type, Ecto.Enum, values: GPU.node_type_keys(), default: :default
+    field :node_type, GPU, default: :default
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
-    field :virtual_size, :string, virtual: true
+    field :virtual_size, CommonCore.Size, virtual: true
 
     embeds_many :env_values, EnvValue, on_replace: :delete
 
@@ -142,7 +142,7 @@ defmodule CommonCore.Notebooks.JupyterLabNotebook do
     ]
   end
 
-  def preset_options_for_select do
+  def preset_options do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name})
   end
 

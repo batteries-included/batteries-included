@@ -19,7 +19,7 @@ defmodule ControlServerWeb.RedisFormSubcomponents do
           label="Type"
           disabled={@action == :edit}
           type="select"
-          options={RedisInstance.type_options_for_select()}
+          options={RedisInstance.type_options()}
         />
 
         <div class="lg:col-span-2">
@@ -28,7 +28,7 @@ defmodule ControlServerWeb.RedisFormSubcomponents do
             type="select"
             label="Size"
             placeholder="Choose a size"
-            options={RedisInstance.preset_options_for_select()}
+            options={RedisInstance.preset_options()}
           />
         </div>
       </.grid>

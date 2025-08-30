@@ -68,7 +68,7 @@ defmodule CommonCore.TraditionalServices.Service do
     field :additional_hosts, {:array, :string}, default: []
 
     # Used in the CRUD form. User picks a "Size", which sets other fields based on presets.
-    field :virtual_size, :string, virtual: true
+    field :virtual_size, CommonCore.Size, virtual: true
 
     field :cpu_requested, :integer
     field :cpu_limits, :integer
@@ -95,7 +95,7 @@ defmodule CommonCore.TraditionalServices.Service do
     |> unique_constraint(:name)
   end
 
-  def preset_options_for_select do
+  def preset_options do
     Enum.map(@presets, &{String.capitalize(&1.name), &1.name}) ++ [{"Custom", "custom"}]
   end
 

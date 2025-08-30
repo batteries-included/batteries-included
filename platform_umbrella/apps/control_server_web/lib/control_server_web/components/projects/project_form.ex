@@ -95,7 +95,7 @@ defmodule ControlServerWeb.Projects.ProjectForm do
                 type="select"
                 field={@form[:type]}
                 placeholder="Select project type"
-                options={Project.type_options_for_select()}
+                options={Project.type_options()}
               />
             </.field>
           </.fieldset>

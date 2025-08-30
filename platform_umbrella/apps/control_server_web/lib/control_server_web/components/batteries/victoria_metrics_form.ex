@@ -101,7 +101,7 @@ defmodule ControlServerWeb.Batteries.VictoriaMetricsForm do
             <.input
               type="select"
               field={@form[:virtual_size]}
-              options={VictoriaMetricsConfig.preset_options_for_select()}
+              options={VictoriaMetricsConfig.preset_options()}
             />
           </.field>
 

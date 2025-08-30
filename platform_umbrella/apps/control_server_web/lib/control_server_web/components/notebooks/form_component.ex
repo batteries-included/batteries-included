@@ -6,9 +6,9 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
   import ControlServerWeb.Containers.HiddenForms
 
   alias CommonCore.Containers.EnvValue
-  alias CommonCore.Defaults.GPU
   alias CommonCore.Notebooks
   alias CommonCore.Notebooks.JupyterLabNotebook
+  alias CommonCore.Nvidia.GPU
   alias CommonCore.Util.Memory
   alias ControlServer.Notebooks
   alias ControlServer.Projects
@@ -180,7 +180,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
                 type="select"
                 label="Size"
                 placeholder="Choose a size"
-                options={JupyterLabNotebook.preset_options_for_select()}
+                options={JupyterLabNotebook.preset_options()}
               />
 
               <.data_list
@@ -217,7 +217,7 @@ defmodule ControlServerWeb.Live.Notebooks.FormComponent do
                 type="select"
                 label="GPU"
                 placeholder="None"
-                options={GPU.node_types_for_select()}
+                options={GPU.options()}
               />
             </.flex>
           </.panel>

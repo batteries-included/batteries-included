@@ -8,12 +8,13 @@ defmodule CommonCore.Factory do
   alias CommonCore.ClusterType
   alias CommonCore.Ecto.BatteryUUID
   alias CommonCore.FerretDB.FerretService
-  alias CommonCore.Installs.Options
   alias CommonCore.Notebooks.JupyterLabNotebook
   alias CommonCore.OpenAPI.KeycloakAdminSchema.ClientRepresentation
   alias CommonCore.OpenAPI.KeycloakAdminSchema.RealmRepresentation
   alias CommonCore.Projects.Project
+  alias CommonCore.Size
   alias CommonCore.StateSummary.KeycloakSummary
+  alias CommonCore.Usage
 
   # with Ecto
   def state_summary_factory(attrs \\ %{}) do
@@ -56,7 +57,7 @@ defmodule CommonCore.Factory do
     # Ensure this is a map
     attrs = Map.new(attrs)
 
-    usage = Map.get_lazy(attrs, :usage, fn -> sequence(:usage, Keyword.values(Options.usages())) end)
+    usage = Map.get_lazy(attrs, :usage, fn -> sequence(:usage, Keyword.values(Usage.usages())) end)
 
     kube_provider =
       Map.get_lazy(attrs, :kube_provider, fn -> sequence(:kube_provider, Map.keys(ClusterType.__enum_map__())) end)
@@ -78,7 +79,7 @@ defmodule CommonCore.Factory do
       control_jwk: control_jwk,
       user_id: user_id,
       team_id: team_id,
-      default_size: sequence(:default_size, Options.sizes())
+      default_size: sequence(:default_size, Size.__enum_map__() |> Map.keys() |> Enum.reject(&(&1 == :custom)))
     }
     |> merge_attributes(attrs)
     |> evaluate_lazy_attributes()
@@ -272,7 +273,7 @@ defmodule CommonCore.Factory do
   def traditional_service_factory do
     %CommonCore.TraditionalServices.Service{
       name: sequence("knative-service-"),
-      virtual_size: sequence(:virtual_size, ~w(tiny small medium large xlarge huge)),
+      virtual_size: sequence(:virtual_size, ~w(tiny small medium large xlarge huge)a),
       kube_deployment_type: sequence(:kube_deployment_type, [:statefulset, :deployment]),
       num_instances: sequence(:num_instances, [1, 2, 3, 4]),
       containers: [build(:containers_container)],
