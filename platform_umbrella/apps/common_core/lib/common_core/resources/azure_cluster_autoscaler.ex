@@ -107,7 +107,7 @@ defmodule CommonCore.Resources.AzureClusterAutoscaler do
 
   resource(:deployment_azure_cluster_autoscaler, battery, state) do
     namespace = base_namespace(state)
-    cluster_name = Core.cluster_name(state)
+    cluster_name = battery.config.cluster_name || Core.cluster_name(state)
 
     template =
       %{}

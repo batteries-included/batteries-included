@@ -249,7 +249,7 @@ defmodule CommonCore.Resources.AzureKarpenter do
                 %{"name" => "METRICS_PORT", "value" => "#{@metrics_port}"},
                 %{"name" => "HEALTH_PROBE_PORT", "value" => "#{@health_probe_port}"},
                 %{"name" => "SYSTEM_NAMESPACE", "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.namespace"}}},
-                %{"name" => "CLUSTER_NAME", "value" => Core.config_field(state, :cluster_name)},
+                %{"name" => "CLUSTER_NAME", "value" => battery.config.cluster_name || Core.config_field(state, :cluster_name)},
                 %{"name" => "RG", "value" => battery.config.resource_group_name},
                 %{"name" => "LOCATION", "value" => battery.config.location},
                 %{"name" => "KARPENTER_NAMESPACE", "value" => namespace},
@@ -332,7 +332,6 @@ defmodule CommonCore.Resources.AzureKarpenter do
     |> B.name("default")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.add_owner(battery)
   end
 
   # Default NodePool for Azure Karpenter
@@ -375,6 +374,5 @@ defmodule CommonCore.Resources.AzureKarpenter do
     |> B.name("default")
     |> B.namespace(namespace)
     |> B.spec(spec)
-    |> B.add_owner(battery)
   end
 end

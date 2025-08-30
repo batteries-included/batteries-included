@@ -80,7 +80,7 @@ defmodule CommonCore.Resources.AzureLoadBalancerController do
 
   resource(:deployment_azure_load_balancer_controller, battery, state) do
     namespace = base_namespace(state)
-    cluster_name = Core.cluster_name(state)
+    cluster_name = battery.config.cluster_name || Core.cluster_name(state)
 
     template =
       %{}
@@ -160,29 +160,11 @@ defmodule CommonCore.Resources.AzureLoadBalancerController do
     |> B.name(@app_name)
     |> B.namespace(namespace)
     |> B.app_labels(@app_name)
+    |> B.add_owner(battery)
     |> B.spec(spec)
   end
 
-  resource(:service_azure_load_balancer_controller, _battery, state) do
-    namespace = base_namespace(state)
 
-    :service
-    |> B.build_resource()
-    |> B.name("#{@app_name}-webhook-service")
-    |> B.namespace(namespace)
-    |> B.app_labels(@app_name)
-    |> B.spec(%{
-      "ports" => [
-        %{
-          "name" => "webhook-server",
-          "port" => 9443,
-          "protocol" => "TCP",
-          "targetPort" => "webhook-server"
-        }
-      ],
-      "selector" => %{"app" => @app_name}
-    })
-  end
 
   resource(:ingress_class_azure_load_balancer_controller) do
     :ingress_class
