@@ -129,10 +129,6 @@ version_tag() {
     git describe --match="badtagthatnevermatches" --always --dirty
 }
 
-docker_hash() {
-    git rev-parse HEAD:docker
-}
-
 version_lte() {
     printf '%s\n' "$1" "$2" | sort -C -V
 }
