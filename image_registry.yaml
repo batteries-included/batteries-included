@@ -39,7 +39,7 @@ aqua_trivy_checks:
   tag_regex: ^\d+\.\d+\.\d+$
 aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
-  default_tag: v2.13.3
+  default_tag: v2.13.4
   tags:
     - v2.13.4
     - v2.13.3
@@ -324,7 +324,7 @@ jupyter_datascience_lab:
   tag_regex: ^lab-\d+\.\d+\.\d+$
 karpenter:
   name: public.ecr.aws/karpenter/controller
-  default_tag: 1.6.0
+  default_tag: 1.6.3
   tags:
     - 1.6.3
     - 1.6.2
