@@ -184,7 +184,7 @@ defmodule ControlServerWeb.Projects.AIForm do
                 type="select"
                 field={@form[:jupyter].value[:virtual_size]}
                 placeholder="Choose size"
-                options={JupyterLabNotebook.preset_options_for_select()}
+                options={JupyterLabNotebook.preset_options()}
               />
             </.field>
           </.fieldset>

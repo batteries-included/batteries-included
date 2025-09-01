@@ -13,5 +13,5 @@ defmodule CommonCore.Postgres.PGBackupConfig do
     field :type, Ecto.Enum, values: Keyword.keys(@backup_types)
   end
 
-  def backup_type_options_for_select, do: Enum.map(@backup_types, &swap/1)
+  def backup_type_options, do: Enum.map(@backup_types, &swap/1)
 end

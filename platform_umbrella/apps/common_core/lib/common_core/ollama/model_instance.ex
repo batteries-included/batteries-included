@@ -2,7 +2,7 @@ defmodule CommonCore.Ollama.ModelInstance do
   @moduledoc false
   use CommonCore, {:schema, no_encode: [:project]}
 
-  alias CommonCore.Defaults.GPU
+  alias CommonCore.Nvidia.GPU
   alias CommonCore.Util.Memory
 
   @required_fields ~w(name)a
@@ -55,7 +55,7 @@ defmodule CommonCore.Ollama.ModelInstance do
     "snowflake-arctic-embed2" => %{name: "Snowflake Arctic Embed 2.0 568m", size: Memory.to_bytes(1.2, :GB)}
   }
 
-  @gpu_node_types GPU.node_types_with_gpus()
+  @gpu_node_types GPU.with_gpus()
 
   @derive {
     Flop.Schema,
@@ -74,9 +74,9 @@ defmodule CommonCore.Ollama.ModelInstance do
     field :memory_limits, :integer
 
     field :gpu_count, :integer, default: 0
-    field :node_type, Ecto.Enum, values: GPU.node_type_keys(), default: :default
+    field :node_type, Ecto.Enum, values: GPU.keys(), default: :default
 
-    field :virtual_size, :string, virtual: true
+    field :virtual_size, CommonCore.Size, virtual: true
 
     belongs_to :project, CommonCore.Projects.Project
 
@@ -125,13 +125,13 @@ defmodule CommonCore.Ollama.ModelInstance do
     if count > 0, do: [node_type: "must be a GPU type if GPU count is greater than 0"], else: []
   end
 
-  def preset_options_for_select(model_name) do
+  def preset_options(model_name) do
     size = model_size(model_name)
 
     Enum.map(@presets, &[key: String.capitalize(&1.name), value: &1.name, disabled: &1.memory_requested < size])
   end
 
-  def model_options_for_select do
+  def model_options do
     # the key in the @model registry is what should/would be stored in the db
     # the key for the form is what the user chooses
     Enum.map(@models, fn {key, %{name: name, size: size}} ->

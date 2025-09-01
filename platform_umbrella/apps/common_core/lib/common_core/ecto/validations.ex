@@ -190,14 +190,9 @@ defmodule CommonCore.Ecto.Validations do
     #
     # Returns the `:name` of the matched preset, or `nil` if no match.
     presets
-    |> Enum.find(
-      %{},
-      fn preset ->
-        # Check if all keys are either the name which we ignore
-        # or they are euqal to the current changeset value.
-        Enum.all?(preset, fn {k, v} -> k == :name || get_field(changeset, k) == v end)
-      end
-    )
+    |> Enum.find(%{}, fn preset ->
+      Enum.all?(preset, fn {k, v} -> k == :name || get_field(changeset, k) == v end)
+    end)
     |> Map.get(:name, nil)
   end
 
@@ -205,7 +200,10 @@ defmodule CommonCore.Ecto.Validations do
   defp apply_preset(changeset, "custom" = _preset_name, _presets), do: changeset
 
   defp apply_preset(changeset, preset_name, presets) do
-    preset = Enum.find(presets, &(&1.name == preset_name))
+    # Allow preset_name to be an atom or string; normalize to string for comparison
+    preset_name_str = if is_atom(preset_name), do: Atom.to_string(preset_name), else: to_string(preset_name)
+
+    preset = Enum.find(presets, &(to_string(&1.name) == preset_name_str))
 
     # Add all preset fields to changeset
 
