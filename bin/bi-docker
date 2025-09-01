@@ -11,34 +11,18 @@ source "${ROOT_DIR}/bin/lib/common-functions.sh"
 source "${ROOT_DIR}/bin/lib/docker-functions.sh"
 
 do_build_base_images() {
-    local tag
     local ubuntu_version
-    tag=$(docker_hash)
-
-    declare -a ci_args
-    if in_github_action; then
-        ci_args+=(--progress=plain)
-    fi
 
     ubuntu_version=$(default_tag_for_registry_image ubuntu)
-    elixir_version=$(tool_version elixir | cut -d'-' -f 1)
-    erlang_version=$(tool_version erlang)
+
     for base in build deploy; do
-        docker build \
-            --load \
-            -t "${REGISTRY}/${base}-base:${tag}" \
-            -f docker/${base}-base.dockerfile \
-            --build-arg UBUNTU_VERSION="${ubuntu_version}" \
-            --build-arg ELIXIR_VERSION="${elixir_version}" \
-            --build-arg ERLANG_VERSION="${erlang_version}" \
-            ${TRACE:+--progress=plain} \
-            "${ci_args[@]}" \
-            .
+        do_build_image "$base" "${ubuntu_version}"
     done
 }
 
 do_build_image() {
     local image_name=${1:-"control-server"}
+    local ensure_base_images=1
     local version
     local version_hash
     local docker_base_tag
@@ -46,14 +30,11 @@ do_build_image() {
     # Pre-create the version for all docker builds
     version_hash=$(version_tag)
     version=$(image_tag)
+    docker_base_tag=$(base_image_tag)
 
     log "${GREEN}Building${NOFORMAT} ${image_name} image with version: ${version}"
 
     declare -a platform_args build_args
-
-    # if any docker files changed, make sure we're not using old cache
-    docker_base_tag=$(docker_hash)
-    do_ensure_base_images "${docker_base_tag}"
 
     build_args+=(
         --load
@@ -126,7 +107,37 @@ do_build_image() {
             --build-arg "PG_MAJOR=${major}"
         )
         ;;
+    build | build-base)
+        if [[ $# -lt 2 ]]; then
+            die "Missing upstream tag for build-base image. Usage: ${BASH_SOURCE[0]} build-image build-base <upstream_tag>"
+        fi
+        local upstream_tag=${2}
+        local elixir_version
+        local erlang_version
+        elixir_version=$(tool_version elixir | cut -d'-' -f 1)
+        erlang_version=$(tool_version erlang)
 
+        build_args+=(
+            -t "${REGISTRY}/build-base:${upstream_tag}-$(docker_hash)"
+            -f "${ROOT_DIR}/docker/build-base.dockerfile"
+            --build-arg UBUNTU_VERSION="${upstream_tag}"
+            --build-arg ELIXIR_VERSION="${elixir_version}"
+            --build-arg ERLANG_VERSION="${erlang_version}"
+        )
+        ensure_base_images=0
+        ;;
+    deploy | deploy-base)
+        if [[ $# -lt 2 ]]; then
+            die "Missing upstream tag for deploy-base image. Usage: ${BASH_SOURCE[0]} build-image deploy-base <upstream_tag>"
+        fi
+        local upstream_tag=${2}
+        build_args+=(
+            -t "${REGISTRY}/deploy-base:${upstream_tag}-$(docker_hash)"
+            -f "${ROOT_DIR}/docker/deploy-base.dockerfile"
+            --build-arg UBUNTU_VERSION="${upstream_tag}"
+        )
+        ensure_base_images=0
+        ;;
     *)
         die "Unknown image name: ${image_name} not in control-server, home-base, kube-bootstrap, pastebin, keycloak, postgres{,ql}"
         ;;
@@ -134,6 +145,11 @@ do_build_image() {
 
     if in_github_action; then
         build_args+=(--progress=plain)
+    fi
+
+    if [[ "${ensure_base_images}" -eq 1 ]]; then
+        # if any docker files changed, make sure we're not using old cache
+        do_ensure_base_images "${docker_base_tag}"
     fi
 
     docker build \
@@ -165,12 +181,12 @@ try_pull_base_image() {
 }
 
 do_push_images() {
-    local docker_tag
+    local base_image_tag
     local version
 
-    docker_tag=$(docker_hash)
+    base_image_tag=$(base_image_tag)
     for base in build deploy; do
-        tag_push "${REGISTRY}/${base}-base" "${docker_tag}"
+        tag_push "${REGISTRY}/${base}-base" "${base_image_tag}"
     done
 
     version=$(image_tag)
@@ -188,10 +204,10 @@ do_save_images() {
     }
 
     declare -a imgs
-    local docker_tag
-    docker_tag=$(docker_hash)
+    local base_image_tag
+    base_image_tag=$(base_image_tag)
     for base in build deploy; do
-        imgs+=("${REGISTRY}/${base}-base:${docker_tag}")
+        imgs+=("${REGISTRY}/${base}-base:${base_image_tag}")
     done
 
     local version
@@ -211,10 +227,13 @@ do_trigger_missing_upstream() {
     local upstream_image
     local upstream_tags
     local our_tags
+    local clean_tags
 
     if [[ -z "${target}" ]]; then
         die "Missing desired target to check"
     fi
+
+    log "Checking for missing upstream tags for ${target}"
 
     case "${target}" in
     keycloak)
@@ -224,17 +243,23 @@ do_trigger_missing_upstream() {
         target=postgresql
         upstream_image=postgresql_upstream
         ;;
+    deploy | deploy-base)
+        target=bi_deploy_base
+        upstream_image=ubuntu
+        ;;
+    build | build-base)
+        target=bi_build_base
+        upstream_image=ubuntu
+        ;;
+
     *)
         die "Unknown upstream target: ${target}"
         ;;
     esac
 
-    log "Checking for missing upstream tags for ${target}"
     upstream_tags=$(tags_for_registry_image "${upstream_image}")
     our_tags=$(tags_for_registry_image "${target}")
-
     # Strip version hashes from our tags to get base versions
-    local clean_tags
     clean_tags=$(strip_version_hash "${our_tags}")
 
     log "Upstream tags:\n${upstream_tags}"
@@ -277,6 +302,12 @@ do_push_image() {
         ;;
     postgres | postgresql)
         image_name="${REGISTRY}/postgresql:${upstream_tag}"
+        ;;
+    deploy | deploy-base)
+        image_name="${REGISTRY}/deploy-base:${upstream_tag}-$(docker_hash)"
+        ;;
+    build | build-base)
+        image_name="${REGISTRY}/build-base:${upstream_tag}-$(docker_hash)"
         ;;
     *)
         die "Unknown upstream target: ${RED}${target}${NOFORMAT}"
@@ -352,7 +383,7 @@ export PATH
 
 case "$command" in
 ensure-base-images)
-    do_ensure_base_images "$(docker_hash)"
+    do_ensure_base_images "$(base_image_tag)"
     ;;
 build-base-images)
     do_build_base_images
@@ -367,7 +398,7 @@ save-images)
     do_save_images "${args[@]}"
     ;;
 get-base-tag)
-    docker_hash
+    base_image_tag
     ;;
 get-image-tag)
     image_tag

@@ -43,6 +43,7 @@ tags_for_registry_image() {
     tags=$(yq "${query}" "${registry_file}")
     if [[ -z "${tags}" ]]; then
         log "No tags found in registry file for #{name}"
+        return 1
     fi
     echo "$tags"
 }
@@ -64,6 +65,7 @@ default_tag_for_registry_image() {
     tag=$(yq "${query}" "${registry_file}")
     if [[ -z "${tag}" ]]; then
         log "No default tag found in registry file for #{name}"
+        return 1
     fi
     echo "$tag"
 }
@@ -108,4 +110,12 @@ validate_image_exists() {
 
     log "Image exists: ${image_name}"
     return 0
+}
+
+docker_hash() {
+    git rev-parse --short HEAD:docker
+}
+
+base_image_tag() {
+    echo "$(default_tag_for_registry_image ubuntu)-$(docker_hash)"
 }
