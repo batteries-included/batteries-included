@@ -125,17 +125,17 @@ do_dev() {
 
 do_int_test() {
     local tag
-    tag=$(bi-docker get-image-tag)
+    tag=$(bix-docker get-image-tag)
     log "${GREEN}Running Integration Tests${NOFORMAT} for tag ${BLUE}${tag}${NOFORMAT}"
 
     log "${GREEN}Building base images${NOFORMAT}"
-    bi-docker ensure-base-images
+    bix-docker ensure-base-images
     log "${GREEN}Building images${NOFORMAT}"
 
     for image_name in kube-bootstrap control-server home-base; do
         docker rmi -f "${REGISTRY}/${image_name}:${tag}" || true
 
-        bi-docker build-image "${image_name}"
+        bix-docker build-image "${image_name}"
     done
 
     # Create a temporary directory to store the tarball
@@ -146,18 +146,18 @@ do_int_test() {
 
     log "${GREEN}Creating tarball for images at ${BLUE}${TAR_DIR}/images.tar${NOFORMAT}"
     # Save the images to a tar file that we side load into the kind cluster
-    bi-registry save-int-images "${TAR_DIR}/images.tar"
+    bix-registry save-int-images "${TAR_DIR}/images.tar"
 
     # Make sure that the bi binary is already built
     log "${GREEN}Building bi binary${NOFORMAT}"
-    bi-go ensure-bi
+    bix-go ensure-bi
 
     log "${GREEN}Running integration tests for ${BLUE}${tag}${NOFORMAT} with images at ${BLUE}${TAR_DIR}/images.tar${NOFORMAT}"
     export BI_IMAGE_TAR="${TAR_DIR}/images.tar"
 
     # Run the integration tests with one partition
     # since this is just our local dev machine
-    bi-elixir int-test --partitions=1 "$@"
+    bix-elixir int-test --partitions=1 "$@"
 }
 
 usage() {

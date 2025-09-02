@@ -105,7 +105,7 @@ validate_image_exists() {
 
     if ! docker image inspect "${image_name}" &>/dev/null; then
         log "Image not found: ${image_name}"
-        die "Try building the image first with: ${CYAN}bi-docker build-image <target> <upstream_tag>${NOFORMAT}"
+        die "Try building the image first with: ${CYAN}bix-docker build-image <target> <upstream_tag>${NOFORMAT}"
     fi
 
     log "Image exists: ${image_name}"

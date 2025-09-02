@@ -65,7 +65,7 @@ do_save_images() {
     if [[ "$type" == all || "$type" == bi ]]; then
         # add our images
         local version
-        version=$(bi-docker get-image-tag)
+        version=$(bix-docker get-image-tag)
         for img in kube-bootstrap control-server home-base; do
             imgs+=("${REGISTRY}/${img}:${version}")
         done
@@ -122,12 +122,12 @@ do_create_pr() {
     # was successful then we need to regenerate static specs.
     if [[ $advance_exit_code -eq 0 ]]; then
         log "Regenerating static specs after advancing default tags"
-        bi-source gen-static-specs
+        bix-source gen-static-specs
     fi
 
     log "${GREEN}Formatting image_registry.yaml${NOFORMAT}"
 
-    bi-source fmt yaml
+    bix-source fmt yaml
 
     local title="chore(deps): Automated registry update [bi-registry-bot]"
     local message="This is an automated update of the image registry.
