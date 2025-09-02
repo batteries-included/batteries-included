@@ -117,12 +117,12 @@ in_github_action() {
 
 # delegate to elixir subcommand
 run_mix() {
-    "${SCRIPT_DIR}/bi-elixir" run "$@"
+    "${SCRIPT_DIR}/bix-elixir" run "$@"
 }
 
 # delegate to go subcommand
 run_bi() {
-    "${SCRIPT_DIR}/bi-go" run "$@"
+    "${SCRIPT_DIR}/bix-go" run "$@"
 }
 
 version_tag() {
