@@ -33,6 +33,13 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup-ci
 
+      - name: Login to GHCR
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Update registry and create PR
         run: bin/bix registry create-pr
         env:
