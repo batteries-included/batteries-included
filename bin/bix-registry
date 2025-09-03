@@ -90,13 +90,17 @@ do_list() {
 do_create_pr() {
     bi_pushd "${ROOT_DIR}/registry-tool" || exit 1
 
+    bix-go ensure-registry-tool
+    local registry_tool
+    registry_tool=$(bix-go registry-tool-location)
+
     # While running the two registry tools turn off set -e
     set +e
 
     local update_exit_code=0
     log "Running registry updates"
     update_exit_code=$(
-        go run registry-tool update-tags ${TRACE:+-v=debug} --delay 500ms --jitter 250ms ../image_registry.yaml
+        "${registry_tool}" update-tags ${TRACE:+-v=debug} --delay 500ms --jitter 250ms ../image_registry.yaml
         echo $?
     )
     [[ $update_exit_code -gt 1 ]] && die "Error updating tags"
@@ -104,7 +108,7 @@ do_create_pr() {
     local advance_exit_code=0
     log "Running registry advances"
     advance_exit_code=$(
-        go run registry-tool advance-defaults ${TRACE:+-v=debug} ../image_registry.yaml
+        "${registry_tool}" advance-defaults ${TRACE:+-v=debug} ../image_registry.yaml
         echo $?
     )
     [[ $advance_exit_code -gt 1 ]] && die "Error advancing tags"

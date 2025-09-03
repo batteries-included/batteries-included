@@ -11,6 +11,9 @@ inputs:
   go_cache:
     description: 'Set up Go cache'
     default: 'true'
+  reg_tool_cache:
+    description: 'Pull cached registry-tool binary'
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -21,7 +24,7 @@ runs:
       shell: bash
       if: ${{ inputs.bi_cache == 'true' }}
       run: |
-        echo "BI_REVISION=$(bin/bix go revision)" >> "$GITHUB_ENV"
+        echo "BI_REVISION=$(bin/bix go bi-revision)" >> "$GITHUB_ENV"
 
     - name: Restore BI cache
       if: ${{ inputs.bi_cache == 'true' }}
@@ -57,3 +60,19 @@ runs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum', '.tool-versions') }}
         restore-keys: |
           ${{ runner.os }}-go-
+
+    - name: Determine bi cache key
+      shell: bash
+      if: ${{ inputs.reg_tool_cache == 'true' }}
+      run: |
+        echo "REG_TOOL_REVISION=$(bin/bix go registry-tool-revision)" >> "$GITHUB_ENV"
+
+    - name: Restore registry-tool cache
+      if: ${{ inputs.reg_tool_cache == 'true' }}
+      uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809
+      with:
+        path: |
+          /home/runner/.local/share/bi/registry-tool/
+        key: ${{ runner.os }}-reg-tool-${{ env.REG_TOOL_REVISION }}
+        restore-keys: |
+          ${{ runner.os }}-reg-tool-

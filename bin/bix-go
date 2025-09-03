@@ -9,33 +9,36 @@ ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
 
 source "${ROOT_DIR}/bin/lib/common-functions.sh"
 
+REG_TOOL_BUILD_DIR="${REG_TOOL_BUILD_DIR:-$HOME/.local/share/bi/registry-tool}"
 BI_BUILD_DIR="${BI_BUILD_DIR:-$HOME/.local/share/bi/dev}"
 KEEP_BUILDS="${KEEP_BUILDS:-10}"
 
-build_bi() {
-    local revision
-    revision=$(bi_revision)
+build() {
+    local target="$1"
+    local bin_path="$2"
 
     # This is the directory where we will put the binary
-    local bin_dir="${BI_BUILD_DIR}/${revision}"
-    mkdir -p "${bin_dir}"
-
-    # This is the path to the binary
-    # We still want it to be called bi so help works
-    local bin_path
-    bin_path=$(bi_bin_location)
+    mkdir -p "$(dirname "${bin_path}")"
 
     if [[ ! -f "${bin_path}" ]]; then
-        log "Building bi: ${BLUE}${revision}${NOFORMAT}"
-        bi_pushd "${ROOT_DIR}/bi"
+        log "Building ${BLUE}${target}${NOFORMAT}"
+        bi_pushd "${ROOT_DIR}/${target}"
         SECONDS=0
         CGO_ENABLED=0 go build \
             -tags "netgo osusergo static_build" \
-            -o "${bin_path}" bi
+            -o "${bin_path}" \
+            "${target}"
         bi_popd
-        log "Built bi in ${RED}${SECONDS}${NOFORMAT} seconds"
+        log "Built ${target} in ${RED}${SECONDS}${NOFORMAT} seconds"
     fi
+}
 
+build_bi() {
+    build bi "$(bi_bin_location)"
+}
+
+build_registry_tool() {
+    build registry-tool "$(registry_tool_bin_location)"
 }
 
 clean_bi_build() {
@@ -85,6 +88,16 @@ bi_revision() {
     git rev-parse HEAD:bi
 }
 
+registry_tool_bin_location() {
+    local revision
+    revision=$(registry_tool_revision)
+    echo "${REG_TOOL_BUILD_DIR}/${revision}/registry-tool"
+}
+
+registry_tool_revision() {
+    git rev-parse HEAD:registry-tool
+}
+
 update_go_deps() {
     local go_path=${1}
     bi_pushd "${go_path}"
@@ -121,6 +134,7 @@ do_test() {
 do_test_int() {
     export INTEGRATION=true
     run_go_test "${ROOT_DIR}/bi"
+    run_go_test "${ROOT_DIR}/registry-tool"
     run_go_test "${ROOT_DIR}/pastebin-go"
 }
 
@@ -138,6 +152,18 @@ do_ensure_bi() {
         build_bi
     else
         log "bi binary found at ${bin_path}"
+    fi
+}
+
+do_ensure_registry_tool() {
+    local bin_path
+    bin_path=$(registry_tool_bin_location)
+
+    if [ ! -f "${bin_path}" ]; then
+        log "registry-tool binary not found at ${bin_path} building..."
+        build_registry_tool
+    else
+        log "registry-tool binary found at ${bin_path}"
     fi
 }
 
@@ -229,8 +255,17 @@ bi-snapshot-build)
 bi-location)
     bi_bin_location
     ;;
-revision)
+bi-revision)
     bi_revision
+    ;;
+registry-tool-location)
+    registry_tool_bin_location
+    ;;
+registry-tool-revision)
+    registry_tool_revision
+    ;;
+ensure-registry-tool)
+    do_ensure_registry_tool
     ;;
 run)
     __run_bi "${args[@]}"

@@ -40,6 +40,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Ensure registry-tool
+        run: bin/bix go ensure-registry-tool
+
       - name: Update registry and create PR
         run: bin/bix registry create-pr
         env:
