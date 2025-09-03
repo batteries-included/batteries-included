@@ -33,7 +33,6 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup-ci
         with:
-          elixir_cache: false
           reg_tool_cache: true
 
       - name: Login to GHCR
