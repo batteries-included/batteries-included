@@ -4,15 +4,33 @@ ARG BASE_IMAGE_TAG=latest
 ARG DEPLOY_IMAGE_NAME=ghcr.io/batteries-included/deploy-base
 ARG DEPLOY_IMAGE_TAG=latest
 
-
-FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG}
-
 ARG PG_VERSION=latest
 ARG PG_MAJOR
 
-ENV PATH=$PATH:/usr/lib/postgresql/$PG_MAJOR/bin
+# Download needed extension debs
+#################################################
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} AS debs
 
-RUN apt-get update \
+ARG DOCUMENTDB_URL
+
+RUN mkdir -p /out/debs
+WORKDIR /out/debs
+RUN curl -Lo ./documentdb.deb "${DOCUMENTDB_URL}"
+
+
+#############################################
+FROM ${DEPLOY_IMAGE_NAME}:${DEPLOY_IMAGE_TAG}
+
+ARG PG_VERSION
+ENV PG_VERSION=${PG_VERSION}
+ARG PG_MAJOR
+ENV PG_MAJOR=${PG_MAJOR}
+
+ENV PATH=$PATH:/usr/lib/postgresql/$PG_MAJOR/bin
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN --mount=from=debs,src=/out/debs,dst=/out/debs \
+    apt-get update \
     && apt-get install -y \
         --no-install-recommends \
         gnupg \
@@ -29,10 +47,13 @@ RUN apt-get update \
         -o Dpkg::::="--force-confdef" \
         -o Dpkg::::="--force-confold" \
         "postgresql-${PG_MAJOR}=${PG_VERSION}*" \
+        postgresql-${PG_MAJOR}-cron \
         postgresql-${PG_MAJOR}-pg-failover-slots \
         postgresql-${PG_MAJOR}-pgaudit \
         postgresql-${PG_MAJOR}-pgvector \
-        postgresql-${PG_MAJOR}-postgis \
+        postgresql-${PG_MAJOR}-postgis-3 \
+        postgresql-${PG_MAJOR}-rum \
+    && dpkg -i /out/debs/documentdb.deb \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/* /var/cache/* /var/log/*
 

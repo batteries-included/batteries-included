@@ -100,11 +100,26 @@ do_build_image() {
         local major
         major=$(echo "$upstream_tag" | cut -d'.' -f 1)
 
+        # TODO: dont hardcode. map noble -> ubuntu24.04
+        local docdb_url
+        docdb_url=$(
+            gh release view -R FerretDB/documentdb --json assets |
+                jq --raw-output --arg pgmajor "-${major}-" '
+                    .assets[]
+                    | select(
+                        (.name | startswith("ubuntu24.04")) 
+                        and (.name | contains($pgmajor)) 
+                        and (.name | endswith("amd64.deb"))
+                    )
+                    | .url'
+        )
+
         build_args+=(
-            -t "${REGISTRY}/postgresql:${upstream_tag}"
+            -t "${REGISTRY}/postgresql:${upstream_tag}-${version_hash}"
             -f "${ROOT_DIR}/docker/postgres.dockerfile"
             --build-arg "PG_VERSION=${upstream_tag}"
             --build-arg "PG_MAJOR=${major}"
+            --build-arg "DOCUMENTDB_URL=${docdb_url}"
         )
         ;;
     build | build-base)

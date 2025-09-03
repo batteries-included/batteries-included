@@ -22,6 +22,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       --no-install-recommends \
       build-essential \
       ca-certificates \
+      curl \
       git \
       maven \
       nodejs \
