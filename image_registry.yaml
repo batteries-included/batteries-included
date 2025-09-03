@@ -20,8 +20,9 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: ghcr.io/aquasecurity/trivy
-  default_tag: 0.65.0
+  default_tag: 0.66.0
   tags:
+    - 0.66.0
     - 0.65.0
     - 0.64.1
     - 0.64.0
@@ -387,8 +388,9 @@ keycloak_upstream:
   tag_regex: ^\d+\.\d+\.\d+$
 kiali:
   name: quay.io/kiali/kiali
-  default_tag: v2.14.0
+  default_tag: v2.15.0
   tags:
+    - v2.15.0
     - v2.14.0
     - v2.13.0
     - v2.12.0
@@ -415,24 +417,27 @@ kiwigrid_sidecar:
   tag_regex: ^\d+\.\d+\.\d+$
 knative_gateway_api_controller:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller
-  default_tag: v1.19.2
+  default_tag: v1.19.3
   tags:
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_gateway_api_webhook:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook
-  default_tag: v1.19.2
+  default_tag: v1.19.3
   tags:
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_controller:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
-  default_tag: v1.19.2
+  default_tag: v1.19.3
   tags:
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
@@ -442,8 +447,9 @@ knative_istio_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_webhook:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook
-  default_tag: v1.19.2
+  default_tag: v1.19.3
   tags:
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
@@ -453,8 +459,10 @@ knative_istio_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_activator:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  default_tag: v1.19.2
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
@@ -468,8 +476,10 @@ knative_serving_activator:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_autoscaler:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  default_tag: v1.19.2
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
@@ -483,8 +493,10 @@ knative_serving_autoscaler:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_controller:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  default_tag: v1.19.2
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
@@ -498,8 +510,10 @@ knative_serving_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_queue:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/queue
-  default_tag: v1.19.2
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
@@ -513,8 +527,10 @@ knative_serving_queue:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_webhook:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
-  default_tag: v1.19.2
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
+    - v1.19.3
     - v1.19.2
     - v1.19.1
     - v1.19.0
@@ -528,8 +544,9 @@ knative_serving_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 kube_state_metrics:
   name: registry.k8s.io/kube-state-metrics/kube-state-metrics
-  default_tag: v2.16.0
+  default_tag: v2.17.0
   tags:
+    - v2.17.0
     - v2.16.0
     - v2.15.0
     - v2.14.0
@@ -717,8 +734,9 @@ promtail:
   tag_regex: ^\d+\.\d+\.\d+$
 redis:
   name: quay.io/opstree/redis
-  default_tag: v8.2.0
+  default_tag: v8.2.1
   tags:
+    - v8.2.1
     - v8.2.0
     - v8.0.3
     - v8.0.2
@@ -730,8 +748,9 @@ redis:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_exporter:
   name: quay.io/opstree/redis-exporter
-  default_tag: v1.75.0
+  default_tag: v1.76.0
   tags:
+    - v1.76.0
     - v1.75.0
     - v1.74.0
     - v1.73.0
@@ -782,14 +801,17 @@ trust_manager_init:
   tag_regex: ^\d{8}\.\d+$
 ubuntu:
   name: docker.io/library/ubuntu
-  default_tag: noble-20250716
+  default_tag: noble-20250805
   tags:
+    - noble-20250805
     - noble-20250716
   tag_regex: ^noble-\d{8}(\.\d)?$
 vm_agent:
   name: docker.io/victoriametrics/vmagent
-  default_tag: v1.124.0
+  default_tag: v1.125.1
   tags:
+    - v1.125.1
+    - v1.125.0
     - v1.124.0
     - v1.123.0
     - v1.122.0
@@ -840,8 +862,10 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: docker.io/victoriametrics/vminsert
-  default_tag: v1.124.0-cluster
+  default_tag: v1.125.1-cluster
   tags:
+    - v1.125.1-cluster
+    - v1.125.0-cluster
     - v1.124.0-cluster
     - v1.123.0-cluster
     - v1.122.0-cluster
@@ -920,8 +944,10 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: docker.io/victoriametrics/vmselect
-  default_tag: v1.124.0-cluster
+  default_tag: v1.125.1-cluster
   tags:
+    - v1.125.1-cluster
+    - v1.125.0-cluster
     - v1.124.0-cluster
     - v1.123.0-cluster
     - v1.122.0-cluster
@@ -953,8 +979,10 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: docker.io/victoriametrics/vmstorage
-  default_tag: v1.124.0-cluster
+  default_tag: v1.125.1-cluster
   tags:
+    - v1.125.1-cluster
+    - v1.125.0-cluster
     - v1.124.0-cluster
     - v1.123.0-cluster
     - v1.122.0-cluster

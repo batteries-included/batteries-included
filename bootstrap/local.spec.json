@@ -5,7 +5,7 @@
       "kind": "ClusterRoleBinding",
       "metadata": {
         "annotations": {
-          "battery/hash": "BRQWFMMNR7TXFC3CPJMC6Z7KBKJ4N5Q3HJL3AHJKOVTNDGHMEDZQ===="
+          "battery/hash": "I7HUMDENG5ZBV63FD3XDZ32LXN5TGE3AHMMGRJ773ERD5RW3XRMA===="
         },
         "labels": {
           "app": "battery-core",
@@ -15,7 +15,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019905984ddd73a1948ece433e4909a5",
+          "battery/owner": "batt_0199103d553b7ec6af9c6fc816fb1ab2",
           "version": "latest"
         },
         "name": "batteries-included:bootstrap"
@@ -38,7 +38,7 @@
       "kind": "Job",
       "metadata": {
         "annotations": {
-          "battery/hash": "F4BADG3GTFYNK7JLWWF5R3QCQRFMZCGEN5LHV7DCZPOPDTAOA4UQ===="
+          "battery/hash": "ZXDTEXRY3655QBQTJM4YWSMTLOXVU3HKE7YCOCEC2FA4B3CIN3AQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -48,7 +48,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019905984ddd73a1948ece433e4909a5",
+          "battery/owner": "batt_0199103d553b7ec6af9c6fc816fb1ab2",
           "sidecar.istio.io/inject": "false",
           "version": "latest"
         },
@@ -72,7 +72,7 @@
               "battery/component": "bootstrap",
               "battery/managed": "true",
               "battery/managed.indirect": "true",
-              "battery/owner": "batt_019905984ddd73a1948ece433e4909a5",
+              "battery/owner": "batt_0199103d553b7ec6af9c6fc816fb1ab2",
               "component": "bootstrap",
               "sidecar.istio.io/inject": "false",
               "version": "latest"
@@ -85,7 +85,7 @@
                 "env": [
                   {
                     "name": "RELEASE_COOKIE",
-                    "value": "6GEVYTJBVMRN6CRWDS3SEQYALSJGPXCNRXBPYZZADEVYCSOPHGCSMI7FJG3IUCF5"
+                    "value": "CF6QMO5EOID5ZERCOJXH3EVG36Z5DOV73DCOLAYZ5CZKJPUQ2XFQLWKKS22KQKZK"
                   },
                   {
                     "name": "RELEASE_DISTRIBUTION",
@@ -133,7 +133,7 @@
       "kind": "Namespace",
       "metadata": {
         "annotations": {
-          "battery/hash": "ADRMLWXBJXBSHTUWAQTOQT5AYFNRRUT4YZNW4RLEA5GGWLBDP2WQ===="
+          "battery/hash": "J2LYRNZTXN7IEJPWZRQFPONONR37GCNSSJXCAM3UZV5ZOGUO6YEQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -143,7 +143,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019905984ddd73a1948ece433e4909a5",
+          "battery/owner": "batt_0199103d553b7ec6af9c6fc816fb1ab2",
           "istio-injection": "disabled",
           "istio.io/dataplane-mode": "ambient",
           "version": "latest"
@@ -156,7 +156,7 @@
       "kind": "ServiceAccount",
       "metadata": {
         "annotations": {
-          "battery/hash": "5BW7OS2PZEUBBHQPXMM5KYYE6VXPB42N23473WVAL4DPO4ATYPDA===="
+          "battery/hash": "F6LMESMIH7ZW523ENUVFESP77AAK2CEDPRGY7D5CCYTQPJNJX4LQ===="
         },
         "labels": {
           "app": "battery-core",
@@ -166,7 +166,7 @@
           "battery/app": "battery-core",
           "battery/managed": "true",
           "battery/managed.direct": "true",
-          "battery/owner": "batt_019905984ddd73a1948ece433e4909a5",
+          "battery/owner": "batt_0199103d553b7ec6af9c6fc816fb1ab2",
           "version": "latest"
         },
         "name": "bootstrap",
@@ -186,7 +186,7 @@
           "type": "gateway_api"
         },
         "group": "net_sec",
-        "id": "batt_019905984ddd7e588486951040be6a87",
+        "id": "batt_0199103d553b79ada634f1e4cf39e720",
         "inserted_at": null,
         "type": "gateway_api",
         "updated_at": null
@@ -207,7 +207,7 @@
           "ztunnel_image_tag_override": null
         },
         "group": "net_sec",
-        "id": "batt_019905984ddd771399cff4bd91ba440f",
+        "id": "batt_0199103d553b7a758cf46501bb33f5e9",
         "inserted_at": null,
         "type": "istio",
         "updated_at": null
@@ -220,7 +220,7 @@
           "type": "istio_gateway"
         },
         "group": "net_sec",
-        "id": "batt_019905984ddd778eb7604498cc0e0245",
+        "id": "batt_0199103d553b7798ac7fd6ee60ec80b9",
         "inserted_at": null,
         "type": "istio_gateway",
         "updated_at": null
@@ -233,15 +233,15 @@
           "cluster_type": "kind",
           "control_jwk": {
             "crv": "P-256",
-            "d": "0_EeZwe0DwG0A1_AGWOx6fIfpBYyhK4HgMTMNw5O6K8",
+            "d": "NVkWR9kaGGj0x7_6as3cDVHl1JKKRW2du0BVppONgVE",
             "kty": "EC",
-            "x": "Ha5_-9q2yYEX6V5SeIV2W2FbKqAXNnh9i-kUYATdVyc",
-            "y": "UcAze2DrJ6-nxd45owGYTa0tvq6cAcTN00U_OvTKk7s"
+            "x": "-yQEnEahDLeRkyyH6cusW_6cTveyDgMmuelkJC--psk",
+            "y": "sGy7AmWurCq47IIaOTzNQMzD3nPw9Lr_jmxFr-xj8gU"
           },
           "core_namespace": "battery-core",
           "data_namespace": "battery-data",
           "default_size": "tiny",
-          "install_id": "batt_019905984dd079379981b80cd5459d1c",
+          "install_id": "batt_0199103d552e7cb5aa39539b7b4e4359",
           "type": "battery_core",
           "upgrade_days_of_week": [
             true,
@@ -263,7 +263,7 @@
           ]
         },
         "group": "magic",
-        "id": "batt_019905984ddd73a1948ece433e4909a5",
+        "id": "batt_0199103d553b7ec6af9c6fc816fb1ab2",
         "inserted_at": null,
         "type": "battery_core",
         "updated_at": null
@@ -283,7 +283,7 @@
           "type": "metallb"
         },
         "group": "net_sec",
-        "id": "batt_019905984ddd7a0d9cc4be726936d728",
+        "id": "batt_0199103d553b7d99bfd581888e5c2b1f",
         "inserted_at": null,
         "type": "metallb",
         "updated_at": null
@@ -302,7 +302,7 @@
           "type": "cloudnative_pg"
         },
         "group": "data",
-        "id": "batt_019905984ddd7ff6acd76a358f9f1115",
+        "id": "batt_0199103d553b7aa89050993814f91efe",
         "inserted_at": null,
         "type": "cloudnative_pg",
         "updated_at": null
@@ -314,7 +314,7 @@
           "type": "stale_resource_cleaner"
         },
         "group": "magic",
-        "id": "batt_019905984ddd7c1798ffc696b0e49772",
+        "id": "batt_0199103d553b714599e786f7ed471775",
         "inserted_at": null,
         "type": "stale_resource_cleaner",
         "updated_at": null
@@ -344,7 +344,7 @@
         "num_instances": 1,
         "password_versions": [
           {
-            "password": "LZBI3SZNWOWBONLQWIB6XFRH",
+            "password": "HYXMYCSAOC7WSGMT6RA5RGN2",
             "username": "battery-control-user",
             "version": 1
           }
