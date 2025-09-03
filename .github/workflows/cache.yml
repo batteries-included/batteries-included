@@ -22,6 +22,8 @@ env:
     ${{ vars.GOMODCACHE }}
   BI_PATHS: |
     /home/runner/.local/share/bi/dev/
+  REG_TOOL_PATHS: |
+    /home/runner/.local/share/bi/registry-tool/
   IMAGE_PATHS: |
     /home/runner/work/_temp/base_images.tar
 
@@ -51,16 +53,19 @@ jobs:
             ${{ runner.os }}-images-${{ hashFiles('image_registry.yaml')}}
 
         run: |
-          bi_rev="$(bin/bix go revision)"
+          bi_rev="$(bin/bix go bi-revision)"
           BI_HASH_KEY="${{ runner.os }}-bi-${bi_rev}"
+          reg_tool_rev="$(bin/bix go registry-tool-revision)"
+          REG_TOOL_HASH_KEY="${{ runner.os }}-reg-tool-${reg_tool_rev}"
 
           {
             echo "ASDF_HASH_KEY=$ASDF_HASH_KEY";
             echo "ELIXIR_HASH_KEY=$ELIXIR_HASH_KEY";
             # shellcheck disable=SC2153
             echo "GO_HASH_KEY=$GO_HASH_KEY";
-            echo "BI_HASH_KEY=$BI_HASH_KEY" ;
-            echo "IMAGE_HASH_KEY=$IMAGE_HASH_KEY" ;
+            echo "BI_HASH_KEY=$BI_HASH_KEY";
+            echo "REG_TOOL_HASH_KEY=$REG_TOOL_HASH_KEY";
+            echo "IMAGE_HASH_KEY=$IMAGE_HASH_KEY";
           } >> "$GITHUB_ENV"
 
       - name: Check existing ASDF cache
@@ -95,6 +100,14 @@ jobs:
           key: ${{ env.BI_HASH_KEY }}
           lookup-only: true
 
+      - name: Check existing registry tool cache
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
+        id: reg-tool
+        with:
+          path: ${{ env.REG_TOOL_PATHS }}
+          key: ${{ env.REG_TOOL_HASH_KEY }}
+          lookup-only: true
+
       - name: Check existing image cache
         uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         id: images
@@ -112,6 +125,8 @@ jobs:
       go-hash-key: ${{ env.GO_HASH_KEY }}
       bi-cache-hit: ${{ steps.bi.outputs.cache-hit }}
       bi-hash-key: ${{ env.BI_HASH_KEY }}
+      reg-tool-cache-hit: ${{ steps.reg-tool.outputs.cache-hit }}
+      reg-tool-hash-key: ${{ env.REG_TOOL_HASH_KEY }}
       image-cache-hit: ${{ steps.images.outputs.cache-hit }}
       image-hash-key: ${{ env.IMAGE_HASH_KEY }}
 
@@ -222,6 +237,33 @@ jobs:
           path: |
             /home/runner/.local/share/bi/dev/
           key: ${{ needs.check-caches.outputs.bi-hash-key }}
+
+  cache-registry-tool:
+    if: ${{ ! (needs.check-caches.outputs.reg-tool-cache-hit) }}
+    needs: check-caches
+    runs-on: ubuntu-latest-m
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4
+        with:
+          persist-credentials: false
+
+      # pull whatever go cache we have to build the bi binary
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
+        with:
+          elixir_cache: false
+
+      - name: Build `registry-tool` for caching
+        run: bin/bix go ensure-registry-tool
+
+      - name: Save `registry-tool` cache
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
+        id: registry-tool-cache
+        with:
+          path: |
+            /home/runner/.local/share/bi/registry-tool/
+          key: ${{ needs.check-caches.outputs.reg-tool-hash-key }}
 
   cache-images:
     if: ${{ ! (needs.check-caches.outputs.image-cache-hit) }}
