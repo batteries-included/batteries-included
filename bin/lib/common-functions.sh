@@ -21,6 +21,8 @@ safe_colors() {
 }
 
 setup_trace() {
+    # set TRACE if GHA debug logging is enabled
+    [[ ${RUNNER_DEBUG:-0} -eq 1 ]] && TRACE=1
     if [[ $TRACE -eq 1 ]]; then
         log "${GREEN}Tracing enabled${NOFORMAT}"
         set -x
