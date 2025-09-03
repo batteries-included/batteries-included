@@ -11,6 +11,7 @@ name: BIX Registry Update
 permissions:
   contents: write
   pull-requests: write
+  packages: read
 
 defaults:
   run:
