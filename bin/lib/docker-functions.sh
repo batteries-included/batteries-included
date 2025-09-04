@@ -113,7 +113,7 @@ validate_image_exists() {
 }
 
 docker_hash() {
-    git rev-parse --short HEAD:docker
+    git rev-parse --short=9 HEAD:docker
 }
 
 base_image_tag() {
