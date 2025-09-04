@@ -15,6 +15,7 @@ defmodule ControlServer.Factory do
   alias CommonCore.Postgres.PGPasswordVersion
   alias CommonCore.Redis.RedisInstance
   alias CommonCore.Resources.Hashing
+  alias CommonCore.RoboSRE.Issue
   alias CommonCore.Timeline
   alias CommonCore.Timeline.TimelineEvent
   alias ControlServer.ContentAddressable.Document
@@ -258,6 +259,28 @@ defmodule ControlServer.Factory do
   def battery_install_payload_factory do
     %Timeline.BatteryInstall{
       battery_type: sequence(:battery_type, SystemBattery.possible_types())
+    }
+  end
+
+  def issue_factory do
+    %Issue{
+      subject: sequence("test-cluster.pod.test-app"),
+      subject_type: sequence(:subject_type, [:pod, :control_server]),
+      issue_type: sequence(:issue_type, [:pod_crash, :stuck_kubestate]),
+      trigger: sequence(:trigger, [:kubernetes_event, :metric_threshold, :health_check]),
+      trigger_params: %{
+        "event_type" => "Warning",
+        "reason" => "Failed",
+        "message" => sequence("Test error message")
+      },
+      status: sequence(:status, [:detected, :analyzing, :remediating, :monitoring, :resolved]),
+      handler: sequence(:handler, ["TestHandler", "SomeOtherHandler", "YetAnotherHandler", "UltimateHandler"]),
+      handler_state: %{
+        "attempt" => 1,
+        "last_action" => "restart_pod"
+      },
+      retry_count: sequence(:retry_count, [0, 1, 2]),
+      max_retries: 3
     }
   end
 end

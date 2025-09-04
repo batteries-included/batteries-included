@@ -129,6 +129,14 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :magic,
+      type: :robo_sre,
+      dependencies: [:battery_core],
+      name: "Robo SRE",
+      description:
+        "Automated Site Reliability Engineering system for detecting, diagnosing, and remediating infrastructure issues in Kubernetes environments."
+    },
+    %CatalogBattery{
+      group: :magic,
       type: :karpenter,
       dependencies: [:battery_core],
       name: "Karpenter",
