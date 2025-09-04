@@ -54,14 +54,9 @@ aws_load_balancer_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 build_base:
   name: ghcr.io/batteries-included/build-base
-  default_tag: noble-20250716-30cf546fc
+  default_tag: noble-20250805-30cf546fc
   tags:
-    - noble-20250716-30cf546fc
-  tag_regex: ^noble-\d{8}(\.\d)?-\w{9}$
-deploy_base:
-  name: ghcr.io/batteries-included/deploy-base
-  default_tag: noble-20250716-30cf546fc
-  tags:
+    - noble-20250805-30cf546fc
     - noble-20250716-30cf546fc
   tag_regex: ^noble-\d{8}(\.\d)?-\w{9}$
 cert_manager_acmesolver:
@@ -170,6 +165,13 @@ cnpg_plugin_barman_sidecar:
     - v0.6.0
     - v0.5.0
   tag_regex: ^v\d+\.\d+\.\d+$
+deploy_base:
+  name: ghcr.io/batteries-included/deploy-base
+  default_tag: noble-20250805-30cf546fc
+  tags:
+    - noble-20250805-30cf546fc
+    - noble-20250716-30cf546fc
+  tag_regex: ^noble-\d{8}(\.\d)?-\w{9}$
 ferretdb:
   name: ghcr.io/ferretdb/ferretdb
   default_tag: 1.24.2
@@ -558,8 +560,9 @@ kube_state_metrics:
   tag_regex: ^v\d+\.\d+\.\d+$
 loki:
   name: docker.io/grafana/loki
-  default_tag: 3.5.3
+  default_tag: 3.5.4
   tags:
+    - 3.5.4
     - 3.5.3
     - 3.5.2
     - 3.5.1
@@ -659,8 +662,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.11.9
+  default_tag: 0.11.10
   tags:
+    - 0.11.10
     - 0.11.9
     - 0.11.8
     - 0.11.7
@@ -704,8 +708,9 @@ postgresql_upstream:
   tag_regex: ^\d+\.\d+$
 promtail:
   name: docker.io/grafana/promtail
-  default_tag: 3.5.3
+  default_tag: 3.5.4
   tags:
+    - 3.5.4
     - 3.5.3
     - 3.5.2
     - 3.5.1
@@ -766,8 +771,9 @@ redis_exporter:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_operator:
   name: ghcr.io/ot-container-kit/redis-operator/redis-operator
-  default_tag: v0.21.0
+  default_tag: v0.22.0
   tags:
+    - v0.22.0
     - v0.21.0
     - v0.20.2
     - v0.20.1
