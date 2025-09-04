@@ -102,8 +102,8 @@ github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5Qvfr
 github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
 github.com/djherbis/times v1.6.0 h1:w2ctJ92J8fBvWPxugmXIv7Nz7Q3iDMKNx9v5ocVH20c=
 github.com/djherbis/times v1.6.0/go.mod h1:gOHeRAz2h+VJNZ5Gmc/o7iD9k4wW7NMVqieYCY99oc0=
-github.com/docker/docker v28.3.3+incompatible h1:Dypm25kh4rmk49v1eiVbsAtpAsYURjYkaKubwuBdxEI=
-github.com/docker/docker v28.3.3+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
+github.com/docker/docker v28.4.0+incompatible h1:KVC7bz5zJY/4AZe/78BIvCnPsLaC9T/zh72xnlrTTOk=
+github.com/docker/docker v28.4.0+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
 github.com/docker/go-connections v0.6.0 h1:LlMG9azAe1TqfR7sO+NJttz1gy6KO7VJBh+pMmjSD94=
 github.com/docker/go-connections v0.6.0/go.mod h1:AahvXYshr6JgfUJGdDCs2b5EZG/vmaMAntpSFH5BFKE=
 github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
@@ -324,8 +324,8 @@ github.com/pulumi/pulumi-aws/sdk/v6 v6.83.0 h1:JRCdCiAlTKklG16ww6zeLllfa9sVa0v0H
 github.com/pulumi/pulumi-aws/sdk/v6 v6.83.0/go.mod h1:520DDoW2zBYVWwwAT8qt/9VhNoBcDIslDljzE8/O080=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.13 h1:GXzURNPdXdOln6LZiXcSlIDXBW6PTDMI6Tb++ws2tz8=
 github.com/pulumi/pulumi-cloudinit/sdk v1.4.13/go.mod h1:ilLvs5zUFegchdkRnR6t3riE3uvVqLTJkwZIZ/pV1fA=
-github.com/pulumi/pulumi-tls/sdk/v5 v5.2.1 h1:aCGQS3XM39kJDzdukzpcrPTX5YAOIjqqaIUrgR0EGNU=
-github.com/pulumi/pulumi-tls/sdk/v5 v5.2.1/go.mod h1:5EqVUb6gBc/8Qx5cY1OdXKnU/T6jv470ZJBAn5F+8W4=
+github.com/pulumi/pulumi-tls/sdk/v5 v5.2.2 h1:6yA43nfPhR9PIIvdXTvXII2ToQkgxfJSzIiytEbYth4=
+github.com/pulumi/pulumi-tls/sdk/v5 v5.2.2/go.mod h1:YNul9OEMgUSb4k5cBI4lKh9zeqhCQwZ9phQHtTVbQvU=
 github.com/pulumi/pulumi/sdk/v3 v3.192.0 h1:sfHuR3P02wSbV3xdSMEQ0+uC/HzlMz0YfKrVAXy1hSQ=
 github.com/pulumi/pulumi/sdk/v3 v3.192.0/go.mod h1:aV0+c5xpSYccWKmOjTZS9liYCqh7+peu3cQgSXu7CJw=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
