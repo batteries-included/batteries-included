@@ -5,6 +5,7 @@ defmodule CommonCore.Resources.AzureKarpenter do
 
   import CommonCore.StateSummary.Namespaces
 
+  alias CommonCore.ApiVersionKind
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.StateSummary.Core
 
@@ -323,8 +324,8 @@ defmodule CommonCore.Resources.AzureKarpenter do
     namespace = base_namespace(state)
 
     spec = %{
-      "imageFamily" => "Ubuntu2204",
-      "imageVersion" => "202410.01.0"  # Pin to specific version for stability
+      "imageFamily" => battery.config.image_family,
+      "imageVersion" => battery.config.image_version
     }
 
     :karpenter_aksnode_class
@@ -353,8 +354,8 @@ defmodule CommonCore.Resources.AzureKarpenter do
             %{"key" => "node.kubernetes.io/instance-type", "operator" => "In", "values" => battery.config.instance_types}
           ],
           "nodeClassRef" => %{
-            "apiVersion" => "karpenter.azure.com/v1beta1",
-            "kind" => "AKSNodeClass",
+            "apiVersion" => elem(ApiVersionKind.from_resource_type!(:karpenter_aksnode_class), 0),
+            "kind" => elem(ApiVersionKind.from_resource_type!(:karpenter_aksnode_class), 1),
             "name" => "default"
           },
           "taints" => []

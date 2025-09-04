@@ -2,10 +2,8 @@ defmodule CommonCore.Resources.AzureTest do
   use ExUnit.Case, async: true
 
   alias CommonCore.Batteries.AzureLoadBalancerControllerConfig
-  alias CommonCore.Batteries.AzureClusterAutoscalerConfig
   alias CommonCore.Batteries.SystemBattery
   alias CommonCore.Resources.AzureLoadBalancerController
-  alias CommonCore.Resources.AzureClusterAutoscaler
   alias CommonCore.Resources.StorageClass
   alias CommonCore.StateSummary
 
@@ -52,56 +50,7 @@ defmodule CommonCore.Resources.AzureTest do
     end
   end
 
-  describe "Azure Cluster Autoscaler" do
-    test "generates correct resources" do
-      config = %AzureClusterAutoscalerConfig{
-        subscription_id: "test-subscription",
-        resource_group_name: "test-rg",
-        tenant_id: "test-tenant",
-        node_resource_group: "test-node-rg",
-        image: "mcr.microsoft.com/oss/kubernetes/autoscaler/cluster-autoscaler:v1.28.0"
-      }
 
-      battery = %SystemBattery{
-        type: :azure_cluster_autoscaler,
-        config: config
-      }
-
-      state = %StateSummary{
-        cluster_name: "test-cluster",
-        batteries: [battery]
-      }
-
-      resources = AzureClusterAutoscaler.build(battery, state)
-
-      # Should generate service account, cluster role, cluster role binding, and deployment
-      assert length(resources) >= 4
-
-      # Check service account
-      service_account = Enum.find(resources, &(&1.kind == "ServiceAccount"))
-      assert service_account != nil
-      assert service_account.metadata.name == "azure-cluster-autoscaler"
-
-      # Check cluster role
-      cluster_role = Enum.find(resources, &(&1.kind == "ClusterRole"))
-      assert cluster_role != nil
-      assert cluster_role.metadata.name == "azure-cluster-autoscaler-role"
-
-      # Check deployment
-      deployment = Enum.find(resources, &(&1.kind == "Deployment"))
-      assert deployment != nil
-      assert deployment.metadata.name == "azure-cluster-autoscaler"
-
-      # Check environment variables
-      container = deployment.spec.template.spec.containers |> List.first()
-      env_vars = container.env
-
-      assert Enum.any?(env_vars, &(&1.name == "ARM_SUBSCRIPTION_ID" && &1.value == "test-subscription"))
-      assert Enum.any?(env_vars, &(&1.name == "ARM_RESOURCE_GROUP" && &1.value == "test-rg"))
-      assert Enum.any?(env_vars, &(&1.name == "ARM_TENANT_ID" && &1.value == "test-tenant"))
-      assert Enum.any?(env_vars, &(&1.name == "AZURE_NODE_RESOURCE_GROUP" && &1.value == "test-node-rg"))
-    end
-  end
 
   describe "Azure Storage Classes" do
     test "generates AKS storage classes" do
@@ -162,17 +111,6 @@ defmodule CommonCore.Resources.AzureTest do
       assert config.subnet_name == nil
     end
 
-    test "AzureClusterAutoscalerConfig has correct defaults" do
-      config = %AzureClusterAutoscalerConfig{}
 
-      assert config.image == "mcr.microsoft.com/oss/kubernetes/autoscaler/cluster-autoscaler:v1.28.0"
-      assert config.scale_down_delay_after_add == "10m"
-      assert config.scale_down_unneeded_time == "10m"
-      assert config.max_node_provision_time == "15m"
-      assert config.subscription_id == nil
-      assert config.resource_group_name == nil
-      assert config.tenant_id == nil
-      assert config.node_resource_group == nil
-    end
   end
 end

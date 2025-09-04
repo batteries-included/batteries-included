@@ -56,7 +56,6 @@ defmodule CommonCore.Batteries.SystemBattery do
   # styler:sort
   @possible_types [
     aws_load_balancer_controller: AwsLoadBalancerControllerConfig,
-    azure_cluster_autoscaler: AzureClusterAutoscalerConfig,
     azure_karpenter: AzureKarpenterConfig,
     azure_load_balancer_controller: AzureLoadBalancerControllerConfig,
     battery_ca: BatteryCAConfig,

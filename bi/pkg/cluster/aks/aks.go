@@ -76,7 +76,6 @@ var components = []component{
 	{"gateway", &gatewayConfig{}},
 	{"cluster", &clusterConfig{}},
 	{"loadbalancer", &loadBalancerConfig{}},
-	{"autoscaler", &autoscalerConfig{}},
 	{"postgres", &cnpgConfig{}},
 }
 

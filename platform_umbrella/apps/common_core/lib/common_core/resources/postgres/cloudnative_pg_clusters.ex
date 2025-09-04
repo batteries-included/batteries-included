@@ -220,7 +220,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   defp maybe_add_backup(spec, _cluster, _battery), do: spec
 
-  def scheduled_backup(_battery, state, cluster) do
+  def scheduled_backup(battery, state, cluster) do
     cluster_name = cluster_name(cluster)
 
     spec = %{
@@ -230,7 +230,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       pluginConfiguration: %{name: "barman-cloud.cloudnative-pg.io"}
     }
 
-    resource = :cloudnative_pg_scheduledbackup
+    :cloudnative_pg_scheduledbackup
     |> B.build_resource()
     |> B.name(cluster_name)
     |> B.app_labels(cluster_name)
@@ -240,9 +240,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.spec(spec)
     |> F.require_battery(state, :cloudnative_pg_barman)
     |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
-
-    # Apply filters based on whether this is AWS or Azure
-    require_valid_backup_config(resource, battery)
+    |> require_valid_backup_config(battery)
   end
 
   defp require_valid_backup_config(resource, battery) do

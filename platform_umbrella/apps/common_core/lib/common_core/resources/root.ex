@@ -60,7 +60,6 @@ defmodule CommonCore.Resources.RootResourceGenerator do
   # styler:sort
   @default_generator_mappings [
     aws_load_balancer_controller: [AwsLoadBalancerController],
-    azure_cluster_autoscaler: [AzureClusterAutoscaler],
     azure_karpenter: [AzureKarpenter],
     azure_load_balancer_controller: [AzureLoadBalancerController],
     battery_ca: [BatteryCA],

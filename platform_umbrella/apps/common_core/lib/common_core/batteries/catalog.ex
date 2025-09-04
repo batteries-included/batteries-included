@@ -150,13 +150,6 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :magic,
-      type: :azure_cluster_autoscaler,
-      dependencies: [:battery_core],
-      name: "Azure Cluster Autoscaler",
-      description: "Auto scale kubernetes clusters in Azure AKS."
-    },
-    %CatalogBattery{
-      group: :magic,
       type: :azure_karpenter,
       dependencies: [:battery_core],
       name: "Azure Karpenter",
