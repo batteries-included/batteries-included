@@ -107,7 +107,7 @@ do_build_image() {
             --build-arg "PG_MAJOR=${major}"
         )
         ;;
-    build | build-base)
+    build | build-base | build_base)
         if [[ $# -lt 2 ]]; then
             die "Missing upstream tag for build-base image. Usage: ${BASH_SOURCE[0]} build-image build-base <upstream_tag>"
         fi
@@ -126,7 +126,7 @@ do_build_image() {
         )
         ensure_base_images=0
         ;;
-    deploy | deploy-base)
+    deploy | deploy-base | deploy_base)
         if [[ $# -lt 2 ]]; then
             die "Missing upstream tag for deploy-base image. Usage: ${BASH_SOURCE[0]} build-image deploy-base <upstream_tag>"
         fi
@@ -139,7 +139,7 @@ do_build_image() {
         ensure_base_images=0
         ;;
     *)
-        die "Unknown image name: ${image_name} not in control-server, home-base, kube-bootstrap, pastebin, keycloak, postgres{,ql}"
+        die "Unknown image name: ${image_name} not in control-server, home-base, kube-bootstrap, pastebin, keycloak, postgres{,ql}, build-base, deploy-base"
         ;;
     esac
 
@@ -244,11 +244,11 @@ do_trigger_missing_upstream() {
         upstream_image=postgresql_upstream
         ;;
     deploy | deploy-base)
-        target=bi_deploy_base
+        target=deploy_base
         upstream_image=ubuntu
         ;;
     build | build-base)
-        target=bi_build_base
+        target=build_base
         upstream_image=ubuntu
         ;;
 
@@ -303,10 +303,10 @@ do_push_image() {
     postgres | postgresql)
         image_name="${REGISTRY}/postgresql:${upstream_tag}"
         ;;
-    deploy | deploy-base)
+    deploy | deploy_base)
         image_name="${REGISTRY}/deploy-base:${upstream_tag}-$(docker_hash)"
         ;;
-    build | build-base)
+    build | build_base)
         image_name="${REGISTRY}/build-base:${upstream_tag}-$(docker_hash)"
         ;;
     *)

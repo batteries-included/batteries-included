@@ -52,13 +52,13 @@ aws_load_balancer_controller:
     - v2.8.2
     - v2.8.1
   tag_regex: ^v\d+\.\d+\.\d+$
-bi_build_base:
+build_base:
   name: ghcr.io/batteries-included/build-base
   default_tag: noble-20250716-30cf546fc
   tags:
     - noble-20250716-30cf546fc
   tag_regex: ^noble-\d{8}(\.\d)?-\w{9}$
-bi_deploy_base:
+deploy_base:
   name: ghcr.io/batteries-included/deploy-base
   default_tag: noble-20250716-30cf546fc
   tags:
