@@ -11,7 +11,8 @@ defmodule CommonCore.Timeline.NamedDatabase do
     :ferret_service,
     :system_battery,
     :traditional_service,
-    :model_instance
+    :model_instance,
+    :issue
   ]
 
   def possible_schema_types, do: @possible_schema_types

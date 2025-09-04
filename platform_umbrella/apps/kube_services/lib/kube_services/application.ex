@@ -22,6 +22,7 @@ defmodule KubeServices.Application do
     [
       CommonCore.ConnectionPool,
       {Task.Supervisor, name: @task_supervisor},
+      KubeServices.RoboSRE.Registry,
       KubeServices.KubeState,
       KubeServices.Batteries
     ]

@@ -92,6 +92,7 @@ defmodule CommonCore.Resources.RootResourceGenerator do
     project_export: [],
     promtail: [Promtail],
     redis: [Redis, RedisOperator],
+    robo_sre: [],
     sso: [SSO],
     stale_resource_cleaner: [],
     timeline: [],
