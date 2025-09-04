@@ -34,15 +34,7 @@ defmodule Verify.TestCase.Util do
           :ok
         rescue
           e ->
-            case Registry.lookup(Verify.Registry, __MODULE__.KindInstallWorker) do
-              [{kind_worker_pid, _}] -> :ok
-              [] -> 
-                Logger.error("No KindInstallWorker found in the registry for #{__MODULE__}.KindInstallWorker")
-                raise "KindInstallWorker not found"
-              _ -> 
-                Logger.error("Multiple KindInstallWorkers found in the registry for #{__MODULE__}.KindInstallWorker")
-                raise "Multiple KindInstallWorkers found"
-            end
+            [{kind_worker_pid, _}] = Registry.lookup(Verify.Registry, __MODULE__.KindInstallWorker)
             out = unquote(__MODULE__).rage_output_for_test(unquote(mod), unquote(message))
 
             Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), unquote(message))
