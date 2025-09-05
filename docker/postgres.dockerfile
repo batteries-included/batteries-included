@@ -79,6 +79,8 @@ FROM pg-base AS docdb
 ARG PG_MAJOR
 ENV PG_MAJOR=${PG_MAJOR}
 
+ARG DOCDB_VERSION
+
 WORKDIR /source
 
 RUN apt-get update \
@@ -118,7 +120,7 @@ ENV LANG=en_US.UTF-8
 
 # actually build and package the extensions
 RUN sed -i "s/POSTGRES_VERSION/${PG_MAJOR}/g" /source/packaging/debian_files/control \
-    && sed -i "s/DOCUMENTDB_VERSION/0.106-0/g" /source/packaging/debian_files/changelog \
+    && sed -i "s/DOCUMENTDB_VERSION/${DOCDB_VERSION}/g" /source/packaging/debian_files/changelog \
     && mkdir -p /source/debian \
     && cp /source/packaging/debian_files/* /source/debian \
     && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
