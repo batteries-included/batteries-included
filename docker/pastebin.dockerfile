@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
-ARG BASE_IMAGE_NAME=ghcr.io/batteries-included/build-base
-ARG BASE_IMAGE_TAG=latest
+ARG BUILD_IMAGE_NAME=ghcr.io/batteries-included/build-base
+ARG BUILD_IMAGE_TAG=latest
 
 ARG DEPLOY_IMAGE_NAME=ghcr.io/batteries-included/deploy-base
 ARG DEPLOY_IMAGE_TAG=latest
@@ -12,7 +12,7 @@ ARG LANG=C.UTF-8
 # Build the assets
 # These will be served from /static in the final image
 
-FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} AS assets
+FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS assets
 
 WORKDIR /source
 

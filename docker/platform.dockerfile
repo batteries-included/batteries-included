@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7-labs
 
-ARG BASE_IMAGE_NAME=ghcr.io/batteries-included/build-base
-ARG BASE_IMAGE_TAG=latest
+ARG BUILD_IMAGE_NAME=ghcr.io/batteries-included/build-base
+ARG BUILD_IMAGE_TAG=latest
 
 ARG DEPLOY_IMAGE_NAME=ghcr.io/batteries-included/deploy-base
 ARG DEPLOY_IMAGE_TAG=latest
@@ -13,7 +13,7 @@ ARG IMAGE_DESCRIPTION="Batteries Included Platform Service"
 ##########################################################################
 # Set up base mix / elixir build container
 
-FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} AS deps
+FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS deps
 
 ARG MIX_ENV
 ENV MIX_ENV=${MIX_ENV}

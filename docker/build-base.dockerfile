@@ -5,13 +5,15 @@ ARG ELIXIR_VERSION=use_version_from_tool-versions
 ARG ERLANG_VERSION=use_version_from_tool-versions
 
 
-ARG BUILD_IMAGE_NAME=hexpm/elixir
-ARG BUILD_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-ubuntu-${UBUNTU_VERSION}
+ARG BASE_IMAGE_NAME=hexpm/elixir
+ARG BASE_IMAGE_TAG=${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-ubuntu-${UBUNTU_VERSION}
 
-FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG}
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
 LABEL org.opencontainers.image.source="https://github.com/batteries-included/batteries-included"
 LABEL org.opencontainers.image.description="Batteries Included Build env for elixir"
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 ##########################################################################
 # Fetch OS build dependencies
@@ -22,6 +24,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       --no-install-recommends \
       build-essential \
       ca-certificates \
+      curl \
       git \
       maven \
       nodejs \
