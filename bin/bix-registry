@@ -46,7 +46,7 @@ do_save_images() {
             docker.io/istio/*)
                 imgs+=("${img}:${tag}")
                 ;;
-            ghcr.io/cloudnative-pg/*)
+            ghcr.io/cloudnative-pg/cloudnative-pg)
                 imgs+=("${img}:${tag}")
                 ;;
             quay.io/frrouting/*)

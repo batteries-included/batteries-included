@@ -17,6 +17,8 @@ ARG LANG
 LABEL org.opencontainers.image.source="https://github.com/batteries-included/batteries-included"
 LABEL org.opencontainers.image.description="Batteries Included Deploy env"
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt \
   apt-get update && \

@@ -1,9 +1,9 @@
 ARG KC_VERSION=latest
 
-ARG BASE_IMAGE_NAME=ghcr.io/batteries-included/build-base
-ARG BASE_IMAGE_TAG=latest
+ARG BUILD_IMAGE_NAME=ghcr.io/batteries-included/build-base
+ARG BUILD_IMAGE_TAG=latest
 
-FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} AS theme-builder
+FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} AS theme-builder
 
 WORKDIR /keycloak-theme
 COPY keycloak-theme/ /keycloak-theme/

@@ -38,7 +38,7 @@ do_build_image() {
 
     build_args+=(
         --load
-        --build-arg "BASE_IMAGE_TAG=${docker_base_tag}"
+        --build-arg "BUILD_IMAGE_TAG=${docker_base_tag}"
         --build-arg "DEPLOY_IMAGE_TAG=${docker_base_tag}"
     )
 
@@ -100,11 +100,21 @@ do_build_image() {
         local major
         major=$(echo "$upstream_tag" | cut -d'.' -f 1)
 
+        local docdb_source_url
+        docdb_source_url=$(
+            gh api \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                --jq '.[0].tarball_url' \
+                /repos/documentdb/documentdb/tags
+        )
+
         build_args+=(
             -t "${REGISTRY}/postgresql:${upstream_tag}"
             -f "${ROOT_DIR}/docker/postgres.dockerfile"
             --build-arg "PG_VERSION=${upstream_tag}"
             --build-arg "PG_MAJOR=${major}"
+            --build-arg "DOCDB_URL=${docdb_source_url}"
         )
         ;;
     build | build-base | build_base)
