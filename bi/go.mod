@@ -20,8 +20,8 @@ require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.83.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.13
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.2
-	github.com/pulumi/pulumi/sdk/v3 v3.192.0
-	github.com/samber/slog-multi v1.4.1
+	github.com/pulumi/pulumi/sdk/v3 v3.193.0
+	github.com/samber/slog-multi v1.5.0
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.11.1
