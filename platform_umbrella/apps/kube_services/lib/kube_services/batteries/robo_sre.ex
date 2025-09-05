@@ -7,6 +7,7 @@ defmodule KubeServices.Batteries.RoboSRE do
 
     children = [
       {KubeServices.RoboSRE.DynamicSupervisor, battery: battery},
+      {KubeServices.RoboSRE.DeleteResourceExecutor, []},
       {KubeServices.RoboSRE.IssueWatcher, battery: battery}
     ]
 

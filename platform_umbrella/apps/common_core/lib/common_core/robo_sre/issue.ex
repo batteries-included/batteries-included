@@ -14,6 +14,7 @@ defmodule CommonCore.RoboSRE.Issue do
 
   use CommonCore, :schema
 
+  alias CommonCore.RoboSRE.HandlerType
   alias CommonCore.RoboSRE.IssueStatus
   alias CommonCore.RoboSRE.IssueType
   alias CommonCore.RoboSRE.SubjectType
@@ -44,10 +45,10 @@ defmodule CommonCore.RoboSRE.Issue do
     # Self-referencing for parent-child relationships
     belongs_to :parent_issue, __MODULE__, type: CommonCore.Ecto.BatteryUUID
     has_many :child_issues, __MODULE__, foreign_key: :parent_issue_id
+    has_many :remediation_plans, CommonCore.RoboSRE.RemediationPlan
 
     # Handler information
-    field :handler, :string
-    field :handler_state, :map, default: %{}
+    field :handler, HandlerType
 
     # Tracking fields
     field :resolved_at, :utc_datetime_usec
@@ -64,7 +65,6 @@ defmodule CommonCore.RoboSRE.Issue do
     issue
     |> CommonCore.Ecto.Schema.schema_changeset(attrs, opts)
     |> validate_length(:subject, max: 500)
-    |> validate_length(:handler, max: 200)
     |> validate_number(:retry_count, greater_than_or_equal_to: 0)
     |> validate_number(:max_retries, greater_than_or_equal_to: 0)
     |> validate_subject_format()

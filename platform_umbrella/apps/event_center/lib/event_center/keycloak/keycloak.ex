@@ -2,6 +2,8 @@ defmodule EventCenter.Keycloak do
   @moduledoc """
   This PubSub gets events about what we pushed to the KeyCloak API.
   """
+  @behaviour EventCenter.Keycloak.Behaviour
+
   use TypedStruct
 
   alias EventCenter.Keycloak.Payload

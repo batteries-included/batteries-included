@@ -1,5 +1,7 @@
 defmodule EventCenter.KeycloakSnapshot do
   @moduledoc false
+  @behaviour EventCenter.KeycloakSnapshot.Behaviour
+
   use TypedStruct
 
   alias Phoenix.PubSub

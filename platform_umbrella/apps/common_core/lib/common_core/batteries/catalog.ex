@@ -122,7 +122,7 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :magic,
       type: :stale_resource_cleaner,
-      dependencies: [:battery_core],
+      dependencies: [:battery_core, :robo_sre],
       name: "Stale Resource Cleaner",
       description: "A battery that removes old resources that are no longer needed.",
       uninstallable: false

@@ -27,7 +27,7 @@ defmodule KubeServices.Batteries.BatteryCore do
       {KubeServices.ET.StableVersionsWorker, [home_client_pid: HomeBaseClient]},
       KubeServices.SystemState,
       KubeServices.SnapshotApply,
-      KubeServices.ResourceDeleter
+      KubeServices.ResourceDeleter.Worker
     ]
 
     Logger.debug("Starting BatteryCore")

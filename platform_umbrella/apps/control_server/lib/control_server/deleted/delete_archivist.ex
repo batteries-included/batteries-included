@@ -11,6 +11,8 @@ defmodule ControlServer.Deleted.DeleteArchivist do
   alias ControlServer.ContentAddressable.Document
   alias ControlServer.Deleted.DeletedResource
 
+  # Given a resource map, record its deletion in the DeletedResource table,
+  # along with a content-addressable snapshot of the resource at deletion time.
   def record_delete(resource, repo \\ Repo) do
     resource
     |> delete_multi()

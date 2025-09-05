@@ -1,5 +1,7 @@
 defmodule EventCenter.Database do
   @moduledoc false
+  @behaviour EventCenter.Database.Behaviour
+
   alias Phoenix.PubSub
 
   @pubsub EventCenter.Database.PubSub
@@ -33,14 +35,14 @@ defmodule EventCenter.Database do
     PubSub.subscribe(@pubsub, clean_topic(topic))
   end
 
-  def clean(object) when is_struct(object) do
+  defp clean(object) when is_struct(object) do
     object
     |> Map.from_struct()
     |> Map.drop([:__meta__, :__struct__])
   end
 
-  def clean(object), do: object
+  defp clean(object), do: object
 
-  def clean_topic(topic) when is_atom(topic), do: Atom.to_string(topic)
-  def clean_topic(topic), do: topic
+  defp clean_topic(topic) when is_atom(topic), do: Atom.to_string(topic)
+  defp clean_topic(topic), do: topic
 end

@@ -1,0 +1,6 @@
+{:ok, _} = Application.ensure_all_started(:mox)
+
+Mox.defmock(KubeServices.RoboSRE.MockDeleteResourceExecutor, for: KubeServices.RoboSRE.Executor)
+Mox.defmock(KubeServices.RoboSRE.MockStaleResourceHandler, for: KubeServices.RoboSRE.Handler)
+Mox.defmock(KubeServices.MockKubeState, for: KubeServices.KubeState.Behaviour)
+Mox.defmock(KubeServices.MockResourceDeleter, for: KubeServices.ResourceDeleter.Behaviour)

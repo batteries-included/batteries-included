@@ -1,20 +1,20 @@
-defmodule ControlServer.RoboSRETest do
+defmodule ControlServer.RoboSRE.IssuesTest do
   use ControlServer.DataCase
 
   import ControlServer.Factory
 
   alias CommonCore.RoboSRE.Issue
-  alias ControlServer.RoboSRE
+  alias ControlServer.RoboSRE.Issues
 
   describe "issues" do
     test "list_issues/0 returns all issues" do
       issue = insert(:issue)
-      assert RoboSRE.list_issues() == [issue]
+      assert Issues.list_issues() == [issue]
     end
 
     test "get_issue!/1 returns the issue with given id" do
       issue = insert(:issue)
-      assert RoboSRE.get_issue!(issue.id) == issue
+      assert Issues.get_issue!(issue.id) == issue
     end
 
     test "create_issue/1 with valid data creates an issue" do
@@ -22,16 +22,17 @@ defmodule ControlServer.RoboSRETest do
         params_for(:issue, %{
           subject: "test-cluster.pod.my-app.container",
           subject_type: :pod,
-          issue_type: :pod_crash,
+          issue_type: :stuck_kubestate,
           trigger: :kubernetes_event,
+          handler: :stale_resource,
           trigger_params: %{"restart_count" => 5},
           status: :detected
         })
 
-      assert {:ok, %Issue{} = issue} = RoboSRE.create_issue(valid_attrs)
+      assert {:ok, %Issue{} = issue} = Issues.create_issue(valid_attrs)
       assert issue.subject == "test-cluster.pod.my-app.container"
       assert issue.subject_type == :pod
-      assert issue.issue_type == :pod_crash
+      assert issue.issue_type == :stuck_kubestate
       assert issue.trigger == :kubernetes_event
       assert issue.status == :detected
       assert issue.trigger_params == %{"restart_count" => 5}
@@ -46,39 +47,37 @@ defmodule ControlServer.RoboSRETest do
         status: nil
       }
 
-      assert {:error, %Ecto.Changeset{}} = RoboSRE.create_issue(invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Issues.create_issue(invalid_attrs)
     end
 
     test "update_issue/2 with valid data updates the issue" do
-      issue = insert(:issue)
+      issue = insert(:issue, status: :detected)
 
       update_attrs = %{
-        status: :analyzing,
-        handler: "PodCrashAnalyzer"
+        status: :analyzing
       }
 
-      assert {:ok, %Issue{} = updated_issue} = RoboSRE.update_issue(issue, update_attrs)
+      assert {:ok, %Issue{} = updated_issue} = Issues.update_issue(issue, update_attrs)
       assert updated_issue.status == :analyzing
-      assert updated_issue.handler == "PodCrashAnalyzer"
     end
 
     test "update_issue/2 with invalid data returns error changeset" do
       issue = insert(:issue)
       invalid_attrs = %{subject: nil, status: nil}
 
-      assert {:error, %Ecto.Changeset{}} = RoboSRE.update_issue(issue, invalid_attrs)
-      assert issue == RoboSRE.get_issue!(issue.id)
+      assert {:error, %Ecto.Changeset{}} = Issues.update_issue(issue, invalid_attrs)
+      assert issue == Issues.get_issue!(issue.id)
     end
 
     test "delete_issue/1 deletes the issue" do
       issue = insert(:issue)
-      assert {:ok, %Issue{}} = RoboSRE.delete_issue(issue)
-      assert_raise Ecto.NoResultsError, fn -> RoboSRE.get_issue!(issue.id) end
+      assert {:ok, %Issue{}} = Issues.delete_issue(issue)
+      assert_raise Ecto.NoResultsError, fn -> Issues.get_issue!(issue.id) end
     end
 
     test "change_issue/1 returns an issue changeset" do
       issue = insert(:issue)
-      assert %Ecto.Changeset{} = RoboSRE.change_issue(issue)
+      assert %Ecto.Changeset{} = Issues.change_issue(issue)
     end
 
     test "find_open_issues_by_subject/1 returns open issues for subject" do
@@ -90,7 +89,7 @@ defmodule ControlServer.RoboSRETest do
       _resolved_issue = insert(:issue, subject: subject, status: :resolved)
       _different_subject = insert(:issue, subject: "cluster.pod.app2", status: :detected)
 
-      open_issues = RoboSRE.find_open_issues_by_subject(subject)
+      open_issues = Issues.find_open_issues_by_subject(subject)
 
       assert length(open_issues) == 2
       assert issue1 in open_issues
@@ -103,7 +102,7 @@ defmodule ControlServer.RoboSRETest do
       # This one shouldn't be counted
       insert(:issue, status: :resolved)
 
-      assert RoboSRE.count_open_issues() == 2
+      assert Issues.count_open_issues() == 2
     end
 
     test "mark_stale_issues_as_resolved/1 marks old issues as resolved" do
@@ -115,17 +114,17 @@ defmodule ControlServer.RoboSRETest do
       stale_issue = insert(:issue, status: :detected, updated_at: old_time)
       recent_issue = insert(:issue, status: :detected, updated_at: now)
 
-      {count, _} = RoboSRE.mark_stale_issues_as_resolved(24)
+      {count, _} = Issues.mark_stale_issues_as_resolved(24)
 
       assert count == 1
 
       # Verify the stale issue was resolved
-      updated_stale = RoboSRE.get_issue!(stale_issue.id)
+      updated_stale = Issues.get_issue!(stale_issue.id)
       assert updated_stale.status == :resolved
       assert updated_stale.resolved_at
 
       # Verify the recent issue is still open
-      updated_recent = RoboSRE.get_issue!(recent_issue.id)
+      updated_recent = Issues.get_issue!(recent_issue.id)
       assert updated_recent.status == :detected
       refute updated_recent.resolved_at
     end

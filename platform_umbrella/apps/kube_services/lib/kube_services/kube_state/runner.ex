@@ -9,7 +9,6 @@ defmodule KubeServices.KubeState.Runner do
 
   alias CommonCore.ApiVersionKind
   alias EventCenter.KubeState.Payload
-  alias KubeServices.KubeState.Status
 
   def start_link(opts) do
     table_name = Keyword.fetch!(opts, :name)
@@ -84,21 +83,21 @@ defmodule KubeServices.KubeState.Runner do
   def handle_call({:add, resource, opts}, _from, {ets_table}) do
     :ets.insert(ets_table, {key(resource), resource})
 
-    broadcast(:add, resource, opts, ets_table)
+    broadcast(:add, resource, opts)
     {:reply, :ok, {ets_table}}
   end
 
   def handle_call({:delete, resource, opts}, _from, {ets_table}) do
     :ets.delete(ets_table, key(resource))
 
-    broadcast(:delete, resource, opts, ets_table)
+    broadcast(:delete, resource, opts)
     {:reply, :ok, {ets_table}}
   end
 
   def handle_call({:update, resource, opts}, _from, {ets_table}) do
     :ets.insert(ets_table, {key(resource), resource})
 
-    broadcast(:update, resource, opts, ets_table)
+    broadcast(:update, resource, opts)
     {:reply, :ok, {ets_table}}
   end
 
@@ -114,10 +113,8 @@ defmodule KubeServices.KubeState.Runner do
     {ApiVersionKind.resource_type(resource), namespace(resource), name(resource)}
   end
 
-  defp broadcast(action, resource, opts, table_name) do
+  defp broadcast(action, resource, opts) do
     skip_broadcast = Keyword.get(opts, :skip_broadcast, false)
-    Status.update(table_name)
-
     do_broadcast(skip_broadcast, action, resource)
   end
 

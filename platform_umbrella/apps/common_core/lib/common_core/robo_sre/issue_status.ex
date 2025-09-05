@@ -6,8 +6,9 @@ defmodule CommonCore.RoboSRE.IssueStatus do
   use CommonCore.Ecto.Enum,
     detected: "detected",
     analyzing: "analyzing",
+    planning: "planning",
     remediating: "remediating",
-    monitoring: "monitoring",
+    verifying: "verifying",
     resolved: "resolved",
     failed: "failed"
 
@@ -16,8 +17,9 @@ defmodule CommonCore.RoboSRE.IssueStatus do
     [
       {"Detected", :detected},
       {"Analyzing", :analyzing},
+      {"Planning", :planning},
       {"Remediating", :remediating},
-      {"Monitoring", :monitoring},
+      {"Verifying", :verifying},
       {"Resolved", :resolved},
       {"Failed", :failed}
     ]
@@ -26,20 +28,10 @@ defmodule CommonCore.RoboSRE.IssueStatus do
   @spec label(t()) :: String.t()
   def label(:detected), do: "Detected"
   def label(:analyzing), do: "Analyzing"
+  def label(:planning), do: "Planning"
   def label(:remediating), do: "Remediating"
-  def label(:monitoring), do: "Monitoring"
+  def label(:verifying), do: "Verifying"
   def label(:resolved), do: "Resolved"
   def label(:failed), do: "Failed"
   def label(other), do: other |> Atom.to_string() |> String.capitalize()
-
-  @spec in_progress?(t()) :: boolean()
-  def in_progress?(:detected), do: true
-  def in_progress?(:analyzing), do: true
-  def in_progress?(:remediating), do: true
-  def in_progress?(:monitoring), do: true
-  def in_progress?(:resolved), do: false
-  def in_progress?(:failed), do: false
-
-  @spec terminal?(t()) :: boolean()
-  def terminal?(status), do: not in_progress?(status)
 end
