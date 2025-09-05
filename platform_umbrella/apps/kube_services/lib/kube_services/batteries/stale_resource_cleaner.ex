@@ -5,7 +5,9 @@ defmodule KubeServices.Batteries.StaleResourceCleaner do
   def init(opts) do
     battery = Keyword.fetch!(opts, :battery)
 
-    children = [{KubeServices.Stale.Reaper, [delay: battery.config.delay]}]
+    children = [
+      {KubeServices.Stale.Watcher, [delay: battery.config.delay]}
+    ]
 
     Supervisor.init(children, strategy: :one_for_one)
   end

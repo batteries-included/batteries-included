@@ -5,15 +5,13 @@ defmodule CommonCore.RoboSRE.SubjectTypeTest do
 
   describe "SubjectType enum" do
     test "casts valid atom values" do
-      assert {:ok, :pod} = SubjectType.cast(:pod)
       assert {:ok, :control_server} = SubjectType.cast(:control_server)
-      assert {:ok, :service} = SubjectType.cast(:service)
+      assert {:ok, :cluster_resource} = SubjectType.cast(:cluster_resource)
     end
 
     test "casts valid string values" do
-      assert {:ok, :pod} = SubjectType.cast("pod")
       assert {:ok, :control_server} = SubjectType.cast("control_server")
-      assert {:ok, :service} = SubjectType.cast("service")
+      assert {:ok, :cluster_resource} = SubjectType.cast("cluster_resource")
     end
 
     test "returns error for invalid values" do
@@ -22,16 +20,15 @@ defmodule CommonCore.RoboSRE.SubjectTypeTest do
     end
 
     test "provides human-readable labels" do
-      assert "Pod" = SubjectType.label(:pod)
       assert "Control Server" = SubjectType.label(:control_server)
-      assert "Service" = SubjectType.label(:service)
+      assert "Cluster Resource" = SubjectType.label(:cluster_resource)
     end
 
     test "provides options for forms" do
       options = SubjectType.options()
       assert is_list(options)
-      assert {"Pod", :pod} in options
-      assert {"Service", :service} in options
+      assert {"Control Server", :control_server} in options
+      assert {"Cluster Resource", :cluster_resource} in options
     end
   end
 end

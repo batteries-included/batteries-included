@@ -1,5 +1,7 @@
 defmodule EventCenter.SystemStateSummary do
   @moduledoc false
+  @behaviour EventCenter.SystemStateSummary.Behaviour
+
   alias Phoenix.PubSub
 
   @pubsub EventCenter.SystemStateSummary.PubSub

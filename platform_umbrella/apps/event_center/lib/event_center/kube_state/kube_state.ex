@@ -1,5 +1,7 @@
 defmodule EventCenter.KubeState do
   @moduledoc false
+  @behaviour EventCenter.KubeState.Behaviour
+
   use TypedStruct
 
   alias Phoenix.PubSub

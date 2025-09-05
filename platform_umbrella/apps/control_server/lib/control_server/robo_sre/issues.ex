@@ -1,4 +1,4 @@
-defmodule ControlServer.RoboSRE do
+defmodule ControlServer.RoboSRE.Issues do
   @moduledoc """
   The RoboSRE context for managing issues detected and remediated by the automated system.
   """
@@ -35,6 +35,15 @@ defmodule ControlServer.RoboSRE do
   """
   def list_issues(params) do
     Repo.Flop.validate_and_run(Issue, params, for: Issue)
+  end
+
+  def list_open_issues do
+    Repo.all(
+      from(i in Issue,
+        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying],
+        order_by: [desc: :inserted_at]
+      )
+    )
   end
 
   @spec get_issue!(BatteryUUID.t(), keyword()) :: Issue.t()
@@ -149,7 +158,7 @@ defmodule ControlServer.RoboSRE do
     Repo.all(
       from(i in Issue,
         where: i.subject == ^subject,
-        where: i.status in [:detected, :analyzing, :remediating, :monitoring]
+        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying]
       )
     )
   end
@@ -174,7 +183,7 @@ defmodule ControlServer.RoboSRE do
   def count_open_issues do
     Repo.one(
       from(i in Issue,
-        where: i.status in [:detected, :analyzing, :remediating, :monitoring],
+        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying],
         select: count(i.id)
       )
     )
@@ -189,7 +198,7 @@ defmodule ControlServer.RoboSRE do
 
     Repo.update_all(
       from(i in Issue,
-        where: i.status in [:detected, :analyzing, :remediating, :monitoring],
+        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying],
         where: i.updated_at < ^cutoff
       ),
       set: [status: :resolved, resolved_at: DateTime.utc_now()]

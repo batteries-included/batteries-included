@@ -1,5 +1,32 @@
 defmodule KubeServices.Stale do
-  @moduledoc false
+  @moduledoc """
+  A resource is considered stale if it meets certain criteria:
+
+  - Has the correct management labels (`battery/managed.direct`)
+  - Has the required annotations (hashing annotation)
+  - Is not owned by another resource
+  - Is not in a delete hold period
+  - Is not present in recent resource snapshots
+
+  ## Resource Classification
+
+  Resources are classified based on several factors:
+
+  ### Management Labels
+  - `battery/managed.direct=true`: Resources directly managed by the platform
+  - `battery/managed.indirect`: Resources indirectly managed (excluded from stale detection)
+
+  ### Special Cases
+  - Resources managed by `vm-operator` are excluded
+  - Resources managed by Knative are excluded
+  - Resources with owner references are excluded (controlled by other resources)
+
+  ### Delete Hold
+  Resources can specify a minimum lifetime using the `battery/delete-after` label
+  with ISO 8601 duration format (e.g., "PT30M" for 30 minutes).
+  """
+  @behaviour KubeServices.Stale.Behaviour
+
   import CommonCore.Resources.FieldAccessors
 
   alias CommonCore.ApiVersionKind
@@ -15,6 +42,9 @@ defmodule KubeServices.Stale do
 
   @empty MapSet.new()
 
+  @spec can_delete_safe? :: boolean
+  def can_delete_safe?, do: resource_paths_success?() and snapshot_success?()
+
   @spec find_potential_stale :: list
   def find_potential_stale do
     seen_res_set = recent_resource_map_set(1)
@@ -26,6 +56,7 @@ defmodule KubeServices.Stale do
     end)
   end
 
+  @spec stale?(map, MapSet.t() | nil) :: boolean
   def stale?(resource, seen_res_set \\ nil)
   def stale?(resource, nil), do: stale?(resource, recent_resource_map_set())
   def stale?(resource, seen_res_set) when seen_res_set == @empty, do: stale?(resource, recent_resource_map_set())
@@ -60,8 +91,10 @@ defmodule KubeServices.Stale do
     end
   end
 
-  def recent_resource_map_set(num_snapshots \\ 10) do
-    num_snapshots |> StaleSnaphotApply.most_recent_snapshot_paths() |> MapSet.new(&to_tuple!/1)
+  defp recent_resource_map_set(num_snapshots \\ 10) do
+    num_snapshots
+    |> StaleSnaphotApply.most_recent_snapshot_paths()
+    |> MapSet.new(&to_tuple!/1)
   end
 
   defp to_tuple!(r) do
@@ -139,9 +172,6 @@ defmodule KubeServices.Stale do
   defp managed_by_knative(resource) do
     has_label?(resource, "serving.knative.dev/service")
   end
-
-  @spec can_delete_safe? :: boolean
-  def can_delete_safe?, do: resource_paths_success?() and snapshot_success?()
 
   defp snapshot_success? do
     ControlServer.SnapshotApply.KubeSnapshot

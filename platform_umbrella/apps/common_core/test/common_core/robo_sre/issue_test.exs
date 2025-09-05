@@ -6,8 +6,9 @@ defmodule CommonCore.RoboSRE.IssueTest do
   @valid_attrs %{
     subject: "cluster1.pod.my-app.container",
     subject_type: :pod,
-    issue_type: :pod_crash,
+    issue_type: :stale_resource,
     trigger: :kubernetes_event,
+    handler: "stale_resource",
     status: :detected
   }
 
@@ -16,6 +17,7 @@ defmodule CommonCore.RoboSRE.IssueTest do
     subject_type: :invalid,
     issue_type: :invalid,
     trigger: :invalid,
+    handler: :invalid,
     status: :invalid
   }
 

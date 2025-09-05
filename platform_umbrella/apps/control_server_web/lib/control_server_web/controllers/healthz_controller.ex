@@ -26,30 +26,13 @@ defmodule ControlServerWeb.HealthzController do
   end
 
   def check_healthz(conn, params) do
-    with {:ok, _} <- check_kube_state_healthz(conn, params),
-         {:ok, _} <- check_sql_repo_healthz(conn, params),
+    with {:ok, _} <- check_sql_repo_healthz(conn, params),
          {:ok, _} <- check_install_status_healthz(conn, params),
          {:ok, _} <- check_snapshot_apply_worker_healthz(conn, params) do
       %{status: 200, message: "OK"}
     else
       {:error, message} ->
         %{status: 500, message: "Internal Server Error: #{message}"}
-    end
-  end
-
-  defp check_kube_state_healthz(_conn, _params) do
-    case KubeServices.KubeState.get_status() do
-      nil ->
-        {:error, "No KubeState updates"}
-
-      timestamp ->
-        now = DateTime.utc_now()
-
-        if DateTime.after?(now, DateTime.add(timestamp, 45, :minute)) do
-          {:error, "KubeState is unhealthy, #{DateTime.to_iso8601(timestamp)}"}
-        else
-          {:ok, "KubeState is healthy, #{DateTime.to_iso8601(timestamp)}"}
-        end
     end
   end
 
