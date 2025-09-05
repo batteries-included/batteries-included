@@ -132,9 +132,9 @@ func (eb *envBuilder) readInstallEnv() (*InstallEnv, error) {
 
 // NeedsKubeCleanup returns true if we should remove all resources in an install
 func (env *InstallEnv) NeedsKubeCleanup() bool {
-	// Returns true if the cluster provider is in [provided, aws]
+	// Returns true if the cluster provider is in [provided, aws, azure]
 	provider := env.Spec.KubeCluster.Provider
-	if provider != "provided" && provider != "aws" {
+	if provider != "provided" && provider != "aws" && provider != "azure" {
 		return false
 	}
 
@@ -188,6 +188,8 @@ func (env *InstallEnv) init(ctx context.Context) error {
 		env.clusterProvider = kind.NewClusterProvider(slog.Default(), env.Slug, gatewayEnabled, env.nvidiaAutoDiscovery)
 	case "aws":
 		env.clusterProvider = cluster.NewPulumiProvider(env.Spec)
+	case "azure":
+		env.clusterProvider = cluster.NewAzureProvider(env.Spec)
 	case "provided":
 	default:
 		return fmt.Errorf("unknown provider: %s", provider)

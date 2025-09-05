@@ -8,6 +8,7 @@ defmodule CommonCore.ClusterType do
   use CommonCore.Ecto.Enum,
     kind: "kind",
     aws: "aws",
+    azure: "azure",
     provided: "provided"
 
   @doc """
@@ -18,6 +19,7 @@ defmodule CommonCore.ClusterType do
     [
       {"Kind", :kind},
       {"AWS", :aws},
+      {"Azure", :azure},
       {"Provided", :provided}
     ]
   end
@@ -28,6 +30,7 @@ defmodule CommonCore.ClusterType do
   @spec label(t()) :: String.t()
   def label(:kind), do: "Kind"
   def label(:aws), do: "AWS"
+  def label(:azure), do: "Azure"
   def label(:provided), do: "Provided"
   def label(other), do: to_string(other)
 end

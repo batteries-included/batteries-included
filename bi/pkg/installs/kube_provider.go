@@ -24,6 +24,8 @@ func (env *InstallEnv) StartKubeProvider(ctx context.Context, progressReporter *
 		err = env.startLocal(ctx, progressReporter)
 	case "aws":
 		err = env.startAWS(ctx, progressReporter)
+	case "azure":
+		err = env.startAzure(ctx, progressReporter)
 	case "provided":
 	default:
 		err = fmt.Errorf("unknown provider: %s", provider)
@@ -99,6 +101,38 @@ func (env *InstallEnv) startAWS(ctx context.Context, progressReporter *util.Prog
 
 	if err := env.configureKarpenterBattery(parsed); err != nil {
 		return fmt.Errorf("error configuring karpenter battery: %w", err)
+	}
+
+	if err := env.configureCNPGBarmanBattery(parsed); err != nil {
+		return fmt.Errorf("error configuring cloudnative_pg_barman battery: %w", err)
+	}
+
+	return nil
+}
+
+func (env *InstallEnv) startAzure(ctx context.Context, progressReporter *util.ProgressReporter) error {
+	slog.Debug("Starting azure cluster")
+
+	if err := env.clusterProvider.Create(ctx, progressReporter); err != nil {
+		return fmt.Errorf("error creating azure cluster: %w", err)
+	}
+
+	var buf bytes.Buffer
+	if err := env.clusterProvider.WriteOutputs(ctx, &buf); err != nil {
+		return fmt.Errorf("error getting cluster outputs: %w", err)
+	}
+
+	parsed, err := parseAKSOutputs(buf.Bytes())
+	if err != nil {
+		return fmt.Errorf("error parsing cluster outputs: %w", err)
+	}
+
+	if err := env.configureAzureLBControllerBattery(parsed); err != nil {
+		return fmt.Errorf("error configuring azure lb controller battery: %w", err)
+	}
+
+	if err := env.configureAzureKarpenterBattery(parsed); err != nil {
+		return fmt.Errorf("error configuring azure karpenter battery: %w", err)
 	}
 
 	if err := env.configureCNPGBarmanBattery(parsed); err != nil {
@@ -187,6 +221,80 @@ func (env *InstallEnv) configureCNPGBarmanBattery(outputs *eksOutputs) error {
 
 	b.Config["bucket_name"] = outputs.Postgres["bucketName"].Value
 	b.Config["service_role_arn"] = outputs.Postgres["roleARN"].Value
+
+	return nil
+}
+
+type aksOutputs struct {
+	Cluster       map[string]output `json:"cluster"`
+	Gateway       map[string]output `json:"gateway"`
+	Karpenter     map[string]output `json:"karpenter"`
+	LoadBalancer  map[string]output `json:"loadbalancer"`
+	Postgres      map[string]output `json:"postgres"`
+	ResourceGroup map[string]output `json:"resourcegroup"`
+	VNet          map[string]output `json:"vnet"`
+}
+
+func parseAKSOutputs(output []byte) (*aksOutputs, error) {
+	o := &aksOutputs{}
+	err := json.Unmarshal(output, o)
+	return o, err
+}
+
+func (env *InstallEnv) configureAzureLBControllerBattery(outputs *aksOutputs) error {
+	b, err := env.Spec.GetBatteryByType("azure_load_balancer_controller")
+	if err != nil {
+		return fmt.Errorf("azure_load_balancer_controller battery wasn't found in install spec")
+	}
+
+	// Configure Azure-specific settings
+	if clusterName, ok := outputs.Cluster["name"]; ok {
+		b.Config["cluster_name"] = clusterName.Value
+	}
+	if resourceGroup, ok := outputs.Cluster["resourceGroupName"]; ok {
+		b.Config["resource_group_name"] = resourceGroup.Value
+	}
+	if location, ok := outputs.Cluster["location"]; ok {
+		b.Config["location"] = location.Value
+	}
+	if subscriptionId, ok := outputs.ResourceGroup["subscriptionId"]; ok {
+		b.Config["subscription_id"] = subscriptionId.Value
+	}
+	if tenantId, ok := outputs.Cluster["tenantId"]; ok {
+		b.Config["tenant_id"] = tenantId.Value
+	}
+	if clientId, ok := outputs.LoadBalancer["clientId"]; ok {
+		b.Config["client_id"] = clientId.Value
+	}
+
+	return nil
+}
+
+func (env *InstallEnv) configureAzureKarpenterBattery(outputs *aksOutputs) error {
+	b, err := env.Spec.GetBatteryByType("azure_karpenter")
+	if err != nil {
+		return fmt.Errorf("azure_karpenter battery wasn't found in install spec")
+	}
+
+	// Configure Azure Karpenter-specific settings
+	if clusterName, ok := outputs.Cluster["name"]; ok {
+		b.Config["cluster_name"] = clusterName.Value
+	}
+	if resourceGroup, ok := outputs.Cluster["resourceGroupName"]; ok {
+		b.Config["resource_group_name"] = resourceGroup.Value
+	}
+	if location, ok := outputs.Cluster["location"]; ok {
+		b.Config["location"] = location.Value
+	}
+	if subscriptionId, ok := outputs.ResourceGroup["subscriptionId"]; ok {
+		b.Config["subscription_id"] = subscriptionId.Value
+	}
+	if tenantId, ok := outputs.Cluster["tenantId"]; ok {
+		b.Config["tenant_id"] = tenantId.Value
+	}
+	if nodeResourceGroup, ok := outputs.Cluster["nodeResourceGroup"]; ok {
+		b.Config["node_resource_group"] = nodeResourceGroup.Value
+	}
 
 	return nil
 }
