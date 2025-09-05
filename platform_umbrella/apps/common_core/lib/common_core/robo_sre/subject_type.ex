@@ -6,14 +6,16 @@ defmodule CommonCore.RoboSRE.SubjectType do
   use CommonCore.Ecto.Enum,
     pod: "pod",
     control_server: "control_server",
-    service: "service"
+    service: "service",
+    cluster_resource: "cluster_resource"
 
   @spec options() :: list({String.t(), t()})
   def options do
     [
       {"Pod", :pod},
       {"Control Server", :control_server},
-      {"Service", :service}
+      {"Service", :service},
+      {"Cluster Resource", :cluster_resource}
     ]
   end
 
@@ -21,5 +23,6 @@ defmodule CommonCore.RoboSRE.SubjectType do
   def label(:pod), do: "Pod"
   def label(:control_server), do: "Control Server"
   def label(:service), do: "Service"
+  def label(:cluster_resource), do: "Cluster Resource"
   def label(other), do: other |> Atom.to_string() |> String.capitalize()
 end

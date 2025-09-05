@@ -6,14 +6,16 @@ defmodule CommonCore.RoboSRE.IssueType do
   use CommonCore.Ecto.Enum,
     pod_crash: "pod_crash",
     stuck_kubestate: "stuck_kubestate",
-    service_unavailable: "service_unavailable"
+    service_unavailable: "service_unavailable",
+    stale_resource: "stale_resource"
 
   @spec options() :: list({String.t(), t()})
   def options do
     [
       {"Pod Crash", :pod_crash},
       {"Stuck KubeState", :stuck_kubestate},
-      {"Service Unavailable", :service_unavailable}
+      {"Service Unavailable", :service_unavailable},
+      {"Stale Resource", :stale_resource}
     ]
   end
 
@@ -21,6 +23,7 @@ defmodule CommonCore.RoboSRE.IssueType do
   def label(:pod_crash), do: "Pod Crash"
   def label(:stuck_kubestate), do: "Stuck KubeState"
   def label(:service_unavailable), do: "Service Unavailable"
+  def label(:stale_resource), do: "Stale Resource"
 
   def label(other),
     do:

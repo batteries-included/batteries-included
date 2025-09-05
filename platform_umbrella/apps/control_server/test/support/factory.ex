@@ -265,8 +265,8 @@ defmodule ControlServer.Factory do
   def issue_factory do
     %Issue{
       subject: sequence("test-cluster.pod.test-app"),
-      subject_type: sequence(:subject_type, [:pod, :control_server]),
-      issue_type: sequence(:issue_type, [:pod_crash, :stuck_kubestate]),
+      subject_type: sequence(:subject_type, [:pod, :control_server, :cluster_resource]),
+      issue_type: sequence(:issue_type, [:pod_crash, :stuck_kubestate, :stale_resource]),
       trigger: sequence(:trigger, [:kubernetes_event, :metric_threshold, :health_check]),
       trigger_params: %{
         "event_type" => "Warning",
@@ -282,5 +282,11 @@ defmodule ControlServer.Factory do
       retry_count: sequence(:retry_count, [0, 1, 2]),
       max_retries: 3
     }
+  end
+
+  def robo_sre_issue_factory(attrs \\ %{}) do
+    issue_factory()
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
   end
 end
