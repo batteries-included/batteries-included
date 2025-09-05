@@ -13,6 +13,8 @@ defmodule KubeBootstrap do
   # styler:sort
   @allowed_bootstrap_batteries ~w(
     aws_load_balancer_controller
+    azure_karpenter
+    azure_load_balancer_controller
     battery_ca
     battery_core
     cert_manager

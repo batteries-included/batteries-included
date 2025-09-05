@@ -13,12 +13,14 @@ defmodule CommonCore.ClusterTypeTest do
     test "accepts atoms" do
       assert {:ok, :kind} == ClusterType.cast(:kind)
       assert {:ok, :aws} == ClusterType.cast(:aws)
+      assert {:ok, :azure} == ClusterType.cast(:azure)
       assert {:ok, :provided} == ClusterType.cast(:provided)
     end
 
     test "accepts strings" do
       assert {:ok, :kind} == ClusterType.cast("kind")
       assert {:ok, :aws} == ClusterType.cast("aws")
+      assert {:ok, :azure} == ClusterType.cast("azure")
       assert {:ok, :provided} == ClusterType.cast("provided")
     end
 
@@ -37,6 +39,7 @@ defmodule CommonCore.ClusterTypeTest do
   test "options/0 returns tuples" do
     assert {"Kind", :kind} in ClusterType.options()
     assert {"AWS", :aws} in ClusterType.options()
+    assert {"Azure", :azure} in ClusterType.options()
     assert {"Provided", :provided} in ClusterType.options()
   end
 
