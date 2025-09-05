@@ -101,13 +101,12 @@ do_build_image() {
         major=$(echo "$upstream_tag" | cut -d'.' -f 1)
 
         local docdb_source_url
-        docdb_source_url=$(
-            gh api \
-                -H "Accept: application/vnd.github+json" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                --jq '.[0].tarball_url' \
-                /repos/documentdb/documentdb/tags
-        )
+        local docdb_version
+        read -r docdb_version docdb_source_url < <(gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            --jq '.[0] | [.name, .tarball_url] | @tsv' \
+            /repos/documentdb/documentdb/tags)
 
         build_args+=(
             -t "${REGISTRY}/postgresql:${upstream_tag}"
@@ -115,6 +114,7 @@ do_build_image() {
             --build-arg "PG_VERSION=${upstream_tag}"
             --build-arg "PG_MAJOR=${major}"
             --build-arg "DOCDB_URL=${docdb_source_url}"
+            --build-arg "DOCDB_VERSION=${docdb_version}"
         )
         ;;
     build | build-base | build_base)
