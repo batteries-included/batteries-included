@@ -321,8 +321,9 @@ istio_ztunnel:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
-  default_tag: lab-4.4.6
+  default_tag: lab-4.4.7
   tags:
+    - lab-4.4.7
     - lab-4.4.6
     - lab-4.4.5
     - lab-4.4.4
