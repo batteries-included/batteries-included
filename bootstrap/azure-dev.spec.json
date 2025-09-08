@@ -1,0 +1,265 @@
+{
+  "initial_resources": {
+    "/namespace/battery_core": {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "battery/hash": "AZURE_DEV_HASH_PLACEHOLDER"
+        },
+        "labels": {
+          "app": "battery-core",
+          "app.kubernetes.io/managed-by": "batteries-included",
+          "app.kubernetes.io/name": "battery-core",
+          "app.kubernetes.io/version": "latest",
+          "battery/app": "battery-core",
+          "battery/managed": "true",
+          "battery/managed.direct": "true",
+          "battery/owner": "batt_azure_dev_battery_core_id",
+          "istio-injection": "disabled",
+          "istio.io/dataplane-mode": "ambient",
+          "version": "latest"
+        },
+        "name": "battery-core"
+      }
+    }
+  },
+  "kube_cluster": {
+    "config": {},
+    "provider": "azure"
+  },
+  "slug": "azure-dev",
+  "target_summary": {
+    "batteries": [
+      {
+        "config": {
+          "type": "gateway_api"
+        },
+        "group": "net_sec",
+        "id": "batt_azure_dev_gateway_api_id",
+        "inserted_at": null,
+        "type": "gateway_api",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "cni_image": "docker.io/istio/install-cni:1.27.0-distroless",
+          "cni_image_name_override": null,
+          "cni_image_tag_override": null,
+          "namespace": "battery-istio",
+          "namespace_override": null,
+          "pilot_image": "docker.io/istio/pilot:1.27.0-distroless",
+          "pilot_image_name_override": null,
+          "pilot_image_tag_override": null,
+          "type": "istio",
+          "ztunnel_image": "docker.io/istio/ztunnel:1.27.0-distroless",
+          "ztunnel_image_name_override": null,
+          "ztunnel_image_tag_override": null
+        },
+        "group": "net_sec",
+        "id": "batt_azure_dev_istio_id",
+        "inserted_at": null,
+        "type": "istio",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "proxy_image": "docker.io/istio/proxyv2:1.27.0-distroless",
+          "proxy_image_name_override": null,
+          "proxy_image_tag_override": null,
+          "type": "istio_gateway"
+        },
+        "group": "net_sec",
+        "id": "batt_azure_dev_istio_gateway_id",
+        "inserted_at": null,
+        "type": "istio_gateway",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "ai_namespace": "battery-ai",
+          "base_namespace": "battery-base",
+          "cluster_name": "azure-dev",
+          "cluster_type": "azure",
+          "control_jwk": {
+            "crv": "P-256",
+            "d": "azure_dev_key_placeholder_replace_with_real_key",
+            "kty": "EC",
+            "x": "azure_dev_x_placeholder_replace_with_real_value",
+            "y": "azure_dev_y_placeholder_replace_with_real_value"
+          },
+          "core_namespace": "battery-core",
+          "data_namespace": "battery-data",
+          "default_size": "small",
+          "install_id": "batt_azure_dev_install_id_placeholder",
+          "type": "battery_core",
+          "upgrade_days_of_week": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
+          ],
+          "upgrade_end_hour": 23,
+          "upgrade_start_hour": 18,
+          "usage": "development",
+          "virtual_upgrade_days_of_week": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday"
+          ]
+        },
+        "group": "magic",
+        "id": "batt_azure_dev_battery_core_id",
+        "inserted_at": null,
+        "type": "battery_core",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "image": "mcr.microsoft.com/oss/kubernetes/azure-load-balancer-controller:v1.7.0",
+          "image_name_override": null,
+          "image_tag_override": null,
+          "resource_group_name": "AZURE_RESOURCE_GROUP_PLACEHOLDER",
+          "subscription_id": "AZURE_SUBSCRIPTION_ID_PLACEHOLDER",
+          "tenant_id": "AZURE_TENANT_ID_PLACEHOLDER",
+          "cluster_name": "azure-dev",
+          "location": "AZURE_LOCATION_PLACEHOLDER",
+          "node_resource_group": "AZURE_NODE_RESOURCE_GROUP_PLACEHOLDER",
+          "vnet_name": "AZURE_VNET_NAME_PLACEHOLDER",
+          "subnet_name": "AZURE_SUBNET_NAME_PLACEHOLDER",
+          "kubelet_identity_id": "AZURE_KUBELET_IDENTITY_ID_PLACEHOLDER",
+          "type": "azure_load_balancer_controller"
+        },
+        "group": "magic",
+        "id": "batt_azure_dev_load_balancer_controller_id",
+        "inserted_at": null,
+        "type": "azure_load_balancer_controller",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "image": "mcr.microsoft.com/oss/azure/karpenter/karpenter:v0.37.0",
+          "image_name_override": null,
+          "image_tag_override": null,
+          "subscription_id": "AZURE_SUBSCRIPTION_ID_PLACEHOLDER",
+          "resource_group_name": "AZURE_RESOURCE_GROUP_PLACEHOLDER",
+          "location": "AZURE_LOCATION_PLACEHOLDER",
+          "tenant_id": "AZURE_TENANT_ID_PLACEHOLDER",
+          "client_id": "AZURE_CLIENT_ID_PLACEHOLDER",
+          "cluster_name": "azure-dev",
+          "node_resource_group": "AZURE_NODE_RESOURCE_GROUP_PLACEHOLDER",
+          "instance_types": ["Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3"],
+          "image_family": "Ubuntu2204",
+          "image_version": "202410.01.0",
+          "type": "azure_karpenter"
+        },
+        "group": "magic",
+        "id": "batt_azure_dev_karpenter_id",
+        "inserted_at": null,
+        "type": "azure_karpenter",
+        "updated_at": null
+      },
+      {
+        "config": {
+          "bucket_arn": null,
+          "bucket_name": null,
+          "storage_account_name": "AZURE_STORAGE_ACCOUNT_PLACEHOLDER",
+          "container_name": "AZURE_CONTAINER_NAME_PLACEHOLDER",
+          "default_postgres_image": "ghcr.io/batteries-included/postgresql:17.6",
+          "default_postgres_image_name_override": null,
+          "default_postgres_image_tag_override": null,
+          "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0",
+          "image_name_override": null,
+          "image_tag_override": null,
+          "service_role_arn": null,
+          "type": "cloudnative_pg"
+        },
+        "group": "data",
+        "id": "batt_azure_dev_cloudnative_pg_id",
+        "inserted_at": null,
+        "type": "cloudnative_pg",
+        "updated_at": null
+      }
+    ],
+    "captured_at": null,
+    "ferret_services": [],
+    "install_status": null,
+    "ip_address_pools": [],
+    "knative_services": [],
+    "model_instances": [],
+    "notebooks": [],
+    "postgres_clusters": [
+      {
+        "backup_config": {
+          "type": "object_store",
+          "storage_account_name": "AZURE_STORAGE_ACCOUNT_PLACEHOLDER",
+          "container_name": "AZURE_CONTAINER_NAME_PLACEHOLDER"
+        },
+        "cpu_limits": 1000,
+        "cpu_requested": 1000,
+        "database": {
+          "name": "control",
+          "owner": "battery-control-user"
+        },
+        "id": null,
+        "inserted_at": null,
+        "memory_limits": 1073741824,
+        "memory_requested": 1073741824,
+        "name": "controlserver",
+        "num_instances": 1,
+        "password_versions": [
+          {
+            "password": "AZURE_DEV_CONTROL_PASSWORD_PLACEHOLDER",
+            "username": "battery-control-user",
+            "version": 2
+          },
+          {
+            "password": "AZURE_DEV_LOCAL_PASSWORD_PLACEHOLDER",
+            "username": "battery-local-user",
+            "version": 1
+          }
+        ],
+        "project_id": null,
+        "restore_from_backup": null,
+        "storage_class": null,
+        "storage_size": 1073741824,
+        "type": "internal",
+        "updated_at": null,
+        "users": [
+          {
+            "credential_namespaces": [],
+            "position": null,
+            "roles": [
+              "superuser",
+              "createrole",
+              "createdb",
+              "login"
+            ],
+            "username": "battery-local-user"
+          },
+          {
+            "credential_namespaces": [
+              "battery-core"
+            ],
+            "position": null,
+            "roles": [
+              "createdb",
+              "login"
+            ],
+            "username": "battery-control-user"
+          }
+        ],
+        "virtual_size": "small",
+        "virtual_storage_size_range_value": 10737418240
+      }
+    ],
+    "projects": [],
+    "redis_instances": [],
+    "stable_versions_report": null,
+    "traditional_services": []
+  }
+}

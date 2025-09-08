@@ -5,9 +5,22 @@ defmodule CommonCore.Resources.StorageClass do
   def generate_eks_storage_classes do
     [
       build_storage_class(nil, name: "gp2", provisioner: "kubernetes.io/aws-ebs", allow_volume_expansion: false),
-      build_storage_class(%{"csi.storage.k8s.io/fstype" => "ext4", "type" => "gp2", "encrypted" => "true"}),
-      build_storage_class(%{"csi.storage.k8s.io/fstype" => "ext4", "type" => "gp3", "encrypted" => "true"},
-        default: "true"
+      build_storage_class(%{"type" => "gp3"}, name: "gp3", provisioner: "ebs.csi.aws.com", default: "true"),
+      build_storage_class(%{"type" => "gp2"}, name: "gp2-csi", provisioner: "ebs.csi.aws.com")
+    ]
+  end
+
+  def generate_aks_storage_classes do
+    [
+      build_storage_class(nil, name: "default", provisioner: "kubernetes.io/azure-disk", allow_volume_expansion: false),
+      build_storage_class(%{"storageaccounttype" => "Standard_LRS", "kind" => "Managed"},
+        name: "managed-standard", provisioner: "disk.csi.azure.com"
+      ),
+      build_storage_class(%{"storageaccounttype" => "Premium_LRS", "kind" => "Managed"},
+        name: "managed-premium", provisioner: "disk.csi.azure.com", default: "true"
+      ),
+      build_storage_class(%{"storageaccounttype" => "StandardSSD_LRS", "kind" => "Managed"},
+        name: "managed-standard-ssd", provisioner: "disk.csi.azure.com"
       )
     ]
   end

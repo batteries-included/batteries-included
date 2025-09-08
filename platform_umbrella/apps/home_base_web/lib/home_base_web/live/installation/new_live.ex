@@ -6,6 +6,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
 
   use CommonCore.IncludeResource,
     aws_description: "priv/markdown/install/aws.md",
+    azure_description: "priv/markdown/install/azure.md",
     internal_description: "priv/markdown/install/internal.md",
     kind_description: "priv/markdown/install/kind.md",
     kitchen_sink_description: "priv/markdown/install/kitchen_sink.md",
@@ -180,6 +181,7 @@ defmodule HomeBaseWeb.InstallationNewLive do
   # providers
   def explanation_more(:kind), do: get_resource(:kind_description)
   def explanation_more(:aws), do: get_resource(:aws_description)
+  def explanation_more(:azure), do: get_resource(:azure_description)
   def explanation_more(:provided), do: get_resource(:provided_description)
 
   def explanation_more(_), do: ""
