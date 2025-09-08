@@ -123,7 +123,7 @@ jobs:
       ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref,
       'refs/tags/')) && github.event_name == 'push' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4
         with:
