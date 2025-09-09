@@ -14,15 +14,13 @@ defmodule ControlServerWeb.Batteries.LokiForm do
 
       <.panel title="Configuration">
         <.fieldset>
-          <.field>
-            <:label>Replication Factor</:label>
-            <.input field={@form[:replication_factor]} type="number" />
-          </.field>
+          <.defaultable_field
+            label="Replication Factor"
+            field={@form[:replication_factor]}
+            type="number"
+          />
 
-          <.field>
-            <:label>Replicas</:label>
-            <.input field={@form[:replicas]} type="number" />
-          </.field>
+          <.defaultable_field label="Replicas" field={@form[:replicas]} type="number" />
         </.fieldset>
       </.panel>
 
