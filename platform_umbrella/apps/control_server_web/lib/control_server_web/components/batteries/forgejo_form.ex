@@ -14,10 +14,11 @@ defmodule ControlServerWeb.Batteries.ForgejoForm do
 
       <.panel title="Configuration">
         <.fieldset>
-          <.field>
-            <:label>Admin Username</:label>
-            <.input field={@form[:admin_username]} disabled={@action != :new} />
-          </.field>
+          <.defaultable_field
+            label="Admin Username"
+            field={@form[:admin_username]}
+            disabled={@action != :new}
+          />
 
           <.field>
             <:label>Admin Password</:label>

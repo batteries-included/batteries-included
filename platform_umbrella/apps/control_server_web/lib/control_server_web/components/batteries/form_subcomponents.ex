@@ -4,6 +4,7 @@ defmodule ControlServerWeb.BatteriesFormSubcomponents do
   use ControlServerWeb, :html
 
   alias CommonCore.Defaults.Images
+  alias Phoenix.HTML.FormField
 
   slot :inner_block
 
@@ -15,7 +16,7 @@ defmodule ControlServerWeb.BatteriesFormSubcomponents do
     """
   end
 
-  attr :field, Phoenix.HTML.FormField, required: true
+  attr :field, FormField, required: true
   attr :image_id, :atom, required: true
   attr :label, :string, required: true
 
@@ -32,4 +33,30 @@ defmodule ControlServerWeb.BatteriesFormSubcomponents do
     </.field>
     """
   end
+
+  attr :field, FormField, required: true
+  attr :label, :string, required: true
+  attr :options, :list, default: []
+  attr :disabled, :boolean, default: false
+  attr :rest, :global
+
+  def defaultable_field(assigns) do
+    assigns = assign(assigns, :form, assigns.field.form)
+
+    ~H"""
+    <.field>
+      <:label>{@label}</:label>
+      <.input
+        field={@form[override_field(@field)]}
+        placeholder={value(@field)}
+        options={@options}
+        disabled={@disabled}
+        {@rest}
+      />
+    </.field>
+    """
+  end
+
+  defp override_field(%FormField{field: field}), do: String.to_existing_atom("#{field}_override")
+  defp value(%FormField{value: value}), do: value
 end

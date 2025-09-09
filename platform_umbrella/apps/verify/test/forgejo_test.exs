@@ -1,9 +1,9 @@
-defmodule Verify.ForegejoTest do
+defmodule Verify.ForgejoTest do
   use Verify.TestCase,
     async: false,
     batteries: [
       # the override config is just for testing that we can override during testing
-      forgejo: %{admin_username: "user", admin_password: "pass"}
+      forgejo: %{admin_username_override: "inttestuser", admin_password: "pass"}
     ],
     images: ~w(forgejo)a
 

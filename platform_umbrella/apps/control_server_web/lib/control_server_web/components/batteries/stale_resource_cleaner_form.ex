@@ -1,7 +1,8 @@
 defmodule ControlServerWeb.Batteries.StaleResourceCleanerForm do
   @moduledoc false
-
   use ControlServerWeb, :live_component
+
+  import ControlServerWeb.BatteriesFormSubcomponents
 
   def render(assigns) do
     ~H"""
@@ -12,10 +13,7 @@ defmodule ControlServerWeb.Batteries.StaleResourceCleanerForm do
 
       <.panel title="Configuration">
         <.fieldset>
-          <.field>
-            <:label>Delay</:label>
-            <.input type="number" field={@form[:delay_override]} value={@form[:delay].value} />
-          </.field>
+          <.defaultable_field label="Delay" type="number" field={@form[:delay]} />
         </.fieldset>
       </.panel>
     </div>
