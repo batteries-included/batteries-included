@@ -20,7 +20,7 @@ defmodule CommonCore.Defaults.ControlDB do
       :virtual_size => to_string(size),
       :type => :internal,
       :users => [
-        %{username: @username, roles: ["createdb", "login"], credential_namespaces: additional_namespaces}
+        %{username: @username, roles: ["superuser", "createdb", "login"], credential_namespaces: additional_namespaces}
       ],
       :password_versions => [],
       :database => %{name: @database_name, owner: @username}
