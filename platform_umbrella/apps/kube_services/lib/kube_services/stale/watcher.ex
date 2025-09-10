@@ -29,14 +29,17 @@ defmodule KubeServices.Stale.Watcher do
     field :stale_resources, map(), default: %{}
     field :last_check_time, DateTime.t()
     field :snapshot_event_center, module(), default: SnapshotEventCenter
+    field :stale_module, module(), default: Stale
 
     def new!(opts) do
       delay_ms = Keyword.get(opts, :delay_ms, 900_000)
       snapshot_event_center = Keyword.get(opts, :snapshot_event_center, SnapshotEventCenter)
+      stale_module = Keyword.get(opts, :stale_module, Stale)
 
       struct!(__MODULE__,
         delay_ms: delay_ms,
-        snapshot_event_center: snapshot_event_center
+        snapshot_event_center: snapshot_event_center,
+        stale_module: stale_module
       )
     end
   end
@@ -87,10 +90,10 @@ defmodule KubeServices.Stale.Watcher do
     now = DateTime.utc_now()
 
     # Only proceed if we can safely delete
-    if Stale.can_delete_safe?() do
+    if state.stale_module.can_delete_safe?() do
       # Get currently stale resources
       current_stale_resources =
-        Stale.find_potential_stale()
+        state.stale_module.find_potential_stale()
         |> Enum.map(&resource_to_entry/1)
         |> Enum.reject(&is_nil/1)
         |> Map.new(fn entry -> {{entry.api_version_kind, entry.namespace, entry.name}, entry} end)
