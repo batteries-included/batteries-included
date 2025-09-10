@@ -22,7 +22,7 @@ defmodule CommonCore.RoboSRE.Issue do
 
   @derive {
     Flop.Schema,
-    filterable: [:status, :issue_type, :subject_type, :trigger],
+    filterable: [:subject, :status, :issue_type, :subject_type, :trigger],
     sortable: [:subject, :status, :issue_type, :inserted_at, :updated_at],
     default_limit: 20,
     default_order: %{

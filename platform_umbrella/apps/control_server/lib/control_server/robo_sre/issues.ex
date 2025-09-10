@@ -7,7 +7,10 @@ defmodule ControlServer.RoboSRE.Issues do
 
   alias CommonCore.Ecto.BatteryUUID
   alias CommonCore.RoboSRE.Issue
+  alias CommonCore.RoboSRE.IssueStatus
   alias EventCenter.Database, as: DatabaseEventCenter
+
+  @open_statuses IssueStatus.open_statuses()
 
   @spec list_issues() :: list(Issue.t())
   @doc """
@@ -40,7 +43,7 @@ defmodule ControlServer.RoboSRE.Issues do
   def list_open_issues do
     Repo.all(
       from(i in Issue,
-        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying],
+        where: i.status in ^@open_statuses,
         order_by: [desc: :inserted_at]
       )
     )
@@ -158,7 +161,7 @@ defmodule ControlServer.RoboSRE.Issues do
     Repo.all(
       from(i in Issue,
         where: i.subject == ^subject,
-        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying]
+        where: i.status in ^@open_statuses
       )
     )
   end
@@ -183,7 +186,19 @@ defmodule ControlServer.RoboSRE.Issues do
   def count_open_issues do
     Repo.one(
       from(i in Issue,
-        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying],
+        where: i.status in ^@open_statuses,
+        select: count(i.id)
+      )
+    )
+  end
+
+  @spec count_total_issues() :: integer()
+  @doc """
+  Count all issues.
+  """
+  def count_total_issues do
+    Repo.one(
+      from(i in Issue,
         select: count(i.id)
       )
     )
@@ -198,7 +213,7 @@ defmodule ControlServer.RoboSRE.Issues do
 
     Repo.update_all(
       from(i in Issue,
-        where: i.status in [:detected, :analyzing, :planning, :remediating, :verifying],
+        where: i.status in ^@open_statuses,
         where: i.updated_at < ^cutoff
       ),
       set: [status: :resolved, resolved_at: DateTime.utc_now()]
