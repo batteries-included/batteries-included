@@ -1,0 +1,25 @@
+<div class="border-b border-gray-lighter dark:border-gray-darker-tint ">
+  <nav aria-label="Tabs" class="-mb-px flex space-x-8">
+    
+      <a href="#" class="group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium cursor-pointer border-transparent text-gray-dark dark:text-gray hover:border-gray-light dark:hover:border-gray-darker-tint hover:text-gray-darkest dark:hover:text-gray-light [&amp;&gt;svg]:text-gray [&amp;&gt;svg]:group-hover:text-gray-dark dark:[&amp;&gt;svg]:text-gray-dark dark:[&amp;&gt;svg]:group-hover:text-gray">
+        
+        <span>My Account</span>
+      </a>
+    
+      <a href="#" class="group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium cursor-pointer border-transparent text-gray-dark dark:text-gray hover:border-gray-light dark:hover:border-gray-darker-tint hover:text-gray-darkest dark:hover:text-gray-light [&amp;&gt;svg]:text-gray [&amp;&gt;svg]:group-hover:text-gray-dark dark:[&amp;&gt;svg]:text-gray-dark dark:[&amp;&gt;svg]:group-hover:text-gray">
+        
+        <span>Company</span>
+      </a>
+    
+      <a href="#" class="group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium cursor-pointer border-primary text-primary dark:text-primary hover:text-primary [&amp;&gt;svg]:text-primary dark:[&amp;&gt;svg]:text-primary">
+        
+        <span>Team Members</span>
+      </a>
+    
+      <a href="#" class="group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium cursor-pointer border-transparent text-gray-dark dark:text-gray hover:border-gray-light dark:hover:border-gray-darker-tint hover:text-gray-darkest dark:hover:text-gray-light [&amp;&gt;svg]:text-gray [&amp;&gt;svg]:group-hover:text-gray-dark dark:[&amp;&gt;svg]:text-gray-dark dark:[&amp;&gt;svg]:group-hover:text-gray">
+        
+        <span>Billing</span>
+      </a>
+    
+  </nav>
+</div>

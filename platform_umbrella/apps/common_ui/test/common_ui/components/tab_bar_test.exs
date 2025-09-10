@@ -49,4 +49,30 @@ defmodule CommonUI.Components.TabBarTest do
     </.tab_bar>
     """
   end
+
+  component_snapshot_test "minimal tab bar" do
+    assigns = %{}
+
+    ~H"""
+    <.tab_bar variant="minimal">
+      <:tab>My Account</:tab>
+      <:tab>Company</:tab>
+      <:tab selected>Team Members</:tab>
+      <:tab>Billing</:tab>
+    </.tab_bar>
+    """
+  end
+
+  component_snapshot_test "minimal tab bar with icons" do
+    assigns = %{}
+
+    ~H"""
+    <.tab_bar variant="minimal">
+      <:tab icon={:user}>My Account</:tab>
+      <:tab icon={:building_office}>Company</:tab>
+      <:tab icon={:users} selected>Team Members</:tab>
+      <:tab icon={:credit_card}>Billing</:tab>
+    </.tab_bar>
+    """
+  end
 end

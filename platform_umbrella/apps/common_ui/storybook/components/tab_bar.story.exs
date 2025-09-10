@@ -75,6 +75,34 @@ defmodule Storybook.Components.TabBar do
           <.psb-variation />
         </div>
         """
+      },
+      %Variation{
+        id: :minimal,
+        slots: [
+          """
+          <:tab>My Account</:tab>
+          <:tab>Company</:tab>
+          <:tab selected>Team Members</:tab>
+          <:tab>Billing</:tab>
+          """
+        ],
+        attributes: %{
+          variant: "minimal"
+        }
+      },
+      %Variation{
+        id: :minimal_with_icons,
+        slots: [
+          """
+          <:tab icon={:user}>My Account</:tab>
+          <:tab icon={:building_office}>Company</:tab>
+          <:tab icon={:users} selected>Team Members</:tab>
+          <:tab icon={:credit_card}>Billing</:tab>
+          """
+        ],
+        attributes: %{
+          variant: "minimal"
+        }
       }
     ]
   end
