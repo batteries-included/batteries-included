@@ -34,4 +34,9 @@ defmodule CommonCore.RoboSRE.IssueStatus do
   def label(:resolved), do: "Resolved"
   def label(:failed), do: "Failed"
   def label(other), do: other |> Atom.to_string() |> String.capitalize()
+
+  @spec open_statuses() :: list(t())
+  def open_statuses do
+    [:detected, :analyzing, :planning, :remediating, :verifying]
+  end
 end

@@ -1,0 +1,47 @@
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table id="custom-actions-table" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
+      <tr>
+        <th class="pb-4">Step</th><th class="pb-4">Action Type</th><th class="pb-4">Parameters</th><th class="pb-4">Status</th><th class="pb-4">Result</th>
+        
+      </tr>
+    </thead>
+
+    <tbody id="custom-actions-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      <tr>
+        <td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+    <span class="font-mono text-sm">1</span>
+  
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+    Test action
+  
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+    <div class="space-y-1">
+  <div class="text-xs">
+    <span class="font-medium text-gray-dark">test:</span>
+    <span class="ml-1">value</span>
+  </div>
+</div>
+  
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+    <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400">
+  <svg xmlns="http://www.w3.org/2000/svg" class="size-3" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+</svg> Pending
+</span>
+  
+        </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold">
+          
+    <span class="text-xs text-gray-light">Not executed</span>
+  
+        </td>
+
+        
+      </tr>
+    </tbody>
+  </table>
+</div>

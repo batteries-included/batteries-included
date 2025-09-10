@@ -20,8 +20,7 @@ defmodule EventCenter.Database do
     :timeline_event,
     :ferret_service,
     :traditional_service,
-    :model_instance,
-    :issue
+    :model_instance
   ]
 
   def allowed_actions, do: @allowed_actions

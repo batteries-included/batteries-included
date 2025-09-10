@@ -15,7 +15,9 @@ defmodule ControlServer.Factory do
   alias CommonCore.Postgres.PGPasswordVersion
   alias CommonCore.Redis.RedisInstance
   alias CommonCore.Resources.Hashing
+  alias CommonCore.RoboSRE.Action
   alias CommonCore.RoboSRE.Issue
+  alias CommonCore.RoboSRE.RemediationPlan
   alias CommonCore.Timeline
   alias CommonCore.Timeline.TimelineEvent
   alias ControlServer.ContentAddressable.Document
@@ -277,6 +279,33 @@ defmodule ControlServer.Factory do
       handler: sequence(:handler, [:stale_resource]),
       retry_count: sequence(:retry_count, [0, 1, 2]),
       max_retries: 3
+    }
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+  end
+
+  def remediation_plan_factory(attrs \\ %{}) do
+    %RemediationPlan{
+      retry_delay_ms: sequence(:retry_delay_ms, [30_000, 60_000, 120_000]),
+      success_delay_ms: sequence(:success_delay_ms, [10_000, 30_000, 60_000]),
+      max_retries: sequence(:max_retries, [1, 2, 3, 5]),
+      current_action_index: 0
+    }
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+  end
+
+  def action_factory(attrs \\ %{}) do
+    %Action{
+      action_type: :delete_resource,
+      params: %{
+        "name" => sequence("test-resource"),
+        "namespace" => sequence("test-namespace"),
+        "api_version_kind" => sequence(:api_version_kind, CommonCore.ApiVersionKind.all_known())
+      },
+      order_index: sequence(:order_index, & &1),
+      executed_at: nil,
+      result: nil
     }
     |> merge_attributes(attrs)
     |> evaluate_lazy_attributes()

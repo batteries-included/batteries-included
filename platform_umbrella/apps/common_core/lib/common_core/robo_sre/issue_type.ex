@@ -26,4 +26,8 @@ defmodule CommonCore.RoboSRE.IssueType do
     |> String.split()
     |> Enum.map_join(" ", &String.capitalize/1)
   end
+
+  def open_statuses do
+    [:detected, :analyzing, :planning, :remediating, :verifying]
+  end
 end
