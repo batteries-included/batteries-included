@@ -426,8 +426,9 @@ kiwigrid_sidecar:
   tag_regex: ^\d+\.\d+\.\d+$
 knative_gateway_api_controller:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller
-  default_tag: v1.19.3
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
     - v1.19.3
     - v1.19.2
     - v1.19.1
@@ -435,8 +436,9 @@ knative_gateway_api_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_gateway_api_webhook:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook
-  default_tag: v1.19.3
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
     - v1.19.3
     - v1.19.2
     - v1.19.1
@@ -444,8 +446,9 @@ knative_gateway_api_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_controller:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
-  default_tag: v1.19.3
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
     - v1.19.3
     - v1.19.2
     - v1.19.1
@@ -456,8 +459,9 @@ knative_istio_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_webhook:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook
-  default_tag: v1.19.3
+  default_tag: v1.19.4
   tags:
+    - v1.19.4
     - v1.19.3
     - v1.19.2
     - v1.19.1
@@ -468,8 +472,9 @@ knative_istio_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_activator:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  default_tag: v1.19.4
+  default_tag: v1.19.5
   tags:
+    - v1.19.5
     - v1.19.4
     - v1.19.3
     - v1.19.2
@@ -485,8 +490,9 @@ knative_serving_activator:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_autoscaler:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  default_tag: v1.19.4
+  default_tag: v1.19.5
   tags:
+    - v1.19.5
     - v1.19.4
     - v1.19.3
     - v1.19.2
@@ -502,8 +508,9 @@ knative_serving_autoscaler:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_controller:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  default_tag: v1.19.4
+  default_tag: v1.19.5
   tags:
+    - v1.19.5
     - v1.19.4
     - v1.19.3
     - v1.19.2
@@ -519,8 +526,9 @@ knative_serving_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_queue:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/queue
-  default_tag: v1.19.4
+  default_tag: v1.19.5
   tags:
+    - v1.19.5
     - v1.19.4
     - v1.19.3
     - v1.19.2
@@ -536,8 +544,9 @@ knative_serving_queue:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_webhook:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
-  default_tag: v1.19.4
+  default_tag: v1.19.5
   tags:
+    - v1.19.5
     - v1.19.4
     - v1.19.3
     - v1.19.2
