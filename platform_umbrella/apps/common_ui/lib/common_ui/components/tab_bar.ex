@@ -4,13 +4,37 @@ defmodule CommonUI.Components.TabBar do
 
   import CommonUI.Components.Icon
 
-  attr :variant, :string, default: "primary", values: ["primary", "secondary", "borderless", "navigation"]
+  attr :variant, :string, default: "primary", values: ["primary", "secondary", "borderless", "navigation", "minimal"]
   attr :class, :any, default: nil
 
   # Don't validate attributes or define the `attr` macro under slot,
   # since slots don't support the `:global` attribute and we need to
   # pass phx bindings.
   slot :tab, validate_attrs: false
+
+  def tab_bar(%{variant: "minimal"} = assigns) do
+    ~H"""
+    <div class={[
+      "border-b border-gray-lighter dark:border-gray-darker-tint",
+      @class
+    ]}>
+      <nav aria-label="Tabs" class="-mb-px flex space-x-8">
+        <%= for tab <- @tab do %>
+          <.link
+            {assigns_to_attributes(tab, [:icon, :selected])}
+            class={[
+              "group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium cursor-pointer",
+              tab_class("minimal", Map.get(tab, :selected))
+            ]}
+          >
+            <.icon :if={icon = Map.get(tab, :icon)} name={icon} class="mr-2 -ml-0.5 size-5" />
+            <span>{render_slot(tab)}</span>
+          </.link>
+        <% end %>
+      </nav>
+    </div>
+    """
+  end
 
   def tab_bar(assigns) do
     ~H"""
@@ -84,5 +108,13 @@ defmodule CommonUI.Components.TabBar do
       # Prevents weirdness with drop shadow in safari
       "transform-gpu"
     ]
+  end
+
+  defp tab_class("minimal", true) do
+    "border-primary text-primary dark:text-primary hover:text-primary [&>svg]:text-primary dark:[&>svg]:text-primary"
+  end
+
+  defp tab_class("minimal", _) do
+    "border-transparent text-gray-dark dark:text-gray hover:border-gray-light dark:hover:border-gray-darker-tint hover:text-gray-darkest dark:hover:text-gray-light [&>svg]:text-gray [&>svg]:group-hover:text-gray-dark dark:[&>svg]:text-gray-dark dark:[&>svg]:group-hover:text-gray"
   end
 end
