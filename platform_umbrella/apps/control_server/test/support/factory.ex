@@ -266,8 +266,7 @@ defmodule ControlServer.Factory do
 
   def issue_factory(attrs \\ %{}) do
     %Issue{
-      subject: sequence("test-cluster.pod.test-app"),
-      subject_type: sequence(:subject_type, [:pod, :control_server, :cluster_resource]),
+      subject: sequence("test-cluster:pod:test-app"),
       issue_type: sequence(:issue_type, [:stuck_kubestate, :stale_resource]),
       trigger: sequence(:trigger, [:kubernetes_event, :metric_threshold, :health_check]),
       trigger_params: %{

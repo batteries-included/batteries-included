@@ -19,6 +19,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   alias ControlServer.RoboSRE.RemediationPlans, as: RemediationPlansContext
   alias EventCenter.Database, as: DatabaseEventCenter
   alias KubeServices.RoboSRE.DeleteResourceExecutor
+  alias KubeServices.RoboSRE.RestartKubeStateExecutor
   alias KubeServices.RoboSRE.StaleResourceHandler
 
   require Logger
@@ -33,6 +34,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
     field :plan_id, CommonCore.Ecto.BatteryUUID.t() | nil, default: nil
     # modules for dependency injection / mocking in tests
     field :delete_resource_executor, module(), default: DeleteResourceExecutor
+    field :restart_kube_state_executor, module(), default: RestartKubeStateExecutor
     field :database_event_center, module(), default: DatabaseEventCenter
     field :issues_context, module(), default: IssuesContext
     field :remediation_plans_context, module(), default: RemediationPlansContext
@@ -61,11 +63,10 @@ defmodule KubeServices.RoboSRE.IssueWorker do
 
   def start_link(opts \\ []) do
     issue = Keyword.fetch!(opts, :issue)
-
-    GenServer.start_link(__MODULE__, opts, name: via_name(issue.id))
+    GenServer.start_link(__MODULE__, opts, name: via(issue.id))
   end
 
-  def via_name(issue_id) do
+  def via(issue_id) do
     {:via, Registry, {KubeServices.RoboSRE.Registry, issue_id}}
   end
 
@@ -76,7 +77,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
     # Subscribe to issue updates for this specific issue
     :ok = state.database_event_center.subscribe(:issue)
 
-    Logger.info("IssueWorker started for issue #{state.issue.id}: #{state.issue.subject}")
+    Logger.info("IssueWorker started for issue #{state.issue.id}: #{state.issue.subject}", issue_id: state.issue.id)
     # Start processing based on current status
     {:ok, state, {:continue, :process_issue}}
   end
@@ -88,66 +89,80 @@ defmodule KubeServices.RoboSRE.IssueWorker do
 
   @impl GenServer
   def handle_info(:run_analysis, %State{issue: issue} = state) do
-    Logger.debug("Starting analysis for issue #{issue.id}")
+    Logger.debug("Starting analysis for issue #{issue.id}", issue_id: issue.id)
 
-    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, :analyzing),
-         {:ok, result, updated_state} <- execute_analysis(refreshed_state) do
+    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, [:detected, :analyzing]),
+         {:ok, updated_issue} <- state.issues_context.update_issue(refreshed_state.issue, %{status: :analyzing}),
+         {:ok, result, updated_state} <- execute_analysis(%{refreshed_state | issue: updated_issue}) do
+      Logger.debug("Analysis completed for issue #{issue.id} with result #{inspect(result)}", issue_id: issue.id)
+
       case result do
         :ready -> transition_to_planning(updated_state)
         :skip -> transition_to_resolved(updated_state)
       end
     else
       {:error, :issue_state_changed, current_state} ->
-        Logger.debug("Issue #{issue.id} state changed, re-processing")
+        Logger.info(
+          "Issue #{issue.id} state changed, re-processing previous #{issue.status} now #{current_state.issue.status}",
+          issue_id: issue.id
+        )
+
         process_issue(current_state)
 
       {:error, reason, updated_state} ->
-        Logger.error("Analysis failed for issue #{issue.id}: #{inspect(reason)}")
+        Logger.error("Analysis failed for issue #{issue.id}: #{inspect(reason)}", issue_id: issue.id)
         transition_to_failed(updated_state)
     end
   end
 
   @impl GenServer
-  def handle_info(:run_planning, state) do
-    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, :planning),
+  def handle_info(:run_planning, %State{issue: issue} = state) do
+    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, [:planning]),
          {:ok, updated_state} <- execute_planning(refreshed_state) do
       transition_to_remediating(updated_state)
     else
       {:error, :issue_state_changed, current_state} ->
-        Logger.debug("Issue #{state.issue.id} state changed, re-processing")
+        Logger.info(
+          "Issue #{issue.id} state changed, re-processing. Previous: #{issue.status} Current: #{current_state.issue.status}",
+          issue_id: issue.id
+        )
+
         process_issue(current_state)
 
       {:error, reason, updated_state} ->
-        Logger.error("Planning failed: #{inspect(reason)}")
+        Logger.error("Planning failed: #{inspect(reason)}", issue_id: state.issue.id)
         transition_to_failed(updated_state)
     end
   end
 
   @impl GenServer
   def handle_info(:run_remediation, %{issue: %{status: :remediating}} = state) do
-    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, :remediating),
+    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, [:remediating]),
          {:ok, updated_state} <- execute_current_action(refreshed_state) do
       check_plan_completion(updated_state)
     else
       {:error, :issue_state_changed, current_state} ->
-        Logger.debug("Issue #{state.issue.id} state changed, re-processing")
+        Logger.debug("Issue #{state.issue.id} state changed, re-processing", issue_id: state.issue.id)
         process_issue(current_state)
 
       {:error, reason, updated_state} ->
-        Logger.error("Remediation action failed: #{inspect(reason)}")
+        Logger.error("Remediation action failed: #{inspect(reason)}", issue_id: state.issue.id)
         handle_remediation_failure(updated_state)
     end
   end
 
   @impl GenServer
   def handle_info(:run_remediation, %{issue: %{status: status}} = state) do
-    Logger.debug("Ignoring :run_remediation message, issue status is #{status} (not remediating)")
+    Logger.debug("Ignoring :run_remediation message, issue status is #{status} (not remediating)",
+      issue_id: state.issue.id
+    )
+
     {:noreply, state}
   end
 
   @impl GenServer
   def handle_info(:run_verify, state) do
-    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, :verifying),
+    with {:ok, refreshed_state} <- refresh_and_validate_issue_state(state, [:verifying]),
          {:ok, result, updated_state} <- execute_verify(refreshed_state) do
       case result do
         :resolved -> transition_to_resolved(updated_state)
@@ -155,11 +170,11 @@ defmodule KubeServices.RoboSRE.IssueWorker do
       end
     else
       {:error, :issue_state_changed, current_state} ->
-        Logger.debug("Issue #{state.issue.id} state changed, re-processing")
+        Logger.debug("Issue #{state.issue.id} state changed, re-processing", issue_id: state.issue.id)
         process_issue(current_state)
 
       {:error, reason, updated_state} ->
-        Logger.error("Verification failed: #{inspect(reason)}")
+        Logger.error("Verification failed: #{inspect(reason)}", issue_id: state.issue.id)
         transition_to_failed(updated_state)
     end
   end
@@ -170,7 +185,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
         %{issue: %{id: issue_id} = old_issue, issues_context: issues_context} = state
       ) do
     # Issue was updated, sync our local state
-    Logger.debug("Issue #{issue_id} was updated, syncing state")
+    Logger.debug("Issue #{issue_id} was updated, syncing state", issue_id: issue_id)
     new_issue = issues_context.get_issue!(issue_id)
     state = %{state | issue: new_issue}
 
@@ -178,14 +193,14 @@ defmodule KubeServices.RoboSRE.IssueWorker do
     if old_issue.status == new_issue.status && old_issue.updated_at == new_issue.updated_at do
       {:noreply, state}
     else
-      Logger.info("Issue #{issue_id} status changed from #{old_issue.status} to #{new_issue.status}")
+      Logger.info("Issue #{issue_id} status changed from #{old_issue.status} to #{new_issue.status}", issue_id: issue_id)
       process_issue(state)
     end
   end
 
   @impl GenServer
   def handle_info({:delete, %{id: issue_id}}, %{issue: %{id: issue_id}} = state) do
-    Logger.info("Issue #{issue_id} has been deleted, stopping worker")
+    Logger.info("Issue #{issue_id} has been deleted, stopping worker", issue_id: issue_id)
     {:stop, :normal, state}
   end
 
@@ -196,39 +211,15 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   end
 
   # Helper function to refresh issue state from database and validate/update expected status
-  defp refresh_and_validate_issue_state(%State{issue: issue, issues_context: issues_context} = state, expected_status) do
+  defp refresh_and_validate_issue_state(%State{issue: issue, issues_context: issues_context} = state, expected_statuses) do
     refreshed_issue = issues_context.get_issue!(issue.id)
 
-    cond do
-      refreshed_issue.status == expected_status ->
-        # Already in expected state
-        {:ok, %{state | issue: refreshed_issue}}
-
-      status_transition_valid?(refreshed_issue.status, expected_status) ->
-        # Valid transition, update to expected status
-        case issues_context.update_issue(refreshed_issue, %{status: expected_status}) do
-          {:ok, updated_issue} ->
-            {:ok, %{state | issue: updated_issue}}
-
-          {:error, changeset} ->
-            Logger.error("Failed to update issue status to #{expected_status}: #{inspect(changeset.errors)}")
-            {:error, :status_update_failed, %{state | issue: refreshed_issue}}
-        end
-
-      true ->
-        # Invalid state transition
-        {:error, :issue_state_changed, %{state | issue: refreshed_issue}}
-    end
-  end
-
-  defp status_transition_valid?(current_status, expected_status) do
-    case {current_status, expected_status} do
-      {:detected, :analyzing} -> true
-      {:analyzing, :analyzing} -> true
-      {:planning, :planning} -> true
-      {:remediating, :remediating} -> true
-      {:verifying, :verifying} -> true
-      _ -> false
+    if refreshed_issue.status in expected_statuses do
+      # Already in expected state
+      {:ok, %{state | issue: refreshed_issue}}
+    else
+      # state transition
+      {:error, :issue_state_changed, %{state | issue: refreshed_issue}}
     end
   end
 
@@ -250,11 +241,11 @@ defmodule KubeServices.RoboSRE.IssueWorker do
         schedule_verify(state)
 
       status when status in [:resolved, :failed] ->
-        Logger.info("Issue #{issue.id} is in terminal state #{status}, stopping worker")
+        Logger.info("Issue #{issue.id} is in terminal state #{status}, stopping worker", issue_id: issue.id)
         {:stop, :normal, state}
 
       _ ->
-        Logger.warning("Issue #{issue.id} in unknown status #{issue.status}")
+        Logger.warning("Issue #{issue.id} in unknown status #{issue.status}", issue_id: issue.id)
         {:noreply, state}
     end
   end
@@ -268,13 +259,13 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   end
 
   defp schedule_analysis(%{analysis_delay_ms: delay_ms} = state) do
-    Logger.debug("Scheduling analysis in #{delay_ms}ms for issue #{state.issue.id}")
+    Logger.debug("Scheduling analysis in #{delay_ms}ms for issue #{state.issue.id}", issue_id: state.issue.id)
     timer_ref = Process.send_after(self(), :run_analysis, delay_ms)
     {:noreply, %{cancel_all_timers(state) | analysis_timer: timer_ref}}
   end
 
   defp schedule_planning(state, delay \\ 0) do
-    Logger.debug("Scheduling planning for issue #{state.issue.id}")
+    Logger.debug("Scheduling planning for issue #{state.issue.id}", issue_id: state.issue.id)
     timer_ref = Process.send_after(self(), :run_planning, delay)
     {:noreply, %{cancel_all_timers(state) | remediation_timer: timer_ref}}
   end
@@ -288,7 +279,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   end
 
   defp schedule_remediation(%{plan_id: nil} = state, _delay) do
-    Logger.error("Cannot schedule remediation without plan_id")
+    Logger.error("Cannot schedule remediation without plan_id", issue_id: state.issue.id)
     transition_to_failed(state)
   end
 
@@ -303,15 +294,15 @@ defmodule KubeServices.RoboSRE.IssueWorker do
 
     case handler_module.preflight(issue) do
       {:ok, :ready} ->
-        Logger.debug("Preflight check passed for issue #{issue.id}")
+        Logger.debug("Preflight check passed for issue #{issue.id}", issue_id: issue.id)
         {:ok, :ready, state}
 
       {:ok, :skip} ->
-        Logger.info("Preflight check indicates issue #{issue.id} should be skipped")
+        Logger.info("Preflight check indicates issue #{issue.id} should be skipped", issue_id: issue.id)
         {:ok, :skip, state}
 
       {:error, reason} ->
-        Logger.error("Preflight check failed for issue #{issue.id}: #{inspect(reason)}")
+        Logger.error("Preflight check failed for issue #{issue.id}: #{inspect(reason)}", issue_id: issue.id)
         {:error, reason, state}
     end
   end
@@ -322,7 +313,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
         {:ok, %{state | plan_id: plan_id}}
 
       {:error, reason} ->
-        Logger.error("Planning failed for issue #{issue.id}: #{inspect(reason)}")
+        Logger.error("Planning failed for issue #{issue.id}: #{inspect(reason)}", issue_id: issue.id)
         {:error, reason, state}
     end
   end
@@ -333,7 +324,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
         create_new_plan(state)
 
       [existing_plan | _] ->
-        Logger.debug("Found existing remediation plan for issue #{issue.id}")
+        Logger.debug("Found existing remediation plan for issue #{issue.id}", issue_id: issue.id)
         {:ok, existing_plan.id}
     end
   end
@@ -343,19 +334,19 @@ defmodule KubeServices.RoboSRE.IssueWorker do
          plan_attrs = Map.put(plan_template.plan_attrs, :issue_id, issue.id),
          actions_attrs = plan_template.actions_attrs,
          {:ok, saved_plan} <- plans_context.create_plan_with_actions(plan_attrs, actions_attrs) do
-      Logger.debug("Created remediation plan with #{length(saved_plan.actions)} actions")
+      Logger.debug("Created remediation plan with #{length(saved_plan.actions)} actions", issue_id: issue.id)
       {:ok, saved_plan.id}
     else
       {:error, changeset} when is_map(changeset) and is_map_key(changeset, :errors) ->
-        Logger.error("Failed to save remediation plan: #{inspect(changeset.errors)}")
+        Logger.error("Failed to save remediation plan: #{inspect(changeset.errors)}", issue_id: issue.id)
         {:error, :failed_to_save_plan}
 
       {:error, reason, _updated_state} ->
-        Logger.error("Failed to create remediation plan: #{inspect(reason)}")
+        Logger.error("Failed to create remediation plan: #{inspect(reason)}", issue_id: issue.id)
         {:error, reason}
 
       {:error, reason} ->
-        Logger.error("Failed to create remediation plan: #{inspect(reason)}")
+        Logger.error("Failed to create remediation plan: #{inspect(reason)}", issue_id: issue.id)
         {:error, reason}
     end
   end
@@ -378,37 +369,39 @@ defmodule KubeServices.RoboSRE.IssueWorker do
          {:actions_remaining, true} <- {:actions_remaining, plan.current_action_index < length(plan.actions)},
          action when not is_nil(action) <- Enum.at(plan.actions, plan.current_action_index),
          executor = get_executor(state, plan),
-         Logger.debug("Executing action #{plan.current_action_index + 1}/#{length(plan.actions)}: #{action.action_type}"),
-         {:ok, result} <- executor.execute(action) do
-      Logger.debug("Action completed successfully: #{inspect(result)} for issue #{state.issue.id}")
-      # Save the result to the database, but continue even if this fails
-      case plans_context.update_action_result(action.id, result) do
-        {:ok, _updated_action} ->
-          {:ok, state}
-
-        {:error, changeset} ->
-          Logger.error("Failed to save action result: #{inspect(changeset.errors)}")
-          # Continue anyway since the action itself succeeded
-          {:ok, state}
-      end
+         Logger.debug("Executing action #{plan.current_action_index + 1}/#{length(plan.actions)}: #{action.action_type}",
+           issue_id: state.issue.id
+         ),
+         {:ok, result} <- executor.execute(action),
+         Logger.debug("Action completed successfully: #{inspect(result)} for issue #{state.issue.id}",
+           issue_id: state.issue.id
+         ),
+         # Save the result to the database, but continue even if this fails
+         {:ok, _updated_action} <- plans_context.update_action_result(action.id, to_result_map(result)) do
+      {:ok, state}
     else
       nil ->
-        Logger.error("Remediation plan #{plan_id} not found")
+        Logger.error("Remediation plan #{plan_id} not found", issue_id: state.issue.id)
         {:error, :plan_not_found, state}
 
       {:actions_remaining, false} ->
-        Logger.debug("All actions completed for plan #{plan_id}, skipping execution")
+        Logger.debug("All actions completed for plan #{plan_id}, skipping execution", issue_id: state.issue.id)
         # All actions are complete, return success so completion check can handle transition
         {:ok, state}
 
+      {:error, %Ecto.Changeset{} = changeset} ->
+        Logger.error("Failed to save action result: #{inspect(changeset.errors)}", issue_id: state.issue.id)
+        # Continue anyway since the action itself succeeded
+        {:ok, state}
+
       {:error, reason} ->
-        Logger.error("Action failed: #{inspect(reason)} for issue #{state.issue.id}")
+        Logger.error("Action failed: #{inspect(reason)} for issue #{state.issue.id}", issue_id: state.issue.id)
         {:error, reason, state}
     end
   end
 
   defp execute_current_action(%{plan_id: nil} = state) do
-    Logger.error("No plan ID available for remediation")
+    Logger.error("No plan ID available for remediation", issue_id: state.issue.id)
     {:error, :no_plan_id, state}
   end
 
@@ -417,15 +410,15 @@ defmodule KubeServices.RoboSRE.IssueWorker do
 
     case handler_module.verify(issue) do
       {:ok, :resolved} ->
-        Logger.info("Verification successful, issue #{issue.id} is resolved")
+        Logger.info("Verification successful, issue #{issue.id} is resolved", issue_id: issue.id)
         {:ok, :resolved, state}
 
       {:ok, :pending} ->
-        Logger.debug("Verification indicates issue #{issue.id} is still pending")
+        Logger.debug("Verification indicates issue #{issue.id} is still pending", issue_id: issue.id)
         {:ok, :pending, state}
 
       {:error, reason} ->
-        Logger.error("Verification failed for issue #{issue.id}: #{inspect(reason)}")
+        Logger.error("Verification failed for issue #{issue.id}: #{inspect(reason)}", issue_id: issue.id)
         {:error, reason, state}
     end
   end
@@ -437,20 +430,20 @@ defmodule KubeServices.RoboSRE.IssueWorker do
          {:ok, _updated_plan} <- plans_context.update_remediation_plan(plan, %{current_action_index: next_index}) do
       if next_index >= length(plan.actions) do
         # All actions completed, schedule monitoring
-        Logger.debug("All remediation actions completed, transitioning to monitoring")
+        Logger.debug("All remediation actions completed, transitioning to monitoring", issue_id: state.issue.id)
         transition_to_monitoring(state)
       else
         # More actions to execute
-        Logger.debug("Scheduling next action (#{next_index + 1}/#{length(plan.actions)})")
+        Logger.debug("Scheduling next action (#{next_index + 1}/#{length(plan.actions)})", issue_id: state.issue.id)
         schedule_remediation(state)
       end
     else
       nil ->
-        Logger.error("Plan #{plan_id} not found for completion check")
+        Logger.error("Plan #{plan_id} not found for completion check", issue_id: state.issue.id)
         transition_to_failed(state)
 
       {:error, changeset} ->
-        Logger.error("Failed to update plan action index: #{inspect(changeset.errors)}")
+        Logger.error("Failed to update plan action index: #{inspect(changeset.errors)}", issue_id: state.issue.id)
         # Still try to continue based on completed vs remaining actions
         # Re-fetch plan to get current state for fallback logic
         case plans_context.get_remediation_plan(plan_id) do
@@ -464,14 +457,14 @@ defmodule KubeServices.RoboSRE.IssueWorker do
             end
 
           nil ->
-            Logger.error("Plan #{plan_id} not found for fallback completion check")
+            Logger.error("Plan #{plan_id} not found for fallback completion check", issue_id: state.issue.id)
             transition_to_failed(state)
         end
     end
   end
 
   defp check_plan_completion(%{plan_id: nil} = state) do
-    Logger.error("No plan ID available for completion check")
+    Logger.error("No plan ID available for completion check", issue_id: state.issue.id)
     transition_to_failed(state)
   end
 
@@ -483,10 +476,12 @@ defmodule KubeServices.RoboSRE.IssueWorker do
     retry_count = issue.retry_count + 1
 
     if retry_count >= issue.max_retries do
-      Logger.error("Issue #{issue.id} exceeded max retries (#{issue.max_retries})")
+      Logger.error("Issue #{issue.id} exceeded max retries (#{issue.max_retries})", issue_id: issue.id)
       transition_to_failed(state)
     else
-      Logger.info("Retrying remediation for issue #{issue.id} (attempt #{retry_count + 1}/#{issue.max_retries})")
+      Logger.info("Retrying remediation for issue #{issue.id} (attempt #{retry_count + 1}/#{issue.max_retries})",
+        issue_id: issue.id
+      )
 
       with {:ok, updated_issue} <- issues_context.update_issue(issue, %{retry_count: retry_count}),
            state = %{state | issue: updated_issue},
@@ -496,18 +491,18 @@ defmodule KubeServices.RoboSRE.IssueWorker do
         schedule_remediation(state, delay_ms)
       else
         {:error, changeset} ->
-          Logger.error("Failed to update retry count: #{inspect(changeset.errors)}")
+          Logger.error("Failed to update retry count: #{inspect(changeset.errors)}", issue_id: issue.id)
           transition_to_failed(state)
 
         nil ->
-          Logger.error("Plan #{plan_id} not found for retry")
+          Logger.error("Plan #{plan_id} not found for retry", issue_id: issue.id)
           transition_to_failed(state)
       end
     end
   end
 
   defp handle_remediation_failure(%{plan_id: nil} = state) do
-    Logger.error("Cannot handle remediation failure without plan_id")
+    Logger.error("Cannot handle remediation failure without plan_id", issue_id: state.issue.id)
     transition_to_failed(state)
   end
 
@@ -520,7 +515,9 @@ defmodule KubeServices.RoboSRE.IssueWorker do
 
     with %RemediationPlan{} = plan <- plans_context.get_remediation_plan(plan_id),
          {:within_retry_limit, true} <- {:within_retry_limit, retry_count < plan.max_retries} do
-      Logger.debug("Issue #{issue.id} still pending, retrying monitoring (#{retry_count}/#{plan.max_retries})")
+      Logger.debug("Issue #{issue.id} still pending, retrying monitoring (#{retry_count}/#{plan.max_retries})",
+        issue_id: issue.id
+      )
 
       case issues_context.update_issue(issue, %{retry_count: retry_count}) do
         {:ok, updated_issue} ->
@@ -528,22 +525,22 @@ defmodule KubeServices.RoboSRE.IssueWorker do
           schedule_verify(%{state | issue: updated_issue}, delay_ms)
 
         {:error, changeset} ->
-          Logger.error("Failed to update retry count during monitoring: #{inspect(changeset.errors)}")
+          Logger.error("Failed to update retry count during monitoring: #{inspect(changeset.errors)}", issue_id: issue.id)
           transition_to_failed(state)
       end
     else
       nil ->
-        Logger.error("Plan #{plan_id} not found for verify pending")
+        Logger.error("Plan #{plan_id} not found for verify pending", issue_id: state.issue.id)
         transition_to_failed(state)
 
       {:within_retry_limit, false} ->
         # We need to get the plan again to access max_retries in the error case
         case plans_context.get_remediation_plan(plan_id) do
           %RemediationPlan{} = plan ->
-            Logger.error("Issue #{issue.id} monitoring exceeded max retries (#{plan.max_retries})")
+            Logger.error("Issue #{issue.id} monitoring exceeded max retries (#{plan.max_retries})", issue_id: issue.id)
 
           nil ->
-            Logger.error("Issue #{issue.id} monitoring exceeded max retries")
+            Logger.error("Issue #{issue.id} monitoring exceeded max retries", issue_id: issue.id)
         end
 
         transition_to_failed(state)
@@ -551,25 +548,25 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   end
 
   defp handle_verify_pending(%{plan_id: nil} = state) do
-    Logger.error("Cannot handle verify pending without plan_id")
+    Logger.error("Cannot handle verify pending without plan_id", issue_id: state.issue.id)
     transition_to_failed(state)
   end
 
   defp transition_to_planning(%{issue: issue, issues_context: issues_context} = state) do
-    Logger.info("Transitioning issue #{issue.id} to planning")
+    Logger.info("Transitioning issue #{issue.id} to planning", issue_id: issue.id)
 
     case issues_context.update_issue(issue, %{status: :planning, retry_count: 0}) do
       {:ok, updated_issue} ->
         schedule_planning(%{state | issue: updated_issue})
 
       {:error, changeset} ->
-        Logger.error("Failed to update issue status to planning: #{inspect(changeset.errors)}")
+        Logger.error("Failed to update issue status to planning: #{inspect(changeset.errors)}", issue_id: issue.id)
         transition_to_failed(state)
     end
   end
 
   defp transition_to_remediating(%{issue: issue, issues_context: issues_context} = state) do
-    Logger.info("Transitioning issue #{issue.id} to remediating")
+    Logger.info("Transitioning issue #{issue.id} to remediating", issue_id: issue.id)
 
     case issues_context.update_issue(issue, %{status: :remediating, retry_count: 0}) do
       {:ok, updated_issue} ->
@@ -577,7 +574,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
         schedule_remediation(%{state | issue: updated_issue})
 
       {:error, changeset} ->
-        Logger.error("Failed to update issue status to remediating: #{inspect(changeset.errors)}")
+        Logger.error("Failed to update issue status to remediating: #{inspect(changeset.errors)}", issue_id: issue.id)
         transition_to_failed(state)
     end
   end
@@ -587,7 +584,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
            state
        )
        when not is_nil(plan_id) do
-    Logger.info("Transitioning issue #{issue.id} to verifying")
+    Logger.info("Transitioning issue #{issue.id} to verifying", issue_id: issue.id)
 
     # Load plan to get success delay
     case plans_context.get_remediation_plan(plan_id) do
@@ -599,44 +596,44 @@ defmodule KubeServices.RoboSRE.IssueWorker do
             schedule_verify(%{state | issue: updated_issue}, delay_ms)
 
           {:error, changeset} ->
-            Logger.error("Failed to update issue status to verifying: #{inspect(changeset.errors)}")
+            Logger.error("Failed to update issue status to verifying: #{inspect(changeset.errors)}", issue_id: issue.id)
             transition_to_failed(state)
         end
 
       nil ->
-        Logger.error("Plan #{plan_id} not found for monitoring transition")
+        Logger.error("Plan #{plan_id} not found for monitoring transition", issue_id: issue.id)
         transition_to_failed(state)
     end
   end
 
   defp transition_to_resolved(%{issue: issue, issues_context: issues_context} = state) do
-    Logger.info("Issue #{issue.id} resolved successfully")
+    Logger.info("Issue #{issue.id} resolved successfully", issue_id: issue.id)
 
     case issues_context.update_issue(issue, %{status: :resolved, retry_count: 0}) do
       {:ok, updated_issue} ->
-        Logger.info("Issue #{issue.id} is in terminal state resolved, stopping worker")
+        Logger.info("Issue #{issue.id} is in terminal state resolved, stopping worker", issue_id: issue.id)
         {:stop, :normal, %{state | issue: updated_issue}}
 
       {:error, changeset} ->
-        Logger.error("Failed to update issue status to resolved: #{inspect(changeset.errors)}")
+        Logger.error("Failed to update issue status to resolved: #{inspect(changeset.errors)}", issue_id: issue.id)
         # Still consider it resolved locally even if DB update fails
-        Logger.info("Issue #{issue.id} is in terminal state resolved, stopping worker")
+        Logger.info("Issue #{issue.id} is in terminal state resolved, stopping worker", issue_id: issue.id)
         {:stop, :normal, state}
     end
   end
 
   defp transition_to_failed(%{issue: issue, issues_context: issues_context} = state) do
-    Logger.error("Issue #{issue.id} failed")
+    Logger.error("Issue #{issue.id} failed", issue_id: issue.id)
 
     case issues_context.update_issue(issue, %{status: :failed}) do
       {:ok, updated_issue} ->
-        Logger.info("Issue #{issue.id} is in terminal state failed, stopping worker")
+        Logger.info("Issue #{issue.id} is in terminal state failed, stopping worker", issue_id: issue.id)
         {:stop, :normal, %{state | issue: updated_issue}}
 
       {:error, changeset} ->
-        Logger.error("Failed to update issue status to failed: #{inspect(changeset.errors)}")
+        Logger.error("Failed to update issue status to failed: #{inspect(changeset.errors)}", issue_id: issue.id)
         # Still consider it failed locally even if DB update fails
-        Logger.info("Issue #{issue.id} is in terminal state failed, stopping worker")
+        Logger.info("Issue #{issue.id} is in terminal state failed, stopping worker", issue_id: issue.id)
         {:stop, :normal, state}
     end
   end
@@ -644,6 +641,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   defp get_handler(%State{issue: issue} = state) do
     case issue.handler do
       :stale_resource -> state.stale_resource_handler
+      :restart_kube_state -> state.restart_kube_state_executor
       _ -> raise "Unknown handler #{issue.handler}"
     end
   end
@@ -656,4 +654,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
       _ -> raise "Unknown action type #{action.action_type}"
     end
   end
+
+  defp to_result_map(result) when is_map(result), do: result
+  defp to_result_map(result), do: %{"result" => result}
 end

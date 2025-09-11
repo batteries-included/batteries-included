@@ -9,7 +9,6 @@ defmodule ControlServerWeb.Live.RoboSRE.IssuesShowTest do
     issue =
       insert(:issue, %{
         subject: "cluster-1.pod.test-app",
-        subject_type: :pod,
         issue_type: :stuck_kubestate,
         status: :detected,
         trigger: :kubernetes_event,
@@ -78,7 +77,6 @@ defmodule ControlServerWeb.Live.RoboSRE.IssuesShowTest do
       |> start(~p"/robo_sre/issues/#{issue.id}")
       |> assert_html("Subject")
       |> assert_html(issue.subject)
-      |> assert_html("Subject Type")
       |> assert_html("Pod")
       |> assert_html("Issue Type")
       |> assert_html("Stuck KubeState")

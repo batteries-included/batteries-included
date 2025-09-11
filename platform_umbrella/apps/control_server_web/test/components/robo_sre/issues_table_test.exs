@@ -17,7 +17,6 @@ defmodule ControlServerWeb.RoboSRE.IssuesTableTest do
         %{
           id: "batt_issue_1",
           subject: "cluster-1.pod.test-app",
-          subject_type: :pod,
           issue_type: :stuck_kubestate,
           status: :detected,
           handler: :pod_restart_handler,
@@ -26,7 +25,6 @@ defmodule ControlServerWeb.RoboSRE.IssuesTableTest do
         %{
           id: "batt_issue_2",
           subject: "cluster-1.control_server.main",
-          subject_type: :control_server,
           issue_type: :stale_resource,
           status: :remediating,
           handler: nil,
@@ -35,7 +33,6 @@ defmodule ControlServerWeb.RoboSRE.IssuesTableTest do
         %{
           id: "batt_issue_3",
           subject: "cluster-1.cluster_resource.monitoring-config",
-          subject_type: :cluster_resource,
           issue_type: :stuck_kubestate,
           status: :resolved,
           handler: :resource_cleanup_handler,
@@ -55,7 +52,6 @@ defmodule ControlServerWeb.RoboSRE.IssuesTableTest do
         %{
           id: "batt_issue_1",
           subject: "cluster-1.pod.test-app",
-          subject_type: :pod,
           issue_type: :stuck_kubestate,
           status: :failed,
           handler: :pod_restart_handler,
@@ -75,7 +71,6 @@ defmodule ControlServerWeb.RoboSRE.IssuesTableTest do
         %{
           id: "batt_issue_1",
           subject: "cluster-1.pod.test-app",
-          subject_type: :pod,
           issue_type: :stuck_kubestate,
           status: :analyzing,
           handler: nil,

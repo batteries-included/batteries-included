@@ -25,19 +25,19 @@ defmodule KubeServices.Stale.Watcher do
   @me __MODULE__
 
   typedstruct module: State do
-    field :delay_ms, integer(), default: 900_000
+    field :delay, integer(), default: 900_000
     field :stale_resources, map(), default: %{}
     field :last_check_time, DateTime.t()
     field :snapshot_event_center, module(), default: SnapshotEventCenter
     field :stale_module, module(), default: Stale
 
     def new!(opts) do
-      delay_ms = Keyword.get(opts, :delay_ms, 900_000)
+      delay = Keyword.get(opts, :delay, 900_000)
       snapshot_event_center = Keyword.get(opts, :snapshot_event_center, SnapshotEventCenter)
       stale_module = Keyword.get(opts, :stale_module, Stale)
 
       struct!(__MODULE__,
-        delay_ms: delay_ms,
+        delay: delay,
         snapshot_event_center: snapshot_event_center,
         stale_module: stale_module
       )
@@ -62,14 +62,14 @@ defmodule KubeServices.Stale.Watcher do
   def init(opts) do
     state = State.new!(opts)
     :ok = state.snapshot_event_center.subscribe()
-    Logger.info("Starting Watcher with delay: #{state.delay_ms}ms")
+    Logger.info("Starting Watcher with delay: #{state.delay}ms")
 
     {:ok, state}
   end
 
   @impl GenServer
   def handle_info(%SnapshotEventCenter.Payload{snapshot: %KubeSnapshot{status: :ok} = _snapshot}, state) do
-    Logger.debug("Received successful KubeSnapshot, checking for stale resources delay #{state.delay_ms}ms")
+    Logger.debug("Received successful KubeSnapshot, checking for stale resources delay #{state.delay}ms")
     new_state = check_for_stale_resources(state)
     {:noreply, new_state}
   end
@@ -102,7 +102,7 @@ defmodule KubeServices.Stale.Watcher do
       updated_stale_resources = update_stale_tracking(state.stale_resources, current_stale_resources, now)
 
       # Create issues for resources that have been stale long enough
-      create_issues_for_eligible_resources(updated_stale_resources, state.delay_ms, now)
+      create_issues_for_eligible_resources(updated_stale_resources, state.delay, now)
 
       %{state | stale_resources: updated_stale_resources, last_check_time: now}
     else
@@ -145,11 +145,11 @@ defmodule KubeServices.Stale.Watcher do
   end
 
   # Create RoboSRE issues for resources that have been stale long enough
-  defp create_issues_for_eligible_resources(stale_resources, delay_ms, now) do
+  defp create_issues_for_eligible_resources(stale_resources, delay, now) do
     stale_resources
     |> Enum.filter(fn {_key, entry} ->
       not entry.issue_created and
-        DateTime.diff(now, entry.first_seen_stale, :millisecond) >= delay_ms
+        DateTime.diff(now, entry.first_seen_stale, :millisecond) >= delay
     end)
     |> Enum.each(fn {_key, entry} ->
       create_stale_resource_issue(entry)
@@ -161,14 +161,11 @@ defmodule KubeServices.Stale.Watcher do
     subject = build_subject(entry)
 
     trigger_params = %{
-      api_version_kind: entry.api_version_kind,
-      namespace: entry.namespace,
-      name: entry.name
+      api_version_kind: entry.api_version_kind
     }
 
     issue_attrs = %{
       subject: subject,
-      subject_type: :cluster_resource,
       issue_type: :stale_resource,
       trigger: :health_check,
       trigger_params: trigger_params,
@@ -191,7 +188,7 @@ defmodule KubeServices.Stale.Watcher do
     case namespace do
       nil -> name
       "" -> name
-      ns -> "#{ns}.#{name}"
+      ns -> "#{ns}:#{name}"
     end
   end
 end

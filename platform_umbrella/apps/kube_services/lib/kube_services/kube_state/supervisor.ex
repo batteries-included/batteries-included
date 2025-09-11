@@ -4,6 +4,7 @@ defmodule KubeServices.KubeState.Supervisor do
 
   alias CommonCore.ApiVersionKind
   alias CommonCore.ConnectionPool
+  alias KubeServices.KubeState.Canary
   alias KubeServices.KubeState.Runner
 
   @default_table :default_state_table
@@ -29,7 +30,7 @@ defmodule KubeServices.KubeState.Supervisor do
 
     to_watch = if should_watch, do: ApiVersionKind.all_known(), else: []
 
-    [{Runner, name: table_name}] ++ Enum.map(to_watch, &spec(&1, opts))
+    [{Runner, name: table_name}, {Canary, []}] ++ Enum.map(to_watch, &spec(&1, opts))
   end
 
   def spec(type, opts) do

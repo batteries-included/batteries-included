@@ -290,6 +290,103 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
       # Assert
       assert {:ok, %{"message" => "service deleted"}} = result
     end
+
+    test "correctly converts string api_version_kind to atom when calling KubeState.get/3" do
+      # Arrange - This tests the critical string-to-atom conversion for api_version_kind
+      action = %Action{
+        action_type: :delete_resource,
+        params: %{
+          # String value as it would come from PostgreSQL database
+          "api_version_kind" => "pod",
+          "namespace" => "default",
+          "name" => "test-pod"
+        }
+      }
+
+      resource = %{
+        "apiVersion" => "v1",
+        "kind" => "Pod",
+        "metadata" => %{"name" => "test-pod", "namespace" => "default"}
+      }
+
+      # Mock expects atom :pod, not string "pod" - this is the critical test
+      expect(MockKubeState, :get, fn :pod, "default", "test-pod" -> {:ok, resource} end)
+      expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"deleted" => true}} end)
+
+      # Act
+      result = DeleteResourceExecutor.execute(action)
+
+      # Assert
+      assert {:ok, %{"deleted" => true}} = result
+    end
+
+    test "correctly converts various string api_version_kind formats to atoms" do
+      # Test different resource kinds that come from database as strings
+      test_cases = [
+        {"deployment", :deployment, "apps/v1", "Deployment"},
+        {"config_map", :config_map, "v1", "ConfigMap"},
+        {"service_account", :service_account, "v1", "ServiceAccount"},
+        {"persistent_volume_claim", :persistent_volume_claim, "v1", "PersistentVolumeClaim"},
+        {"horizontal_pod_autoscaler", :horizontal_pod_autoscaler, "autoscaling/v2", "HorizontalPodAutoscaler"}
+      ]
+
+      for {string_kind, atom_kind, api_version, kind} <- test_cases do
+        action = %Action{
+          action_type: :delete_resource,
+          params: %{
+            # String from database
+            "api_version_kind" => string_kind,
+            "namespace" => "test-ns",
+            "name" => "test-resource"
+          }
+        }
+
+        resource = %{
+          "apiVersion" => api_version,
+          "kind" => kind,
+          "metadata" => %{"name" => "test-resource", "namespace" => "test-ns"}
+        }
+
+        # Mock expects the converted atom, not the original string
+        expect(MockKubeState, :get, fn ^atom_kind, "test-ns", "test-resource" -> {:ok, resource} end)
+        expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"status" => "deleted"}} end)
+
+        # Act
+        result = DeleteResourceExecutor.execute(action)
+
+        # Assert
+        assert {:ok, %{"status" => "deleted"}} = result
+      end
+    end
+
+    test "correctly converts string api_version_kind for cluster-scoped resources" do
+      # Arrange
+      action = %Action{
+        action_type: :delete_resource,
+        params: %{
+          # String from database
+          "api_version_kind" => "cluster_role",
+          "namespace" => nil,
+          "name" => "test-cluster-role"
+        }
+      }
+
+      resource = %{
+        "apiVersion" => "rbac.authorization.k8s.io/v1",
+        "kind" => "ClusterRole",
+        "metadata" => %{"name" => "test-cluster-role"}
+      }
+
+      # Mock expects atom :cluster_role and nil namespace
+      expect(MockKubeState, :get, fn :cluster_role, nil, "test-cluster-role" -> {:ok, resource} end)
+      expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"deleted" => "cluster-role"}} end)
+
+      # Act
+      result = DeleteResourceExecutor.execute(action)
+
+      # Assert
+      assert {:ok, %{"deleted" => "cluster-role"}} = result
+    end
   end
 
   describe "integration scenarios" do

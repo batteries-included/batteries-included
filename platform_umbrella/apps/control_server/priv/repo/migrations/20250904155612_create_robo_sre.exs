@@ -5,7 +5,6 @@ defmodule ControlServer.Repo.Migrations.CreateRoboSRE do
     create table(:robo_sre_issues, primary_key: false) do
       add :id, :uuid, primary_key: true
       add :subject, :string, null: false
-      add :subject_type, :string, null: false
       add :issue_type, :string, null: false
       add :trigger, :string, null: false
       add :trigger_params, :map, default: %{}

@@ -4,8 +4,7 @@ defmodule CommonCore.RoboSRE.IssueTest do
   alias CommonCore.RoboSRE.Issue
 
   @valid_attrs %{
-    subject: "cluster1.pod.my-app.container",
-    subject_type: :pod,
+    subject: "cluster1:pod:my-app:container",
     issue_type: :stale_resource,
     trigger: :kubernetes_event,
     handler: "stale_resource",
@@ -14,7 +13,6 @@ defmodule CommonCore.RoboSRE.IssueTest do
 
   @invalid_attrs %{
     subject: "invalid subject",
-    subject_type: :invalid,
     issue_type: :invalid,
     trigger: :invalid,
     handler: :invalid,
@@ -32,11 +30,10 @@ defmodule CommonCore.RoboSRE.IssueTest do
       refute changeset.valid?
     end
 
-    test "requires subject, subject_type, issue_type, trigger, and status" do
+    test "requires subject, issue_type, trigger, and status" do
       changeset = Issue.changeset(%Issue{}, %{})
 
       assert changeset.errors[:subject]
-      assert changeset.errors[:subject_type]
       assert changeset.errors[:issue_type]
       assert changeset.errors[:trigger]
       # Status has a default value, so it won't be in the errors
@@ -45,10 +42,10 @@ defmodule CommonCore.RoboSRE.IssueTest do
 
     test "validates subject format" do
       # Valid formats
-      valid_changeset = Issue.changeset(%Issue{}, %{@valid_attrs | subject: "cluster.pod.resource"})
+      valid_changeset = Issue.changeset(%Issue{}, %{@valid_attrs | subject: "cluster:pod:resource"})
       assert valid_changeset.valid?
 
-      valid_changeset = Issue.changeset(%Issue{}, %{@valid_attrs | subject: "cluster.pod.resource.subresource"})
+      valid_changeset = Issue.changeset(%Issue{}, %{@valid_attrs | subject: "cluster:pod:resource:subresource"})
       assert valid_changeset.valid?
 
       # Invalid format

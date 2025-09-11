@@ -13,12 +13,7 @@
   </span>
 </th><th class="pb-4">
   <span>
-    <a href="/robo_sre/issues?order_by[]=subject_type&amp;order_directions[]=asc" data-phx-link="patch" data-phx-link-state="push">Type</a>
-    
-  </span>
-</th><th class="pb-4">
-  <span>
-    <a href="/robo_sre/issues?order_by[]=issue_type&amp;order_directions[]=asc" data-phx-link="patch" data-phx-link-state="push">Issue</a>
+    <a href="/robo_sre/issues?order_by[]=issue_type&amp;order_directions[]=asc" data-phx-link="patch" data-phx-link-state="push">Type</a>
     
   </span>
 </th><th class="pb-4">
@@ -48,14 +43,6 @@
     <a href="/robo_sre/issues/batt_issue_1" data-phx-link="redirect" data-phx-link-state="push" class="hover:underline font-medium">
       cluster-1.pod.test-app
     </a>
-  
-  
-      </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/robo_sre/issues/batt_issue_1&quot;}]]">
-        
-    
-    <div class="bg-gray-lighter dark:bg-gray-darkest-tint text-xs text-white dark:text-gray-darker-tint font-semibold rounded px-1 py-0.5 whitespace-nowrap ">
-  Pod
-</div>
   
   
       </td><td class="px-2 py-4 align-top first:rounded-l-lg last:rounded-r-lg first:font-semibold" phx-click="[[&quot;navigate&quot;,{&quot;replace&quot;:false,&quot;href&quot;:&quot;/robo_sre/issues/batt_issue_1&quot;}]]">
@@ -96,7 +83,7 @@
   
   </div>
   
-  710 day ago
+  711 day ago
 
 </div>
   

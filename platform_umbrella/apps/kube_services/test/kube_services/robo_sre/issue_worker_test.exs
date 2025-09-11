@@ -40,7 +40,6 @@ defmodule KubeServices.RoboSRE.IssueWorkerTest do
       issue =
         insert(:issue, %{
           subject: "test-cluster.pod.test-app.container",
-          subject_type: :pod,
           issue_type: :stale_resource,
           trigger: :kubernetes_event,
           handler: :stale_resource,

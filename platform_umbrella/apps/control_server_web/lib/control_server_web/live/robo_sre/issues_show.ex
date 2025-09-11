@@ -8,7 +8,6 @@ defmodule ControlServerWeb.Live.RoboSRE.IssuesShow do
   import ControlServerWeb.RoboSRE.RemediationActionsTable
 
   alias CommonCore.RoboSRE.IssueType
-  alias CommonCore.RoboSRE.SubjectType
   alias ControlServer.RoboSRE.Issues
   alias ControlServer.RoboSRE.RemediationPlans
 
@@ -71,9 +70,6 @@ defmodule ControlServerWeb.Live.RoboSRE.IssuesShow do
     <.panel title="Issue Details">
       <.data_list>
         <:item title="Subject">{@issue.subject}</:item>
-        <:item title="Subject Type">
-          {SubjectType.label(@issue.subject_type)}
-        </:item>
         <:item title="Issue Type">
           {IssueType.label(@issue.issue_type)}
         </:item>
