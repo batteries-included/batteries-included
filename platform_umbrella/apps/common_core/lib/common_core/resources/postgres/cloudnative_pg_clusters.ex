@@ -289,7 +289,16 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       "auto_explain.sample_rate" => "0.01",
       "pgaudit.log" => "role, ddl, misc_set",
       "pgaudit.log_catalog" => "off",
-      "cron.database_name" => "postgres"
+      # set up ferret / docdb 
+      "cron.database_name" => "postgres",
+      "documentdb.enableCompact" => "true",
+      "documentdb.enableLetAndCollationForQueryMatch" => "true",
+      "documentdb.enableNowSystemVariable" => "true",
+      "documentdb.enableSortbyIdPushDownToPrimaryKey" => "true",
+      "documentdb.enableSchemaValidation" => "true",
+      "documentdb.enableBypassDocumentValidation" => "true",
+      "documentdb.enableUserCrud" => "true",
+      "documentdb.maxUserLimit" => "100"
     }
   end
 
