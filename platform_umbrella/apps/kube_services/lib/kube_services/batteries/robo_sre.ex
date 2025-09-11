@@ -6,6 +6,7 @@ defmodule KubeServices.Batteries.RoboSRE do
     battery = Keyword.fetch!(opts, :battery)
 
     children = [
+      KubeServices.RoboSRE.Registry,
       {KubeServices.RoboSRE.DynamicSupervisor, battery: battery},
       {KubeServices.RoboSRE.DeleteResourceExecutor, []},
       {KubeServices.RoboSRE.IssueWatcher, battery: battery}

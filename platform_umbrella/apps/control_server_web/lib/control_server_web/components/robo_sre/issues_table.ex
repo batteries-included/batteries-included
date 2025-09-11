@@ -7,7 +7,6 @@ defmodule ControlServerWeb.RoboSRE.IssuesTable do
   import ControlServerWeb.RoboSRE.IssueStatusBadge
 
   alias CommonCore.RoboSRE.IssueType
-  alias CommonCore.RoboSRE.SubjectType
 
   attr :rows, :list, required: true
   attr :meta, :map, default: nil
@@ -29,11 +28,7 @@ defmodule ControlServerWeb.RoboSRE.IssuesTable do
         </.link>
       </:col>
 
-      <:col :let={issue} field={:subject_type} label="Type">
-        <.badge minimal label={SubjectType.label(issue.subject_type)} />
-      </:col>
-
-      <:col :let={issue} field={:issue_type} label="Issue">
+      <:col :let={issue} field={:issue_type} label="Type">
         <.badge minimal label={IssueType.label(issue.issue_type)} />
       </:col>
 

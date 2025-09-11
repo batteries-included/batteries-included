@@ -52,7 +52,11 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutor do
         _from,
         %State{resource_deleter: resource_deleter, kube_state: kube_state} = state
       ) do
-    api_version_kind = Map.get(params, :api_version_kind, Map.get(params, "api_version_kind", nil))
+    api_version_kind =
+      params
+      |> Map.get(:api_version_kind, Map.get(params, "api_version_kind", nil))
+      |> to_atom()
+
     namespace = Map.get(params, :namespace, Map.get(params, "namespace", nil))
     name = Map.get(params, :name, Map.get(params, "name", nil))
 
@@ -78,4 +82,10 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutor do
         {:reply, {:error, reason}, state}
     end
   end
+
+  defp to_atom(string) when is_binary(string) do
+    String.to_atom(string)
+  end
+
+  defp to_atom(atom) when is_atom(atom), do: atom
 end

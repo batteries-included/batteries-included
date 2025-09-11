@@ -11,43 +11,56 @@ defmodule KubeServices.PodLogs.Worker do
 
   require Logger
 
+  @get_opts ~w|name namespace container|a
+  @state_opts ~w|opts conn connection_func target client|a
+
   typedstruct module: State do
     field :opts, keyword()
     field :conn, K8s.Conn.t() | nil
     field :connection_func, any()
     field :target, pid(), enforce: false
+
+    # For mocking
+    field :client, module(), default: KubeServices.K8s.Client
+
+    def new!(opts) do
+      {get_args, other_args} = Keyword.split(opts, ~w|name namespace container|a)
+      # These are the required arguments that should be passed in as keyword lists.
+      pid = Keyword.get(other_args, :target, nil)
+
+      # Optional argument. Use the default connection pool if not specified.
+      connection_func =
+        Keyword.get(other_args, :connection_func, &CommonCore.ConnectionPool.get!/0)
+
+      struct!(
+        __MODULE__,
+        other_args
+        |> Keyword.put(:opts, get_args)
+        |> Keyword.put(:connection_func, connection_func)
+        |> Keyword.put(:target, pid)
+      )
+    end
   end
 
   def start_link(args) do
-    GenServer.start_link(__MODULE__, args)
+    {state_opts, gen_opts} = Keyword.split(args, @state_opts ++ @get_opts)
+
+    GenServer.start_link(__MODULE__, state_opts, gen_opts)
   end
 
   @impl GenServer
   def init(args) do
-    {get_args, other_args} = Keyword.split(args, ~w|name namespace container|a)
-    # These are the required arguments that should be passed in as keyword lists.
-    pid = Keyword.get(other_args, :target, nil)
-
-    # Optional argument. Use the default connection pool if not specified.
-    connection_func =
-      Keyword.get(other_args, :connection_func, &CommonCore.ConnectionPool.get!/0)
-
-    Process.send_after(self(), :start_connect, 50)
-
     # Create the inital state with conn being nil explictly
     # to allow for a lazy connection inside of `handle_info(:start_connect, state)`
-    state = %State{
-      opts: get_args,
-      connection_func: connection_func,
-      conn: nil,
-      target: pid
-    }
+    args = Keyword.put(args, :conn, nil)
+    state = State.new!(args)
+    Process.send_after(self(), :start_connect, 50)
 
     {:ok, state}
   end
 
   @impl GenServer
-  def handle_info(:start_connect, %State{opts: opts} = state) do
+  def handle_info(:start_connect, %State{opts: opts, client: client} = state) do
     conn = connection(state)
 
     {api_version, _kind} = ApiVersionKind.from_resource_type(:pod)
@@ -86,13 +99,13 @@ defmodule KubeServices.PodLogs.Worker do
     # TODO: send this to a phoenix pubsub from `event_center`
     {:ok, _} =
       api_version
-      |> K8s.Client.connect(
+      |> client.connect(
         "pods/log",
         main_opts,
         query_params
       )
-      |> K8s.Client.put_conn(conn)
-      |> K8s.Client.stream_to(self())
+      |> client.put_conn(conn)
+      |> client.stream_to(self())
 
     {:noreply, %{state | conn: conn}}
   end

@@ -8,7 +8,7 @@ defmodule KubeServices.Batteries do
 
   def init(_opts) do
     children = [
-      {Registry, [name: KubeServices.Batteries.Registry, keys: :unique]},
+      KubeServices.Batteries.Registry,
       {DynamicSupervisor, strategy: :one_for_one, name: KubeServices.Batteries.DynamicSupervisor},
       KubeServices.Batteries.InstalledWatcher
     ]

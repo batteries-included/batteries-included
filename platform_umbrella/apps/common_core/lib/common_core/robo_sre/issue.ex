@@ -17,12 +17,11 @@ defmodule CommonCore.RoboSRE.Issue do
   alias CommonCore.RoboSRE.HandlerType
   alias CommonCore.RoboSRE.IssueStatus
   alias CommonCore.RoboSRE.IssueType
-  alias CommonCore.RoboSRE.SubjectType
   alias CommonCore.RoboSRE.TriggerType
 
   @derive {
     Flop.Schema,
-    filterable: [:subject, :status, :issue_type, :subject_type, :trigger],
+    filterable: [:subject, :status, :issue_type, :trigger],
     sortable: [:subject, :status, :issue_type, :inserted_at, :updated_at],
     default_limit: 20,
     default_order: %{
@@ -31,12 +30,11 @@ defmodule CommonCore.RoboSRE.Issue do
     }
   }
 
-  @required_fields ~w(subject subject_type issue_type trigger status)a
+  @required_fields ~w(subject issue_type trigger status)a
 
   batt_schema "robo_sre_issues" do
-    # Subject: hierarchical identifier like "cluster.type.resource[.subresource]"
+    # Subject: hierarchical identifier like "namespace:resource[:subresource]"
     field :subject, :string
-    field :subject_type, SubjectType
     field :issue_type, IssueType
     field :trigger, TriggerType
     field :trigger_params, :map, default: %{}
@@ -74,11 +72,11 @@ defmodule CommonCore.RoboSRE.Issue do
 
   defp validate_subject_format(changeset) do
     validate_change(changeset, :subject, fn :subject, subject ->
-      #  Validate format of words  - or _ and numbers separated by dots
-      if Regex.match?(~r/^(([a-zA-Z0-9_-])+\.)*([a-zA-Z0-9_-])+$/, subject) do
+      #  Validate format of words  - or _ and numbers separated by :
+      if Regex.match?(~r/^(([.a-zA-Z0-9_-])+\:)*([.a-zA-Z0-9_-])+$/, subject) do
         []
       else
-        [subject: "must be in format 'cluster.type.resource' or 'cluster.type.resource.subresource'"]
+        [subject: "must be in format 'cluster:type:resource' or 'cluster:type:resource:subresource'"]
       end
     end)
   end

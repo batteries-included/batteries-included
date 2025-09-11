@@ -87,15 +87,38 @@ defmodule KubeServices.RoboSRE.StaleResourceHandler do
     {:error, "Unknown issue type"}
   end
 
-  defp destructure_params(%Issue{trigger_params: params}) do
+  defp destructure_params(%Issue{trigger_params: params, subject: subject}) do
     api_version_kind =
       params
       |> Map.get("api_version_kind", Map.get(params, :api_version_kind))
-      |> String.to_existing_atom()
+      |> to_atom()
 
-    namespace = Map.get(params, "namespace", Map.get(params, :namespace))
-    name = Map.get(params, "name", Map.get(params, :name))
+    {namespace, name} = parse_subject_for_resource(subject)
 
     {api_version_kind, namespace, name}
+  end
+
+  defp to_atom(string) when is_binary(string) do
+    String.to_atom(string)
+  end
+
+  defp to_atom(atom) when is_atom(atom), do: atom
+
+  # Parse the subject to extract namespace and name
+  # Subject format for stale resources: "namespace.name" or just "name" (for cluster-scoped resources)
+  defp parse_subject_for_resource(subject) do
+    case String.split(subject, ":") do
+      [name] ->
+        # Cluster-scoped resource (no namespace)
+        {nil, name}
+
+      [namespace, name] ->
+        # Namespaced resource
+        {namespace, name}
+
+      _ ->
+        Logger.error("Invalid subject format for stale resource: #{subject}")
+        {nil, subject}
+    end
   end
 end

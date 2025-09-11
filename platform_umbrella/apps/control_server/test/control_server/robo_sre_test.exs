@@ -20,8 +20,7 @@ defmodule ControlServer.RoboSRE.IssuesTest do
     test "create_issue/1 with valid data creates an issue" do
       valid_attrs =
         params_for(:issue, %{
-          subject: "test-cluster.pod.my-app.container",
-          subject_type: :pod,
+          subject: "test-cluster:pod:my-app:container",
           issue_type: :stuck_kubestate,
           trigger: :kubernetes_event,
           handler: :stale_resource,
@@ -30,8 +29,7 @@ defmodule ControlServer.RoboSRE.IssuesTest do
         })
 
       assert {:ok, %Issue{} = issue} = Issues.create_issue(valid_attrs)
-      assert issue.subject == "test-cluster.pod.my-app.container"
-      assert issue.subject_type == :pod
+      assert issue.subject == "test-cluster:pod:my-app:container"
       assert issue.issue_type == :stuck_kubestate
       assert issue.trigger == :kubernetes_event
       assert issue.status == :detected
@@ -41,7 +39,6 @@ defmodule ControlServer.RoboSRE.IssuesTest do
     test "create_issue/1 with invalid data returns error changeset" do
       invalid_attrs = %{
         subject: nil,
-        subject_type: nil,
         issue_type: nil,
         trigger: nil,
         status: nil
@@ -87,7 +84,7 @@ defmodule ControlServer.RoboSRE.IssuesTest do
       issue1 = insert(:issue, subject: subject, status: :detected)
       issue2 = insert(:issue, subject: subject, status: :analyzing)
       _resolved_issue = insert(:issue, subject: subject, status: :resolved)
-      _different_subject = insert(:issue, subject: "cluster.pod.app2", status: :detected)
+      _different_subject = insert(:issue, subject: "cluster:pod:app2", status: :detected)
 
       open_issues = Issues.find_open_issues_by_subject(subject)
 

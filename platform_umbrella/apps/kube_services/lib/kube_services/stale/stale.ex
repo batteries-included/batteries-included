@@ -47,7 +47,7 @@ defmodule KubeServices.Stale do
 
   @spec find_potential_stale :: list
   def find_potential_stale do
-    seen_res_set = recent_resource_map_set(1)
+    seen_res_set = recent_resource_map_set(3)
 
     KubeState.snapshot()
     |> Enum.flat_map(fn {_key, values} -> values end)
@@ -91,7 +91,7 @@ defmodule KubeServices.Stale do
     end
   end
 
-  defp recent_resource_map_set(num_snapshots \\ 10) do
+  defp recent_resource_map_set(num_snapshots \\ 3) do
     num_snapshots
     |> StaleSnaphotApply.most_recent_snapshot_paths()
     |> MapSet.new(&to_tuple!/1)

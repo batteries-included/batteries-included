@@ -9,7 +9,6 @@ defmodule ControlServerWeb.Live.RoboSRE.IssuesIndexTest do
     issue1 =
       insert(:issue, %{
         subject: "cluster-1.pod.test-app",
-        subject_type: :pod,
         issue_type: :stuck_kubestate,
         status: :detected,
         trigger: :kubernetes_event,
@@ -19,7 +18,6 @@ defmodule ControlServerWeb.Live.RoboSRE.IssuesIndexTest do
     issue2 =
       insert(:issue, %{
         subject: "cluster-1.control_server.main",
-        subject_type: :control_server,
         issue_type: :stale_resource,
         status: :remediating,
         trigger: :metric_threshold,
@@ -29,7 +27,6 @@ defmodule ControlServerWeb.Live.RoboSRE.IssuesIndexTest do
     issue3 =
       insert(:issue, %{
         subject: "cluster-1.cluster_resource.config",
-        subject_type: :cluster_resource,
         issue_type: :stuck_kubestate,
         status: :resolved,
         trigger: :health_check,

@@ -20,10 +20,16 @@ defmodule KubeServices.Application do
 
   def children(true = _run) do
     [
+      # Start up the K8s Client connection pool
       CommonCore.ConnectionPool,
+      # Start the Task Supervisor for async tasks
       {Task.Supervisor, name: @task_supervisor},
-      KubeServices.RoboSRE.Registry,
+      # Start the KubeState so we know what is in the cluster
       KubeServices.KubeState.Supervisor,
+      # Everything else is part of the batteries
+      #
+      # Each battery that needs processes will start a supervisor in
+      # the batteries dynamic supervisor.
       KubeServices.Batteries
     ]
   end

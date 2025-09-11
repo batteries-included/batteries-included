@@ -75,7 +75,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
     end
 
     test "starts successfully with custom delay" do
-      assert {:ok, _pid} = Watcher.start_link(name: :test_watcher_2, delay_ms: 1000)
+      assert {:ok, _pid} = Watcher.start_link(name: :test_watcher_2, delay: 1000)
     end
 
     test "ignores failed snapshot events", %{stale_pod: stale_pod} do
@@ -109,7 +109,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       stub(MockStale, :find_potential_stale, fn -> [stale_pod, stale_service] end)
 
       # Start watcher with very short delay to speed up test
-      {:ok, watcher_pid} = start_watcher_with_mock(delay_ms: 50)
+      {:ok, watcher_pid} = start_watcher_with_mock(delay: 50)
 
       # Send first successful snapshot event to start tracking resources as stale
       successful_snapshot = %KubeSnapshot{status: :ok}
@@ -129,26 +129,20 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       assert length(issues) == 2
 
       # Verify issue details for pod (note: namespace is included in subject)
-      pod_issue = Enum.find(issues, &(&1.subject == "default.stale-pod"))
-      assert pod_issue.subject_type == :cluster_resource
+      pod_issue = Enum.find(issues, &(&1.subject == "default:stale-pod"))
       assert pod_issue.issue_type == :stale_resource
       assert pod_issue.trigger == :health_check
       assert pod_issue.handler == :stale_resource
       assert pod_issue.status == :detected
       assert pod_issue.trigger_params["api_version_kind"] == "pod"
-      assert pod_issue.trigger_params["namespace"] == "default"
-      assert pod_issue.trigger_params["name"] == "stale-pod"
 
       # Verify issue details for service (with namespace in subject)
-      service_issue = Enum.find(issues, &(&1.subject == "production.stale-service"))
-      assert service_issue.subject_type == :cluster_resource
+      service_issue = Enum.find(issues, &(&1.subject == "production:stale-service"))
       assert service_issue.issue_type == :stale_resource
       assert service_issue.trigger == :health_check
       assert service_issue.handler == :stale_resource
       assert service_issue.status == :detected
       assert service_issue.trigger_params["api_version_kind"] == "service"
-      assert service_issue.trigger_params["namespace"] == "production"
-      assert service_issue.trigger_params["name"] == "stale-service"
     end
 
     test "does not create issues when can_delete_safe? returns false",
@@ -158,7 +152,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       # This should not be called, but stub it to be safe
       stub(MockStale, :find_potential_stale, fn -> [stale_pod] end)
 
-      {:ok, watcher_pid} = start_watcher_with_mock(delay_ms: 50)
+      {:ok, watcher_pid} = start_watcher_with_mock(delay: 50)
 
       # Send a successful snapshot event
       successful_snapshot = %KubeSnapshot{status: :ok}
@@ -179,7 +173,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       stub(MockStale, :can_delete_safe?, fn -> true end)
       stub(MockStale, :find_potential_stale, fn -> [stale_pod] end)
 
-      {:ok, watcher_pid} = start_watcher_with_mock(delay_ms: 100)
+      {:ok, watcher_pid} = start_watcher_with_mock(delay: 100)
 
       # Send snapshot event to start tracking
       successful_snapshot = %KubeSnapshot{status: :ok}
@@ -205,7 +199,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       assert length(issues) == 1
 
       issue = List.first(issues)
-      assert issue.subject == "default.stale-pod"
+      assert issue.subject == "default:stale-pod"
     end
 
     test "handles resources with no namespace (cluster-scoped)", %{stale_pod: stale_pod} do
@@ -217,7 +211,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       stub(MockStale, :can_delete_safe?, fn -> true end)
       stub(MockStale, :find_potential_stale, fn -> [cluster_resource] end)
 
-      {:ok, watcher_pid} = start_watcher_with_mock(delay_ms: 50)
+      {:ok, watcher_pid} = start_watcher_with_mock(delay: 50)
 
       # Send snapshot events with proper timing
       successful_snapshot = %KubeSnapshot{status: :ok}
@@ -233,8 +227,6 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
 
       issue = List.first(issues)
       assert issue.subject == "cluster-resource"
-      assert issue.trigger_params["namespace"] == nil
-      assert issue.trigger_params["name"] == "cluster-resource"
     end
 
     test "handles resource that becomes referenced (no longer stale)",
@@ -256,7 +248,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
         end
       end)
 
-      {:ok, watcher_pid} = start_watcher_with_mock(delay_ms: 50)
+      {:ok, watcher_pid} = start_watcher_with_mock(delay: 50)
 
       # Send first snapshot event
       successful_snapshot = %KubeSnapshot{status: :ok}
@@ -284,7 +276,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
 
       # All issues should be for the same resource
       subjects = Enum.map(final_issues, & &1.subject)
-      assert Enum.all?(subjects, fn subject -> subject == "default.stale-pod" end)
+      assert Enum.all?(subjects, fn subject -> subject == "default:stale-pod" end)
     end
 
     test "processes resources with different api version kinds correctly", %{stale_pod: stale_pod} do
@@ -315,7 +307,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       stub(MockStale, :can_delete_safe?, fn -> true end)
       stub(MockStale, :find_potential_stale, fn -> [stale_pod, deployment, configmap] end)
 
-      {:ok, watcher_pid} = start_watcher_with_mock(delay_ms: 50)
+      {:ok, watcher_pid} = start_watcher_with_mock(delay: 50)
 
       # Send snapshot events with proper timing
       successful_snapshot = %KubeSnapshot{status: :ok}
@@ -330,13 +322,13 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       assert length(issues) == 3
 
       # Verify each issue has correct api_version_kind
-      pod_issue = Enum.find(issues, &(&1.subject == "default.stale-pod"))
+      pod_issue = Enum.find(issues, &(&1.subject == "default:stale-pod"))
       assert pod_issue.trigger_params["api_version_kind"] == "pod"
 
-      deployment_issue = Enum.find(issues, &(&1.subject == "default.test-deployment"))
+      deployment_issue = Enum.find(issues, &(&1.subject == "default:test-deployment"))
       assert deployment_issue.trigger_params["api_version_kind"] == "deployment"
 
-      configmap_issue = Enum.find(issues, &(&1.subject == "kube-system.test-config"))
+      configmap_issue = Enum.find(issues, &(&1.subject == "kube-system:test-config"))
       assert configmap_issue.trigger_params["api_version_kind"] == "config_map"
     end
 
@@ -356,7 +348,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       stub(MockStale, :can_delete_safe?, fn -> true end)
       stub(MockStale, :find_potential_stale, fn -> [stale_pod, invalid_resource] end)
 
-      {:ok, watcher_pid} = start_watcher_with_mock(delay_ms: 50)
+      {:ok, watcher_pid} = start_watcher_with_mock(delay: 50)
 
       # Send snapshot events with proper timing
       successful_snapshot = %KubeSnapshot{status: :ok}
@@ -371,7 +363,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
       assert length(issues) == 1
 
       issue = List.first(issues)
-      assert issue.subject == "default.stale-pod"
+      assert issue.subject == "default:stale-pod"
     end
   end
 
@@ -379,7 +371,7 @@ defmodule KubeServices.Stale.StaleResourceWatcherTest do
   defp start_watcher_with_mock(opts \\ []) do
     default_opts = [
       name: :"test_watcher_#{System.unique_integer([:positive])}",
-      delay_ms: 100,
+      delay: 100,
       snapshot_event_center: EventCenter.MockKubeSnapshot,
       stale_module: MockStale
     ]
