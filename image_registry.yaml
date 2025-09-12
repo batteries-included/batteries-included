@@ -572,8 +572,9 @@ kube_state_metrics:
   tag_regex: ^v\d+\.\d+\.\d+$
 loki:
   name: docker.io/grafana/loki
-  default_tag: 3.5.4
+  default_tag: 3.5.5
   tags:
+    - 3.5.5
     - 3.5.4
     - 3.5.3
     - 3.5.2
@@ -721,8 +722,9 @@ postgresql_upstream:
   tag_regex: ^\d+\.\d+$
 promtail:
   name: docker.io/grafana/promtail
-  default_tag: 3.5.4
+  default_tag: 3.5.5
   tags:
+    - 3.5.5
     - 3.5.4
     - 3.5.3
     - 3.5.2
