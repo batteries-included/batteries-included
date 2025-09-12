@@ -1,57 +1,25 @@
 defmodule KubeServices.KubeState do
   @moduledoc false
-  use Supervisor
+
+  @behaviour KubeServices.KubeState.Behaviour
 
   alias CommonCore.ApiVersionKind
-  alias CommonCore.ConnectionPool
   alias CommonCore.Resources.ResourceVersion
   alias K8s.Resource
+  alias KubeServices.KubeState.Behaviour
   alias KubeServices.KubeState.Runner
-  alias KubeServices.KubeState.Status
 
   @default_table :default_state_table
 
-  def start_link(opts \\ []) do
-    Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
-  end
-
-  def init(opts) do
-    should_watch = Keyword.get(opts, :should_watch, true)
-    Supervisor.init(children(should_watch), strategy: :one_for_one)
-  end
-
-  defp children(true) do
-    [{Status, []}, {Runner, name: default_state_table()}] ++
-      Enum.map(ApiVersionKind.all_known(), &spec/1)
-  end
-
-  defp children(false) do
-    [{Status, []}, {Runner, name: default_state_table()}]
-  end
-
-  def spec(type) do
-    type_name = type |> Atom.to_string() |> Macro.camelize()
-    id = "KubeServices.KubeState.ResourceWatcher.#{type_name}"
-
-    Supervisor.child_spec(
-      {KubeServices.KubeState.ResourceWatcher,
-       [
-         connection_func: &ConnectionPool.get!/0,
-         client: K8s.Client,
-         resource_type: type,
-         table_name: default_state_table()
-       ]},
-      id: id
-    )
-  end
-
   def default_state_table, do: @default_table
 
+  @impl Behaviour
   @spec snapshot(:ets.table()) :: map()
   def snapshot(t \\ @default_table) do
     Runner.snapshot(t)
   end
 
+  @impl Behaviour
   @spec get!(:ets.table(), map()) :: map()
   def get!(t \\ @default_table, resource) do
     get!(
@@ -62,6 +30,7 @@ defmodule KubeServices.KubeState do
     )
   end
 
+  @impl Behaviour
   @spec get!(:ets.table(), atom(), binary() | nil, binary()) :: map()
   def get!(t \\ @default_table, resource_type, namespace, name) do
     case get(t, resource_type, namespace, name) do
@@ -76,15 +45,18 @@ defmodule KubeServices.KubeState do
     end
   end
 
+  @impl Behaviour
   @spec get(:ets.table(), map()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource),
     do: get(t, ApiVersionKind.resource_type(resource), Resource.namespace(resource), Resource.name(resource))
 
+  @impl Behaviour
   @spec get(:ets.table(), atom(), binary() | nil, binary()) :: :missing | {:ok, map()}
   def get(t \\ @default_table, resource_type, namespace, name) do
     Runner.get(t, resource_type, namespace, name)
   end
 
+  @impl Behaviour
   @spec get_all(:ets.table(), atom()) :: list(map)
   def get_all(t \\ @default_table, res_type) do
     t
@@ -92,6 +64,7 @@ defmodule KubeServices.KubeState do
     |> Enum.sort_by(&ResourceVersion.sortable_resource_version/1)
   end
 
+  @impl Behaviour
   @spec get_owned_resources(:ets.table(), atom(), list(String.t()) | map) :: list(map)
   def get_owned_resources(table \\ @default_table, resource_type, owner_uuids_or_resource)
 
@@ -109,6 +82,7 @@ defmodule KubeServices.KubeState do
 
   def get_owned_resources(_, _, _), do: []
 
+  @impl Behaviour
   @spec get_events(:ets.table(), String.t() | map) :: list(map)
   def get_events(table \\ @default_table, involved_uid_or_resource)
 
@@ -122,7 +96,4 @@ defmodule KubeServices.KubeState do
   end
 
   def get_events(_, _), do: []
-
-  @spec get_status(:ets.table()) :: DateTime.t() | nil
-  def get_status(table \\ @default_table), do: Status.get(table)
 end

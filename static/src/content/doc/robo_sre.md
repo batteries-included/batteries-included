@@ -94,70 +94,7 @@ Handlers are pluggable remediation modules that:
 
 1. **Analyze**: Gather context and determine if they can handle the issue
 2. **Plan**: Plan automated remediation steps, in sequence or in parallel
-
-### Analyzer Mappings
-
-The analysis system operates in two phases: general analyzers that run first for
-all issues, followed by type-specific analyzers.
-
-#### General Analyzers
-
-Some analyzers are more general and run before the per-type analyzers to handle
-cross-cutting concerns:
-
-- **SubjectGroupingAnalyzer**: Groups related issues like "memory not reported"
-  and "host being down" when there's a critical ongoing issue upstream. If
-  there's an ongoing issue up the dependency chain, this analyzer marks new
-  issues as duplicates rather than spawning additional workers.
-
-- **LLMGroupingAnalyzer** _(Coming Soon)_: Uses AI to analyze descriptions of
-  potentially relevant issues and determines if they share the same root cause
-  as existing issues, enabling intelligent grouping of seemingly different
-  problems.
-
-#### Type-Specific Analyzers
-
-Each issue type can only have a single type-specific analyzer. That analyzer
-must be able to handle all the different ways that triggers can report their
-issue. These analyzers run after the general analyzers have had a chance to
-group or deduplicate issues.
-
-On the first time an issue is detected we will delay some small amount of time
-(configurable but 200ms for example). This delay will allow grouping.
-
-```elixir
-analyzer_mappings = [
-  pod_crash: PodCrashAnalyzer,
-  disk_full: DiskFullAnalyzer,
-  stuck_kubestate: StuckKubeStateAnalyzer
-]
-```
-
-Analyzer can return:
-
-- Valid with context, meaning this needs some work to fix.
-- Invalid meaning that this doesn't seem to be an issue
-- Duplicate meaning that there is an existing issue open and being worked on for
-  this.
-
-### Execute Handler Mappings
-
-```elixir
-handler_mappings = [
-  # For pods we only have one handler, so if it doesn't work
-  # then we need to mark the issue as failed.
-  pod_crash: [PodRestartHandler],
-  # For disk full we have two handlers. The first one will try to clean up
-  # if that doesn't work then, the second one will try to expand the volume,
-  # only after all of that will it be marked failed.
-  disk_full: [DiskCleanupHandler, VolumeExpansionHandler],
-  stuck_kubestate: [StuckKubeStateHandler]
-]
-```
-
-Handlers return a list of remediations to run, and how long to wait to check for
-success after running remediations, how long to delay a retry polling for status
-change, and total number of retries.
+3. **Verify**: Verify if the issue is resolved after remediation
 
 ## Issue Worker
 
@@ -186,7 +123,7 @@ characteristics:
 The Issue Worker follows a state machine pattern:
 
 ```
-:initializing → :analyzing → :remediating → :monitoring → :resolved
+:initializing → :analyzing → :remediating → :verifying → :resolved
       ↓             ↓            ↓            ↓            ↓
    :failed ←─── :failed ←─── :failed ←─── :failed ───→ :cleanup
 ```
@@ -195,8 +132,8 @@ The Issue Worker follows a state machine pattern:
 
 1. **:initializing**: Worker starts, loads issue data, validates configuration
 2. **:analyzing**: Runs appropriate analyzer to validate and gather context
-3. **:remediating**: Executes handlers and remediations in sequence
-4. **:monitoring**: Polls/watches for issue resolution or failure
+3. **:remediating**: Executes handler and remediations in sequence
+4. **:verifying**: Polls/watches for issue resolution or failure
 5. **:resolved**: Issue successfully resolved, cleanup and termination
 6. **:failed**: Issue could not be resolved, escalation and cleanup
 7. **:cleanup**: Final state before process termination
@@ -219,7 +156,7 @@ infrastructure and reporting any anomalies or problems it detects.
 
 The first few will be:
 
-- Pod monitoring
+- Stale Resource monitoring
 - KubeState monitoring
 
 ### Event Correlation and Deduplication
@@ -234,6 +171,8 @@ This happens after detection in the analysis phase. Doing this allows events
 that all trigger at the same time to be grouped together after the initial
 analysis delay.
 
+This is TODO, and will be implemented as a later PR.
+
 ## Remediation Workers
 
 Remediation Workers are individual GenServer processes that execute specific
@@ -242,55 +181,12 @@ remediation action and implements its own rate limiting and safety controls.
 
 ### Remediation Architecture
 
-Each remediation worker is spawned as a separate GenServer process under the
-KubeServices supervision tree. Workers are started on demand when a handler
-requests a specific remediation action, and they manage their own lifecycle and
-state.
+Each remediation executor is spawned as a separate GenServer process under the
+KubeServices supervision tree. Executors are started with the battery.
 
 ### Types
 
-#### PodRestartWorker
+### Delete Resource Executor
 
-Handles restarting pods with sophisticated rate limiting:
-
-- **Per-pod rate limiting**: Prevents restarting the same pod too frequently
-  (e.g., max three restarts per hour per pod)
-- **Global rate limiting**: Limits total pod restarts across the cluster (e.g.,
-  max 10 pod restarts per 5-minute window)
-- **Dependency awareness**: Avoids restarting pods that are part of the same
-  StatefulSet or Deployment simultaneously
-- **Health validation**: Verifies pod health after restart before marking
-  remediation as successful
-
-#### DiskCleanupWorker
-
-Executes cleanup commands in pods or nodes:
-
-- **Command execution**: Runs predefined cleanup scripts (log rotation, temp
-  file cleanup, cache clearing)
-- **Space validation**: Verifies sufficient disk space was freed
-- **Safety checks**: Ensures cleanup commands don't affect critical system files
-- **Rollback capability**: Can revert changes if cleanup causes issues
-
-#### VolumeExpansionWorker
-
-Manages persistent volume expansion:
-
-- **Storage class validation**: Ensures the storage class supports expansion
-- **Capacity planning**: Calculates appropriate expansion size based on usage
-  patterns
-- **Expansion monitoring**: Tracks the progress of volume expansion operations
-- **Application coordination**: Coordinates with pods that need to be restarted
-  after expansion
-
-#### NotificationWorker
-
-Manages escalation to human operators:
-
-- **Channel management**: Routes notifications to appropriate channels (Slack,
-  email, PagerDuty)
-- **Escalation policies**: Implements tiered escalation based on issue severity
-  and time
-- **Deduplication**: Prevents spam by grouping related notifications
-- **Acknowledgment tracking**: Tracks human responses and adjusts automation
-  accordingly
+Deletes a Kubernetes resource (pod, deployment, service, etc.) and saves the
+state before deletion for potential rollback.

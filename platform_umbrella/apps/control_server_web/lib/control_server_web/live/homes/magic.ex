@@ -114,6 +114,12 @@ defmodule ControlServerWeb.Live.MagicHome do
     """
   end
 
+  defp battery_link_panel(%{battery: %{type: :robo_sre}} = assigns) do
+    ~H"""
+    <.a variant="bordered" navigate={~p"/robo_sre/issues"}>RoboSRE Issues</.a>
+    """
+  end
+
   defp battery_link_panel(assigns), do: ~H||
 
   defp deploys_panel(assigns) do

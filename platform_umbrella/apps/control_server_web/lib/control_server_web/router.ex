@@ -340,6 +340,14 @@ defmodule ControlServerWeb.Router do
     live "/", Live.ContentAddressableIndex, :index
   end
 
+  # RoboSRE issue management - requires authentication
+  scope "/robo_sre", ControlServerWeb do
+    pipe_through [:browser, :auth]
+
+    live "/issues", Live.RoboSRE.IssuesIndex, :index
+    live "/issues/:id", Live.RoboSRE.IssuesShow, :show
+  end
+
   # REST API endpoints - requires API authentication
   scope "/api", ControlServerWeb do
     pipe_through :api
