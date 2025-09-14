@@ -2,6 +2,8 @@ defmodule KubeServices.KubeState.Canary do
   @moduledoc """
   This is a module that can be used to force a restart of the KubeState.Supervisor
   """
+  @behaviour KubeServices.KubeState.Canary.Behaviour
+
   use GenServer
 
   def start_link(opts \\ []) do
@@ -14,6 +16,7 @@ defmodule KubeServices.KubeState.Canary do
     {:ok, %{}}
   end
 
+  @impl KubeServices.KubeState.Canary.Behaviour
   def force_restart do
     GenServer.call(__MODULE__, :force_restart)
   end

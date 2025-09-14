@@ -10,15 +10,66 @@ defmodule KubeServices.RoboSRE.StaleResourceHandler do
 
   @behaviour KubeServices.RoboSRE.Handler
 
+  use GenServer
+  use TypedStruct
+
   alias CommonCore.RoboSRE.Issue
   alias CommonCore.RoboSRE.RemediationPlan
   alias KubeServices.KubeState
+  alias KubeServices.RoboSRE.Handler
   alias KubeServices.Stale
 
   require Logger
 
+  @state_opts [:kube_state, :stale]
+  @me __MODULE__
+
+  typedstruct module: State do
+    field :kube_state, module(), default: KubeState
+    field :stale, module(), default: Stale
+  end
+
+  def start_link(opts \\ []) do
+    opts = Keyword.put_new(opts, :name, __MODULE__)
+    {init_opts, opts} = Keyword.split(opts, @state_opts)
+
+    GenServer.start_link(__MODULE__, init_opts, opts)
+  end
+
+  @impl GenServer
+  def init(opts) do
+    kube_state = Keyword.get(opts, :kube_state, KubeState)
+    stale = Keyword.get(opts, :stale, Stale)
+
+    state = %State{kube_state: kube_state, stale: stale}
+
+    {:ok, state}
+  end
+
+  @impl Handler
   @spec preflight(Issue.t()) :: {:ok, :ready | :skip} | {:error, any()}
-  def preflight(%Issue{trigger_params: params} = issue) do
+  def preflight(%Issue{} = issue) do
+    GenServer.call(@me, {:preflight, issue})
+  end
+
+  @impl Handler
+  @spec plan(Issue.t()) :: {:ok, RemediationPlan.t()} | {:error, String.t()}
+  def plan(%Issue{} = issue) do
+    GenServer.call(@me, {:plan, issue})
+  end
+
+  @impl Handler
+  @spec verify(Issue.t()) :: {:ok, :resolved} | {:ok, :pending} | {:error, String.t()}
+  def verify(%Issue{} = issue) do
+    GenServer.call(@me, {:verify, issue})
+  end
+
+  @impl GenServer
+  def handle_call(
+        {:preflight, %Issue{trigger_params: params} = issue},
+        _from,
+        %State{kube_state: kube_state, stale: stale} = state
+      ) do
     Logger.info(
       "Preflight check for stale resource issue (issue_id: #{issue.id}, subject: #{issue.subject} params: #{inspect(params)})"
     )
@@ -26,65 +77,67 @@ defmodule KubeServices.RoboSRE.StaleResourceHandler do
     {api_version_kind, namespace, name} = destructure_params(issue)
     # We have to get the resource again to since we only pass the identifying info in trigger_params
     # and we need the labels and annotations as they currently exist on the resource
-    with {:ok, resource} <- KubeState.get(api_version_kind, namespace, name),
-         true <- Stale.stale?(resource) do
-      {:ok, :ready}
-    else
-      :missing ->
-        {:ok, :skip}
+    result =
+      with {:ok, resource} <- kube_state.get(api_version_kind, namespace, name),
+           true <- stale.stale?(resource) do
+        {:ok, :ready}
+      else
+        :missing ->
+          {:ok, :skip}
 
-      false ->
-        {:error, :not_stale}
-    end
+        false ->
+          {:error, :not_stale}
+      end
+
+    {:reply, result, state}
   end
 
-  @doc """
-  Create a remediation plan for a stale resource issue.
-  """
-  @spec plan(Issue.t()) :: {:ok, RemediationPlan.t()} | {:error, String.t()}
-  def plan(%Issue{issue_type: :stale_resource} = issue) do
+  @impl GenServer
+  def handle_call({:plan, %Issue{issue_type: :stale_resource} = issue}, _from, state) do
     Logger.debug("Planning remediation for stale resource (issue_id: #{issue.id}, subject: #{issue.subject})")
 
     {api_version_kind, namespace, name} = destructure_params(issue)
 
-    {:ok,
-     RemediationPlan.delete_resource(
-       api_version_kind,
-       namespace,
-       name
-     )}
+    plan =
+      RemediationPlan.delete_resource(
+        api_version_kind,
+        namespace,
+        name
+      )
+
+    {:reply, {:ok, plan}, state}
   end
 
-  def plan(%Issue{} = issue) do
+  @impl GenServer
+  def handle_call({:plan, issue}, _from, state) do
     # This is mostly a hack to make dialyzer happy
     Logger.error("Planning remediation for unknown issue type (issue_id: #{issue.id}, subject: #{issue.subject})")
-    {:error, "Unknown issue type"}
+    {:reply, {:error, "Unknown issue type"}, state}
   end
 
-  @doc """
-  Verify that the remediation was successful.
-
-  For stale resource deletion, this checks that the resource no longer exists in the cluster.
-  """
-  @spec verify(Issue.t()) :: {:ok, :resolved} | {:ok, :pending} | {:error, String.t()}
-  def verify(%Issue{issue_type: :stale_resource} = issue) do
+  @impl GenServer
+  def handle_call({:verify, %Issue{issue_type: :stale_resource} = issue}, _from, %State{kube_state: kube_state} = state) do
     Logger.debug("Verifying stale resource deletion success (issue_id: #{issue.id})")
 
     {api_version_kind, namespace, name} = destructure_params(issue)
 
-    case KubeState.get(api_version_kind, namespace, name) do
-      {:ok, _resource} ->
-        {:ok, :pending}
+    result =
+      case kube_state.get(api_version_kind, namespace, name) do
+        {:ok, _resource} ->
+          {:ok, :pending}
 
-      :missing ->
-        {:ok, :resolved}
-    end
+        :missing ->
+          {:ok, :resolved}
+      end
+
+    {:reply, result, state}
   end
 
-  def verify(%Issue{} = issue) do
+  @impl GenServer
+  def handle_call({:verify, issue}, _from, state) do
     # This is mostly a hack to make dialyzer happy
     Logger.error("Verifying remediation for unknown issue type (issue_id: #{issue.id}, subject: #{issue.subject})")
-    {:error, "Unknown issue type"}
+    {:reply, {:error, "Unknown issue type"}, state}
   end
 
   defp destructure_params(%Issue{trigger_params: params, subject: subject}) do

@@ -11,10 +11,12 @@ defmodule KubeServices.Batteries.RoboSRE do
       {KubeServices.RoboSRE.DeleteResourceExecutor, []},
       {KubeServices.RoboSRE.IssueWatcher, battery: battery},
 
-      # Put General detectors/handlers here
+      # Put General detectors/handlers/executors here
       # Other batteries can run their own detectors/handlers too
       # under their own supervision tree. The ones here are
       # shared across all batteries, or from RoboSRE's dependencies
+      {KubeServices.RoboSRE.RestartKubeStateExecutor, []},
+      {KubeServices.RoboSRE.StaleResourceHandler, []},
       {KubeServices.RoboSRE.StuckKubeStateHandler, []}
     ]
 
