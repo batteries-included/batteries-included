@@ -30,22 +30,28 @@ defmodule CommonCore.RoboSRE.RemediationPlan do
   end
 
   def delete_resource(api_version_kind, namespace, name) do
-    %{
-      plan_attrs: %{
-        retry_delay_ms: 59_000,
-        # We don't take all that long to notice that a resource is gone
-        success_delay_ms: 500,
-        max_retries: 3,
-        current_action_index: 0
-      },
-      actions_attrs: [
-        %{
+    %__MODULE__{
+      actions: [
+        %Action{
           action_type: :delete_resource,
           params: %{
             name: name,
             namespace: namespace,
             api_version_kind: api_version_kind
-          }
+          },
+          order_index: 0
+        }
+      ]
+    }
+  end
+
+  def restart_kube_state do
+    %__MODULE__{
+      actions: [
+        %Action{
+          action_type: :restart_kube_state,
+          params: %{},
+          order_index: 0
         }
       ]
     }

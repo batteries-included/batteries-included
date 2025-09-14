@@ -128,4 +128,52 @@ defmodule CommonCore.Util.Map do
   @spec maybe_append(map(), (map() -> boolean()), String.t(), list(term())) :: map()
   def maybe_append(%{} = map, predicate, key, val) when is_function(predicate),
     do: maybe_append(map, predicate.(map), key, val)
+
+  @doc """
+  Converts an Ecto struct to a plain map, removing internal Ecto metadata.
+
+  This function strips out:
+  - `:__meta__` - Ecto's internal metadata for tracking database state
+  - Association fields - References to related schemas
+  - Virtual fields - Fields that exist only in memory, not in the database
+
+  This is useful for serialization or when you need a clean map representation
+  of your struct data without Ecto's internal tracking information.
+
+  ## Examples
+
+      # With a basic schema created via batt_schema
+      iex> schema = %CommonCore.ExampleSchemas.EmbeddedMetaSchema{name: "John", age: 25}
+      iex> CommonCore.Util.Map.from_struct(schema)
+      %{name: "John", age: 25, password: nil}
+
+      # Regular maps are passed through unchanged
+      iex> CommonCore.Util.Map.from_struct(%{name: "Jane", age: 30})
+      %{name: "Jane", age: 30}
+
+      # Non-Ecto structs are converted to maps
+      iex> CommonCore.Util.Map.from_struct(%URI{scheme: "https", host: "example.com"})
+      %{scheme: "https", host: "example.com", path: nil, query: nil, fragment: nil, port: nil, authority: nil, userinfo: nil}
+
+  """
+  @spec from_struct(struct() | map()) :: map()
+  def from_struct(i) when is_struct(i) do
+    # Get the association fields, convert to map, then drop association metadata
+
+    struct = Map.get(i, :__struct__, nil)
+
+    # Only try to get schema info if the struct actually has the __schema__ function
+    {assocs, virtual_fields} =
+      if struct && function_exported?(struct, :__schema__, 1) do
+        {struct.__schema__(:associations), struct.__schema__(:virtual_fields)}
+      else
+        {[], []}
+      end
+
+    i
+    |> Map.from_struct()
+    |> Map.drop([:__meta__ | assocs ++ virtual_fields])
+  end
+
+  def from_struct(i), do: i
 end

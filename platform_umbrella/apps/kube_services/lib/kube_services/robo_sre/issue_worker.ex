@@ -308,9 +308,9 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   end
 
   defp execute_planning(%{issue: issue} = state) do
-    case find_or_create_plan(state) do
-      {:ok, plan_id} ->
-        {:ok, %{state | plan_id: plan_id}}
+    case create_new_plan(state) do
+      {:ok, plan} ->
+        {:ok, %{state | plan_id: plan.id}}
 
       {:error, reason} ->
         Logger.error("Planning failed for issue #{issue.id}: #{inspect(reason)}", issue_id: issue.id)
@@ -318,24 +318,13 @@ defmodule KubeServices.RoboSRE.IssueWorker do
     end
   end
 
-  defp find_or_create_plan(%{issue: issue, remediation_plans_context: plans_context} = state) do
-    case plans_context.find_remediation_plans_by_issue(issue.id) do
-      [] ->
-        create_new_plan(state)
-
-      [existing_plan | _] ->
-        Logger.debug("Found existing remediation plan for issue #{issue.id}", issue_id: issue.id)
-        {:ok, existing_plan.id}
-    end
-  end
-
   defp create_new_plan(%{issue: issue, remediation_plans_context: plans_context} = state) do
-    with {:ok, plan_template, _updated_state} <- execute_plan(state),
-         plan_attrs = Map.put(plan_template.plan_attrs, :issue_id, issue.id),
-         actions_attrs = plan_template.actions_attrs,
-         {:ok, saved_plan} <- plans_context.create_plan_with_actions(plan_attrs, actions_attrs) do
+    handler_module = get_handler(state)
+
+    with {:ok, plan} <- handler_module.plan(state),
+         {:ok, saved_plan} <- plans_context.create_remediation_plan(Map.put(plan, :issue_id, issue.id)) do
       Logger.debug("Created remediation plan with #{length(saved_plan.actions)} actions", issue_id: issue.id)
-      {:ok, saved_plan.id}
+      {:ok, saved_plan}
     else
       {:error, changeset} when is_map(changeset) and is_map_key(changeset, :errors) ->
         Logger.error("Failed to save remediation plan: #{inspect(changeset.errors)}", issue_id: issue.id)
@@ -348,18 +337,6 @@ defmodule KubeServices.RoboSRE.IssueWorker do
       {:error, reason} ->
         Logger.error("Failed to create remediation plan: #{inspect(reason)}", issue_id: issue.id)
         {:error, reason}
-    end
-  end
-
-  defp execute_plan(%{issue: issue} = state) do
-    handler_module = get_handler(state)
-
-    case handler_module.plan(issue) do
-      {:ok, plan} ->
-        {:ok, plan, state}
-
-      {:error, reason} ->
-        {:error, reason, state}
     end
   end
 

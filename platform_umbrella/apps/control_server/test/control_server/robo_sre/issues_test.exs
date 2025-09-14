@@ -14,7 +14,7 @@ defmodule ControlServer.RoboSRE.IssuesTest do
 
     test "get_issue!/1 returns the issue with given id" do
       issue = insert(:issue)
-      assert Issues.get_issue!(issue.id) == issue
+      assert Issues.get_issue!(issue.id, preload: []) == issue
     end
 
     test "create_issue/1 with valid data creates an issue" do
@@ -63,7 +63,7 @@ defmodule ControlServer.RoboSRE.IssuesTest do
       invalid_attrs = %{subject: nil, status: nil}
 
       assert {:error, %Ecto.Changeset{}} = Issues.update_issue(issue, invalid_attrs)
-      assert issue == Issues.get_issue!(issue.id)
+      assert issue == Issues.get_issue!(issue.id, preload: [])
     end
 
     test "delete_issue/1 deletes the issue" do

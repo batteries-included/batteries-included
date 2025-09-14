@@ -93,7 +93,11 @@ defmodule KubeServices.RoboSRE.IssueWorkerTest do
 
     test "processes stale resource issue through complete happy path", %{issue: issue} do
       # Mock the handler to simulate successful preflight, plan, and verify
-      plan_template = RemediationPlan.delete_resource(:pod, "default", "test-pod")
+      plan_template =
+        :pod
+        |> RemediationPlan.delete_resource("default", "test-pod")
+        |> Map.put(:success_delay_ms, 500)
+        |> Map.put(:retry_delay_ms, 100)
 
       # Allow the mocks to be called multiple times since worker might restart
       stub(MockStaleResourceHandler, :preflight, fn _issue -> {:ok, :ready} end)
@@ -235,13 +239,11 @@ defmodule KubeServices.RoboSRE.IssueWorkerTest do
     test "creates and updates remediation plan throughout the process", %{issue: issue} do
       # Mock the handler to simulate multi-step plan with a failure and retry
       plan_template = %{
-        plan_attrs: %{
-          retry_delay_ms: 1000,
-          success_delay_ms: 500,
-          max_retries: 2,
-          current_action_index: 0
-        },
-        actions_attrs: [
+        retry_delay_ms: 1000,
+        success_delay_ms: 500,
+        max_retries: 2,
+        current_action_index: 0,
+        actions: [
           %{action_type: :delete_resource, params: %{name: "test-pod", namespace: "default", api_version_kind: "pod"}},
           %{
             action_type: :delete_resource,
@@ -319,14 +321,15 @@ defmodule KubeServices.RoboSRE.IssueWorkerTest do
     test "retries failed actions within the retry limit", %{issue: issue} do
       # Mock the handler to simulate a plan with a single action that fails then succeeds
       plan_template = %{
-        plan_attrs: %{
-          retry_delay_ms: 100,
-          success_delay_ms: 500,
-          max_retries: 3,
-          current_action_index: 0
-        },
-        actions_attrs: [
-          %{action_type: :delete_resource, params: %{name: "test-pod", namespace: "default", api_version_kind: "pod"}}
+        retry_delay_ms: 100,
+        success_delay_ms: 500,
+        max_retries: 3,
+        current_action_index: 0,
+        actions: [
+          %{
+            action_type: :delete_resource,
+            params: %{name: "test-pod", namespace: "default", api_version_kind: "pod"}
+          }
         ]
       }
 

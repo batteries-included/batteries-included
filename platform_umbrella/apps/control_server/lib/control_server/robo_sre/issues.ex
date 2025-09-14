@@ -65,8 +65,10 @@ defmodule ControlServer.RoboSRE.Issues do
 
   """
   def get_issue!(id, opts \\ []) do
+    preload = Keyword.get(opts, :preload, [:child_issues])
+
     Issue
-    |> preload(^Keyword.get(opts, :preload, []))
+    |> preload(^preload)
     |> Repo.get!(id)
   end
 

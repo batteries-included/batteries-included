@@ -36,9 +36,31 @@ defmodule ControlServer.RoboSRE.RemediationPlans do
 
   @spec create_remediation_plan(map()) :: {:ok, RemediationPlan.t()} | {:error, Ecto.Changeset.t()}
   def create_remediation_plan(attrs \\ %{}) do
-    %RemediationPlan{}
-    |> RemediationPlan.changeset(attrs)
-    |> Repo.insert()
+    actions = Map.get(attrs, :actions, [])
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:remediation_plan, RemediationPlan.changeset(%RemediationPlan{}, Map.delete(attrs, :actions)))
+    |> Ecto.Multi.insert_all(:actions, Action, fn %{remediation_plan: plan} ->
+      actions
+      |> Enum.with_index()
+      |> Enum.map(fn {a, index} ->
+        a
+        |> CommonCore.Util.Map.from_struct()
+        |> Map.put(:remediation_plan_id, plan.id)
+        |> Map.put(:inserted_at, DateTime.utc_now())
+        |> Map.put_new(:order_index, index)
+        |> Map.put(:updated_at, DateTime.utc_now())
+        |> Map.put(:id, BatteryUUID.autogenerate())
+      end)
+    end)
+    |> Multi.one(:fetched_plan, fn %{remediation_plan: plan} ->
+      from RemediationPlan, where: [id: ^plan.id], preload: [:actions]
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{fetched_plan: plan}} -> {:ok, plan}
+      {:error, _step, changeset, _changes} -> {:error, changeset}
+    end
     |> broadcast(:insert)
   end
 
@@ -62,57 +84,31 @@ defmodule ControlServer.RoboSRE.RemediationPlans do
     RemediationPlan.changeset(plan, attrs)
   end
 
+  @spec update_action_result(BatteryUUID.t(), map()) :: {:ok, Action.t()} | {:error, Ecto.Changeset.t()}
+  def update_action_result(action_id, result) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.one(:action, from(a in Action, where: a.id == ^action_id))
+    |> Ecto.Multi.update(:update_action, fn %{action: action} ->
+      Action.changeset(action, %{result: result, executed_at: DateTime.utc_now()})
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{update_action: updated_action}} -> {:ok, updated_action}
+      {:error, _step, changeset, _changes} -> {:error, changeset}
+    end
+  end
+
   @spec find_remediation_plans_by_issue(BatteryUUID.t()) :: [RemediationPlan.t()]
-  def find_remediation_plans_by_issue(issue_id) do
+  def find_remediation_plans_by_issue(issue_id, opts \\ []) do
+    preload = Keyword.get(opts, :preload, [:actions])
+
     Repo.all(
       from(p in RemediationPlan,
         where: p.issue_id == ^issue_id,
         order_by: [desc: :inserted_at],
-        preload: [:actions]
+        preload: ^preload
       )
     )
-  end
-
-  @spec update_action_result(BatteryUUID.t(), map()) :: {:ok, Action.t()} | {:error, Ecto.Changeset.t()}
-  def update_action_result(action_id, result) do
-    action = Repo.get!(Action, action_id)
-
-    action
-    |> Action.changeset(%{result: result, executed_at: DateTime.utc_now()})
-    |> Repo.update()
-  end
-
-  @spec create_plan_with_actions(map(), list(map())) :: {:ok, RemediationPlan.t()} | {:error, Ecto.Changeset.t()}
-  def create_plan_with_actions(plan_attrs, actions_attrs) do
-    Repo.transaction(fn ->
-      with {:ok, plan} <- create_remediation_plan(plan_attrs),
-           {:ok, _actions} <- create_actions_for_plan(plan, actions_attrs) do
-        get_remediation_plan!(plan.id, preload: [:actions])
-      else
-        {:error, changeset} -> Repo.rollback(changeset)
-      end
-    end)
-  end
-
-  defp create_actions_for_plan(plan, actions_attrs) do
-    actions_with_plan_id =
-      actions_attrs
-      |> Enum.with_index()
-      |> Enum.map(fn {action_attrs, index} ->
-        action_attrs
-        |> Map.put(:remediation_plan_id, plan.id)
-        |> Map.put(:order_index, index)
-      end)
-
-    changesets = Enum.map(actions_with_plan_id, &Action.changeset(%Action{}, &1))
-
-    if Enum.all?(changesets, & &1.valid?) do
-      actions = Enum.map(changesets, &Repo.insert!/1)
-      {:ok, actions}
-    else
-      invalid_changeset = Enum.find(changesets, &(not &1.valid?))
-      {:error, invalid_changeset}
-    end
   end
 
   # Private functions
