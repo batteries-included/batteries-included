@@ -267,7 +267,7 @@ defmodule ControlServer.RoboSRE.RemediationPlansTest do
 
       # Verify no actions were created
       actions = Repo.all(from(a in Action, where: a.remediation_plan_id == ^plan.id))
-      assert length(actions) == 0
+      assert Enum.empty?(actions)
     end
 
     test "create_remediation_plan/1 creates plan and allows separate action creation" do

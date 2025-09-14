@@ -38,30 +38,35 @@ defmodule ControlServer.RoboSRE.RemediationPlans do
   def create_remediation_plan(attrs \\ %{}) do
     actions = Map.get(attrs, :actions, [])
 
-    Ecto.Multi.new()
-    |> Ecto.Multi.insert(:remediation_plan, RemediationPlan.changeset(%RemediationPlan{}, Map.delete(attrs, :actions)))
-    |> Ecto.Multi.insert_all(:actions, Action, fn %{remediation_plan: plan} ->
-      actions
-      |> Enum.with_index()
-      |> Enum.map(fn {a, index} ->
-        a
-        |> CommonCore.Util.Map.from_struct()
-        |> Map.put(:remediation_plan_id, plan.id)
-        |> Map.put(:inserted_at, DateTime.utc_now())
-        |> Map.put_new(:order_index, index)
-        |> Map.put(:updated_at, DateTime.utc_now())
-        |> Map.put(:id, BatteryUUID.autogenerate())
+    multi =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:remediation_plan, RemediationPlan.changeset(%RemediationPlan{}, Map.delete(attrs, :actions)))
+      |> Ecto.Multi.insert_all(:actions, Action, fn %{remediation_plan: plan} ->
+        actions
+        |> Enum.with_index()
+        |> Enum.map(fn {a, index} ->
+          a
+          |> CommonCore.Util.Map.from_struct()
+          |> Map.put(:remediation_plan_id, plan.id)
+          |> Map.put(:inserted_at, DateTime.utc_now())
+          |> Map.put_new(:order_index, index)
+          |> Map.put(:updated_at, DateTime.utc_now())
+          |> Map.put(:id, BatteryUUID.autogenerate())
+        end)
       end)
-    end)
-    |> Multi.one(:fetched_plan, fn %{remediation_plan: plan} ->
-      from RemediationPlan, where: [id: ^plan.id], preload: [:actions]
-    end)
-    |> Repo.transaction()
-    |> case do
-      {:ok, %{fetched_plan: plan}} -> {:ok, plan}
-      {:error, _step, changeset, _changes} -> {:error, changeset}
-    end
-    |> broadcast(:insert)
+      |> Multi.one(:fetched_plan, fn %{remediation_plan: plan} ->
+        from RemediationPlan, where: [id: ^plan.id], preload: [:actions]
+      end)
+
+    transaction_result = Repo.transaction(multi)
+
+    result =
+      case transaction_result do
+        {:ok, %{fetched_plan: plan}} -> {:ok, plan}
+        {:error, _step, changeset, _changes} -> {:error, changeset}
+      end
+
+    broadcast(result, :insert)
   end
 
   @spec update_remediation_plan(RemediationPlan.t(), map()) :: {:ok, RemediationPlan.t()} | {:error, Ecto.Changeset.t()}
@@ -86,13 +91,16 @@ defmodule ControlServer.RoboSRE.RemediationPlans do
 
   @spec update_action_result(BatteryUUID.t(), map()) :: {:ok, Action.t()} | {:error, Ecto.Changeset.t()}
   def update_action_result(action_id, result) do
-    Ecto.Multi.new()
-    |> Ecto.Multi.one(:action, from(a in Action, where: a.id == ^action_id))
-    |> Ecto.Multi.update(:update_action, fn %{action: action} ->
-      Action.changeset(action, %{result: result, executed_at: DateTime.utc_now()})
-    end)
-    |> Repo.transaction()
-    |> case do
+    multi =
+      Ecto.Multi.new()
+      |> Ecto.Multi.one(:action, from(a in Action, where: a.id == ^action_id))
+      |> Ecto.Multi.update(:update_action, fn %{action: action} ->
+        Action.changeset(action, %{result: result, executed_at: DateTime.utc_now()})
+      end)
+
+    transaction_result = Repo.transaction(multi)
+
+    case transaction_result do
       {:ok, %{update_action: updated_action}} -> {:ok, updated_action}
       {:error, _step, changeset, _changes} -> {:error, changeset}
     end

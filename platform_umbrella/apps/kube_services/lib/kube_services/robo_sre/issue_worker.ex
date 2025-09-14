@@ -21,6 +21,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   alias KubeServices.RoboSRE.DeleteResourceExecutor
   alias KubeServices.RoboSRE.RestartKubeStateExecutor
   alias KubeServices.RoboSRE.StaleResourceHandler
+  alias KubeServices.RoboSRE.StuckKubeStateHandler
 
   require Logger
 
@@ -39,24 +40,29 @@ defmodule KubeServices.RoboSRE.IssueWorker do
     field :issues_context, module(), default: IssuesContext
     field :remediation_plans_context, module(), default: RemediationPlansContext
     field :stale_resource_handler, module(), default: StaleResourceHandler
+    field :stuck_kube_state_handler, module(), default: StuckKubeStateHandler
 
     def new!(opts \\ []) do
       issue = Keyword.fetch!(opts, :issue)
       analysis_delay_ms = Keyword.get(opts, :analysis_delay_ms, 200)
       database_event_center = Keyword.get(opts, :database_event_center, DatabaseEventCenter)
       delete_resource_executor = Keyword.get(opts, :delete_resource_executor, DeleteResourceExecutor)
+      restart_kube_state_executor = Keyword.get(opts, :restart_kube_state_executor, RestartKubeStateExecutor)
       issues_context = Keyword.get(opts, :issues_context, IssuesContext)
       remediation_plans_context = Keyword.get(opts, :remediation_plans_context, RemediationPlansContext)
       stale_resource_handler = Keyword.get(opts, :stale_resource_handler, StaleResourceHandler)
+      stuck_kube_state_handler = Keyword.get(opts, :stuck_kube_state_handler, StuckKubeStateHandler)
 
       struct!(__MODULE__,
         issue: issue,
         analysis_delay_ms: analysis_delay_ms,
         database_event_center: database_event_center,
         delete_resource_executor: delete_resource_executor,
+        restart_kube_state_executor: restart_kube_state_executor,
         issues_context: issues_context,
         remediation_plans_context: remediation_plans_context,
-        stale_resource_handler: stale_resource_handler
+        stale_resource_handler: stale_resource_handler,
+        stuck_kube_state_handler: stuck_kube_state_handler
       )
     end
   end
@@ -618,6 +624,7 @@ defmodule KubeServices.RoboSRE.IssueWorker do
   defp get_handler(%State{issue: issue} = state) do
     case issue.handler do
       :stale_resource -> state.stale_resource_handler
+      :stuck_kubestate -> state.stuck_kube_state_handler
       :restart_kube_state -> state.restart_kube_state_executor
       _ -> raise "Unknown handler #{issue.handler}"
     end
