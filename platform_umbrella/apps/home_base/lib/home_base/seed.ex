@@ -16,12 +16,17 @@ defmodule HomeBase.Seed do
       if existing_team do
         Logger.info("Team #{team["id"]} already exists")
       else
-        case HomeBase.Teams.create_team(team) do
-          {:ok, _} ->
-            Logger.info("Did not find team #{team["id"]}. Created it.")
+        try do
+          case HomeBase.Teams.create_team(team) do
+            {:ok, _} ->
+              Logger.info("Did not find team #{team["id"]}. Created it.")
 
-          {:error, reason} ->
-            Logger.error("Failed to create team #{team["id"]}: #{inspect(reason)}")
+            {:error, reason} ->
+              Logger.error("Failed to create team #{team["id"]}: #{inspect(reason)}")
+          end
+        rescue
+          e in Ecto.ConstraintError ->
+            Logger.error("Failed to create team #{team["id"]} due to constraint error: #{inspect(e)}")
         end
       end
     end
@@ -37,12 +42,17 @@ defmodule HomeBase.Seed do
       if existing_install do
         Logger.info("Installation #{install["id"]} already exists")
       else
-        case HomeBase.CustomerInstalls.create_installation(install) do
-          {:ok, _} ->
-            Logger.info("Did not find installation #{install["id"]}. Created it.")
+        try do
+          case HomeBase.CustomerInstalls.create_installation(install) do
+            {:ok, _} ->
+              Logger.info("Did not find installation #{install["id"]}. Created it.")
 
-          {:error, reason} ->
-            Logger.error("Failed to create installation #{install["id"]}: #{inspect(reason)}")
+            {:error, reason} ->
+              Logger.error("Failed to create installation #{install["id"]}: #{inspect(reason)}")
+          end
+        rescue
+          e in Ecto.ConstraintError ->
+            Logger.error("Failed to create installation #{install["id"]} due to constraint error: #{inspect(e)}")
         end
       end
     end
@@ -53,19 +63,24 @@ defmodule HomeBase.Seed do
 
   def seed_static_projects do
     :ok = load_app()
-    [prod_install | _] = HomeBase.BatteriesInstalls.list_internal_prod_installations()
 
-    prod_install.id
-    |> HomeBase.Projects.StaticProjects.static_projects()
-    |> Enum.each(fn {id, stored_project} ->
-      case HomeBase.Projects.create_or_get_stored_project_snapshot(stored_project) do
-        {:ok, _} ->
-          Logger.info("Seeded static project #{id}")
+    case HomeBase.BatteriesInstalls.list_internal_prod_installations() do
+      [prod_install | _] ->
+        prod_install.id
+        |> HomeBase.Projects.StaticProjects.static_projects()
+        |> Enum.each(fn {id, stored_project} ->
+          case HomeBase.Projects.create_or_get_stored_project_snapshot(stored_project) do
+            {:ok, _} ->
+              Logger.info("Seeded static project #{id}")
 
-        {:error, reason} ->
-          Logger.error("Failed to seed static project #{id}: #{inspect(reason)}")
-      end
-    end)
+            {:error, reason} ->
+              Logger.error("Failed to seed static project #{id}: #{inspect(reason)}")
+          end
+        end)
+
+      [] ->
+        Logger.warning("No production installation found. Skipping static project seeding.")
+    end
   end
 
   @start_apps [:postgrex, :ecto, :ecto_sql, :home_base]
