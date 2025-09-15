@@ -10,6 +10,7 @@ defmodule CommonCore.Resources.FerretDB do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary
+  alias CommonCore.StateSummary.PostgresState
 
   multi_resource(:deployments, battery, %StateSummary{} = state) do
     Enum.map(state.ferret_services, &deployment(&1, battery, state))
@@ -104,27 +105,55 @@ defmodule CommonCore.Resources.FerretDB do
 
   def secrets(ferret_service, _battery, state) do
     pg = get_cluster(ferret_service, state)
-    host = "#{service_name(ferret_service)}.#{namespace(ferret_service, state)}.svc.cluster.local."
+
+    host =
+      "#{service_name(ferret_service)}.#{namespace(ferret_service, state)}.svc.cluster.local."
 
     Enum.flat_map(pg.users, fn %{username: username} = user ->
-      password = CommonCore.StateSummary.PostgresState.password_for_user(state, pg, user)
+      password = PostgresState.password_for_user(state, pg, user)
 
-      Enum.map(user.credential_namespaces, fn ns ->
-        data =
-          Secret.encode(%{
-            hostname: host,
-            password: password,
-            username: username,
-            uri: "mongodb://#{username}:#{password}@#{host}/#{pg.database.name}?authMechanism=PLAIN"
-          })
+      Enum.map(
+        user.credential_namespaces,
+        &user_ns_secret(username, password, host, pg.database.name, ferret_service.name, &1)
+      )
+    end) ++ [upstream_secret(ferret_service, state)]
+  end
 
-        :secret
-        |> B.build_resource()
-        |> B.name("ferret.#{ferret_service.name}.#{username}")
-        |> B.namespace(ns)
-        |> B.data(data)
-      end)
-    end)
+  defp user_ns_secret(username, password, host, database_name, service_name, namespace) do
+    data =
+      Secret.encode(%{
+        hostname: host,
+        password: password,
+        username: username,
+        uri: "mongodb://#{username}:#{password}@#{host}/#{database_name}"
+      })
+
+    :secret
+    |> B.build_resource()
+    |> B.name("ferret.#{service_name}.#{username}")
+    |> B.namespace(namespace)
+    |> B.data(data)
+  end
+
+  defp upstream_secret(service, state) do
+    cluster = get_cluster(service, state)
+    # TODO: allow end-user to specify which pg user
+    user = List.first(cluster.users)
+    hostname = PostgresState.read_write_hostname(state, cluster)
+    password = PostgresState.password_for_user(state, cluster, user)
+
+    data =
+      if password == nil do
+        %{}
+      else
+        %{dsn: "postgresql://#{user.username}:#{password}@#{hostname}/postgres"}
+      end
+
+    :secret
+    |> B.build_resource()
+    |> B.name("ferret.#{service.name}.upstream")
+    |> B.namespace(namespace(service, state))
+    |> B.data(Secret.encode(data))
   end
 
   @spec get_cluster(FerretService.t(), StateSummary.t()) :: CommonCore.Postgres.Cluster.t() | nil
@@ -132,12 +161,7 @@ defmodule CommonCore.Resources.FerretDB do
     Enum.find(state.postgres_clusters, fn cluster -> cluster.id == ferret_service.postgres_cluster_id end)
   end
 
-  defp container(%FerretService{} = ferret_service, battery, %StateSummary{} = state) do
-    pg = get_cluster(ferret_service, state)
-    # TODO: allow end-user to specify which pg user
-    user = List.first(pg.users)
-    user_secret = StateSummary.PostgresState.user_secret(state, pg, user)
-
+  defp container(%FerretService{} = ferret_service, battery, %StateSummary{} = _state) do
     %{}
     |> Map.put("name", "ferret")
     |> Map.put("image", battery.config.ferretdb_image)
@@ -149,7 +173,7 @@ defmodule CommonCore.Resources.FerretDB do
     |> Map.put("env", [
       %{
         "name" => "FERRETDB_POSTGRESQL_URL",
-        "valueFrom" => B.secret_key_ref(user_secret, "dsn")
+        "valueFrom" => B.secret_key_ref("ferret.#{ferret_service.name}.upstream", "dsn")
       },
       %{"name" => "FERRETDB_TELEMETRY", "value" => "disable"},
       %{"name" => "DO_NOT_TRACK", "value" => "true"}
@@ -189,6 +213,6 @@ defmodule CommonCore.Resources.FerretDB do
 
   defp namespace(%FerretService{} = ferret_service, %StateSummary{} = state) do
     pg_cluster = get_cluster(ferret_service, state)
-    StateSummary.PostgresState.cluster_namespace(state, pg_cluster)
+    PostgresState.cluster_namespace(state, pg_cluster)
   end
 end
