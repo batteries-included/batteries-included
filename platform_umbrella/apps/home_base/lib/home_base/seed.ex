@@ -16,8 +16,13 @@ defmodule HomeBase.Seed do
       if existing_team do
         Logger.info("Team #{team["id"]} already exists")
       else
-        {:ok, _} = HomeBase.Teams.create_team(team)
-        Logger.info("Did not find team #{team["id"]}. Created it.")
+        case HomeBase.Teams.create_team(team) do
+          {:ok, _} ->
+            Logger.info("Did not find team #{team["id"]}. Created it.")
+
+          {:error, reason} ->
+            Logger.error("Failed to create team #{team["id"]}: #{inspect(reason)}")
+        end
       end
     end
 
@@ -32,8 +37,13 @@ defmodule HomeBase.Seed do
       if existing_install do
         Logger.info("Installation #{install["id"]} already exists")
       else
-        {:ok, _} = HomeBase.CustomerInstalls.create_installation(install)
-        Logger.info("Did not find installation #{install["id"]}. Created it.")
+        case HomeBase.CustomerInstalls.create_installation(install) do
+          {:ok, _} ->
+            Logger.info("Did not find installation #{install["id"]}. Created it.")
+
+          {:error, reason} ->
+            Logger.error("Failed to create installation #{install["id"]}: #{inspect(reason)}")
+        end
       end
     end
 
