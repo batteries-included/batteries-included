@@ -39,7 +39,6 @@ defmodule HomeBaseWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        namespace: HomeBaseWeb,
         formats: [:html, :json]
 
       use Gettext, backend: CommonUI.Gettext
