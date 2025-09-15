@@ -625,16 +625,22 @@ defmodule KubeServices.RoboSRE.IssueWorker do
     case issue.handler do
       :stale_resource -> state.stale_resource_handler
       :stuck_kubestate -> state.stuck_kube_state_handler
-      :restart_kube_state -> state.restart_kube_state_executor
       _ -> raise "Unknown handler #{issue.handler}"
     end
   end
 
-  defp get_executor(state, plan) do
-    action = Enum.at(plan.actions, plan.current_action_index)
+  defp get_executor(
+         %State{
+           delete_resource_executor: delete_resource_executor,
+           restart_kube_state_executor: restart_kube_state_executor
+         } = state,
+         %{actions: actions, current_action_index: current_action_index} = _plan
+       ) do
+    action = Enum.at(actions, current_action_index)
 
     case action.action_type do
-      :delete_resource -> state.delete_resource_executor
+      :delete_resource -> delete_resource_executor
+      :restart_kube_state -> restart_kube_state_executor
       _ -> raise "Unknown action type #{action.action_type}"
     end
   end

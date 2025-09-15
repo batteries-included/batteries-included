@@ -152,7 +152,7 @@ defmodule KubeServices.RoboSRE.StaleResourceHandler do
   end
 
   defp to_atom(string) when is_binary(string) do
-    String.to_atom(string)
+    String.to_existing_atom(string)
   end
 
   defp to_atom(atom) when is_atom(atom), do: atom
