@@ -19,7 +19,8 @@ defmodule ControlServer.Umbrella.MixProject do
         plt_ignore_apps: [:bandit, :myxql],
         plt_local_path: ".dialyzer",
         plt_core_path: ".dialyzer"
-      ]
+      ],
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 

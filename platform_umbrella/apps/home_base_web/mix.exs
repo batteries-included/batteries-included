@@ -14,7 +14,9 @@ defmodule HomeBaseWeb.MixProject do
       start_permanent: Mix.env() == :prod,
       test_paths: test_paths(Mix.env()),
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 
