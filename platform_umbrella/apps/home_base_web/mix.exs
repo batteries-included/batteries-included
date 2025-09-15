@@ -40,7 +40,7 @@ defmodule HomeBaseWeb.MixProject do
       # Web Serving
       {:bandit, "~> 1.4"},
       {:websock_adapter, "~> 0.5"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 1.0"},
       {:jason, "~> 1.4"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.6"},

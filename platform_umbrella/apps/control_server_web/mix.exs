@@ -46,7 +46,7 @@ defmodule ControlServerWeb.MixProject do
       {:kube_services, in_umbrella: true},
       {:bandit, "~> 1.4"},
       {:websock_adapter, "~> 0.5"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 1.0"},
       {:inflex, "~> 2.1"},
       {:jason, "~> 1.4"},
 
