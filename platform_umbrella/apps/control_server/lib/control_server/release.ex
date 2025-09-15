@@ -47,6 +47,11 @@ defmodule ControlServer.Release do
     end
   end
 
+  def fixup_batteries do
+    :ok = load_app()
+    :ok = ControlServer.Batteries.Fixup.install_needed()
+  end
+
   def rollback(repo, version) do
     :ok = load_app()
     {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :down, to: version))

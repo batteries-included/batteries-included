@@ -123,6 +123,15 @@ do_dev() {
     KUBE_CONFIG_FILE=$(run_bi debug kube-config-path dev) iex -S mix phx.server
 }
 
+## Start port forwarding for a specific slug
+do_portforward() {
+    local slug=${1:-"dev"}
+    trap cleanup ERR EXIT
+    log "${GREEN}Starting Port Forwarding${NOFORMAT} for ${BLUE}${slug}${NOFORMAT}"
+
+    try_portforward "${slug}"
+}
+
 do_int_test() {
     local tag
     tag=$(bix-docker get-image-tag)
@@ -175,6 +184,7 @@ Available commands:
 - stop              Stop a running installation
 - bootstrap         Bootstrap a new installation
 - dev               Start a development environment with iex
+- portforward       Start port forwarding for a slug (defaults to 'dev')
 - phx-server        Start a phoenix server
 - int-test          Run integration tests
 EOF
@@ -224,6 +234,9 @@ bootstrap)
     ;;
 dev)
     do_dev "${args[@]}"
+    ;;
+portforward)
+    do_portforward "${args[@]}"
     ;;
 phx-server)
     do_phx_server

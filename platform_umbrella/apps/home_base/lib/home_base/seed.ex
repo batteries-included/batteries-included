@@ -5,57 +5,9 @@ defmodule HomeBase.Seed do
 
   def seed_files(%{teams: teams, installations: installations}) do
     :ok = load_app()
-    # For each team file import the team
-    for team_file <- teams do
-      Logger.debug("Importing team from #{team_file}")
-      team_json = File.read!(team_file)
-      team = Jason.decode!(team_json)
 
-      existing_team = HomeBase.Teams.get_team(team["id"])
-
-      if existing_team do
-        Logger.info("Team #{team["id"]} already exists")
-      else
-        try do
-          case HomeBase.Teams.create_team(team) do
-            {:ok, _} ->
-              Logger.info("Did not find team #{team["id"]}. Created it.")
-
-            {:error, reason} ->
-              Logger.error("Failed to create team #{team["id"]}: #{inspect(reason)}")
-          end
-        rescue
-          e in Ecto.ConstraintError ->
-            Logger.error("Failed to create team #{team["id"]} due to constraint error: #{inspect(e)}")
-        end
-      end
-    end
-
-    # Now the installations
-    for install_file <- installations do
-      Logger.debug("Importing installation from #{install_file}")
-      install_json = File.read!(install_file)
-      install = Jason.decode!(install_json)
-
-      existing_install = HomeBase.CustomerInstalls.get_installation(install["id"])
-
-      if existing_install do
-        Logger.info("Installation #{install["id"]} already exists")
-      else
-        try do
-          case HomeBase.CustomerInstalls.create_installation(install) do
-            {:ok, _} ->
-              Logger.info("Did not find installation #{install["id"]}. Created it.")
-
-            {:error, reason} ->
-              Logger.error("Failed to create installation #{install["id"]}: #{inspect(reason)}")
-          end
-        rescue
-          e in Ecto.ConstraintError ->
-            Logger.error("Failed to create installation #{install["id"]} due to constraint error: #{inspect(e)}")
-        end
-      end
-    end
+    Enum.each(teams, &seed_team/1)
+    Enum.each(installations, &seed_installation/1)
 
     Logger.info("Seed done!")
     :ok
@@ -81,6 +33,39 @@ defmodule HomeBase.Seed do
       [] ->
         Logger.warning("No production installation found. Skipping static project seeding.")
     end
+  end
+
+  defp seed_team(team_file) do
+    Logger.debug("Importing team from #{team_file}")
+    team = team_file |> File.read!() |> Jason.decode!()
+
+    case HomeBase.Teams.get_team(team["id"]) do
+      nil -> create_entity(team, &HomeBase.Teams.create_team/1, "team")
+      _existing -> Logger.info("Team #{team["id"]} already exists")
+    end
+  end
+
+  defp seed_installation(install_file) do
+    Logger.debug("Importing installation from #{install_file}")
+    install = install_file |> File.read!() |> Jason.decode!()
+
+    case HomeBase.CustomerInstalls.get_installation(install["id"]) do
+      nil -> create_entity(install, &HomeBase.CustomerInstalls.create_installation/1, "installation")
+      _existing -> Logger.info("Installation #{install["id"]} already exists")
+    end
+  end
+
+  defp create_entity(entity, create_func, entity_type) do
+    case create_func.(entity) do
+      {:ok, _} ->
+        Logger.info("Did not find #{entity_type} #{entity["id"]}. Created it.")
+
+      {:error, reason} ->
+        Logger.error("Failed to create #{entity_type} #{entity["id"]}: #{inspect(reason)}")
+    end
+  rescue
+    e in Ecto.ConstraintError ->
+      Logger.error("Failed to create #{entity_type} #{entity["id"]} due to constraint error: #{inspect(e)}")
   end
 
   @start_apps [:postgrex, :ecto, :ecto_sql, :home_base]
