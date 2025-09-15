@@ -41,13 +41,14 @@ defmodule KubeServices.Stale do
   require Logger
 
   @empty MapSet.new()
+  @num_resource_snapshots 3
 
   @spec can_delete_safe? :: boolean
   def can_delete_safe?, do: resource_paths_success?() and snapshot_success?()
 
   @spec find_potential_stale :: list
   def find_potential_stale do
-    seen_res_set = recent_resource_map_set(3)
+    seen_res_set = recent_resource_map_set(@num_resource_snapshots)
 
     KubeState.snapshot()
     |> Enum.flat_map(fn {_key, values} -> values end)
@@ -91,7 +92,7 @@ defmodule KubeServices.Stale do
     end
   end
 
-  defp recent_resource_map_set(num_snapshots \\ 3) do
+  defp recent_resource_map_set(num_snapshots \\ @num_resource_snapshots) do
     num_snapshots
     |> StaleSnaphotApply.most_recent_snapshot_paths()
     |> MapSet.new(&to_tuple!/1)
