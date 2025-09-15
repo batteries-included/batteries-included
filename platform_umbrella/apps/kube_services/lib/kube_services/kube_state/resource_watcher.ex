@@ -13,22 +13,39 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   Errors in the list or watch cause everything to be retried after some time
   """
   use GenServer
+  use TypedStruct
 
   alias CommonCore.ApiVersionKind
+  alias KubeServices.K8s.Client
   alias KubeServices.KubeState.Runner
 
   require Logger
 
-  @defaults %{
-    delay: 1000,
-    retries: 0,
-    max_retries: 14,
-    retry_secs: 6,
-    jitter_min: 0.75,
-    jitter_max: 1.25
-  }
+  typedstruct module: State do
+    field :resource_type, atom(), enforce: true
+    field :table_name, atom(), enforce: true
 
-  @state_opts ~w(resource_type client conn watch_delay connection_func table_name)a
+    field :conn, K8s.Conn.t() | nil
+    field :connection_func, (-> K8s.Conn.t()), enforce: true
+
+    field :watch_delay, non_neg_integer(), default: 100
+
+    field :retries, non_neg_integer(), default: 0
+    field :max_retries, non_neg_integer(), default: 14
+    field :retry_ms, non_neg_integer(), default: 6000
+    field :jitter_min, float(), default: 0.75
+    field :jitter_max, float(), default: 1.25
+
+    # For mocking
+    field :client, module(), default: Client
+    field :runner, module(), default: Runner
+
+    def new!(opts) do
+      struct!(__MODULE__, opts)
+    end
+  end
+
+  @state_opts ~w(resource_type client conn connection_func watch_delay table_name client runner)a
 
   @spec start_link(keyword) :: GenServer.on_start()
   def start_link(opts) do
@@ -41,15 +58,11 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
   @impl GenServer
   def init(opts) do
-    opts =
-      opts
-      |> Keyword.put_new(:watch_delay, @defaults.delay)
-      |> Keyword.put(:retries, @defaults.retries)
-      |> Map.new()
+    state = State.new!(opts)
 
-    trigger_start_watch(opts)
+    trigger_start_watch(state)
 
-    {:ok, opts}
+    {:ok, state}
   end
 
   @impl GenServer
@@ -57,41 +70,44 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     {:noreply, start_watch(state)}
   end
 
-  defp trigger_start_watch(%{watch_delay: delay} = _state), do: trigger_start_watch(delay)
+  defp trigger_start_watch(
+         %{watch_delay: delay, jitter_min: jitter_min, jitter_max: jitter_max, retries: retries, retry_ms: retry_ms} =
+           _state
+       ) do
+    delay = delay + retries * retry_ms
 
-  defp trigger_start_watch(delay_ms) do
     # random time between 75% to 125% of delay
-    min = floor(@defaults.jitter_min * delay_ms)
-    max = ceil(@defaults.jitter_max * delay_ms)
+    min = floor(jitter_min * delay)
+    max = ceil(jitter_max * delay)
     Process.send_after(self(), :start_watch, Enum.random(min..max))
   end
 
   defp start_watch(state) do
     # Finally inflate the connection here.
     # From now on we need to remember that in the state
-    conn = connection(state)
-
-    # get the inital state that's there
-    state = fetch_initial(state, conn)
+    state = inflate_connection(state)
+    state = fetch_initial(state)
 
     # watch. While this doesn't plumb through resource version
     # It's good enough for now.
-    case watch(state, conn) do
+    case watch(state) do
       :ok ->
-        Map.merge(state, %{conn: conn, retries: 1})
+        %{state | retries: 1}
 
       {:delay, _ref} ->
-        %{state | retries: min(state.retries + 1, @defaults.max_retries)}
+        %{state | retries: min(state.retries + 1, state.max_retries)}
     end
   end
 
   # do the initial sync of the resource type and add found resources to state
-  defp fetch_initial(%{resource_type: resource_type, table_name: table_name} = state, conn) do
+  defp fetch_initial(
+         %{resource_type: resource_type, table_name: table_name, conn: conn, client: client, runner: runner} = state
+       ) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
 
-    op = K8s.Client.list(api_version, kind, namespace: :all)
+    op = client.list(api_version, kind, namespace: :all)
 
-    case K8s.Client.stream(conn, op) do
+    case client.stream(conn, op) do
       {:ok, list_res} ->
         # Now it's possible that the list returns a {:error, _} tuple
         # Filter those out.
@@ -103,7 +119,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
         |> Enum.each(fn r ->
           # Push in what's there now.
           # but
-          Runner.add(table_name, r, skip_broadcast: true)
+          runner.add(table_name, r, skip_broadcast: true)
         end)
 
       _ ->
@@ -114,11 +130,11 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   end
 
   # set up watch on resource type
-  defp watch(%{resource_type: resource_type, retries: retries} = state, conn) do
+  defp watch(%{resource_type: resource_type, retries: retries, conn: conn, client: client} = state) do
     {api_version, kind} = ApiVersionKind.from_resource_type(resource_type)
-    op = K8s.Client.watch(api_version, kind, namespace: :all)
+    op = client.watch(api_version, kind, namespace: :all)
 
-    case K8s.Client.stream(conn, op) do
+    case client.stream(conn, op) do
       {:ok, watch_stream} ->
         Enum.each(watch_stream, fn event ->
           handle_watch_event(
@@ -139,20 +155,20 @@ defmodule KubeServices.KubeState.ResourceWatcher do
 
       _ ->
         # add 6 seconds per retry. the max is configured in `start_watch` where retries is incremented.
-        {:delay, trigger_start_watch((retries + 1) * @defaults.retry_secs * 1_000)}
+        {:delay, trigger_start_watch(%{state | retries: retries + 1})}
     end
   end
 
   defp handle_watch_event(event_type, object, state_table_name)
 
-  defp handle_watch_event("ADDED" = _event_type, object, %{table_name: state_table_name} = state),
-    do: Runner.add(state_table_name, clean(object, state))
+  defp handle_watch_event("ADDED" = _event_type, object, %{table_name: state_table_name, runner: runner} = state),
+    do: runner.add(state_table_name, clean(object, state))
 
-  defp handle_watch_event("DELETED" = _event_type, object, %{table_name: state_table_name} = state),
-    do: Runner.delete(state_table_name, clean(object, state))
+  defp handle_watch_event("DELETED" = _event_type, object, %{table_name: state_table_name, runner: runner} = state),
+    do: runner.delete(state_table_name, clean(object, state))
 
-  defp handle_watch_event("MODIFIED" = _event_type, object, %{table_name: state_table_name} = state),
-    do: Runner.update(state_table_name, clean(object, state))
+  defp handle_watch_event("MODIFIED" = _event_type, object, %{table_name: state_table_name, runner: runner} = state),
+    do: runner.update(state_table_name, clean(object, state))
 
   defp clean({:error, _}, _), do: nil
 
@@ -181,7 +197,10 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     resource
   end
 
-  # memoize connection fn
-  defp connection(%{conn: conn} = _state), do: conn
-  defp connection(%{connection_func: connection_func} = _state), do: connection_func.()
+  defp inflate_connection(%{conn: nil, connection_func: connection_func} = state) when is_function(connection_func) do
+    conn = connection_func.()
+    %{state | conn: conn}
+  end
+
+  defp inflate_connection(state), do: state
 end

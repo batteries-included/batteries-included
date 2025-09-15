@@ -40,4 +40,9 @@ defmodule CommonCore.ExampleSchemas do
       embeds_one :meta, EmbeddedMetaSchema
     end
   end
+
+  defmodule SimpleStruct do
+    @moduledoc false
+    defstruct [:name, :value]
+  end
 end
