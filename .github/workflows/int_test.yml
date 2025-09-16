@@ -19,6 +19,7 @@ name: Integration tests
 
 env:
   VERSION_OVERRIDE: ${{ inputs.version }}
+  TEST_LOG_LEVEL: debug
 
 jobs:
   save-images:

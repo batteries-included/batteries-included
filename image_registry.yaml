@@ -1,3 +1,4 @@
+---
 __schema_test:
   name: ecto/schema/test
   default_tag: 1.2.3
