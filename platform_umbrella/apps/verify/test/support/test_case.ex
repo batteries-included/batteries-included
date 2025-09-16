@@ -77,6 +77,9 @@ defmodule Verify.TestCase do
         # check that we have all of the pre-pulled images before installing batteries
         :ok = wait_for_images(image_pid, @images)
 
+        # double check that control server is available
+        {:ok, _} = url |> build_retryable_get() |> retry()
+
         # install any requested batteries
         {:ok, session} = start_session(url)
 
