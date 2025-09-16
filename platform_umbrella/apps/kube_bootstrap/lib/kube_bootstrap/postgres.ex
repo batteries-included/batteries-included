@@ -36,6 +36,7 @@ defmodule KubeBootstrap.Postgres do
         "role" => "primary",
         "cnpg.io/cluster" => "pg-#{cluster.name}"
       })
+      |> K8s.Selector.field({"status.phase", "Running"})
 
     Logger.info("Waiting for Postgres service and pods", cluster: cluster.name)
 
@@ -49,7 +50,7 @@ defmodule KubeBootstrap.Postgres do
                  false
              end,
              eval: true,
-             timeout: 300
+             timeout: 600
            ) do
       {:ok, cluster}
     end
