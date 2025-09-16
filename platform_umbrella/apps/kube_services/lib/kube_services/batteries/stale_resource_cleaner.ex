@@ -3,11 +3,11 @@ defmodule KubeServices.Batteries.StaleResourceCleaner do
   use KubeServices.Batteries.Supervisor
 
   def init(opts) do
-    battery = Keyword.fetch!(opts, :battery)
+    _battery = Keyword.fetch!(opts, :battery)
 
     children = [
-      {KubeServices.Stale.Watcher, [delay: battery.config.delay]},
-      {KubeServices.RoboSRE.StaleResourceHandler, []}
+      # {KubeServices.Stale.Watcher, [delay: battery.config.delay]},
+      # {KubeServices.RoboSRE.StaleResourceHandler, []}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
