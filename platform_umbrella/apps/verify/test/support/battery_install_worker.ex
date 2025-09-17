@@ -13,9 +13,11 @@ defmodule Verify.BatteryInstallWorker do
 
   typedstruct module: State do
     field :session, Wallaby.Session.t()
+    field :rage_output, String.t()
+    field :kind_worker_pid, GenServer.name()
   end
 
-  @state_opts ~w(session)a
+  @state_opts ~w(session rage_output kind_worker_pid)a
 
   def start_link(opts \\ []) do
     {state_opts, gen_opts} =
@@ -61,7 +63,8 @@ defmodule Verify.BatteryInstallWorker do
     rescue
       e ->
         # grab a screenshot if we've failed to install the battery
-        take_screenshot(session, name: "battery-install-worker-failure-#{battery.type}")
+        take_screenshot(session, name: "battery-install-worker-failure-#{battery.type}", log: true)
+        Verify.KindInstallWorker.rage(state.kind_worker_pid, state.rage_output)
 
         reraise(e, __STACKTRACE__)
     end
