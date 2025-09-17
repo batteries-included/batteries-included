@@ -128,9 +128,12 @@ defmodule Verify.KindInstallWorker do
   end
 
   defp do_stop_all(%{started: started, bi_binary: bi} = state) do
-    Enum.each(started, fn {slug, path} ->
-      :ok = do_stop(slug, path, bi)
-    end)
+    stop_results =
+      Enum.map(started, fn {slug, path} ->
+        do_stop(slug, path, bi)
+      end)
+
+    Logger.info("Stopped all Kind installs, with results: #{inspect(stop_results)}")
 
     {:reply, :ok, %{state | started: %{}}}
   end
@@ -138,14 +141,19 @@ defmodule Verify.KindInstallWorker do
   defp do_stop(slug, path, bi) do
     Logger.info("Stopping Kind install with path: #{path}, slug: #{slug}, bi: #{bi}")
 
-    {_, 0} = System.cmd(bi, ["stop", slug])
+    {_, exit_code} = System.cmd(bi, ["stop", slug])
 
-    # Remove the file after stopping the install
-    if path != "" do
-      _ = File.rm_rf(path)
+    if exit_code == 0 do
+      # Remove the file after stopping the install
+      if path != "" do
+        _ = File.rm_rf(path)
+      end
+
+      :ok
+    else
+      Logger.error("Failed to stop Kind install for #{slug}")
+      :error
     end
-
-    :ok
   end
 
   defp do_rage(output, %{bi_binary: bi, started: started} = state) do

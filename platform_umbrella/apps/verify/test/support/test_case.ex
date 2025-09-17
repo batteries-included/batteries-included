@@ -74,6 +74,10 @@ defmodule Verify.TestCase do
         {:ok, url, kube_config_path} =
           Verify.KindInstallWorker.start_from_spec(kind_pid, install_spec, slug)
 
+        on_exit(fn ->
+          Verify.KindInstallWorker.stop_all(kind_pid)
+        end)
+
         # check that we have all of the pre-pulled images before installing batteries
         :ok = wait_for_images(image_pid, @images)
 
