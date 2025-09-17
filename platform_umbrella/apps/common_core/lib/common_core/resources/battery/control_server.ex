@@ -143,7 +143,7 @@ defmodule CommonCore.Resources.ControlServer do
     %{
       "command" => ["/app/bin/start", "control_server"],
       "ports" => [%{"containerPort" => @server_port}],
-      "readinessProbe" => %{
+      "startupProbe" => %{
         "httpGet" => %{
           "path" => "/healthz",
           "port" => @server_port
@@ -152,14 +152,20 @@ defmodule CommonCore.Resources.ControlServer do
         "periodSeconds" => 5,
         "failureThreshold" => 60
       },
+      # readiness and liveness won't start until after startup probe succeeds
+      "readinessProbe" => %{
+        "httpGet" => %{
+          "path" => "/healthz",
+          "port" => @server_port
+        },
+        "periodSeconds" => 5,
+        "failureThreshold" => 2
+      },
       "livenessProbe" => %{
         "httpGet" => %{
           "path" => "/healthz",
           "port" => @server_port
         },
-        # Wait until we have for sure been
-        # ready until testing liveness
-        "initialDelaySeconds" => 300,
         "periodSeconds" => 30,
         "failureThreshold" => 5
       }
