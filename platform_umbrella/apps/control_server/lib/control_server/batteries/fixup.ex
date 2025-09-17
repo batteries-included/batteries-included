@@ -6,7 +6,7 @@ defmodule ControlServer.Batteries.Fixup do
     # Any that are not installed will be installed with the ControlServer.Batteries.Installer module.
 
     Enum.each(ControlServer.Batteries.list_system_batteries(), fn system_battery ->
-      _ = ControlServer.Batteries.Installer.install(system_battery.type)
+      {:ok, _} = ControlServer.Batteries.Installer.install(system_battery.type)
     end)
 
     :ok
