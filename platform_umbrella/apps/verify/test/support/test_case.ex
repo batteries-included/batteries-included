@@ -70,11 +70,21 @@ defmodule Verify.TestCase do
           start_supervised!({
             # the kind_install_worker cleans up after itself as it is stopped
             Verify.KindInstallWorker,
-            [name: {:via, Registry, {Verify.Registry, __MODULE__.KindInstallWorker, Verify.KindInstallWorker}}]
+            [
+              name: {:via, Registry, {Verify.Registry, __MODULE__.KindInstallWorker, Verify.KindInstallWorker}},
+              bi_binary: Verify.PathHelper.find_bi()
+            ]
           })
 
         {:ok, url, kube_config_path} =
-          Verify.KindInstallWorker.start_from_spec(kind_pid, install_spec, slug)
+          try do
+            Verify.KindInstallWorker.start_from_spec(kind_pid, install_spec, slug)
+          catch
+            :exit, value ->
+              Logger.error("failed to create cluster: #{inspect(value)}")
+              Verify.KindInstallWorker.rage(kind_pid, tmp_dir)
+              raise inspect(value)
+          end
 
         # check that we have all of the pre-pulled images before installing batteries
         :ok = wait_for_images(image_pid, @images)
