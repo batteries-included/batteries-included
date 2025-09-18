@@ -11,6 +11,7 @@ type RageReport struct {
 	InstallSlug string
 	KubeExists  bool
 	PodsInfo    []PodRageInfo
+	HttpRoutes  []HttpRouteRageInfo
 	AccessSpec  *access.AccessSpec
 	KindIPs     *string
 	BILogs      map[string][]interface{}
@@ -29,6 +30,19 @@ type PodRageInfo struct {
 	Phase         string
 	Message       string
 	ContainerInfo map[string]ContainerRageInfo
+}
+type HttpRouteConditionRageInfo struct {
+	LastTransitionTime string
+	Message            string
+	Reason             string
+	Status             string
+	Type               string
+}
+type HttpRouteRageInfo struct {
+	Namespace  string
+	Name       string
+	Hostnames  []string
+	Conditions []HttpRouteConditionRageInfo
 }
 
 func (report *RageReport) Write(w io.Writer) error {

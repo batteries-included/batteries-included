@@ -95,7 +95,7 @@ defmodule KubeBootstrap do
   end
 
   defp control_server?(resource) do
-    CommonCore.ApiVersionKind.resource_type!(resource) == :deployment &&
+    CommonCore.ApiVersionKind.resource_type!(resource) == :stateful_set &&
       CommonCore.Resources.FieldAccessors.name(resource) == "controlserver"
   end
 end

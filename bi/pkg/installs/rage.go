@@ -16,7 +16,7 @@ import (
 )
 
 func (env *InstallEnv) NewRage(ctx context.Context) (*rage.RageReport, error) {
-	report := &rage.RageReport{InstallSlug: env.Slug, KubeExists: false, PodsInfo: []rage.PodRageInfo{}}
+	report := &rage.RageReport{InstallSlug: env.Slug, KubeExists: false, PodsInfo: []rage.PodRageInfo{}, HttpRoutes: []rage.HttpRouteRageInfo{}}
 	// Add the logs from the local command line invocations
 	err := env.addBILogs(report)
 	if err != nil {
@@ -42,6 +42,11 @@ func (env *InstallEnv) NewRage(ctx context.Context) (*rage.RageReport, error) {
 	if err != nil {
 		slog.Error("unable to add kube info to the rage report", "error", err)
 		return nil, err
+	}
+
+	err = env.addHttpRoutes(ctx, kubeClient, report)
+	if err != nil {
+		slog.Error("unable to add HTTP routes to the rage report", "error", err)
 	}
 
 	return report, nil
@@ -124,5 +129,16 @@ func (env *InstallEnv) addBILogs(report *rage.RageReport) error {
 
 	report.BILogs = results
 
+	return nil
+}
+
+func (env *InstallEnv) addHttpRoutes(ctx context.Context, kubeClient kube.KubeClient, report *rage.RageReport) error {
+	httpRoutes, err := kubeClient.ListHttpRoutesRage(ctx)
+	if err != nil {
+		slog.Error("unable to list HTTP routes", "error", err)
+		return err
+	}
+
+	report.HttpRoutes = httpRoutes
 	return nil
 }

@@ -49,7 +49,7 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 
 	watchSteps := map[string]*kube.WatchOptions{
 		"bootstrap job":   bootstrapJobWatchOpts(ns),
-		"control server":  controlServerDeployWatchOpts(ns),
+		"control server":  controlServerStatefulSetWatchOpts(ns),
 		"host config map": batteryInfoConfigMapWatchOpts(ns),
 	}
 
@@ -88,16 +88,30 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Failed to get access info", attemptCount))
 			return err
 		}
-		url := info.GetURL()
+
+		baseUrl := info.GetURL()
+		// Try the health endpoint after the base URL
+		healthCheckUrl := fmt.Sprintf("%s/healthz", baseUrl)
 
 		// try to make sure the control server is up before we return
-		slog.Debug("Attempting to connect to control server", slog.String("url", url))
-		_, err = httpClient.Head(url)
+		slog.Debug("Attempting to connect to control server", slog.String("baseUrl", baseUrl), slog.String("url", healthCheckUrl))
+		_, err = httpClient.Head(baseUrl)
 		if err != nil {
 			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Health check failed", attemptCount))
 		} else {
 			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Health check successful", attemptCount))
 		}
+
+		util.IncrementWithMessage(healthBar, "Re-checking health...")
+
+		// try again to make sure we are stable
+		_, err = httpClient.Head(healthCheckUrl)
+		if err != nil {
+			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Second health check failed", attemptCount))
+		} else {
+			util.IncrementWithMessage(healthBar, fmt.Sprintf("Attempt %d: Second health check successful", attemptCount))
+		}
+
 		return err
 	}, retry.Context(ctx))
 
@@ -164,9 +178,9 @@ func jobFailed(conditions []batchv1.JobCondition) bool {
 	return false
 }
 
-func controlServerDeployWatchOpts(ns string) *kube.WatchOptions {
+func controlServerStatefulSetWatchOpts(ns string) *kube.WatchOptions {
 	return &kube.WatchOptions{
-		GVR:       schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"},
+		GVR:       schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "statefulsets"},
 		Namespace: ns,
 		ListOpts:  controlServerListOpts(),
 		Callback:  buildCallback(deployReady),
