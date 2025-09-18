@@ -44,7 +44,17 @@ defmodule KubeBootstrap.Postgres do
            K8s.Client.wait_until(conn, pod_operation,
              find: fn
                %{"items" => items} ->
-                 !Enum.empty?(items)
+                 all_containers_running =
+                   Enum.filter(items, fn item ->
+                     containers =
+                       item
+                       |> CommonCore.Resources.FieldAccessors.status()
+                       |> Map.get("containerStatuses", [])
+
+                     Enum.all?(containers, fn c -> c["ready"] == true end)
+                   end)
+
+                 !Enum.empty?(all_containers_running)
 
                _ ->
                  false
