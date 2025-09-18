@@ -68,6 +68,7 @@ defmodule CommonCore.ApiVersionKind do
     knative_route: {"serving.knative.dev/v1", "Route"},
     knative_service: {"serving.knative.dev/v1", "Service"},
     knative_serving: {"operator.knative.dev/v1beta1", "KnativeServing"},
+    lease: {"coordination.k8s.io/v1", "Lease"},
     metal_address_pool: {"metallb.io/v1beta1", "AddressPool"},
     metal_ip_address_pool: {"metallb.io/v1beta1", "IPAddressPool"},
     metal_l2_advertisement: {"metallb.io/v1beta1", "L2Advertisement"},
