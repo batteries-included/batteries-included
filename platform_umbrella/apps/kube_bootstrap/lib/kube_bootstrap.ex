@@ -46,8 +46,7 @@ defmodule KubeBootstrap do
          :ok <- KubeBootstrap.Postgres.wait_for_postgres(conn, summary),
          # Create the second group of resources with the control server
          # This allows the user and passwords to be set before trying to boot.
-         {:ok, _} <-
-           KubeBootstrap.Kube.ensure_exists(conn, with_control_server),
+         {:ok, _} <- KubeBootstrap.Kube.ensure_exists(conn, with_control_server),
          :ok <- KubeBootstrap.ControlServer.wait_for_control_server(conn, summary) do
       Logger.info("Bootstrap complete")
       :ok

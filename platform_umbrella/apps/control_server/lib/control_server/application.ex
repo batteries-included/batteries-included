@@ -9,7 +9,8 @@ defmodule ControlServer.Application do
       ControlServer.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: ControlServer.PubSub},
-      {Task.Supervisor, name: ControlServer.TaskSupervisor}
+      {Task.Supervisor, name: ControlServer.TaskSupervisor},
+      CommonCore.ConnectionPool
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
