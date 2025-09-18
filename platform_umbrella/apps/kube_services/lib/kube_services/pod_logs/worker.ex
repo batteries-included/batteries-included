@@ -21,7 +21,7 @@ defmodule KubeServices.PodLogs.Worker do
     field :target, pid(), enforce: false
 
     # For mocking
-    field :client, module(), default: KubeServices.K8s.Client
+    field :client, module(), default: CommonCore.K8s.Client
 
     def new!(opts) do
       {get_args, other_args} = Keyword.split(opts, ~w|name namespace container|a)

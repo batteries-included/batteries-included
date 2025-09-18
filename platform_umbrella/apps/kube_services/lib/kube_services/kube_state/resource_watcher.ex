@@ -16,7 +16,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   use TypedStruct
 
   alias CommonCore.ApiVersionKind
-  alias KubeServices.K8s.Client
+  alias CommonCore.K8s.Client
   alias KubeServices.KubeState.Runner
 
   require Logger

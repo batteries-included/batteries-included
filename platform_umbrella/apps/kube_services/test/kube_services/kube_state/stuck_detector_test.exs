@@ -8,8 +8,8 @@ defmodule KubeServices.KubeState.StuckDetectorTest do
   import ControlServer.Factory
   import Mox
 
+  alias CommonCore.K8s.MockClient
   alias ControlServer.RoboSRE.Issues
-  alias KubeServices.K8s.MockClient
   alias KubeServices.KubeState.StuckDetector
   alias KubeServices.MockKubeState
 
