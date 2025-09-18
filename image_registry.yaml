@@ -54,8 +54,9 @@ aws_load_balancer_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 build_base:
   name: ghcr.io/batteries-included/build-base
-  default_tag: noble-20250805-f5b9491e2
+  default_tag: noble-20250910-e294e1ea7
   tags:
+    - noble-20250910-e294e1ea7
     - noble-20250805-f5b9491e2
     - noble-20250805-30cf546fc
     - noble-20250716-30cf546fc
@@ -168,8 +169,9 @@ cnpg_plugin_barman_sidecar:
   tag_regex: ^v\d+\.\d+\.\d+$
 deploy_base:
   name: ghcr.io/batteries-included/deploy-base
-  default_tag: noble-20250805-f5b9491e2
+  default_tag: noble-20250910-e294e1ea7
   tags:
+    - noble-20250910-e294e1ea7
     - noble-20250805-f5b9491e2
     - noble-20250805-30cf546fc
     - noble-20250716-30cf546fc
