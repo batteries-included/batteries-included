@@ -1,8 +1,8 @@
-defmodule KubeServices.K8s.Behaviour do
+defmodule CommonCore.K8s.Behaviour do
   @moduledoc """
   Behaviour for a K8s client wrapper so it can be mocked in tests with Mox.
 
-  This mirrors the public API of `K8s.Client` used by kube_services.
+  This mirrors the public API of `K8s.Client` used by applications.
   """
   alias K8s.Client.Provider
 
@@ -30,6 +30,7 @@ defmodule KubeServices.K8s.Behaviour do
   @callback stream_to(K8s.Conn.t(), K8s.Operation.t(), pid()) :: Provider.stream_to_response_t()
   @callback stream_to(K8s.Conn.t(), K8s.Operation.t(), keyword(), pid()) :: Provider.stream_to_response_t()
 
+  @callback apply(map()) :: K8s.Operation.t()
   @callback apply(map(), keyword()) :: K8s.Operation.t()
   @callback apply(binary(), K8s.Operation.name_t(), path_params() | nil, map(), keyword()) :: K8s.Operation.t()
 

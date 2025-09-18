@@ -23,9 +23,9 @@ defmodule KubeServices.KubeState.StuckDetector do
 
   alias CommonCore.ApiVersionKind
   alias CommonCore.ConnectionPool
+  alias CommonCore.K8s.Client
   alias CommonCore.Resources.Hashing
   alias ControlServer.RoboSRE.Issues
-  alias KubeServices.K8s.Client
 
   require Logger
 

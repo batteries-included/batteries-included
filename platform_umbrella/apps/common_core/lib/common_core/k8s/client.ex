@@ -1,8 +1,8 @@
-defmodule KubeServices.K8s.Client do
+defmodule CommonCore.K8s.Client do
   @moduledoc """
   This is a wrapper on the K8s.Client module to allow for easier mocking in tests.
   """
-  @behaviour KubeServices.K8s.Behaviour
+  @behaviour CommonCore.K8s.Behaviour
 
   # Delegate all public K8s.Client functions so production code calls through
   # the wrapper, which can be mocked in tests using Mox.
