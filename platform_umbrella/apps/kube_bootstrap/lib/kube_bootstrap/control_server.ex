@@ -8,8 +8,9 @@ defmodule KubeBootstrap.ControlServer do
   def wait_for_control_server(conn, summary) do
     namespace = CommonCore.StateSummary.Namespaces.core_namespace(summary)
 
-    with :ok <- wait_for_deployment(conn, namespace),
-         :ok <- wait_for_one_pod(conn, namespace) do
+    with :ok <- wait_for_stateful_set(conn, namespace),
+         :ok <- wait_for_one_pod(conn, namespace),
+         :ok <- wait_for_one_endpoint(conn, namespace) do
       Logger.info("Control Server is ready")
       :ok
     else
@@ -19,33 +20,23 @@ defmodule KubeBootstrap.ControlServer do
     end
   end
 
-  defp wait_for_deployment(conn, namespace) do
-    Logger.info("Waiting for Control Server to be ready in namespace #{namespace}")
+  defp wait_for_stateful_set(conn, namespace) do
+    Logger.info("Waiting for Control Server statefulset to be ready in namespace #{namespace}")
 
-    deployment_operation =
-      "apps/v1"
-      |> K8s.Client.list(:deployment, namespace: namespace)
-      |> K8s.Selector.label(%{
-        "battery/app" => "battery-control-server"
-      })
+    stateful_set_operation = K8s.Client.get("apps/v1", "StatefulSet", namespace: namespace, name: "controlserver")
 
-    case K8s.Client.wait_until(conn, deployment_operation,
+    case K8s.Client.wait_until(conn, stateful_set_operation,
            find: fn
-             %{"items" => items} ->
-               two_or_more_generations =
-                 Enum.filter(items, fn item ->
-                   observed_generation =
-                     item
-                     |> FieldAccessors.status()
-                     |> Map.get("observedGeneration", 0)
+             %{} = item ->
+               observed_generation =
+                 item
+                 |> FieldAccessors.status()
+                 |> Map.get("observedGeneration", 0)
 
-                   # When the deployment is first ready it will
-                   # change it's own spec causing the generation to increment
-                   # We want to wait for that to happen at least once
-                   observed_generation >= 2
-                 end)
-
-               !Enum.empty?(two_or_more_generations)
+               # When the deployment is first ready it will
+               # change it's own spec causing the generation to increment
+               # We want to wait for that to happen at least once
+               observed_generation >= 2
 
              _ ->
                false
@@ -75,6 +66,45 @@ defmodule KubeBootstrap.ControlServer do
            find: fn
              %{"items" => items} ->
                Enum.count(items) == 1
+
+             _ ->
+               false
+           end,
+           eval: true,
+           timeout: 300
+         ) do
+      {:ok, _} ->
+        :ok
+
+      {:error, _reason} ->
+        {:error, :timeout}
+    end
+  end
+
+  defp wait_for_one_endpoint(conn, namespace) do
+    Logger.info("Waiting for single Control Server endpoint to be ready in namespace #{namespace}")
+
+    endpoint_operation =
+      "v1"
+      |> K8s.Client.list(:endpoints, namespace: namespace)
+      |> K8s.Selector.label(%{
+        "battery/app" => "battery-control-server"
+      })
+
+    case K8s.Client.wait_until(conn, endpoint_operation,
+           find: fn
+             %{"items" => items} ->
+               # We should find a single endpoint
+               # with a single subset
+               # with a single address
+               Enum.count(items, fn item ->
+                 subsets = Map.get(item, "subsets", [])
+
+                 Enum.count(subsets, fn subset ->
+                   addresses = Map.get(subset, "addresses", [])
+                   Enum.count(addresses) == 1
+                 end) == 1
+               end) == 1
 
              _ ->
                false

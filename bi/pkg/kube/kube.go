@@ -45,6 +45,7 @@ type KubeClient interface {
 	GetAccessInfo(ctx context.Context, namespace string) (*access.AccessSpec, error)
 	GetPostgresAccessInfo(ctx context.Context, namespace string, clusterName string, userName string) (*access.PostgresAccessSpec, error)
 	ListPodsRage(ctx context.Context) ([]rage.PodRageInfo, error)
+	ListHttpRoutesRage(ctx context.Context) ([]rage.HttpRouteRageInfo, error)
 	GetDialContext() func(ctx context.Context, network, address string) (net.Conn, error)
 }
 

@@ -74,12 +74,12 @@ defmodule CommonCore.Resources.ControlServer do
     |> F.require(battery.config.usage != :internal_dev)
   end
 
-  resource(:deployment, battery, state) do
+  resource(:stateful_set, battery, state) do
     # This name is important
     # Do not change it without also changing kube_bootstrap
     #
     # We order the control server to be created last based upon
-    # this name for a  deployment.
+    # this name for a  stateful set.
     name = "controlserver"
 
     cluster = PostgresState.cluster(state, name: Defaults.ControlDB.cluster_name(), type: :internal)
@@ -135,7 +135,7 @@ defmodule CommonCore.Resources.ControlServer do
       |> B.match_labels_selector(@app_name)
       |> B.template(template)
 
-    :deployment
+    :stateful_set
     |> B.build_resource()
     |> B.name(name)
     |> B.namespace(core_namespace(state))
