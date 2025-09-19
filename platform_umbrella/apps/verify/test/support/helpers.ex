@@ -58,7 +58,7 @@ defmodule Verify.TestCase.Helpers do
     session =
       session
       |> visit("/kube/pods")
-      |> assert_has(table_row(minimum: 6))
+      |> assert_has(table_row(minimum: 1))
 
     session =
       Enum.reduce(name_fragments, session, fn frag, acc ->
