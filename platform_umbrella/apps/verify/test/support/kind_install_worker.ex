@@ -75,21 +75,11 @@ defmodule Verify.KindInstallWorker do
   defp do_start({:cmd, cmd, slug, host}, state) do
     Logger.debug("Running #{cmd}")
 
-    latest_release =
-      [{Tesla.Middleware.FollowRedirects, max_redirects: 3}]
-      |> Tesla.client()
-      |> Tesla.get!("https://api.github.com/repos/batteries-included/batteries-included/releases/latest")
-      |> Map.get(:body)
-      |> Jason.decode!()
-      |> Map.get("name")
-
-    Logger.debug("Using latest release: #{latest_release}")
-
     env = [
-      {"BI_VERSION_TAG", latest_release},
       {"BI_ADDITIONAL_HOSTS", host},
       {"BI_NVIDIA_AUTO_DISCOVERY", "false"},
       {"BI_ALLOW_TEST_KEYS", "true"},
+      {"BI_OVERRIDE_LOC", state.bi_binary},
       {"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")},
       {"VERSION_OVERRIDE", System.get_env("VERSION_OVERRIDE", "")}
     ]

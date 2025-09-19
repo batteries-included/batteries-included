@@ -10,8 +10,12 @@ INSTALL_SPEC_URL="<%= spec_url %>"
 # install bi if needed first
 check_bi_version || install_bi
 
+# The location of the bi binary
+# This is usually VERSION_LOC but can be overridden with BI_OVERRIDE_LOC
+BI_INSTALL_LOC="${BI_OVERRIDE_LOC:-$VERSION_LOC}"
+
 # start install
-"${VERSION_LOC}" start \
+"${BI_INSTALL_LOC}" start \
     ${TRACE:+-v=debug} \
     ${BI_ADDITIONAL_HOSTS:+--additional-insecure-hosts=$BI_ADDITIONAL_HOSTS} \
     ${BI_DISABLE_GPU:+--nvidia-auto-discovery=false} \
