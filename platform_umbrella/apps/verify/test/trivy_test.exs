@@ -15,20 +15,22 @@ defmodule Verify.TrivyTest do
   # TODO: use this module to assert that there are no vulnerabilities?
 
   setup_all %{control_url: url} do
-    {:ok, session} = start_session(url)
+    wrap do
+      {:ok, session} = start_session(url)
 
-    {:ok, _} =
-      session
-      # make sure operator is running
-      |> assert_pod_running("trivy-operator")
-      # wait until the reports have ran
-      |> visit(@trivy_report_path)
-      |> click(@vulnerability_link)
-      # this will retry until there are rows (i.e we have results) or we time out
-      |> execute_query(table_row(minimum: 1))
+      {:ok, _} =
+        session
+        # make sure operator is running
+        |> assert_pod_running("trivy-operator")
+        # wait until the reports have ran
+        |> visit(@trivy_report_path)
+        |> click(@vulnerability_link)
+        # this will retry until there are rows (i.e we have results) or we time out
+        |> execute_query(table_row(minimum: 1))
 
-    Wallaby.end_session(session)
-    :ok
+      Wallaby.end_session(session)
+      :ok
+    end
   end
 
   verify "config audits ran and are visible", %{session: session} do

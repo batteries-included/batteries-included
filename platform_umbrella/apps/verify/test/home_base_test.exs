@@ -16,48 +16,50 @@ defmodule Verify.HomeBaseTest do
   @password "really good testing password"
 
   setup_all %{kube_config_path: kube_config_path, control_url: url} do
-    {:ok, session} = start_session(url)
+    wrap do
+      {:ok, session} = start_session(url)
 
-    # make sure the namespace is created
-    session =
+      # make sure the namespace is created
+      session =
+        session
+        |> trigger_k8s_deploy()
+        |> sleep(1_000)
+
+      # get the seed data from the int-prod bootstrap file
+      home_base_seed_data =
+        File.cwd!()
+        |> Path.join("../../../bootstrap/int-prod.spec.json")
+        |> File.read!()
+        |> Jason.decode!()
+        |> Kernel.get_in(~w(initial_resources /config_map/home_base_seed_data))
+
+      # apply it to the running cluster
+      {:ok, conn} = K8s.Conn.from_file(kube_config_path, insecure_skip_tls_verify: true)
+      op = K8s.Client.apply(home_base_seed_data)
+
+      case retry(fn -> K8s.Client.run(conn, op) end) do
+        {:ok, _} ->
+          :ok
+
+        {:error, reason} ->
+          raise "#{inspect(reason)}"
+      end
+
+      # get the team id from the bootstrap data
+      team =
+        home_base_seed_data
+        |> Map.get("data")
+        |> Enum.find_value(fn {k, v} ->
+          if String.contains?(k, ".team.json"), do: v
+        end)
+        |> Jason.decode!()
+
       session
-      |> trigger_k8s_deploy()
-      |> sleep(1_000)
+      |> create_home_base(team["id"])
+      |> Wallaby.end_session()
 
-    # get the seed data from the int-prod bootstrap file
-    home_base_seed_data =
-      File.cwd!()
-      |> Path.join("../../../bootstrap/int-prod.spec.json")
-      |> File.read!()
-      |> Jason.decode!()
-      |> Kernel.get_in(~w(initial_resources /config_map/home_base_seed_data))
-
-    # apply it to the running cluster
-    {:ok, conn} = K8s.Conn.from_file(kube_config_path, insecure_skip_tls_verify: true)
-    op = K8s.Client.apply(home_base_seed_data)
-
-    case retry(fn -> K8s.Client.run(conn, op) end) do
-      {:ok, _} ->
-        :ok
-
-      {:error, reason} ->
-        raise "#{inspect(reason)}"
+      :ok
     end
-
-    # get the team id from the bootstrap data
-    team =
-      home_base_seed_data
-      |> Map.get("data")
-      |> Enum.find_value(fn {k, v} ->
-        if String.contains?(k, ".team.json"), do: v
-      end)
-      |> Jason.decode!()
-
-    session
-    |> create_home_base(team["id"])
-    |> Wallaby.end_session()
-
-    :ok
   end
 
   verify "can create install", %{session: session, kind_install_worker: pid} do

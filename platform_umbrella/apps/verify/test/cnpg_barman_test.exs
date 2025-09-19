@@ -7,14 +7,17 @@ defmodule Verify.CNPGBarmanTest do
     images: ~w(cnpg_plugin_barman cnpg_plugin_barman_sidecar)a ++ @cert_manager
 
   setup_all %{control_url: url} do
-    {:ok, session} = start_session(url)
+    wrap do
+      {:ok, session} = start_session(url)
 
-    session
-    |> assert_pods_in_deployment_running("battery-base", "cert-manager")
-    |> assert_pods_in_deployment_running("battery-base", "cert-manager-cainjector")
-    |> assert_pods_in_deployment_running("battery-base", "cert-manager-webhook")
+      session
+      |> assert_pods_in_deployment_running("battery-base", "cert-manager")
+      |> assert_pods_in_deployment_running("battery-base", "cert-manager-cainjector")
+      |> assert_pods_in_deployment_running("battery-base", "cert-manager-webhook")
 
-    Wallaby.end_session(session)
+      Wallaby.end_session(session)
+      :ok
+    end
   end
 
   verify "barman is running", %{session: session} do

@@ -63,6 +63,26 @@ defmodule Verify.TestCase.Util do
     end
   end
 
+  defmacro wrap(contents) do
+    quote do
+      try do
+        unquote(contents)
+        :ok
+      rescue
+        e ->
+          [{kind_worker_pid, _}] = Registry.lookup(Verify.Registry, __MODULE__.KindInstallWorker)
+          out = unquote(__MODULE__).rage_output_for_test(__MODULE__, "setup_all")
+
+          Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), "setup_all")
+          # taking a screenshot writes the paths without a final newline so add it here
+          IO.write("\n")
+          Verify.KindInstallWorker.rage(kind_worker_pid, out)
+
+          reraise(e, __STACKTRACE__)
+      end
+    end
+  end
+
   @spec prepull_images(GenServer.server(), list(atom() | String.t())) :: :ok
   def prepull_images(_pid, []), do: :ok
 
