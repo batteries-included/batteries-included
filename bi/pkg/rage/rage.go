@@ -15,6 +15,7 @@ type RageReport struct {
 	AccessSpec  *access.AccessSpec
 	KindIPs     *string
 	BILogs      map[string][]interface{}
+	Nodes       []NodeRageInfo
 }
 
 type ContainerRageInfo struct {
@@ -43,6 +44,20 @@ type HttpRouteRageInfo struct {
 	Name       string
 	Hostnames  []string
 	Conditions []HttpRouteConditionRageInfo
+}
+
+type NodeConditionRageInfo struct {
+	Type    string
+	Status  string
+	Message string
+}
+
+type NodeRageInfo struct {
+	Name              string
+	Cores             int32
+	MemoryBytes       int64
+	Conditions        []NodeConditionRageInfo
+	KubernetesVersion string
 }
 
 func (report *RageReport) Write(w io.Writer) error {

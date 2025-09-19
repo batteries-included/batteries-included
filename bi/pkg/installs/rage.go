@@ -44,6 +44,14 @@ func (env *InstallEnv) NewRage(ctx context.Context) (*rage.RageReport, error) {
 		return nil, err
 	}
 
+	// Add node information
+	nodes, err := kubeClient.ListNodesRage(ctx)
+	if err != nil {
+		slog.Error("unable to list nodes for rage", "error", err)
+	} else {
+		report.Nodes = nodes
+	}
+
 	err = env.addHttpRoutes(ctx, kubeClient, report)
 	if err != nil {
 		slog.Error("unable to add HTTP routes to the rage report", "error", err)
