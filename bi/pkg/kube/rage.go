@@ -133,6 +133,54 @@ func (client *batteryKubeClient) ListHttpRoutesRage(ctx context.Context) ([]rage
 	return results, nil
 }
 
+func (client *batteryKubeClient) ListNodesRage(ctx context.Context) ([]rage.NodeRageInfo, error) {
+	nodes, err := client.client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]rage.NodeRageInfo, 0)
+	for _, n := range nodes.Items {
+		// CPU cores: look for cpu capacity, which is in cores (as quantity)
+		var cores int32
+		if cpuQty, found := n.Status.Capacity[v1.ResourceCPU]; found {
+			if v, ok := cpuQty.AsInt64(); ok {
+				cores = int32(v)
+			} else {
+				// fallback: try to parse as milli and divide
+				milli := cpuQty.MilliValue()
+				cores = int32(milli / 1000)
+			}
+		}
+
+		var memBytes int64
+		if memQty, found := n.Status.Capacity[v1.ResourceMemory]; found {
+			memBytes = memQty.Value()
+		}
+
+		conds := make([]rage.NodeConditionRageInfo, 0)
+		for _, c := range n.Status.Conditions {
+			conds = append(conds, rage.NodeConditionRageInfo{
+				Type:    string(c.Type),
+				Status:  string(c.Status),
+				Message: c.Message,
+			})
+		}
+
+		ni := rage.NodeRageInfo{
+			Name:              n.Name,
+			Cores:             cores,
+			MemoryBytes:       memBytes,
+			Conditions:        conds,
+			KubernetesVersion: n.Status.NodeInfo.KubeletVersion,
+		}
+
+		results = append(results, ni)
+	}
+
+	return results, nil
+}
+
 func (client *batteryKubeClient) extractHttpRouteInfo(route *unstructured.Unstructured) rage.HttpRouteRageInfo {
 	routeInfo := rage.HttpRouteRageInfo{
 		Namespace:  route.GetNamespace(),
