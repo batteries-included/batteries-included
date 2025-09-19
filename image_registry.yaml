@@ -855,7 +855,7 @@ ubuntu:
   tag_regex: ^noble-\d{8}(\.\d)?$
 vm_agent:
   name: docker.io/victoriametrics/vmagent
-  default_tag: v1.126.0
+  default_tag: v1.125.1
   tags:
     - v1.126.0
     - v1.125.1
@@ -910,7 +910,7 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: docker.io/victoriametrics/vminsert
-  default_tag: v1.126.0-cluster
+  default_tag: v1.125.1-cluster
   tags:
     - v1.126.0-cluster
     - v1.125.1-cluster
@@ -994,7 +994,7 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: docker.io/victoriametrics/vmselect
-  default_tag: v1.126.0-cluster
+  default_tag: v1.125.1-cluster
   tags:
     - v1.126.0-cluster
     - v1.125.1-cluster
@@ -1030,7 +1030,7 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: docker.io/victoriametrics/vmstorage
-  default_tag: v1.126.0-cluster
+  default_tag: v1.125.1-cluster
   tags:
     - v1.126.0-cluster
     - v1.125.1-cluster
