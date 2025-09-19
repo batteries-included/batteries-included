@@ -42,7 +42,7 @@ defmodule KubeBootstrap.ControlServer do
                false
            end,
            eval: true,
-           timeout: 300
+           timeout: 600
          ) do
       {:ok, _} ->
         :ok
@@ -71,7 +71,7 @@ defmodule KubeBootstrap.ControlServer do
                false
            end,
            eval: true,
-           timeout: 300
+           timeout: 600
          ) do
       {:ok, _} ->
         :ok
@@ -94,6 +94,7 @@ defmodule KubeBootstrap.ControlServer do
     case K8s.Client.wait_until(conn, endpoint_operation,
            find: fn
              %{"items" => items} ->
+               Logger.info("Found #{Enum.count(items)} endpoint(s) for control server")
                # We should find a single endpoint
                # with a single subset
                # with a single address
@@ -110,7 +111,7 @@ defmodule KubeBootstrap.ControlServer do
                false
            end,
            eval: true,
-           timeout: 300
+           timeout: 600
          ) do
       {:ok, _} ->
         :ok

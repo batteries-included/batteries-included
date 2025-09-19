@@ -52,7 +52,15 @@ defmodule KubeBootstrap do
       if length(with_control_server) == length(resources) do
         Logger.info("No Control Server found to wait for")
       else
+        Logger.info("Waiting for Control Server to be ready")
         :ok = KubeBootstrap.ControlServer.wait_for_control_server(conn, summary)
+        Logger.info("Control Server is ready")
+        Logger.debug("Waiting for MetalLB to be ready")
+        # Sometimes metallb's speaker pod can take a while.
+        # There are 4 containers and they each take a second.
+        # So rather than get un-explained network errors
+        # we'll take our time here.
+        :ok = KubeBootstrap.MetalLB.wait_for_metallb(conn, summary)
       end
 
       Logger.info("Bootstrap complete")

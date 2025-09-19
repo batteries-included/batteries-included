@@ -110,7 +110,7 @@ defmodule Verify.TestCase do
         on_exit(fn -> Wallaby.end_session(session) end)
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
-        Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
+        Logger.info("Testing version: #{tested_version} of batteries included: #{url} for #{slug}")
 
         {:ok,
          [
