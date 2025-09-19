@@ -13,32 +13,34 @@ defmodule Verify.SSOTest do
   @password "password"
 
   setup_all %{battery_install_worker: install_pid, image_pull_worker: pull_pid, control_url: url} do
-    # we don't need to wait for these. We can install and setup SSO while these are pulling
-    prepull_images(pull_pid, ~w(grafana oauth2_proxy)a ++ @victoria_metrics)
+    wrap do
+      # we don't need to wait for these. We can install and setup SSO while these are pulling
+      prepull_images(pull_pid, ~w(grafana oauth2_proxy)a ++ @victoria_metrics)
 
-    {:ok, session} = start_session(url)
+      {:ok, session} = start_session(url)
 
-    session =
-      session
-      |> check_keycloak_running()
-      |> navigate_to_keycloak_realm("Batteries Included")
-      |> create_keycloak_user("test@batteriesincl.com", @user, @password, "Batteries", "Included")
+      session =
+        session
+        |> check_keycloak_running()
+        |> navigate_to_keycloak_realm("Batteries Included")
+        |> create_keycloak_user("test@batteriesincl.com", @user, @password, "Batteries", "Included")
 
-    :ok = install_batteries(install_pid, :sso)
-    Wallaby.end_session(session)
+      :ok = install_batteries(install_pid, :sso)
+      Wallaby.end_session(session)
 
-    # having an already logged in session will be helpful
-    {:ok, session} = start_session(url)
+      # having an already logged in session will be helpful
+      {:ok, session} = start_session(url)
 
-    authenticated_session =
-      session
-      |> visit("/")
-      |> login_keycloak(@user, @password)
+      authenticated_session =
+        session
+        |> visit("/")
+        |> login_keycloak(@user, @password)
 
-    # use it for installing future batteries
-    BatteryInstallWorker.set_session(install_pid, authenticated_session)
+      # use it for installing future batteries
+      BatteryInstallWorker.set_session(install_pid, authenticated_session)
 
-    {:ok, authenticated_session: authenticated_session}
+      {:ok, authenticated_session: authenticated_session}
+    end
   end
 
   verify "control-server prompts for login", %{session: session} do
