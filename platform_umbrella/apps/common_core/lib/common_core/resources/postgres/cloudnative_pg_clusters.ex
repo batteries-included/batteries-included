@@ -62,8 +62,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         bootstrap: bootstrap(cluster, db),
         externalClusters: external_clusters(state, cluster),
         postgresql: %{
-          parameters: postgres_paramters(cluster),
-          shared_preload_libraries: ["pg_cron", "pg_documentdb_core", "pg_documentdb"]
+          parameters: postgres_paramters(cluster)
         },
         affinity: %{
           enablePodAntiAffinity: true,
@@ -99,15 +98,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   defp bootstrap(%{restore_from_backup: backup_name}, _db) when not is_empty(backup_name),
     do: %{recovery: %{source: backup_name}}
 
-  defp bootstrap(_cluster, db),
-    do: %{
-      initdb: %{
-        database: db.name,
-        owner: db.owner,
-        dataChecksums: true,
-        postInitSQL: ["CREATE EXTENSION IF NOT EXISTS documentdb CASCADE;"]
-      }
-    }
+  defp bootstrap(_cluster, db), do: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}}
 
   defp external_clusters(state, %{restore_from_backup: backup} = cluster) when not is_empty(backup) do
     namespace = PostgresState.cluster_namespace(state, cluster)
@@ -288,17 +279,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       "auto_explain.log_buffers" => "true",
       "auto_explain.sample_rate" => "0.01",
       "pgaudit.log" => "role, ddl, misc_set",
-      "pgaudit.log_catalog" => "off",
-      # set up ferret / docdb 
-      "cron.database_name" => "postgres",
-      "documentdb.enableCompact" => "true",
-      "documentdb.enableLetAndCollationForQueryMatch" => "true",
-      "documentdb.enableNowSystemVariable" => "true",
-      "documentdb.enableSortbyIdPushDownToPrimaryKey" => "true",
-      "documentdb.enableSchemaValidation" => "true",
-      "documentdb.enableBypassDocumentValidation" => "true",
-      "documentdb.enableUserCrud" => "true",
-      "documentdb.maxUserLimit" => "100"
+      "pgaudit.log_catalog" => "off"
     }
   end
 
