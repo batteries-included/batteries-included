@@ -191,7 +191,7 @@ defmodule Verify.TestCase.Util do
            # pods table. That assestion waits for the max_wait_time
            # before failing.
            # So if the image takes longer than this to pull, the test will fail
-           max_wait_time: 300_000,
+           max_wait_time: 600_000,
            capabilities: %{
              headless: true,
              javascriptEnabled: true,
