@@ -82,7 +82,15 @@ defmodule Verify.HomeBaseTest do
 
     uri = URI.new!(url)
 
-    {:ok} = KindInstallWorker.start_from_command(pid, cmd, install_name, uri.host)
+    {:ok} =
+      try do
+        KindInstallWorker.start_from_command(pid, cmd, install_name, uri.host)
+      catch
+        :exit, value ->
+          # catch the exit and raise so that verify will run rage
+          Logger.error("failed to create home-base cluster: #{inspect(value)}")
+          raise inspect(value)
+      end
   end
 
   defp navigate_to_home_base(session) do
