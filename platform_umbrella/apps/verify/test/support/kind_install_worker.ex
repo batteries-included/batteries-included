@@ -88,6 +88,7 @@ defmodule Verify.KindInstallWorker do
     env = [
       {"BI_VERSION_TAG", latest_release},
       {"BI_ADDITIONAL_HOSTS", host},
+      {"BI_NVIDIA_AUTO_DISCOVERY", "false"},
       {"BI_ALLOW_TEST_KEYS", "true"},
       {"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")},
       {"VERSION_OVERRIDE", System.get_env("VERSION_OVERRIDE", "")}
@@ -106,6 +107,7 @@ defmodule Verify.KindInstallWorker do
 
     env = [
       {"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")},
+      {"BI_NVIDIA_AUTO_DISCOVERY", "false"},
       {"BI_ALLOW_TEST_KEYS", "true"}
     ]
 
