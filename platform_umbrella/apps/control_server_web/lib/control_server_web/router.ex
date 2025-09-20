@@ -352,6 +352,8 @@ defmodule ControlServerWeb.Router do
   scope "/api", ControlServerWeb do
     pipe_through :api
 
+    get "/stats", StatsController, :index
+
     # Database cluster management
     resources "/postgres/clusters", ClusterController, except: [:new, :edit]
     resources "/redis/clusters", RedisInstanceController, except: [:new, :edit]

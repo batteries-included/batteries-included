@@ -8,14 +8,15 @@ import (
 )
 
 type RageReport struct {
-	InstallSlug string
-	KubeExists  bool
-	PodsInfo    []PodRageInfo
-	HttpRoutes  []HttpRouteRageInfo
-	AccessSpec  *access.AccessSpec
-	KindIPs     *string
-	BILogs      map[string][]interface{}
-	Nodes       []NodeRageInfo
+	InstallSlug     string
+	KubeExists      bool
+	PodsInfo        []PodRageInfo
+	HttpRoutes      []HttpRouteRageInfo
+	AccessSpec      *access.AccessSpec
+	KindIPs         *string
+	BILogs          map[string][]interface{}
+	Nodes           []NodeRageInfo
+	ControllerState ControllerStateRageInfo
 }
 
 type ContainerRageInfo struct {
@@ -30,6 +31,7 @@ type PodRageInfo struct {
 	Name          string
 	Phase         string
 	Message       string
+	Conditions    []ConditionRageInfo
 	ContainerInfo map[string]ContainerRageInfo
 }
 type HttpRouteConditionRageInfo struct {
@@ -46,7 +48,7 @@ type HttpRouteRageInfo struct {
 	Conditions []HttpRouteConditionRageInfo
 }
 
-type NodeConditionRageInfo struct {
+type ConditionRageInfo struct {
 	Type    string
 	Status  string
 	Message string
@@ -56,8 +58,30 @@ type NodeRageInfo struct {
 	Name              string
 	Cores             int32
 	MemoryBytes       int64
-	Conditions        []NodeConditionRageInfo
+	Conditions        []ConditionRageInfo
 	KubernetesVersion string
+}
+
+type ControllerStateRageInfo struct {
+	AgeSeconds          int64 `json:"age_seconds"`
+	Batteries           int   `json:"batteries"`
+	PostgresClusters    int   `json:"postgres_clusters"`
+	FerretServices      int   `json:"ferret_services"`
+	RedisInstances      int   `json:"redis_instances"`
+	Notebooks           int   `json:"notebooks"`
+	KnativeServices     int   `json:"knative_services"`
+	TraditionalServices int   `json:"traditional_services"`
+	IPAddressPools      int   `json:"ip_address_pools"`
+	Projects            int   `json:"projects"`
+	ModelInstances      int   `json:"model_instances"`
+
+	Pods         int `json:"pods"`
+	Services     int `json:"services"`
+	Deployments  int `json:"deployments"`
+	StatefulSets int `json:"stateful_sets"`
+	Nodes        int `json:"nodes"`
+
+	Realms int `json:"realms"`
 }
 
 func (report *RageReport) Write(w io.Writer) error {

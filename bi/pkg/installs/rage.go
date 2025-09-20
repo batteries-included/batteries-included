@@ -4,10 +4,12 @@ import (
 	"bi/pkg/cluster/kind"
 	"bi/pkg/kube"
 	"bi/pkg/rage"
+	"bi/pkg/specs"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -44,17 +46,11 @@ func (env *InstallEnv) NewRage(ctx context.Context) (*rage.RageReport, error) {
 		return nil, err
 	}
 
-	// Add node information
-	nodes, err := kubeClient.ListNodesRage(ctx)
+	httpClient := specs.GetHTTPClient(env.Spec, kubeClient)
+	err = env.addControlServerRageInfo(ctx, httpClient, report)
 	if err != nil {
-		slog.Error("unable to list nodes for rage", "error", err)
-	} else {
-		report.Nodes = nodes
-	}
-
-	err = env.addHttpRoutes(ctx, kubeClient, report)
-	if err != nil {
-		slog.Error("unable to add HTTP routes to the rage report", "error", err)
+		slog.Error("unable to add control server info to the rage report", "error", err)
+		// Not a fatal error
 	}
 
 	return report, nil
@@ -95,6 +91,19 @@ func (env *InstallEnv) addKubeRageInfo(ctx context.Context, kubeClient kube.Kube
 		slog.Error("unable to get access info", "error", err)
 	} else {
 		report.AccessSpec = accessInfo
+	}
+
+	// Add node information
+	nodes, err := kubeClient.ListNodesRage(ctx)
+	if err != nil {
+		slog.Error("unable to list nodes for rage", "error", err)
+	} else {
+		report.Nodes = nodes
+	}
+
+	err = env.addHttpRoutes(ctx, kubeClient, report)
+	if err != nil {
+		slog.Error("unable to add HTTP routes to the rage report", "error", err)
 	}
 
 	return nil
@@ -148,5 +157,49 @@ func (env *InstallEnv) addHttpRoutes(ctx context.Context, kubeClient kube.KubeCl
 	}
 
 	report.HttpRoutes = httpRoutes
+	return nil
+}
+
+func (env *InstallEnv) addControlServerRageInfo(ctx context.Context, httpClient *http.Client, report *rage.RageReport) error {
+
+	if report.AccessSpec == nil {
+		return fmt.Errorf("no access spec available to get control server info")
+	}
+	baseUrl := report.AccessSpec.GetURL()
+	statsUrl := fmt.Sprintf("%s/api/stats", baseUrl)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, statsUrl, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	// Set a reasonable timeout on the client if not already set by specs
+	// The httpClient may already have a timeout; if not, wrap with context deadline
+	ctx, cancel := context.WithTimeout(req.Context(), 15*time.Second)
+	defer cancel()
+
+	req = req.WithContext(ctx)
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to request control server stats: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("control server stats returned status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	// Decode the JSON response into the ControllerStateRageInfo struct
+	var cs rage.ControllerStateRageInfo
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&cs); err != nil {
+		return fmt.Errorf("failed to decode control server stats JSON: %w", err)
+	}
+
+	// Attach to report
+	report.ControllerState = cs
+
 	return nil
 }
