@@ -6,8 +6,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
-	"time"
 
 	"github.com/avast/retry-go/v4"
 	"github.com/vbauerster/mpb/v8"
@@ -67,7 +65,7 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 
 	util.IncrementWithMessage(bootstrapBar, "Getting access info")
 
-	httpClient := getHTTPClient(spec, kubeClient)
+	httpClient := GetHTTPClient(spec, kubeClient)
 
 	// Create a separate progress bar for HTTP health check
 	var healthBar *mpb.Bar
@@ -127,22 +125,7 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 	return err
 }
 
-func getHTTPClient(spec *InstallSpec, kubeClient kube.KubeClient) *http.Client {
-	httpClient := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-
-	dialContext := kubeClient.GetDialContext()
-
-	// Create HTTP client with WireGuard support if available and necessary
-	if dialContext != nil && spec.KubeCluster.Provider == "kind" {
-		httpClient.Transport = &http.Transport{
-			DialContext: dialContext,
-		}
-	}
-
-	return httpClient
-}
+// ...existing code...
 
 func bootstrapJobWatchOpts(ns string) *kube.WatchOptions {
 	return &kube.WatchOptions{

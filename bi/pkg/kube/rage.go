@@ -74,11 +74,20 @@ func (client *batteryKubeClient) GetPodRageInfo(ctx context.Context, namespace, 
 		}
 		containerInfos[container.Name] = info
 	}
+	conds := make([]rage.ConditionRageInfo, 0)
+	for _, c := range pod.Status.Conditions {
+		conds = append(conds, rage.ConditionRageInfo{
+			Type:    string(c.Type),
+			Status:  string(c.Status),
+			Message: c.Message,
+		})
+	}
 	return &rage.PodRageInfo{
 		Namespace:     pod.Namespace,
 		Name:          pod.Name,
 		Phase:         string(pod.Status.Phase),
 		Message:       pod.Status.Message,
+		Conditions:    conds,
 		ContainerInfo: containerInfos,
 	}, nil
 }
@@ -158,9 +167,9 @@ func (client *batteryKubeClient) ListNodesRage(ctx context.Context) ([]rage.Node
 			memBytes = memQty.Value()
 		}
 
-		conds := make([]rage.NodeConditionRageInfo, 0)
+		conds := make([]rage.ConditionRageInfo, 0)
 		for _, c := range n.Status.Conditions {
-			conds = append(conds, rage.NodeConditionRageInfo{
+			conds = append(conds, rage.ConditionRageInfo{
 				Type:    string(c.Type),
 				Status:  string(c.Status),
 				Message: c.Message,
