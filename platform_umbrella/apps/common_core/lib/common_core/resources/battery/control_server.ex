@@ -152,9 +152,10 @@ defmodule CommonCore.Resources.ControlServer do
           "path" => "/healthz",
           "port" => @server_port
         },
-        # Try for 3 minutes to get ready
+        # Try for 5 minutes to get ready
         "periodSeconds" => 5,
-        "failureThreshold" => 60
+        "failureThreshold" => 60,
+        "timeoutSeconds" => 5
       },
       # readiness and liveness won't start until after startup probe succeeds
       "readinessProbe" => %{
@@ -163,7 +164,8 @@ defmodule CommonCore.Resources.ControlServer do
           "port" => @server_port
         },
         "periodSeconds" => 5,
-        "failureThreshold" => 2
+        "failureThreshold" => 2,
+        "timeoutSeconds" => 2
       },
       "livenessProbe" => %{
         "httpGet" => %{
