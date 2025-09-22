@@ -96,7 +96,7 @@ func (client *batteryKubeClient) GetPodRageInfo(ctx context.Context, namespace, 
 }
 
 func (client *batteryKubeClient) GetLogs(ctx context.Context, namespace, podName, containerName string) (string, error) {
-	tailLines := int64(20)
+	tailLines := int64(128)
 	logs, err := client.client.CoreV1().Pods(namespace).GetLogs(podName, &v1.PodLogOptions{Container: containerName, TailLines: &tailLines}).Do(ctx).Raw()
 	if err != nil {
 		return "", err
