@@ -26,7 +26,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     field :resource_type, atom(), enforce: true
     field :table_name, atom(), enforce: true
 
-    field :retry_ms, non_neg_integer(), default: 1000
+    field :retry_ms, non_neg_integer(), default: 100
     field :max_retry_ms, non_neg_integer(), default: 120_000
     field :jitter_min, float(), default: 0.75
     field :jitter_max, float(), default: 1.25
