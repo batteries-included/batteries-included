@@ -3,6 +3,7 @@ package kube
 import (
 	"bi/pkg/rage"
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
@@ -21,9 +22,6 @@ func (client *batteryKubeClient) ListPodsRage(ctx context.Context) ([]rage.PodRa
 	results := make([]rage.PodRageInfo, 0)
 
 	for _, namespace := range namespaces.Items {
-		if !strings.Contains(namespace.Name, "battery") {
-			continue
-		}
 		slog.Debug("Listing pods", "namespace", namespace.Name)
 		pods, err := client.client.CoreV1().Pods(namespace.Name).List(ctx, metav1.ListOptions{})
 		if err != nil {
@@ -74,12 +72,26 @@ func (client *batteryKubeClient) GetPodRageInfo(ctx context.Context, namespace, 
 		}
 		containerInfos[container.Name] = info
 	}
+
+	// Get events for this pod
+	events, err := client.GetPodEvents(ctx, namespace, podName)
+	if err != nil {
+		slog.Warn("unable to get events for pod",
+			slog.String("namespace", namespace),
+			slog.String("pod", podName),
+			slog.Any("error", err),
+		)
+		// Continue without events rather than failing the whole pod info
+		events = []rage.PodEventRageInfo{}
+	}
+
 	return &rage.PodRageInfo{
 		Namespace:     pod.Namespace,
 		Name:          pod.Name,
 		Phase:         string(pod.Status.Phase),
 		Message:       pod.Status.Message,
 		ContainerInfo: containerInfos,
+		Events:        events,
 	}, nil
 }
 
@@ -90,6 +102,41 @@ func (client *batteryKubeClient) GetLogs(ctx context.Context, namespace, podName
 		return "", err
 	}
 	return string(logs), nil
+}
+
+func (client *batteryKubeClient) GetPodEvents(ctx context.Context, namespace, podName string) ([]rage.PodEventRageInfo, error) {
+	// Create field selector for events related to this specific pod
+	fieldSelector := fmt.Sprintf("involvedObject.name=%s,involvedObject.kind=Pod", podName)
+
+	// Get events for the pod
+	events, err := client.client.CoreV1().Events(namespace).List(ctx, metav1.ListOptions{
+		FieldSelector: fieldSelector,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("unable to get events for pod %s/%s: %w", namespace, podName, err)
+	}
+
+	eventInfos := make([]rage.PodEventRageInfo, 0, len(events.Items))
+	for _, event := range events.Items {
+		eventInfo := rage.PodEventRageInfo{
+			Type:               event.Type,
+			Reason:             event.Reason,
+			Message:            event.Message,
+			ReportingComponent: event.ReportingController,
+		}
+
+		// Handle timestamp formatting - Kubernetes events can have different timestamp formats
+		if !event.FirstTimestamp.IsZero() {
+			eventInfo.FirstTimestamp = event.FirstTimestamp.Format("2006-01-02T15:04:05Z")
+		}
+		if !event.LastTimestamp.IsZero() {
+			eventInfo.LastTimestamp = event.LastTimestamp.Format("2006-01-02T15:04:05Z")
+		}
+
+		eventInfos = append(eventInfos, eventInfo)
+	}
+
+	return eventInfos, nil
 }
 
 func (client *batteryKubeClient) ListHttpRoutesRage(ctx context.Context) ([]rage.HttpRouteRageInfo, error) {

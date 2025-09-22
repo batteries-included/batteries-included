@@ -31,6 +31,16 @@ type PodRageInfo struct {
 	Phase         string
 	Message       string
 	ContainerInfo map[string]ContainerRageInfo
+	Events        []PodEventRageInfo
+}
+
+type PodEventRageInfo struct {
+	Type               string
+	Reason             string
+	Message            string
+	FirstTimestamp     string
+	LastTimestamp      string
+	ReportingComponent string
 }
 type HttpRouteConditionRageInfo struct {
 	LastTransitionTime string
