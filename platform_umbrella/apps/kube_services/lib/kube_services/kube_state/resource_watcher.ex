@@ -23,19 +23,25 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   require Logger
 
   typedstruct module: State do
-    field :resource_type, atom(), enforce: true
-    field :table_name, atom(), enforce: true
+    field(:resource_type, atom(), enforce: true)
+    field(:table_name, atom(), enforce: true)
 
-    field :retry_ms, non_neg_integer(), default: 100
-    field :max_retry_ms, non_neg_integer(), default: 120_000
-    field :jitter_min, float(), default: 0.75
-    field :jitter_max, float(), default: 1.25
+    field(:current_retry_ms, non_neg_integer(), default: 100)
 
-    field :conn, K8s.Conn.t() | nil
+    # Retry settings
+    # retry_ms is the base time we add to current_retry_ms when retrying
+    # jitter_min and jitter_max are used to add some randomness to the retry time
+    # max_retry_ms is the maximum time we will wait between retries
+    field(:retry_ms, non_neg_integer(), default: 800)
+    field(:jitter_min, float(), default: 0.75)
+    field(:jitter_max, float(), default: 1.25)
+    field(:max_retry_ms, non_neg_integer(), default: 120_000)
+
+    field(:conn, K8s.Conn.t() | nil)
 
     # For mocking
-    field :client, module(), default: Client
-    field :runner, module(), default: Runner
+    field(:client, module(), default: Client)
+    field(:runner, module(), default: Runner)
 
     def new!(opts) do
       conn_func = Keyword.get(opts, :conn_func, &ConnectionPool.get!/0)
@@ -88,14 +94,20 @@ defmodule KubeServices.KubeState.ResourceWatcher do
     end
   end
 
-  defp next_delay(%State{retry_ms: current_time, max_retry_ms: max_time} = state) do
-    # Rather than do doubling we do a random percent increase between jitter_min and jitter_max
-    percent_to_add = :rand.uniform() * (state.jitter_max - state.jitter_min) + state.jitter_min
-    computed_time = round(current_time * percent_to_add) + current_time
+  defp next_delay(
+         %State{
+           current_retry_ms: current_retry,
+           retry_ms: base_retry,
+           jitter_min: jitter_min,
+           jitter_max: jitter_max,
+           max_retry_ms: max_time
+         } = state
+       ) do
+    jitter_percent = :rand.uniform() * (jitter_max - jitter_min) + jitter_min
+    computed_time = ceil(current_retry + base_retry * jitter_percent)
 
     # Cap that to a jittered min and max
-    percent_of_max = :rand.uniform() * (state.jitter_max - state.jitter_min) + state.jitter_min
-    computed_time = if computed_time > max_time, do: round(max_time * percent_of_max), else: computed_time
+    computed_time = if computed_time > max_time, do: round(max_time * jitter_percent), else: computed_time
 
     new_state = %{state | retry_ms: computed_time}
     {computed_time, new_state}
@@ -147,6 +159,7 @@ defmodule KubeServices.KubeState.ResourceWatcher do
         # NOTE(jdt): we'll probably need a way to handle deprecations and version skew if we can be launched into arbitrary EKS clusters
         # e.g. PSP is deprecated and removed in 1.25 but available in 1.24. AWS still supports 1.24 until Jan 31 2025
         Logger.warning("Stopping watch on #{resource_type} as it appears to be removed in this version.")
+
         {:ok, state}
 
       {:error, reason} ->
