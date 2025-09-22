@@ -16,9 +16,11 @@ defmodule ControlServerWeb.HealthzController do
   action_fallback ControlServerWeb.FallbackController
 
   def index(conn, params) do
+    start = DateTime.utc_now()
     status = check_healthz(conn, params)
+    diff = DateTime.diff(DateTime.utc_now(), start, :millisecond)
 
-    Logger.debug("Healthz check: #{inspect(status)}", status: status)
+    Logger.debug("Healthz check: #{inspect(status)} in #{diff}ms", status: status)
 
     conn
     |> put_status(status[:status])

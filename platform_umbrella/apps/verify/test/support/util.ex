@@ -25,7 +25,7 @@ defmodule Verify.TestCase.Util do
   - The install slug: `slug`
   """
   defmacro verify(message, context \\ quote(do: _), contents) do
-    %{module: mod, file: file, line: line} = __CALLER__
+    %{file: file, line: line} = __CALLER__
 
     contents =
       quote do
@@ -35,7 +35,7 @@ defmodule Verify.TestCase.Util do
         rescue
           e ->
             [{kind_worker_pid, _}] = Registry.lookup(Verify.Registry, __MODULE__.KindInstallWorker)
-            out = unquote(__MODULE__).rage_output_for_test(unquote(mod), unquote(message))
+            out = unquote(__MODULE__).rage_output_for_test(__MODULE__, unquote(message))
 
             Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), unquote(message))
             # taking a screenshot writes the paths without a final newline so add it here
@@ -50,24 +50,22 @@ defmodule Verify.TestCase.Util do
     contents = Macro.escape(contents, unquote: true)
 
     quote bind_quoted: [
-            mod: mod,
             file: file,
             line: line,
             context: context,
             contents: contents,
             message: message
           ] do
-      name = ExUnit.Case.register_test(mod, file, line, :verification, message, [:verify])
+      name = ExUnit.Case.register_test(__MODULE__, file, line, :verification, message, [:verify])
 
       def unquote(name)(unquote(context)), do: unquote(contents)
     end
   end
 
-  defmacro wrap(contents) do
+  defmacro wrap(do: contents) do
     quote do
       try do
         unquote(contents)
-        :ok
       rescue
         e ->
           [{kind_worker_pid, _}] = Registry.lookup(Verify.Registry, __MODULE__.KindInstallWorker)
