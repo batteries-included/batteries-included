@@ -27,7 +27,9 @@ builds:
       - -w -s -X 'bi/pkg.Version={{.Version}}'
 
     hooks:
-      pre: ./bin/verify-keys
+      pre:
+        - ./bin/verify-keys
+        - ./bin/go-generate
       post: ./bin/clean-tmp
 
   - id: registry-tool
