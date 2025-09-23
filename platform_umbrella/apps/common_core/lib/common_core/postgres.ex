@@ -3,7 +3,7 @@ defmodule CommonCore.Postgres do
   import Ecto.Changeset
 
   def possible_roles do
-    ~w( superuser nosuperuser createdb nocreatedb createrole nocreaterole inherit noinherit login nologin replication noreplication bypassrls nobypassrls )
+    ~w(superuser nosuperuser createdb nocreatedb createrole nocreaterole inherit noinherit login nologin replication noreplication bypassrls nobypassrls)
   end
 
   def validate_pg_rolelist(changeset, field) do

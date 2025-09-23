@@ -163,9 +163,9 @@ defmodule CommonCore.Resources.ControlServer do
           "path" => "/healthz",
           "port" => @server_port
         },
-        "periodSeconds" => 5,
-        "failureThreshold" => 2,
-        "timeoutSeconds" => 2
+        "periodSeconds" => 10,
+        "failureThreshold" => 5,
+        "timeoutSeconds" => 3
       },
       "livenessProbe" => %{
         "httpGet" => %{
@@ -173,7 +173,8 @@ defmodule CommonCore.Resources.ControlServer do
           "port" => @server_port
         },
         "periodSeconds" => 30,
-        "failureThreshold" => 5
+        "failureThreshold" => 5,
+        "timeoutSeconds" => 3
       }
     }
   end
