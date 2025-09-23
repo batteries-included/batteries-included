@@ -25,5 +25,9 @@ defmodule EventCenter.KubeState do
 
   def subscribe(resource_type) when is_binary(resource_type), do: PubSub.subscribe(@pubsub, resource_type)
 
+  def unsubscribe(resource_type) when is_atom(resource_type), do: unsubscribe(topic(resource_type))
+
+  def unsubscribe(resource_type) when is_binary(resource_type), do: PubSub.unsubscribe(@pubsub, resource_type)
+
   defp topic(resource_type), do: Atom.to_string(resource_type)
 end

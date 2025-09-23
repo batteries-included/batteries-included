@@ -5,10 +5,14 @@ defmodule Verify.TrivyTest do
     images: ~w(trivy_operator aqua_trivy aqua_node_collector)a
 
   @trivy_report_path "/trivy_reports/vulnerability_report"
-  @audit_link Query.link("Audit")
+  @config_audit_link Query.link("Config Audit")
   @cluster_rbac_link Query.link("Cluster RBAC")
+  @cluster_sbom_link Query.link("Cluster SBOM")
+  @cluster_vuln_link Query.link("Cluster Vuln")
+  @exposed_secrets_link Query.link("Exposed Secrets")
   # wallaby will find Cluster RBAC and RBAC if we try to use link like above
   @rbac_link Query.css(~s|a[href="/trivy_reports/rbac_assessment_report"]|)
+  @sbom_link Query.css(~s|a[href="/trivy_reports/sbom_report"]|)
   @kube_infra_link Query.link("Kube Infra")
   @vulnerability_link Query.link("Vulnerability")
 
@@ -18,15 +22,39 @@ defmodule Verify.TrivyTest do
     wrap do
       {:ok, session} = start_session(url)
 
-      {:ok, _} =
-        session
-        # make sure operator is running
-        |> assert_pod_running("trivy-operator")
-        # wait until the reports have ran
-        |> visit(@trivy_report_path)
-        |> click(@vulnerability_link)
-        # this will retry until there are rows (i.e we have results) or we time out
-        |> execute_query(table_row(minimum: 1))
+      session
+      # make sure operator is running
+      |> assert_pod_running("trivy-operator")
+      # wait until the reports have ran
+      |> visit(@trivy_report_path)
+      |> then(fn session ->
+        Enum.reduce(
+          # this is _roughly_ in order of quickest to slowest
+          # as a result, we shouldn't spend much time waiting for any single one
+          [
+            @cluster_sbom_link,
+            @config_audit_link,
+            @rbac_link,
+            @cluster_rbac_link,
+            @kube_infra_link,
+            @cluster_vuln_link,
+            @vulnerability_link,
+            @exposed_secrets_link,
+            @sbom_link
+          ],
+          session,
+          fn link, s ->
+            {:ok, _} =
+              s
+              |> sleep(121)
+              |> click(link)
+              # this will retry until there are rows (i.e we have results) or we time out
+              |> execute_query(table_row(minimum: 1))
+
+            s
+          end
+        )
+      end)
 
       Wallaby.end_session(session)
       :ok
@@ -36,8 +64,8 @@ defmodule Verify.TrivyTest do
   verify "config audits ran and are visible", %{session: session} do
     session
     |> visit(@trivy_report_path)
-    |> assert_has(@audit_link)
-    |> click(@audit_link)
+    |> assert_has(@config_audit_link)
+    |> click(@config_audit_link)
     |> assert_has(table_row(text: "service-", minimum: 1))
   end
 
