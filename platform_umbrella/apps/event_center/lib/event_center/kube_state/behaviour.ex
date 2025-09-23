@@ -19,4 +19,9 @@ defmodule EventCenter.KubeState.Behaviour do
   Subscribes to Kubernetes state events for specified resource type. Allows processes to receive notifications of resource state changes.
   """
   @callback subscribe(resource_type :: atom() | binary()) :: :ok | {:error, any()}
+
+  @doc """
+  Unsubscribes to Kubernetes state events for specified resource type.
+  """
+  @callback unsubscribe(resource_type :: atom() | binary()) :: :ok | {:error, any()}
 end
