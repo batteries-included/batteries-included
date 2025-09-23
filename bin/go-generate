@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# When releasing via goreleaser we need to make sure that npm has dependencies
+# and that go generate has been run to embed the assets.
+
+set -Eeuo pipefail
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+ROOT_DIR=$(cd "$SCRIPT_DIR/.." &>/dev/null && pwd -P)
+
+# Source common functions
+source "${SCRIPT_DIR}/lib/common-functions.sh"
+
+bi_pushd "${ROOT_DIR}/bi/assets"
+log "Downloading and installing bi/assets dependencies..."
+npm ci
+bi_popd
+
+bi_pushd "${ROOT_DIR}/bi"
+log "Running go generate for bi/..."
+go generate ./...
+bi_popd

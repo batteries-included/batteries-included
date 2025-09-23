@@ -24,6 +24,8 @@ build() {
         log "Building ${BLUE}${target}${NOFORMAT}"
         bi_pushd "${ROOT_DIR}/${target}"
         SECONDS=0
+        # If there's any go generate directives, run them
+        go generate ./...
         CGO_ENABLED=0 go build \
             -tags "netgo osusergo static_build" \
             -o "${bin_path}" \

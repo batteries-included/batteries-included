@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rage Report: {{.Filename}}</title>
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <script defer src="/static/js/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-lightest text-gray-darkest">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <nav class="mb-4">
+                <a href="/" class="text-primary hover:text-primary-dark">&larr; Back to Reports</a>
+            </nav>
+            <h1 class="text-4xl font-bold text-gray-darkest mb-2">
+                Rage Report Details
+            </h1>
+            <p class="text-gray-default">{{.Filename}}</p>
+        </header>
+
+        <main>
+            <!-- Overview -->
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter mb-6">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">
+                        Installation Overview
+                    </h2>
+                </div>
+                <div class="px-6 py-4">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-light">Install Slug</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-darkest">
+                                {{.Report.InstallSlug}}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-light">Kubernetes</dt>
+                            <dd class="mt-1">
+                                {{if .Report.KubeExists}}
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Available
+                                </span>
+                                {{else}}
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    Not Available
+                                </span>
+                                {{end}}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-light">Pods</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-darkest">
+                                {{len .Report.PodsInfo}}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-light">HTTP Routes</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-darkest">
+                                {{len .Report.HttpRoutes}}
+                            </dd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter mb-6">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">
+                        Quick Navigation
+                    </h2>
+                </div>
+                <div class="px-6 py-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <a href="/rage/{{urlEncode .Filename}}/pods"
+                            class="block p-4 border border-gray-lighter rounded-lg hover:bg-gray-lightest transition-colors">
+                            <h3 class="text-lg font-medium text-gray-darkest mb-2">
+                                Pods & Containers
+                            </h3>
+                            <p class="text-gray-default text-sm">
+                                View pod status, container logs, and events
+                            </p>
+                            <div class="mt-2 text-secondary-dark text-sm font-medium">
+                                {{len .Report.PodsInfo}} pods →
+                            </div>
+                        </a>
+
+                        <a href="/rage/{{urlEncode .Filename}}/networking"
+                            class="block p-4 border border-gray-lighter rounded-lg hover:bg-gray-lightest transition-colors">
+                            <h3 class="text-lg font-medium text-gray-darkest mb-2">
+                                Network & Access
+                            </h3>
+                            <p class="text-gray-default text-sm">
+                                HTTP routes, access specs, and network configuration
+                            </p>
+                            <div class="mt-2 text-secondary-dark text-sm font-medium">
+                                {{len .Report.HttpRoutes}} routes →
+                            </div>
+                        </a>
+
+                        <a href="/rage/{{urlEncode .Filename}}/logs"
+                            class="block p-4 border border-gray-lighter rounded-lg hover:bg-gray-lightest transition-colors">
+                            <h3 class="text-lg font-medium text-gray-darkest mb-2">BI Logs</h3>
+                            <p class="text-gray-default text-sm">
+                                Batteries Included system logs and diagnostics
+                            </p>
+                            <div class="mt-2 text-secondary-dark text-sm font-medium">
+                                {{len .Report.BILogs}} log sources →
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nodes Summary -->
+            {{if .Report.Nodes}}
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter mb-6">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">Cluster Nodes</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-lighter">
+                        <thead class="bg-gray-lightest">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Version
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Resources
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-lighter">
+                            {{range .Report.Nodes}}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-darkest">
+                                    {{.Name}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-light">
+                                    {{.KubernetesVersion}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-light">
+                                    {{.Cores}} cores
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {{range .Conditions}} {{if eq .Type "Ready"}} {{if eq
+                                    .Status "True"}}
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ready</span>
+                                    {{else}}
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Not
+                                        Ready</span>
+                                    {{end}} {{end}} {{end}}
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {{end}}
+        </main>
+    </div>
+</body>
+
+</html>

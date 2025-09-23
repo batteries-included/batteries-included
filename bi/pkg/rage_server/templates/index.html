@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rage Reports</title>
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <script defer src="/static/js/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-lightest text-gray-darkest">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-darkest mb-2">
+                Batteries Included - Rage Reports
+            </h1>
+            <p class="text-gray-default">
+                Debug information viewer for Batteries Included installations
+            </p>
+        </header>
+
+        <main>
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">
+                        Available Rage Reports
+                    </h2>
+                </div>
+
+                {{if .RageFiles}}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-lighter">
+                        <thead class="bg-gray-lightest">
+                            <tr>
+                                <th scope="col" data-sort="filename"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider cursor-pointer hover:bg-gray-lighter select-none">
+                                    <div class="flex items-center space-x-1">
+                                        <span>File</span>
+                                        <span class="sort-icon text-gray-light">↕</span>
+                                    </div>
+                                </th>
+                                <th scope="col" data-sort="created"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider cursor-pointer hover:bg-gray-lighter select-none">
+                                    <div class="flex items-center space-x-1">
+                                        <span>Created</span>
+                                        <span class="sort-icon text-gray-light">↕</span>
+                                    </div>
+                                </th>
+                                <th scope="col" data-sort="size"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider cursor-pointer hover:bg-gray-lighter select-none">
+                                    <div class="flex items-center space-x-1">
+                                        <span>Size</span>
+                                        <span class="sort-icon text-gray-light">↕</span>
+                                    </div>
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-lighter">
+                            {{range .RageFiles}}
+                            <tr class="hover:bg-gray-lightest">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-darkest">
+                                    <a href="/rage/{{urlEncode .Filename}}"
+                                        class="text-gray-default hover:underline decoration-primary">
+                                        <div class="flex flex-col">
+                                            {{if ne (dir .Filename) "."}}
+                                            <div class="text-xs text-gray-light mb-1">{{dir .Filename}}/</div>
+                                            {{end}}
+                                            <div>{{base .Filename}}</div>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-light">
+                                    {{formatTime .Timestamp}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-light">
+                                    {{formatSize .Size}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <div class="flex space-x-2">
+                                        <a href="/rage/{{urlEncode .Filename}}"
+                                            class="text-gray-default hover:underline decoration-primary">View</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+                {{else}}
+                <div class="px-6 py-12 text-center">
+                    <div class="text-gray-light mb-4">
+                        <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-darkest mb-2">
+                        No rage reports found
+                    </h3>
+                    <p class="text-gray-default mb-4">
+                        Generate a rage report using the
+                        <code class="bg-gray-lighter px-2 py-1 rounded text-sm">bi rage</code>
+                        command
+                    </p>
+                    <code
+                        class="bg-gray-lighter text-gray-darker px-3 py-2 rounded text-sm">bi rage [install-slug]</code>
+                </div>
+                {{end}}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.querySelector('table');
+            const tbody = table.querySelector('tbody');
+            const headers = table.querySelectorAll('th[data-sort]');
+
+            let currentSort = { column: null, direction: 'asc' };
+
+            // Store original row data for sorting
+            const rows = Array.from(tbody.querySelectorAll('tr')).map(row => {
+                const cells = row.querySelectorAll('td');
+                return {
+                    element: row,
+                    filename: cells[0].textContent.trim(),
+                    created: cells[1].textContent.trim(),
+                    size: cells[2].textContent.trim(),
+                    // Store raw values for proper sorting
+                    createdSort: cells[1].textContent.trim(), // Could be enhanced to parse actual date
+                    sizeSort: parseSizeForSorting(cells[2].textContent.trim())
+                };
+            });
+
+            function parseSizeForSorting(sizeText) {
+                const match = sizeText.match(/^([\d.]+)\s*([KMGT]?B)$/i);
+                if (!match) return 0;
+
+                const value = parseFloat(match[1]);
+                const unit = match[2].toUpperCase();
+                const multipliers = { 'B': 1, 'KB': 1024, 'MB': 1024 * 1024, 'GB': 1024 * 1024 * 1024, 'TB': 1024 * 1024 * 1024 * 1024 };
+
+                return value * (multipliers[unit] || 1);
+            }
+
+            function updateSortIcons() {
+                headers.forEach(header => {
+                    const icon = header.querySelector('.sort-icon');
+                    const column = header.dataset.sort;
+
+                    if (column === currentSort.column) {
+                        icon.textContent = currentSort.direction === 'asc' ? '↑' : '↓';
+                        icon.className = 'sort-icon text-gray-darkest';
+                    } else {
+                        icon.textContent = '↕';
+                        icon.className = 'sort-icon text-gray-light';
+                    }
+                });
+            }
+
+            function sortTable(column) {
+                const isCurrentColumn = currentSort.column === column;
+                currentSort.direction = isCurrentColumn && currentSort.direction === 'asc' ? 'desc' : 'asc';
+                currentSort.column = column;
+
+                const sortedRows = [...rows].sort((a, b) => {
+                    let aVal, bVal;
+
+                    switch (column) {
+                        case 'filename':
+                            aVal = a.filename.toLowerCase();
+                            bVal = b.filename.toLowerCase();
+                            break;
+                        case 'created':
+                            aVal = a.createdSort;
+                            bVal = b.createdSort;
+                            break;
+                        case 'size':
+                            aVal = a.sizeSort;
+                            bVal = b.sizeSort;
+                            break;
+                    }
+
+                    if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+
+                // Clear tbody and append sorted rows
+                tbody.innerHTML = '';
+                sortedRows.forEach(row => tbody.appendChild(row.element));
+
+                updateSortIcons();
+            }
+
+            // Add click handlers to sortable headers
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    sortTable(header.dataset.sort);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

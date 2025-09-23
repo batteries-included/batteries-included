@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logs - {{.Filename}}</title>
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <script defer src="/static/js/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-lightest text-gray-darkest"
+    x-data="{ 
+    selectedSource: '{{if .Report.BILogs}}{{$firstSource := ""}}{{range $source, $logs := .Report.BILogs}}{{if eq $firstSource ""}}{{$firstSource = $source}}{{$source}}{{end}}{{end}}{{end}}',
+    selectSource(source) {
+        this.selectedSource = source;
+    }
+}">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <nav class="mb-4 flex space-x-4">
+                <a href="/" class="text-primary hover:text-primary-dark">&larr; Back to Reports</a>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}" class="text-primary hover:text-primary-dark">Overview</a>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}/pods" class="text-primary hover:text-primary-dark">Pods</a>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}/networking"
+                    class="text-primary hover:text-primary-dark">Networking</a>
+                <span class="text-gray-light">|</span>
+                <span class="text-gray-darkest font-medium">Logs</span>
+            </nav>
+            <h1 class="text-3xl font-bold text-gray-darkest mb-2">Batteries Included Logs</h1>
+            <p class="text-gray-default">{{.Filename}}</p>
+        </header>
+
+        {{if .Report.BILogs}}
+        <main class="flex gap-8">
+            <!-- Selected Log Source Content - Left Column -->
+            <div class="flex-1 min-w-0">
+                {{range $source, $logs := .Report.BILogs}}
+                <div x-show="selectedSource === '{{$source}}'" class="space-y-6">
+
+                    <!-- Log Source Header -->
+                    <div class="space-y-4">
+                        <div class="flex items-baseline gap-4">
+                            <h2 class="text-2xl font-bold text-gray-darkest">{{$source}}</h2>
+                            <span class="text-sm text-gray-light">{{len $logs}} entries</span>
+                        </div>
+                    </div>
+
+                    <!-- Log Content -->
+                    <div
+                        class="bg-gray-darker text-gray-lighter p-6 font-mono text-base leading-relaxed tracking-wide whitespace-pre-wrap overflow-x-auto w-full max-h-96 overflow-y-auto">
+                        {{range $logs}}{{printf "%s\n" .}}{{end}}</div>
+                </div>
+                {{end}}
+            </div>
+
+            <!-- Log Source Navigation - Right Sidebar -->
+            <div class="w-64 flex-shrink-0">
+                <nav class="space-y-2">
+                    <h3 class="text-sm font-semibold text-gray-darkest mb-3">Select Log Source</h3>
+                    {{range $source, $logs := .Report.BILogs}}
+                    <button @click="selectSource('{{$source}}')"
+                        class="w-full text-left p-3 rounded-lg transition-all duration-200 border-r-4 border-transparent"
+                        :class="selectedSource === '{{$source}}' 
+                                    ? 'bg-gray-darkest/70 text-white' 
+                                    : 'text-gray-dark hover:bg-gray-lightest hover:text-gray-darkest hover:border-primary'">
+                        <div class="font-medium truncate">{{$source}}</div>
+                        <div class="text-xs opacity-75">{{len $logs}} entries</div>
+                    </button>
+                    {{end}}
+                </nav>
+            </div>
+        </main>
+
+        <!-- Fallback for no JavaScript - show all log sources -->
+        <noscript>
+            <main class="space-y-8">
+                {{range $source, $logs := .Report.BILogs}}
+                <div class="space-y-6">
+                    <!-- Log Source Header -->
+                    <div class="space-y-4">
+                        <div class="flex items-baseline gap-4">
+                            <h2 class="text-2xl font-bold text-gray-darkest">{{$source}}</h2>
+                            <span class="text-sm text-gray-light">{{len $logs}} entries</span>
+                        </div>
+                    </div>
+
+                    <!-- Log Content -->
+                    <div
+                        class="bg-gray-darker text-gray-lighter p-6 font-mono text-base leading-relaxed tracking-wide whitespace-pre-wrap overflow-x-auto w-full max-h-96 overflow-y-auto">
+                        {{range $logs}}{{printf "%s\n" .}}{{end}}</div>
+
+                    <hr class="my-8">
+                </div>
+                {{end}}
+            </main>
+        </noscript>
+
+        {{else}}
+        <main>
+            <div class="text-center py-12">
+                <div class="text-gray-light mb-4">
+                    <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-darkest mb-2">No BI logs found</h3>
+                <p class="text-gray-default">
+                    No Batteries Included system logs were collected in this rage report.
+                </p>
+            </div>
+        </main>
+        {{end}}
+    </div>
+</body>
+
+</html>

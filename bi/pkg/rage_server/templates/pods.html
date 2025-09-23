@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pods - {{.Filename}}</title>
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <script defer src="/static/js/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-lightest text-gray-darkest" x-data="{ 
+    selectedPod: '{{if .Report.PodsInfo}}{{(index .Report.PodsInfo 0).Name}}_{{(index .Report.PodsInfo 0).Namespace}}{{end}}',
+    selectPod(name, namespace) {
+        this.selectedPod = name + '_' + namespace;
+    }
+}">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <nav class="mb-4 flex space-x-4">
+                <a href="/" class="text-primary hover:text-primary-dark">&larr; Back to Reports</a>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}" class="text-primary hover:text-primary-dark">Overview</a>
+                <span class="text-gray-light">|</span>
+                <span class="text-gray-darkest font-medium">Pods</span>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}/networking"
+                    class="text-primary hover:text-primary-dark">Networking</a>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}/logs" class="text-primary hover:text-primary-dark">Logs</a>
+            </nav>
+            <h1 class="text-3xl font-bold text-gray-darkest mb-2">Pods</h1>
+            <p class="text-gray-default">{{.Filename}}</p>
+        </header>
+
+        {{if .Report.PodsInfo}}
+        <main class="flex gap-8">
+            <!-- Selected Pod Content - Left Column -->
+            <div class="flex-1 min-w-0">
+                {{range .Report.PodsInfo}}
+                <div x-show="selectedPod === '{{.Name}}_{{.Namespace}}'" x-data="{ showLogs: {} }" class="space-y-8">
+
+                    <!-- Pod Header -->
+                    <div class="space-y-4">
+                        <div class="flex items-baseline gap-4">
+                            <h2 class="text-2xl font-bold text-gray-darkest">{{.Name}}</h2>
+                            <span class="text-sm text-gray-light">{{.Namespace}}</span>
+                            {{if eq .Phase "Running"}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">{{.Phase}}</span>
+                            {{else if eq .Phase "Pending"}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{{.Phase}}</span>
+                            {{else}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">{{.Phase}}</span>
+                            {{end}}
+                        </div>
+                        {{if .Message}}
+                        <p class="text-gray-default">{{.Message}}</p>
+                        {{end}}
+                    </div>
+
+                    <!-- Containers -->
+                    {{if .ContainerInfo}}
+                    <div class="space-y-6">
+                        <h3 class="text-lg font-semibold text-gray-darkest">Containers</h3>
+                        {{range $name, $info := .ContainerInfo}}
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="font-medium text-gray-darkest">{{$info.Name}}</span>
+                                {{if $info.Running}}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">Running</span>
+                                {{else}}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">Stopped</span>
+                                {{end}}
+                                {{if gt $info.RestartCount 0}}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{{$info.RestartCount}}
+                                    restarts</span>
+                                {{end}}
+                                {{if $info.Logs}}
+                                <button @click="showLogs['{{$info.Name}}'] = !showLogs['{{$info.Name}}']"
+                                    class="text-primary hover:text-primary-dark text-sm underline">
+                                    <span x-text="showLogs['{{$info.Name}}'] ? 'Hide logs' : 'Show logs'"></span>
+                                </button>
+                                {{end}}
+                            </div>
+                            {{if $info.Logs}}
+                            <div x-show="showLogs['{{$info.Name}}']" x-transition
+                                class="bg-gray-darker text-gray-lighter p-6 font-mono text-base leading-relaxed tracking-wide whitespace-pre-wrap overflow-x-auto w-full">
+                                {{$info.Logs}}</div>
+                            {{end}}
+                        </div>
+                        {{end}}
+                    </div>
+                    {{end}}
+
+                    <!-- Events -->
+                    {{if .Events}}
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-darkest">Events</h3>
+                        <div class="space-y-2">
+                            {{range .Events}}
+                            <div class="flex gap-4 py-2">
+                                <div class="flex-shrink-0">
+                                    {{if eq .Type "Warning"}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{{.Type}}</span>
+                                    {{else if eq .Type "Normal"}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">{{.Type}}</span>
+                                    {{else}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-lighter text-gray-darker">{{.Type}}</span>
+                                    {{end}}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-gray-darkest">{{.Reason}}</div>
+                                    <div class="text-gray-default mt-1">{{.Message}}</div>
+                                    <div class="text-gray-light text-sm mt-1">{{.FirstTimestamp}}</div>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                {{end}}
+            </div>
+
+            <!-- Pod Navigation - Right Sidebar -->
+            <div class="w-64 flex-shrink-0">
+                <nav class="space-y-2">
+                    <h3 class="text-sm font-semibold text-gray-darkest mb-3">Select Pod</h3>
+                    {{range .Report.PodsInfo}}
+                    <button @click="selectPod('{{.Name}}', '{{.Namespace}}')"
+                        class="w-full text-left p-3 rounded-lg transition-all duration-200 border-r-4 border-transparent"
+                        :class="selectedPod === '{{.Name}}_{{.Namespace}}' 
+                                    ? 'bg-gray-darkest/70 text-white' 
+                                    : 'text-gray-dark hover:bg-gray-lightest hover:text-gray-darkest hover:border-primary'">
+                        <div class="font-medium truncate">{{.Name}}</div>
+                        <div class="text-xs opacity-75 truncate">{{.Namespace}}</div>
+                        <div class="text-xs mt-1">
+                            {{if eq .Phase "Running"}}
+                            <span class="inline-block w-2 h-2 bg-green-400 rounded-full"></span>
+                            {{else if eq .Phase "Pending"}}
+                            <span class="inline-block w-2 h-2 bg-yellow-400 rounded-full"></span>
+                            {{else}}
+                            <span class="inline-block w-2 h-2 bg-red-400 rounded-full"></span>
+                            {{end}}
+                            {{.Phase}}
+                        </div>
+                    </button>
+                    {{end}}
+                </nav>
+            </div>
+        </main>
+
+        <!-- Fallback for no JavaScript - show all pods -->
+        <noscript>
+            <main class="space-y-8">
+                {{range .Report.PodsInfo}}
+                <div class="space-y-8">
+                    <!-- Pod Header -->
+                    <div class="space-y-4">
+                        <div class="flex items-baseline gap-4">
+                            <h2 class="text-2xl font-bold text-gray-darkest">{{.Name}}</h2>
+                            <span class="text-sm text-gray-light">{{.Namespace}}</span>
+                            {{if eq .Phase "Running"}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">{{.Phase}}</span>
+                            {{else if eq .Phase "Pending"}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{{.Phase}}</span>
+                            {{else}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">{{.Phase}}</span>
+                            {{end}}
+                        </div>
+                        {{if .Message}}
+                        <p class="text-gray-default">{{.Message}}</p>
+                        {{end}}
+                    </div>
+
+                    <!-- Containers -->
+                    {{if .ContainerInfo}}
+                    <div class="space-y-6">
+                        <h3 class="text-lg font-semibold text-gray-darkest">Containers</h3>
+                        {{range $name, $info := .ContainerInfo}}
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="font-medium text-gray-darkest">{{$info.Name}}</span>
+                                {{if $info.Running}}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">Running</span>
+                                {{else}}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">Stopped</span>
+                                {{end}}
+                                {{if gt $info.RestartCount 0}}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{{$info.RestartCount}}
+                                    restarts</span>
+                                {{end}}
+                            </div>
+                            {{if $info.Logs}}
+                            <div
+                                class="bg-gray-darker text-gray-lighter p-6 font-mono text-base leading-relaxed tracking-wide whitespace-pre-wrap overflow-x-auto w-full">
+                                {{$info.Logs}}</div>
+                            {{end}}
+                        </div>
+                        {{end}}
+                    </div>
+                    {{end}}
+
+                    <!-- Events -->
+                    {{if .Events}}
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-darkest">Events</h3>
+                        <div class="space-y-2">
+                            {{range .Events}}
+                            <div class="flex gap-4 py-2">
+                                <div class="flex-shrink-0">
+                                    {{if eq .Type "Warning"}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">{{.Type}}</span>
+                                    {{else if eq .Type "Normal"}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">{{.Type}}</span>
+                                    {{else}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-lighter text-gray-darker">{{.Type}}</span>
+                                    {{end}}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-gray-darkest">{{.Reason}}</div>
+                                    <div class="text-gray-default mt-1">{{.Message}}</div>
+                                    <div class="text-gray-light text-sm mt-1">{{.FirstTimestamp}}</div>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+
+                    <hr class="my-8">
+                </div>
+                {{end}}
+            </main>
+        </noscript>
+
+        {{else}}
+        <main>
+            <div class="text-center py-12">
+                <div class="text-gray-light mb-4">
+                    <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2m-4 4v4a2 2 0 002 2h2m0-4v-4m0 4h4" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-darkest mb-2">No pods found</h3>
+                <p class="text-gray-default">
+                    No pod information was collected in this rage report.
+                </p>
+            </div>
+        </main>
+        {{end}}
+    </div>
+</body>
+
+</html>
