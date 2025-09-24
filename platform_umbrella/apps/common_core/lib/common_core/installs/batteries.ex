@@ -100,8 +100,9 @@ defmodule CommonCore.Installs.Batteries do
   # turn off upgrades for dev clusters
   defp enrich_single_battery_config(
          %SystemBattery{type: :battery_core, config: config} = sb,
-         %Installation{usage: :development} = install
-       ),
+         %Installation{usage: usage} = install
+       )
+       when usage in ~w(internal_int_test development)a,
        do: %{
          sb
          | config:
