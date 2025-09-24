@@ -64,7 +64,7 @@ defmodule Verify.BatteryInstallWorker do
       e ->
         # grab a screenshot if we've failed to install the battery
         take_screenshot(session, name: "battery-install-worker-failure-#{battery.type}", log: true)
-        Verify.KindInstallWorker.rage(state.kind_worker_pid, state.rage_output)
+        Verify.KindInstallWorker.rage_all(state.kind_worker_pid, state.rage_output)
 
         reraise(e, __STACKTRACE__)
     end
@@ -88,7 +88,7 @@ defmodule Verify.BatteryInstallWorker do
       e ->
         # grab a screenshot if we've failed to uninstall the battery
         take_screenshot(session, name: "battery-uninstall-worker-failure-#{battery.type}")
-        Verify.KindInstallWorker.rage(state.kind_worker_pid, state.rage_output)
+        Verify.KindInstallWorker.rage_all(state.kind_worker_pid, state.rage_output)
 
         reraise(e, __STACKTRACE__)
     end

@@ -16,6 +16,7 @@ type RageReport struct {
 	KindIPs     *string
 	BILogs      map[string][]interface{}
 	Nodes       []NodeRageInfo
+	Metrics     map[string]interface{}
 }
 
 type ContainerRageInfo struct {

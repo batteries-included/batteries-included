@@ -5,6 +5,7 @@ defmodule ControlServer.Application do
 
   def start(_type, _args) do
     children = [
+      ControlServer.Telemetry,
       # Start the Ecto repository
       ControlServer.Repo,
       # Start the PubSub system

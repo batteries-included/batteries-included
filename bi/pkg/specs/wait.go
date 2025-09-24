@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"github.com/avast/retry-go/v4"
 	"github.com/vbauerster/mpb/v8"
@@ -128,20 +127,8 @@ func (spec *InstallSpec) WaitForBootstrap(ctx context.Context, kubeClient kube.K
 }
 
 func getHTTPClient(spec *InstallSpec, kubeClient kube.KubeClient) *http.Client {
-	httpClient := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-
-	dialContext := kubeClient.GetDialContext()
-
-	// Create HTTP client with WireGuard support if available and necessary
-	if dialContext != nil && spec.KubeCluster.Provider == "kind" {
-		httpClient.Transport = &http.Transport{
-			DialContext: dialContext,
-		}
-	}
-
-	return httpClient
+	// Use the reusable HTTP client function
+	return GetHTTPClient(spec, kubeClient)
 }
 
 func bootstrapJobWatchOpts(ns string) *kube.WatchOptions {

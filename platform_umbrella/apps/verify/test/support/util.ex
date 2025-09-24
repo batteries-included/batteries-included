@@ -40,7 +40,7 @@ defmodule Verify.TestCase.Util do
             Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), unquote(message))
             # taking a screenshot writes the paths without a final newline so add it here
             IO.write("\n")
-            Verify.KindInstallWorker.rage(kind_worker_pid, out)
+            Verify.KindInstallWorker.rage_all(kind_worker_pid, out)
 
             reraise(e, __STACKTRACE__)
         end
@@ -74,7 +74,7 @@ defmodule Verify.TestCase.Util do
           Wallaby.Feature.Utils.take_screenshots_for_sessions(self(), "setup_all")
           # taking a screenshot writes the paths without a final newline so add it here
           IO.write("\n")
-          Verify.KindInstallWorker.rage(kind_worker_pid, out)
+          Verify.KindInstallWorker.rage_all(kind_worker_pid, out)
 
           reraise(e, __STACKTRACE__)
       end

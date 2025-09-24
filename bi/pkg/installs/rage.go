@@ -4,10 +4,12 @@ import (
 	"bi/pkg/cluster/kind"
 	"bi/pkg/kube"
 	"bi/pkg/rage"
+	"bi/pkg/specs"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -55,6 +57,14 @@ func (env *InstallEnv) NewRage(ctx context.Context) (*rage.RageReport, error) {
 	err = env.addHttpRoutes(ctx, kubeClient, report)
 	if err != nil {
 		slog.Error("unable to add HTTP routes to the rage report", "error", err)
+	}
+
+	// Create HTTP client with VPN support and collect metrics
+	httpClient := specs.GetHTTPClient(env.Spec, kubeClient)
+	err = env.addMetrics(ctx, httpClient, report)
+	if err != nil {
+		slog.Error("unable to add metrics data", "error", err)
+		// Non-fatal error - continue with rage report generation
 	}
 
 	return report, nil
@@ -148,5 +158,47 @@ func (env *InstallEnv) addHttpRoutes(ctx context.Context, kubeClient kube.KubeCl
 	}
 
 	report.HttpRoutes = httpRoutes
+	return nil
+}
+
+func (env *InstallEnv) addMetrics(ctx context.Context, httpClient *http.Client, report *rage.RageReport) error {
+	if report.AccessSpec == nil {
+		return fmt.Errorf("no access spec available to get control server info")
+	}
+
+	baseUrl := report.AccessSpec.GetURL()
+	metricsURL := fmt.Sprintf("%s/api/metrics/json", baseUrl)
+	slog.Debug("Fetching control server metrics", "url", metricsURL)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, metricsURL, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	// Set a reasonable timeout on the context if not already set
+	ctx, cancel := context.WithTimeout(req.Context(), 15*time.Second)
+	defer cancel()
+	req = req.WithContext(ctx)
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to request control server metrics: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("control server metrics returned status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	// Decode the JSON response into a generic map
+	var metricsData map[string]interface{}
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&metricsData); err != nil {
+		return fmt.Errorf("failed to decode control server metrics JSON: %w", err)
+	}
+
+	report.Metrics = metricsData
+
 	return nil
 }

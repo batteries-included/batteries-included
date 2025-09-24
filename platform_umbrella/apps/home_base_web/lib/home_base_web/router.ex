@@ -101,6 +101,14 @@ defmodule HomeBaseWeb.Router do
     get "/teams/:id", TeamsController, :switch
   end
 
+  # Metrics API endpoint - simple public endpoint for Prometheus scraping
+  scope "/api", HomeBaseWeb do
+    pipe_through :api
+
+    get "/metrics", MetricsController, :prometheus
+    get "/metrics/json", MetricsController, :metrics_json
+  end
+
   scope "/api/v1/", HomeBaseWeb do
     pipe_through :api
 
