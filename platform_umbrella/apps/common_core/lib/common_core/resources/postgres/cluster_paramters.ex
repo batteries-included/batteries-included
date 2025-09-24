@@ -49,6 +49,7 @@ defmodule CommonCore.Resources.CloudNativePGClusterParamters do
     %{
       # set up ferret / docdb
       "cron.database_name" => "postgres",
+      "cron.host" => "",
       "documentdb.enableCompact" => "true",
       "documentdb.enableLetAndCollationForQueryMatch" => "true",
       "documentdb.enableNowSystemVariable" => "true",
