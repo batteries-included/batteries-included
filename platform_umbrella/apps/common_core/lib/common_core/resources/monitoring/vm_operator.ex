@@ -238,9 +238,11 @@ defmodule CommonCore.Resources.VMOperator do
             "image" => battery.config.operator_image,
             "imagePullPolicy" => "IfNotPresent",
             "livenessProbe" => %{
-              "httpGet" => %{"path" => "/health", "port" => 8081},
-              "initialDelaySeconds" => 15,
-              "periodSeconds" => 20
+              "failureThreshold" => 3,
+              "tcpSocket" => %{"port" => 8081},
+              "initialDelaySeconds" => 5,
+              "periodSeconds" => 15,
+              "timeoutSeconds" => 5
             },
             "name" => "operator",
             "ports" => [
@@ -249,8 +251,10 @@ defmodule CommonCore.Resources.VMOperator do
             ],
             "readinessProbe" => %{
               "httpGet" => %{"path" => "/ready", "port" => 8081},
+              "failureThreshold" => 3,
               "initialDelaySeconds" => 5,
-              "periodSeconds" => 10
+              "periodSeconds" => 15,
+              "timeoutSeconds" => 5
             },
             "resources" => %{},
             "securityContext" => %{
