@@ -20,7 +20,7 @@ defmodule ControlServer.Umbrella.MixProject do
         plt_local_path: ".dialyzer",
         plt_core_path: ".dialyzer"
       ],
-      listeners: [Phoenix.CodeReloader]
+      listeners: listeners()
     ]
   end
 
@@ -82,5 +82,13 @@ defmodule ControlServer.Umbrella.MixProject do
       File.cp!("apps/#{proj}/config/runtime.exs", Path.join(release_path, "app_config.exs"))
       release
     end
+  end
+
+  defp listeners do
+    if dependabot?(), do: [], else: [Phoenix.CodeReloader]
+  end
+
+  defp dependabot? do
+    Enum.any?(System.get_env(), fn {key, _value} -> String.starts_with?(key, "DEPENDABOT") end)
   end
 end
