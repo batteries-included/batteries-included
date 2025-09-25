@@ -16,7 +16,7 @@ defmodule ControlServerWeb.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: listeners()
     ]
   end
 
@@ -92,5 +92,13 @@ defmodule ControlServerWeb.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "ecto.reset": []
     ]
+  end
+
+  defp listeners do
+    if dependabot?(), do: [], else: [Phoenix.CodeReloader]
+  end
+
+  defp dependabot? do
+    Enum.any?(System.get_env(), fn {key, _value} -> String.starts_with?(key, "DEPENDABOT") end)
   end
 end
