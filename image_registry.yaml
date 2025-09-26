@@ -155,15 +155,17 @@ cloudnative_pg:
   tag_regex: ^\d+\.\d+\.\d+$
 cnpg_plugin_barman:
   name: ghcr.io/cloudnative-pg/plugin-barman-cloud
-  default_tag: v0.6.0
+  default_tag: v0.7.0
   tags:
+    - v0.7.0
     - v0.6.0
     - v0.5.0
   tag_regex: ^v\d+\.\d+\.\d+$
 cnpg_plugin_barman_sidecar:
   name: ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar
-  default_tag: v0.6.0
+  default_tag: v0.7.0
   tags:
+    - v0.7.0
     - v0.6.0
     - v0.5.0
   tag_regex: ^v\d+\.\d+\.\d+$
@@ -397,8 +399,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.3.4
+  default_tag: 26.3.5
   tags:
+    - 26.3.5
     - 26.3.4
     - 26.3.3
     - 26.3.2
@@ -705,8 +708,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.12.1
+  default_tag: 0.12.2
   tags:
+    - 0.12.2
     - 0.12.1
     - 0.12.0
     - 0.11.11
