@@ -10,6 +10,7 @@ defmodule CommonCore.Application do
       {Finch, name: CommonCore.Finch},
       # Cache for JWKs
       CommonCore.JWK.Cache
+      # Metrics storage now handled by individual applications
     ]
 
     opts = [strategy: :one_for_one, name: CommonCore.Supervisor]

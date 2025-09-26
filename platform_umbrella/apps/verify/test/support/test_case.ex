@@ -82,7 +82,7 @@ defmodule Verify.TestCase do
           catch
             :exit, value ->
               Logger.error("failed to create cluster: #{inspect(value)}")
-              Verify.KindInstallWorker.rage(kind_pid, tmp_dir)
+              Verify.KindInstallWorker.rage_all(kind_pid, tmp_dir)
               raise inspect(value)
           end
 

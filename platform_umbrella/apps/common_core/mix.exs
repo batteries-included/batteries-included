@@ -30,6 +30,7 @@ defmodule CommonCore.MixProject do
       # Nice naming generator
       {:mnemonic_slugs, "~> 0.0.3"},
       {:telemetry, "~> 1.1"},
+      {:telemetry_metrics, "~> 1.0"},
 
       # Types for all the things
       {:ecto_soft_delete, "~> 2.0"},

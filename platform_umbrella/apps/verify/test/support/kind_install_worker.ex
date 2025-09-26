@@ -53,8 +53,12 @@ defmodule Verify.KindInstallWorker do
     do_stop_all(state)
   end
 
-  def handle_call({:rage, output}, _from, state) do
-    do_rage(output, state)
+  def handle_call({:rage, slug}, _from, state) do
+    do_rage_single(slug, state)
+  end
+
+  def handle_call({:rage_all, output}, _from, state) do
+    do_rage_all(output, state)
   end
 
   def handle_continue({args, from}, state) do
@@ -135,7 +139,25 @@ defmodule Verify.KindInstallWorker do
     :ok
   end
 
-  defp do_rage(output, %{bi_binary: bi, started: started} = state) do
+  defp do_rage_single(slug, %{bi_binary: bi, started: started} = state) do
+    case Map.get(started, slug) do
+      nil ->
+        {:reply, {:error, :slug_not_found}, state}
+
+      _path ->
+        case System.cmd(bi, ["rage", "-v=debug", slug, "-o=-"], stderr_to_stdout: false) do
+          {stdout, 0} ->
+            Logger.debug("Rage ran successfully for #{slug}")
+            {:reply, {:ok, stdout}, state}
+
+          {output, exit_code} ->
+            Logger.error("Rage failed for #{slug}: #{output}")
+            {:reply, {:error, {exit_code, output}}, state}
+        end
+    end
+  end
+
+  defp do_rage_all(output, %{bi_binary: bi, started: started} = state) do
     time = :second |> :erlang.system_time() |> to_string()
 
     results =
@@ -194,8 +216,12 @@ defmodule Verify.KindInstallWorker do
     GenServer.call(target, {:start, {:spec, identifier, slug}}, 15 * 60 * 1000)
   end
 
-  def rage(target, output) do
-    GenServer.call(target, {:rage, output}, 15 * 60 * 1000)
+  def rage(target, slug) do
+    GenServer.call(target, {:rage, slug}, 15 * 60 * 1000)
+  end
+
+  def rage_all(target, output) do
+    GenServer.call(target, {:rage_all, output}, 15 * 60 * 1000)
   end
 
   def stop_all(target) do

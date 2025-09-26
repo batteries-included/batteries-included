@@ -362,6 +362,10 @@ defmodule ControlServerWeb.Router do
 
     # Notebook management
     resources "/notebooks/jupyter_lab_notebooks", JupyterLabNotebookController, except: [:new, :edit]
+
+    # Metrics endpoints
+    get "/metrics", MetricsController, :prometheus
+    get "/metrics/json", MetricsController, :metrics_json
   end
 
   # Development tools - only available in development environment
