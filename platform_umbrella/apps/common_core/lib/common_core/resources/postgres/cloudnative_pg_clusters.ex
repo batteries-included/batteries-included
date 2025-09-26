@@ -65,7 +65,11 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         externalClusters: external_clusters(state, cluster),
         postgresql: %{
           parameters: CloudNativePGClusterParamters.params(cluster),
-          shared_preload_libraries: ["pg_cron", "pg_documentdb_core", "pg_documentdb"]
+          shared_preload_libraries: ["pg_cron", "pg_documentdb_core", "pg_documentdb"],
+          pg_hba: [
+            "host postgres all 127.0.0.1/32 trust",
+            "host postgres all ::1/128 trust"
+          ]
         },
         affinity: %{
           enablePodAntiAffinity: true,
