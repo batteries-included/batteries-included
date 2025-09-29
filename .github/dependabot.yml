@@ -15,11 +15,14 @@ updates:
       - dependencies
       - automation
   - package-ecosystem: npm
-    directory: '/platform_umbrella/apps/common_ui/assets/'
+    directories:
+      - '/platform_umbrella/apps/common_ui/assets/'
+      - '/platform_umbrella/apps/control_server_web/assets/'
+      - '/platform_umbrella/apps/home_base_web/assets/'
     schedule:
       interval: weekly
       day: monday
-      time: '00:01'
+      time: '01:15'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -28,59 +31,17 @@ updates:
     labels:
       - dependencies
       - automation
-      - javascript
-  - package-ecosystem: npm
-    directory: '/platform_umbrella/apps/control_server_web/assets/'
-    schedule:
-      interval: weekly
-      day: monday
-      time: '00:05'
-      timezone: America/Chicago
-    groups:
-      dependencies:
-        patterns:
-          - '*'
-    labels:
-      - dependencies
       - javascript
       - int-test
-      - automation
   - package-ecosystem: npm
-    directory: '/platform_umbrella/apps/home_base_web/assets/'
+    directories:
+      - '/keycloak-theme/'
+      - '/pastebin-go/assets/'
+      - '/static'
     schedule:
       interval: weekly
       day: monday
-      time: '00:01'
-      timezone: America/Chicago
-    groups:
-      dependencies:
-        patterns:
-          - '*'
-    labels:
-      - dependencies
-      - automation
-      - javascript
-  - package-ecosystem: npm
-    directory: '/static/'
-    schedule:
-      interval: weekly
-      day: monday
-      time: '00:01'
-      timezone: America/Chicago
-    groups:
-      dependencies:
-        patterns:
-          - '*'
-    labels:
-      - dependencies
-      - automation
-      - javascript
-  - package-ecosystem: npm
-    directory: '/keycloak-theme/'
-    schedule:
-      interval: weekly
-      day: monday
-      time: '00:01'
+      time: '00:10'
       timezone: America/Chicago
     groups:
       dependencies:
@@ -93,7 +54,8 @@ updates:
   - package-ecosystem: 'mix'
     directory: '/platform_umbrella/'
     schedule:
-      interval: daily
+      interval: weekly
+      day: monday
       time: '00:25'
       timezone: America/Chicago
     labels:
@@ -104,7 +66,7 @@ updates:
   - package-ecosystem: 'gomod'
     directory: '/bi/'
     schedule:
-      interval: daily
+      interval: weekly
       time: '00:01'
       timezone: America/Chicago
     groups:
@@ -114,25 +76,11 @@ updates:
     labels:
       - dependencies
       - automation
-  - package-ecosystem: npm
-    directory: '/pastebin-go/assets/'
-    schedule:
-      interval: monthly
-      time: '00:01'
-      timezone: America/Chicago
-    groups:
-      dependencies:
-        patterns:
-          - '*'
-    labels:
-      - dependencies
-      - automation
-      - javascript
   - package-ecosystem: 'gomod'
     directory: '/pastebin-go/'
     schedule:
       interval: monthly
-      time: '00:01'
+      time: '00:05'
       timezone: America/Chicago
     groups:
       dependencies:
