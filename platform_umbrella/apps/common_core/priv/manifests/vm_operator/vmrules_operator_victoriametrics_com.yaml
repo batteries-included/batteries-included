@@ -193,7 +193,7 @@ spec:
                       tenant:
                         description: |-
                           Tenant id for group, can be used only with enterprise version of vmalert.
-                          See more details [here](https://docs.victoriametrics.com/victoriametrics/vmalert#multitenancy).
+                          See more details [here](https://docs.victoriametrics.com/victoriametrics/vmalert/#multitenancy).
                         type: string
                       type:
                         description: |-

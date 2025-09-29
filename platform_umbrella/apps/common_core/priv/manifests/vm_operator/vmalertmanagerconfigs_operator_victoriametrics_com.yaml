@@ -1570,6 +1570,10 @@ spec:
                                 Comma separated list of actions that will be
                                 available for the alert.
                               type: string
+                            apiURL:
+                              description:
+                                The URL to send OpsGenie API requests to.
+                              type: string
                             api_key:
                               description: |-
                                 The secret's key that contains the OpsGenie API key.
@@ -1599,10 +1603,6 @@ spec:
                                 - key
                               type: object
                               x-kubernetes-map-type: atomic
-                            apiURL:
-                              description:
-                                The URL to send OpsGenie API requests to.
-                              type: string
                             description:
                               description: Description of the incident.
                               type: string
