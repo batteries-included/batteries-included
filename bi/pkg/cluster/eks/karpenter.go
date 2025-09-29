@@ -312,6 +312,7 @@ func (k *karpenterConfig) karpenterServiceRole(ctx *pulumi.Context) error {
 					"iam:DeleteInstanceProfile",
 					"iam:CreateInstanceProfile",
 					"iam:AddRoleToInstanceProfile",
+					"iam:ListInstanceProfiles",
 				}),
 				Effect:    P_STR_ALLOW,
 				Resources: P_STR_ARR_WILDCARD,

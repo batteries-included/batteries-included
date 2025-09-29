@@ -350,7 +350,7 @@ jupyter_datascience_lab:
   tag_regex: ^lab-\d+\.\d+\.\d+$
 karpenter:
   name: public.ecr.aws/karpenter/controller
-  default_tag: 1.6.3
+  default_tag: 1.7.1
   tags:
     - 1.7.1
     - 1.7.0
