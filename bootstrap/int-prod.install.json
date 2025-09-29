@@ -1,19 +1,19 @@
 {
   "control_jwk": {
     "crv": "P-256",
-    "d": "C-f6hfJkt_QxPPh2-sEY453m_ay7eL0ylazvNEi5mBo",
+    "d": "Ih76R77tyWJotob3KRo74X7kQm_F-o1dypedfxbFpt4",
     "kty": "EC",
-    "x": "bUn6KgN1zu9o2iMVRxO0Qy0DTC-4gJcvdEy5xvvGpHU",
-    "y": "0VsVsX4Z5civvOJms9m5SXyKMefsQqj9GyuMPTM5wqw"
+    "x": "OGciFecvbk1XmN5dMpTOxDWyk6R0nbBuv0LIfR27bfI",
+    "y": "iZAS0fmj68vxqbkmnQreJceOV2q-cyHaIzTypR5FATQ"
   },
   "default_size": "medium",
   "deleted_at": null,
-  "id": "batt_019983aa44117c7288683ed8518ada11",
+  "id": "batt_0199931dbaba7404a162343089ba4481",
   "inserted_at": null,
   "kube_provider": "aws",
   "kube_provider_config": {},
   "slug": "int-prod",
-  "team_id": "batt_019983aa43fb71a9b515a1d068bd9887",
+  "team_id": "batt_0199931dbaa071c28d1e881f6180476d",
   "updated_at": null,
   "usage": "internal_prod",
   "user_id": null
