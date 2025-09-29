@@ -52,7 +52,7 @@ defmodule CommonCore.Resources.KarpenterPools do
 
   resource(:default_node_pool) do
     spec = %{
-      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmpty"},
+      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmptyOrUnderutilized"},
       "limits" => %{"cpu" => 1000},
       "template" => %{
         "spec" => %{
@@ -129,7 +129,7 @@ defmodule CommonCore.Resources.KarpenterPools do
 
   defp build_nvidia_pool_spec(instance_types) do
     %{
-      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmpty"},
+      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmptyOrUnderutilized"},
       "limits" => %{"cpu" => 1000},
       "template" => %{
         "spec" => %{
@@ -152,7 +152,7 @@ defmodule CommonCore.Resources.KarpenterPools do
 
   resource(:amd_gpu_node_pool) do
     spec = %{
-      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmpty"},
+      "disruption" => %{"consolidateAfter" => "30s", "consolidationPolicy" => "WhenEmptyOrUnderutilized"},
       "limits" => %{"cpu" => 1000},
       "template" => %{
         "spec" => %{
