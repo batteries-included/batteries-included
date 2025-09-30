@@ -1,25 +1,10 @@
 ---
-import '@fontsource-variable/inter';
+// CSS variables are now defined in tailwind.css using @theme directive
+// Fonts are imported via @import in tailwind.css
 ---
 
 <style is:inline is:global>
   :root {
-    --bi-font-sans: 'Inter Variable';
-    --bi-font-serif: var(--bi-font-sans);
-    --bi-font-heading: var(--bi-font-sans);
-
-    --bi-color-primary: rgb(252, 64, 139);
-    --color-primary-hover: rgb(222, 46, 116);
-    --bi-color-secondary: rgb(151 239 233);
-    --bi-color-secondary-gray: rgb(107, 114, 128);
-    --bi-color-accent: '#97efe9';
-
-    --bi-color-text-heading: rgb(0 0 0);
-    --bi-color-text-default: #101010;
-    --color-text-dark: #1c1c1e;
-    --bi-color-text-muted: rgb(16 16 16 / 66%);
-    --bi-color-bg-page: rgb(255 255 255);
-
     ::selection {
       background-color: rgb(252 64 139);
     }
