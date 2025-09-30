@@ -47,6 +47,7 @@ type KubeClient interface {
 	ListPodsRage(ctx context.Context) ([]rage.PodRageInfo, error)
 	ListHttpRoutesRage(ctx context.Context) ([]rage.HttpRouteRageInfo, error)
 	ListNodesRage(ctx context.Context) ([]rage.NodeRageInfo, error)
+	ListServicesRage(ctx context.Context) ([]rage.ServiceRageInfo, error)
 	GetDialContext() func(ctx context.Context, network, address string) (net.Conn, error)
 }
 
@@ -59,6 +60,9 @@ type batteryKubeClient struct {
 	mapper              *restmapper.DeferredDiscoveryRESTMapper
 	net                 network.Network
 }
+
+// compile-time assertion that batteryKubeClient implements the full interface
+var _ KubeClient = (*batteryKubeClient)(nil)
 
 func NewBatteryKubeClient(kubeConfigPath, wireGuardConfigPath string) (KubeClient, error) {
 	slog.Debug("Creating new kubernetes client",
@@ -164,7 +168,7 @@ func (c *batteryKubeClient) WaitForConnection(timeout time.Duration) error {
 				slog.Info("Successfully connected to cluster")
 				return nil
 			}
-			slog.Debug("Still waiting on cluster to be ready")
+			slog.Debug("Still waiting on cluster to be ready", slog.Any("error", err))
 			time.Sleep(1 * time.Second)
 		}
 	}

@@ -139,6 +139,41 @@ func (client *batteryKubeClient) GetPodEvents(ctx context.Context, namespace, po
 	return eventInfos, nil
 }
 
+func (client *batteryKubeClient) ListServicesRage(ctx context.Context) ([]rage.ServiceRageInfo, error) {
+	slog.Debug("Getting service rage info")
+	svcList, err := client.client.CoreV1().Services("").List(ctx, metav1.ListOptions{LabelSelector: "app.kubernetes.io/managed-by=batteries-included"})
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]rage.ServiceRageInfo, 0)
+	for _, svc := range svcList.Items {
+		ingresses := []string{}
+		for _, v := range svc.Status.LoadBalancer.Ingress {
+			if v.IP != "" {
+				ingresses = append(ingresses, v.IP)
+			}
+
+			if v.Hostname != "" {
+				ingresses = append(ingresses, v.Hostname)
+			}
+		}
+
+		info := rage.ServiceRageInfo{
+			Namespace:  svc.GetNamespace(),
+			Name:       svc.GetName(),
+			Type:       string(svc.Spec.Type),
+			ClusterIPs: svc.Spec.ClusterIPs,
+			Conditions: svc.Status.Conditions,
+			Ingresses:  ingresses,
+		}
+		results = append(results, info)
+
+	}
+
+	return results, nil
+}
+
 func (client *batteryKubeClient) ListHttpRoutesRage(ctx context.Context) ([]rage.HttpRouteRageInfo, error) {
 	// Define the GVR for HTTPRoute
 	gvr := schema.GroupVersionResource{
@@ -233,7 +268,7 @@ func (client *batteryKubeClient) extractHttpRouteInfo(route *unstructured.Unstru
 		Namespace:  route.GetNamespace(),
 		Name:       route.GetName(),
 		Hostnames:  []string{},
-		Conditions: []rage.HttpRouteConditionRageInfo{},
+		Conditions: []metav1.Condition{},
 	}
 
 	// Extract hostnames from spec
@@ -250,15 +285,8 @@ func (client *batteryKubeClient) extractHttpRouteInfo(route *unstructured.Unstru
 			if parent, ok := parents[0].(map[string]interface{}); ok {
 				if conditions, found, _ := unstructured.NestedSlice(parent, "conditions"); found {
 					for _, conditionRaw := range conditions {
-						if condition, ok := conditionRaw.(map[string]interface{}); ok {
-							conditionInfo := rage.HttpRouteConditionRageInfo{
-								LastTransitionTime: getStringFromMap(condition, "lastTransitionTime"),
-								Message:            getStringFromMap(condition, "message"),
-								Reason:             getStringFromMap(condition, "reason"),
-								Status:             getStringFromMap(condition, "status"),
-								Type:               getStringFromMap(condition, "type"),
-							}
-							routeInfo.Conditions = append(routeInfo.Conditions, conditionInfo)
+						if condition, ok := conditionRaw.(metav1.Condition); ok {
+							routeInfo.Conditions = append(routeInfo.Conditions, condition)
 						}
 					}
 				}
@@ -267,13 +295,4 @@ func (client *batteryKubeClient) extractHttpRouteInfo(route *unstructured.Unstru
 	}
 
 	return routeInfo
-}
-
-func getStringFromMap(m map[string]interface{}, key string) string {
-	if value, found := m[key]; found {
-		if strValue, ok := value.(string); ok {
-			return strValue
-		}
-	}
-	return ""
 }

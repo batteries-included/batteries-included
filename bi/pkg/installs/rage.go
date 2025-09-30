@@ -100,6 +100,13 @@ func (env *InstallEnv) addKubeRageInfo(ctx context.Context, kubeClient kube.Kube
 		report.PodsInfo = pods
 	}
 
+	svcs, err := kubeClient.ListServicesRage(ctx)
+	if err != nil {
+		slog.Error("unable to list services", "error", err)
+	} else {
+		report.ServicesInfo = svcs
+	}
+
 	accessInfo, err := kubeClient.GetAccessInfo(ctx, ns)
 	if err != nil {
 		slog.Error("unable to get access info", "error", err)
