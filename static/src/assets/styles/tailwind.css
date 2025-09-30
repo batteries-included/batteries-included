@@ -1,6 +1,34 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #fc408b;
+  --color-primary-hover: #de2e74;
+  --color-secondary: #97efe9;
+  --color-secondary-gray: #6b7280;
+  --color-accent: #97efe9;
+  --color-text-heading: #000000;
+  --color-text-default: #101010;
+  --color-text-dark: #1c1c1e;
+  --color-text-muted: #10101066;
+  --color-text-page: #101010;
+  --color-page: #101010;
+  --color-muted: #10101066;
+  --color-default: #101010;
+  --color-bg-page: #ffffff;
+  --color-bg-page-dark: #000000;
+
+  --color-raisin-black: #181b22;
+  --color-davys-grey: #4e535f;
+  --color-raisin-black-2: #21242b;
+  --color-rich-black: #111318;
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-sans);
+  --font-heading: var(--font-sans);
+
+  --scale--100: -1;
+}
 
 @layer base {
   a {
@@ -10,23 +38,23 @@
 
 @layer utilities {
   .bg-page {
-    background-color: var(--bi-color-bg-page);
+    background-color: var(--color-bg-page);
   }
 
   .bg-dark {
-    background-color: var(--bi-color-bg-page-dark);
+    background-color: var(--color-bg-page-dark);
   }
 
   .bg-light {
-    background-color: var(--bi-color-bg-page);
+    background-color: var(--color-bg-page);
   }
 
   .text-page {
-    color: var(--bi-color-text-page);
+    color: var(--color-text-page);
   }
 
   .text-muted {
-    color: var(--bi-color-text-muted);
+    color: var(--color-text-muted);
   }
 
   .u-container {
@@ -44,39 +72,263 @@
 
 @layer components {
   .btn {
-    @apply text-page inline-flex cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-transparent px-6 py-3.5 text-center text-base font-medium leading-snug transition duration-200 ease-in hover:border-gray-600 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-200 md:px-8 dark:border-slate-500 dark:text-slate-300 dark:hover:border-slate-800 dark:hover:bg-slate-800;
+    color: var(--color-text-page);
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border-width: 1px;
+    border-color: rgb(156 163 175);
+    background-color: transparent;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.25;
+    transition: all 200ms ease-in;
+  }
+
+  .btn:hover {
+    border-color: rgb(75 85 99);
+    background-color: rgb(243 244 246);
+  }
+
+  .btn:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgb(59 130 246);
+  }
+
+  @media (min-width: 768px) {
+    .btn {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn {
+      border-color: rgb(100 116 139);
+      color: rgb(203 213 225);
+    }
+
+    .btn:hover {
+      border-color: rgb(30 41 59);
+      background-color: rgb(30 41 59);
+    }
   }
 
   .btn-primary {
-    @apply btn bg-primary border-primary hover:bg-secondary hover:border-secondary dark:bg-primary dark:border-primary dark:hover:border-secondary dark:hover:bg-secondary font-semibold text-white hover:text-white dark:text-white;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    font-weight: 600;
+    color: white;
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border-width: 1px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.25;
+    transition: all 200ms ease-in;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    color: white;
   }
 
   .btn-secondary {
-    @apply btn;
+    color: var(--color-text-page);
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border-width: 1px;
+    border-color: rgb(156 163 175);
+    background-color: transparent;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.25;
+    transition: all 200ms ease-in;
   }
 
   .btn-tertiary {
-    @apply btn text-muted border-none shadow-none hover:text-gray-900 dark:text-gray-400 dark:hover:text-white;
+    color: var(--color-text-muted);
+    border: none;
+    box-shadow: none;
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: transparent;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.25;
+    transition: all 200ms ease-in;
+  }
+
+  .btn-tertiary:hover {
+    color: rgb(17 24 39);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn-tertiary {
+      color: rgb(156 163 175);
+    }
+
+    .btn-tertiary:hover {
+      color: white;
+    }
   }
 
   .btn-fourth {
-    @apply border-primary flex w-full items-center justify-between gap-x-4 rounded-lg border bg-white px-6 py-3 font-semibold lg:text-lg;
+    border-color: var(--color-primary);
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    background-color: white;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  @media (min-width: 1024px) {
+    .btn-fourth {
+      font-size: 1.125rem;
+    }
   }
 
   .btn-fifth {
-    @apply bg-primary inline-flex items-center gap-x-3 rounded-lg px-6 py-3 text-lg font-medium text-white;
+    background-color: var(--color-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 0.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: white;
   }
 
   .btn-square {
-    @apply border-primary text-page focus:ring-offset-primary inline-flex cursor-pointer items-center justify-center rounded-lg border bg-transparent px-6 py-3.5 text-center text-3xl text-base font-medium font-semibold capitalize leading-snug transition duration-200 ease-in focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 md:px-8;
+    border-color: var(--color-primary);
+    color: var(--color-text-page);
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    background-color: transparent;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    line-height: 1.25;
+    transition: all 200ms ease-in;
+  }
+
+  .btn-square:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgb(59 130 246);
+  }
+
+  @media (min-width: 768px) {
+    .btn-square {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
 
   .btn-square-primary {
-    @apply btn-square bg-primary hover:bg-primary-hover font-semibold text-white;
+    background-color: var(--color-primary);
+    font-weight: 600;
+    color: white;
+    border-color: var(--color-primary);
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    text-align: center;
+    font-size: 1rem;
+    text-transform: capitalize;
+    line-height: 1.25;
+    transition: all 200ms ease-in;
+  }
+
+  .btn-square-primary:hover {
+    background-color: var(--color-primary-hover);
   }
 
   .btn-square-secondary {
-    @apply btn-square text-text-dark hover:text-primary;
+    color: var(--color-text-dark);
+    border-color: var(--color-primary);
+    display: inline-flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    background-color: transparent;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    line-height: 1.25;
+    transition: all 200ms ease-in;
+  }
+
+  .btn-square-secondary:hover {
+    color: var(--color-primary);
   }
 
   .mobile-menu-container {
