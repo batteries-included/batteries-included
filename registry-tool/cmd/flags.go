@@ -29,7 +29,4 @@ var DefaultIgnoredImages = []string{
 
 	// No Users are not ready for Cuda versions to be automatically updated
 	"docker.io/nvidia/cuda",
-
-	// temporarily disable advancing ferret default to allow upgrade
-	"ghcr.io/ferretdb/ferretdb",
 }
