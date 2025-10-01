@@ -20,8 +20,9 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: ghcr.io/aquasecurity/trivy
-  default_tag: 0.66.0
+  default_tag: 0.67.0
   tags:
+    - 0.67.0
     - 0.66.0
     - 0.65.0
     - 0.64.1
@@ -337,8 +338,9 @@ istio_ztunnel:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
-  default_tag: lab-4.4.7
+  default_tag: lab-4.4.9
   tags:
+    - lab-4.4.9
     - lab-4.4.7
     - lab-4.4.6
     - lab-4.4.5
@@ -400,8 +402,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.3.5
+  default_tag: 26.4.0
   tags:
+    - 26.4.0
     - 26.3.5
     - 26.3.4
     - 26.3.3
