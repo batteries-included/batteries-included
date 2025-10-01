@@ -215,5 +215,6 @@ defmodule CommonCore.Resources.Keycloak do
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
+    |> F.require(R.valid?(spec))
   end
 end

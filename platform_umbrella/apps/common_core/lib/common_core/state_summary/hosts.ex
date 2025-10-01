@@ -4,6 +4,8 @@ defmodule CommonCore.StateSummary.Hosts do
 
   alias CommonCore.StateSummary
 
+  require Logger
+
   @default ["127.0.0.1"]
 
   def control_host(%StateSummary{} = summary) do
@@ -156,6 +158,22 @@ defmodule CommonCore.StateSummary.Hosts do
   def hosts_for_battery(summary, :traditional_services), do: traditional_hosts(summary)
   def hosts_for_battery(_summary, _battery_type), do: nil
 
+  def valid_host?(host) do
+    host != nil and
+      String.length(host) > 0 and
+      !String.contains?(host, "..batrsinc.co") and
+      !String.contains?(host, "127-0-0-1") and
+      valid_uri?(host)
+  end
+
+  # assume for now that, if it's parseable, that's good enough
+  defp valid_uri?(host) do
+    case URI.new(host) do
+      {:ok, _uri} -> true
+      _ -> false
+    end
+  end
+
   defp ip(summary) do
     summary |> ingress_ips() |> List.first()
   end
@@ -189,11 +207,19 @@ defmodule CommonCore.StateSummary.Hosts do
     summary.kube_state
     |> Map.get(:service, [])
     |> ingress_ips_from_services(istio_namespace, ingress_name)
+    |> maybe_default_ip()
     |> Enum.sort(:asc)
   end
 
+  defp maybe_default_ip(ips) when is_nil(ips) or ips == [] do
+    Logger.warning("Failed to find ingress IP from services. Using default.")
+    @default
+  end
+
+  defp maybe_default_ip(ips), do: ips
+
   defp ingress_ips_from_services(services, istio_namespace, ingress_name) do
-    Enum.find_value(services, @default, fn
+    Enum.find_value(services, fn
       %{
         "metadata" => %{"name" => ^ingress_name, "namespace" => ^istio_namespace},
         "status" => %{"loadBalancer" => %{"ingress" => values}}

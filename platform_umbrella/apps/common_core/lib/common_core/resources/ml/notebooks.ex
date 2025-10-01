@@ -43,6 +43,7 @@ defmodule CommonCore.Resources.Notebooks do
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
+    |> F.require(R.valid?(spec))
   end
 
   # we can share a single configmap for now as none of the settings are configurable

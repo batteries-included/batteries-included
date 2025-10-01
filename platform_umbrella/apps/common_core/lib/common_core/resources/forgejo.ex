@@ -39,6 +39,7 @@ defmodule CommonCore.Resources.Forgejo do
     |> B.namespace(namespace)
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
+    |> F.require(R.valid?(spec))
   end
 
   resource(:tcp_route, _battery, state) do
