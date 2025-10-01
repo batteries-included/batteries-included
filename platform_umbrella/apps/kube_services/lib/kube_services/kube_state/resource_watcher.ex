@@ -23,25 +23,23 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   require Logger
 
   typedstruct module: State do
-    field(:resource_type, atom(), enforce: true)
-    field(:table_name, atom(), enforce: true)
-
-    field(:current_retry_ms, non_neg_integer(), default: 100)
+    field :resource_type, atom(), enforce: true
+    field :table_name, atom(), enforce: true
 
     # Retry settings
-    # retry_ms is the base time we add to current_retry_ms when retrying
+    # retry_ms is the base time we add to retry_ms when retrying
     # jitter_min and jitter_max are used to add some randomness to the retry time
     # max_retry_ms is the maximum time we will wait between retries
-    field(:retry_ms, non_neg_integer(), default: 800)
-    field(:jitter_min, float(), default: 0.75)
-    field(:jitter_max, float(), default: 1.25)
-    field(:max_retry_ms, non_neg_integer(), default: 120_000)
+    field :retry_ms, non_neg_integer(), default: 800
+    field :jitter_min, float(), default: 0.75
+    field :jitter_max, float(), default: 1.25
+    field :max_retry_ms, non_neg_integer(), default: 120_000
 
-    field(:conn, K8s.Conn.t() | nil)
+    field :conn, K8s.Conn.t() | nil
 
     # For mocking
-    field(:client, module(), default: Client)
-    field(:runner, module(), default: Runner)
+    field :client, module(), default: Client
+    field :runner, module(), default: Runner
 
     def new!(opts) do
       conn_func = Keyword.get(opts, :conn_func, &ConnectionPool.get!/0)
@@ -95,16 +93,10 @@ defmodule KubeServices.KubeState.ResourceWatcher do
   end
 
   defp next_delay(
-         %State{
-           current_retry_ms: current_retry,
-           retry_ms: base_retry,
-           jitter_min: jitter_min,
-           jitter_max: jitter_max,
-           max_retry_ms: max_time
-         } = state
+         %State{retry_ms: base_retry, jitter_min: jitter_min, jitter_max: jitter_max, max_retry_ms: max_time} = state
        ) do
     jitter_percent = :rand.uniform() * (jitter_max - jitter_min) + jitter_min
-    computed_time = ceil(current_retry + base_retry * jitter_percent)
+    computed_time = ceil(base_retry + base_retry * jitter_percent)
 
     # Cap that to a jittered min and max
     computed_time = if computed_time > max_time, do: round(max_time * jitter_percent), else: computed_time
