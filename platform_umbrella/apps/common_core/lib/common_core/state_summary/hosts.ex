@@ -233,7 +233,7 @@ defmodule CommonCore.StateSummary.Hosts do
     end)
   end
 
-  defp get_ips_from_ingress_status(%{"ip" => ip} = _ingress), do: [ip]
+  defp get_ips_from_ingress_status(%{"ip" => ip} = _ingress), do: dbg([ip])
 
   defp get_ips_from_ingress_status(%{"hostname" => hostname} = _ingress) do
     erl_host = to_charlist(hostname)
