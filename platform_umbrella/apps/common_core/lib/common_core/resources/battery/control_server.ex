@@ -2,7 +2,6 @@ defmodule CommonCore.Resources.ControlServer do
   @moduledoc false
   use CommonCore.Resources.ResourceGenerator, app_name: "battery-control-server"
 
-  import CommonCore.StateSummary.AccessSpec, only: [valid_host?: 2]
   import CommonCore.StateSummary.Namespaces
 
   alias CommonCore.Defaults
@@ -10,7 +9,6 @@ defmodule CommonCore.Resources.ControlServer do
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.RouteBuilder, as: R
   alias CommonCore.StateSummary.Core
-  alias CommonCore.StateSummary.Hosts
   alias CommonCore.StateSummary.PostgresState
 
   @server_port 4000
@@ -18,7 +16,6 @@ defmodule CommonCore.Resources.ControlServer do
 
   resource(:http_route, battery, state) do
     namespace = core_namespace(state)
-    host = Hosts.control_host(state)
 
     spec =
       battery
@@ -33,7 +30,7 @@ defmodule CommonCore.Resources.ControlServer do
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
     |> F.require(battery.config.usage != :internal_dev)
-    |> F.require(valid_host?(host, nil))
+    |> F.require(R.valid?(spec))
   end
 
   resource(:service_account, battery, state) do

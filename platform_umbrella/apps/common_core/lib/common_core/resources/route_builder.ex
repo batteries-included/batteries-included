@@ -65,6 +65,13 @@ defmodule CommonCore.Resources.RouteBuilder do
     )
   end
 
+  @spec valid?(map()) :: boolean()
+  def valid?(spec) do
+    spec
+    |> Map.get("hostnames")
+    |> Enum.all?(&Hosts.valid_host?(&1))
+  end
+
   defp get_parent_ref(battery, state) do
     istio_ns = istio_namespace(state)
 
