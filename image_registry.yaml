@@ -815,8 +815,9 @@ redis:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_exporter:
   name: quay.io/opstree/redis-exporter
-  default_tag: v1.76.0
+  default_tag: v1.77.0
   tags:
+    - v1.77.0
     - v1.76.0
     - v1.75.0
     - v1.74.0
