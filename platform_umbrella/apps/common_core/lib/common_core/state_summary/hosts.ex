@@ -212,7 +212,7 @@ defmodule CommonCore.StateSummary.Hosts do
   end
 
   defp maybe_default_ip(ips) when is_nil(ips) or ips == [] do
-    Logger.warning("Failed to find ingress IP from services. Using default.")
+    Logger.error("Failed to find ingress IP from services. Using default.")
     @default
   end
 
