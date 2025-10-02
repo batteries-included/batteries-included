@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"mime"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -20,6 +20,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/mux"
 
+	"bi/assets"
 	"bi/pkg/rage"
 )
 
@@ -65,11 +66,12 @@ func (s *RageServer) Start(ctx context.Context) error {
 	// Set up HTTP routes
 	router := mux.NewRouter()
 
-	// Static assets - try to find assets directory
-	assetsDir := s.findAssetsDir()
-	if assetsDir != "" {
-		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", s.staticFileHandler(assetsDir)))
+	// Static assets
+	staticFS, err := fs.Sub(assets.FS, "dist")
+	if err != nil {
+		return fmt.Errorf("failed to load embedded static files: %w", err)
 	}
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServerFS(staticFS)))
 
 	// Rage viewer routes
 	router.HandleFunc("/", s.handleIndex).Methods("GET")
@@ -379,44 +381,4 @@ func (s *RageServer) handleLogs(w http.ResponseWriter, r *http.Request) {
 	if err := s.templates.ExecuteTemplate(w, "logs.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-}
-
-func (s *RageServer) staticFileHandler(dir string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Get the file extension and set appropriate MIME type
-		ext := filepath.Ext(r.URL.Path)
-		switch ext {
-		case ".js":
-			w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
-		case ".css":
-			w.Header().Set("Content-Type", "text/css; charset=utf-8")
-		case ".html":
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		default:
-			// For other files, try to detect MIME type
-			if mimeType := mime.TypeByExtension(ext); mimeType != "" {
-				w.Header().Set("Content-Type", mimeType)
-			}
-		}
-
-		// Serve the file
-		http.FileServer(http.Dir(dir)).ServeHTTP(w, r)
-	})
-}
-
-func (s *RageServer) findAssetsDir() string {
-	// Try different possible locations for assets
-	candidates := []string{
-		"assets/dist",
-		"../../../assets/dist",
-		"/home/elliott/Code/batteries-included/bi/assets/dist",
-	}
-
-	for _, dir := range candidates {
-		if _, err := os.Stat(dir); err == nil {
-			return dir
-		}
-	}
-
-	return ""
 }
