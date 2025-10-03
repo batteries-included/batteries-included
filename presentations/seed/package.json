@@ -6,16 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build-presentation": "vite build",
     "preview": "vite preview --port 5174"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "^5.2.6",
-    "@fontsource-variable/jetbrains-mono": "^5.2.6",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "reveal.js": "^5.2.1"
   },
   "devDependencies": {
     "@types/reveal.js": "^5.2.0",
     "prettier": "^3.6.2",
-    "vite": "^7.1.5"
+    "vite": "^7.1.9"
   }
 }
