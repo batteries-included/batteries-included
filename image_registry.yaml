@@ -43,6 +43,7 @@ aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.13.4
   tags:
+    - v2.14.0
     - v2.13.4
     - v2.13.3
     - v2.13.2
@@ -379,10 +380,11 @@ karpenter:
   tag_regex: ^\d+\.\d+\.\d+$
 keycloak:
   name: ghcr.io/batteries-included/keycloak
-  default_tag: 26.3.5-a513c82
+  default_tag: 26.4.0-52f7464
   blacklisted_tags:
     - 26.3.0-3a3a040
   tags:
+    - 26.4.0-52f7464
     - 26.3.5-a513c82
     - 26.3.4-163349d
     - 26.3.3-e87336e
@@ -679,8 +681,9 @@ node_exporter:
   tag_regex: ^v\d+\.\d+\.\d+$
 node_feature_discovery:
   name: registry.k8s.io/nfd/node-feature-discovery
-  default_tag: v0.17.4
+  default_tag: v0.18.0
   tags:
+    - v0.18.0
     - v0.17.4
     - v0.17.3
     - v0.17.2
@@ -871,8 +874,9 @@ trust_manager_init:
   tag_regex: ^\d{8}\.\d+$
 ubuntu:
   name: docker.io/library/ubuntu
-  default_tag: noble-20250910
+  default_tag: noble-20250925
   tags:
+    - noble-20250925
     - noble-20250910
     - noble-20250805
     - noble-20250716
