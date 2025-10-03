@@ -28,4 +28,8 @@ defmodule CommonCore.Defaults.Image do
   def default_image(%__MODULE__{} = image) do
     "#{image.name}:#{image.default_tag}"
   end
+
+  def repository(%__MODULE__{name: name} = _image), do: name
+
+  def default_tag(%__MODULE__{default_tag: default_tag} = _image), do: default_tag
 end

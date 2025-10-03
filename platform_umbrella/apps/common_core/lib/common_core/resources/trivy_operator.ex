@@ -38,9 +38,17 @@ defmodule CommonCore.Resources.TrivyOperator do
 
   import CommonCore.StateSummary.Namespaces
 
+  alias CommonCore.Defaults.Image
+  alias CommonCore.Defaults.Images
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
+
+  multi_resource(:crds_trivy_operator) do
+    @included_resources
+    |> Enum.filter(fn res -> res |> Atom.to_string() |> String.ends_with?("_github_io") end)
+    |> Enum.flat_map(&(&1 |> get_resource() |> YamlElixir.read_all_from_string!()))
+  end
 
   resource(:cluster_role_aggregate_config_audit_reports_view) do
     rules = [
@@ -113,22 +121,51 @@ defmodule CommonCore.Resources.TrivyOperator do
     rules = [
       %{"apiGroups" => [""], "resources" => ["configmaps"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["limitranges"], "verbs" => ["get", "list", "watch"]},
+      %{"apiGroups" => [""], "resources" => ["namespaces"], "verbs" => ["get"]},
       %{"apiGroups" => [""], "resources" => ["nodes"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["pods"], "verbs" => ["get", "list", "watch"]},
       %{"apiGroups" => [""], "resources" => ["pods/log"], "verbs" => ["get", "list"]},
-      %{"apiGroups" => [""], "resources" => ["replicationcontrollers"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => [""], "resources" => ["resourcequotas"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => [""],
+        "resources" => ["replicationcontrollers"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => [""],
+        "resources" => ["resourcequotas"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{"apiGroups" => [""], "resources" => ["services"], "verbs" => ["get", "list", "watch"]},
       %{
         "apiGroups" => ["apiextensions.k8s.io"],
         "resources" => ["customresourcedefinitions"],
         "verbs" => ["get", "list", "watch"]
       },
-      %{"apiGroups" => ["apps"], "resources" => ["daemonsets"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["apps"], "resources" => ["deployments"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["apps"], "resources" => ["replicasets"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["apps"], "resources" => ["statefulsets"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["apps.openshift.io"], "resources" => ["deploymentconfigs"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["daemonsets"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["deployments"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["replicasets"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps"],
+        "resources" => ["statefulsets"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["apps.openshift.io"],
+        "resources" => ["deploymentconfigs"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{
         "apiGroups" => ["aquasecurity.github.io"],
         "resources" => ["clustercompliancedetailreports"],
@@ -199,10 +236,26 @@ defmodule CommonCore.Resources.TrivyOperator do
         "resources" => ["vulnerabilityreports"],
         "verbs" => ["create", "delete", "get", "list", "patch", "update", "watch"]
       },
-      %{"apiGroups" => ["batch"], "resources" => ["cronjobs"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["batch"], "resources" => ["jobs"], "verbs" => ["create", "delete", "get", "list", "watch"]},
-      %{"apiGroups" => ["networking.k8s.io"], "resources" => ["ingresses"], "verbs" => ["get", "list", "watch"]},
-      %{"apiGroups" => ["networking.k8s.io"], "resources" => ["networkpolicies"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["batch"],
+        "resources" => ["cronjobs"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["batch"],
+        "resources" => ["jobs"],
+        "verbs" => ["create", "delete", "get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["networking.k8s.io"],
+        "resources" => ["ingresses"],
+        "verbs" => ["get", "list", "watch"]
+      },
+      %{
+        "apiGroups" => ["networking.k8s.io"],
+        "resources" => ["networkpolicies"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{
         "apiGroups" => ["rbac.authorization.k8s.io"],
         "resources" => ["clusterrolebindings"],
@@ -218,7 +271,11 @@ defmodule CommonCore.Resources.TrivyOperator do
         "resources" => ["rolebindings"],
         "verbs" => ["get", "list", "watch"]
       },
-      %{"apiGroups" => ["rbac.authorization.k8s.io"], "resources" => ["roles"], "verbs" => ["get", "list", "watch"]},
+      %{
+        "apiGroups" => ["rbac.authorization.k8s.io"],
+        "resources" => ["roles"],
+        "verbs" => ["get", "list", "watch"]
+      },
       %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["create", "get", "update"]},
       %{"apiGroups" => [""], "resources" => ["serviceaccounts"], "verbs" => ["get"]},
       %{"apiGroups" => [""], "resources" => ["nodes/proxy"], "verbs" => ["get"]}
@@ -235,18 +292,20 @@ defmodule CommonCore.Resources.TrivyOperator do
 
     data =
       %{}
-      |> Map.put("node.collector.imageRef", battery.config.node_collector_image)
-      |> Map.put("policies.bundle.oci.ref", battery.config.trivy_checks_image)
       |> Map.put("compliance.failEntriesLimit", "10")
       |> Map.put("configAuditReports.scanner", "Trivy")
+      |> Map.put("node.collector.imageRef", battery.config.node_collector_image)
       |> Map.put("node.collector.nodeSelector", "true")
       |> Map.put("policies.bundle.insecure", "false")
+      |> Map.put("policies.bundle.oci.ref", battery.config.trivy_checks_image)
       |> Map.put("report.recordFailedChecksOnly", "true")
       |> Map.put("scanJob.compressLogs", "true")
       |> Map.put(
         "scanJob.podTemplateContainerSecurityContext",
         ~s({"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true})
       )
+      |> Map.put("scanJob.useGCRServiceAccount", "true")
+      |> Map.put("vulnerabilityReports.scanJobsInSameNamespace", "false")
       |> Map.put("vulnerabilityReports.scanner", "Trivy")
       |> Map.put("nodeCollector.volumeMounts", get_resource(:nodecollector_volumemounts))
       |> Map.put("nodeCollector.volumes", get_resource(:nodecollector_volumes))
@@ -274,89 +333,39 @@ defmodule CommonCore.Resources.TrivyOperator do
 
     data =
       %{}
-      |> Map.put("trivy.repo", battery.config.trivy_repo)
-      |> Map.put("trivy.tag", battery.config.trivy_version_tag)
       |> Map.put("trivy.additionalVulnerabilityReportFields", "")
       |> Map.put("trivy.command", "image")
-      |> Map.put("trivy.dbRepository", "ghcr.io/aquasecurity/trivy-db")
+      |> Map.put("trivy.dbRepository", :aqua_trivy_db |> Images.get_image!() |> Image.repository())
       |> Map.put("trivy.dbRepositoryInsecure", "false")
       |> Map.put("trivy.filesystemScanCacheDir", "/var/trivyoperator/trivy-db")
       |> Map.put("trivy.imagePullPolicy", "IfNotPresent")
       |> Map.put("trivy.imageScanCacheDir", "/tmp/trivy/.cache")
       |> Map.put("trivy.includeDevDeps", "false")
-      |> Map.put("trivy.javaDbRepository", "ghcr.io/aquasecurity/trivy-java-db")
+      |> Map.put("trivy.javaDbRepository", "")
       |> Map.put("trivy.mode", "Standalone")
-      |> Map.put("trivy.repository", "ghcr.io/aquasecurity/trivy")
+      |> Map.put("trivy.repository", battery.config.trivy_repo)
       |> Map.put("trivy.resources.limits.cpu", "500m")
       |> Map.put("trivy.resources.limits.memory", "500M")
       |> Map.put("trivy.resources.requests.cpu", "100m")
       |> Map.put("trivy.resources.requests.memory", "100M")
       |> Map.put("trivy.sbomSources", "")
       |> Map.put("trivy.severity", "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL")
-      |> Map.put("trivy.skipJavaDBUpdate", "false")
+      |> Map.put("trivy.skipJavaDBUpdate", "true")
       |> Map.put("trivy.slow", "true")
-      |> Map.put("trivy.ignoreUnfixed", "true")
       |> Map.put(
         "trivy.supportedConfigAuditKinds",
         "Workload,Service,Role,ClusterRole,NetworkPolicy,Ingress,LimitRange,ResourceQuota"
       )
+      |> Map.put("trivy.tag", battery.config.trivy_version_tag)
       |> Map.put("trivy.timeout", "5m0s")
-      |> Map.put("trivy.useBuiltinRegoPolicies", "true")
-      |> Map.put("trivy.useEmbeddedRegoPolicies", "false")
+      |> Map.put("trivy.useBuiltinRegoPolicies", "false")
+      |> Map.put("trivy.useEmbeddedRegoPolicies", "true")
 
     :config_map
     |> B.build_resource()
     |> B.name("trivy-operator-trivy-config")
     |> B.namespace(namespace)
     |> B.data(data)
-  end
-
-  resource(:crd_clustercompliancereports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clustercompliancereports_aquasecurity_github_io))
-  end
-
-  resource(:crd_clusterconfigauditreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clusterconfigauditreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_clusterinfraassessmentreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clusterinfraassessmentreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_clusterrbacassessmentreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clusterrbacassessmentreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_clustersbomreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clustersbomreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_clustervulnerabilityreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:clustervulnerabilityreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_configauditreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:configauditreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_exposedsecretreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:exposedsecretreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_infraassessmentreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:infraassessmentreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_rbacassessmentreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:rbacassessmentreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_sbomreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:sbomreports_aquasecurity_github_io))
-  end
-
-  resource(:crd_vulnerabilityreports_aquasecurity_github_io) do
-    YamlElixir.read_all_from_string!(get_resource(:vulnerabilityreports_aquasecurity_github_io))
   end
 
   resource(:deployment_trivy_operator, battery, state) do
@@ -374,33 +383,8 @@ defmodule CommonCore.Resources.TrivyOperator do
           %{
             "env" => [
               %{"name" => "OPERATOR_NAMESPACE", "value" => namespace},
-              %{"name" => "OPERATOR_TARGET_NAMESPACES", "value" => ""},
-              %{"name" => "OPERATOR_EXCLUDE_NAMESPACES", "value" => ""},
               %{"name" => "OPERATOR_SERVICE_ACCOUNT", "value" => "trivy-operator"},
-              %{"name" => "OPERATOR_LOG_DEV_MODE", "value" => "false"},
-              %{"name" => "OPERATOR_VULNERABILITY_SCANNER_ENABLED", "value" => "true"},
-              %{
-                "name" => "OPERATOR_VULNERABILITY_SCANNER_SCAN_ONLY_CURRENT_REVISIONS",
-                "value" => "true"
-              },
-              %{"name" => "OPERATOR_CONFIG_AUDIT_SCANNER_ENABLED", "value" => "true"},
-              %{"name" => "OPERATOR_RBAC_ASSESSMENT_SCANNER_ENABLED", "value" => "true"},
-              %{"name" => "OPERATOR_INFRA_ASSESSMENT_SCANNER_ENABLED", "value" => "true"},
-              %{
-                "name" => "OPERATOR_CONFIG_AUDIT_SCANNER_SCAN_ONLY_CURRENT_REVISIONS",
-                "value" => "true"
-              },
-              %{"name" => "OPERATOR_EXPOSED_SECRET_SCANNER_ENABLED", "value" => "true"},
-              %{"name" => "OPERATOR_PRIVATE_REGISTRY_SCAN_SECRETS_NAMES", "value" => "{}"},
-              %{
-                "name" => "OPERATOR_ACCESS_GLOBAL_SECRETS_SERVICE_ACCOUNTS",
-                "value" => "true"
-              },
-              %{
-                "name" => "OPERATOR_MERGE_RBAC_FINDING_WITH_CONFIG_AUDIT",
-                "value" => "false"
-              },
-              %{"name" => "OPERATOR_CLUSTER_COMPLIANCE_ENABLED", "value" => "true"}
+              %{"name" => "OPERATOR_LEADER_ELECTION_ENABLED", "value" => "true"}
             ],
             "image" => battery.config.image,
             "imagePullPolicy" => "IfNotPresent",
@@ -486,7 +470,11 @@ defmodule CommonCore.Resources.TrivyOperator do
         "resources" => ["configmaps"],
         "verbs" => ["create", "get", "list", "watch"]
       },
-      %{"apiGroups" => [""], "resources" => ["secrets"], "verbs" => ["create", "get", "delete"]}
+      %{
+        "apiGroups" => [""],
+        "resources" => ["secrets"],
+        "verbs" => ["create", "get", "delete", "update"]
+      }
     ]
 
     :role

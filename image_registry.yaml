@@ -19,7 +19,7 @@ aqua_node_collector:
     - 0.3.1
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
-  name: ghcr.io/aquasecurity/trivy
+  name: mirror.gcr.io/aquasec/trivy
   default_tag: 0.67.0
   tags:
     - 0.67.0
@@ -31,7 +31,7 @@ aqua_trivy:
     - 0.62.1
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy_checks:
-  name: ghcr.io/aquasecurity/trivy-checks
+  name: mirror.gcr.io/aquasec/trivy-checks
   default_tag: 1.11.2
   tags:
     - 1.11.2
@@ -39,6 +39,13 @@ aqua_trivy_checks:
     - 1.10.0
     - 0.13.0
   tag_regex: ^\d+\.\d+\.\d+$
+aqua_trivy_db:
+  name: mirror.gcr.io/aquasec/trivy-db
+  default_tag: '2'
+  tags:
+    - '2'
+    - '1'
+  tag_regex: ^\d+$
 aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.13.4
@@ -841,7 +848,7 @@ redis_operator:
     - v0.18.0
   tag_regex: ^v\d+\.\d+\.\d+$
 trivy_operator:
-  name: ghcr.io/aquasecurity/trivy-operator
+  name: mirror.gcr.io/aquasec/trivy-operator
   default_tag: 0.23.1
   tags:
     - 0.23.1

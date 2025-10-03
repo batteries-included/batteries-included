@@ -3,6 +3,7 @@ defmodule CommonCore.Batteries.TrivyOperatorConfig do
 
   use CommonCore, :embedded_schema
 
+  alias CommonCore.Defaults.Image
   alias CommonCore.Defaults.Images
 
   batt_polymorphic_schema type: :trivy_operator do
@@ -14,7 +15,7 @@ defmodule CommonCore.Batteries.TrivyOperatorConfig do
     defaultable_image_field :trivy_checks_image, image_id: :aqua_trivy_checks
 
     # the trivy scanner image repo and tag
-    defaultable_field :trivy_repo, :string, default: :aqua_trivy |> Images.get_image!() |> Map.get(:name)
-    defaultable_field :trivy_version_tag, :string, default: :aqua_trivy |> Images.get_image!() |> Map.get(:default_tag)
+    defaultable_field :trivy_repo, :string, default: :aqua_trivy |> Images.get_image!() |> Image.repository()
+    defaultable_field :trivy_version_tag, :string, default: :aqua_trivy |> Images.get_image!() |> Image.default_tag()
   end
 end
