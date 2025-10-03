@@ -65,6 +65,7 @@ build_base:
   name: ghcr.io/batteries-included/build-base
   default_tag: noble-20250910-e294e1ea7
   tags:
+    - noble-20250925-e294e1ea7
     - noble-20250910-e294e1ea7
     - noble-20250805-f5b9491e2
     - noble-20250805-30cf546fc
@@ -182,6 +183,7 @@ deploy_base:
   name: ghcr.io/batteries-included/deploy-base
   default_tag: noble-20250910-e294e1ea7
   tags:
+    - noble-20250925-e294e1ea7
     - noble-20250910-e294e1ea7
     - noble-20250805-f5b9491e2
     - noble-20250805-30cf546fc
@@ -852,8 +854,19 @@ redis_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 trivy_operator:
   name: mirror.gcr.io/aquasec/trivy-operator
-  default_tag: 0.23.1
+  default_tag: 0.29.0
   tags:
+    - 0.29.0
+    - 0.28.0
+    - 0.27.3
+    - 0.27.2
+    - 0.27.1
+    - 0.27.0
+    - 0.26.1
+    - 0.26.0
+    - 0.25.0
+    - 0.24.1
+    - 0.24.0
     - 0.23.1
     - 0.22.0
   tag_regex: ^\d+\.\d+\.\d+$
