@@ -1,4 +1,4 @@
-# Batteries Included — Seed Presentation
+# Batteries Included — Preseed++/Seed-- Presentation
 
 A modern Reveal.js deck built with Vite and deployed as a static site.
 
