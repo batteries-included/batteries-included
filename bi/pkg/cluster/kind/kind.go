@@ -16,6 +16,7 @@ import (
 	"github.com/avast/retry-go/v4"
 	dockerclient "github.com/docker/docker/client"
 	slogmulti "github.com/samber/slog-multi"
+	"go.yaml.in/yaml/v3"
 	"sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
 	"sigs.k8s.io/kind/pkg/cluster"
 	"sigs.k8s.io/kind/pkg/cluster/nodes"
@@ -178,6 +179,8 @@ func (c *KindClusterProvider) Create(ctx context.Context, progressReporter *util
 
 // createClusterConfig creates a kind cluster configuration, with GPU support if available
 func (c *KindClusterProvider) createClusterConfig() *v1alpha4.Cluster {
+	patches := c.createKubeadmConfigPatches()
+
 	// Create a basic cluster config with control plane node
 	config := &v1alpha4.Cluster{
 		TypeMeta: v1alpha4.TypeMeta{
@@ -189,7 +192,8 @@ func (c *KindClusterProvider) createClusterConfig() *v1alpha4.Cluster {
 		},
 		Nodes: []v1alpha4.Node{
 			{
-				Role: v1alpha4.ControlPlaneRole,
+				Role:                 v1alpha4.ControlPlaneRole,
+				KubeadmConfigPatches: patches,
 			},
 		},
 	}
@@ -225,6 +229,34 @@ func (c *KindClusterProvider) createClusterConfig() *v1alpha4.Cluster {
 	}
 
 	return config
+}
+
+func (c *KindClusterProvider) createKubeadmConfigPatches() []string {
+	// if we're not at debug level, don't need anything
+	if !c.logger.Enabled(context.Background(), slog.LevelDebug) {
+		c.logger.Info("Skipping control plane debug patches")
+		return []string{}
+	}
+
+	// otherwise, set up control plane components with a higher log level
+	patch, err := yaml.Marshal(map[string]interface{}{
+		"kind": "ClusterConfiguration",
+		"apiServer": map[string]interface{}{
+			"extraArgs": map[string]string{"v": "6"},
+		},
+		"controllerManager": map[string]interface{}{
+			"extraArgs": map[string]string{"v": "6"},
+		},
+		"scheduler": map[string]interface{}{
+			"extraArgs": map[string]string{"v": "6"},
+		},
+	})
+	if err != nil {
+		c.logger.Error("error creating patch", slog.Any("error", err))
+		return []string{}
+	}
+
+	return []string{string(patch)}
 }
 
 func (c *KindClusterProvider) Destroy(ctx context.Context, _ *util.ProgressReporter) error {
