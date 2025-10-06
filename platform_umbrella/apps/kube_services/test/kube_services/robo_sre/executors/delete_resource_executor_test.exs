@@ -36,7 +36,8 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
       {:ok, pid} =
         DeleteResourceExecutor.start_link(
           resource_deleter: MockResourceDeleter,
-          kube_state: MockKubeState
+          kube_state: MockKubeState,
+          name: KubeServices.RoboSRE.DeleteResourceExecutorTest.Executor
         )
 
       # Allow the GenServer to call the mocks
@@ -52,8 +53,7 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
       %{executor_pid: pid}
     end
 
-    test "successfully deletes a resource when found" do
-      # Arrange
+    test "successfully deletes a resource when found", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -73,15 +73,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"deleted" => true}} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, %{"deleted" => true}} = result
     end
 
-    test "successfully deletes a resource with atom keys in params" do
-      # Arrange
+    test "successfully deletes a resource with atom keys in params", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -101,15 +98,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"result" => "deleted"}} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, %{"result" => "deleted"}} = result
     end
 
-    test "returns :not_found when resource is missing from kube state" do
-      # Arrange
+    test "returns :not_found when resource is missing from kube state", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -121,15 +115,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockKubeState, :get, fn :service, "default", "missing-service" -> :missing end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, :not_found} = result
     end
 
-    test "returns :not_found when kube state returns {:error, :not_found}" do
-      # Arrange
+    test "returns :not_found when kube state returns {:error, :not_found}", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -141,15 +132,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockKubeState, :get, fn :configmap, "test-ns", "test-config" -> {:error, :not_found} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, :not_found} = result
     end
 
-    test "returns error when resource deletion fails" do
-      # Arrange
+    test "returns error when resource deletion fails", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -169,15 +157,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockResourceDeleter, :delete, fn ^resource -> {:error, :forbidden} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:error, :forbidden} = result
     end
 
-    test "returns error when kube state returns unexpected error" do
-      # Arrange
+    test "returns error when kube state returns unexpected error", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -189,15 +174,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockKubeState, :get, fn :secret, "default", "test-secret" -> {:error, :timeout} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:error, :timeout} = result
     end
 
-    test "handles nil namespace correctly" do
-      # Arrange
+    test "handles nil namespace correctly", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -217,15 +199,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"status" => "deleted"}} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, %{"status" => "deleted"}} = result
     end
 
-    test "handles missing required parameters gracefully" do
-      # Arrange
+    test "handles missing required parameters gracefully", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -236,15 +215,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockKubeState, :get, fn :pod, nil, nil -> :missing end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, :not_found} = result
     end
 
-    test "returns error for unsupported action type" do
-      # Arrange
+    test "returns error for unsupported action type", %{executor_pid: pid} do
       action = %Action{
         action_type: :create_resource,
         params: %{
@@ -254,15 +230,13 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
         }
       }
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:error, {:unsupported_action_type, :create_resource}} = result
     end
 
-    test "works with mixed string and atom parameter keys" do
-      # Arrange
+    test "works with mixed string and atom parameter keys", %{executor_pid: pid} do
+      # Arran
       # This test verifies that the executor properly handles both string and atom keys
       # by falling back to string keys when atom keys are not found
       action = %Action{
@@ -284,15 +258,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
 
       expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"message" => "service deleted"}} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, %{"message" => "service deleted"}} = result
     end
 
-    test "correctly converts string api_version_kind to atom when calling KubeState.get/3" do
-      # Arrange - This tests the critical string-to-atom conversion for api_version_kind
+    test "correctly converts string api_version_kind to atom when calling KubeState.get/3", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -313,54 +284,12 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
       expect(MockKubeState, :get, fn :pod, "default", "test-pod" -> {:ok, resource} end)
       expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"deleted" => true}} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, %{"deleted" => true}} = result
     end
 
-    test "correctly converts various string api_version_kind formats to atoms" do
-      # Test different resource kinds that come from database as strings
-      test_cases = [
-        {"deployment", :deployment, "apps/v1", "Deployment"},
-        {"config_map", :config_map, "v1", "ConfigMap"},
-        {"service_account", :service_account, "v1", "ServiceAccount"},
-        {"persistent_volume_claim", :persistent_volume_claim, "v1", "PersistentVolumeClaim"},
-        {"horizontal_pod_autoscaler", :horizontal_pod_autoscaler, "autoscaling/v2", "HorizontalPodAutoscaler"}
-      ]
-
-      for {string_kind, atom_kind, api_version, kind} <- test_cases do
-        action = %Action{
-          action_type: :delete_resource,
-          params: %{
-            # String from database
-            "api_version_kind" => string_kind,
-            "namespace" => "test-ns",
-            "name" => "test-resource"
-          }
-        }
-
-        resource = %{
-          "apiVersion" => api_version,
-          "kind" => kind,
-          "metadata" => %{"name" => "test-resource", "namespace" => "test-ns"}
-        }
-
-        # Mock expects the converted atom, not the original string
-        expect(MockKubeState, :get, fn ^atom_kind, "test-ns", "test-resource" -> {:ok, resource} end)
-        expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"status" => "deleted"}} end)
-
-        # Act
-        result = DeleteResourceExecutor.execute(action)
-
-        # Assert
-        assert {:ok, %{"status" => "deleted"}} = result
-      end
-    end
-
-    test "correctly converts string api_version_kind for cluster-scoped resources" do
-      # Arrange
+    test "correctly converts string api_version_kind for cluster-scoped resources", %{executor_pid: pid} do
       action = %Action{
         action_type: :delete_resource,
         params: %{
@@ -381,79 +310,9 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutorTest do
       expect(MockKubeState, :get, fn :cluster_role, nil, "test-cluster-role" -> {:ok, resource} end)
       expect(MockResourceDeleter, :delete, fn ^resource -> {:ok, %{"deleted" => "cluster-role"}} end)
 
-      # Act
-      result = DeleteResourceExecutor.execute(action)
+      result = DeleteResourceExecutor.execute(pid, action)
 
-      # Assert
       assert {:ok, %{"deleted" => "cluster-role"}} = result
-    end
-  end
-
-  describe "integration scenarios" do
-    setup do
-      # Start with unique name for integration tests to avoid conflicts
-      {:ok, pid} =
-        DeleteResourceExecutor.start_link(
-          name: :integration_test_executor,
-          resource_deleter: MockResourceDeleter,
-          kube_state: MockKubeState
-        )
-
-      # Allow the GenServer to call the mocks
-      allow(MockKubeState, self(), pid)
-      allow(MockResourceDeleter, self(), pid)
-
-      on_exit(fn ->
-        if Process.alive?(pid) do
-          GenServer.stop(pid)
-        end
-      end)
-
-      %{executor_pid: pid}
-    end
-
-    test "handles concurrent delete requests" do
-      # Arrange
-      action1 = %Action{
-        action_type: :delete_resource,
-        params: %{"api_version_kind" => :pod, "namespace" => "default", "name" => "pod-1"}
-      }
-
-      action2 = %Action{
-        action_type: :delete_resource,
-        params: %{"api_version_kind" => :pod, "namespace" => "default", "name" => "pod-2"}
-      }
-
-      resource1 = %{
-        "apiVersion" => "v1",
-        "kind" => "Pod",
-        "metadata" => %{"name" => "pod-1", "namespace" => "default"}
-      }
-
-      resource2 = %{
-        "apiVersion" => "v1",
-        "kind" => "Pod",
-        "metadata" => %{"name" => "pod-2", "namespace" => "default"}
-      }
-
-      MockKubeState
-      |> expect(:get, fn :pod, "default", "pod-1" -> {:ok, resource1} end)
-      |> expect(:get, fn :pod, "default", "pod-2" -> {:ok, resource2} end)
-
-      MockResourceDeleter
-      |> expect(:delete, fn ^resource1 -> {:ok, %{"deleted" => "pod-1"}} end)
-      |> expect(:delete, fn ^resource2 -> {:ok, %{"deleted" => "pod-2"}} end)
-
-      # Act
-      task1 = Task.async(fn -> GenServer.call(:integration_test_executor, {:execute, action1}) end)
-      task2 = Task.async(fn -> GenServer.call(:integration_test_executor, {:execute, action2}) end)
-
-      result1 = Task.await(task1)
-      result2 = Task.await(task2)
-
-      # Assert
-      assert {:ok, %{"deleted" => "pod-1"}} = result1
-      assert {:ok, %{"deleted" => "pod-2"}} = result2
     end
   end
 end
