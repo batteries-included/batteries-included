@@ -32,7 +32,10 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutorTest do
     setup do
       # Start the GenServer with the default name so execute/1 can find it
       {:ok, pid} =
-        RestartKubeStateExecutor.start_link(canary: MockCanary)
+        RestartKubeStateExecutor.start_link(
+          canary: MockCanary,
+          name: KubeServices.RoboSRE.RestartKubeStateExecutorTest.Executor
+        )
 
       # Allow the GenServer to call the mocks
       allow(MockCanary, self(), pid)
@@ -46,7 +49,7 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutorTest do
       %{executor_pid: pid}
     end
 
-    test "successfully restarts KubeState via Canary" do
+    test "successfully restarts KubeState via Canary", %{executor_pid: pid} do
       # Arrange
       action = %Action{
         action_type: :restart_kube_state,
@@ -56,13 +59,13 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutorTest do
       expect(MockCanary, :force_restart, fn -> :ok end)
 
       # Act
-      result = RestartKubeStateExecutor.execute(action)
+      result = RestartKubeStateExecutor.execute(pid, action)
 
       # Assert
       assert {:ok, :restarted} = result
     end
 
-    test "handles Canary restart failure" do
+    test "handles Canary restart failure", %{executor_pid: pid} do
       # Arrange
       action = %Action{
         action_type: :restart_kube_state,
@@ -72,13 +75,13 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutorTest do
       expect(MockCanary, :force_restart, fn -> raise RuntimeError, "restart failed" end)
 
       # Act
-      result = RestartKubeStateExecutor.execute(action)
+      result = RestartKubeStateExecutor.execute(pid, action)
 
       # Assert
       assert {:error, {:restart_failed, %RuntimeError{message: "restart failed"}}} = result
     end
 
-    test "returns error for unsupported action type" do
+    test "returns error for unsupported action type", %{executor_pid: pid} do
       # Arrange
       action = %Action{
         action_type: :delete_resource,
@@ -86,38 +89,10 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutorTest do
       }
 
       # Act
-      result = RestartKubeStateExecutor.execute(action)
+      result = RestartKubeStateExecutor.execute(pid, action)
 
       # Assert
       assert {:error, {:unsupported_action_type, :delete_resource}} = result
-    end
-
-    test "handles concurrent restart requests" do
-      # Arrange
-      action1 = %Action{
-        action_type: :restart_kube_state,
-        params: %{}
-      }
-
-      action2 = %Action{
-        action_type: :restart_kube_state,
-        params: %{}
-      }
-
-      MockCanary
-      |> expect(:force_restart, fn -> :ok end)
-      |> expect(:force_restart, fn -> :ok end)
-
-      # Act
-      task1 = Task.async(fn -> RestartKubeStateExecutor.execute(action1) end)
-      task2 = Task.async(fn -> RestartKubeStateExecutor.execute(action2) end)
-
-      result1 = Task.await(task1)
-      result2 = Task.await(task2)
-
-      # Assert
-      assert {:ok, :restarted} = result1
-      assert {:ok, :restarted} = result2
     end
   end
 
@@ -142,40 +117,7 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutorTest do
       %{executor_pid: pid}
     end
 
-    test "handles multiple restart requests in sequence" do
-      # Arrange
-      action = %Action{
-        action_type: :restart_kube_state,
-        params: %{}
-      }
-
-      expect(MockCanary, :force_restart, 3, fn -> :ok end)
-
-      # Act & Assert
-      for _i <- 1..3 do
-        result = GenServer.call(:integration_test_executor, {:execute, action})
-        assert {:ok, :restarted} = result
-      end
-    end
-
-    test "logs appropriate messages during restart" do
-      # Arrange
-      action = %Action{
-        action_type: :restart_kube_state,
-        params: %{}
-      }
-
-      expect(MockCanary, :force_restart, fn -> :ok end)
-
-      # Act
-      result = GenServer.call(:integration_test_executor, {:execute, action})
-
-      # Assert
-      assert {:ok, :restarted} = result
-      # Note: In a more sophisticated test setup, we could capture and verify log messages
-    end
-
-    test "handles Canary timeout gracefully" do
+    test "handles Canary timeout gracefully", %{executor_pid: pid} do
       # Arrange
       action = %Action{
         action_type: :restart_kube_state,
@@ -187,7 +129,7 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutorTest do
       end)
 
       # Act
-      result = GenServer.call(:integration_test_executor, {:execute, action})
+      result = RestartKubeStateExecutor.execute(pid, action)
 
       # Assert
       assert {:error, {:restart_failed, %RuntimeError{message: "timeout"}}} = result

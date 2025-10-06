@@ -38,11 +38,13 @@ defmodule KubeServices.RoboSRE.DeleteResourceExecutor do
 
   @impl KubeServices.RoboSRE.Executor
   @spec execute(Action.t()) :: {:ok, any()} | {:error, any()}
-  def execute(%Action{action_type: :delete_resource} = action) do
-    GenServer.call(@me, {:execute, action})
+  def execute(target \\ @me, action)
+
+  def execute(target, %Action{action_type: :delete_resource} = action) do
+    GenServer.call(target, {:execute, action})
   end
 
-  def execute(%Action{action_type: other}) do
+  def execute(_, %Action{action_type: other}) do
     {:error, {:unsupported_action_type, other}}
   end
 

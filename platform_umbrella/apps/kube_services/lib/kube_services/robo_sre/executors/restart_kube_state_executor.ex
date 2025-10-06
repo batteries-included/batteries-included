@@ -33,12 +33,14 @@ defmodule KubeServices.RoboSRE.RestartKubeStateExecutor do
   end
 
   @impl KubeServices.RoboSRE.Executor
-  @spec execute(Action.t()) :: {:ok, any()} | {:error, any()}
-  def execute(%Action{action_type: :restart_kube_state} = action) do
-    GenServer.call(@me, {:execute, action})
+  @spec execute(GenServer.server(), Action.t()) :: {:ok, any()} | {:error, any()}
+  def execute(target \\ @me, action)
+
+  def execute(target, %Action{action_type: :restart_kube_state} = action) do
+    GenServer.call(target, {:execute, action})
   end
 
-  def execute(%Action{action_type: other}) do
+  def execute(_, %Action{action_type: other}) do
     {:error, {:unsupported_action_type, other}}
   end
 
