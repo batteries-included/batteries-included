@@ -902,7 +902,7 @@ ubuntu:
     - noble-20250716
   tag_regex: ^noble-\d{8}(\.\d)?$
 vm_agent:
-  name: docker.io/victoriametrics/vmagent
+  name: mirror.gcr.io/victoriametrics/vmagent
   default_tag: v1.126.0
   tags:
     - v1.126.0
@@ -957,7 +957,7 @@ vm_agent:
     - v1.93.9
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
-  name: docker.io/victoriametrics/vminsert
+  name: mirror.gcr.io/victoriametrics/vminsert
   default_tag: v1.126.0-cluster
   tags:
     - v1.126.0-cluster
@@ -993,7 +993,7 @@ vm_insert:
     - v1.102.0-cluster
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_operator:
-  name: docker.io/victoriametrics/operator
+  name: mirror.gcr.io/victoriametrics/operator
   default_tag: v0.63.0
   tags:
     - v0.63.0
@@ -1041,7 +1041,7 @@ vm_operator:
     - v0.44.0
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
-  name: docker.io/victoriametrics/vmselect
+  name: mirror.gcr.io/victoriametrics/vmselect
   default_tag: v1.126.0-cluster
   tags:
     - v1.126.0-cluster
@@ -1077,7 +1077,7 @@ vm_select:
     - v1.102.0-cluster
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
-  name: docker.io/victoriametrics/vmstorage
+  name: mirror.gcr.io/victoriametrics/vmstorage
   default_tag: v1.126.0-cluster
   tags:
     - v1.126.0-cluster
