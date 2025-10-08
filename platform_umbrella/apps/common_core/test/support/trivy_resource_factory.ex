@@ -62,7 +62,7 @@ defmodule CommonCore.TrivyResourceFactory do
     |> Map.put("report", %{
       "artifact" => %{
         "repository" => "kubernetes",
-        "tag" => sequence(:k8s_version, ["1.28.1", "1.29.2", "1.30.1"])
+        "tag" => sequence(:k8s_version, ["1.28.1", "1.29.2", "1.30.1", "1.31.12", "1.32.8", "1.33.4", "1.34.0"])
       },
       "os" => %{
         "family" => "debian",
