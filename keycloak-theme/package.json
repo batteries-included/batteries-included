@@ -1,6 +1,6 @@
 {
   "name": "bi-keycloak-theme",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Batteries Included Keycloakify Theme",
   "type": "module",
   "scripts": {
