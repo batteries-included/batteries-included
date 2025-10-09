@@ -368,6 +368,8 @@ karpenter:
   name: public.ecr.aws/karpenter/controller
   default_tag: 1.7.1
   tags:
+    - 1.8.0
+    - 1.7.2
     - 1.7.1
     - 1.7.0
     - 1.6.3
@@ -964,8 +966,9 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: mirror.gcr.io/victoriametrics/vminsert
-  default_tag: v1.126.0-cluster
+  default_tag: v1.127.0-cluster
   tags:
+    - v1.127.0-cluster
     - v1.126.0-cluster
     - v1.125.1-cluster
     - v1.125.0-cluster
@@ -1048,8 +1051,9 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: mirror.gcr.io/victoriametrics/vmselect
-  default_tag: v1.126.0-cluster
+  default_tag: v1.127.0-cluster
   tags:
+    - v1.127.0-cluster
     - v1.126.0-cluster
     - v1.125.1-cluster
     - v1.125.0-cluster
@@ -1084,8 +1088,9 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: mirror.gcr.io/victoriametrics/vmstorage
-  default_tag: v1.126.0-cluster
+  default_tag: v1.127.0-cluster
   tags:
+    - v1.127.0-cluster
     - v1.126.0-cluster
     - v1.125.1-cluster
     - v1.125.0-cluster
