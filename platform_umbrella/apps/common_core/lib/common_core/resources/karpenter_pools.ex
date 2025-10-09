@@ -3,23 +3,16 @@ defmodule CommonCore.Resources.KarpenterPools do
   use CommonCore.IncludeResource,
     ec2nodeclasses_karpenter_k8s_aws: "priv/manifests/karpenter/ec2nodeclasses_karpenter_k8s_aws.yaml",
     nodeclaims_karpenter_sh: "priv/manifests/karpenter/nodeclaims_karpenter_sh.yaml",
-    nodepools_karpenter_sh: "priv/manifests/karpenter/nodepools_karpenter_sh.yaml"
+    nodepools_karpenter_sh: "priv/manifests/karpenter/nodepools_karpenter_sh.yaml",
+    nodeoverlays_karpenter_sh: "priv/manifests/karpenter/nodeoverlays_karpenter_sh.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "karpenter_pools"
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.StateSummary.Core
 
-  resource(:crd_ec2nodeclasses_karpenter_k8s_aws) do
-    YamlElixir.read_all_from_string!(get_resource(:ec2nodeclasses_karpenter_k8s_aws))
-  end
-
-  resource(:crd_nodeclaims_karpenter_sh) do
-    YamlElixir.read_all_from_string!(get_resource(:nodeclaims_karpenter_sh))
-  end
-
-  resource(:crd_nodepools_karpenter_sh) do
-    YamlElixir.read_all_from_string!(get_resource(:nodepools_karpenter_sh))
+  multi_resource(:crds_karpenter) do
+    Enum.flat_map(@included_resources, &(&1 |> get_resource() |> YamlElixir.read_all_from_string!()))
   end
 
   resource(:defalt_node_class, battery, state) do
