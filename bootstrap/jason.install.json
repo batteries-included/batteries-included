@@ -1,19 +1,19 @@
 {
   "control_jwk": {
     "crv": "P-256",
-    "d": "6Lh3jp4DnGZRl4tQxiFbHIokbXQgCxi28QWnoBweeWc",
+    "d": "IE-5pFW6k_GZwWheesOGd_uxmXd8wq9HQ1bpm_Mbl9c",
     "kty": "EC",
-    "x": "RfjLrMq35GbrulWUmEuC3ii0fj-ANXe-UGU8NeFuIBU",
-    "y": "go9EOY9cBe24dyKPHSzOi0cQtDTa1tr1pf6UiKth5Ks"
+    "x": "oNvooHMVHPJEh_-bfxPtqcXD9XCk54tJEOQMBC1dF0Q",
+    "y": "uGyO95cZXssFB5Ab6CDLuDhXBFnfZfTi6LtDXzBvfPU"
   },
   "default_size": "small",
   "deleted_at": null,
-  "id": "batt_0199c69d1271707e9a6c3ab2cea7c658",
+  "id": "batt_0199cbc2d48179499b3982071f689127",
   "inserted_at": null,
   "kube_provider": "aws",
   "kube_provider_config": {},
   "slug": "jason",
-  "team_id": "batt_0199c69d1259708ab97f8c95d047bb69",
+  "team_id": "batt_0199cbc2d46a75a2b696b6b36792ef55",
   "updated_at": null,
   "usage": "development",
   "user_id": null
