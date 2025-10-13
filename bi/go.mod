@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.31.12
 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.6
 	github.com/aws/smithy-go v1.23.0
-	github.com/docker/docker v28.5.0+incompatible
+	github.com/docker/docker v28.5.1+incompatible
 	github.com/docker/go-connections v0.6.0
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/go-jose/go-jose/v4 v4.1.3
@@ -22,16 +22,17 @@ require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.83.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.13
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.2
-	github.com/pulumi/pulumi/sdk/v3 v3.200.0
+	github.com/pulumi/pulumi/sdk/v3 v3.202.0
 	github.com/samber/slog-multi v1.5.0
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
 	github.com/vbauerster/mpb/v8 v8.10.2
+	go.yaml.in/yaml/v3 v3.0.4
 	golang.org/x/exp v0.0.0-20250911091902-df9299821621
-	golang.org/x/mod v0.28.0
+	golang.org/x/mod v0.29.0
 	golang.org/x/sync v0.17.0
-	golang.org/x/term v0.35.0
+	golang.org/x/term v0.36.0
 	gopkg.in/ini.v1 v1.67.0
 	k8s.io/api v0.34.1
 	k8s.io/apiextensions-apiserver v0.34.1
@@ -190,11 +191,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
-	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.42.0 // indirect
 	golang.org/x/net v0.44.0 // indirect
 	golang.org/x/oauth2 v0.31.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/time v0.13.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
