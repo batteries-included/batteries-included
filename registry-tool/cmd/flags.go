@@ -29,4 +29,7 @@ var DefaultIgnoredImages = []string{
 
 	// No Users are not ready for Cuda versions to be automatically updated
 	"docker.io/nvidia/cuda",
+
+	// temporarily prevent base updates until hexpm is updated
+	"docker.io/library/ubuntu",
 }
