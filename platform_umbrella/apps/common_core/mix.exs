@@ -44,7 +44,7 @@ defmodule CommonCore.MixProject do
 
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
-      {:k8s, "~> 2.7.0"},
+      {:k8s, "~> 2.8.0"},
       {:mint, "~> 1.0"},
 
       # Data Formats
