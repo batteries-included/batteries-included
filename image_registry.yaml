@@ -20,8 +20,10 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: mirror.gcr.io/aquasec/trivy
-  default_tag: 0.67.0
+  default_tag: 0.67.2
   tags:
+    - 0.67.2
+    - 0.67.1
     - 0.67.0
     - 0.66.0
     - 0.65.0
@@ -32,8 +34,9 @@ aqua_trivy:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy_checks:
   name: mirror.gcr.io/aquasec/trivy-checks
-  default_tag: 1.11.2
+  default_tag: 1.11.3
   tags:
+    - 1.11.3
     - 1.11.2
     - 1.11.1
     - 1.10.0
@@ -368,6 +371,7 @@ karpenter:
   name: public.ecr.aws/karpenter/controller
   default_tag: 1.8.0
   tags:
+    - 1.8.1
     - 1.8.0
     - 1.7.2
     - 1.7.1
@@ -624,8 +628,9 @@ kube_state_metrics:
   tag_regex: ^v\d+\.\d+\.\d+$
 loki:
   name: docker.io/grafana/loki
-  default_tag: 3.5.5
+  default_tag: 3.5.6
   tags:
+    - 3.5.6
     - 3.5.5
     - 3.5.4
     - 3.5.3
@@ -731,8 +736,10 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.12.3
+  default_tag: 0.12.5
   tags:
+    - 0.12.5
+    - 0.12.4
     - 0.12.3
     - 0.12.2
     - 0.12.1
@@ -783,8 +790,9 @@ postgresql_upstream:
   tag_regex: ^\d+\.\d+$
 promtail:
   name: docker.io/grafana/promtail
-  default_tag: 3.5.5
+  default_tag: 3.5.6
   tags:
+    - 3.5.6
     - 3.5.5
     - 3.5.4
     - 3.5.3
@@ -820,8 +828,9 @@ promtail:
   tag_regex: ^\d+\.\d+\.\d+$
 redis:
   name: quay.io/opstree/redis
-  default_tag: v8.2.1
+  default_tag: v8.2.2
   tags:
+    - v8.2.2
     - v8.2.1
     - v8.2.0
     - v8.0.3
@@ -834,8 +843,9 @@ redis:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_exporter:
   name: quay.io/opstree/redis-exporter
-  default_tag: v1.77.0
+  default_tag: v1.78.0
   tags:
+    - v1.78.0
     - v1.77.0
     - v1.76.0
     - v1.75.0
@@ -879,8 +889,10 @@ trivy_operator:
   tag_regex: ^\d+\.\d+\.\d+$
 trust_manager:
   name: quay.io/jetstack/trust-manager
-  default_tag: v0.19.0
+  default_tag: v0.20.1
   tags:
+    - v0.20.1
+    - v0.20.0
     - v0.19.0
     - v0.18.0
     - v0.17.1
@@ -895,14 +907,16 @@ trust_manager:
   tag_regex: ^v\d+\.\d+\.\d+$
 trust_manager_init:
   name: quay.io/jetstack/cert-manager-package-debian
-  default_tag: '20210119.0'
+  default_tag: '20210119.1'
   tags:
+    - '20210119.1'
     - '20210119.0'
   tag_regex: ^\d{8}\.\d+$
 ubuntu:
   name: docker.io/library/ubuntu
-  default_tag: noble-20250925
+  default_tag: noble-20251001
   tags:
+    - noble-20251001
     - noble-20250925
     - noble-20250910
     - noble-20250805
