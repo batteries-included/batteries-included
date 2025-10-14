@@ -479,21 +479,6 @@ defmodule CommonCore.Resources.Istio.Istiod do
     |> Map.put("webhooks", webhooks)
   end
 
-  resource(:pod_disruption_budget_istiod, battery, _state) do
-    spec =
-      %{}
-      |> Map.put("minAvailable", 1)
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "istio" => "pilot"}})
-
-    :pod_disruption_budget
-    |> B.build_resource()
-    |> B.name("istiod")
-    |> B.namespace(battery.config.namespace)
-    |> B.label("istio", "pilot")
-    |> B.label("istio.io/rev", "default")
-    |> B.spec(spec)
-  end
-
   resource(:role_binding_istiod, battery, _state) do
     :role_binding
     |> B.build_resource()

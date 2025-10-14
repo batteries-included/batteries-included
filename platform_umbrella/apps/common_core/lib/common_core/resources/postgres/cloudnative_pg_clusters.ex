@@ -59,6 +59,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
         instances: cluster.num_instances,
         imageName: battery.config.default_postgres_image,
         storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
+        enablePDB: false,
         enableSuperuserAccess: false,
         backup: %{},
         bootstrap: bootstrap(cluster, db),
