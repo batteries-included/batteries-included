@@ -11,21 +11,6 @@ defmodule CommonCore.Resources.Karpenter do
   @metrics_port 8000
   @health_probe_port 8081
 
-  resource(:pod_disruption_budget_main, _battery, state) do
-    namespace = base_namespace(state)
-
-    spec =
-      %{}
-      |> Map.put("maxUnavailable", 1)
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name}})
-
-    :pod_disruption_budget
-    |> B.build_resource()
-    |> B.name(@app_name)
-    |> B.namespace(namespace)
-    |> B.spec(spec)
-  end
-
   resource(:service_account_main, battery, state) do
     namespace = base_namespace(state)
 

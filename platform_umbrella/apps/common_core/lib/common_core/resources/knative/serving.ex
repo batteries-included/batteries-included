@@ -829,34 +829,6 @@ defmodule CommonCore.Resources.KnativeServing do
     |> B.label("istio.io/dataplane-mode", "ambient")
   end
 
-  resource(:pod_disruption_budget_activator_pdb, battery, _state) do
-    spec =
-      %{}
-      |> Map.put("minAvailable", "80%")
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "activator"}})
-
-    :pod_disruption_budget
-    |> B.build_resource()
-    |> B.name("activator-pdb")
-    |> B.namespace(battery.config.namespace)
-    |> B.component_labels("activator")
-    |> B.spec(spec)
-  end
-
-  resource(:pod_disruption_budget_webhook_pdb, battery, _state) do
-    spec =
-      %{}
-      |> Map.put("minAvailable", "80%")
-      |> Map.put("selector", %{"matchLabels" => %{"battery/app" => @app_name, "battery/component" => "webhook"}})
-
-    :pod_disruption_budget
-    |> B.build_resource()
-    |> B.name("webhook-pdb")
-    |> B.namespace(battery.config.namespace)
-    |> B.component_labels("webhook")
-    |> B.spec(spec)
-  end
-
   resource(:role_binding_activator, battery, _state) do
     :role_binding
     |> B.build_resource()
