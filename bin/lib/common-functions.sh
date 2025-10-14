@@ -4,7 +4,7 @@ TRACE=${TRACE-""}
 
 # If you are changing this also change the
 # version in mix.exs for all the apps in platform_umbrella
-export BASE_VERSION="1.11.0"
+export BASE_VERSION="1.12.0"
 
 export REGISTRY="ghcr.io/batteries-included"
 
