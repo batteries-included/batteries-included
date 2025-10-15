@@ -76,6 +76,22 @@ updates:
     labels:
       - dependencies
       - automation
+      - go
+  - package-ecosystem: 'gomod'
+    directory: '/registry-tool/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '00:10'
+      timezone: America/Chicago
+    groups:
+      dependencies:
+        patterns:
+          - '*'
+    labels:
+      - dependencies
+      - automation
+      - go
   - package-ecosystem: 'gomod'
     directory: '/pastebin-go/'
     schedule:
@@ -89,3 +105,4 @@ updates:
     labels:
       - dependencies
       - automation
+      - go
