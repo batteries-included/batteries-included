@@ -188,8 +188,9 @@ cnpg_plugin_barman_sidecar:
   tag_regex: ^v\d+\.\d+\.\d+$
 deploy_base:
   name: ghcr.io/batteries-included/deploy-base
-  default_tag: noble-20250925-e294e1ea7
+  default_tag: noble-20251001-e294e1ea7
   tags:
+    - noble-20251001-e294e1ea7
     - noble-20250925-e294e1ea7
     - noble-20250910-e294e1ea7
     - noble-20250805-f5b9491e2
