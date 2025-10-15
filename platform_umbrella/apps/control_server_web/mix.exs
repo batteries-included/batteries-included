@@ -94,11 +94,5 @@ defmodule ControlServerWeb.MixProject do
     ]
   end
 
-  defp listeners do
-    if dependabot?(), do: [], else: [Phoenix.CodeReloader]
-  end
-
-  defp dependabot? do
-    Enum.any?(System.get_env(), fn {key, _value} -> String.starts_with?(key, "DEPENDABOT") end)
-  end
+  defp listeners, do: [Phoenix.CodeReloader]
 end
