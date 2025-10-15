@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/adrg/xdg v0.5.3
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/avast/retry-go/v4 v4.6.1
+	github.com/avast/retry-go/v4 v4.7.0
 	github.com/aws/aws-sdk-go-v2/config v1.31.12
 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.6
 	github.com/aws/smithy-go v1.23.0
@@ -20,7 +20,7 @@ require (
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.83.0
-	github.com/pulumi/pulumi-cloudinit/sdk v1.4.13
+	github.com/pulumi/pulumi-cloudinit/sdk v1.4.14
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.2
 	github.com/pulumi/pulumi/sdk/v3 v3.202.0
 	github.com/samber/slog-multi v1.5.0
