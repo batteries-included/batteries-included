@@ -66,8 +66,9 @@ aws_load_balancer_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 build_base:
   name: ghcr.io/batteries-included/build-base
-  default_tag: noble-20250925-e294e1ea7
+  default_tag: noble-20251001-e294e1ea7
   tags:
+    - noble-20251001-e294e1ea7
     - noble-20250925-e294e1ea7
     - noble-20250910-e294e1ea7
     - noble-20250805-f5b9491e2
@@ -76,8 +77,9 @@ build_base:
   tag_regex: ^noble-\d{8}(\.\d)?-\w{9}$
 cert_manager_acmesolver:
   name: quay.io/jetstack/cert-manager-acmesolver
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.2
     - v1.18.1
@@ -92,8 +94,9 @@ cert_manager_acmesolver:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_cainjector:
   name: quay.io/jetstack/cert-manager-cainjector
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.2
     - v1.18.1
@@ -108,8 +111,9 @@ cert_manager_cainjector:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_controller:
   name: quay.io/jetstack/cert-manager-controller
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.2
     - v1.18.1
@@ -143,8 +147,9 @@ cert_manager_istio_csr:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_webhook:
   name: quay.io/jetstack/cert-manager-webhook
-  default_tag: v1.19.0
+  default_tag: v1.19.1
   tags:
+    - v1.19.1
     - v1.19.0
     - v1.18.2
     - v1.18.1
