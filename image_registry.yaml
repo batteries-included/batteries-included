@@ -928,7 +928,7 @@ trust_manager_init:
   tag_regex: ^\d{8}\.\d+$
 ubuntu:
   name: docker.io/library/ubuntu
-  default_tag: noble-20250925
+  default_tag: noble-20251001
   tags:
     - noble-20251001
     - noble-20250925
