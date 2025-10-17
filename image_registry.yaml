@@ -433,8 +433,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.4.0
+  default_tag: 26.4.1
   tags:
+    - 26.4.1
     - 26.4.0
     - 26.3.5
     - 26.3.4
@@ -749,8 +750,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.12.5
+  default_tag: 0.12.6
   tags:
+    - 0.12.6
     - 0.12.5
     - 0.12.4
     - 0.12.3
@@ -903,8 +905,9 @@ trivy_operator:
   tag_regex: ^\d+\.\d+\.\d+$
 trust_manager:
   name: quay.io/jetstack/trust-manager
-  default_tag: v0.20.1
+  default_tag: v0.20.2
   tags:
+    - v0.20.2
     - v0.20.1
     - v0.20.0
     - v0.19.0
@@ -921,8 +924,9 @@ trust_manager:
   tag_regex: ^v\d+\.\d+\.\d+$
 trust_manager_init:
   name: quay.io/jetstack/cert-manager-package-debian
-  default_tag: '20210119.1'
+  default_tag: '20210119.2'
   tags:
+    - '20210119.2'
     - '20210119.1'
     - '20210119.0'
   tag_regex: ^\d{8}\.\d+$
