@@ -1,9 +1,9 @@
-actionlint 1.7.7
-awscli     2.31.8
+actionlint 1.7.8
+awscli     2.31.17
 elixir     1.18.4-otp-27
 erlang     27.3.4.3
-github-cli 2.81.0
-golang     1.25.1
+github-cli 2.82.0
+golang     1.25.3
 goreleaser 2.12.5
 java       adoptopenjdk-21.0.7+6.0.LTS
 kind       0.30.0
@@ -14,4 +14,4 @@ python     3.12.9
 shfmt      3.12.0
 upx        5.0.2
 yamllint   1.37.1
-yq         4.47.2
+yq         4.48.1
