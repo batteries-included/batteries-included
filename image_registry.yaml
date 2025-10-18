@@ -53,6 +53,7 @@ aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.14.0
   tags:
+    - v2.14.1
     - v2.14.0
     - v2.13.4
     - v2.13.3
@@ -128,8 +129,9 @@ cert_manager_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_istio_csr:
   name: quay.io/jetstack/cert-manager-istio-csr
-  default_tag: v0.14.2
+  default_tag: v0.14.3
   tags:
+    - v0.14.3
     - v0.14.2
     - v0.14.1
     - v0.14.0
