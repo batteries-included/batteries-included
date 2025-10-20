@@ -37,7 +37,6 @@ defmodule KubeServices.Application do
   def children(_run),
     do: [
       {KubeServices.KubeState.Supervisor, [should_watch: false]},
-      {KubeServices.ET.InstallStatusWorker, [home_client_pid: nil, install_id: nil]},
       {KubeServices.ET.StableVersionsWorker, [home_client_pid: nil]},
       {KubeServices.SystemState, [should_refresh: false]}
     ]

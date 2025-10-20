@@ -3,8 +3,6 @@ defmodule ControlServerWeb.Router do
 
   import Phoenix.LiveDashboard.Router
 
-  alias ControlServerWeb.Plug.InstallStatus
-
   require CommonCore.Env
 
   pipeline :browser do
@@ -18,14 +16,12 @@ defmodule ControlServerWeb.Router do
 
   pipeline :auth do
     plug ControlServerWeb.Plug.SessionID
-    plug InstallStatus
     plug ControlServerWeb.Plug.RefreshToken
     plug ControlServerWeb.Plug.SSOAuth
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug InstallStatus
     plug ControlServerWeb.Plug.ApiSSOAuth
   end
 
