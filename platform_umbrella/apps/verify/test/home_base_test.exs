@@ -167,9 +167,21 @@ defmodule Verify.HomeBaseTest do
       session
       |> add_init_container()
       # set up DB creds from secret
-      |> add_env_var_from_secret("cloudnative-pg.pg-#{service_name}.root", "username", "POSTGRES_USER")
-      |> add_env_var_from_secret("cloudnative-pg.pg-#{service_name}.root", "password", "POSTGRES_PASSWORD")
-      |> add_env_var_from_secret("cloudnative-pg.pg-#{service_name}.root", "hostname", "POSTGRES_HOST")
+      |> add_env_var_from_secret(
+        "cloudnative-pg.pg-#{service_name}.root",
+        "username",
+        "POSTGRES_USER"
+      )
+      |> add_env_var_from_secret(
+        "cloudnative-pg.pg-#{service_name}.root",
+        "password",
+        "POSTGRES_PASSWORD"
+      )
+      |> add_env_var_from_secret(
+        "cloudnative-pg.pg-#{service_name}.root",
+        "hostname",
+        "POSTGRES_HOST"
+      )
       |> add_explicit_var("POSTGRES_DB", "home-base")
       # add misc needed env vars
       |> add_explicit_var("POSTMARK_KEY", "abc123")
@@ -185,7 +197,10 @@ defmodule Verify.HomeBaseTest do
   defp add_init_container(session) do
     session
     # add init container
-    |> find(Query.css("#containers_panel-init_containers"), &click(&1, Query.button("Add Container")))
+    |> find(
+      Query.css("#containers_panel-init_containers"),
+      &click(&1, Query.button("Add Container"))
+    )
     |> fill_in(Query.text_field("container[name]"), with: "home-base-init")
     |> fill_in(Query.text_field("container[image]"), with: Images.home_base_image())
     |> fill_in(Query.text_field("container[path]"), with: "/app/bin/start")
