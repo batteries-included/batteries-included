@@ -53,6 +53,7 @@ aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.14.0
   tags:
+    - v2.14.1
     - v2.14.0
     - v2.13.4
     - v2.13.3
@@ -128,8 +129,9 @@ cert_manager_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_istio_csr:
   name: quay.io/jetstack/cert-manager-istio-csr
-  default_tag: v0.14.2
+  default_tag: v0.14.3
   tags:
+    - v0.14.3
     - v0.14.2
     - v0.14.1
     - v0.14.0
@@ -301,8 +303,9 @@ grafana:
   tag_regex: ^\d+\.\d+\.\d+$
 istio_cni:
   name: docker.io/istio/install-cni
-  default_tag: 1.27.2-distroless
+  default_tag: 1.27.3-distroless
   tags:
+    - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
     - 1.27.0-distroless
@@ -311,8 +314,9 @@ istio_cni:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_pilot:
   name: docker.io/istio/pilot
-  default_tag: 1.27.2-distroless
+  default_tag: 1.27.3-distroless
   tags:
+    - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
     - 1.27.0-distroless
@@ -333,8 +337,9 @@ istio_pilot:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_proxy:
   name: docker.io/istio/proxyv2
-  default_tag: 1.27.2-distroless
+  default_tag: 1.27.3-distroless
   tags:
+    - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
     - 1.27.0-distroless
@@ -355,8 +360,9 @@ istio_proxy:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_ztunnel:
   name: docker.io/istio/ztunnel
-  default_tag: 1.27.2-distroless
+  default_tag: 1.27.3-distroless
   tags:
+    - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
     - 1.27.0-distroless
@@ -409,10 +415,11 @@ karpenter:
   tag_regex: ^\d+\.\d+\.\d+$
 keycloak:
   name: ghcr.io/batteries-included/keycloak
-  default_tag: 26.4.0-52f7464
+  default_tag: 26.4.1-0bfdd9f
   blacklisted_tags:
     - 26.3.0-3a3a040
   tags:
+    - 26.4.1-0bfdd9f
     - 26.4.0-52f7464
     - 26.3.5-a513c82
     - 26.3.4-163349d
@@ -715,8 +722,9 @@ node_exporter:
   tag_regex: ^v\d+\.\d+\.\d+$
 node_feature_discovery:
   name: registry.k8s.io/nfd/node-feature-discovery
-  default_tag: v0.18.1
+  default_tag: v0.18.2
   tags:
+    - v0.18.2
     - v0.18.1
     - v0.18.0
     - v0.17.4
