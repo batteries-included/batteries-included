@@ -1,10 +1,10 @@
 actionlint 1.7.8
-awscli     2.31.17
-elixir     1.18.4-otp-27
-erlang     27.3.4.3
-github-cli 2.82.0
+awscli     2.31.20
+elixir     1.19.1-otp-28
+erlang     28.1.1
+github-cli 2.82.1
 golang     1.25.3
-goreleaser 2.12.5
+goreleaser 2.12.6
 java       adoptopenjdk-21.0.7+6.0.LTS
 kind       0.30.0
 kubectl    1.34.1
