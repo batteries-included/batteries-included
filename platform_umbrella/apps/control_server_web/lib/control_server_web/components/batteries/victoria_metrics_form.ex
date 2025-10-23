@@ -12,29 +12,25 @@ defmodule ControlServerWeb.Batteries.VictoriaMetricsForm do
         "change_storage_size_range",
         %{"victoria_metrics_config" => %{"virtual_vmselect_storage_size_range" => size}},
         socket
-      ),
-      do: update_volume_size(:vmselect_volume_size, size, socket)
+      ), do: update_volume_size(:vmselect_volume_size, size, socket)
 
   def handle_event(
         "change_storage_size_range",
         %{"battery_config" => %{"virtual_vmselect_storage_size_range" => size}},
         socket
-      ),
-      do: update_volume_size(:vmselect_volume_size, size, socket)
+      ), do: update_volume_size(:vmselect_volume_size, size, socket)
 
   def handle_event(
         "change_storage_size_range",
         %{"victoria_metrics_config" => %{"virtual_vmstorage_storage_size_range" => size}},
         socket
-      ),
-      do: update_volume_size(:vmstorage_volume_size, size, socket)
+      ), do: update_volume_size(:vmstorage_volume_size, size, socket)
 
   def handle_event(
         "change_storage_size_range",
         %{"battery_config" => %{"virtual_vmstorage_storage_size_range" => size}},
         socket
-      ),
-      do: update_volume_size(:vmstorage_volume_size, size, socket)
+      ), do: update_volume_size(:vmstorage_volume_size, size, socket)
 
   defp update_volume_size(field, size, %{assigns: %{form: %{name: name, source: source}}} = socket) do
     old_size = Map.get(source.data, field, 0) || 0
