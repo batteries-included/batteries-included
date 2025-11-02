@@ -220,7 +220,23 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
 
   defp backup(_battery, _state, _cluster), do: nil
 
-  def scheduled_backup(_battery, state, cluster) do
+  defp maybe_add_backup(spec, %{backup_config: %{type: backup_type}}, %{config: %{storage_account_name: storage_account, container_name: container}})
+       when backup_type == :object_store and not is_empty(storage_account) and not is_empty(container) do
+    Map.put(spec, :backup, %{
+      retentionPolicy: "30d",
+      barmanObjectStore: %{
+        # the backups are stored in a prefix (default: cluster_name) under this path
+        destinationPath: "azure://#{storage_account}.blob.core.windows.net/#{container}",
+        data: %{compression: "snappy"},
+        wal: %{compression: "snappy"},
+        azureCredentials: %{inheritFromAzureAD: true}
+      }
+    })
+  end
+
+  defp maybe_add_backup(spec, _cluster, _battery), do: spec
+
+  def scheduled_backup(battery, state, cluster) do
     cluster_name = cluster_name(cluster)
 
     spec = %{
@@ -240,6 +256,19 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     |> B.spec(spec)
     |> F.require_battery(state, :cloudnative_pg_barman)
     |> F.require(cluster.backup_config && cluster.backup_config.type == :object_store)
+    |> require_valid_backup_config(battery)
+  end
+
+  defp require_valid_backup_config(resource, battery) do
+    if battery.config.storage_account_name && battery.config.container_name do
+      resource
+      |> F.require_non_nil(battery.config.storage_account_name)
+      |> F.require_non_nil(battery.config.container_name)
+    else
+      resource
+      |> F.require_non_nil(battery.config.bucket_name)
+      |> F.require_non_nil(battery.config.service_role_arn)
+    end
   end
 
   defp resources(%Cluster{} = cluster) do

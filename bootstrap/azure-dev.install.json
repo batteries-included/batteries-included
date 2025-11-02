@@ -1,0 +1,20 @@
+{
+  "control_jwk": {
+    "crv": "P-256",
+    "d": "azure_dev_key_placeholder_replace_with_real_key",
+    "kty": "EC",
+    "x": "azure_dev_x_placeholder_replace_with_real_value",
+    "y": "azure_dev_y_placeholder_replace_with_real_value"
+  },
+  "default_size": "small",
+  "deleted_at": null,
+  "id": "batt_azure_dev_install_id_placeholder",
+  "inserted_at": null,
+  "kube_provider": "azure",
+  "kube_provider_config": {},
+  "slug": "azure-dev",
+  "team_id": "batt_0198f3777ee67f649fe3819852d4ea20",
+  "updated_at": null,
+  "usage": "development",
+  "user_id": null
+}

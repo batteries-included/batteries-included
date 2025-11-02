@@ -151,6 +151,20 @@ defmodule CommonCore.Batteries.Catalog do
     },
     %CatalogBattery{
       group: :magic,
+      type: :azure_load_balancer_controller,
+      dependencies: [:battery_core, :battery_ca],
+      name: "Azure Load Balancer Controller",
+      description: "A Kubernetes controller for Azure Load Balancers."
+    },
+    %CatalogBattery{
+      group: :magic,
+      type: :azure_karpenter,
+      dependencies: [:battery_core],
+      name: "Azure Karpenter",
+      description: "Auto scale kubernetes clusters in Azure AKS using Karpenter."
+    },
+    %CatalogBattery{
+      group: :magic,
       type: :node_feature_discovery,
       dependencies: [:battery_core],
       name: "Node Feature Discovery",

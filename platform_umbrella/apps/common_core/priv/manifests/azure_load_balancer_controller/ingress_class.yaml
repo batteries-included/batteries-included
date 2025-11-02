@@ -1,0 +1,63 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: azureloadbalancerconfigs.networking.azure.io
+spec:
+  group: networking.azure.io
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              resourceGroup:
+                type: string
+                description: "Azure resource group name"
+              subscriptionId:
+                type: string
+                description: "Azure subscription ID"
+              location:
+                type: string
+                description: "Azure region location"
+              loadBalancerType:
+                type: string
+                enum: ["internal", "external"]
+                default: "external"
+                description: "Type of load balancer"
+              publicIPName:
+                type: string
+                description: "Name of the public IP resource"
+              subnetName:
+                type: string
+                description: "Name of the subnet for internal load balancers"
+              tags:
+                type: object
+                additionalProperties:
+                  type: string
+                description: "Tags to apply to Azure resources"
+          status:
+            type: object
+            properties:
+              conditions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    status:
+                      type: string
+                    reason:
+                      type: string
+                    message:
+                      type: string
+  scope: Namespaced
+  names:
+    plural: azureloadbalancerconfigs
+    singular: azureloadbalancerconfig
+    kind: AzureLoadBalancerConfig
