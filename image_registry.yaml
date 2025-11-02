@@ -795,8 +795,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.12.8
+  default_tag: 0.12.9
   tags:
+    - 0.12.9
     - 0.12.8
     - 0.12.7
     - 0.12.6
@@ -906,8 +907,9 @@ redis:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_exporter:
   name: quay.io/opstree/redis-exporter
-  default_tag: v1.78.0
+  default_tag: v1.79.0
   tags:
+    - v1.79.0
     - v1.78.0
     - v1.77.0
     - v1.76.0
