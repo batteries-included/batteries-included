@@ -28,7 +28,9 @@ defmodule CommonCore.Resources.VMOperatorCRDs do
     vmsingles_operator_victoriametrics_com: "priv/manifests/vm_operator/vmsingles_operator_victoriametrics_com.yaml",
     vmstaticscrapes_operator_victoriametrics_com:
       "priv/manifests/vm_operator/vmstaticscrapes_operator_victoriametrics_com.yaml",
-    vmusers_operator_victoriametrics_com: "priv/manifests/vm_operator/vmusers_operator_victoriametrics_com.yaml"
+    vmusers_operator_victoriametrics_com: "priv/manifests/vm_operator/vmusers_operator_victoriametrics_com.yaml",
+    vtclusters_operator_victoriametrics_com: "priv/manifests/vm_operator/vtclusters_operator_victoriametrics_com.yaml",
+    vtsingles_operator_victoriametrics_com: "priv/manifests/vm_operator/vtsingles_operator_victoriametrics_com.yaml"
 
   use CommonCore.Resources.ResourceGenerator, app_name: "vm_operator_crds"
 

@@ -4,7 +4,7 @@ defmodule KubeServices.MixProject do
   def project do
     [
       app: :kube_services,
-      version: "1.5.0",
+      version: "1.12.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -41,7 +41,7 @@ defmodule KubeServices.MixProject do
       {:event_center, in_umbrella: true},
       {:ex_machina, "~> 2.7", only: [:dev, :test]},
       {:jason, "~> 1.4"},
-      {:k8s, "~> 2.7.0"},
+      {:k8s, "~> 2.8.0"},
       {:mnemonic_slugs, "~> 0.0.3"},
       {:mox, "~> 1.0", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.7"},

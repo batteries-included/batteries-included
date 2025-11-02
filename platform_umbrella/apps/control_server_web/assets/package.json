@@ -27,5 +27,6 @@
     "tippy.js": "~6.3",
     "topbar": "~3.0",
     "typescript": "~5.9"
-  }
+  },
+  "version": "1.12.0"
 }

@@ -8,6 +8,7 @@ defmodule CommonCore.Resources.Istio.Ingress do
 
   alias CommonCore.Resources.Builder, as: B
   alias CommonCore.Resources.FilterResource, as: F
+  alias CommonCore.Resources.RouteBuilder
   alias CommonCore.StateSummary.Batteries
   alias CommonCore.StateSummary.Core
   alias CommonCore.StateSummary.SSL
@@ -261,6 +262,7 @@ defmodule CommonCore.Resources.Istio.Ingress do
       |> B.spec(spec)
       |> F.require(SSL.ssl_enabled?(state))
       |> F.require_non_empty(hosts)
+      |> F.require(RouteBuilder.valid?(spec))
     end)
   end
 

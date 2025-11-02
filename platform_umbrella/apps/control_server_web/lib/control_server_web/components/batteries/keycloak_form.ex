@@ -31,15 +31,9 @@ defmodule ControlServerWeb.Batteries.KeycloakForm do
             <.input type="password" field={@form[:admin_password]} disabled={@action != :new} />
           </.field>
 
-          <.field>
-            <:label>Log Level</:label>
-            <.input field={@form[:log_level]} />
-          </.field>
+          <.defaultable_field label="Log Level" field={@form[:log_level]} />
 
-          <.field>
-            <:label>Replicas</:label>
-            <.input type="number" field={@form[:replicas]} />
-          </.field>
+          <.defaultable_field label="Replicas" type="number" field={@form[:replicas]} />
         </.fieldset>
       </.panel>
     </div>

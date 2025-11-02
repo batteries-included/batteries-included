@@ -5,11 +5,14 @@ defmodule Verify.KeycloakTest do
     images: ~w(keycloak)a
 
   setup_all %{control_url: url} do
-    {:ok, session} = start_session(url)
+    wrap do
+      {:ok, session} = start_session(url)
 
-    check_keycloak_running(session)
+      check_keycloak_running(session)
 
-    Wallaby.end_session(session)
+      Wallaby.end_session(session)
+      :ok
+    end
   end
 
   verify "can access keycloak console", %{session: session} do

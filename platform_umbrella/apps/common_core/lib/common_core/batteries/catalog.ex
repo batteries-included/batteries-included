@@ -122,10 +122,18 @@ defmodule CommonCore.Batteries.Catalog do
     %CatalogBattery{
       group: :magic,
       type: :stale_resource_cleaner,
-      dependencies: [:battery_core],
+      dependencies: [:battery_core, :robo_sre],
       name: "Stale Resource Cleaner",
       description: "A battery that removes old resources that are no longer needed.",
       uninstallable: false
+    },
+    %CatalogBattery{
+      group: :magic,
+      type: :robo_sre,
+      dependencies: [:battery_core],
+      name: "Robo SRE",
+      description:
+        "Automated Site Reliability Engineering system for detecting, diagnosing, and remediating infrastructure issues in Kubernetes environments."
     },
     %CatalogBattery{
       group: :magic,

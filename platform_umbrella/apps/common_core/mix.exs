@@ -4,7 +4,7 @@ defmodule CommonCore.MixProject do
   def project do
     [
       app: :common_core,
-      version: "1.5.0",
+      version: "1.12.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -30,6 +30,7 @@ defmodule CommonCore.MixProject do
       # Nice naming generator
       {:mnemonic_slugs, "~> 0.0.3"},
       {:telemetry, "~> 1.1"},
+      {:telemetry_metrics, "~> 1.0"},
 
       # Types for all the things
       {:ecto_soft_delete, "~> 2.0"},
@@ -43,7 +44,7 @@ defmodule CommonCore.MixProject do
 
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
-      {:k8s, "~> 2.7.0"},
+      {:k8s, "~> 2.8.0"},
       {:mint, "~> 1.0"},
 
       # Data Formats

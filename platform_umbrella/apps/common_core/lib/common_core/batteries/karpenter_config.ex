@@ -11,7 +11,7 @@ defmodule CommonCore.Batteries.KarpenterConfig do
     field :service_role_arn, :string
     field :node_role_name, :string
 
-    defaultable_field :ami_alias, :string, default: "al2023@v20250704"
-    defaultable_field :bottlerocket_ami_alias, :string, default: "bottlerocket@v1.42.0"
+    defaultable_field :ami_alias, :string, default: "al2023@v20251002"
+    defaultable_field :bottlerocket_ami_alias, :string, default: "bottlerocket@v1.49.0"
   end
 end

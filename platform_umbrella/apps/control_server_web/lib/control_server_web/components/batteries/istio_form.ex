@@ -14,10 +14,7 @@ defmodule ControlServerWeb.Batteries.IstioForm do
 
       <.panel title="Configuration">
         <.fieldset>
-          <.field>
-            <:label>Namespace</:label>
-            <.input field={@form[:namespace]} />
-          </.field>
+          <.defaultable_field label="Namespace" field={@form[:namespace]} />
         </.fieldset>
       </.panel>
 

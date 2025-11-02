@@ -47,527 +47,6 @@ spec:
             spec:
               description: VLSingleSpec defines the desired state of VLSingle
               properties:
-                affinity:
-                  description:
-                    Affinity If specified, the pod's scheduling constraints.
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
-                configMaps:
-                  description: |-
-                    ConfigMaps is a list of ConfigMaps in the same namespace as the Application
-                    object, which shall be mounted into the Application container
-                    at /etc/vm/configs/CONFIGMAP_NAME folder
-                  items:
-                    type: string
-                  type: array
-                containers:
-                  description: |-
-                    Containers property allows to inject additions sidecars or to patch existing containers.
-                    It can be useful for proxies, backup, etc.
-                  items:
-                    description:
-                      A single application container that you want to run within
-                      a pod.
-                    required:
-                      - name
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  type: array
-                disableAutomountServiceAccountToken:
-                  description: |-
-                    DisableAutomountServiceAccountToken whether to disable serviceAccount auto mount by Kubernetes (available from v0.54.0).
-                    Operator will conditionally create volumes and volumeMounts for containers if it requires k8s API access.
-                    For example, vmagent and vm-config-reloader requires k8s API access.
-                    Operator creates volumes with name: "kube-api-access", which can be used as volumeMount for extraContainers if needed.
-                    And also adds VolumeMounts at /var/run/secrets/kubernetes.io/serviceaccount.
-                  type: boolean
-                disableSelfServiceScrape:
-                  description: |-
-                    DisableSelfServiceScrape controls creation of VMServiceScrape by operator
-                    for the application.
-                    Has priority over `VM_DISABLESELFSERVICESCRAPECREATION` operator env variable
-                  type: boolean
-                dnsConfig:
-                  description: |-
-                    Specifies the DNS parameters of a pod.
-                    Parameters specified here will be merged to the generated DNS
-                    configuration based on DNSPolicy.
-                  items:
-                    x-kubernetes-preserve-unknown-fields: true
-                  properties:
-                    nameservers:
-                      description: |-
-                        A list of DNS name server IP addresses.
-                        This will be appended to the base nameservers generated from DNSPolicy.
-                        Duplicated nameservers will be removed.
-                      items:
-                        type: string
-                      type: array
-                      x-kubernetes-list-type: atomic
-                    options:
-                      description: |-
-                        A list of DNS resolver options.
-                        This will be merged with the base options generated from DNSPolicy.
-                        Duplicated entries will be removed. Resolution options given in Options
-                        will override those that appear in the base DNSPolicy.
-                      items:
-                        description:
-                          PodDNSConfigOption defines DNS resolver options of a
-                          pod.
-                        properties:
-                          name:
-                            description: |-
-                              Name is this DNS resolver option's name.
-                              Required.
-                            type: string
-                          value:
-                            description:
-                              Value is this DNS resolver option's value.
-                            type: string
-                        type: object
-                      type: array
-                      x-kubernetes-list-type: atomic
-                    searches:
-                      description: |-
-                        A list of DNS search domains for host-name lookup.
-                        This will be appended to the base search paths generated from DNSPolicy.
-                        Duplicated search paths will be removed.
-                      items:
-                        type: string
-                      type: array
-                      x-kubernetes-list-type: atomic
-                  type: object
-                dnsPolicy:
-                  description: DNSPolicy sets DNS policy for the pod
-                  type: string
-                extraArgs:
-                  additionalProperties:
-                    type: string
-                  description: |-
-                    ExtraArgs that will be passed to the application container
-                    for example remoteWrite.tmpDataPath: /tmp
-                  type: object
-                extraEnvs:
-                  description:
-                    ExtraEnvs that will be passed to the application container
-                  items:
-                    description:
-                      EnvVar represents an environment variable present in a
-                      Container.
-                    properties:
-                      name:
-                        description:
-                          Name of the environment variable. Must be a
-                          C_IDENTIFIER.
-                        type: string
-                      value:
-                        description: |-
-                          Variable references $(VAR_NAME) are expanded
-                          using the previously defined environment variables in the container and
-                          any service environment variables. If a variable cannot be resolved,
-                          the reference in the input string will be unchanged. Double $$ are reduced
-                          to a single $, which allows for escaping the $(VAR_NAME) syntax: i.e.
-                          "$$(VAR_NAME)" will produce the string literal "$(VAR_NAME)".
-                          Escaped references will never be expanded, regardless of whether the variable
-                          exists or not.
-                          Defaults to "".
-                        type: string
-                    required:
-                      - name
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  type: array
-                extraEnvsFrom:
-                  description: |-
-                    ExtraEnvsFrom defines source of env variables for the application container
-                    could either be secret or configmap
-                  items:
-                    description:
-                      EnvFromSource represents the source of a set of ConfigMaps
-                    properties:
-                      configMapRef:
-                        description: The ConfigMap to select from
-                        properties:
-                          name:
-                            default: ''
-                            description: |-
-                              Name of the referent.
-                              This field is effectively required, but due to backwards compatibility is
-                              allowed to be empty. Instances of this type with an empty value here are
-                              almost certainly wrong.
-                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                            type: string
-                          optional:
-                            description:
-                              Specify whether the ConfigMap must be defined
-                            type: boolean
-                        type: object
-                        x-kubernetes-map-type: atomic
-                      prefix:
-                        description:
-                          An optional identifier to prepend to each key in the
-                          ConfigMap. Must be a C_IDENTIFIER.
-                        type: string
-                      secretRef:
-                        description: The Secret to select from
-                        properties:
-                          name:
-                            default: ''
-                            description: |-
-                              Name of the referent.
-                              This field is effectively required, but due to backwards compatibility is
-                              allowed to be empty. Instances of this type with an empty value here are
-                              almost certainly wrong.
-                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                            type: string
-                          optional:
-                            description:
-                              Specify whether the Secret must be defined
-                            type: boolean
-                        type: object
-                        x-kubernetes-map-type: atomic
-                    type: object
-                  type: array
-                futureRetention:
-                  description: |-
-                    FutureRetention for the stored logs
-                    Log entries with timestamps bigger than now+futureRetention are rejected during data ingestion; see https://docs.victoriametrics.com/victorialogs/#retention
-                  pattern: ^[0-9]+(h|d|y)?$
-                  type: string
-                host_aliases:
-                  description: |-
-                    HostAliasesUnderScore provides mapping for ip and hostname,
-                    that would be propagated to pod,
-                    cannot be used with HostNetwork.
-                    Has Priority over hostAliases field
-                  items:
-                    description: |-
-                      HostAlias holds the mapping between IP and hostnames that will be injected as an entry in the
-                      pod's hosts file.
-                    properties:
-                      hostnames:
-                        description: Hostnames for the above IP address.
-                        items:
-                          type: string
-                        type: array
-                        x-kubernetes-list-type: atomic
-                      ip:
-                        description: IP address of the host file entry.
-                        type: string
-                    required:
-                      - ip
-                    type: object
-                  type: array
-                hostAliases:
-                  description: |-
-                    HostAliases provides mapping for ip and hostname,
-                    that would be propagated to pod,
-                    cannot be used with HostNetwork.
-                  items:
-                    description: |-
-                      HostAlias holds the mapping between IP and hostnames that will be injected as an entry in the
-                      pod's hosts file.
-                    properties:
-                      hostnames:
-                        description: Hostnames for the above IP address.
-                        items:
-                          type: string
-                        type: array
-                        x-kubernetes-list-type: atomic
-                      ip:
-                        description: IP address of the host file entry.
-                        type: string
-                    required:
-                      - ip
-                    type: object
-                  type: array
-                hostNetwork:
-                  description:
-                    HostNetwork controls whether the pod may use the node
-                    network namespace
-                  type: boolean
-                image:
-                  description: |-
-                    Image - docker image settings
-                    if no specified operator uses default version from operator config
-                  properties:
-                    pullPolicy:
-                      description: PullPolicy describes how to pull docker image
-                      type: string
-                    repository:
-                      description:
-                        Repository contains name of docker image + it's
-                        repository if needed
-                      type: string
-                    tag:
-                      description: Tag contains desired docker image version
-                      type: string
-                  type: object
-                imagePullSecrets:
-                  description: |-
-                    ImagePullSecrets An optional list of references to secrets in the same namespace
-                    to use for pulling images from registries
-                    see https://kubernetes.io/docs/concepts/containers/images/#referring-to-an-imagepullsecrets-on-a-pod
-                  items:
-                    description: |-
-                      LocalObjectReference contains enough information to let you locate the
-                      referenced object inside the same namespace.
-                    properties:
-                      name:
-                        default: ''
-                        description: |-
-                          Name of the referent.
-                          This field is effectively required, but due to backwards compatibility is
-                          allowed to be empty. Instances of this type with an empty value here are
-                          almost certainly wrong.
-                          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                        type: string
-                    type: object
-                    x-kubernetes-map-type: atomic
-                  type: array
-                initContainers:
-                  description: |-
-                    InitContainers allows adding initContainers to the pod definition.
-                    Any errors during the execution of an initContainer will lead to a restart of the Pod.
-                    More info: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-                  items:
-                    description:
-                      A single application container that you want to run within
-                      a pod.
-                    required:
-                      - name
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  type: array
-                livenessProbe:
-                  description: LivenessProbe that will be added CRD pod
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
-                logFormat:
-                  description: LogFormat for VLSingle to be configured with.
-                  enum:
-                    - default
-                    - json
-                  type: string
-                logIngestedRows:
-                  description:
-                    Whether to log all the ingested log entries; this can be
-                    useful for debugging of data ingestion; see
-                    https://docs.victoriametrics.com/victorialogs/data-ingestion/
-                  type: boolean
-                logLevel:
-                  description: LogLevel for VictoriaLogs to be configured with.
-                  enum:
-                    - INFO
-                    - WARN
-                    - ERROR
-                    - FATAL
-                    - PANIC
-                  type: string
-                logNewStreams:
-                  description:
-                    LogNewStreams Whether to log creation of new streams; this
-                    can be useful for debugging of high cardinality issues with
-                    log streams; see
-                    https://docs.victoriametrics.com/victorialogs/keyconcepts/#stream-fields
-                  type: boolean
-                managedMetadata:
-                  description: |-
-                    ManagedMetadata defines metadata that will be added to the all objects
-                    created by operator for the given CustomResource
-                  properties:
-                    annotations:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        Annotations is an unstructured key value map stored with a resource that may be
-                        set by external tools to store and retrieve arbitrary metadata. They are not
-                        queryable and should be preserved when modifying objects.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
-                      type: object
-                    labels:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        Labels Map of string keys and values that can be used to organize and categorize
-                        (scope and select) objects.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
-                      type: object
-                  type: object
-                minReadySeconds:
-                  description: |-
-                    MinReadySeconds defines a minimum number of seconds to wait before starting update next pod
-                    if previous in healthy state
-                    Has no effect for VLogs and VMSingle
-                  format: int32
-                  type: integer
-                nodeSelector:
-                  additionalProperties:
-                    type: string
-                  description:
-                    NodeSelector Define which Nodes the Pods are scheduled on.
-                  type: object
-                paused:
-                  description: |-
-                    Paused If set to true all actions on the underlying managed objects are not
-                    going to be performed, except for delete actions.
-                  type: boolean
-                podMetadata:
-                  description:
-                    PodMetadata configures Labels and Annotations which are
-                    propagated to the VLSingle pods.
-                  properties:
-                    annotations:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        Annotations is an unstructured key value map stored with a resource that may be
-                        set by external tools to store and retrieve arbitrary metadata. They are not
-                        queryable and should be preserved when modifying objects.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
-                      type: object
-                    labels:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        Labels Map of string keys and values that can be used to organize and categorize
-                        (scope and select) objects. May match selectors of replication controllers
-                        and services.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
-                      type: object
-                    name:
-                      description: |-
-                        Name must be unique within a namespace. Is required when creating resources, although
-                        some resources may allow a client to request the generation of an appropriate name
-                        automatically. Name is primarily intended for creation idempotence and configuration
-                        definition.
-                        Cannot be updated.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
-                      type: string
-                  type: object
-                port:
-                  description: Port listen address
-                  type: string
-                priorityClassName:
-                  description: PriorityClassName class assigned to the Pods
-                  type: string
-                readinessGates:
-                  description: ReadinessGates defines pod readiness gates
-                  items:
-                    description:
-                      PodReadinessGate contains the reference to a pod condition
-                    properties:
-                      conditionType:
-                        description:
-                          ConditionType refers to a condition in the pod's
-                          condition list with matching type.
-                        type: string
-                    required:
-                      - conditionType
-                    type: object
-                  type: array
-                readinessProbe:
-                  description: ReadinessProbe that will be added CRD pod
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
-                replicaCount:
-                  description:
-                    ReplicaCount is the expected size of the Application.
-                  format: int32
-                  type: integer
-                resources:
-                  description: |-
-                    Resources container resource request and limits, https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-                    if not defined default resources from operator config will be used
-                  properties:
-                    claims:
-                      description: |-
-                        Claims lists the names of resources, defined in spec.resourceClaims,
-                        that are used by this container.
-
-                        This is an alpha field and requires enabling the
-                        DynamicResourceAllocation feature gate.
-
-                        This field is immutable. It can only be set for containers.
-                      items:
-                        description:
-                          ResourceClaim references one entry in
-                          PodSpec.ResourceClaims.
-                        properties:
-                          name:
-                            description: |-
-                              Name must match the name of one entry in pod.spec.resourceClaims of
-                              the Pod where this field is used. It makes that resource available
-                              inside a container.
-                            type: string
-                          request:
-                            description: |-
-                              Request is the name chosen for a request in the referenced claim.
-                              If empty, everything from the claim is made available, otherwise
-                              only the result of this request.
-                            type: string
-                        required:
-                          - name
-                        type: object
-                      type: array
-                      x-kubernetes-list-map-keys:
-                        - name
-                      x-kubernetes-list-type: map
-                    limits:
-                      additionalProperties:
-                        anyOf:
-                          - type: integer
-                          - type: string
-                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                        x-kubernetes-int-or-string: true
-                      description: |-
-                        Limits describes the maximum amount of compute resources allowed.
-                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-                      type: object
-                    requests:
-                      additionalProperties:
-                        anyOf:
-                          - type: integer
-                          - type: string
-                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                        x-kubernetes-int-or-string: true
-                      description: |-
-                        Requests describes the minimum amount of compute resources required.
-                        If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
-                        otherwise to an implementation-defined value. Requests cannot exceed Limits.
-                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-                      type: object
-                  type: object
-                retentionMaxDiskSpaceUsageBytes:
-                  description: |-
-                    RetentionMaxDiskSpaceUsageBytes for the stored logs
-                    VictoriaLogs keeps at least two last days of data in order to guarantee that the logs for the last day can be returned in queries.
-                    This means that the total disk space usage may exceed the -retention.maxDiskSpaceUsageBytes,
-                    if the size of the last two days of data exceeds the -retention.maxDiskSpaceUsageBytes.
-                    https://docs.victoriametrics.com/victorialogs/#retention-by-disk-space-usage
-                  type: string
-                retentionPeriod:
-                  description: |-
-                    RetentionPeriod for the stored logs
-                    https://docs.victoriametrics.com/victorialogs/#retention
-                  pattern: ^[0-9]+(h|d|w|y)?$
-                  type: string
-                revisionHistoryLimitCount:
-                  description: |-
-                    The number of old ReplicaSets to retain to allow rollback in deployment or
-                    maximum number of revisions that will be maintained in the Deployment revision history.
-                    Has no effect at StatefulSets
-                    Defaults to 10.
-                  format: int32
-                  type: integer
-                runtimeClassName:
-                  description: |-
-                    RuntimeClassName - defines runtime class for kubernetes pod.
-                    https://kubernetes.io/docs/concepts/containers/runtime-class/
-                  type: string
-                schedulerName:
-                  description: SchedulerName - defines kubernetes scheduler name
-                  type: string
                 secrets:
                   description: |-
                     Secrets is a list of Secrets in the same namespace as the Application
@@ -576,25 +55,6 @@ spec:
                   items:
                     type: string
                   type: array
-                securityContext:
-                  description: |-
-                    SecurityContext holds pod-level security attributes and common container settings.
-                    This defaults to the default PodSecurityContext.
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
-                serviceAccountName:
-                  description:
-                    ServiceAccountName is the name of the ServiceAccount to use
-                    to run the pods
-                  type: string
-                serviceScrapeSpec:
-                  description:
-                    ServiceScrapeSpec that will be added to vlsingle
-                    VMServiceScrape spec
-                  required:
-                    - endpoints
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 serviceSpec:
                   description:
                     ServiceSpec that will be added to vlsingle service spec
@@ -646,10 +106,285 @@ spec:
                   required:
                     - spec
                   type: object
-                startupProbe:
-                  description: StartupProbe that will be added to CRD pod
+                serviceAccountName:
+                  description:
+                    ServiceAccountName is the name of the ServiceAccount to use
+                    to run the pods
+                  type: string
+                topologySpreadConstraints:
+                  description: |-
+                    TopologySpreadConstraints embedded kubernetes pod configuration option,
+                    controls how pods are spread across your cluster among failure-domains
+                    such as regions, zones, nodes, and other user-defined topology domains
+                    https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+                  items:
+                    description:
+                      TopologySpreadConstraint specifies how to spread matching
+                      pods among the given topology.
+                    required:
+                      - maxSkew
+                      - topologyKey
+                      - whenUnsatisfiable
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  type: array
+                logLevel:
+                  description: LogLevel for VictoriaLogs to be configured with.
+                  enum:
+                    - INFO
+                    - WARN
+                    - ERROR
+                    - FATAL
+                    - PANIC
+                  type: string
+                dnsConfig:
+                  description: |-
+                    Specifies the DNS parameters of a pod.
+                    Parameters specified here will be merged to the generated DNS
+                    configuration based on DNSPolicy.
+                  items:
+                    x-kubernetes-preserve-unknown-fields: true
+                  properties:
+                    nameservers:
+                      description: |-
+                        A list of DNS name server IP addresses.
+                        This will be appended to the base nameservers generated from DNSPolicy.
+                        Duplicated nameservers will be removed.
+                      items:
+                        type: string
+                      type: array
+                      x-kubernetes-list-type: atomic
+                    options:
+                      description: |-
+                        A list of DNS resolver options.
+                        This will be merged with the base options generated from DNSPolicy.
+                        Duplicated entries will be removed. Resolution options given in Options
+                        will override those that appear in the base DNSPolicy.
+                      items:
+                        description:
+                          PodDNSConfigOption defines DNS resolver options of a
+                          pod.
+                        properties:
+                          name:
+                            description: |-
+                              Name is this DNS resolver option's name.
+                              Required.
+                            type: string
+                          value:
+                            description:
+                              Value is this DNS resolver option's value.
+                            type: string
+                        type: object
+                      type: array
+                      x-kubernetes-list-type: atomic
+                    searches:
+                      description: |-
+                        A list of DNS search domains for host-name lookup.
+                        This will be appended to the base search paths generated from DNSPolicy.
+                        Duplicated search paths will be removed.
+                      items:
+                        type: string
+                      type: array
+                      x-kubernetes-list-type: atomic
                   type: object
-                  x-kubernetes-preserve-unknown-fields: true
+                nodeSelector:
+                  additionalProperties:
+                    type: string
+                  description:
+                    NodeSelector Define which Nodes the Pods are scheduled on.
+                  type: object
+                retentionPeriod:
+                  description: |-
+                    RetentionPeriod for the stored logs
+                    https://docs.victoriametrics.com/victorialogs/#retention
+                  pattern: ^[0-9]+(h|d|w|y)?$
+                  type: string
+                volumes:
+                  description: |-
+                    Volumes allows configuration of additional volumes on the output Deployment/StatefulSet definition.
+                    Volumes specified will be appended to other volumes that are generated.
+                    / +optional
+                  items:
+                    description:
+                      Volume represents a named volume in a pod that may be
+                      accessed by any container in the pod.
+                    required:
+                      - name
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  type: array
+                imagePullSecrets:
+                  description: |-
+                    ImagePullSecrets An optional list of references to secrets in the same namespace
+                    to use for pulling images from registries
+                    see https://kubernetes.io/docs/concepts/containers/images/#referring-to-an-imagepullsecrets-on-a-pod
+                  items:
+                    description: |-
+                      LocalObjectReference contains enough information to let you locate the
+                      referenced object inside the same namespace.
+                    properties:
+                      name:
+                        default: ''
+                        description: |-
+                          Name of the referent.
+                          This field is effectively required, but due to backwards compatibility is
+                          allowed to be empty. Instances of this type with an empty value here are
+                          almost certainly wrong.
+                          More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                        type: string
+                    type: object
+                    x-kubernetes-map-type: atomic
+                  type: array
+                storageMetadata:
+                  description:
+                    StorageMeta defines annotations and labels attached to PVC
+                    for given vlsingle CR
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Annotations is an unstructured key value map stored with a resource that may be
+                        set by external tools to store and retrieve arbitrary metadata. They are not
+                        queryable and should be preserved when modifying objects.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Labels Map of string keys and values that can be used to organize and categorize
+                        (scope and select) objects. May match selectors of replication controllers
+                        and services.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
+                      type: object
+                    name:
+                      description: |-
+                        Name must be unique within a namespace. Is required when creating resources, although
+                        some resources may allow a client to request the generation of an appropriate name
+                        automatically. Name is primarily intended for creation idempotence and configuration
+                        definition.
+                        Cannot be updated.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
+                      type: string
+                  type: object
+                extraEnvsFrom:
+                  description: |-
+                    ExtraEnvsFrom defines source of env variables for the application container
+                    could either be secret or configmap
+                  items:
+                    description:
+                      EnvFromSource represents the source of a set of ConfigMaps
+                    properties:
+                      configMapRef:
+                        description: The ConfigMap to select from
+                        properties:
+                          name:
+                            default: ''
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                          optional:
+                            description:
+                              Specify whether the ConfigMap must be defined
+                            type: boolean
+                        type: object
+                        x-kubernetes-map-type: atomic
+                      prefix:
+                        description:
+                          An optional identifier to prepend to each key in the
+                          ConfigMap. Must be a C_IDENTIFIER.
+                        type: string
+                      secretRef:
+                        description: The Secret to select from
+                        properties:
+                          name:
+                            default: ''
+                            description: |-
+                              Name of the referent.
+                              This field is effectively required, but due to backwards compatibility is
+                              allowed to be empty. Instances of this type with an empty value here are
+                              almost certainly wrong.
+                              More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            type: string
+                          optional:
+                            description:
+                              Specify whether the Secret must be defined
+                            type: boolean
+                        type: object
+                        x-kubernetes-map-type: atomic
+                    type: object
+                  type: array
+                hostAliases:
+                  description: |-
+                    HostAliases provides mapping for ip and hostname,
+                    that would be propagated to pod,
+                    cannot be used with HostNetwork.
+                  items:
+                    description: |-
+                      HostAlias holds the mapping between IP and hostnames that will be injected as an entry in the
+                      pod's hosts file.
+                    properties:
+                      hostnames:
+                        description: Hostnames for the above IP address.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      ip:
+                        description: IP address of the host file entry.
+                        type: string
+                    required:
+                      - ip
+                    type: object
+                  type: array
+                extraEnvs:
+                  description:
+                    ExtraEnvs that will be passed to the application container
+                  items:
+                    description:
+                      EnvVar represents an environment variable present in a
+                      Container.
+                    properties:
+                      name:
+                        description:
+                          Name of the environment variable. Must be a
+                          C_IDENTIFIER.
+                        type: string
+                      value:
+                        description: |-
+                          Variable references $(VAR_NAME) are expanded
+                          using the previously defined environment variables in the container and
+                          any service environment variables. If a variable cannot be resolved,
+                          the reference in the input string will be unchanged. Double $$ are reduced
+                          to a single $, which allows for escaping the $(VAR_NAME) syntax: i.e.
+                          "$$(VAR_NAME)" will produce the string literal "$(VAR_NAME)".
+                          Escaped references will never be expanded, regardless of whether the variable
+                          exists or not.
+                          Defaults to "".
+                        type: string
+                    required:
+                      - name
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  type: array
+                containers:
+                  description: |-
+                    Containers property allows to inject additions sidecars or to patch existing containers.
+                    It can be useful for proxies, backup, etc.
+                  items:
+                    description:
+                      A single application container that you want to run within
+                      a pod.
+                    required:
+                      - name
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  type: array
                 storage:
                   description: |-
                     Storage is the definition of how storage will be used by the VLSingle
@@ -857,44 +592,56 @@ spec:
                         PersistentVolume backing this claim.
                       type: string
                   type: object
-                storageDataPath:
-                  description: |-
-                    StorageDataPath disables spec.storage option and overrides arg for victoria-logs binary --storageDataPath,
-                    its users responsibility to mount proper device into given path.
-                  type: string
-                storageMetadata:
+                logNewStreams:
                   description:
-                    StorageMeta defines annotations and labels attached to PVC
-                    for given vlsingle CR
-                  properties:
-                    annotations:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        Annotations is an unstructured key value map stored with a resource that may be
-                        set by external tools to store and retrieve arbitrary metadata. They are not
-                        queryable and should be preserved when modifying objects.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
-                      type: object
-                    labels:
-                      additionalProperties:
-                        type: string
-                      description: |-
-                        Labels Map of string keys and values that can be used to organize and categorize
-                        (scope and select) objects. May match selectors of replication controllers
-                        and services.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
-                      type: object
-                    name:
-                      description: |-
-                        Name must be unique within a namespace. Is required when creating resources, although
-                        some resources may allow a client to request the generation of an appropriate name
-                        automatically. Name is primarily intended for creation idempotence and configuration
-                        definition.
-                        Cannot be updated.
-                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
-                      type: string
+                    LogNewStreams Whether to log creation of new streams; this
+                    can be useful for debugging of high cardinality issues with
+                    log streams; see
+                    https://docs.victoriametrics.com/victorialogs/keyconcepts/#stream-fields
+                  type: boolean
+                disableAutomountServiceAccountToken:
+                  description: |-
+                    DisableAutomountServiceAccountToken whether to disable serviceAccount auto mount by Kubernetes (available from v0.54.0).
+                    Operator will conditionally create volumes and volumeMounts for containers if it requires k8s API access.
+                    For example, vmagent and vm-config-reloader requires k8s API access.
+                    Operator creates volumes with name: "kube-api-access", which can be used as volumeMount for extraContainers if needed.
+                    And also adds VolumeMounts at /var/run/secrets/kubernetes.io/serviceaccount.
+                  type: boolean
+                minReadySeconds:
+                  description: |-
+                    MinReadySeconds defines a minimum number of seconds to wait before starting update next pod
+                    if previous in healthy state
+                    Has no effect for VLogs and VMSingle
+                  format: int32
+                  type: integer
+                logFormat:
+                  description: LogFormat for VLSingle to be configured with.
+                  enum:
+                    - default
+                    - json
+                  type: string
+                replicaCount:
+                  description:
+                    ReplicaCount is the expected size of the Application.
+                  format: int32
+                  type: integer
+                serviceScrapeSpec:
+                  description:
+                    ServiceScrapeSpec that will be added to vlsingle
+                    VMServiceScrape spec
+                  required:
+                    - endpoints
                   type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                startupProbe:
+                  description: StartupProbe that will be added to CRD pod
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                affinity:
+                  description:
+                    Affinity If specified, the pod's scheduling constraints.
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
                 syslogSpec:
                   description: SyslogSpec defines syslog listener configuration
                   properties:
@@ -1057,80 +804,112 @@ spec:
                         type: object
                       type: array
                   type: object
-                terminationGracePeriodSeconds:
-                  description:
-                    TerminationGracePeriodSeconds period for container graceful
-                    termination
-                  format: int64
-                  type: integer
-                tolerations:
-                  description: Tolerations If specified, the pod's tolerations.
-                  items:
-                    description: |-
-                      The pod this Toleration is attached to tolerates any taint that matches
-                      the triple <key,value,effect> using the matching operator <operator>.
-                    properties:
-                      effect:
-                        description: |-
-                          Effect indicates the taint effect to match. Empty means match all taint effects.
-                          When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-                        type: string
-                      key:
-                        description: |-
-                          Key is the taint key that the toleration applies to. Empty means match all taint keys.
-                          If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-                        type: string
-                      operator:
-                        description: |-
-                          Operator represents a key's relationship to the value.
-                          Valid operators are Exists and Equal. Defaults to Equal.
-                          Exists is equivalent to wildcard for value, so that a pod can
-                          tolerate all taints of a particular category.
-                        type: string
-                      tolerationSeconds:
-                        description: |-
-                          TolerationSeconds represents the period of time the toleration (which must be
-                          of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-                          it is not set, which means tolerate the taint forever (do not evict). Zero and
-                          negative values will be treated as 0 (evict immediately) by the system.
-                        format: int64
-                        type: integer
-                      value:
-                        description: |-
-                          Value is the taint value the toleration matches to.
-                          If the operator is Exists, the value should be empty, otherwise just a regular string.
-                        type: string
-                    type: object
-                  type: array
-                topologySpreadConstraints:
+                retentionMaxDiskSpaceUsageBytes:
                   description: |-
-                    TopologySpreadConstraints embedded kubernetes pod configuration option,
-                    controls how pods are spread across your cluster among failure-domains
-                    such as regions, zones, nodes, and other user-defined topology domains
-                    https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
-                  items:
-                    description:
-                      TopologySpreadConstraint specifies how to spread matching
-                      pods among the given topology.
-                    required:
-                      - maxSkew
-                      - topologyKey
-                      - whenUnsatisfiable
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  type: array
-                useDefaultResources:
+                    RetentionMaxDiskSpaceUsageBytes for the stored logs
+                    VictoriaLogs keeps at least two last days of data in order to guarantee that the logs for the last day can be returned in queries.
+                    This means that the total disk space usage may exceed the -retention.maxDiskSpaceUsageBytes,
+                    if the size of the last two days of data exceeds the -retention.maxDiskSpaceUsageBytes.
+                    https://docs.victoriametrics.com/victorialogs/#retention-by-disk-space-usage
+                  type: string
+                resources:
                   description: |-
-                    UseDefaultResources controls resource settings
-                    By default, operator sets built-in resource requirements
-                  type: boolean
-                useStrictSecurity:
+                    Resources container resource request and limits, https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                    if not defined default resources from operator config will be used
+                  properties:
+                    claims:
+                      description: |-
+                        Claims lists the names of resources, defined in spec.resourceClaims,
+                        that are used by this container.
+
+                        This is an alpha field and requires enabling the
+                        DynamicResourceAllocation feature gate.
+
+                        This field is immutable. It can only be set for containers.
+                      items:
+                        description:
+                          ResourceClaim references one entry in
+                          PodSpec.ResourceClaims.
+                        properties:
+                          name:
+                            description: |-
+                              Name must match the name of one entry in pod.spec.resourceClaims of
+                              the Pod where this field is used. It makes that resource available
+                              inside a container.
+                            type: string
+                          request:
+                            description: |-
+                              Request is the name chosen for a request in the referenced claim.
+                              If empty, everything from the claim is made available, otherwise
+                              only the result of this request.
+                            type: string
+                        required:
+                          - name
+                        type: object
+                      type: array
+                      x-kubernetes-list-map-keys:
+                        - name
+                      x-kubernetes-list-type: map
+                    limits:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: |-
+                        Limits describes the maximum amount of compute resources allowed.
+                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                      type: object
+                    requests:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: |-
+                        Requests describes the minimum amount of compute resources required.
+                        If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                        otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                        More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                      type: object
+                  type: object
+                dnsPolicy:
+                  description: DNSPolicy sets DNS policy for the pod
+                  type: string
+                readinessProbe:
+                  description: ReadinessProbe that will be added CRD pod
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                futureRetention:
                   description: |-
-                    UseStrictSecurity enables strict security mode for component
-                    it restricts disk writes access
-                    uses non-root user out of the box
-                    drops not needed security permissions
-                  type: boolean
+                    FutureRetention for the stored logs
+                    Log entries with timestamps bigger than now+futureRetention are rejected during data ingestion; see https://docs.victoriametrics.com/victorialogs/#retention
+                  pattern: ^[0-9]+(h|d|y)?$
+                  type: string
+                image:
+                  description: |-
+                    Image - docker image settings
+                    if no specified operator uses default version from operator config
+                  properties:
+                    pullPolicy:
+                      description: PullPolicy describes how to pull docker image
+                      type: string
+                    repository:
+                      description:
+                        Repository contains name of docker image + it's
+                        repository if needed
+                      type: string
+                    tag:
+                      description: Tag contains desired docker image version
+                      type: string
+                  type: object
+                runtimeClassName:
+                  description: |-
+                    RuntimeClassName - defines runtime class for kubernetes pod.
+                    https://kubernetes.io/docs/concepts/containers/runtime-class/
+                  type: string
                 volumeMounts:
                   description: |-
                     VolumeMounts allows configuration of additional VolumeMounts on the output Deployment/StatefulSet definition.
@@ -1198,20 +977,241 @@ spec:
                       - name
                     type: object
                   type: array
-                volumes:
+                logIngestedRows:
+                  description:
+                    Whether to log all the ingested log entries; this can be
+                    useful for debugging of data ingestion; see
+                    https://docs.victoriametrics.com/victorialogs/data-ingestion/
+                  type: boolean
+                livenessProbe:
+                  description: LivenessProbe that will be added CRD pod
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                schedulerName:
+                  description: SchedulerName - defines kubernetes scheduler name
+                  type: string
+                priorityClassName:
+                  description: PriorityClassName class assigned to the Pods
+                  type: string
+                configMaps:
                   description: |-
-                    Volumes allows configuration of additional volumes on the output Deployment/StatefulSet definition.
-                    Volumes specified will be appended to other volumes that are generated.
-                    / +optional
+                    ConfigMaps is a list of ConfigMaps in the same namespace as the Application
+                    object, which shall be mounted into the Application container
+                    at /etc/vm/configs/CONFIGMAP_NAME folder
+                  items:
+                    type: string
+                  type: array
+                readinessGates:
+                  description: ReadinessGates defines pod readiness gates
                   items:
                     description:
-                      Volume represents a named volume in a pod that may be
-                      accessed by any container in the pod.
+                      PodReadinessGate contains the reference to a pod condition
+                    properties:
+                      conditionType:
+                        description:
+                          ConditionType refers to a condition in the pod's
+                          condition list with matching type.
+                        type: string
+                    required:
+                      - conditionType
+                    type: object
+                  type: array
+                useDefaultResources:
+                  description: |-
+                    UseDefaultResources controls resource settings
+                    By default, operator sets built-in resource requirements
+                  type: boolean
+                revisionHistoryLimitCount:
+                  description: |-
+                    The number of old ReplicaSets to retain to allow rollback in deployment or
+                    maximum number of revisions that will be maintained in the Deployment revision history.
+                    Has no effect at StatefulSets
+                    Defaults to 10.
+                  format: int32
+                  type: integer
+                tolerations:
+                  description: Tolerations If specified, the pod's tolerations.
+                  items:
+                    description: |-
+                      The pod this Toleration is attached to tolerates any taint that matches
+                      the triple <key,value,effect> using the matching operator <operator>.
+                    properties:
+                      effect:
+                        description: |-
+                          Effect indicates the taint effect to match. Empty means match all taint effects.
+                          When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+                        type: string
+                      key:
+                        description: |-
+                          Key is the taint key that the toleration applies to. Empty means match all taint keys.
+                          If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+                        type: string
+                      operator:
+                        description: |-
+                          Operator represents a key's relationship to the value.
+                          Valid operators are Exists and Equal. Defaults to Equal.
+                          Exists is equivalent to wildcard for value, so that a pod can
+                          tolerate all taints of a particular category.
+                        type: string
+                      tolerationSeconds:
+                        description: |-
+                          TolerationSeconds represents the period of time the toleration (which must be
+                          of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
+                          it is not set, which means tolerate the taint forever (do not evict). Zero and
+                          negative values will be treated as 0 (evict immediately) by the system.
+                        format: int64
+                        type: integer
+                      value:
+                        description: |-
+                          Value is the taint value the toleration matches to.
+                          If the operator is Exists, the value should be empty, otherwise just a regular string.
+                        type: string
+                    type: object
+                  type: array
+                podMetadata:
+                  description:
+                    PodMetadata configures Labels and Annotations which are
+                    propagated to the VLSingle pods.
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Annotations is an unstructured key value map stored with a resource that may be
+                        set by external tools to store and retrieve arbitrary metadata. They are not
+                        queryable and should be preserved when modifying objects.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Labels Map of string keys and values that can be used to organize and categorize
+                        (scope and select) objects. May match selectors of replication controllers
+                        and services.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
+                      type: object
+                    name:
+                      description: |-
+                        Name must be unique within a namespace. Is required when creating resources, although
+                        some resources may allow a client to request the generation of an appropriate name
+                        automatically. Name is primarily intended for creation idempotence and configuration
+                        definition.
+                        Cannot be updated.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
+                      type: string
+                  type: object
+                host_aliases:
+                  description: |-
+                    HostAliasesUnderScore provides mapping for ip and hostname,
+                    that would be propagated to pod,
+                    cannot be used with HostNetwork.
+                    Has Priority over hostAliases field
+                  items:
+                    description: |-
+                      HostAlias holds the mapping between IP and hostnames that will be injected as an entry in the
+                      pod's hosts file.
+                    properties:
+                      hostnames:
+                        description: Hostnames for the above IP address.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                      ip:
+                        description: IP address of the host file entry.
+                        type: string
+                    required:
+                      - ip
+                    type: object
+                  type: array
+                port:
+                  description: Port listen address
+                  type: string
+                hostNetwork:
+                  description:
+                    HostNetwork controls whether the pod may use the node
+                    network namespace
+                  type: boolean
+                extraArgs:
+                  additionalProperties:
+                    type: string
+                  description: |-
+                    ExtraArgs that will be passed to the application container
+                    for example remoteWrite.tmpDataPath: /tmp
+                  type: object
+                terminationGracePeriodSeconds:
+                  description:
+                    TerminationGracePeriodSeconds period for container graceful
+                    termination
+                  format: int64
+                  type: integer
+                paused:
+                  description: |-
+                    Paused If set to true all actions on the underlying managed objects are not
+                    going to be performed, except for delete actions.
+                  type: boolean
+                useStrictSecurity:
+                  description: |-
+                    UseStrictSecurity enables strict security mode for component
+                    it restricts disk writes access
+                    uses non-root user out of the box
+                    drops not needed security permissions
+                  type: boolean
+                storageDataPath:
+                  description: |-
+                    StorageDataPath disables spec.storage option and overrides arg for victoria-logs binary --storageDataPath,
+                    its users responsibility to mount proper device into given path.
+                  type: string
+                managedMetadata:
+                  description: |-
+                    ManagedMetadata defines metadata that will be added to the all objects
+                    created by operator for the given CustomResource
+                  properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Annotations is an unstructured key value map stored with a resource that may be
+                        set by external tools to store and retrieve arbitrary metadata. They are not
+                        queryable and should be preserved when modifying objects.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
+                      type: object
+                    labels:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Labels Map of string keys and values that can be used to organize and categorize
+                        (scope and select) objects.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
+                      type: object
+                  type: object
+                initContainers:
+                  description: |-
+                    InitContainers allows adding initContainers to the pod definition.
+                    Any errors during the execution of an initContainer will lead to a restart of the Pod.
+                    More info: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+                  items:
+                    description:
+                      A single application container that you want to run within
+                      a pod.
                     required:
                       - name
                     type: object
                     x-kubernetes-preserve-unknown-fields: true
                   type: array
+                disableSelfServiceScrape:
+                  description: |-
+                    DisableSelfServiceScrape controls creation of VMServiceScrape by operator
+                    for the application.
+                    Has priority over `VM_DISABLESELFSERVICESCRAPECREATION` operator env variable
+                  type: boolean
+                securityContext:
+                  description: |-
+                    SecurityContext holds pod-level security attributes and common container settings.
+                    This defaults to the default PodSecurityContext.
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
               type: object
             status:
               description: VLSingleStatus defines the observed state of VLSingle

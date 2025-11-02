@@ -26,6 +26,13 @@ log() {
 }
 
 check_bi_version() {
+    # If there's a BI_OVERRIDE_LOC, then assume the
+    # user knows what they're doing
+    #
+    # (hey that's me and that's not always true)
+    if [ -n "${BI_OVERRIDE_LOC:-""}" ]; then
+        return 0
+    fi
     test -f "${VERSION_LOC}"
 }
 

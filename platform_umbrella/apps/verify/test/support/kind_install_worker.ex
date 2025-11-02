@@ -39,30 +39,30 @@ defmodule Verify.KindInstallWorker do
   def terminate(_reason, %{bi_binary: nil} = _state), do: :ok
   def terminate(_reason, state), do: do_stop_all(state)
 
-  # determine bi_binary if necessary
-  def handle_call({:start, args}, _from, %{bi_binary: nil} = state) do
-    do_start(args, %{state | bi_binary: PathHelper.find_bi()})
+  def handle_call({:start, {:cmd, _cmd, slug, _host} = args}, from, state) do
+    # update state and return continuation so we can catch exit on timeout and rage
+    {:noreply, %{state | started: Map.put(state.started, slug, "")}, {:continue, {args, from}}}
   end
 
-  def handle_call({:start, args}, _from, state) do
-    do_start(args, state)
-  end
-
-  # determine bi_binary if necessary
-  def handle_call(:stop_all, _from, %{bi_binary: nil} = state) do
-    do_stop_all(%{state | bi_binary: PathHelper.find_bi()})
+  def handle_call({:start, {:spec, _identifier, slug} = args}, from, state) do
+    # update state and return continuation so we can catch exit on timeout and rage
+    {:noreply, %{state | started: Map.put(state.started, slug, "")}, {:continue, {args, from}}}
   end
 
   def handle_call(:stop_all, _from, state) do
     do_stop_all(state)
   end
 
-  def handle_call({:rage, output}, _from, %{bi_binary: nil} = state) do
-    do_rage(output, %{state | bi_binary: PathHelper.find_bi()})
+  def handle_call({:rage, slug}, _from, state) do
+    do_rage_single(slug, state)
   end
 
-  def handle_call({:rage, output}, _from, state) do
-    do_rage(output, state)
+  def handle_call({:rage_all, output}, _from, state) do
+    do_rage_all(output, state)
+  end
+
+  def handle_continue({args, from}, state) do
+    do_start(args, from, state)
   end
 
   def handle_info({:EXIT, _, _}, state), do: {:noreply, state}
@@ -72,23 +72,14 @@ defmodule Verify.KindInstallWorker do
     {:noreply, state}
   end
 
-  defp do_start({:cmd, cmd, slug, host}, state) do
+  defp do_start({:cmd, cmd, _slug, host}, from, state) do
     Logger.debug("Running #{cmd}")
 
-    latest_release =
-      [{Tesla.Middleware.FollowRedirects, max_redirects: 3}]
-      |> Tesla.client()
-      |> Tesla.get!("https://api.github.com/repos/batteries-included/batteries-included/releases/latest")
-      |> Map.get(:body)
-      |> Jason.decode!()
-      |> Map.get("name")
-
-    Logger.debug("Using latest release: #{latest_release}")
-
     env = [
-      {"BI_VERSION_TAG", latest_release},
       {"BI_ADDITIONAL_HOSTS", host},
+      {"BI_NVIDIA_AUTO_DISCOVERY", "false"},
       {"BI_ALLOW_TEST_KEYS", "true"},
+      {"BI_OVERRIDE_LOC", state.bi_binary},
       {"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")},
       {"VERSION_OVERRIDE", System.get_env("VERSION_OVERRIDE", "")}
     ]
@@ -97,33 +88,33 @@ defmodule Verify.KindInstallWorker do
     # we need to figure out how to connect to it programatically first
     # so for now just start it
     {_output, 0} = System.shell(cmd, env: env, stderr_to_stdout: true)
-    {:reply, {:ok}, %{state | started: Map.put(state.started, slug, "")}}
+    GenServer.reply(from, {:ok})
+    {:noreply, state}
   end
 
-  defp do_start({:spec, identifier, slug}, state) do
+  defp do_start({:spec, identifier, slug}, from, state) do
     {_spec, path} = build_install_spec(identifier, slug, state)
     Logger.debug("Starting with #{path}")
 
     env = [
       {"BI_IMAGE_TAR", System.get_env("BI_IMAGE_TAR", "")},
+      {"BI_NVIDIA_AUTO_DISCOVERY", "false"},
       {"BI_ALLOW_TEST_KEYS", "true"}
     ]
 
-    common_start(fn -> System.cmd(state.bi_binary, ["start", path], env: env) end, state, slug, path)
-  end
-
-  defp common_start(func, state, slug, path) do
-    with {_output, 0} <- func.(),
+    with {_output, 0} <- System.cmd(state.bi_binary, ["start", path], env: env),
          {kube_config_path, 0} <- System.cmd(state.bi_binary, ["debug", "kube-config-path", slug]),
          {:ok, url} <- get_url(kube_config_path) do
       Logger.debug("Kind install started for #{slug}")
       Logger.debug("Kubeconfig found at #{kube_config_path}")
 
-      {:reply, {:ok, url, kube_config_path}, %{state | started: Map.put(state.started, slug, path)}}
+      GenServer.reply(from, {:ok, url, kube_config_path})
+      {:noreply, %{state | started: Map.put(state.started, slug, path)}}
     else
       error ->
         Logger.warning("Unable to start Kind install from #{path}")
-        {:reply, error, state}
+        GenServer.reply(from, {:error, error})
+        {:noreply, state}
     end
   end
 
@@ -148,14 +139,32 @@ defmodule Verify.KindInstallWorker do
     :ok
   end
 
-  defp do_rage(output, %{bi_binary: bi, started: started} = state) do
+  defp do_rage_single(slug, %{bi_binary: bi, started: started} = state) do
+    case Map.get(started, slug) do
+      nil ->
+        {:reply, {:error, :slug_not_found}, state}
+
+      _path ->
+        case System.cmd(bi, ["rage", "-v=debug", slug, "-o=-"], stderr_to_stdout: false) do
+          {stdout, 0} ->
+            Logger.debug("Rage ran successfully for #{slug}")
+            {:reply, {:ok, stdout}, state}
+
+          {output, exit_code} ->
+            Logger.error("Rage failed for #{slug}: #{output}")
+            {:reply, {:error, {exit_code, output}}, state}
+        end
+    end
+  end
+
+  defp do_rage_all(output, %{bi_binary: bi, started: started} = state) do
     time = :second |> :erlang.system_time() |> to_string()
 
     results =
-      Enum.map(started, fn {slug, path} ->
+      Enum.map(started, fn {slug, _path} ->
         full_output = Path.join(output, "#{time}_#{slug}.json")
 
-        case System.cmd(bi, ["rage", path, "-o=#{full_output}"], stderr_to_stdout: true) do
+        case System.cmd(bi, ["rage", slug, "-o=#{full_output}"], stderr_to_stdout: true) do
           {stdout, 0} ->
             Logger.debug("Rage ran: #{inspect(stdout)}")
             :ok
@@ -207,8 +216,12 @@ defmodule Verify.KindInstallWorker do
     GenServer.call(target, {:start, {:spec, identifier, slug}}, 15 * 60 * 1000)
   end
 
-  def rage(target, output) do
-    GenServer.call(target, {:rage, output}, 15 * 60 * 1000)
+  def rage(target, slug) do
+    GenServer.call(target, {:rage, slug}, 15 * 60 * 1000)
+  end
+
+  def rage_all(target, output) do
+    GenServer.call(target, {:rage_all, output}, 15 * 60 * 1000)
   end
 
   def stop_all(target) do

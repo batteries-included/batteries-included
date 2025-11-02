@@ -4,7 +4,7 @@ defmodule HomeBaseWeb.MixProject do
   def project do
     [
       app: :home_base_web,
-      version: "1.5.0",
+      version: "1.12.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -14,7 +14,9 @@ defmodule HomeBaseWeb.MixProject do
       start_permanent: Mix.env() == :prod,
       test_paths: test_paths(Mix.env()),
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      listeners: listeners()
     ]
   end
 
@@ -40,7 +42,7 @@ defmodule HomeBaseWeb.MixProject do
       # Web Serving
       {:bandit, "~> 1.4"},
       {:websock_adapter, "~> 0.5"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 1.0"},
       {:jason, "~> 1.4"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.6"},
@@ -67,4 +69,6 @@ defmodule HomeBaseWeb.MixProject do
       "ecto.reset": []
     ]
   end
+
+  defp listeners, do: [Phoenix.CodeReloader]
 end

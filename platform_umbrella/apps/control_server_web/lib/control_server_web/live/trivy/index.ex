@@ -19,6 +19,7 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
 
     {:ok,
      socket
+     |> assign(:current_action, live_action)
      |> assign(:objects, objects(live_action))
      |> assign(:page_title, title_text(live_action))
      |> assign_current_page()}
@@ -37,8 +38,21 @@ defmodule ControlServerWeb.Live.TrivyReportsIndex do
   def handle_params(_params, _url, socket) do
     live_action = socket.assigns.live_action
 
+    case Map.get(socket.assigns, :current_action) do
+      nil ->
+        :ok
+
+      topic ->
+        # unsubscribe from previous resource
+        KubeEventCenter.unsubscribe(topic)
+    end
+
+    # subscribe to current resource
+    :ok = KubeEventCenter.subscribe(live_action)
+
     {:noreply,
      socket
+     |> assign(:current_action, live_action)
      |> assign(:objects, objects(live_action))
      |> assign(:page_title, title_text(live_action))}
   end

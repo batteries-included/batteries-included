@@ -92,10 +92,6 @@ defmodule KubeServices.SystemState.Summarizer do
     KeycloakSummarizer.snapshot()
   end
 
-  defp get_install_status do
-    KubeServices.ET.InstallStatusWorker.get_status()
-  end
-
   defp get_stable_versions do
     KubeServices.ET.StableVersionsWorker.get_stable_versions()
   end
@@ -109,12 +105,11 @@ defmodule KubeServices.SystemState.Summarizer do
       Task.async(&get_db_state/0),
       Task.async(&get_kube_state/0),
       Task.async(&get_keycloak_state/0),
-      Task.async(&get_install_status/0),
       Task.async(&get_stable_versions/0)
     ]
 
     # Split the result list into something we can use
-    [base_map, kube, keycloak, install_status, stable_versions_report] = Task.await_many(tasks)
+    [base_map, kube, keycloak, stable_versions_report] = Task.await_many(tasks)
 
     base = struct(StateSummary, base_map)
 
@@ -122,7 +117,6 @@ defmodule KubeServices.SystemState.Summarizer do
       base
       | keycloak_state: keycloak,
         kube_state: kube,
-        install_status: install_status,
         stable_versions_report: stable_versions_report,
         captured_at: DateTime.utc_now()
     }

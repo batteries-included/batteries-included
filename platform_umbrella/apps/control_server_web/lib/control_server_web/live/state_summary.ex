@@ -58,13 +58,6 @@ defmodule ControlServerWeb.Live.StateSummary do
           <% end %>
         </ul>
       </.panel>
-      <.panel :if={@state_summary.install_status} title="Install Status">
-        <.data_list>
-          <:item title="Status">{@state_summary.install_status.status}</:item>
-          <:item title="Message">{@state_summary.install_status.message}</:item>
-          <:item title="Expires">{@state_summary.install_status.exp}</:item>
-        </.data_list>
-      </.panel>
 
       <.panel title="Stable Versions">
         <.data_list>

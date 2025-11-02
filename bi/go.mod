@@ -14,12 +14,19 @@ require (
 	github.com/aws/smithy-go v1.23.0
 	github.com/docker/docker v28.4.0+incompatible
 	github.com/docker/go-connections v0.6.0
+	github.com/fsnotify/fsnotify v1.9.0
 	github.com/go-jose/go-jose/v4 v4.1.2
+	github.com/gorilla/mux v1.8.0
 	github.com/lmittmann/tint v1.1.2
 	github.com/neilotoole/slogt v1.1.0
 	github.com/noisysockets/network v0.23.0
 	github.com/noisysockets/noisysockets v0.28.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.83.0
+	github.com/pulumi/pulumi-azure-native-sdk/authorization/v2 v2.90.0
+	github.com/pulumi/pulumi-azure-native-sdk/compute/v2 v2.90.0
+	github.com/pulumi/pulumi-azure-native-sdk/containerservice/v2 v2.90.0
+	github.com/pulumi/pulumi-azure-native-sdk/network/v2 v2.90.0
+	github.com/pulumi/pulumi-azure-native-sdk/resources/v2 v2.90.0
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.13
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.2
 	github.com/pulumi/pulumi/sdk/v3 v3.193.0
@@ -28,6 +35,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.11.1
 	github.com/vbauerster/mpb/v8 v8.10.2
+	go.yaml.in/yaml/v3 v3.0.4
 	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476
 	golang.org/x/mod v0.27.0
 	golang.org/x/sync v0.16.0
@@ -87,7 +95,6 @@ require (
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.6.2 // indirect
@@ -158,6 +165,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/esc v0.17.0 // indirect
+	github.com/pulumi/pulumi-azure-native-sdk/v2 v2.90.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
@@ -188,7 +196,6 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
-	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.40.0 // indirect
 	golang.org/x/net v0.42.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect

@@ -345,6 +345,17 @@ do_set_version() {
     sed -i.bak "s/themeVersion: '${old_version}'/themeVersion: '${new_version}'/g" "${ROOT_DIR}/keycloak-theme/vite.config.ts"
     rm "${ROOT_DIR}/keycloak-theme/vite.config.ts.bak"
 
+    log "Changing version in package.json files"
+    # Change the version in the package.json files
+    local package_json_files
+    package_json_files=$(git ls-files '*.json' | grep 'package.json' || true)
+    while read -r package_file; do
+        directory=$(dirname "${package_file}")
+        bi_pushd "${directory}"
+        npm version "${new_version}" --no-git-tag-version >/dev/null
+        bi_popd
+    done <<<"${package_json_files}"
+
     # Change the base version in the bin/lib/common-functions.sh
     sed -i.bak "s/BASE_VERSION=\"${old_version}\"/BASE_VERSION=\"${new_version}\"/g" "${ROOT_DIR}/bin/lib/common-functions.sh"
     rm "${ROOT_DIR}/bin/lib/common-functions.sh.bak"

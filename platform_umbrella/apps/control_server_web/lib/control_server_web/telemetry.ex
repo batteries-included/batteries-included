@@ -11,11 +11,14 @@ defmodule ControlServerWeb.Telemetry do
   @impl Supervisor
   def init(_arg) do
     children = [
-      # Telemetry poller will execute the given period measurements
-      # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
-      {:telemetry_poller, measurements: periodic_measurements(), period: 10_000}
-      # Add reporters as children of your supervision tree.
-      # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
+      {:telemetry_poller, measurements: periodic_measurements(), period: 10_000},
+      {CommonCore.Metrics.Store,
+       name: ControlServerWeb.MetricsStore,
+       metrics_table: :control_server_web_metrics,
+       aggregated_table: :control_server_web_metrics_aggregated,
+       metrics: metrics()},
+      {CommonCore.Metrics.Reporter,
+       name: ControlServerWeb.MetricsReporter, store_target: ControlServerWeb.MetricsStore, metrics: metrics()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -32,28 +35,6 @@ defmodule ControlServerWeb.Telemetry do
         unit: {:native, :millisecond}
       ),
 
-      # Database Metrics
-      summary("control_server.repo.query.total_time",
-        unit: {:native, :millisecond},
-        description: "The sum of the other measurements"
-      ),
-      summary("control_server.repo.query.decode_time",
-        unit: {:native, :millisecond},
-        description: "The time spent decoding the data received from the database"
-      ),
-      summary("control_server.repo.query.query_time",
-        unit: {:native, :millisecond},
-        description: "The time spent executing the query"
-      ),
-      summary("control_server.repo.query.queue_time",
-        unit: {:native, :millisecond},
-        description: "The time spent waiting for a database connection"
-      ),
-      summary("control_server.repo.query.idle_time",
-        unit: {:native, :millisecond},
-        description: "The time the connection spent waiting before being checked out for the query"
-      ),
-
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),
@@ -63,10 +44,6 @@ defmodule ControlServerWeb.Telemetry do
   end
 
   defp periodic_measurements do
-    [
-      # A module, function and arguments to be invoked periodically.
-      # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {ControlServerWeb, :count_users, []}
-    ]
+    []
   end
 end

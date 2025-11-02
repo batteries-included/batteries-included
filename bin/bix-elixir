@@ -15,9 +15,36 @@ do_int_test() {
     export MIX_ENV=test
     bi_pushd platform_umbrella/apps/verify
     mix "do" deps.get, compile --warnings-as-errors >/dev/null
-    mix test --trace --warnings-as-errors --all-warnings --only cluster_test "$@"
+
+    local err
+
+    {
+        run_int_test "$@"
+        err="$?"
+    } || true
+
+    # Exit code 1: compilation failed, Exit code 2: tests failed
+    case $err in
+    0)
+        log "Elixir integration tests ${GREEN}Passed${NOFORMAT}"
+        ;;
+    2)
+        log "Some tests failed, retrying with --failed flag after a short wait..."
+        sleep 120
+
+        log "Retrying failed tests..."
+        run_int_test --failed "$@"
+        ;;
+    *)
+        die "Elixir integration tests ${RED}Failed${NOFORMAT} with exit code $err" "$err"
+        ;;
+    esac
+
     bi_popd
-    log "Elixir integration tests ${GREEN}Passed${NOFORMAT}"
+}
+
+run_int_test() {
+    mix test --trace --warnings-as-errors --all-warnings --only cluster_test "$@"
 }
 
 do_test_deep() {

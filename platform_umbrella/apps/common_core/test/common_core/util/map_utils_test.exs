@@ -3,6 +3,8 @@ defmodule CommonCore.Util.MapTest do
 
   import CommonCore.Util.Map
 
+  alias CommonCore.ExampleSchemas.EmbeddedMetaSchema
+
   doctest CommonCore.Util.Map
 
   describe "maybe_put/3" do
@@ -105,6 +107,122 @@ defmodule CommonCore.Util.MapTest do
 
       assert %{} = maybe_append(%{}, fn _ -> false end, "a", "b")
       assert %{"a" => nil} = maybe_append(%{"a" => nil}, fn m -> m["a"] == "blargh" end, "a", "b")
+    end
+  end
+
+  describe "from_struct/1" do
+    test "converts Ecto schemas to plain maps, removing metadata" do
+      # Create an embedded schema instance
+      schema = %EmbeddedMetaSchema{name: "test", age: 42}
+
+      result = from_struct(schema)
+
+      # Should be a plain map with only the actual field data
+      assert result == %{name: "test", age: 42, password: nil}
+
+      # Should not contain any Ecto metadata
+      refute Map.has_key?(result, :__meta__)
+      refute Map.has_key?(result, :__struct__)
+    end
+
+    test "converts regular schemas to plain maps, removing associations and virtual fields" do
+      alias CommonCore.ExampleSchemas.TodoSchema
+
+      # Create a schema with an embedded association
+      meta = %EmbeddedMetaSchema{name: "meta_test", age: 100}
+
+      todo = %TodoSchema{
+        name: "my-todo",
+        message: "test message",
+        meta: meta
+      }
+
+      result = from_struct(todo)
+
+      # Should contain regular fields but not associations or virtual fields
+      assert Map.has_key?(result, :name)
+      assert Map.has_key?(result, :message_override)
+
+      # Should not contain Ecto metadata
+      refute Map.has_key?(result, :__meta__)
+      refute Map.has_key?(result, :__struct__)
+      # virtual field from defaultable_field
+      refute Map.has_key?(result, :message)
+
+      # The embedded association might be present depending on how it's handled
+      # but metadata fields should definitely be gone
+    end
+
+    test "passes through regular maps unchanged" do
+      map = %{name: "test", value: 42, nested: %{key: "value"}}
+
+      result = from_struct(map)
+
+      assert result == map
+    end
+
+    test "converts non-Ecto structs to plain maps" do
+      # Test with a built-in Elixir struct
+      uri = %URI{scheme: "https", host: "example.com", port: 443}
+
+      result = from_struct(uri)
+
+      # Should be converted to a plain map
+      assert is_map(result)
+      refute is_struct(result)
+      assert result.scheme == "https"
+      assert result.host == "example.com"
+      assert result.port == 443
+    end
+
+    test "handles structs that don't have __schema__ function" do
+      # Create a simple struct without Ecto schema functionality
+
+      simple = %CommonCore.ExampleSchemas.SimpleStruct{name: "test", value: 123}
+
+      result = from_struct(simple)
+
+      # Should convert to plain map since it doesn't have __schema__
+      assert result == %{name: "test", value: 123}
+      refute Map.has_key?(result, :__struct__)
+    end
+
+    test "handles nil and empty values gracefully" do
+      # Test with nil
+      assert from_struct(nil) == nil
+
+      # Test with empty map
+      assert from_struct(%{}) == %{}
+    end
+
+    test "works with deeply nested structures" do
+      # Test with complex nested data
+      complex_map = %{
+        user: %{name: "John", age: 30},
+        items: [%{id: 1, name: "item1"}, %{id: 2, name: "item2"}],
+        metadata: %{created_at: "2024-01-01", updated_at: "2024-01-02"}
+      }
+
+      result = from_struct(complex_map)
+
+      # Should pass through unchanged since it's already a map
+      assert result == complex_map
+    end
+
+    test "preserves all field types correctly" do
+      # Create a schema with various field types
+      schema = %EmbeddedMetaSchema{
+        name: "test_user",
+        age: 25
+      }
+
+      result = from_struct(schema)
+
+      # Verify field types are preserved
+      assert is_binary(result.name)
+      assert is_integer(result.age)
+      assert result.name == "test_user"
+      assert result.age == 25
     end
   end
 end

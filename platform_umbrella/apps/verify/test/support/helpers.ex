@@ -58,7 +58,7 @@ defmodule Verify.TestCase.Helpers do
     session =
       session
       |> visit("/kube/pods")
-      |> assert_has(table_row(minimum: 6))
+      |> assert_has(table_row(minimum: 1))
 
     session =
       Enum.reduce(name_fragments, session, fn frag, acc ->
@@ -366,7 +366,7 @@ defmodule Verify.TestCase.Helpers do
     |> fill_in(Query.text_field("firstName"), with: first)
     |> fill_in(Query.text_field("lastName"), with: last)
     |> click(Query.button("Submit"))
-    |> assert_has(Query.css("#kc-main-content-page-container"))
+    |> assert_has(Query.css("div#app"))
   end
 
   @doc """

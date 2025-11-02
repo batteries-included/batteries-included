@@ -48,8 +48,23 @@ defmodule KubeBootstrap do
          :ok <- KubeBootstrap.Postgres.wait_for_postgres(conn, summary),
          # Create the second group of resources with the control server
          # This allows the user and passwords to be set before trying to boot.
-         {:ok, _} <-
-           KubeBootstrap.Kube.ensure_exists(conn, with_control_server) do
+         {:ok, _} <- KubeBootstrap.Kube.ensure_exists(conn, with_control_server) do
+      # Now if we were starting a control server we need to wait for it to be ready
+      # before we can consider the bootstrap complete
+      if length(with_control_server) == length(resources) do
+        Logger.info("No Control Server found to wait for")
+      else
+        Logger.info("Waiting for Control Server to be ready")
+        :ok = KubeBootstrap.ControlServer.wait_for_control_server(conn, summary)
+        Logger.info("Control Server is ready")
+        Logger.debug("Waiting for MetalLB to be ready")
+        # Sometimes metallb's speaker pod can take a while.
+        # There are 4 containers and they each take a second.
+        # So rather than get un-explained network errors
+        # we'll take our time here.
+        :ok = KubeBootstrap.MetalLB.wait_for_metallb(conn, summary)
+      end
+
       Logger.info("Bootstrap complete")
       :ok
     end
@@ -90,7 +105,7 @@ defmodule KubeBootstrap do
   end
 
   defp control_server?(resource) do
-    CommonCore.ApiVersionKind.resource_type!(resource) == :deployment &&
+    CommonCore.ApiVersionKind.resource_type!(resource) == :stateful_set &&
       CommonCore.Resources.FieldAccessors.name(resource) == "controlserver"
   end
 end

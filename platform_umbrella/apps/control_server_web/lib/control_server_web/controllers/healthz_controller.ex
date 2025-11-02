@@ -10,15 +10,16 @@ defmodule ControlServerWeb.HealthzController do
 
   - KubeState has some pods
   - SQL Repo can run a query
-  - InstallStatusWorker is running
   - SnapshotApplyWorker has a last success (even if it is nil)
   """
   action_fallback ControlServerWeb.FallbackController
 
   def index(conn, params) do
+    start = DateTime.utc_now()
     status = check_healthz(conn, params)
+    diff = DateTime.diff(DateTime.utc_now(), start, :millisecond)
 
-    Logger.debug("Healthz check: #{inspect(status)}", status: status)
+    Logger.debug("Healthz check: #{inspect(status)} in #{diff}ms", status: status)
 
     conn
     |> put_status(status[:status])
@@ -26,9 +27,7 @@ defmodule ControlServerWeb.HealthzController do
   end
 
   def check_healthz(conn, params) do
-    with {:ok, _} <- check_kube_state_healthz(conn, params),
-         {:ok, _} <- check_sql_repo_healthz(conn, params),
-         {:ok, _} <- check_install_status_healthz(conn, params),
+    with {:ok, _} <- check_sql_repo_healthz(conn, params),
          {:ok, _} <- check_snapshot_apply_worker_healthz(conn, params) do
       %{status: 200, message: "OK"}
     else
@@ -37,40 +36,8 @@ defmodule ControlServerWeb.HealthzController do
     end
   end
 
-  defp check_kube_state_healthz(_conn, _params) do
-    case KubeServices.KubeState.get_status() do
-      nil ->
-        {:error, "No KubeState updates"}
-
-      timestamp ->
-        now = DateTime.utc_now()
-
-        if DateTime.after?(now, DateTime.add(timestamp, 45, :minute)) do
-          {:error, "KubeState is unhealthy, #{DateTime.to_iso8601(timestamp)}"}
-        else
-          {:ok, "KubeState is healthy, #{DateTime.to_iso8601(timestamp)}"}
-        end
-    end
-  end
-
   defp check_sql_repo_healthz(_conn, _params) do
     Ecto.Adapters.SQL.query(ControlServer.Repo, "SELECT true", [])
-  end
-
-  defp check_install_status_healthz(_conn, _params) do
-    case KubeServices.ET.InstallStatusWorker.get_status() do
-      # Report healthy if the status returned.
-      # This keeps the controlserver running even if the install status is not ok.
-      # We want the control server to run and see if the status changes or clean up resources
-      #
-      # This check is simply here to make sure that the worker is running
-      %CommonCore.ET.InstallStatus{} = status ->
-        {:ok,
-         "InstallStatusWorker is healthy. staus: #{status.status} iss: #{status.iss} exp: #{status.exp} message: #{status.message}"}
-
-      _ ->
-        {:error, "InstallStatusWorker is not healthy"}
-    end
   end
 
   defp check_snapshot_apply_worker_healthz(_conn, _params) do

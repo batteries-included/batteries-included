@@ -4,7 +4,7 @@ defmodule ControlServer.MixProject do
   def project do
     [
       app: :control_server,
-      version: "1.5.0",
+      version: "1.12.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -45,7 +45,7 @@ defmodule ControlServer.MixProject do
 
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
-      {:k8s, "~> 2.7.0"},
+      {:k8s, "~> 2.8.0"},
       {:mint, "~> 1.0"},
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.6"},

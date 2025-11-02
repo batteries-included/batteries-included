@@ -39,7 +39,6 @@ defmodule ControlServerWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        namespace: ControlServerWeb,
         formats: [:html, :json],
         layouts: [html: ControlServerWeb.Layouts]
 

@@ -64,18 +64,33 @@ defmodule Verify.TestCase do
         Logger.debug("Starting Kind for spec: #{install_spec}")
         tmp_dir = get_tmp_dir(__MODULE__)
 
+        Application.put_env(:wallaby, :screenshot_dir, tmp_dir, persistent: true)
+
         kind_pid =
           start_supervised!({
             # the kind_install_worker cleans up after itself as it is stopped
             Verify.KindInstallWorker,
-            [name: {:via, Registry, {Verify.Registry, __MODULE__.KindInstallWorker, Verify.KindInstallWorker}}]
+            [
+              name: {:via, Registry, {Verify.Registry, __MODULE__.KindInstallWorker, Verify.KindInstallWorker}},
+              bi_binary: Verify.PathHelper.find_bi()
+            ]
           })
 
         {:ok, url, kube_config_path} =
-          Verify.KindInstallWorker.start_from_spec(kind_pid, install_spec, slug)
+          try do
+            Verify.KindInstallWorker.start_from_spec(kind_pid, install_spec, slug)
+          catch
+            :exit, value ->
+              Logger.error("failed to create cluster: #{inspect(value)}")
+              Verify.KindInstallWorker.rage_all(kind_pid, tmp_dir)
+              raise inspect(value)
+          end
 
         # check that we have all of the pre-pulled images before installing batteries
         :ok = wait_for_images(image_pid, @images)
+
+        # double check that control server is available
+        {:ok, _} = url |> build_retryable_get() |> retry()
 
         # install any requested batteries
         {:ok, session} = start_session(url)
@@ -85,7 +100,9 @@ defmodule Verify.TestCase do
             Verify.BatteryInstallWorker,
             [
               name: {:via, Registry, {Verify.Registry, __MODULE__.BatteryInstallWorker, Verify.BatteryInstallWorker}},
-              session: session
+              session: session,
+              rage_output: tmp_dir,
+              kind_worker_pid: kind_pid
             ]
           })
 
@@ -93,7 +110,7 @@ defmodule Verify.TestCase do
         on_exit(fn -> Wallaby.end_session(session) end)
 
         tested_version = CommonCore.Defaults.Images.batteries_included_version()
-        Logger.info("Testing version: #{tested_version} of batteries included: #{url}")
+        Logger.info("Testing version: #{tested_version} of batteries included: #{url} for #{slug}")
 
         {:ok,
          [

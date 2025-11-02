@@ -21,13 +21,10 @@ defmodule KubeServices.Batteries.BatteryCore do
          stable_versions_path: URLs.stable_versions_path(battery.config),
          project_snapshot_path: URLs.project_snapshot_path(battery.config)
        ]},
-      {KubeServices.ET.Usage, [home_client_pid: HomeBaseClient]},
-      {KubeServices.ET.Hosts, [home_client_pid: HomeBaseClient]},
-      {KubeServices.ET.InstallStatusWorker, [home_client_pid: HomeBaseClient, install_id: battery.config.install_id]},
       {KubeServices.ET.StableVersionsWorker, [home_client_pid: HomeBaseClient]},
       KubeServices.SystemState,
       KubeServices.SnapshotApply,
-      KubeServices.ResourceDeleter
+      KubeServices.ResourceDeleter.Worker
     ]
 
     Logger.debug("Starting BatteryCore")

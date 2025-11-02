@@ -14,14 +14,12 @@ defmodule ControlServerWeb.Batteries.TrivyOperatorForm do
 
       <.panel title="Configuration">
         <.fieldset>
-          <.field>
-            <:label>Trivy Repo</:label>
-            <.input field={@form[:trivy_repo]} />
-          </.field>
-          <.field>
-            <:label>Trivy Version Tag</:label>
-            <.input field={@form[:trivy_version_tag]} />
-          </.field>
+          <.defaultable_field label="Trivy Repo" field={@form[:trivy_repo]} />
+          <.image_version
+            field={@form[:trivy_version_tag_override]}
+            image_id={:aqua_trivy}
+            label="Trivy Version Tag"
+          />
         </.fieldset>
       </.panel>
 

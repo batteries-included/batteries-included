@@ -4,7 +4,7 @@ defmodule ControlServerWeb.MixProject do
   def project do
     [
       app: :control_server_web,
-      version: "1.5.0",
+      version: "1.12.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -14,7 +14,9 @@ defmodule ControlServerWeb.MixProject do
       test_paths: test_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      listeners: listeners()
     ]
   end
 
@@ -46,13 +48,13 @@ defmodule ControlServerWeb.MixProject do
       {:kube_services, in_umbrella: true},
       {:bandit, "~> 1.4"},
       {:websock_adapter, "~> 0.5"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 1.0"},
       {:inflex, "~> 2.1"},
       {:jason, "~> 1.4"},
 
       # K8s uses mint and mint_web_socket for HTTP requests
       # If it's detected as a dependency.
-      {:k8s, "~> 2.7.0"},
+      {:k8s, "~> 2.8.0"},
       {:mint, "~> 1.0"},
 
       # We use this to generate some names
@@ -91,4 +93,6 @@ defmodule ControlServerWeb.MixProject do
       "ecto.reset": []
     ]
   end
+
+  defp listeners, do: [Phoenix.CodeReloader]
 end

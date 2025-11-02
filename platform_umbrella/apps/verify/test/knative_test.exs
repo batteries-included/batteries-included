@@ -21,21 +21,24 @@ defmodule Verify.KnativeTest do
 
   # make sure knative is fully running before tests start
   setup_all %{control_url: url} do
-    {:ok, session} = start_session(url)
+    wrap do
+      {:ok, session} = start_session(url)
 
-    session
-    # wait a sec for knative to "install"
-    # it's actually quicker to pause here then to wait for future syncs
-    |> sleep(1_000)
-    # trigger a new summary
-    |> trigger_k8s_deploy()
-    |> assert_pods_in_deployment_running(@knative_ns, "activator")
-    |> assert_pods_in_deployment_running(@knative_ns, "autoscaler")
-    |> assert_pods_in_deployment_running(@knative_ns, "controller")
-    |> assert_pods_in_deployment_running(@knative_ns, "net-gateway-api-controller")
-    |> assert_pods_in_deployment_running(@knative_ns, "webhook")
+      session
+      # wait a sec for knative to "install"
+      # it's actually quicker to pause here then to wait for future syncs
+      |> sleep(1_000)
+      # trigger a new summary
+      |> trigger_k8s_deploy()
+      |> assert_pods_in_deployment_running(@knative_ns, "activator")
+      |> assert_pods_in_deployment_running(@knative_ns, "autoscaler")
+      |> assert_pods_in_deployment_running(@knative_ns, "controller")
+      |> assert_pods_in_deployment_running(@knative_ns, "net-gateway-api-controller")
+      |> assert_pods_in_deployment_running(@knative_ns, "webhook")
 
-    Wallaby.end_session(session)
+      Wallaby.end_session(session)
+      :ok
+    end
   end
 
   @container_panel Query.css("#containers_panel-containers")

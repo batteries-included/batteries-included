@@ -4,12 +4,12 @@ import (
 	"bi/pkg/cluster/util"
 	"fmt"
 
-	"github.com/pulumi/pulumi-azure-native/sdk/v2/go/azure-native/resources"
+	"github.com/pulumi/pulumi-azure-native-sdk/resources/v2"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-type resourceGroupConfig struct {
+type resourceGroupConfig struct{
 	resourceGroupName pulumi.StringPtrInput
 	location          pulumi.StringPtrInput
 	tags              pulumi.StringMapInput

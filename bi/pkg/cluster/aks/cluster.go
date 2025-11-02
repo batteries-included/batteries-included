@@ -4,9 +4,9 @@ import (
 	"bi/pkg/cluster/util"
 	"fmt"
 
-	"github.com/pulumi/pulumi-azure-native/sdk/v2/go/azure-native/authorization"
-	"github.com/pulumi/pulumi-azure-native/sdk/v2/go/azure-native/containerservice"
-	"github.com/pulumi/pulumi-azure-native/sdk/v2/go/azure-native/network"
+	"github.com/pulumi/pulumi-azure-native-sdk/authorization/v2"
+	"github.com/pulumi/pulumi-azure-native-sdk/containerservice/v2"
+	"github.com/pulumi/pulumi-azure-native-sdk/network/v2"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )

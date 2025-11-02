@@ -97,7 +97,29 @@ defmodule CommonCore.Installs.Batteries do
     Enum.map(batteries, &enrich_single_battery_config(&1, install))
   end
 
-  defp enrich_single_battery_config(%SystemBattery{type: :battery_core, config: config} = sb, %Installation{
+  # turn off upgrades for dev clusters
+  defp enrich_single_battery_config(
+         %SystemBattery{type: :battery_core, config: config} = sb,
+         %Installation{usage: usage} = install
+       )
+       when usage in ~w(internal_int_test development)a,
+       do: %{
+         sb
+         | config:
+             config
+             |> Map.merge(battery_core_config_from_install(install))
+             |> Map.merge(%{
+               upgrade_days_of_week: [false, false, false, false, false, false, false],
+               virtual_upgrade_days_of_week: []
+             })
+       }
+
+  defp enrich_single_battery_config(%SystemBattery{type: :battery_core, config: config} = sb, %Installation{} = install),
+    do: %{sb | config: Map.merge(config, battery_core_config_from_install(install))}
+
+  defp enrich_single_battery_config(battery, _install), do: battery
+
+  defp battery_core_config_from_install(%Installation{
          id: id,
          slug: slug,
          kube_provider: cluster_type,
@@ -105,20 +127,13 @@ defmodule CommonCore.Installs.Batteries do
          usage: usage,
          control_jwk: control_jwk
        }) do
-    new_config = %{
-      config
-      | cluster_type: cluster_type,
-        default_size: default_size,
-        cluster_name: slug,
-        install_id: id,
-        control_jwk: control_jwk,
-        usage: usage
+    %{
+      cluster_type: cluster_type,
+      default_size: default_size,
+      cluster_name: slug,
+      install_id: id,
+      control_jwk: control_jwk,
+      usage: usage
     }
-
-    %{sb | config: new_config}
-  end
-
-  defp enrich_single_battery_config(battery, _install) do
-    battery
   end
 end

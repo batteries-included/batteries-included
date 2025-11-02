@@ -4,7 +4,7 @@ defmodule ControlServer.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "1.5.0",
+      version: "1.12.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       releases: releases(),
@@ -19,7 +19,8 @@ defmodule ControlServer.Umbrella.MixProject do
         plt_ignore_apps: [:bandit, :myxql],
         plt_local_path: ".dialyzer",
         plt_core_path: ".dialyzer"
-      ]
+      ],
+      listeners: listeners()
     ]
   end
 
@@ -82,4 +83,6 @@ defmodule ControlServer.Umbrella.MixProject do
       release
     end
   end
+
+  defp listeners, do: [Phoenix.CodeReloader]
 end

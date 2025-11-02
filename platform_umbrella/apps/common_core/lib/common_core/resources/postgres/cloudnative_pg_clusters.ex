@@ -8,6 +8,7 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   alias CommonCore.Postgres.Cluster
   alias CommonCore.Postgres.PGUser
   alias CommonCore.Resources.Builder, as: B
+  alias CommonCore.Resources.CloudNativePGClusterParamters
   alias CommonCore.Resources.FilterResource, as: F
   alias CommonCore.Resources.Secret
   alias CommonCore.StateSummary.Batteries
@@ -56,13 +57,20 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     spec =
       %{
         instances: cluster.num_instances,
+        imageName: battery.config.default_postgres_image,
         storage: %{size: Integer.to_string(cluster.storage_size), resizeInUseVolumes: false},
+        enablePDB: false,
         enableSuperuserAccess: false,
         backup: %{},
         bootstrap: bootstrap(cluster, db),
         externalClusters: external_clusters(state, cluster),
         postgresql: %{
-          parameters: postgres_paramters(cluster)
+          parameters: CloudNativePGClusterParamters.params(cluster),
+          shared_preload_libraries: ["pg_cron", "pg_documentdb_core", "pg_documentdb"],
+          pg_hba: [
+            "host postgres all 127.0.0.1/32 trust",
+            "host postgres all ::1/128 trust"
+          ]
         },
         affinity: %{
           enablePodAntiAffinity: true,
@@ -98,7 +106,15 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
   defp bootstrap(%{restore_from_backup: backup_name}, _db) when not is_empty(backup_name),
     do: %{recovery: %{source: backup_name}}
 
-  defp bootstrap(_cluster, db), do: %{initdb: %{database: db.name, owner: db.owner, dataChecksums: true}}
+  defp bootstrap(_cluster, db),
+    do: %{
+      initdb: %{
+        database: db.name,
+        owner: db.owner,
+        dataChecksums: true,
+        postInitSQL: ["CREATE EXTENSION IF NOT EXISTS documentdb CASCADE;"]
+      }
+    }
 
   defp external_clusters(state, %{restore_from_backup: backup} = cluster) when not is_empty(backup) do
     namespace = PostgresState.cluster_namespace(state, cluster)
@@ -291,27 +307,6 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
     end
   end
 
-  defp postgres_paramters(_cluster) do
-    %{
-      "timezone" => "UTC",
-      "max_connections" => "200",
-      # Autovacuum
-      "autovacuum" => "on",
-      # Stats for the dashboards
-      "pg_stat_statements.max" => "10000",
-      "pg_stat_statements.track" => "all",
-      "pg_stat_statements.track_utility" => "false",
-
-      # Auto explain long running queries.
-      "auto_explain.log_min_duration" => "5s",
-      "auto_explain.log_analyze" => "true",
-      "auto_explain.log_buffers" => "true",
-      "auto_explain.sample_rate" => "0.01",
-      "pgaudit.log" => "role, ddl, misc_set",
-      "pgaudit.log_catalog" => "off"
-    }
-  end
-
   @spec user_role_secret(
           CommonCore.Batteries.SystemBattery.t(),
           CommonCore.StateSummary.t(),
@@ -380,6 +375,10 @@ defmodule CommonCore.Resources.CloudnativePGClusters do
       ensure: "present",
       passwordSecret: %{name: PostgresState.user_secret(state, cluster, user)}
     })
+    |> then(fn role ->
+      # special handling of battery-control-user until we have facilities to upgrade battery config
+      if user.username == "battery-control-user", do: Map.put(role, "superuser", true), else: role
+    end)
   end
 
   defp cluster_name(cluster), do: "pg-#{cluster.name}"

@@ -24,6 +24,8 @@ build() {
         log "Building ${BLUE}${target}${NOFORMAT}"
         bi_pushd "${ROOT_DIR}/${target}"
         SECONDS=0
+        # If there's any go generate directives, run them
+        go generate ./...
         CGO_ENABLED=0 go build \
             -tags "netgo osusergo static_build" \
             -o "${bin_path}" \
@@ -111,6 +113,7 @@ run_go_test() {
     local go_path=${1}
     bi_pushd "${go_path}"
     log "${BLUE}Running go tests${NOFORMAT} in ${go_path}"
+    go generate ./...
     gofmt -s -l -e .
     go vet ${TRACE:+-v} ./...
     # If trace run tests with --race -v

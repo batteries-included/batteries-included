@@ -3,6 +3,8 @@ defmodule ControlServerWeb.Batteries.VMAgentForm do
 
   use ControlServerWeb, :live_component
 
+  import ControlServerWeb.BatteriesFormSubcomponents
+
   def render(assigns) do
     ~H"""
     <div class="contents">
@@ -16,6 +18,11 @@ defmodule ControlServerWeb.Batteries.VMAgentForm do
             <:label>Cookie Secret</:label>
             <.input type="password" field={@form[:cookie_secret]} disabled={@action != :new} />
           </.field>
+          <.image_version
+            field={@form[:image_tag_override]}
+            image_id={:vm_agent}
+            label="VM Agent Tag"
+          />
         </.fieldset>
       </.panel>
     </div>

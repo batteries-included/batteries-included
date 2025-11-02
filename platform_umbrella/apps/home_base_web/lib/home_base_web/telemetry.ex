@@ -13,9 +13,16 @@ defmodule HomeBaseWeb.Telemetry do
     children = [
       # Telemetry poller will execute the given period measurements
       # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
-      {:telemetry_poller, measurements: periodic_measurements(), period: 10_000}
-      # Add reporters as children of your supervision tree.
-      # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
+      {:telemetry_poller, measurements: periodic_measurements(), period: 10_000},
+      # Metrics store for HomeBaseWeb-specific metrics
+      {CommonCore.Metrics.Store,
+       name: HomeBaseWeb.MetricsStore,
+       metrics_table: :home_base_web_metrics,
+       aggregated_table: :home_base_web_aggregated,
+       metrics: metrics()},
+      # Custom metrics reporter that stores metrics in ETS tables
+      {CommonCore.Metrics.Reporter,
+       name: HomeBaseWeb.MetricsReporter, store_target: HomeBaseWeb.MetricsStore, metrics: metrics()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -13,7 +13,7 @@ export default defineConfig({
       // This line needs to always be here
       // It is set by the bi-source script
       // to the current version of the batteries-included platform
-      themeVersion: '1.5.0',
+      themeVersion: '1.12.0',
     }),
   ],
 });

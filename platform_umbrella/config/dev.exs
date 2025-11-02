@@ -96,7 +96,7 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   level: :debug,
   metadata:
-    ~w(mfa request_id name namespace fail_cnt cluster retries_left type reason error errors realm action kind result pid id status pool)a,
+    ~w(mfa request_id name namespace fail_cnt cluster retries_left type reason error errors realm action kind result pid id status pool issue_id)a,
   handle_otp_reports: true,
   handle_sasl_reports: true,
   compile_time_purge_matching: [

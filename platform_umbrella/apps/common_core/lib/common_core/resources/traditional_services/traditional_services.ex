@@ -65,6 +65,7 @@ defmodule CommonCore.Resources.TraditionalServices do
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
     |> F.require_non_empty(service.ports)
+    |> F.require(R.valid?(spec))
   end
 
   defp service(service, battery, _state) do

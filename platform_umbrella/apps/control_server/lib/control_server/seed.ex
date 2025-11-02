@@ -81,10 +81,10 @@ defmodule ControlServer.Seed do
     |> Enum.each(fn pool ->
       case MetalLB.create_ip_address_pool(pool) do
         {:ok, created_pool} ->
-          Logger.debug("Created new ip address pool", pool: created_pool)
+          Logger.debug("Created new ip address pool #{inspect(created_pool)}")
 
         res ->
-          Logger.debug("IP address creation skipped", pool: pool, result: res)
+          Logger.debug("IP address creation skipped result: #{inspect(res)}")
       end
     end)
 

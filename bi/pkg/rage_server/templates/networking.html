@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Networking - {{.Filename}}</title>
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <script defer src="/static/js/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-lightest text-gray-darkest">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <nav class="mb-4 flex space-x-4">
+                <a href="/" class="text-primary hover:text-primary-dark">&larr; Back to Reports</a>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}" class="text-primary hover:text-primary-dark">Overview</a>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}/pods" class="text-primary hover:text-primary-dark">Pods</a>
+                <span class="text-gray-light">|</span>
+                <span class="text-gray-darkest font-medium">Networking</span>
+                <span class="text-gray-light">|</span>
+                <a href="/rage/{{urlEncode .Filename}}/logs" class="text-primary hover:text-primary-dark">Logs</a>
+            </nav>
+            <h1 class="text-4xl font-bold text-gray-darkest mb-2">
+                Network & Access Information
+            </h1>
+            <p class="text-gray-default">{{.Filename}}</p>
+        </header>
+
+        <main>
+            <!-- HTTP Routes -->
+            {{if .Report.HttpRoutes}}
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter mb-6">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">HTTP Routes</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-lighter">
+                        <thead class="bg-gray-lightest">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Namespace
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Hostnames
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-lighter">
+                            {{range .Report.HttpRoutes}}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-darkest">
+                                    {{.Name}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-light">
+                                    {{.Namespace}}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-light">
+                                    {{if .Hostnames}} {{range $i, $hostname := .Hostnames}} {{if
+                                    $i}}, {{end}}
+                                    <code class="bg-gray-lighter px-1 py-0.5 rounded text-xs">{{$hostname}}</code>
+                                    {{end}} {{else}}
+                                    <span class="text-gray-light">No hostnames</span>
+                                    {{end}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    {{if .Conditions}} {{range .Conditions}} {{if eq .Status
+                                    "True"}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800 mr-1">{{.Type}}</span>
+                                    {{else}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800 mr-1">{{.Type}}</span>
+                                    {{end}} {{end}} {{else}}
+                                    <span class="text-gray-light">No conditions</span>
+                                    {{end}}
+                                </td>
+                            </tr>
+                            <!-- Condition details row -->
+                            {{if .Conditions}}
+                            <tr>
+                                <td colspan="4" class="px-6 py-2 bg-gray-lightest">
+                                    <div class="text-sm">
+                                        {{range .Conditions}}
+                                        <div class="mb-2">
+                                            <strong class="text-gray-dark">{{.Type}}:</strong>
+                                            {{if .Message}}
+                                            <span class="text-gray-default">{{.Message}}</span>
+                                            {{end}} {{if .Reason}}
+                                            <span class="text-gray-light">({{.Reason}})</span>
+                                            {{end}} {{if .LastTransitionTime}}
+                                            <span class="text-gray-light text-xs">- {{.LastTransitionTime}}</span>
+                                            {{end}}
+                                        </div>
+                                        {{end}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {{end}} {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {{end}}
+
+            <!-- Services -->
+            {{if .Report.ServicesInfo}}
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter mb-6">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">Services</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-lighter">
+                        <thead class="bg-gray-lightest">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Namespace
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    ClusterIPs
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Type
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Ingresses
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-light uppercase tracking-wider">
+                                    Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-lighter">
+                            {{range .Report.ServicesInfo}}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-darkest">
+                                    {{.Name}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-light">
+                                    {{.Namespace}}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-light">
+                                    {{if .ClusterIPs}} {{range $i, $ip := .ClusterIPs}} {{if
+                                    $i}}, {{end}}
+                                    <code class="bg-gray-lighter px-1 py-0.5 rounded text-xs">{{$ip}}</code>
+                                    {{end}} {{else}}
+                                    <span class="text-gray-light">No IPs</span>
+                                    {{end}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-light">
+                                    {{.Type}}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-light">
+                                    {{if .Ingresses}} {{range $i, $ingress := .Ingresses}} {{if
+                                    $i}}, {{end}}
+                                    <code class="bg-gray-lighter px-1 py-0.5 rounded text-xs">{{$ingress}}</code>
+                                    {{end}} {{else}}
+                                    <span class="text-gray-light">No Ingress</span>
+                                    {{end}}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    {{if .Conditions}} {{range .Conditions}} {{if eq .Status
+                                    "True"}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800 mr-1">{{.Type}}</span>
+                                    {{else}}
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800 mr-1">{{.Type}}</span>
+                                    {{end}} {{end}} {{else}}
+                                    <span class="text-gray-light">No conditions</span>
+                                    {{end}}
+                                </td>
+                            </tr>
+                            <!-- Condition details row -->
+                            {{if .Conditions}}
+                            <tr>
+                                <td colspan="4" class="px-6 py-2 bg-gray-lightest">
+                                    <div class="text-sm">
+                                        {{range .Conditions}}
+                                        <div class="mb-2">
+                                            <strong class="text-gray-dark">{{.Type}}:</strong>
+                                            {{if .Message}}
+                                            <span class="text-gray-default">{{.Message}}</span>
+                                            {{end}} {{if .Reason}}
+                                            <span class="text-gray-light">({{.Reason}})</span>
+                                            {{end}} {{if .LastTransitionTime}}
+                                            <span class="text-gray-light text-xs">- {{.LastTransitionTime}}</span>
+                                            {{end}}
+                                        </div>
+                                        {{end}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {{end}}  {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {{end}}
+
+            <!-- Access Spec -->
+            {{if .Report.AccessSpec}}
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter mb-6">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">
+                        Access Specification
+                    </h2>
+                </div>
+                <div class="px-6 py-4">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-dark">Hostname:</span>
+                            <code
+                                class="bg-gray-lighter text-gray-darker px-3 py-1 rounded text-sm">{{.Report.AccessSpec.Hostname}}</code>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-dark">SSL Enabled:</span>
+                            {{if .Report.AccessSpec.SSL}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Yes
+                            </span>
+                            {{else}}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                No
+                            </span>
+                            {{end}}
+                        </div>
+                        {{if .Report.AccessSpec.Hostname}}
+                        <div class="pt-2 border-t border-gray-lighter">
+                            <span class="text-sm font-medium text-gray-dark">Access URL:</span>
+                            <div class="mt-1">
+                                <a href="{{.Report.AccessSpec.GetURL}}" target="_blank" rel="noopener noreferrer"
+                                    class="inline-flex items-center text-primary hover:text-primary-dark text-sm">
+                                    {{.Report.AccessSpec.GetURL}}
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                                        <path
+                                            d="M5 5a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+
+            <!-- Kind IPs -->
+            {{if .Report.KindIPs}}
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter mb-6">
+                <div class="px-6 py-4 border-b border-gray-lighter">
+                    <h2 class="text-xl font-semibold text-gray-darkest">
+                        Kind Cluster IPs
+                    </h2>
+                </div>
+                <div class="px-6 py-4">
+                    <code class="bg-gray-lighter text-gray-darker px-3 py-2 rounded">{{.Report.KindIPs}}</code>
+                </div>
+            </div>
+            {{end}} {{if and (not .Report.HttpRoutes) (not .Report.AccessSpec) (not
+            .Report.KindIPs)}}
+            <div class="bg-white shadow-sm rounded-lg border border-gray-lighter p-8 text-center">
+                <div class="text-gray-light mb-4">
+                    <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-darkest mb-2">
+                    No networking information
+                </h3>
+                <p class="text-gray-default">
+                    No network configuration data was collected in this rage report.
+                </p>
+            </div>
+            {{end}}
+        </main>
+    </div>
+</body>
+
+</html>

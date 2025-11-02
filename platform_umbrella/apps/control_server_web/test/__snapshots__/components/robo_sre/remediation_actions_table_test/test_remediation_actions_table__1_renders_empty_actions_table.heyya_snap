@@ -1,0 +1,14 @@
+<div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+  <table id="remediation-actions-table" class="w-[40rem] mt-4 sm:w-full">
+    <thead class="text-sm text-left leading-6 text-gray-darker dark:text-gray border-b border-gray-lighter dark:border-gray-darker">
+      <tr>
+        <th class="pb-4">Step</th><th class="pb-4">Action Type</th><th class="pb-4">Parameters</th><th class="pb-4">Status</th><th class="pb-4">Result</th>
+        
+      </tr>
+    </thead>
+
+    <tbody id="remediation-actions-table-body" class="relative text-sm leading-6 text-gray-darkest dark:text-gray-lighter before:content-[&#39;@&#39;] before:block before:leading-3 before:indent-[-99999px]">
+      
+    </tbody>
+  </table>
+</div>

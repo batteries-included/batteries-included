@@ -30,6 +30,7 @@ defmodule CommonCore.Resources.ControlServer do
     |> B.spec(spec)
     |> F.require_battery(state, :istio_gateway)
     |> F.require(battery.config.usage != :internal_dev)
+    |> F.require(R.valid?(spec))
   end
 
   resource(:service_account, battery, state) do
@@ -70,12 +71,12 @@ defmodule CommonCore.Resources.ControlServer do
     |> F.require(battery.config.usage != :internal_dev)
   end
 
-  resource(:deployment, battery, state) do
+  resource(:stateful_set, battery, state) do
     # This name is important
     # Do not change it without also changing kube_bootstrap
     #
     # We order the control server to be created last based upon
-    # this name for a  deployment.
+    # this name for a  stateful set.
     name = "controlserver"
 
     cluster = PostgresState.cluster(state, name: Defaults.ControlDB.cluster_name(), type: :internal)
@@ -131,7 +132,7 @@ defmodule CommonCore.Resources.ControlServer do
       |> B.match_labels_selector(@app_name)
       |> B.template(template)
 
-    :deployment
+    :stateful_set
     |> B.build_resource()
     |> B.name(name)
     |> B.namespace(core_namespace(state))
@@ -143,25 +144,34 @@ defmodule CommonCore.Resources.ControlServer do
     %{
       "command" => ["/app/bin/start", "control_server"],
       "ports" => [%{"containerPort" => @server_port}],
+      "startupProbe" => %{
+        "httpGet" => %{
+          "path" => "/healthz",
+          "port" => @server_port
+        },
+        # Try for 5 minutes to get ready
+        "periodSeconds" => 5,
+        "failureThreshold" => 60,
+        "timeoutSeconds" => 5
+      },
+      # readiness and liveness won't start until after startup probe succeeds
       "readinessProbe" => %{
         "httpGet" => %{
           "path" => "/healthz",
           "port" => @server_port
         },
-        # Try for 3 minutes to get ready
-        "periodSeconds" => 5,
-        "failureThreshold" => 60
+        "periodSeconds" => 10,
+        "failureThreshold" => 5,
+        "timeoutSeconds" => 3
       },
       "livenessProbe" => %{
         "httpGet" => %{
           "path" => "/healthz",
           "port" => @server_port
         },
-        # Wait until we have for sure been
-        # ready until testing liveness
-        "initialDelaySeconds" => 300,
         "periodSeconds" => 30,
-        "failureThreshold" => 5
+        "failureThreshold" => 5,
+        "timeoutSeconds" => 3
       }
     }
   end
@@ -223,6 +233,10 @@ defmodule CommonCore.Resources.ControlServer do
       %{
         "name" => "POSTGRES_PASSWORD",
         "valueFrom" => B.secret_key_ref(secret_name, "password")
+      },
+      %{
+        "name" => "POD_NAME",
+        "valueFrom" => %{"fieldRef" => %{"fieldPath" => "metadata.name"}}
       }
     ])
   end

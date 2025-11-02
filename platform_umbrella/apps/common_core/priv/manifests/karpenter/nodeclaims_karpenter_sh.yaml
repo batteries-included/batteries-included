@@ -99,7 +99,7 @@ spec:
                       type: string
                       x-kubernetes-validations:
                         - message: group may not be empty
-                          rule: self != ''
+                          rule: "self != ''"
                     kind:
                       description:
                         'Kind of the referent; More info:
@@ -107,7 +107,7 @@ spec:
                       type: string
                       x-kubernetes-validations:
                         - message: kind may not be empty
-                          rule: self != ''
+                          rule: "self != ''"
                     name:
                       description:
                         'Name of the referent; More info:
@@ -115,7 +115,7 @@ spec:
                       type: string
                       x-kubernetes-validations:
                         - message: name may not be empty
-                          rule: self != ''
+                          rule: "self != ''"
                   required:
                     - group
                     - kind
@@ -132,9 +132,9 @@ spec:
                     properties:
                       key:
                         description: The label key that the selector applies to.
-                        type: string
                         maxLength: 316
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
+                        type: string
                         x-kubernetes-validations:
                           - message: label domain "kubernetes.io" is restricted
                             rule:
@@ -169,7 +169,8 @@ spec:
                               label domain "karpenter.k8s.aws" is restricted
                             rule:
                               self in
-                              ["karpenter.k8s.aws/capacity-reservation-id",
+                              ["karpenter.k8s.aws/capacity-reservation-type",
+                              "karpenter.k8s.aws/capacity-reservation-id",
                               "karpenter.k8s.aws/ec2nodeclass",
                               "karpenter.k8s.aws/instance-encryption-in-transit-supported",
                               "karpenter.k8s.aws/instance-category",
@@ -190,7 +191,8 @@ spec:
                               "karpenter.k8s.aws/instance-gpu-memory",
                               "karpenter.k8s.aws/instance-accelerator-name",
                               "karpenter.k8s.aws/instance-accelerator-manufacturer",
-                              "karpenter.k8s.aws/instance-accelerator-count"] ||
+                              "karpenter.k8s.aws/instance-accelerator-count",
+                              "karpenter.k8s.aws/instance-capability-flex"] ||
                               !self.find("^([^/]+)").endsWith("karpenter.k8s.aws")
                       minValues:
                         description: |-
@@ -203,7 +205,6 @@ spec:
                         description: |-
                           Represents a key's relationship to a set of values.
                           Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-                        type: string
                         enum:
                           - In
                           - NotIn
@@ -211,6 +212,7 @@ spec:
                           - DoesNotExist
                           - Gt
                           - Lt
+                        type: string
                       values:
                         description: |-
                           An array of string values. If the operator is In or NotIn,
@@ -220,10 +222,10 @@ spec:
                           This array is replaced during a strategic merge patch.
                         items:
                           type: string
-                        type: array
-                        x-kubernetes-list-type: atomic
                         maxLength: 63
                         pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
+                        type: array
+                        x-kubernetes-list-type: atomic
                     required:
                       - key
                       - operator
@@ -232,21 +234,21 @@ spec:
                   type: array
                   x-kubernetes-validations:
                     - message:
-                        requirements with operator 'In' must have a value
-                        defined
+                        "requirements with operator 'In' must have a value
+                        defined"
                       rule:
                         "self.all(x, x.operator == 'In' ? x.values.size() != 0 :
                         true)"
                     - message:
-                        requirements operator 'Gt' or 'Lt' must have a single
-                        positive integer value
+                        "requirements operator 'Gt' or 'Lt' must have a single
+                        positive integer value"
                       rule:
                         "self.all(x, (x.operator == 'Gt' || x.operator == 'Lt')
                         ? (x.values.size() == 1 && int(x.values[0]) >= 0) :
                         true)"
                     - message:
-                        requirements with 'minValues' must have at least that
-                        many values specified in the 'values' field
+                        "requirements with 'minValues' must have at least that
+                        many values specified in the 'values' field"
                       rule:
                         "self.all(x, (x.operator == 'In' && has(x.minValues)) ?
                         x.values.size() >= x.minValues : true)"
@@ -283,28 +285,28 @@ spec:
                           Required. The effect of the taint on pods
                           that do not tolerate the taint.
                           Valid effects are NoSchedule, PreferNoSchedule and NoExecute.
-                        type: string
                         enum:
                           - NoSchedule
                           - PreferNoSchedule
                           - NoExecute
+                        type: string
                       key:
                         description:
                           Required. The taint key to be applied to a node.
-                        type: string
                         minLength: 1
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
+                        type: string
                       timeAdded:
-                        description: |-
-                          TimeAdded represents the time at which the taint was added.
-                          It is only written for NoExecute taints.
+                        description:
+                          TimeAdded represents the time at which the taint was
+                          added.
                         format: date-time
                         type: string
                       value:
                         description:
                           The taint value corresponding to the taint key.
-                        type: string
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
+                        type: string
                     required:
                       - effect
                       - key
@@ -322,28 +324,28 @@ spec:
                           Required. The effect of the taint on pods
                           that do not tolerate the taint.
                           Valid effects are NoSchedule, PreferNoSchedule and NoExecute.
-                        type: string
                         enum:
                           - NoSchedule
                           - PreferNoSchedule
                           - NoExecute
+                        type: string
                       key:
                         description:
                           Required. The taint key to be applied to a node.
-                        type: string
                         minLength: 1
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
+                        type: string
                       timeAdded:
-                        description: |-
-                          TimeAdded represents the time at which the taint was added.
-                          It is only written for NoExecute taints.
+                        description:
+                          TimeAdded represents the time at which the taint was
+                          added.
                         format: date-time
                         type: string
                       value:
                         description:
                           The taint value corresponding to the taint key.
-                        type: string
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
+                        type: string
                     required:
                       - effect
                       - key

@@ -114,7 +114,9 @@ defmodule CommonCore.ApiVersionKind do
     vm_alertmanager_config: {"operator.victoriametrics.com/v1beta1", "VMAlertmanagerConfig"},
     vm_anomaly: {"operator.victoriametrics.com/v1", "VMAnomaly"},
     vm_cluster: {"operator.victoriametrics.com/v1beta1", "VMCluster"},
-    vm_single: {"operator.victoriametrics.com/v1beta1", "VMSingle"}
+    vm_single: {"operator.victoriametrics.com/v1beta1", "VMSingle"},
+    vt_cluster: {"operator.victoriametrics.com/v1", "VTCluster"},
+    vt_single: {"operator.victoriametrics.com/v1", "VTSingle"}
   ]
 
   @alternatives [
