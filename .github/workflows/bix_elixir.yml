@@ -39,7 +39,7 @@ jobs:
       actions: read
       checks: write
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v4
         with:
           persist-credentials: false
 
@@ -52,7 +52,7 @@ jobs:
         run: bin/bix elixir --no-forward test-deep
 
       - name: Test Report
-        uses: dorny/test-reporter@dc3a92680fcc15842eef52e8c4606ea7ce6bd3f3 # v2
+        uses: dorny/test-reporter@7b7927aa7da8b82e81e755810cb51f39941a2cc7 # v2
         if: ${{github.actor != 'dependabot[bot]' &&  (success() || failure())}}
         with:
           name: Mix Test Results
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v4
         with:
           persist-credentials: false
 
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v4
         with:
           persist-credentials: false
 
