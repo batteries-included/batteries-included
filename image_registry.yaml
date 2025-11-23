@@ -34,8 +34,9 @@ aqua_trivy:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy_checks:
   name: mirror.gcr.io/aquasec/trivy-checks
-  default_tag: 1.11.3
+  default_tag: 1.12.1
   tags:
+    - 1.12.1
     - 1.11.3
     - 1.11.2
     - 1.11.1
@@ -53,6 +54,8 @@ aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.14.0
   tags:
+    - v2.16.0
+    - v2.15.0
     - v2.14.1
     - v2.14.0
     - v2.13.4
@@ -180,8 +183,9 @@ cloudnative_pg:
   tag_regex: ^\d+\.\d+\.\d+$
 cnpg_plugin_barman:
   name: ghcr.io/cloudnative-pg/plugin-barman-cloud
-  default_tag: v0.8.0
+  default_tag: v0.9.0
   tags:
+    - v0.9.0
     - v0.8.0
     - v0.7.0
     - v0.6.0
@@ -189,8 +193,9 @@ cnpg_plugin_barman:
   tag_regex: ^v\d+\.\d+\.\d+$
 cnpg_plugin_barman_sidecar:
   name: ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar
-  default_tag: v0.8.0
+  default_tag: v0.9.0
   tags:
+    - v0.9.0
     - v0.8.0
     - v0.7.0
     - v0.6.0
@@ -209,8 +214,9 @@ deploy_base:
   tag_regex: ^noble-\d{8}(\.\d)?-\w{9}$
 ferretdb:
   name: ghcr.io/ferretdb/ferretdb
-  default_tag: 2.5.0
+  default_tag: 2.7.0
   tags:
+    - 2.7.0
     - 2.5.0
     - 2.4.0
     - 2.3.1
@@ -231,8 +237,9 @@ forgejo:
   tag_regex: ^\d+\.\d+\.\d+-\d+$
 frrouting_frr:
   name: quay.io/frrouting/frr
-  default_tag: 10.4.1
+  default_tag: 10.5.0
   tags:
+    - 10.5.0
     - 10.4.1
     - 10.4.0
     - 10.3.1
@@ -258,12 +265,16 @@ grafana:
   name: docker.io/grafana/grafana
   default_tag: 11.4.5
   tags:
+    - 12.3.0
+    - 12.2.2
     - 12.2.1
     - 12.2.0
+    - 12.1.4
     - 12.1.3
     - 12.1.2
     - 12.1.1
     - 12.1.0
+    - 12.0.7
     - 12.0.6
     - 12.0.5
     - 12.0.4
@@ -271,6 +282,7 @@ grafana:
     - 12.0.2
     - 12.0.1
     - 12.0.0
+    - 11.6.8
     - 11.6.7
     - 11.6.6
     - 11.6.5
@@ -311,8 +323,9 @@ grafana:
   tag_regex: ^\d+\.\d+\.\d+$
 istio_cni:
   name: docker.io/istio/install-cni
-  default_tag: 1.27.3-distroless
+  default_tag: 1.28.0-distroless
   tags:
+    - 1.28.0-distroless
     - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
@@ -322,8 +335,9 @@ istio_cni:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_pilot:
   name: docker.io/istio/pilot
-  default_tag: 1.27.3-distroless
+  default_tag: 1.28.0-distroless
   tags:
+    - 1.28.0-distroless
     - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
@@ -345,8 +359,9 @@ istio_pilot:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_proxy:
   name: docker.io/istio/proxyv2
-  default_tag: 1.27.3-distroless
+  default_tag: 1.28.0-distroless
   tags:
+    - 1.28.0-distroless
     - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
@@ -368,8 +383,9 @@ istio_proxy:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_ztunnel:
   name: docker.io/istio/ztunnel
-  default_tag: 1.27.3-distroless
+  default_tag: 1.28.0-distroless
   tags:
+    - 1.28.0-distroless
     - 1.27.3-distroless
     - 1.27.2-distroless
     - 1.27.1-distroless
@@ -379,8 +395,9 @@ istio_ztunnel:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
-  default_tag: lab-4.4.10
+  default_tag: lab-4.5.0
   tags:
+    - lab-4.5.0
     - lab-4.4.10
     - lab-4.4.9
     - lab-4.4.7
@@ -453,8 +470,10 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.4.2
+  default_tag: 26.4.5
   tags:
+    - 26.4.5
+    - 26.4.4
     - 26.4.2
     - 26.4.1
     - 26.4.0
@@ -475,8 +494,9 @@ keycloak_upstream:
   tag_regex: ^\d+\.\d+\.\d+$
 kiali:
   name: quay.io/kiali/kiali
-  default_tag: v2.17.0
+  default_tag: v2.18.0
   tags:
+    - v2.18.0
     - v2.17.0
     - v2.16.0
     - v2.15.0
@@ -492,8 +512,11 @@ kiali:
   tag_regex: ^v\d+\.\d+\.\d+$
 kiwigrid_sidecar:
   name: quay.io/kiwigrid/k8s-sidecar
-  default_tag: 2.0.3
+  default_tag: 2.1.2
   tags:
+    - 2.1.2
+    - 2.1.1
+    - 2.1.0
     - 2.0.3
     - 1.30.11
     - 1.30.10
@@ -534,8 +557,9 @@ knative_gateway_api_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_controller:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.6
     - v1.19.5
@@ -550,8 +574,9 @@ knative_istio_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_istio_webhook:
   name: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.6
     - v1.19.5
@@ -681,8 +706,11 @@ kube_state_metrics:
   tag_regex: ^v\d+\.\d+\.\d+$
 loki:
   name: docker.io/grafana/loki
-  default_tag: 3.5.7
+  default_tag: 3.6.1
   tags:
+    - 3.6.1
+    - 3.6.0
+    - 3.5.8
     - 3.5.7
     - 3.5.6
     - 3.5.5
@@ -758,8 +786,9 @@ node_exporter:
   tag_regex: ^v\d+\.\d+\.\d+$
 node_feature_discovery:
   name: registry.k8s.io/nfd/node-feature-discovery
-  default_tag: v0.18.2
+  default_tag: v0.18.3
   tags:
+    - v0.18.3
     - v0.18.2
     - v0.18.1
     - v0.18.0
@@ -780,8 +809,9 @@ nvidia_device_plugin:
   tag_regex: ^v\d+\.\d+\.\d+$
 oauth2_proxy:
   name: quay.io/oauth2-proxy/oauth2-proxy
-  default_tag: v7.12.0
+  default_tag: v7.13.0
   tags:
+    - v7.13.0
     - v7.12.0
     - v7.11.0
     - v7.10.0
@@ -795,8 +825,12 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.12.8
+  default_tag: 0.13.0
   tags:
+    - 0.13.0
+    - 0.12.11
+    - 0.12.10
+    - 0.12.9
     - 0.12.8
     - 0.12.7
     - 0.12.6
@@ -845,15 +879,19 @@ postgresql:
   tag_regex: ^\d+\.\d+$
 postgresql_upstream:
   name: docker.io/library/postgres
-  default_tag: '18.0'
+  default_tag: '18.1'
   tags:
+    - '18.1'
     - '18.0'
     - '17.6'
   tag_regex: ^\d+\.\d+$
 promtail:
   name: docker.io/grafana/promtail
-  default_tag: 3.5.7
+  default_tag: 3.6.1
   tags:
+    - 3.6.1
+    - 3.6.0
+    - 3.5.8
     - 3.5.7
     - 3.5.6
     - 3.5.5
@@ -906,8 +944,9 @@ redis:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_exporter:
   name: quay.io/opstree/redis-exporter
-  default_tag: v1.78.0
+  default_tag: v1.79.0
   tags:
+    - v1.79.0
     - v1.78.0
     - v1.77.0
     - v1.76.0
@@ -980,8 +1019,9 @@ trust_manager_init:
   tag_regex: ^\d{8}\.\d+$
 ubuntu:
   name: docker.io/library/ubuntu
-  default_tag: noble-20251001
+  default_tag: noble-20251013
   tags:
+    - noble-20251013
     - noble-20251001
     - noble-20250925
     - noble-20250910
@@ -990,8 +1030,11 @@ ubuntu:
   tag_regex: ^noble-\d{8}(\.\d)?$
 vm_agent:
   name: mirror.gcr.io/victoriametrics/vmagent
-  default_tag: v1.128.0
+  default_tag: v1.130.0
   tags:
+    - v1.130.0
+    - v1.129.1
+    - v1.129.0
     - v1.128.0
     - v1.127.0
     - v1.126.0
@@ -1047,8 +1090,11 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: mirror.gcr.io/victoriametrics/vminsert
-  default_tag: v1.128.0-cluster
+  default_tag: v1.130.0-cluster
   tags:
+    - v1.130.0-cluster
+    - v1.129.1-cluster
+    - v1.129.0-cluster
     - v1.128.0-cluster
     - v1.127.0-cluster
     - v1.126.0-cluster
@@ -1136,8 +1182,11 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: mirror.gcr.io/victoriametrics/vmselect
-  default_tag: v1.128.0-cluster
+  default_tag: v1.130.0-cluster
   tags:
+    - v1.130.0-cluster
+    - v1.129.1-cluster
+    - v1.129.0-cluster
     - v1.128.0-cluster
     - v1.127.0-cluster
     - v1.126.0-cluster
@@ -1174,8 +1223,11 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: mirror.gcr.io/victoriametrics/vmstorage
-  default_tag: v1.128.0-cluster
+  default_tag: v1.130.0-cluster
   tags:
+    - v1.130.0-cluster
+    - v1.129.1-cluster
+    - v1.129.0-cluster
     - v1.128.0-cluster
     - v1.127.0-cluster
     - v1.126.0-cluster
