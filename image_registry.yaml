@@ -475,8 +475,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.4.6
+  default_tag: 26.4.7
   tags:
+    - 26.4.7
     - 26.4.6
     - 26.4.5
     - 26.4.4
@@ -940,8 +941,10 @@ promtail:
   tag_regex: ^\d+\.\d+\.\d+$
 redis:
   name: quay.io/opstree/redis
-  default_tag: v8.2.2
+  default_tag: v8.4.0
   tags:
+    - v8.4.0
+    - v8.2.3
     - v8.2.2
     - v8.2.1
     - v8.2.0
@@ -955,8 +958,10 @@ redis:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_exporter:
   name: quay.io/opstree/redis-exporter
-  default_tag: v1.79.0
+  default_tag: v1.80.1
   tags:
+    - v1.80.1
+    - v1.80.0
     - v1.79.0
     - v1.78.0
     - v1.77.0
