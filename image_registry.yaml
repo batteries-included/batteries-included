@@ -475,8 +475,9 @@ keycloak:
   tag_regex: ^\d+\.\d+\.\d+(?:-\w+)?$
 keycloak_upstream:
   name: quay.io/keycloak/keycloak
-  default_tag: 26.4.6
+  default_tag: 26.4.7
   tags:
+    - 26.4.7
     - 26.4.6
     - 26.4.5
     - 26.4.4
@@ -540,8 +541,9 @@ kiwigrid_sidecar:
   tag_regex: ^\d+\.\d+\.\d+$
 knative_gateway_api_controller:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.6
     - v1.19.5
@@ -553,8 +555,9 @@ knative_gateway_api_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_gateway_api_webhook:
   name: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.6
     - v1.19.5
@@ -835,8 +838,9 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.13.0
+  default_tag: 0.13.1
   tags:
+    - 0.13.1
     - 0.13.0
     - 0.12.11
     - 0.12.10
@@ -940,8 +944,10 @@ promtail:
   tag_regex: ^\d+\.\d+\.\d+$
 redis:
   name: quay.io/opstree/redis
-  default_tag: v8.2.2
+  default_tag: v8.4.0
   tags:
+    - v8.4.0
+    - v8.2.3
     - v8.2.2
     - v8.2.1
     - v8.2.0
@@ -955,8 +961,10 @@ redis:
   tag_regex: ^v\d+\.\d+\.\d+$
 redis_exporter:
   name: quay.io/opstree/redis-exporter
-  default_tag: v1.79.0
+  default_tag: v1.80.1
   tags:
+    - v1.80.1
+    - v1.80.0
     - v1.79.0
     - v1.78.0
     - v1.77.0
@@ -1041,8 +1049,9 @@ ubuntu:
   tag_regex: ^noble-\d{8}(\.\d)?$
 vm_agent:
   name: mirror.gcr.io/victoriametrics/vmagent
-  default_tag: v1.130.0
+  default_tag: v1.131.0
   tags:
+    - v1.131.0
     - v1.130.0
     - v1.129.1
     - v1.129.0
@@ -1101,8 +1110,9 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: mirror.gcr.io/victoriametrics/vminsert
-  default_tag: v1.130.0-cluster
+  default_tag: v1.131.0-cluster
   tags:
+    - v1.131.0-cluster
     - v1.130.0-cluster
     - v1.129.1-cluster
     - v1.129.0-cluster
@@ -1193,8 +1203,9 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: mirror.gcr.io/victoriametrics/vmselect
-  default_tag: v1.130.0-cluster
+  default_tag: v1.131.0-cluster
   tags:
+    - v1.131.0-cluster
     - v1.130.0-cluster
     - v1.129.1-cluster
     - v1.129.0-cluster
@@ -1234,8 +1245,9 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: mirror.gcr.io/victoriametrics/vmstorage
-  default_tag: v1.130.0-cluster
+  default_tag: v1.131.0-cluster
   tags:
+    - v1.131.0-cluster
     - v1.130.0-cluster
     - v1.129.1-cluster
     - v1.129.0-cluster
