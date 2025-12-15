@@ -22,7 +22,7 @@ require (
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.83.2
 	github.com/pulumi/pulumi-cloudinit/sdk v1.4.14
 	github.com/pulumi/pulumi-tls/sdk/v5 v5.2.3
-	github.com/pulumi/pulumi/sdk/v3 v3.207.0
+	github.com/pulumi/pulumi/sdk/v3 v3.212.0
 	github.com/samber/slog-multi v1.6.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
