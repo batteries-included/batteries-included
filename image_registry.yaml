@@ -20,8 +20,9 @@ aqua_node_collector:
   tag_regex: ^\d+\.\d+\.\d+$
 aqua_trivy:
   name: mirror.gcr.io/aquasec/trivy
-  default_tag: 0.68.1
+  default_tag: 0.68.2
   tags:
+    - 0.68.2
     - 0.68.1
     - 0.67.2
     - 0.67.1
@@ -55,6 +56,7 @@ aws_load_balancer_controller:
   name: public.ecr.aws/eks/aws-load-balancer-controller
   default_tag: v2.14.0
   tags:
+    - v2.17.0
     - v2.16.0
     - v2.15.0
     - v2.14.1
@@ -137,8 +139,9 @@ cert_manager_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 cert_manager_istio_csr:
   name: quay.io/jetstack/cert-manager-istio-csr
-  default_tag: v0.14.3
+  default_tag: v0.15.0
   tags:
+    - v0.15.0
     - v0.14.3
     - v0.14.2
     - v0.14.1
@@ -274,15 +277,19 @@ grafana:
   name: docker.io/grafana/grafana
   default_tag: 11.4.5
   tags:
+    - 12.3.1
     - 12.3.0
+    - 12.2.3
     - 12.2.2
     - 12.2.1
     - 12.2.0
+    - 12.1.5
     - 12.1.4
     - 12.1.3
     - 12.1.2
     - 12.1.1
     - 12.1.0
+    - 12.0.8
     - 12.0.7
     - 12.0.6
     - 12.0.5
@@ -291,6 +298,7 @@ grafana:
     - 12.0.2
     - 12.0.1
     - 12.0.0
+    - 11.6.9
     - 11.6.8
     - 11.6.7
     - 11.6.6
@@ -332,8 +340,9 @@ grafana:
   tag_regex: ^\d+\.\d+\.\d+$
 istio_cni:
   name: docker.io/istio/install-cni
-  default_tag: 1.28.1-distroless
+  default_tag: 1.28.2-distroless
   tags:
+    - 1.28.2-distroless
     - 1.28.1-distroless
     - 1.28.0-distroless
     - 1.27.3-distroless
@@ -345,8 +354,9 @@ istio_cni:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_pilot:
   name: docker.io/istio/pilot
-  default_tag: 1.28.1-distroless
+  default_tag: 1.28.2-distroless
   tags:
+    - 1.28.2-distroless
     - 1.28.1-distroless
     - 1.28.0-distroless
     - 1.27.3-distroless
@@ -370,8 +380,9 @@ istio_pilot:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_proxy:
   name: docker.io/istio/proxyv2
-  default_tag: 1.28.1-distroless
+  default_tag: 1.28.2-distroless
   tags:
+    - 1.28.2-distroless
     - 1.28.1-distroless
     - 1.28.0-distroless
     - 1.27.3-distroless
@@ -395,8 +406,9 @@ istio_proxy:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 istio_ztunnel:
   name: docker.io/istio/ztunnel
-  default_tag: 1.28.1-distroless
+  default_tag: 1.28.2-distroless
   tags:
+    - 1.28.2-distroless
     - 1.28.1-distroless
     - 1.28.0-distroless
     - 1.27.3-distroless
@@ -408,8 +420,9 @@ istio_ztunnel:
   tag_regex: ^\d+\.\d+\.\d+-distroless$
 jupyter_datascience_lab:
   name: quay.io/jupyter/datascience-notebook
-  default_tag: lab-4.5.0
+  default_tag: lab-4.5.1
   tags:
+    - lab-4.5.1
     - lab-4.5.0
     - lab-4.4.10
     - lab-4.4.9
@@ -426,6 +439,7 @@ karpenter:
   name: public.ecr.aws/karpenter/controller
   default_tag: 1.8.1
   tags:
+    - 1.8.3
     - 1.8.2
     - 1.8.1
     - 1.8.0
@@ -455,10 +469,12 @@ karpenter:
   tag_regex: ^\d+\.\d+\.\d+$
 keycloak:
   name: ghcr.io/batteries-included/keycloak
-  default_tag: 26.4.6-6f88865
+  default_tag: 26.4.7-9499e03
   blacklisted_tags:
     - 26.3.0-3a3a040
   tags:
+    - 26.4.7-9499e03
+    - 26.4.7-07d3503
     - 26.4.6-6f88865
     - 26.4.5-4720501
     - 26.4.4-4720501
@@ -512,8 +528,9 @@ keycloak_upstream:
   tag_regex: ^\d+\.\d+\.\d+$
 kiali:
   name: quay.io/kiali/kiali
-  default_tag: v2.19.0
+  default_tag: v2.20.0
   tags:
+    - v2.20.0
     - v2.19.0
     - v2.18.0
     - v2.17.0
@@ -614,8 +631,9 @@ knative_istio_webhook:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_activator:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/activator
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.7
     - v1.19.6
@@ -635,8 +653,9 @@ knative_serving_activator:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_autoscaler:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.7
     - v1.19.6
@@ -656,8 +675,9 @@ knative_serving_autoscaler:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_controller:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/controller
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.7
     - v1.19.6
@@ -677,8 +697,9 @@ knative_serving_controller:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_queue:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/queue
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.7
     - v1.19.6
@@ -698,8 +719,9 @@ knative_serving_queue:
   tag_regex: ^v\d+\.\d+\.\d+$
 knative_serving_webhook:
   name: gcr.io/knative-releases/knative.dev/serving/cmd/webhook
-  default_tag: v1.20.0
+  default_tag: v1.20.1
   tags:
+    - v1.20.1
     - v1.20.0
     - v1.19.7
     - v1.19.6
@@ -729,8 +751,9 @@ kube_state_metrics:
   tag_regex: ^v\d+\.\d+\.\d+$
 loki:
   name: docker.io/grafana/loki
-  default_tag: 3.6.2
+  default_tag: 3.6.3
   tags:
+    - 3.6.3
     - 3.6.2
     - 3.6.1
     - 3.6.0
@@ -852,8 +875,11 @@ oauth2_proxy:
   tag_regex: ^v\d+\.\d+\.\d+$
 ollama:
   name: docker.io/ollama/ollama
-  default_tag: 0.13.2
+  default_tag: 0.13.5
   tags:
+    - 0.13.5
+    - 0.13.4
+    - 0.13.3
     - 0.13.2
     - 0.13.1
     - 0.13.0
@@ -916,8 +942,9 @@ postgresql_upstream:
   tag_regex: ^\d+\.\d+$
 promtail:
   name: docker.io/grafana/promtail
-  default_tag: 3.6.2
+  default_tag: 3.6.3
   tags:
+    - 3.6.3
     - 3.6.2
     - 3.6.1
     - 3.6.0
@@ -1026,8 +1053,9 @@ trivy_operator:
   tag_regex: ^\d+\.\d+\.\d+$
 trust_manager:
   name: quay.io/jetstack/trust-manager
-  default_tag: v0.20.2
+  default_tag: v0.20.3
   tags:
+    - v0.20.3
     - v0.20.2
     - v0.20.1
     - v0.20.0
@@ -1045,8 +1073,9 @@ trust_manager:
   tag_regex: ^v\d+\.\d+\.\d+$
 trust_manager_init:
   name: quay.io/jetstack/cert-manager-package-debian
-  default_tag: '20210119.2'
+  default_tag: '20210119.3'
   tags:
+    - '20210119.3'
     - '20210119.2'
     - '20210119.1'
     - '20210119.0'
@@ -1064,8 +1093,9 @@ ubuntu:
   tag_regex: ^noble-\d{8}(\.\d)?$
 vm_agent:
   name: mirror.gcr.io/victoriametrics/vmagent
-  default_tag: v1.131.0
+  default_tag: v1.132.0
   tags:
+    - v1.132.0
     - v1.131.0
     - v1.130.0
     - v1.129.1
@@ -1125,8 +1155,9 @@ vm_agent:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_insert:
   name: mirror.gcr.io/victoriametrics/vminsert
-  default_tag: v1.131.0-cluster
+  default_tag: v1.132.0-cluster
   tags:
+    - v1.132.0-cluster
     - v1.131.0-cluster
     - v1.130.0-cluster
     - v1.129.1-cluster
@@ -1220,8 +1251,9 @@ vm_operator:
   tag_regex: ^v\d+\.\d+\.\d+$
 vm_select:
   name: mirror.gcr.io/victoriametrics/vmselect
-  default_tag: v1.131.0-cluster
+  default_tag: v1.132.0-cluster
   tags:
+    - v1.132.0-cluster
     - v1.131.0-cluster
     - v1.130.0-cluster
     - v1.129.1-cluster
@@ -1262,8 +1294,9 @@ vm_select:
   tag_regex: ^v\d+\.\d+\.\d+-cluster$
 vm_storage:
   name: mirror.gcr.io/victoriametrics/vmstorage
-  default_tag: v1.131.0-cluster
+  default_tag: v1.132.0-cluster
   tags:
+    - v1.132.0-cluster
     - v1.131.0-cluster
     - v1.130.0-cluster
     - v1.129.1-cluster
