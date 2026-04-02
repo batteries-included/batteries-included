@@ -11,8 +11,7 @@ defmodule CommonCore.StateSummary.Backups do
   def backups(summary, cluster \\ nil)
 
   def backups(%StateSummary{kube_state: kube_state} = _summary, _cluster)
-      when not is_map_key(kube_state, :cloudnative_pg_backup),
-      do: []
+      when not is_map_key(kube_state, :cloudnative_pg_backup), do: []
 
   def backups(%StateSummary{kube_state: %{cloudnative_pg_backup: backups}} = _summary, cluster) when is_empty(cluster),
     do: backups
